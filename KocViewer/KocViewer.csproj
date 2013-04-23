@@ -323,13 +323,13 @@
       <Project>{6cd9bd09-2796-4324-ba10-7dcb000ee8eb}</Project>
       <Name>LibPipeline</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
+      <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
+      <Name>MapControl.WPF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
       <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
       <Name>LibSmile</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XamlMapControl\MapControl\WpfMap.csproj">
-      <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
-      <Name>WpfMap</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

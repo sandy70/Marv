@@ -5,7 +5,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  xmlns:libpipeline="clr-namespace:LibPipeline"
-                 xmlns:wpfmap="clr-namespace:WpfMap;assembly=MapControl.WPF"
+                 xmlns:wpfmap="clr-namespace:MapControl;assembly=MapControl.WPF"
                  mc:Ignorable="d" 
                  d:DesignHeight="300" d:DesignWidth="300"
                  Name="Root">

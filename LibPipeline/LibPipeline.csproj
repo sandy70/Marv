@@ -206,9 +206,9 @@
       <Project>{087FC54E-3111-48CA-8F13-20296CDB7C71}</Project>
       <Name>LibBn</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XamlMapControl\MapControl\WpfMap.csproj">
+    <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
       <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
-      <Name>WpfMap</Name>
+      <Name>MapControl.WPF</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

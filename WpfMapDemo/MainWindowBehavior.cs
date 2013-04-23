@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
-using WpfMap;
+using MapControl;
 
 namespace WpfMapDemo
 {
