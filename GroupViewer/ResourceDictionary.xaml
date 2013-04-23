@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
+                    xmlns:properties="clr-namespace:GroupViewer.Properties"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
+    <libpipeline:BooleanNotConverter x:Key="BooleanNot" />
+    <libpipeline:BooleanToColorConverter x:Key="BooleanToColorConverter"
+                                         TrueColor="#b11d01"
+                                         FalseColor="#DDDDDD" />
+    <libpipeline:BooleanToStringConverter x:Key="BooleanToStringConverter"
+                                         TrueString="#b11d01"
+                                         FalseString="#DDDDDD" />
+    <libpipeline:BooleanToStringConverter x:Key="ShowGroupsImageSource" TrueString="Resources/Icons/group.png" FalseString="Resources/Icons/ungroup.png" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    <libpipeline:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
+    <libpipeline:IEnumerableIntToStringConverter x:Key="IEnumerableIntToString" />
+    <properties:Settings x:Key="Settings" />
+</ResourceDictionary>
