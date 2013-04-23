@@ -11,5 +11,8 @@
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
+    <Setting Name="XlsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\Koc\Tally.xlsx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

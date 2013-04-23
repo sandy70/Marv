@@ -58,5 +58,17 @@ namespace KocViewer.Properties {
                 this["FitToPad"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Tally.xlsx")]
+        public string XlsFileName {
+            get {
+                return ((string)(this["XlsFileName"]));
+            }
+            set {
+                this["XlsFileName"] = value;
+            }
+        }
     }
 }

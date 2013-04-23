@@ -1,5 +1,6 @@
 ﻿using LibBn;
 using LibPipeline;
+using LinqToExcel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,8 +58,18 @@ namespace KocViewer
                     Slope = Utils.TryParseDouble(data[r, 10])
                 });
             }
-
+            
             return pipeline;
+        }
+
+        public void ReadTallyNew(string fileName)
+        {
+            var excel = new ExcelQueryFactory(fileName);
+
+            foreach (var row in excel.Worksheet(0))
+            {
+                Console.WriteLine(row);
+            }
         }
 
         public void ReadVertexInputsForAllYears(BnInputStore inputManager)

@@ -32,7 +32,7 @@ namespace KocViewer
             KocDataReader kocDataReader = new KocDataReader();
             window.PipelineProfileViewModel.Pipeline = kocDataReader.ReadProfile(Path.Combine(Config.KocDir, "profile.csv"));
             window.PipelineTallyViewModel.Pipeline = kocDataReader.ReadTally(Path.Combine(Config.KocDir, "tally.csv"));
-            
+            kocDataReader.ReadTallyNew(Properties.Settings.Default.XlsFileName);
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
 
