@@ -33,7 +33,7 @@ namespace LibPipeline
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pipelineControl = d as PipelineControl;
-            pipelineControl.SelectedLocation = (e.NewValue as IEnumerable<Location>).First();
+            pipelineControl.SelectedLocation = (e.NewValue as IEnumerable<Location>).FirstOrDefault();
         }
     }
 }
