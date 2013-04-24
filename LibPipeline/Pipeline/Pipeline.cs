@@ -12,7 +12,6 @@ namespace LibPipeline
     {
         private string _Collection;
         private PipelineProperties _Properties;
-        private ObservableCollection<PipelineSegment> _Segments;
         private List<Location> locations = new List<Location>();
         private Dictionary<Location, dynamic> locationsToProperties = new Dictionary<Location,dynamic>();
         private string name;
@@ -22,7 +21,6 @@ namespace LibPipeline
             this.Collection = ObjectId.GenerateNewId(DateTime.Now).ToString();
             this.Name = "";
             this.Properties = new PipelineProperties();
-            this.Segments = new ObservableCollection<PipelineSegment>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -89,16 +87,6 @@ namespace LibPipeline
             {
                 _Properties = value;
                 OnPropertyChanged("Properties");
-            }
-        }
-
-        public ObservableCollection<PipelineSegment> Segments
-        {
-            get { return _Segments; }
-            set
-            {
-                _Segments = value;
-                OnPropertyChanged("Segments");
             }
         }
 

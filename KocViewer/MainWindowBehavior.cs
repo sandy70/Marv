@@ -25,7 +25,6 @@ namespace KocViewer
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
             window.FileName = Config.NetworkFile;
 
             // Read the KOC pipeline data

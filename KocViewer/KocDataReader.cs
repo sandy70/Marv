@@ -20,17 +20,6 @@ namespace KocViewer
             Pipeline pipeline = new Pipeline();
 
             int nRows = data.GetLength(0);
-            for (int r = 0; r < nRows; r++)
-            {
-                pipeline.Segments.Add(new PipelineSegment
-                {
-                    DistanceFromOrigin = (double)Utils.TryParseDouble(data[r, 1]),
-                    Elevation = Utils.TryParseDouble(data[r, 4]),
-                    Latitude = Utils.TryParseDouble(data[r, 2]),
-                    Longitude = Utils.TryParseDouble(data[r, 3])
-                });
-            }
-
             return pipeline;
         }
 
@@ -45,18 +34,6 @@ namespace KocViewer
             {
                 string longSeamOrientation = data[r, 4];
                 string description = data[r, 5];
-
-                pipeline.Segments.Add(new PipelineSegment
-                {
-                    Latitude = Utils.TryParseDouble(data[r, 6]),
-                    Longitude = Utils.TryParseDouble(data[r, 7]),
-                    Elevation = Utils.TryParseDouble(data[r, 8]),
-                    JointLength = Utils.TryParseDouble(data[r, 2]),
-                    WallThickness = Utils.TryParseDouble(data[r, 3]),
-                    LongSeamOrientation = data[r, 4],
-                    Description = data[r, 5],
-                    Slope = Utils.TryParseDouble(data[r, 10])
-                });
             }
             
             return pipeline;
@@ -64,22 +41,20 @@ namespace KocViewer
 
         public Pipeline ReadTallyNew(string fileName)
         {
-            var pipeline = new Pipeline();
-
             var excel = new ExcelQueryFactory(fileName);
+            var locations = new List<MapControl.Location>();
+            var pipeline = new Pipeline();
 
             var colNames = excel.GetColumnNames("PipeTally");
 
-            var locations = new List<MapControl.Location>();
-
             foreach (var row in excel.Worksheet("PipeTally"))
             {
-                var location = new MapControl.Location();
-
                 if (DBNull.Value.Equals(row["Latitude"].Value) || DBNull.Value.Equals(row["Longitude"].Value))
                 {
                     continue;
                 }
+
+                var location = new MapControl.Location();
 
                 foreach (var colName in colNames)
                 {

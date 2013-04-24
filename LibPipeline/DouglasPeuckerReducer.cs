@@ -18,49 +18,6 @@ namespace LibPipeline
 
         public double Tolerance { get; set; }
 
-        public IEnumerable<ILocation> Reduce(IEnumerable<ILocation> originalLocations, BingMap bingMap)
-        {
-            // If points are null or too few then return
-            if (originalLocations == null || originalLocations.Count() < 3)
-            {
-                return originalLocations;
-            }
-
-            int firstPoint = 0;
-            int lastPoint = originalLocations.Count() - 1;
-            List<int> pointIndexsToKeep = new List<int>();
-
-            //Add the first and last index to the keepers
-            pointIndexsToKeep.Add(firstPoint);
-            pointIndexsToKeep.Add(lastPoint);
-
-            //The first and the last point cannot be the same
-            while (lastPoint >= 0 && originalLocations.ElementAt(firstPoint).Equals(originalLocations.ElementAt(lastPoint)))
-            {
-                lastPoint--;
-            }
-
-            this.DouglasPeuckerReduction(originalLocations, firstPoint, lastPoint, Tolerance, ref pointIndexsToKeep, bingMap);
-
-            // Make new List<Point> to return
-            List<ILocation> reducedLocations = new List<ILocation>();
-
-            pointIndexsToKeep.Sort();
-            foreach (int index in pointIndexsToKeep)
-            {
-                reducedLocations.Add(originalLocations.ElementAt(index));
-            }
-
-            // If the simplification results in zero points, just add the endpoints.
-            if (this.Points.Count == 0)
-            {
-                reducedLocations.Add(originalLocations.First());
-                reducedLocations.Add(originalLocations.Last());
-            }
-
-            return reducedLocations;
-        }
-
         public List<Point> Reduce()
         {
             // If points are null or too few then return
@@ -102,59 +59,6 @@ namespace LibPipeline
             }
 
             return returnPoints;
-        }
-
-        public async Task<IEnumerable<ILocation>> ReduceAsync(IEnumerable<ILocation> originalLocations, BingMap bingMap)
-        {
-            return await Task.Run(() => this.Reduce(originalLocations, bingMap));
-        }
-
-        private void DouglasPeuckerReduction(IEnumerable<ILocation> originalLocations, int firstPoint, int lastPoint, double tolerance, ref List<int> pointIndexsToKeep, BingMap bingMap)
-        {
-            double maxDistance = 0;
-            int indexFarthest = 0;
-
-            // originalLocations.ElementAt(firstPoint) or originalLocations.ElementAt(lastPoint) may not have values
-            while (firstPoint <= originalLocations.Count() && !originalLocations.ElementAt(firstPoint).HasValue())
-            {
-                firstPoint++;
-            }
-
-            while (lastPoint >= 0 && !originalLocations.ElementAt(lastPoint).HasValue())
-            {
-                lastPoint--;
-            }
-
-            for (int index = firstPoint; index < lastPoint; index++)
-            {
-                ILocation fl = originalLocations.ElementAt(firstPoint);
-                ILocation ll = originalLocations.ElementAt(lastPoint);
-                ILocation l = originalLocations.ElementAt(index);
-
-                if (fl.HasValue() && ll.HasValue() && l.HasValue())
-                {
-                    Point fp = bingMap.LocationToViewportPoint(fl.AsLocation());
-                    Point lp = bingMap.LocationToViewportPoint(ll.AsLocation());
-                    Point p = bingMap.LocationToViewportPoint(l.AsLocation());
-
-                    double distance = PerpendicularDistance(fp, lp, p);
-
-                    if (distance > maxDistance)
-                    {
-                        maxDistance = distance;
-                        indexFarthest = index;
-                    }
-                }
-            }
-
-            if (maxDistance > tolerance && indexFarthest != 0)
-            {
-                //Add the largest point that exceeds the tolerance
-                pointIndexsToKeep.Add(indexFarthest);
-
-                this.DouglasPeuckerReduction(originalLocations, firstPoint, indexFarthest, tolerance, ref pointIndexsToKeep, bingMap);
-                this.DouglasPeuckerReduction(originalLocations, indexFarthest, lastPoint, tolerance, ref pointIndexsToKeep, bingMap);
-            }
         }
 
         private void DouglasPeuckerReduction(List<Point> points, int firstPoint, int lastPoint, double tolerance, ref List<int> pointIndexsToKeep)

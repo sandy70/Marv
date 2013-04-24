@@ -10,41 +10,11 @@ namespace LibPipeline
 {
     public static partial class Extensions
     {
-        public static Location AsLocation(this ILocation location)
-        {
-            if (location.HasValue())
-            {
-                return new Location { Altitude = (double)location.Elevation, Latitude = (double)location.Latitude, Longitude = (double)location.Longitude };
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
             else if (val.CompareTo(max) > 0) return max;
             else return val;
-        }
-
-        public static void FillDistanceFromOrigin(this IEnumerable<IPipelineLocation> locations)
-        {
-            int nData = locations.Count();
-            locations.ElementAt(0).DistanceFromOrigin = 0;
-            double lastDistance = 0;
-
-            for (int d = 1; d < nData; d++)
-            {
-                double? thisDistance = Utils.DistanceBetweenLocations(locations.ElementAt(d), locations.ElementAt(d - 1));
-
-                if (thisDistance.HasValue)
-                {
-                    locations.ElementAt(d).DistanceFromOrigin = thisDistance + lastDistance;
-                    lastDistance = locations.ElementAt(d).DistanceFromOrigin.Value;
-                }
-            }
         }
 
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
@@ -151,38 +121,9 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static bool HasValue(this ILocation location)
-        {
-            if (location.Elevation.HasValue && location.Latitude.HasValue && location.Longitude.HasValue)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static bool HasValue(this IPipelineLocation location)
-        {
-            if (location.Elevation.HasValue && location.Latitude.HasValue && location.Longitude.HasValue && location.DistanceFromOrigin.HasValue)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public static void Print(this Point point)
         {
             Console.WriteLine("x: " + point.X + ", y: " + point.Y);
-        }
-
-        public static void Print(this ILocation location)
-        {
-            Console.WriteLine("lat: " + location.Latitude + ", lon: " + location.Longitude + ", elev: " + location.Elevation);
         }
 
         public static void Print(this ObservableCollection<Location> locations)

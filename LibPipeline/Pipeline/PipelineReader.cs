@@ -24,15 +24,9 @@ namespace LibPipeline
 
             this.mongodbInfo.Collection = "Segments" + collection;
             MongoInstance mongodbInstance = new MongoInstance(this.mongodbInfo);
-            MongoCollection<PipelineSegment> segmentCollection = mongodbInstance.GetCollection<PipelineSegment>();
 
             Pipeline pipeline = new Pipeline();
             pipeline.Collection = collection;
-
-            foreach (var segment in segmentCollection.AsQueryable<PipelineSegment>().Select(e => e))
-            {
-                pipeline.Segments.Add(segment);
-            }
 
             this.mongodbInfo.Collection = "Properties" + pipeline.Collection;
             mongodbInstance = new MongoInstance(this.mongodbInfo);
@@ -52,15 +46,9 @@ namespace LibPipeline
 
                     this.mongodbInfo.Collection = "Segments" + collection;
                     MongoInstance mongodbInstance = new MongoInstance(this.mongodbInfo);
-                    MongoCollection<PipelineSegment> segmentCollection = mongodbInstance.GetCollection<PipelineSegment>();
 
                     Pipeline pipeline = new Pipeline();
                     pipeline.Collection = collection;
-
-                    foreach (var segment in segmentCollection.AsQueryable<PipelineSegment>().Select(e => e))
-                    {
-                        pipeline.Segments.Add(segment);
-                    }
 
                     this.mongodbInfo.Collection = "Properties" + pipeline.Collection;
                     mongodbInstance = new MongoInstance(this.mongodbInfo);

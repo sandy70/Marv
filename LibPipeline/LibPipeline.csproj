@@ -151,24 +151,12 @@
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\DecimalToPercentageConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
-    <Compile Include="Extensions\Extensions.IEnumerableILocation.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControl.xaml.cs">
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ILocation.cs" />
-    <Compile Include="Converters\ILocationToLocationConverter.cs" />
-    <Compile Include="ILocation2D.cs" />
-    <Compile Include="IPipelineLocation.cs" />
-    <Compile Include="IPipelineSegment.cs" />
-    <Compile Include="Location2DBase.cs" />
-    <Compile Include="LocationBase.cs" />
-    <Compile Include="LocationPropertyPair.cs" />
-    <Compile Include="LocationSelectionChangedEventArgs.cs" />
     <Compile Include="Controls\PipelineControl\PipelineControl.xaml.cs">
       <DependentUpon>PipelineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PipelineLocationBase.cs" />
-    <Compile Include="PipelineSegmentBase.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
@@ -191,7 +179,6 @@
     <Compile Include="Pipeline\PipelineFlowModel.cs" />
     <Compile Include="Pipeline\PipelineProperties.cs" />
     <Compile Include="Pipeline\PipelineReader.cs" />
-    <Compile Include="Pipeline\PipelineSegment.cs" />
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
     <Compile Include="Pipeline\PipelineWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
