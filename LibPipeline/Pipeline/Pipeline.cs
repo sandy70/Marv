@@ -1,5 +1,7 @@
-﻿using MongoDB.Bson;
+﻿using MapControl;
+using MongoDB.Bson;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -9,12 +11,11 @@ namespace LibPipeline
     public class Pipeline : INotifyPropertyChanged
     {
         private string _Collection;
-
-        private string _Name;
-
         private PipelineProperties _Properties;
-
         private ObservableCollection<PipelineSegment> _Segments;
+        private List<Location> locations = new List<Location>();
+        private Dictionary<Location, dynamic> locationsToProperties = new Dictionary<Location,dynamic>();
+        private string name;
 
         public Pipeline()
         {
@@ -36,12 +37,47 @@ namespace LibPipeline
             }
         }
 
-        public string Name
+        public List<Location> Locations
         {
-            get { return _Name; }
+            get
+            {
+                return this.locations;
+            }
+
             set
             {
-                _Name = value;
+                if (value != this.locations)
+                {
+                    this.locations = value;
+
+                    this.OnPropertyChanged("Locations");
+                }
+            }
+        }
+
+        public Dictionary<Location, dynamic> LocationsToProperties
+        {
+            get
+            {
+                return this.locationsToProperties;
+            }
+
+            set
+            {
+                if (value != this.locationsToProperties)
+                {
+                    this.locationsToProperties = value;
+                    this.OnPropertyChanged("LocationsToProperties");
+                }
+            }
+        }
+
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = value;
                 OnPropertyChanged("Name");
             }
         }

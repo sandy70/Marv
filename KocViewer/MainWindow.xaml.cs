@@ -15,6 +15,12 @@ namespace KocViewer
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty PipelineProperty =
+        DependencyProperty.Register("Pipeline", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedLocationProperty =
+        DependencyProperty.Register("SelectedLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -54,6 +60,18 @@ namespace KocViewer
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
             set { SetValue(IsGroupButtonVisibleProperty, value); }
+        }
+
+        public Pipeline Pipeline
+        {
+            get { return (Pipeline)GetValue(PipelineProperty); }
+            set { SetValue(PipelineProperty, value); }
+        }
+
+        public MapControl.Location SelectedLocation
+        {
+            get { return (MapControl.Location)GetValue(SelectedLocationProperty); }
+            set { SetValue(SelectedLocationProperty, value); }
         }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues

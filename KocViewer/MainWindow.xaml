@@ -34,9 +34,9 @@
                         IsManipulationEnabled="True"
                         IsRotationEnabled="False">
                 <libpipeline:PipelineControl x:Name="PipelineProfileControl"
-                                            Locations="{Binding Pipeline.Segments}"
-                                            SelectedLocation="{Binding SelectedSegment, Mode=TwoWay}"
-                                            Visibility="{Binding Path=IsChecked, ElementName=ProfileRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}">
+                                             Locations="{Binding Pipeline.Locations, ElementName=Root}"
+                                             SelectedLocation="{Binding SelectedLocation, ElementName=Root, Mode=TwoWay}"
+                                             Visibility="{Binding Path=IsChecked, ElementName=ProfileRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}">
                     <libpipeline:PipelineControl.Effect>
                         <DropShadowEffect Color="Gray" Opacity="0.5" ShadowDepth="3" />
                     </libpipeline:PipelineControl.Effect>
@@ -84,19 +84,19 @@
 
                     <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
                                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                             AutoGeneratePropertyDefinitions="False"
+                                             AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              IsReadOnly="True"
-                                             Item="{Binding SelectedSegment, Mode=OneWay}"
+                                             Item="{Binding SelectedLocation.Properties, ElementName=Root}"
                                              Visibility="{Binding ElementName=ProfileRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}">
-                        <telerik:RadPropertyGrid.PropertyDefinitions>
+                        <!--<telerik:RadPropertyGrid.PropertyDefinitions>
                             <telerik:PropertyDefinition Binding="{Binding Latitude}"
                                                                     DisplayName="Latitude" />
                             <telerik:PropertyDefinition Binding="{Binding Longitude}"
                                                                     DisplayName="Longitude" />
                             <telerik:PropertyDefinition Binding="{Binding Elevation}"
                                                                     DisplayName="Elevation" />
-                        </telerik:RadPropertyGrid.PropertyDefinitions>
+                        </telerik:RadPropertyGrid.PropertyDefinitions>-->
                     </telerik:RadPropertyGrid>
 
                     <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"

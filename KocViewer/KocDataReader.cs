@@ -62,14 +62,47 @@ namespace KocViewer
             return pipeline;
         }
 
-        public void ReadTallyNew(string fileName)
+        public Pipeline ReadTallyNew(string fileName)
         {
+            var pipeline = new Pipeline();
+
             var excel = new ExcelQueryFactory(fileName);
 
-            foreach (var row in excel.Worksheet(0))
+            var colNames = excel.GetColumnNames("PipeTally");
+
+            var locations = new List<MapControl.Location>();
+
+            foreach (var row in excel.Worksheet("PipeTally"))
             {
-                Console.WriteLine(row);
+                var location = new MapControl.Location();
+
+                if (DBNull.Value.Equals(row["Latitude"].Value) || DBNull.Value.Equals(row["Longitude"].Value))
+                {
+                    continue;
+                }
+
+                foreach (var colName in colNames)
+                {
+                    if (colName.Equals("Latitude"))
+                    {
+                        location.Latitude = (double)row[colName].Value;
+                    }
+                    else if (colName.Equals("Longitude"))
+                    {
+                        location.Longitude = (double)row[colName].Value;
+                    }
+                    else
+                    {
+                        location.Properties[colName] = row[colName].Value;
+                    }
+                }
+
+                locations.Add(location);
             }
+
+            pipeline.Locations = locations;
+
+            return pipeline;
         }
 
         public void ReadVertexInputsForAllYears(BnInputStore inputManager)

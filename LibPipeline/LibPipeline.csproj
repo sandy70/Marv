@@ -151,7 +151,6 @@
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\DecimalToPercentageConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
-    <Compile Include="Dynamic.cs" />
     <Compile Include="Extensions\Extensions.IEnumerableILocation.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControl.xaml.cs">
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
@@ -163,6 +162,7 @@
     <Compile Include="IPipelineSegment.cs" />
     <Compile Include="Location2DBase.cs" />
     <Compile Include="LocationBase.cs" />
+    <Compile Include="LocationPropertyPair.cs" />
     <Compile Include="LocationSelectionChangedEventArgs.cs" />
     <Compile Include="Controls\PipelineControl\PipelineControl.xaml.cs">
       <DependentUpon>PipelineControl.xaml</DependentUpon>
