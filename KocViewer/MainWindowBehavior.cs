@@ -15,6 +15,19 @@ namespace KocViewer
             base.OnAttached();
             this.AssociatedObject.Closed += AssociatedObject_Closed;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.Drop += AssociatedObject_Drop;
+        }
+
+        private void AssociatedObject_Drop(object sender, DragEventArgs e)
+        {
+            string [] fileNames = (string [])e.Data.GetData("FileNameW");
+
+            Console.WriteLine("Count: " + fileNames.Count());
+
+            foreach (var name in fileNames)
+            {
+                Console.WriteLine("FileName: " + name);
+            }
         }
 
         private void AssociatedObject_Closed(object sender, EventArgs e)
@@ -28,13 +41,12 @@ namespace KocViewer
             window.FileName = Config.NetworkFile;
 
             // Read the KOC pipeline data
+            window.PipelineTally = PipelineReader.ReadExcel(Properties.Settings.Default.TallyFileName, "Sheet1");
+            window.PipelineProfile = PipelineReader.ReadExcel(Properties.Settings.Default.ProfileFileName, "Sheet1");
+
             KocDataReader kocDataReader = new KocDataReader();
-            window.PipelineProfileViewModel.Pipeline = kocDataReader.ReadProfile(Path.Combine(Config.KocDir, "profile.csv"));
-            window.PipelineTallyViewModel.Pipeline = kocDataReader.ReadTally(Path.Combine(Config.KocDir, "tally.csv"));
-            window.Pipeline = kocDataReader.ReadTallyNew(Properties.Settings.Default.XlsFileName);
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
-
             kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;

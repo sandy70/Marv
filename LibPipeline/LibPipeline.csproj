@@ -53,6 +53,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LinqToExcel">
+      <HintPath>..\..\Libraries\LinqToExcel\LinqToExcel.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Libraries\LinqToExcel\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Maps.MapControl.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BingMapsWpfControl.1.0.0\lib\net40-client\Microsoft.Maps.MapControl.WPF.dll</HintPath>
@@ -73,6 +79,12 @@
     </Reference>
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Data.Linq">
+      <HintPath>..\..\Libraries\LinqToExcel\Remotion.Data.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq">
+      <HintPath>..\..\Libraries\LinqToExcel\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Settings4Net">
       <HintPath>..\Libraries\Settings4Net.dll</HintPath>
@@ -172,7 +184,7 @@
     <Compile Include="MongoInfoReader.cs" />
     <Compile Include="MongoInfo.cs" />
     <Compile Include="MongoInstance.cs" />
-    <Compile Include="Pipeline\Pipeline.cs" />
+    <Compile Include="Pipeline.cs" />
     <Compile Include="Pipeline\PipelineChemistry.cs" />
     <Compile Include="Pipeline\PipelineCorrosionModel.cs" />
     <Compile Include="Pipeline\PipelineDateTime.cs" />

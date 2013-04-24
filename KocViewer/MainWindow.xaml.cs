@@ -15,11 +15,17 @@ namespace KocViewer
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty PipelineProperty =
-        DependencyProperty.Register("Pipeline", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty PipelineProfileProperty =
+        DependencyProperty.Register("PipelineProfile", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty PipelineTallyProperty =
+        DependencyProperty.Register("PipelineTally", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedProfileLocationProperty =
+        DependencyProperty.Register("SelectedProfileLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedTallyLocationProperty =
+        DependencyProperty.Register("SelectedTallyLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
@@ -62,16 +68,28 @@ namespace KocViewer
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
-        public Pipeline Pipeline
+        public Pipeline PipelineProfile
         {
-            get { return (Pipeline)GetValue(PipelineProperty); }
-            set { SetValue(PipelineProperty, value); }
+            get { return (Pipeline)GetValue(PipelineProfileProperty); }
+            set { SetValue(PipelineProfileProperty, value); }
         }
 
-        public MapControl.Location SelectedLocation
+        public Pipeline PipelineTally
         {
-            get { return (MapControl.Location)GetValue(SelectedLocationProperty); }
-            set { SetValue(SelectedLocationProperty, value); }
+            get { return (Pipeline)GetValue(PipelineTallyProperty); }
+            set { SetValue(PipelineTallyProperty, value); }
+        }
+
+        public MapControl.Location SelectedProfileLocation
+        {
+            get { return (MapControl.Location)GetValue(SelectedProfileLocationProperty); }
+            set { SetValue(SelectedProfileLocationProperty, value); }
+        }
+
+        public MapControl.Location SelectedTallyLocation
+        {
+            get { return (MapControl.Location)GetValue(SelectedTallyLocationProperty); }
+            set { SetValue(SelectedTallyLocationProperty, value); }
         }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues
@@ -94,9 +112,7 @@ namespace KocViewer
 
         public void InitializeDataContexts()
         {
-            this.PipelineProfileControl.DataContext = this.PipelineProfileViewModel;
             this.PipelineProfilePropertyGrid.DataContext = this.PipelineProfileViewModel;
-            this.PipelineTallyControl.DataContext = this.PipelineTallyViewModel;
             this.PipelineTallyPropertyGrid.DataContext = this.PipelineTallyViewModel;
         }
 

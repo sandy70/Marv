@@ -62,12 +62,24 @@ namespace KocViewer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Tally.xlsx")]
-        public string XlsFileName {
+        public string TallyFileName {
             get {
-                return ((string)(this["XlsFileName"]));
+                return ((string)(this["TallyFileName"]));
             }
             set {
-                this["XlsFileName"] = value;
+                this["TallyFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Profile.xlsx")]
+        public string ProfileFileName {
+            get {
+                return ((string)(this["ProfileFileName"]));
+            }
+            set {
+                this["ProfileFileName"] = value;
             }
         }
     }
