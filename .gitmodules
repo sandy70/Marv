@@ -1,6 +1,3 @@
 [submodule "MapControl"]
 	path = MapControl
 	url = https://git01.codeplex.com/xamlmapcontrol
-[submodule "LinqToExcel"]
-	path = LinqToExcel
-	url = https://github.com/paulyoder/LinqToExcel.git
