@@ -22,7 +22,7 @@
                         StrokeThickness="10" />
 
     <Ellipse Name="Ellipse"
-            wpfmap:MapPanel.Location="{Binding SelectedLocation, ElementName=Root}"
+            wpfmap:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
             Fill="YellowGreen"
             Height="50" Width="50"
             HorizontalAlignment="Center" VerticalAlignment="Center"

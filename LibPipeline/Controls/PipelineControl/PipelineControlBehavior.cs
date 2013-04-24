@@ -3,17 +3,32 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using MapControl;
+using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace LibPipeline
 {
     internal class PipelineControlBehavior : Behavior<PipelineControl>
     {
-        private bool IsDragging = false;
+        private bool isDragging = false;
+        private Stack<Location> locationStack = new Stack<Location>();
+        private DispatcherTimer timer = new DispatcherTimer();
 
         protected override void OnAttached()
         {
             base.OnAttached();
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+
+            timer.Interval = TimeSpan.FromMilliseconds(200);
+            timer.Tick += (o, e) =>
+                {
+                    if (this.locationStack.Count > 0)
+                    {
+                        this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
+                        this.locationStack.Clear();
+                        timer.Stop();
+                    }
+                };
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
@@ -37,7 +52,7 @@ namespace LibPipeline
 
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.IsDragging)
+            if (this.isDragging)
             {
                 var position = e.GetPosition(this.AssociatedObject);
                 this.SelectLocation(position);
@@ -58,7 +73,7 @@ namespace LibPipeline
 
         private void Ellipse_TouchMove(object sender, TouchEventArgs e)
         {
-            if (this.IsDragging)
+            if (this.isDragging)
             {
                 var position = e.GetTouchPoint(this.AssociatedObject).Position;
                 this.SelectLocation(position);
@@ -97,20 +112,28 @@ namespace LibPipeline
         private void OnDown()
         {
             this.AssociatedObject.Ellipse.CaptureMouse();
-            this.IsDragging = true;
+            this.isDragging = true;
         }
 
         private void OnUp()
         {
             this.AssociatedObject.Ellipse.ReleaseMouseCapture();
-            this.IsDragging = false;
+            this.isDragging = false;
         }
 
         private void SelectLocation(Point position)
         {
             var map = this.AssociatedObject.FindParent<Map>();
             var location = map.ViewportPointToLocation(position);
-            this.AssociatedObject.SelectedLocation = this.AssociatedObject.Locations.NearestTo(location);
+            var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
+
+            this.AssociatedObject.CursorLocation = nearestLocation;
+            this.locationStack.Push(nearestLocation);
+
+            if (!timer.IsEnabled)
+            {
+                timer.Start();
+            }
         }
     }
 }

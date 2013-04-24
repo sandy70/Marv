@@ -1,21 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using MapControl;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using MapControl;
 
 namespace LibPipeline
 {
     public partial class PipelineControl : MapPanel
     {
+        public static readonly DependencyProperty CursorLocationProperty =
+        DependencyProperty.Register("CursorLocation", typeof(Location), typeof(PipelineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty LocationsProperty =
         DependencyProperty.Register("Locations", typeof(IEnumerable<Location>), typeof(PipelineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PipelineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PipelineControl), new PropertyMetadata(null, ChangedLocation));
+
+        private static void ChangedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pipelineControl = d as PipelineControl;
+            pipelineControl.CursorLocation = pipelineControl.SelectedLocation;
+        }
 
         public PipelineControl()
         {
             InitializeComponent();
+        }
+
+        public Location CursorLocation
+        {
+            get { return (Location)GetValue(CursorLocationProperty); }
+            set { SetValue(CursorLocationProperty, value); }
         }
 
         public IEnumerable<Location> Locations
