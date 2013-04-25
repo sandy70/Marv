@@ -5,8 +5,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="512" Width="512"
         WindowState="Maximized">
-    <mapcontrol:Map MapSource="BingCombined"
-                    StartExtent="40,60,17.5,37.5">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         
-    </mapcontrol:Map>
+        <Menu Grid.Row="0"
+              IsMainMenu="True">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" />
+            </MenuItem>
+        </Menu>
+        
+        <mapcontrol:Map Grid.Row="1"
+                        MapSource="BingCombined"
+                        StartExtent="40,60,17.5,37.5">
+
+        </mapcontrol:Map>
+    </Grid>
+    
 </Window>
