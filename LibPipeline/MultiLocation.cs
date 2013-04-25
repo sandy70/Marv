@@ -6,8 +6,7 @@ using System.Linq;
 
 namespace LibPipeline
 {
-    [Serializable]
-    public class MultiLocation : INotifyPropertyChanged
+    public class MultiLocation : Dynamic, INotifyPropertyChanged
     {
         private List<Location> locations = new List<Location>();
         private Location selectedLocation;

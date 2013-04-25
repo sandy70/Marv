@@ -193,7 +193,7 @@
     <Compile Include="MongoInfoReader.cs" />
     <Compile Include="MongoInfo.cs" />
     <Compile Include="MongoInstance.cs" />
-    <Compile Include="Pipeline.cs" />
+    <Compile Include="MultiLocation.cs" />
     <Compile Include="Pipeline\PipelineChemistry.cs" />
     <Compile Include="Pipeline\PipelineCorrosionModel.cs" />
     <Compile Include="Pipeline\PipelineDateTime.cs" />
