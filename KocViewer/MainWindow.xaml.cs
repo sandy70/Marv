@@ -21,10 +21,10 @@ namespace KocViewer
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty PipelineProfileProperty =
-        DependencyProperty.Register("PipelineProfile", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("PipelineProfile", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty PipelineTallyProperty =
-        DependencyProperty.Register("PipelineTally", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("PipelineTally", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
@@ -73,15 +73,15 @@ namespace KocViewer
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
-        public Pipeline PipelineProfile
+        public MultiLocation PipelineProfile
         {
-            get { return (Pipeline)GetValue(PipelineProfileProperty); }
+            get { return (MultiLocation)GetValue(PipelineProfileProperty); }
             set { SetValue(PipelineProfileProperty, value); }
         }
 
-        public Pipeline PipelineTally
+        public MultiLocation PipelineTally
         {
-            get { return (Pipeline)GetValue(PipelineTallyProperty); }
+            get { return (MultiLocation)GetValue(PipelineTallyProperty); }
             set { SetValue(PipelineTallyProperty, value); }
         }
 

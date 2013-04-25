@@ -84,7 +84,7 @@
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              IsReadOnly="True"
-                                             Item="{Binding PipelineProfile.SelectedLocation.Properties, ElementName=Root}"
+                                             Item="{Binding PipelineProfile.SelectedLocation, ElementName=Root}"
                                              Visibility="{Binding ElementName=ProfileRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                     <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
@@ -92,7 +92,7 @@
                                             AutoGeneratePropertyDefinitions="True"
                                             DescriptionPanelVisibility="Collapsed"
                                             IsReadOnly="True"
-                                            Item="{Binding PipelineTally.SelectedLocation.Properties, ElementName=Root}"
+                                            Item="{Binding PipelineTally.SelectedLocation, ElementName=Root}"
                                             Visibility="{Binding ElementName=TallyRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
                 </Grid>
             </Border>

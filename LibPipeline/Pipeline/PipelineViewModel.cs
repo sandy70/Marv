@@ -14,7 +14,7 @@ namespace LibPipeline
         private string color;
         private LandcoverViewModel landcoverViewModel;
         private ObservableCollection<Location> locations;
-        private Pipeline pipeline;
+        private MultiLocation pipeline;
         private ObservableCollection<Point> riverCrossingPoints;
         private ObservableCollection<Point> roadCrossingPoints;
         private PipelineSegmentInstant selectedInstant;
@@ -32,7 +32,7 @@ namespace LibPipeline
             this.Color = PipelineViewModel.UnselectedColor;
             this.LandcoverViewModel = new LandcoverViewModel();
             this.Locations = new ObservableCollection<Location>();
-            this.Pipeline = new Pipeline();
+            this.Pipeline = new MultiLocation();
             this.RiverCrossingPoints = new ObservableCollection<Point>();
             this.RoadCrossingPoints = new ObservableCollection<Point>();
             this.SelectedInstant = new PipelineSegmentInstant();
@@ -78,13 +78,13 @@ namespace LibPipeline
             }
         }
 
-        public Pipeline Pipeline
+        public MultiLocation Pipeline
         {
             get { return pipeline; }
             set
             {
                 pipeline = value;
-                OnPropertyChanged("Pipeline");
+                OnPropertyChanged("MultiLocation");
             }
         }
 

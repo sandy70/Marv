@@ -13,7 +13,7 @@ namespace LibPipeline
 
         public MongoInfo mongodbInfo { get; set; }
 
-        public void Write(string filename, Pipeline pipeline)
+        public void Write(string filename, MultiLocation pipeline)
         {
             //this.mongodbInfo.Collection = "Segments" + pipeline.Collection;
 

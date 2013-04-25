@@ -62,11 +62,11 @@ namespace LibPipeline
         //        });
         //}
 
-        public static Pipeline ReadExcel(string fileName, string sheetName)
+        public static MultiLocation ReadExcel(string fileName, string sheetName)
         {
             var excel = new ExcelQueryFactory(fileName);
             var locations = new List<MapControl.Location>();
-            var pipeline = new Pipeline();
+            var pipeline = new MultiLocation();
 
             var colNames = excel.GetColumnNames(sheetName);
 
@@ -91,7 +91,7 @@ namespace LibPipeline
                     }
                     else
                     {
-                        location.Properties[colName] = row[colName].Value;
+                        location[colName] = row[colName].Value;
                     }
                 }
 
