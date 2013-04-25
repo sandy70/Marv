@@ -194,7 +194,6 @@
     <Compile Include="MongoInfoReader.cs" />
     <Compile Include="MongoInfo.cs" />
     <Compile Include="MongoInstance.cs" />
-    <Compile Include="MultiLocation.cs" />
     <Compile Include="Pipeline\PipelineChemistry.cs" />
     <Compile Include="Pipeline\PipelineCorrosionModel.cs" />
     <Compile Include="Pipeline\PipelineDateTime.cs" />
@@ -202,7 +201,6 @@
     <Compile Include="Pipeline\PipelineProperties.cs" />
     <Compile Include="Pipeline\PipelineReader.cs" />
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
-    <Compile Include="Pipeline\PipelineWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectionEventArgs.cs" />
     <Compile Include="Controls\SliderProgressBar\SliderProgressBar.xaml.cs">
