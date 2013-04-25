@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LibPipeline
 {
-    public class PipelineReader
+    public class MultiLocationReader
     {
         public static MultiLocation ReadExcel(string fileName, string sheetName)
         {
