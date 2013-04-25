@@ -178,6 +178,7 @@
     <Compile Include="Controls\GroundOverlayControl\GroundOverlayControl.xaml.cs">
       <DependentUpon>GroundOverlayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EarthquakeService.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />

@@ -1,5 +1,4 @@
 ﻿using MapControl;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,12 +7,13 @@ namespace LibPipeline
 {
     public class MultiLocation : Dynamic, INotifyPropertyChanged
     {
-        private List<Location> locations = new List<Location>();
+        private IEnumerable<Location> locations;
+
         private Location selectedLocation;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<Location> Locations
+        public IEnumerable<Location> Locations
         {
             get
             {
@@ -25,17 +25,9 @@ namespace LibPipeline
                 if (value != this.locations)
                 {
                     this.locations = value;
-
-                    if (locations != null && locations.Count > 0)
-                    {
-                        this.SelectedLocation = locations.First();
-                    }
-                    else
-                    {
-                        this.SelectedLocation = null;
-                    }
-
                     this.OnPropertyChanged("Locations");
+
+                    this.SelectedLocation = locations.FirstOrDefault();
                 }
             }
         }

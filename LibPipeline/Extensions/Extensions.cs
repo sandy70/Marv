@@ -126,41 +126,6 @@ namespace LibPipeline
             Console.WriteLine("x: " + point.X + ", y: " + point.Y);
         }
 
-        public static void Print(this ObservableCollection<Location> locations)
-        {
-            if (locations == null)
-                return;
-
-            foreach (var location in locations)
-                Console.WriteLine("lat: " + location.Latitude + ", lon: " + location.Longitude + ", elev: " + location.Altitude);
-        }
-
-        public static LocationCollection ViewportPointsAsLocationCollection(this List<Point> points, BingMap bingMap)
-        {
-            LocationCollection locations = new LocationCollection();
-
-            foreach (var point in points)
-            {
-                Location location = bingMap.ViewportPointToLocation(point);
-                locations.Add(location);
-            }
-
-            return locations;
-        }
-
-        public static ObservableCollection<Location> ViewportPointsAsLocations(this List<Point> points, BingMap bingMap)
-        {
-            ObservableCollection<Location> locations = new ObservableCollection<Location>();
-
-            foreach (var point in points)
-            {
-                Location location = bingMap.ViewportPointToLocation(point);
-                locations.Add(location);
-            }
-
-            return locations;
-        }
-
         public static ObservableCollection<Location> WithinViewport(this ObservableCollection<Location> segments, BingMap bingMap)
         {
             ObservableCollection<Location> insideLocations = new ObservableCollection<Location>();

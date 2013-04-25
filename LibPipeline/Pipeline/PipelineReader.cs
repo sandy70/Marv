@@ -98,7 +98,7 @@ namespace LibPipeline
                 locations.Add(location);
             }
 
-            pipeline.Locations = locations;
+            // pipeline.Locations = locations;
 
             return pipeline;
         }
