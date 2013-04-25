@@ -53,6 +53,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\Libraries\SharpKml\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="LinqToExcel">
       <HintPath>..\..\Libraries\LinqToExcel\LinqToExcel.dll</HintPath>
     </Reference>
@@ -88,6 +91,9 @@
     </Reference>
     <Reference Include="Settings4Net">
       <HintPath>..\Libraries\Settings4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpKml">
+      <HintPath>..\..\Libraries\SharpKml\SharpKml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -169,6 +175,9 @@
     <Compile Include="Controls\PipelineControl\PipelineControl.xaml.cs">
       <DependentUpon>PipelineControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GroundOverlayControl\GroundOverlayControl.xaml.cs">
+      <DependentUpon>GroundOverlayControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
@@ -229,6 +238,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PipelineControl\PipelineControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GroundOverlayControl\GroundOverlayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

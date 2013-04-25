@@ -1,6 +1,8 @@
 ﻿using LibBn;
 using LibPipeline;
+using SharpKml.Dom;
 using Smile;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using Telerik.Windows.Controls;
@@ -12,6 +14,9 @@ namespace KocViewer
         public static readonly DependencyProperty FileNameProperty =
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty GroundOverlayProperty =
+        DependencyProperty.Register("GroundOverlay", typeof(GroundOverlay), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
@@ -20,12 +25,6 @@ namespace KocViewer
 
         public static readonly DependencyProperty PipelineTallyProperty =
         DependencyProperty.Register("PipelineTally", typeof(Pipeline), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedTallyLocationProperty =
-        DependencyProperty.Register("SelectedTallyLocation", typeof(MapControl.Location), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
@@ -62,6 +61,12 @@ namespace KocViewer
             set { SetValue(FileNameProperty, value); }
         }
 
+        public GroundOverlay GroundOverlay
+        {
+            get { return (GroundOverlay)GetValue(GroundOverlayProperty); }
+            set { SetValue(GroundOverlayProperty, value); }
+        }
+
         public bool IsGroupButtonVisible
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
@@ -78,18 +83,6 @@ namespace KocViewer
         {
             get { return (Pipeline)GetValue(PipelineTallyProperty); }
             set { SetValue(PipelineTallyProperty, value); }
-        }
-
-        public MapControl.Location SelectedProfileLocation
-        {
-            get { return (MapControl.Location)GetValue(SelectedProfileLocationProperty); }
-            set { SetValue(SelectedProfileLocationProperty, value); }
-        }
-
-        public MapControl.Location SelectedTallyLocation
-        {
-            get { return (MapControl.Location)GetValue(SelectedTallyLocationProperty); }
-            set { SetValue(SelectedTallyLocationProperty, value); }
         }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues

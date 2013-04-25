@@ -32,24 +32,21 @@
             <wpfmap:Map Name="BingMap"
                         Grid.Column="0"
                         IsManipulationEnabled="True"
-                        IsRotationEnabled="False">
+                        IsRotationEnabled="False"
+                        MaxZoomLevel="21">
                 <libpipeline:PipelineControl x:Name="PipelineProfileControl"
                                              Locations="{Binding PipelineProfile.Locations, ElementName=Root}"
-                                             SelectedLocation="{Binding SelectedProfileLocation, ElementName=Root, Mode=TwoWay}"
-                                             Visibility="{Binding Path=IsChecked, ElementName=ProfileRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}">
-                    <libpipeline:PipelineControl.Effect>
-                        <DropShadowEffect Color="Gray" Opacity="0.5" ShadowDepth="3" />
-                    </libpipeline:PipelineControl.Effect>
-                </libpipeline:PipelineControl>
+                                             SelectedLocation="{Binding PipelineProfile.SelectedLocation, ElementName=Root, Mode=TwoWay}"
+                                             Visibility="{Binding Path=IsChecked, ElementName=ProfileRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                 <libpipeline:PipelineControl x:Name="PipelineTallyControl"
                                             Locations="{Binding PipelineTally.Locations, ElementName=Root}"
-                                            SelectedLocation="{Binding SelectedTallyLocation, ElementName=Root, Mode=TwoWay}"
-                                            Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}">
-                    <libpipeline:PipelineControl.Effect>
-                        <DropShadowEffect Color="Gray" Opacity="0.5" ShadowDepth="3" />
-                    </libpipeline:PipelineControl.Effect>
-                </libpipeline:PipelineControl>
+                                            SelectedLocation="{Binding PipelineTally.SelectedLocation, ElementName=Root, Mode=TwoWay}"
+                                            Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
+                
+                <libpipeline:GroundOverlayControl GroundOverlay="{Binding GroundOverlay, ElementName=Root}" />
+
+                <wpfmap:MapScale />
             </wpfmap:Map>
 
             <Border Background="#DDDDDD"
@@ -87,7 +84,7 @@
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              IsReadOnly="True"
-                                             Item="{Binding SelectedProfileLocation.Properties, ElementName=Root}"
+                                             Item="{Binding PipelineProfile.SelectedLocation.Properties, ElementName=Root}"
                                              Visibility="{Binding ElementName=ProfileRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                     <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
@@ -95,7 +92,7 @@
                                             AutoGeneratePropertyDefinitions="True"
                                             DescriptionPanelVisibility="Collapsed"
                                             IsReadOnly="True"
-                                            Item="{Binding SelectedTallyLocation.Properties, ElementName=Root}"
+                                            Item="{Binding PipelineTally.SelectedLocation.Properties, ElementName=Root}"
                                             Visibility="{Binding ElementName=TallyRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
                 </Grid>
             </Border>

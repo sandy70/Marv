@@ -15,17 +15,17 @@ namespace LibPipeline
 
         public void Write(string filename, Pipeline pipeline)
         {
-            this.mongodbInfo.Collection = "Segments" + pipeline.Collection;
+            //this.mongodbInfo.Collection = "Segments" + pipeline.Collection;
 
-            MongoInstance mongodbInstance = new MongoInstance(this.mongodbInfo);
-            this.mongodbInfo.Collection = "Properties" + pipeline.Collection;
-            mongodbInstance = new MongoInstance(this.mongodbInfo);
-            MongoCollection<PipelineProperties> propertiesCollection = mongodbInstance.GetCollection<PipelineProperties>();
-            propertiesCollection.Save(pipeline.Properties);
+            //MongoInstance mongodbInstance = new MongoInstance(this.mongodbInfo);
+            //this.mongodbInfo.Collection = "Properties" + pipeline.Collection;
+            //mongodbInstance = new MongoInstance(this.mongodbInfo);
+            //MongoCollection<PipelineProperties> propertiesCollection = mongodbInstance.GetCollection<PipelineProperties>();
+            //propertiesCollection.Save(pipeline.Properties);
 
-            StreamWriter streamWriter = new StreamWriter(filename);
-            streamWriter.Write(pipeline.Collection);
-            streamWriter.Close();
+            //StreamWriter streamWriter = new StreamWriter(filename);
+            //streamWriter.Write(pipeline.Collection);
+            //streamWriter.Close();
         }
     }
 }

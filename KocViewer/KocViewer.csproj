@@ -83,6 +83,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\Libraries\SharpKml\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="LinqToExcel, Version=1.7.1.0, Culture=neutral, PublicKeyToken=9c8ea65a58f03f1f, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\LinqToExcel\LinqToExcel.dll</HintPath>
@@ -142,6 +145,9 @@
     <Reference Include="Remotion.Linq">
       <HintPath>..\..\Libraries\LinqToExcel\Remotion.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="SharpKml">
+      <HintPath>..\..\Libraries\SharpKml\SharpKml.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Input.Manipulations" />
@@ -195,7 +201,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="KocTallyData.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
@@ -249,7 +254,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="KocViewer_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

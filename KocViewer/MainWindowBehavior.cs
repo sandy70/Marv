@@ -1,5 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
+using SharpKml.Dom;
+using SharpKml.Engine;
 using System;
 using System.IO;
 using System.Linq;
@@ -18,21 +20,20 @@ namespace KocViewer
             this.AssociatedObject.Drop += AssociatedObject_Drop;
         }
 
-        private void AssociatedObject_Drop(object sender, DragEventArgs e)
-        {
-            string [] fileNames = (string [])e.Data.GetData("FileNameW");
-
-            Console.WriteLine("Count: " + fileNames.Count());
-
-            foreach (var name in fileNames)
-            {
-                Console.WriteLine("FileName: " + name);
-            }
-        }
-
         private void AssociatedObject_Closed(object sender, EventArgs e)
         {
             BnGraphWriter.WritePositions(Config.NetworkFile, this.AssociatedObject.GraphControl.SourceGraph);
+        }
+
+        private void AssociatedObject_Drop(object sender, DragEventArgs e)
+        {
+            var fileNames = (string[])e.Data.GetData("FileNameW");
+
+            var kmlFile = KmlFile.Load(fileNames[0]);
+
+            var groundOverlay = kmlFile.Root.Flatten().OfType<GroundOverlay>().FirstOrDefault();
+            groundOverlay.Icon.Href = new Uri(Path.Combine(Path.GetDirectoryName(fileNames[0]), groundOverlay.Icon.Href.ToString()));
+            this.AssociatedObject.GroundOverlay = groundOverlay;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)

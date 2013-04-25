@@ -1,39 +1,18 @@
 ﻿using MapControl;
-using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace LibPipeline
 {
     [Serializable]
     public class Pipeline : INotifyPropertyChanged
     {
-        private string _Collection;
-        private PipelineProperties _Properties;
         private List<Location> locations = new List<Location>();
-        private Dictionary<Location, dynamic> locationsToProperties = new Dictionary<Location,dynamic>();
-        private string name;
-
-        public Pipeline()
-        {
-            this.Collection = ObjectId.GenerateNewId(DateTime.Now).ToString();
-            this.Name = "";
-            this.Properties = new PipelineProperties();
-        }
+        private Location selectedLocation;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Collection
-        {
-            get { return _Collection; }
-            set
-            {
-                _Collection = value;
-                OnPropertyChanged("Collection");
-            }
-        }
 
         public List<Location> Locations
         {
@@ -48,45 +27,34 @@ namespace LibPipeline
                 {
                     this.locations = value;
 
+                    if (locations != null && locations.Count > 0)
+                    {
+                        this.SelectedLocation = locations.First();
+                    }
+                    else
+                    {
+                        this.SelectedLocation = null;
+                    }
+
                     this.OnPropertyChanged("Locations");
                 }
             }
         }
 
-        public Dictionary<Location, dynamic> LocationsToProperties
+        public Location SelectedLocation
         {
             get
             {
-                return this.locationsToProperties;
+                return this.selectedLocation;
             }
 
             set
             {
-                if (value != this.locationsToProperties)
+                if (value != this.selectedLocation)
                 {
-                    this.locationsToProperties = value;
-                    this.OnPropertyChanged("LocationsToProperties");
+                    this.selectedLocation = value;
+                    this.OnPropertyChanged("SelectedLocation");
                 }
-            }
-        }
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
-        public PipelineProperties Properties
-        {
-            get { return _Properties; }
-            set
-            {
-                _Properties = value;
-                OnPropertyChanged("Properties");
             }
         }
 
