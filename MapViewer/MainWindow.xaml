@@ -43,10 +43,10 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="mapcontrol:MapItem">
                                     <Grid>
-                                        <Ellipse Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=mapcontrol:MapItem}}"
-                                                 StrokeThickness="3"
-                                                 Fill="Yellow"
-                                                 Height="{Binding Radius}" Width="{Binding Radius}" />
+                                        <Ellipse Fill="Yellow" 
+                                                 Height="{Binding Radius}" Width="{Binding Radius}"
+                                                 Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=mapcontrol:MapItem}}"
+                                                 StrokeThickness="3"/>
 
                                         <Ellipse Stroke="OrangeRed"
                                              StrokeThickness="3"
@@ -78,7 +78,6 @@
                     <TextBlock Text="{Binding Earthquakes.SelectedLocation.Description, ElementName=Root}" />
                 </StackPanel>
             </Border>
-           
         </mapcontrol:Map>
     </Grid>
     
