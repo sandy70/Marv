@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
+                    xmlns:libmarv="clr-namespace:LibMarv;assembly=LibMarv"
                     xmlns:local="clr-namespace:KocViewer"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
     <DropShadowEffect x:Key="DropShadowDeeper" Opacity="0.5" ShadowDepth="0" BlurRadius="10" />
-    <libpipeline:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+    <libmarv:BooleanToColorConverter x:Key="BooleanToColorConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    <libpipeline:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
-    <libpipeline:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
+    <libmarv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
+    <libmarv:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
 </ResourceDictionary>

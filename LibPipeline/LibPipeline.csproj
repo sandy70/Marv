@@ -160,15 +160,7 @@
     </Compile>
     <Compile Include="Controls\PipelineControl\PipelineControlBehavior.cs" />
     <Compile Include="Controls\SliderProgressBar\ProgressBarBehavior.cs" />
-    <Compile Include="Converters\BooleanNotConverter.cs" />
     <Compile Include="ConfigManager.cs" />
-    <Compile Include="Converters\BooleanToColorConverter.cs" />
-    <Compile Include="Converters\BooleanToStringConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DecimalPercentalConverter.cs" />
-    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
-    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
-    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControl.xaml.cs">
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
     </Compile>

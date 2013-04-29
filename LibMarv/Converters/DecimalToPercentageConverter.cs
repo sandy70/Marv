@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace LibPipeline
+namespace LibMarv
 {
     [ValueConversion(typeof(double), typeof(double))]
     public class DecimalToPercentageConverter : IValueConverter

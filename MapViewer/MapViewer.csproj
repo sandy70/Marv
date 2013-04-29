@@ -107,6 +107,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LibMarv\LibMarv.csproj">
+      <Project>{ede1380a-a5a2-4cad-8175-d780b3dd2bd2}</Project>
+      <Name>LibMarv</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibPipeline\LibPipeline.csproj">
       <Project>{6cd9bd09-2796-4324-ba10-7dcb000ee8eb}</Project>
       <Name>LibPipeline</Name>
