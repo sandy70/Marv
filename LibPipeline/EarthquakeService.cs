@@ -6,7 +6,7 @@ using System.Net;
 using System.Xml.Linq;
 using System.Linq;
 
-namespace Marv
+namespace LibPipeline
 {
     public class EarthquakeService
     {
@@ -41,8 +41,9 @@ namespace Marv
                                 {
                                     Location location = new Location();
                                     location.Latitude = Convert.ToDouble(eq.Element(XName.Get("lat", "http://www.w3.org/2003/01/geo/wgs84_pos#")).Value);
-                                    location.Longitude = Convert.ToDouble(eq.Element(XName.Get("lat", "http://www.w3.org/2003/01/geo/wgs84_pos#")).Value);
-                                    (location as dynamic).Size = Convert.ToDouble(eq.Element("title").Value.Substring(2, 3));
+                                    location.Longitude = Convert.ToDouble(eq.Element(XName.Get("long", "http://www.w3.org/2003/01/geo/wgs84_pos#")).Value);
+                                    (location as dynamic).Magnitude = Convert.ToDouble(eq.Element("title").Value.Substring(2, 3));
+                                    (location as dynamic).Radius = (location as dynamic).Magnitude * 10;
                                     (location as dynamic).Title = eq.Element("title").Value;
                                     (location as dynamic).Description = eq.Element("description").Value;
                                     return location;

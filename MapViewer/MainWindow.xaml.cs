@@ -1,25 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MapControl;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LibPipeline;
 
 namespace MapViewer
 {
     public partial class MainWindow : Window
     {
+        public static readonly DependencyProperty EarthquakesProperty =
+        DependencyProperty.Register("Earthquakes", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedEarthquakes));
+
+        private static void ChangedEarthquakes(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mainWindow = d as MainWindow;
+
+            foreach (var location in mainWindow.Earthquakes.Locations)
+            {
+                Console.WriteLine(location.Latitude + ", " + location.Longitude);
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public MultiLocation Earthquakes
+        {
+            get { return (MultiLocation)GetValue(EarthquakesProperty); }
+            set { SetValue(EarthquakesProperty, value); }
         }
     }
 }
