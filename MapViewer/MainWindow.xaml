@@ -11,7 +11,7 @@
         Title="MainWindow"
         WindowState="Maximized">
     <Window.Resources>
-        <libmarv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <libmarv:NullToVisibilityConverter x:Key="NullToVisibility" />
     </Window.Resources>
     
     <i:Interaction.Behaviors>
@@ -27,7 +27,8 @@
         <Menu Grid.Row="0"
               IsMainMenu="True">
             <MenuItem Header="File">
-                <MenuItem Header="Open" />
+                <MenuItem Name="OpenMenuItem"
+                          Header="Open" />
             </MenuItem>
             
             <MenuItem Header="Map">
@@ -64,9 +65,9 @@
                                                  StrokeThickness="3"/>
 
                                         <Ellipse Stroke="OrangeRed"
-                                             StrokeThickness="3"
-                                             Fill="Yellow"
-                                             Height="5" Width="5" />
+                                                 StrokeThickness="3"
+                                                 Fill="Yellow"
+                                                 Height="5" Width="5" />
                                     </Grid>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -87,12 +88,26 @@
                     HorizontalAlignment="Left" VerticalAlignment="Center"
                     Margin="50,0,0,0"
                     Padding="10"
-                    Visibility="{Binding Earthquakes.SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibilityConverter}}">
+                    Visibility="{Binding Earthquakes.SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="{Binding Earthquakes.SelectedLocation.Title, ElementName=Root}" />
                     <TextBlock Text="{Binding Earthquakes.SelectedLocation.Description, ElementName=Root}" />
                 </StackPanel>
             </Border>
+
+            <mapcontrol:MapItemsControl Name="MultiPolylineControl"
+                                        ItemsSource="{Binding MultiLocations, ElementName=Root}">
+                <mapcontrol:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <libpipeline:PipelineControl IsCursorVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=mapcontrol:MapItem}}"
+                                                     Locations="{Binding}" />
+                    </DataTemplate>
+                </mapcontrol:MapItemsControl.ItemTemplate>
+            </mapcontrol:MapItemsControl>
+            
+            <libpipeline:PipelineControl IsCursorVisible="True"
+                                         Locations="{Binding MultiLocation, ElementName=Root}" />
+           
         </mapcontrol:Map>
     </Grid>
     

@@ -9,7 +9,6 @@
         xmlns:this="clr-namespace:KocViewer"
         xmlns:wpfmap="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        AllowDrop="True"
         Name="Root"
         Title="MainWindow" Height="600" Width="800">
     <Window.Resources>
@@ -34,18 +33,17 @@
                         IsManipulationEnabled="True"
                         IsRotationEnabled="False"
                         MaxZoomLevel="21">
-                <libpipeline:PipelineControl x:Name="PipelineProfileControl"
-                                             Locations="{Binding PipelineProfile.Locations, ElementName=Root}"
-                                             SelectedLocation="{Binding PipelineProfile.SelectedLocation, ElementName=Root, Mode=TwoWay}"
-                                             Visibility="{Binding Path=IsChecked, ElementName=ProfileRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
-
-                <libpipeline:PipelineControl x:Name="PipelineTallyControl"
-                                            Locations="{Binding PipelineTally.Locations, ElementName=Root}"
-                                            SelectedLocation="{Binding PipelineTally.SelectedLocation, ElementName=Root, Mode=TwoWay}"
-                                            Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
                 
-                <libpipeline:GroundOverlayControl GroundOverlay="{Binding GroundOverlay, ElementName=Root}" />
+                <libpipeline:PipelineControl x:Name="PipelineProfileControl"
+                                             IsCursorVisible="True"
+                                             Locations="{Binding PipelineProfile, ElementName=Root}" />
 
+                <!--<libpipeline:PipelineControl x:Name="PipelineTallyControl"
+                                             IsCursorVisible="True"
+                                            Locations="{Binding PipelineTally.Locations, ElementName=Root}"
+                                            SelectedLocation="{Binding PipelineTally, ElementName=Root, Mode=TwoWay}"
+                                            Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />-->
+                
                 <wpfmap:MapScale />
             </wpfmap:Map>
 

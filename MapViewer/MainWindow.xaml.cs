@@ -1,8 +1,7 @@
 ﻿using MapControl;
 using System;
+using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Shapes;
-using LibPipeline;
 
 namespace MapViewer
 {
@@ -10,6 +9,35 @@ namespace MapViewer
     {
         public static readonly DependencyProperty EarthquakesProperty =
         DependencyProperty.Register("Earthquakes", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedEarthquakes));
+
+        public static readonly DependencyProperty MultiLocationProperty =
+        DependencyProperty.Register("MultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty MultiLocationsProperty =
+        DependencyProperty.Register("MultiLocations", typeof(ObservableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiLocation>(), ChangedMultiLocations));
+
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        public MultiLocation Earthquakes
+        {
+            get { return (MultiLocation)GetValue(EarthquakesProperty); }
+            set { SetValue(EarthquakesProperty, value); }
+        }
+
+        public MultiLocation MultiLocation
+        {
+            get { return (MultiLocation)GetValue(MultiLocationProperty); }
+            set { SetValue(MultiLocationProperty, value); }
+        }
+
+        public ObservableCollection<MultiLocation> MultiLocations
+        {
+            get { return (ObservableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
+            set { SetValue(MultiLocationsProperty, value); }
+        }
 
         private static void ChangedEarthquakes(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -21,15 +49,10 @@ namespace MapViewer
             }
         }
 
-        public MainWindow()
+        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            InitializeComponent();
-        }
-
-        public MultiLocation Earthquakes
-        {
-            get { return (MultiLocation)GetValue(EarthquakesProperty); }
-            set { SetValue(EarthquakesProperty, value); }
+            var window = d as MainWindow;
+            Console.WriteLine("Count: " + window.MultiLocations.Count);
         }
     }
 }

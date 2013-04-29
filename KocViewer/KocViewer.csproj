@@ -86,7 +86,7 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Libraries\SharpKml\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToExcel, Version=1.7.1.0, Culture=neutral, PublicKeyToken=9c8ea65a58f03f1f, processorArchitecture=x86">
+    <Reference Include="LinqToExcel, Version=1.7.1.0, Culture=neutral, PublicKeyToken=9c8ea65a58f03f1f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\LinqToExcel\LinqToExcel.dll</HintPath>
     </Reference>
@@ -134,7 +134,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\LinqToExcel\Remotion.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Data.Linq, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
+    <Reference Include="Remotion.Data.Linq, Version=1.13.52.2, Culture=neutral, PublicKeyToken=8c59a1bf3e8d42c1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\LinqToExcel\Remotion.Data.Linq.dll</HintPath>
     </Reference>

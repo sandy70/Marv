@@ -92,7 +92,6 @@ namespace LibPipeline
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
             this.OnDown();
-            e.Handled = true;
         }
 
         private void MapPolyline_MouseUp(object sender, MouseButtonEventArgs e)
@@ -106,7 +105,6 @@ namespace LibPipeline
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
             this.OnDown();
-            e.Handled = true;
         }
 
         private void OnDown()

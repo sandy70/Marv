@@ -1,4 +1,4 @@
-﻿<wpfmap:MapPanel x:Class="LibPipeline.PipelineControl"
+﻿<UserControl x:Class="LibPipeline.PipelineControl"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,25 +9,33 @@
                  mc:Ignorable="d" 
                  d:DesignHeight="300" d:DesignWidth="300"
                  Name="Root">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
+    </UserControl.Resources>
+        
     <i:Interaction.Behaviors>
         <libpipeline:PipelineControlBehavior />
     </i:Interaction.Behaviors>
     
-    <wpfmap:MapPolyline Name="MapPolyline"
-                        Locations="{Binding Locations, ElementName=Root}"
-                        Stroke="Red"
-                        StrokeEndLineCap="Round"
-                        StrokeLineJoin="Round"
-                        StrokeStartLineCap="Round"
-                        StrokeThickness="10" />
+    <Grid>
+        <wpfmap:MapPolyline Name="MapPolyline"
+                            Locations="{Binding Locations, ElementName=Root}"
+                            Stroke="Red"
+                            StrokeEndLineCap="Round"
+                            StrokeLineJoin="Round"
+                            StrokeStartLineCap="Round"
+                            StrokeThickness="10" />
 
-    <Ellipse Name="Ellipse"
-            wpfmap:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
-            Fill="YellowGreen"
-            Height="50" Width="50"
-            HorizontalAlignment="Center" VerticalAlignment="Center"
-            Opacity="0.8"
-            Stroke="Yellow"
-            StrokeThickness="2" />
-            
-</wpfmap:MapPanel>
+        <wpfmap:MapPanel>
+            <Ellipse Name="Ellipse"
+                     wpfmap:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
+                     Fill="YellowGreen"
+                     Height="50" Width="50"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Opacity="0.8"
+                     Stroke="Yellow"
+                     StrokeThickness="2"
+                     Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+        </wpfmap:MapPanel>
+    </Grid>
+</UserControl>
