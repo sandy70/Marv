@@ -88,7 +88,6 @@ namespace LibPipeline
 
         private void MapPolyline_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("MapPolyline_MouseDown");
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
             this.OnDown();

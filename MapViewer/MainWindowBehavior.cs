@@ -23,19 +23,12 @@ namespace MapViewer
             this.AssociatedObject.BingRoadsMenuItem.Click += BingRoadsMenuItem_Click;
             this.AssociatedObject.OsmRoadsMenuItem.Click += OsmRoadsMenuItem_Click;
 
-            this.AssociatedObject.MultiPolylineControl.SelectionChanged += MultiPolylineControl_SelectionChanged;
-            
             EarthquakeService.GetRecentEarthquakes((o, args) =>
                 {
                     this.AssociatedObject.Earthquakes = args.MultiLocation;
                 });
 
             this.AssociatedObject.MultiLocation = MultiLocationReader.ReadExcel(@"D:\Data\Koc\Tally.xlsx", "Sheet1");
-        }
-
-        private void MultiPolylineControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            Console.WriteLine("MultiPolylineControl_SelectionChanged");
         }
 
         private void OpenMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)

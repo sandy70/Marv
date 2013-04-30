@@ -16,6 +16,9 @@ namespace MapViewer
         public static readonly DependencyProperty MultiLocationsProperty =
         DependencyProperty.Register("MultiLocations", typeof(ObservableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiLocation>(), ChangedMultiLocations));
 
+        public static readonly DependencyProperty SelectedMultiLocationProperty =
+        DependencyProperty.Register("SelectedMultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+
         public MainWindow()
         {
             InitializeComponent();
@@ -37,6 +40,12 @@ namespace MapViewer
         {
             get { return (ObservableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
             set { SetValue(MultiLocationsProperty, value); }
+        }
+
+        public MultiLocation SelectedMultiLocation
+        {
+            get { return (MultiLocation)GetValue(SelectedMultiLocationProperty); }
+            set { SetValue(SelectedMultiLocationProperty, value); }
         }
 
         private static void ChangedEarthquakes(DependencyObject d, DependencyPropertyChangedEventArgs e)
