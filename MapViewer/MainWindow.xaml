@@ -65,8 +65,7 @@
                             StartExtent="40,60,17.5,37.5">
                 <Grid>
                     <mapcontrol:MapItemsControl ItemsSource="{Binding Earthquakes, ElementName=Root}"
-                                                SelectedItem="{Binding Earthquakes.SelectedLocation, ElementName=Root}"
-                                                Visibility="Collapsed">
+                                                SelectedItem="{Binding Earthquakes.SelectedLocation, ElementName=Root}">
                         <mapcontrol:MapItemsControl.ItemContainerStyle>
                             <Style TargetType="mapcontrol:MapItem">
                                 <Setter Property="mapcontrol:MapPanel.Location" Value="{Binding}"/>
@@ -123,11 +122,11 @@
                 </Grid>
                 
                 <Border mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedLocation, ElementName=Root}"
-                    Background="LightGray"
-                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                    Margin="50,0,0,0"
-                    Padding="10"
-                    Visibility="{Binding Earthquakes.SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
+                        Background="LightGray"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Margin="50,0,0,0"
+                        Padding="10"
+                        Visibility="{Binding Earthquakes.SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding Earthquakes.SelectedLocation.Title, ElementName=Root}" />
                         <TextBlock Text="{Binding Earthquakes.SelectedLocation.Description, ElementName=Root}" />
