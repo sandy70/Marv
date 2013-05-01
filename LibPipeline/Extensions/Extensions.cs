@@ -1,8 +1,4 @@
-﻿using Microsoft.Maps.MapControl.WPF;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -10,8 +6,6 @@ namespace LibPipeline
 {
     public static partial class Extensions
     {
-       
-
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -114,44 +108,6 @@ namespace LibPipeline
 
             // if it's not a ContentElement/FrameworkElement, rely on VisualTreeHelper
             return VisualTreeHelper.GetParent(child);
-        }
-
-        public static void Print(this Point point)
-        {
-            Console.WriteLine("x: " + point.X + ", y: " + point.Y);
-        }
-
-        public static ObservableCollection<Location> WithinViewport(this ObservableCollection<Location> segments, BingMap bingMap)
-        {
-            ObservableCollection<Location> insideLocations = new ObservableCollection<Location>();
-            LocationRect boundingRect = bingMap.BoundingRectangle;
-
-            // Calculate padding. Since distances are small, using lat, lon values works
-            double pad = Math.Max(Math.Abs(boundingRect.East - boundingRect.West),
-                                  Math.Abs(boundingRect.North - boundingRect.South));
-
-            foreach (var segment in segments)
-            {
-                if (boundingRect.South - pad <= segment.Latitude && segment.Latitude <= boundingRect.North + pad &&
-                   boundingRect.West - pad <= segment.Longitude && segment.Longitude <= boundingRect.East + pad)
-                {
-                    insideLocations.Add(segment);
-                }
-            }
-
-            return insideLocations;
-        }
-
-        public static List<Location> Corners(this LocationRect locRect)
-        {
-            var corners = new List<Location>();
-
-            corners.Add(locRect.Northwest);
-            corners.Add(locRect.Northeast);
-            corners.Add(locRect.Southeast);
-            corners.Add(locRect.Southwest);
-
-            return corners;
         }
     }
 }

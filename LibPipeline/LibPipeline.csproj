@@ -145,7 +145,6 @@
   <ItemGroup>
     <Compile Include="BingMap\BingMap.cs" />
     <Compile Include="BingMap\BingMapUpdateBehavior.cs" />
-    <Compile Include="BingMap\TileSystem.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnStatesControlBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnVertexViewModel.cs" />
@@ -193,7 +192,7 @@
     <Compile Include="Pipeline\PipelineProperties.cs" />
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectionEventArgs.cs" />
+    <Compile Include="ValueEventArgs.cs" />
     <Compile Include="Controls\SliderProgressBar\SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
