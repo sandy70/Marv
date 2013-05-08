@@ -168,10 +168,12 @@
     </Compile>
     <Compile Include="Countries.cs" />
     <Compile Include="EarthquakeService.cs" />
+    <Compile Include="ILocation.cs" />
     <Compile Include="LocationRect.cs" />
     <Compile Include="LocationRectConverter.cs" />
     <Compile Include="Controls\MapView\MapView.cs" />
     <Compile Include="Controls\MapView\MapViewBehavior.cs" />
+    <Compile Include="MultiLocationReader.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
