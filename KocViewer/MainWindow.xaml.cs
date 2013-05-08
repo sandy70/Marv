@@ -21,11 +21,11 @@ namespace KocViewer
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty PipelineProfileProperty =
-        DependencyProperty.Register("PipelineProfile", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+        //public static readonly DependencyProperty PipelineProfileProperty =
+        //DependencyProperty.Register("PipelineProfile", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty PipelineTallyProperty =
-        DependencyProperty.Register("PipelineTally", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+        //public static readonly DependencyProperty PipelineTallyProperty =
+        //DependencyProperty.Register("PipelineTally", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
@@ -74,17 +74,17 @@ namespace KocViewer
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
-        public MultiLocation PipelineProfile
-        {
-            get { return (MultiLocation)GetValue(PipelineProfileProperty); }
-            set { SetValue(PipelineProfileProperty, value); }
-        }
+        //public MultiLocation PipelineProfile
+        //{
+        //    get { return (MultiLocation)GetValue(PipelineProfileProperty); }
+        //    set { SetValue(PipelineProfileProperty, value); }
+        //}
 
-        public MultiLocation PipelineTally
-        {
-            get { return (MultiLocation)GetValue(PipelineTallyProperty); }
-            set { SetValue(PipelineTallyProperty, value); }
-        }
+        //public MultiLocation PipelineTally
+        //{
+        //    get { return (MultiLocation)GetValue(PipelineTallyProperty); }
+        //    set { SetValue(PipelineTallyProperty, value); }
+        //}
 
         public IEnumerable<BnVertexValue> SelectedVertexValues
         {

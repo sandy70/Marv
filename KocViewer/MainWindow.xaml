@@ -31,12 +31,11 @@
             <wpfmap:Map Name="BingMap"
                         Grid.Column="0"
                         IsManipulationEnabled="True"
-                        IsRotationEnabled="False"
                         MaxZoomLevel="21">
                 
-                <libpipeline:PipelineControl x:Name="PipelineProfileControl"
+                <!--<libpipeline:PipelineControl x:Name="PipelineProfileControl"
                                              IsCursorVisible="True"
-                                             Locations="{Binding PipelineProfile, ElementName=Root}" />
+                                             Locations="{Binding PipelineProfile, ElementName=Root}" />-->
 
                 <!--<libpipeline:PipelineControl x:Name="PipelineTallyControl"
                                              IsCursorVisible="True"

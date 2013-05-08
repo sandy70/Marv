@@ -1,0 +1,92 @@
+﻿using MapControl;
+using System;
+using System.Windows;
+using System.Windows.Interactivity;
+
+namespace LibPipeline
+{
+    public class MapControl : Map
+    {
+        public MapControl()
+            : base()
+        {
+            var behaviors = Interaction.GetBehaviors(this);
+            behaviors.Add(new MapControlBehavior());
+        }
+
+        public static readonly DependencyProperty StartExtentProperty =
+        DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapControl), new PropertyMetadata(null, ChangedStartExtent));
+
+        private static void ChangedStartExtent(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mapControl = d as MapControl;
+
+            if (mapControl.StartExtent != null)
+            {
+                mapControl.ZoomToExtent(north: mapControl.StartExtent.North,
+                    west: mapControl.StartExtent.West,
+                    south: mapControl.StartExtent.South,
+                    east: mapControl.StartExtent.East);
+            }
+        }
+
+        public LocationRect StartExtent
+        {
+            get { return (LocationRect)GetValue(StartExtentProperty); }
+            set { SetValue(StartExtentProperty, value); }
+        }
+
+        /// <summary>
+        /// Zoom to most appropriate level to encompass the given rectangle
+        /// </summary>
+        /// <param name="north"></param>
+        /// <param name="east"></param>
+        /// <param name="south"></param>
+        /// <param name="west"></param>
+        public void ZoomToExtent(double north, double east, double south, double west)
+        {
+            double zoom = GetBoundsZoomLevel(north, east, south, west);
+            double cx = west + (east - west) / 2;
+            double cy = south + (north - south) / 2;
+
+            zoom = Math.Floor(zoom) - 1;
+
+            TargetCenter = new Location(cy, cx);
+            TargetZoomLevel = zoom;
+        }
+
+        /// <summary>
+        /// Zoom to most appropriate level to encompass the given rectangle
+        /// </summary>
+        /// <param name="bottomLeft"></param>
+        /// <param name="topRight"></param>
+        public void ZoomToExtent(Location bottomLeft, Location topRight)
+        {
+            ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
+        }
+
+        /// <summary>
+        /// calculates a suitable zoom level given a boundary
+        /// </summary>
+        /// <param name="bounds"></param>
+        /// <returns></returns>
+        private double GetBoundsZoomLevel(double north, double east, double south, double west)
+        {
+            var GLOBE_HEIGHT = 256; // Height of a map that displays the entire world when zoomed all the way out
+            var GLOBE_WIDTH = 256; // Width of a map that displays the entire world when zoomed all the way out
+
+            var latAngle = north - south;
+            if (latAngle < 0)
+            {
+                latAngle += 360;
+            }
+
+            var lngAngle = east - west;
+
+            var latZoomLevel = Math.Floor(Math.Log(RenderSize.Height * 360 / latAngle / GLOBE_HEIGHT) / Math.Log(2));
+            var lngZoomLevel = Math.Floor(Math.Log(RenderSize.Width * 360 / lngAngle / GLOBE_WIDTH) / Math.Log(2)); //0.6931471805599453
+
+            return (latZoomLevel < lngZoomLevel) ? latZoomLevel : lngZoomLevel;
+        }
+    }
+}

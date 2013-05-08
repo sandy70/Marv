@@ -157,19 +157,17 @@
     <Compile Include="Controls\BnStatesControl\BnStatesControl.xaml.cs">
       <DependentUpon>BnStatesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PipelineControl\PipelineControlBehavior.cs" />
     <Compile Include="Controls\SliderProgressBar\ProgressBarBehavior.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControl.xaml.cs">
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PipelineControl\PipelineControl.xaml.cs">
-      <DependentUpon>PipelineControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GroundOverlayControl\GroundOverlayControl.xaml.cs">
-      <DependentUpon>GroundOverlayControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="EarthquakeService.cs" />
+    <Compile Include="ILocation.cs" />
+    <Compile Include="LocationRect.cs" />
+    <Compile Include="LocationRectConverter.cs" />
+    <Compile Include="MapControl.cs" />
+    <Compile Include="MapControlBehavior.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
@@ -227,14 +225,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SliderProgressBar\SliderProgressBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PipelineControl\PipelineControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GroundOverlayControl\GroundOverlayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

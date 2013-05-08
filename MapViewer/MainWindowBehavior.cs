@@ -17,18 +17,18 @@ namespace MapViewer
 
         private void AssociatedObject_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            this.AssociatedObject.OpenMenuItem.Click += OpenMenuItem_Click;
+            //this.AssociatedObject.OpenMenuItem.Click += OpenMenuItem_Click;
 
-            this.AssociatedObject.BingHybridMenuItem.Click += BingHybridMenuItem_Click;
-            this.AssociatedObject.BingRoadsMenuItem.Click += BingRoadsMenuItem_Click;
-            this.AssociatedObject.OsmRoadsMenuItem.Click += OsmRoadsMenuItem_Click;
+            //this.AssociatedObject.BingHybridMenuItem.Click += BingHybridMenuItem_Click;
+            //this.AssociatedObject.BingRoadsMenuItem.Click += BingRoadsMenuItem_Click;
+            //this.AssociatedObject.OsmRoadsMenuItem.Click += OsmRoadsMenuItem_Click;
 
-            EarthquakeService.GetRecentEarthquakes((o, args) =>
-                {
-                    this.AssociatedObject.Earthquakes = args.MultiLocation;
-                });
+            //EarthquakeService.GetRecentEarthquakes((o, args) =>
+            //    {
+            //        this.AssociatedObject.Earthquakes = args.MultiLocation;
+            //    });
 
-            this.AssociatedObject.MultiLocation = MultiLocationReader.ReadExcel(@"D:\Data\Koc\Tally.xlsx", "Sheet1");
+            //this.AssociatedObject.MultiLocation = MultiLocationReader.ReadExcel(@"D:\Data\Koc\Tally.xlsx", "Sheet1");
         }
 
         private void OpenMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -43,24 +43,24 @@ namespace MapViewer
             {
                 foreach (var fileName in dialog.FileNames)
                 {
-                    this.AssociatedObject.MultiLocations.Add(MultiLocationReader.ReadExcel(fileName, "Sheet1"));
+                    //this.AssociatedObject.MultiLocations.Add(MultiLocationReader.ReadExcel(fileName, "Sheet1"));
                 }
             }
         }
 
         private void BingHybridMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            this.AssociatedObject.Map.TileLayer = TileLayer.BingHybrid;
+            //this.AssociatedObject.Map.TileLayer = TileLayer.BingHybrid;
         }
 
         private void BingRoadsMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            this.AssociatedObject.Map.TileLayer = TileLayer.BingRoads;
+            //this.AssociatedObject.Map.TileLayer = TileLayer.BingRoads;
         }
 
         private void OsmRoadsMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            this.AssociatedObject.Map.TileLayer = TileLayer.OsmRoads;
+            //this.AssociatedObject.Map.TileLayer = TileLayer.OsmRoads;
         }
     }
 }

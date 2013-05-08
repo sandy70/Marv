@@ -43,8 +43,8 @@ namespace KocViewer
             window.FileName = Config.NetworkFile;
 
             // Read the KOC pipeline data
-            window.PipelineTally = MultiLocationReader.ReadExcel(Properties.Settings.Default.TallyFileName, "Sheet1");
-            window.PipelineProfile = MultiLocationReader.ReadExcel(Properties.Settings.Default.ProfileFileName, "Sheet1");
+            //window.PipelineTally = MultiLocationReader.ReadExcel(Properties.Settings.Default.TallyFileName, "Sheet1");
+            //window.PipelineProfile = MultiLocationReader.ReadExcel(Properties.Settings.Default.ProfileFileName, "Sheet1");
 
             KocDataReader kocDataReader = new KocDataReader();
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
