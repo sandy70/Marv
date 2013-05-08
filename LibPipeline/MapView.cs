@@ -5,21 +5,21 @@ using System.Windows.Interactivity;
 
 namespace LibPipeline
 {
-    public class MapControl : Map
+    public class MapView : Map
     {
-        public MapControl()
+        public MapView()
             : base()
         {
             var behaviors = Interaction.GetBehaviors(this);
-            behaviors.Add(new MapControlBehavior());
+            behaviors.Add(new MapViewBehavior());
         }
 
         public static readonly DependencyProperty StartExtentProperty =
-        DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapControl), new PropertyMetadata(null, ChangedStartExtent));
+        DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null, ChangedStartExtent));
 
         private static void ChangedStartExtent(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var mapControl = d as MapControl;
+            var mapControl = d as MapView;
 
             if (mapControl.StartExtent != null)
             {

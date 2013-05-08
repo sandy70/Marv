@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MapControl;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -108,6 +110,30 @@ namespace LibPipeline
 
             // if it's not a ContentElement/FrameworkElement, rely on VisualTreeHelper
             return VisualTreeHelper.GetParent(child);
+        }
+
+        public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
+        {
+            if (locations == null || queryLocation == null)
+            {
+                return null;
+            }
+
+            double nearestDistance = Double.MaxValue;
+            Location nearestLocation = new Location();
+
+            foreach (var location in locations)
+            {
+                double distance = Utils.Distance(location, queryLocation);
+
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestLocation = location;
+                }
+            }
+
+            return nearestLocation;
         }
     }
 }

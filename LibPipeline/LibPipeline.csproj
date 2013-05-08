@@ -157,17 +157,22 @@
     <Compile Include="Controls\BnStatesControl\BnStatesControl.xaml.cs">
       <DependentUpon>BnStatesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PolylineControl\PolylineControl.xaml.cs">
+      <DependentUpon>PolylineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PolylineControl\PolylineControlBehavior.cs" />
     <Compile Include="Controls\SliderProgressBar\ProgressBarBehavior.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControl.xaml.cs">
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Countries.cs" />
     <Compile Include="EarthquakeService.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="LocationRect.cs" />
     <Compile Include="LocationRectConverter.cs" />
-    <Compile Include="MapControl.cs" />
-    <Compile Include="MapControlBehavior.cs" />
+    <Compile Include="MapView.cs" />
+    <Compile Include="MapViewBehavior.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
@@ -221,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\BnGraphControl\BnGraphControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PolylineControl\PolylineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

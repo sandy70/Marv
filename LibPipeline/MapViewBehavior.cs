@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace LibPipeline
 {
-    class MapControlBehavior : Behavior<MapControl>
+    class MapViewBehavior : Behavior<MapView>
     {
         protected override void OnAttached()
         {
