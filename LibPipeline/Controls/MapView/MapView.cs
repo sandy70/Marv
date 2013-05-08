@@ -7,27 +7,14 @@ namespace LibPipeline
 {
     public class MapView : Map
     {
+        public static readonly DependencyProperty StartExtentProperty =
+        DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
+
         public MapView()
             : base()
         {
             var behaviors = Interaction.GetBehaviors(this);
             behaviors.Add(new MapViewBehavior());
-        }
-
-        public static readonly DependencyProperty StartExtentProperty =
-        DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null, ChangedStartExtent));
-
-        private static void ChangedStartExtent(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mapControl = d as MapView;
-
-            if (mapControl.StartExtent != null)
-            {
-                mapControl.ZoomToExtent(north: mapControl.StartExtent.North,
-                    west: mapControl.StartExtent.West,
-                    south: mapControl.StartExtent.South,
-                    east: mapControl.StartExtent.East);
-            }
         }
 
         public LocationRect StartExtent
