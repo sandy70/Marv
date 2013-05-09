@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using ImpromptuInterface;
 
 namespace LibPipeline
 {
@@ -122,7 +121,8 @@ namespace LibPipeline
         private void SelectLocation(Point position)
         {
             var map = this.AssociatedObject.FindParent<Map>();
-            var location = map.ViewportPointToLocation(position).ActLike<ILocation>();
+            var mLocation = map.ViewportPointToLocation(position);
+            var location = new Location { Latitude = mLocation.Latitude, Longitude = mLocation.Longitude };
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;

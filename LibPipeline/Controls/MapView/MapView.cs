@@ -38,7 +38,7 @@ namespace LibPipeline
 
             zoom = Math.Floor(zoom) - 1;
 
-            TargetCenter = new Location(cy, cx);
+            TargetCenter = new MapControl.Location(cy, cx);
             TargetZoomLevel = zoom;
         }
 

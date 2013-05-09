@@ -1,5 +1,4 @@
 ﻿using LinqToExcel;
-using MapControl;
 using System;
 using System.Collections.Generic;
 
@@ -21,7 +20,7 @@ namespace LibPipeline
                     continue;
                 }
 
-                var location = new MapControl.Location();
+                var location = new Location();
 
                 foreach (var colName in colNames)
                 {
