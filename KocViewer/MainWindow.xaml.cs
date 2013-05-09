@@ -1,9 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
-using MapControl;
 using SharpKml.Dom;
 using Smile;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using Telerik.Windows.Controls;
@@ -21,17 +19,23 @@ namespace KocViewer
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        //public static readonly DependencyProperty PipelineProfileProperty =
-        //DependencyProperty.Register("PipelineProfile", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty ProfileLocationsProperty =
+        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
-        //public static readonly DependencyProperty PipelineTallyProperty =
-        //DependencyProperty.Register("PipelineTally", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedProfileLocationProperty =
+        DependencyProperty.Register("SelectedProfileLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedTallyLocationProperty =
+        DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(Config.StartYear));
+
+        public static readonly DependencyProperty TallyLocationsProperty =
+        DependencyProperty.Register("TallyLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
         public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
@@ -74,17 +78,23 @@ namespace KocViewer
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
-        //public MultiLocation PipelineProfile
-        //{
-        //    get { return (MultiLocation)GetValue(PipelineProfileProperty); }
-        //    set { SetValue(PipelineProfileProperty, value); }
-        //}
+        public IEnumerable<ILocation> ProfileLocations
+        {
+            get { return (IEnumerable<ILocation>)GetValue(ProfileLocationsProperty); }
+            set { SetValue(ProfileLocationsProperty, value); }
+        }
 
-        //public MultiLocation PipelineTally
-        //{
-        //    get { return (MultiLocation)GetValue(PipelineTallyProperty); }
-        //    set { SetValue(PipelineTallyProperty, value); }
-        //}
+        public ILocation SelectedProfileLocation
+        {
+            get { return (ILocation)GetValue(SelectedProfileLocationProperty); }
+            set { SetValue(SelectedProfileLocationProperty, value); }
+        }
+
+        public ILocation SelectedTallyLocation
+        {
+            get { return (ILocation)GetValue(SelectedTallyLocationProperty); }
+            set { SetValue(SelectedTallyLocationProperty, value); }
+        }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues
         {
@@ -96,6 +106,12 @@ namespace KocViewer
         {
             get { return (int)GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public IEnumerable<ILocation> TallyLocations
+        {
+            get { return (IEnumerable<ILocation>)GetValue(TallyLocationsProperty); }
+            set { SetValue(TallyLocationsProperty, value); }
         }
 
         public void AddInput(BnVertexViewModel vertexViewModel)

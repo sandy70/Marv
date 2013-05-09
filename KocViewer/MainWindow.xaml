@@ -7,10 +7,11 @@
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:this="clr-namespace:KocViewer"
-        xmlns:wpfmap="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Height="600" Width="800"
         Name="Root"
-        Title="MainWindow" Height="600" Width="800">
+        Title="MainWindow"
+        WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary Source="ResourceDictionary.xaml" />
     </Window.Resources>
@@ -28,10 +29,11 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <wpfmap:Map Name="BingMap"
-                        Grid.Column="0"
-                        IsManipulationEnabled="True"
-                        MaxZoomLevel="21">
+            <libpipeline:MapView Name="MapView"
+                                 Grid.Column="0"
+                                 IsManipulationEnabled="True"
+                                 MaxZoomLevel="21"
+                                 StartExtent="20,-120,40,-60">
                 
                 <!--<libpipeline:PipelineControl x:Name="PipelineProfileControl"
                                              IsCursorVisible="True"
@@ -43,8 +45,8 @@
                                             SelectedLocation="{Binding PipelineTally, ElementName=Root, Mode=TwoWay}"
                                             Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />-->
                 
-                <wpfmap:MapScale />
-            </wpfmap:Map>
+               
+            </libpipeline:MapView>
 
             <Border Background="#DDDDDD"
                     Effect="{StaticResource ResourceKey=DropShadow}"
