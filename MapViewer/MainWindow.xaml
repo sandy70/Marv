@@ -20,6 +20,9 @@
     
     <Grid>
         <libpipeline:MapView IsManipulationEnabled="True"
-                             StartExtent="20,20,40,50" />
+                             StartExtent="20,20,40,50">
+            <libpipeline:PolylineControl Locations="{Binding Locations, ElementName=Root}"
+                                         />
+        </libpipeline:MapView>
     </Grid>    
 </Window>

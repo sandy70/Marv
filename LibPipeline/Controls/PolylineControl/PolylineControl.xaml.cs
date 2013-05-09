@@ -9,25 +9,25 @@ namespace LibPipeline
     public partial class PolylineControl : UserControl
     {
         public static readonly DependencyProperty CursorLocationProperty =
-        DependencyProperty.Register("CursorLocation", typeof(Location), typeof(PolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("CursorLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IsCursorVisibleProperty =
         DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(PolylineControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty LocationsProperty =
-        DependencyProperty.Register("Locations", typeof(IEnumerable<Location>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
+        DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocation));
+        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocation));
 
         public PolylineControl()
         {
             InitializeComponent();
         }
 
-        public Location CursorLocation
+        public ILocation CursorLocation
         {
-            get { return (Location)GetValue(CursorLocationProperty); }
+            get { return (ILocation)GetValue(CursorLocationProperty); }
             set { SetValue(CursorLocationProperty, value); }
         }
 
@@ -37,15 +37,15 @@ namespace LibPipeline
             set { SetValue(IsCursorVisibleProperty, value); }
         }
 
-        public IEnumerable<Location> Locations
+        public IEnumerable<ILocation> Locations
         {
-            get { return (IEnumerable<Location>)GetValue(LocationsProperty); }
+            get { return (IEnumerable<ILocation>)GetValue(LocationsProperty); }
             set { SetValue(LocationsProperty, value); }
         }
 
-        public Location SelectedLocation
+        public ILocation SelectedLocation
         {
-            get { return (Location)GetValue(SelectedLocationProperty); }
+            get { return (ILocation)GetValue(SelectedLocationProperty); }
             set { SetValue(SelectedLocationProperty, value); }
         }
 
@@ -58,7 +58,7 @@ namespace LibPipeline
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pipelineControl = d as PolylineControl;
-            pipelineControl.SelectedLocation = (e.NewValue as IEnumerable<Location>).FirstOrDefault();
+            pipelineControl.SelectedLocation = (e.NewValue as IEnumerable<ILocation>).FirstOrDefault();
         }
     }
 }

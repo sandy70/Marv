@@ -5,13 +5,14 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
+using ImpromptuInterface;
 
 namespace LibPipeline
 {
     internal class PolylineControlBehavior : Behavior<PolylineControl>
     {
         private bool isDragging = false;
-        private Stack<Location> locationStack = new Stack<Location>();
+        private Stack<ILocation> locationStack = new Stack<ILocation>();
         private DispatcherTimer timer = new DispatcherTimer();
 
         protected override void OnAttached()
@@ -121,7 +122,7 @@ namespace LibPipeline
         private void SelectLocation(Point position)
         {
             var map = this.AssociatedObject.FindParent<Map>();
-            var location = map.ViewportPointToLocation(position);
+            var location = map.ViewportPointToLocation(position).ActLike<ILocation>();
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;

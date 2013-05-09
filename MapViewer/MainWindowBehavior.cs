@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Interactivity;
+using ImpromptuInterface;
 
 namespace MapViewer
 {
@@ -28,7 +29,12 @@ namespace MapViewer
             //        this.AssociatedObject.Earthquakes = args.MultiLocation;
             //    });
 
-            //this.AssociatedObject.MultiLocation = MultiLocationReader.ReadExcel(@"D:\Data\Koc\Tally.xlsx", "Sheet1");
+            this.AssociatedObject.Locations = MultiLocationReader.ReadExcel(@"D:\Data\Koc\Tally.xlsx", "Sheet1").AllActLike<ILocation>();
+
+            foreach (var location in this.AssociatedObject.Locations)
+            {
+                Console.WriteLine(location.Latitude + ", " + location.Longitude);
+            }
         }
 
         private void OpenMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)

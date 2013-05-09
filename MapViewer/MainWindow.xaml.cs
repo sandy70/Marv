@@ -1,12 +1,20 @@
-﻿using MapControl;
-using System;
-using System.Collections.ObjectModel;
+﻿using LibPipeline;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace MapViewer
 {
     public partial class MainWindow : Window
     {
+        public static readonly DependencyProperty LocationsProperty =
+        DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
+
+        public IEnumerable<ILocation> Locations
+        {
+            get { return (IEnumerable<ILocation>)GetValue(LocationsProperty); }
+            set { SetValue(LocationsProperty, value); }
+        }
+
         //public static readonly DependencyProperty EarthquakesProperty =
         //DependencyProperty.Register("Earthquakes", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedEarthquakes));
 

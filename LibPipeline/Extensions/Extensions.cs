@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using System.Linq;
 
 namespace LibPipeline
 {
@@ -112,7 +113,7 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
+        public static ILocation NearestTo(this IEnumerable<ILocation> locations, ILocation queryLocation)
         {
             if (locations == null || queryLocation == null)
             {
@@ -120,7 +121,7 @@ namespace LibPipeline
             }
 
             double nearestDistance = Double.MaxValue;
-            Location nearestLocation = new Location();
+            ILocation nearestLocation = locations.FirstOrDefault();
 
             foreach (var location in locations)
             {

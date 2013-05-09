@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/MapControl.WPF;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
         
     <i:Interaction.Behaviors>
@@ -19,7 +19,7 @@
     
     <Grid>
         <mapcontrol:MapPolyline Name="MapPolyline"
-                                Locations="{Binding Locations, ElementName=Root}"
+                                Locations="{Binding Locations, ElementName=Root, Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
                                 Stroke="Red"
                                 StrokeEndLineCap="Round"
                                 StrokeLineJoin="Round"
@@ -28,7 +28,7 @@
 
         <mapcontrol:MapPanel>
             <Ellipse Name="Ellipse"
-                     mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
+                     mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
                      Fill="YellowGreen"
                      Height="50" Width="50"
                      HorizontalAlignment="Center" VerticalAlignment="Center"

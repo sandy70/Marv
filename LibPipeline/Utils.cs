@@ -26,7 +26,7 @@ namespace LibPipeline
             return dbl;
         }
 
-        public static double Distance(Location l1, Location l2)
+        public static double Distance(ILocation l1, ILocation l2)
         {
             double distance = 0;
 
