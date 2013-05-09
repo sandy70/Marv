@@ -20,20 +20,20 @@
     <Grid>
         <mapcontrol:MapPolyline Name="MapPolyline"
                                 Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
-                                Stroke="Red"
+                                Stroke="{Binding Stroke, ElementName=Root}"
                                 StrokeEndLineCap="Round"
                                 StrokeLineJoin="Round"
                                 StrokeStartLineCap="Round"
                                 StrokeThickness="10" />
 
-        <mapcontrol:MapPanel>
+        <mapcontrol:MapPanel Name="MapPanel">
             <Ellipse Name="Ellipse"
                      mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
-                     Fill="YellowGreen"
+                     Fill="{Binding CursorFill, ElementName=Root}"
                      Height="50" Width="50"
                      HorizontalAlignment="Center" VerticalAlignment="Center"
                      Opacity="0.8"
-                     Stroke="Yellow"
+                     Stroke="{Binding CursorStroke, ElementName=Root}"
                      StrokeThickness="2"
                      Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
         </mapcontrol:MapPanel>

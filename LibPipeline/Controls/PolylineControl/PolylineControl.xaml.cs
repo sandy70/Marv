@@ -2,13 +2,20 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LibPipeline
 {
     public partial class PolylineControl : UserControl
     {
+        public static readonly DependencyProperty CursorFillProperty =
+        DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
+
         public static readonly DependencyProperty CursorLocationProperty =
         DependencyProperty.Register("CursorLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty CursorStrokeProperty =
+        DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
         public static readonly DependencyProperty IsCursorVisibleProperty =
         DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(PolylineControl), new PropertyMetadata(true));
@@ -17,20 +24,35 @@ namespace LibPipeline
         DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocation));
+        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SimplifiedLocationsProperty =
         DependencyProperty.Register("SimplifiedLocations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty StrokeProperty =
+        DependencyProperty.Register("Stroke", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
 
         public PolylineControl()
         {
             InitializeComponent();
         }
 
+        public Brush CursorFill
+        {
+            get { return (Brush)GetValue(CursorFillProperty); }
+            set { SetValue(CursorFillProperty, value); }
+        }
+
         public ILocation CursorLocation
         {
             get { return (ILocation)GetValue(CursorLocationProperty); }
             set { SetValue(CursorLocationProperty, value); }
+        }
+
+        public Brush CursorStroke
+        {
+            get { return (Brush)GetValue(CursorStrokeProperty); }
+            set { SetValue(CursorStrokeProperty, value); }
         }
 
         public bool IsCursorVisible
@@ -57,10 +79,10 @@ namespace LibPipeline
             set { SetValue(SimplifiedLocationsProperty, value); }
         }
 
-        private static void ChangedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public Brush Stroke
         {
-            var pipelineControl = d as PolylineControl;
-            pipelineControl.CursorLocation = pipelineControl.SelectedLocation;
+            get { return (Brush)GetValue(StrokeProperty); }
+            set { SetValue(StrokeProperty, value); }
         }
 
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -68,6 +90,7 @@ namespace LibPipeline
             var pipelineControl = d as PolylineControl;
             pipelineControl.SimplifiedLocations = pipelineControl.Locations;
             pipelineControl.SelectedLocation = pipelineControl.Locations.FirstOrDefault();
+            pipelineControl.CursorLocation = pipelineControl.SelectedLocation;
         }
     }
 }
