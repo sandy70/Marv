@@ -35,17 +35,21 @@
                                  MaxZoomLevel="21"
                                  StartExtent="20,-120,40,-60">
                 
-                <!--<libpipeline:PipelineControl x:Name="PipelineProfileControl"
-                                             IsCursorVisible="True"
-                                             Locations="{Binding PipelineProfile, ElementName=Root}" />-->
+                <libpipeline:PolylineControl x:Name="ProfileControl"
+                                             CursorFill="#FFBA73"
+                                             CursorStroke="#FFA040"
+                                             Locations="{Binding ProfileLocations, ElementName=Root}"
+                                             SelectedLocation="{Binding SelectedProfileLocation, ElementName=Root, Mode=TwoWay}"
+                                             Stroke="#FF8100"
+                                             Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
 
-                <!--<libpipeline:PipelineControl x:Name="PipelineTallyControl"
-                                             IsCursorVisible="True"
-                                            Locations="{Binding PipelineTally.Locations, ElementName=Root}"
-                                            SelectedLocation="{Binding PipelineTally, ElementName=Root, Mode=TwoWay}"
-                                            Visibility="{Binding Path=IsChecked, ElementName=TallyRadioButton, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />-->
-                
-               
+                <libpipeline:PolylineControl x:Name="TallyControl"
+                                             CursorFill="#FFD673"
+                                             CursorStroke="#FFC740"
+                                             Locations="{Binding TallyLocations, ElementName=Root}"
+                                             SelectedLocation="{Binding SelectedTallyLocation, ElementName=Root, Mode=TwoWay}"
+                                             Stroke="#FFB400"
+                                             Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
             </libpipeline:MapView>
 
             <Border Background="#DDDDDD"
@@ -70,29 +74,30 @@
                                             Content="Profile"
                                             Foreground="Black"
                                             GroupName="PipelineInfo"
-                                            IsChecked="True" />
+                                            IsChecked="{Binding IsProfileSelected, ElementName=Root}" />
 
                     <telerik:RadRadioButton Name="TallyRadioButton"
                                             Grid.Row="0" Grid.Column="1"
                                             Content="Tally"
                                             Foreground="Black"
-                                            GroupName="PipelineInfo" />
+                                            GroupName="PipelineInfo"
+                                            IsChecked="{Binding IsTallySelected, ElementName=Root}"/>
 
                     <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
                                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              IsReadOnly="True"
-                                             Item="{Binding PipelineProfile.SelectedLocation, ElementName=Root}"
-                                             Visibility="{Binding ElementName=ProfileRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
+                                             Item="{Binding SelectedProfileLocation, ElementName=Root}"
+                                             Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
                     <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
                                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                             AutoGeneratePropertyDefinitions="True"
                                             DescriptionPanelVisibility="Collapsed"
                                             IsReadOnly="True"
-                                            Item="{Binding PipelineTally.SelectedLocation, ElementName=Root}"
-                                            Visibility="{Binding ElementName=TallyRadioButton, Path=IsChecked, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
+                                            Item="{Binding SelectedTallyLocation, ElementName=Root}"
+                                            Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                 </Grid>
             </Border>
         </Grid>

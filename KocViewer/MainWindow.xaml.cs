@@ -19,6 +19,12 @@ namespace KocViewer
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsProfileSelectedProperty =
+        DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsTallySelectedProperty =
+        DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -76,6 +82,18 @@ namespace KocViewer
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
             set { SetValue(IsGroupButtonVisibleProperty, value); }
+        }
+
+        public bool IsProfileSelected
+        {
+            get { return (bool)GetValue(IsProfileSelectedProperty); }
+            set { SetValue(IsProfileSelectedProperty, value); }
+        }
+
+        public bool IsTallySelected
+        {
+            get { return (bool)GetValue(IsTallySelectedProperty); }
+            set { SetValue(IsTallySelectedProperty, value); }
         }
 
         public IEnumerable<ILocation> ProfileLocations

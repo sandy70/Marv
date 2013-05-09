@@ -5,7 +5,7 @@
     <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
     <DropShadowEffect x:Key="DropShadowDeeper" Opacity="0.5" ShadowDepth="0" BlurRadius="10" />
     <libmarv:BooleanToColorConverter x:Key="BooleanToColorConverter" />
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
     <libmarv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
     <libmarv:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
 </ResourceDictionary>

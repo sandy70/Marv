@@ -1,7 +1,5 @@
 ﻿using LibBn;
 using LibPipeline;
-using MapControl;
-using SharpKml.Dom;
 using SharpKml.Engine;
 using System;
 using System.IO;
@@ -32,7 +30,7 @@ namespace KocViewer
 
             var kmlFile = KmlFile.Load(fileNames[0]);
 
-            var groundOverlay = kmlFile.Root.Flatten().OfType<GroundOverlay>().FirstOrDefault();
+            var groundOverlay = kmlFile.Root.Flatten().OfType<SharpKml.Dom.GroundOverlay>().FirstOrDefault();
             groundOverlay.Icon.Href = new Uri(Path.Combine(Path.GetDirectoryName(fileNames[0]), groundOverlay.Icon.Href.ToString()));
             this.AssociatedObject.GroundOverlay = groundOverlay;
         }
@@ -45,6 +43,9 @@ namespace KocViewer
             // Read the KOC pipeline data
             //window.PipelineTally = MultiLocationReader.ReadExcel(Properties.Settings.Default.TallyFileName, "Sheet1");
             //window.PipelineProfile = MultiLocationReader.ReadExcel(Properties.Settings.Default.ProfileFileName, "Sheet1");
+
+            window.ProfileLocations = ExcelReader.ReadLocations<Location>(Properties.Settings.Default.ProfileFileName);
+            window.TallyLocations = ExcelReader.ReadLocations<Location>(Properties.Settings.Default.ProfileFileName);
 
             KocDataReader kocDataReader = new KocDataReader();
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
