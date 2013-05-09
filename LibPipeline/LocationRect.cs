@@ -1,5 +1,4 @@
-﻿using MapControl;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace LibPipeline
 {
