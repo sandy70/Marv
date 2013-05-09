@@ -10,11 +10,20 @@ namespace LibPipeline
         public static readonly DependencyProperty StartExtentProperty =
         DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
 
+        public static readonly RoutedEvent ZoomLevelChangedEvent =
+        EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<int>>), typeof(MapView));
+
         public MapView()
             : base()
         {
             var behaviors = Interaction.GetBehaviors(this);
             behaviors.Add(new MapViewBehavior());
+        }
+
+        public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
+        {
+            add { AddHandler(ZoomLevelChangedEvent, value); }
+            remove { RemoveHandler(ZoomLevelChangedEvent, value); }
         }
 
         public LocationRect StartExtent

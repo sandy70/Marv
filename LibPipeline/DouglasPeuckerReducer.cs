@@ -8,9 +8,9 @@ namespace LibPipeline
 {
     public class DouglasPeuckerReducer
     {
-        public List<Point> Points;
+        public IEnumerable<Point> Points;
 
-        public DouglasPeuckerReducer(List<Point> points)
+        public DouglasPeuckerReducer(IEnumerable<Point> points)
         {
             this.Points = points;
             this.Tolerance = 10;
@@ -18,16 +18,16 @@ namespace LibPipeline
 
         public double Tolerance { get; set; }
 
-        public List<Point> Reduce()
+        public IEnumerable<Point> Reduce()
         {
             // If points are null or too few then return
-            if (this.Points == null || this.Points.Count < 3)
+            if (this.Points == null || this.Points.Count() < 3)
             {
                 return this.Points;
             }
 
             int firstPoint = 0;
-            int lastPoint = Points.Count - 1;
+            int lastPoint = Points.Count() - 1;
             List<int> pointIndexsToKeep = new List<int>();
 
             //Add the first and last index to the keepers
@@ -35,7 +35,7 @@ namespace LibPipeline
             pointIndexsToKeep.Add(lastPoint);
 
             //The first and the last point cannot be the same
-            while (this.Points[firstPoint].Equals(this.Points[lastPoint]))
+            while (this.Points.ElementAt(firstPoint).Equals(this.Points.ElementAt(lastPoint)))
             {
                 lastPoint--;
             }
@@ -48,11 +48,11 @@ namespace LibPipeline
             pointIndexsToKeep.Sort();
             foreach (int index in pointIndexsToKeep)
             {
-                returnPoints.Add(this.Points[index]);
+                returnPoints.Add(this.Points.ElementAt(index));
             }
 
             // If the simplification results in zero points, just add the endpoints.
-            if (this.Points.Count == 0)
+            if (this.Points.Count() == 0)
             {
                 returnPoints.Add(this.Points.First());
                 returnPoints.Add(this.Points.Last());
@@ -61,14 +61,14 @@ namespace LibPipeline
             return returnPoints;
         }
 
-        private void DouglasPeuckerReduction(List<Point> points, int firstPoint, int lastPoint, double tolerance, ref List<int> pointIndexsToKeep)
+        private void DouglasPeuckerReduction(IEnumerable<Point> points, int firstPoint, int lastPoint, double tolerance, ref List<int> pointIndexsToKeep)
         {
             double maxDistance = 0;
             int indexFarthest = 0;
 
             for (int index = firstPoint; index < lastPoint; index++)
             {
-                double distance = PerpendicularDistance(points[firstPoint], points[lastPoint], points[index]);
+                double distance = PerpendicularDistance(points.ElementAt(firstPoint), points.ElementAt(lastPoint), points.ElementAt(index));
 
                 if (distance > maxDistance)
                 {

@@ -19,7 +19,7 @@
     
     <Grid>
         <mapcontrol:MapPolyline Name="MapPolyline"
-                                Locations="{Binding Locations, ElementName=Root, Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
+                                Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
                                 Stroke="Red"
                                 StrokeEndLineCap="Round"
                                 StrokeLineJoin="Round"

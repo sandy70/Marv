@@ -1,5 +1,4 @@
-﻿using MapControl;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -135,6 +134,16 @@ namespace LibPipeline
             }
 
             return nearestLocation;
+        }
+
+        public static MapControl.Location AsMapControlLocation(this ILocation location)
+        {
+            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
+
+        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
+        {
+            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
     }
 }

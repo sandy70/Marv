@@ -11,10 +11,29 @@ namespace LibPipeline
 {
     class MapViewBehavior : Behavior<MapView>
     {
+        private int discreteZoomLevel = 100;
+
         protected override void OnAttached()
         {
             base.OnAttached();
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.ViewportChanged += AssociatedObject_ViewportChanged;
+        }
+
+        private void AssociatedObject_ViewportChanged(object sender, EventArgs e)
+        {
+            int zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
+
+            if (zl != this.discreteZoomLevel)
+            {
+                this.discreteZoomLevel = zl;
+
+                this.AssociatedObject.RaiseEvent(new ValueEventArgs<int>
+                {
+                    RoutedEvent = MapView.ZoomLevelChangedEvent,
+                    Value = this.discreteZoomLevel
+                });
+            }
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)

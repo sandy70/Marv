@@ -1,5 +1,4 @@
-﻿using MapControl;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +18,9 @@ namespace LibPipeline
 
         public static readonly DependencyProperty SelectedLocationProperty =
         DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocation));
+
+        public static readonly DependencyProperty SimplifiedLocationsProperty =
+        DependencyProperty.Register("SimplifiedLocations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null));
 
         public PolylineControl()
         {
@@ -49,6 +51,12 @@ namespace LibPipeline
             set { SetValue(SelectedLocationProperty, value); }
         }
 
+        public IEnumerable<ILocation> SimplifiedLocations
+        {
+            get { return (IEnumerable<ILocation>)GetValue(SimplifiedLocationsProperty); }
+            set { SetValue(SimplifiedLocationsProperty, value); }
+        }
+
         private static void ChangedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pipelineControl = d as PolylineControl;
@@ -58,7 +66,8 @@ namespace LibPipeline
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pipelineControl = d as PolylineControl;
-            pipelineControl.SelectedLocation = (e.NewValue as IEnumerable<ILocation>).FirstOrDefault();
+            pipelineControl.SimplifiedLocations = pipelineControl.Locations;
+            pipelineControl.SelectedLocation = pipelineControl.Locations.FirstOrDefault();
         }
     }
 }

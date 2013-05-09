@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace LibPipeline
 {
@@ -42,6 +43,39 @@ namespace LibPipeline
             this.AssociatedObject.Ellipse.TouchDown += Ellipse_TouchDown;
             this.AssociatedObject.Ellipse.TouchMove += Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += Ellipse_TouchUp;
+
+            var mapView = this.AssociatedObject.Parent as MapView;
+
+            if (mapView != null)
+            {
+                mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+            }
+        }
+
+        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
+        {
+            var mapView = sender as MapView;
+
+            var points = new List<Point>();
+
+            foreach (var location in this.AssociatedObject.Locations)
+            {
+                points.Add(mapView.LocationToViewportPoint(location.AsMapControlLocation()));
+            }
+
+            var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
+            douglasPeuckerReducer.Tolerance = 5;
+
+            var simplifiedPoints = douglasPeuckerReducer.Reduce();
+
+            var simplifiedLocations = new List<Location>();
+
+            foreach (var point in simplifiedPoints)
+            {
+                simplifiedLocations.Add(mapView.ViewportPointToLocation(point).AsLibPipelineLocation());
+            }
+
+            this.AssociatedObject.SimplifiedLocations = simplifiedLocations;
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
