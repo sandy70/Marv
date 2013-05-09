@@ -1,15 +1,16 @@
 ﻿using LinqToExcel;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LibPipeline
 {
-    public class MultiLocationReader
+    public class ExcelReader
     {
-        public static List<Location> ReadExcel(string fileName, string sheetName = "Sheet1")
+        public static IEnumerable<ILocation> ReadLocations<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : ILocation, new()
         {
             var excel = new ExcelQueryFactory(fileName);
-            var locations = new List<Location>();
+            var locations = new List<TLocation>();
 
             var colNames = excel.GetColumnNames(sheetName);
 
@@ -20,7 +21,7 @@ namespace LibPipeline
                     continue;
                 }
 
-                var location = new Location();
+                var location = new TLocation();
 
                 foreach (var colName in colNames)
                 {
@@ -37,7 +38,12 @@ namespace LibPipeline
                 locations.Add(location);
             }
 
-            return locations;
+            return locations as IEnumerable<ILocation>;
+        }
+
+        public static Task<IEnumerable<ILocation>> ReadLocationsAsync<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : ILocation, new()
+        {
+            return Task.Run(() => ExcelReader.ReadLocations<TLocation>(fileName, sheetName));
         }
     }
 }
