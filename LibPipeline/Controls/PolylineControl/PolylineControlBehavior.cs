@@ -90,6 +90,7 @@ namespace LibPipeline
         {
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
+
             // this.OnDown();
         }
 
@@ -103,7 +104,8 @@ namespace LibPipeline
         {
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
-            this.OnDown();
+            
+            // this.OnDown();
         }
 
         private void OnDown()
