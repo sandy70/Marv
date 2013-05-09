@@ -90,7 +90,7 @@ namespace LibPipeline
         {
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
-            this.OnDown();
+            // this.OnDown();
         }
 
         private void MapPolyline_MouseUp(object sender, MouseButtonEventArgs e)
