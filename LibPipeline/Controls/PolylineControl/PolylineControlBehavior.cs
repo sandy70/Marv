@@ -33,6 +33,8 @@ namespace LibPipeline
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
+            this.AssociatedObject.UpdateVisual();
+
             this.AssociatedObject.MapPolyline.MouseDown += MapPolyline_MouseDown;
             this.AssociatedObject.MapPolyline.MouseUp += MapPolyline_MouseUp;
             this.AssociatedObject.MapPolyline.TouchDown += MapPolyline_TouchDown;

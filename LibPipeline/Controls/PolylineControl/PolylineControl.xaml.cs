@@ -92,5 +92,11 @@ namespace LibPipeline
             pipelineControl.SelectedLocation = pipelineControl.Locations.FirstOrDefault();
             pipelineControl.CursorLocation = pipelineControl.SelectedLocation;
         }
+
+        public void UpdateVisual()
+        {
+            this.MapPanel.InvalidateVisual();
+            this.MapPanel.UpdateLayout();
+        }
     }
 }
