@@ -150,6 +150,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Input.Manipulations" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -354,6 +355,10 @@
     <ProjectReference Include="..\LibMarv\LibMarv.csproj">
       <Project>{ede1380a-a5a2-4cad-8175-d780b3dd2bd2}</Project>
       <Name>LibMarv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MapControl\Caching\ImageFileCache\ImageFileCache.csproj">
+      <Project>{86470440-fee2-4120-af5a-3762fb9c536f}</Project>
+      <Name>ImageFileCache</Name>
     </ProjectReference>
     <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
       <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>

@@ -1,5 +1,7 @@
-﻿using LibBn;
+﻿using Caching;
+using LibBn;
 using LibPipeline;
+using MapControl;
 using SharpKml.Dom;
 using Smile;
 using System.Collections.Generic;
@@ -47,14 +49,6 @@ namespace KocViewer
 
         public BnInputStore InputManager = new BnInputStore();
 
-        public InfoWindowViewModel PipelineProfileInfoWindowViewModel = new InfoWindowViewModel();
-
-        public PipelineViewModel PipelineProfileViewModel = new PipelineViewModel();
-
-        public InfoWindowViewModel PipelineTallyInfoWindowViewModel = new InfoWindowViewModel();
-
-        public PipelineViewModel PipelineTallyViewModel = new PipelineViewModel();
-
         public SensorListener SensorListener = new SensorListener();
 
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
@@ -63,7 +57,8 @@ namespace KocViewer
         {
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
-            InitializeDataContexts();
+
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, @"D:\Data\Cache");
         }
 
         public string FileName
@@ -136,12 +131,6 @@ namespace KocViewer
         {
             var vertexInput = this.InputManager.GetVertexInput(BnInputType.User, this.SelectedYear, vertexViewModel.Key);
             vertexInput.FillFrom(vertexViewModel);
-        }
-
-        public void InitializeDataContexts()
-        {
-            this.PipelineProfilePropertyGrid.DataContext = this.PipelineProfileViewModel;
-            this.PipelineTallyPropertyGrid.DataContext = this.PipelineTallyViewModel;
         }
 
         public void RemoveInput(BnVertexViewModel vertexViewModel)

@@ -1,6 +1,5 @@
 ﻿using LibBn;
 using LibPipeline;
-using SharpKml.Engine;
 using System;
 using System.IO;
 using System.Linq;
@@ -16,7 +15,6 @@ namespace KocViewer
             base.OnAttached();
             this.AssociatedObject.Closed += AssociatedObject_Closed;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
-            this.AssociatedObject.Drop += AssociatedObject_Drop;
         }
 
         private void AssociatedObject_Closed(object sender, EventArgs e)
@@ -24,28 +22,13 @@ namespace KocViewer
             BnGraphWriter.WritePositions(Config.NetworkFile, this.AssociatedObject.GraphControl.SourceGraph);
         }
 
-        private void AssociatedObject_Drop(object sender, DragEventArgs e)
-        {
-            var fileNames = (string[])e.Data.GetData("FileNameW");
-
-            var kmlFile = KmlFile.Load(fileNames[0]);
-
-            var groundOverlay = kmlFile.Root.Flatten().OfType<SharpKml.Dom.GroundOverlay>().FirstOrDefault();
-            groundOverlay.Icon.Href = new Uri(Path.Combine(Path.GetDirectoryName(fileNames[0]), groundOverlay.Icon.Href.ToString()));
-            this.AssociatedObject.GroundOverlay = groundOverlay;
-        }
-
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
             window.FileName = Config.NetworkFile;
 
-            // Read the KOC pipeline data
-            //window.PipelineTally = MultiLocationReader.ReadExcel(Properties.Settings.Default.TallyFileName, "Sheet1");
-            //window.PipelineProfile = MultiLocationReader.ReadExcel(Properties.Settings.Default.ProfileFileName, "Sheet1");
-
-            window.ProfileLocations = ExcelReader.ReadLocations<Location>(Properties.Settings.Default.ProfileFileName);
-            window.TallyLocations = ExcelReader.ReadLocations<Location>(Properties.Settings.Default.ProfileFileName);
+            window.ProfileLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
+            window.TallyLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.TallyFileName);
 
             KocDataReader kocDataReader = new KocDataReader();
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();

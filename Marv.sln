@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibMarv", "LibMarv\LibMarv.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KocViewer", "KocViewer\KocViewer.csproj", "{8F3727CE-D0A7-4F58-A9BF-F0D2A130F912}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageFileCache", "MapControl\Caching\ImageFileCache\ImageFileCache.csproj", "{86470440-FEE2-4120-AF5A-3762FB9C536F}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = MarvInterface.vsmdi
@@ -518,6 +520,55 @@ Global
 		{8F3727CE-D0A7-4F58-A9BF-F0D2A130F912}.SingleImage|Win32.ActiveCfg = DebugWithoutSetup|Any CPU
 		{8F3727CE-D0A7-4F58-A9BF-F0D2A130F912}.SingleImage|x64.ActiveCfg = DebugWithoutSetup|Any CPU
 		{8F3727CE-D0A7-4F58-A9BF-F0D2A130F912}.SingleImage|x86.ActiveCfg = DebugWithoutSetup|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|Mixed Platforms.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|Win32.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|x64.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|Any CPU.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|Any CPU.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|Win32.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|x64.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutPlugins|x86.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|Any CPU.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|Any CPU.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|Win32.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|x64.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DebugWithoutSetup|x86.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|Win32.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|x64.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|Win32.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|x64.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.Release|x86.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|Mixed Platforms.Build.0 = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|Win32.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|x64.ActiveCfg = Release|Any CPU
+		{86470440-FEE2-4120-AF5A-3762FB9C536F}.SingleImage|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
