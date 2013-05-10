@@ -6,6 +6,7 @@ using SharpKml.Dom;
 using Smile;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Data;
 using Telerik.Windows.Controls;
 
 namespace KocViewer
@@ -23,6 +24,9 @@ namespace KocViewer
 
         public static readonly DependencyProperty IsProfileSelectedProperty =
         DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsSensorButtonVisibleProperty =
+        DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -58,6 +62,12 @@ namespace KocViewer
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
 
+            this.SetBinding(MainWindow.IsSensorButtonVisibleProperty, new Binding
+            {
+                Path = new PropertyPath("IsSensorButtonVisible"),
+                Source = Properties.Settings.Default
+            });
+
             TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, @"D:\Data\Cache");
         }
 
@@ -83,6 +93,12 @@ namespace KocViewer
         {
             get { return (bool)GetValue(IsProfileSelectedProperty); }
             set { SetValue(IsProfileSelectedProperty, value); }
+        }
+
+        public bool IsSensorButtonVisible
+        {
+            get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
+            set { SetValue(IsSensorButtonVisibleProperty, value); }
         }
 
         public bool IsTallySelected

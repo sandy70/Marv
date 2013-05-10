@@ -17,5 +17,8 @@
     <Setting Name="ProfileFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Data\Koc\Profile.xlsx</Value>
     </Setting>
+    <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
