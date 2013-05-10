@@ -1,7 +1,9 @@
 ﻿using MapControl;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interactivity;
+using System.Linq;
 
 namespace LibPipeline
 {
@@ -30,6 +32,30 @@ namespace LibPipeline
         {
             get { return (LocationRect)GetValue(StartExtentProperty); }
             set { SetValue(StartExtentProperty, value); }
+        }
+
+        public IEnumerable<Point> ILocationsToViewportPoints(IEnumerable<ILocation> locations)
+        {
+            var points = new List<Point>();
+
+            foreach (var location in locations)
+            {
+                points.Add(this.LocationToViewportPoint(location.AsMapControlLocation()));
+            }
+
+            return points;
+        }
+
+        public IEnumerable<ILocation> ViewportPointsToILocations(IEnumerable<Point> points)
+        {
+            var locations = new List<Location>();
+
+            foreach (var point in points)
+            {
+                locations.Add(this.ViewportPointToLocation(point).AsLibPipelineLocation());
+            }
+
+            return locations;
         }
 
         /// <summary>
