@@ -145,6 +145,18 @@ namespace LibPipeline
         {
             return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
+
+        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
+        {
+            var locationRect = new LocationRect();
+
+            locationRect.South = locations.Min(x => x.Latitude);
+            locationRect.West = locations.Min(x => x.Longitude);
+            locationRect.North = locations.Max(x => x.Latitude);
+            locationRect.East = locations.Max(x => x.Longitude);
+
+            return locationRect;
+        }
     }
 }
 
