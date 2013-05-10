@@ -61,7 +61,7 @@ namespace LibPipeline
                 if (value != this.isSelected)
                 {
                     this.isSelected = value;
-                    this.OnPropertyChanged("IsCursorVisible");
+                    this.OnPropertyChanged("IsSelected");
                 }
             }
         }
