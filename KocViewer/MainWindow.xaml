@@ -14,7 +14,8 @@
         WindowState="Maximized">
     <Window.Resources>
         <Style TargetType="local:MainWindow">
-            <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
         </Style>
     </Window.Resources>
 
@@ -172,5 +173,14 @@
                            VerticalAlignment="Top" HorizontalAlignment="Left"
                            Visibility="Collapsed"
                            Width="300" Height="50" />
+
+        <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
+                                Grid.Column="0" Grid.ColumnSpan="3"
+                                Background="#DDDDDD"
+                                Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}"
+                                Padding="10"
+                                VerticalAlignment="Top" HorizontalAlignment="Left"
+                                Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
     </Grid>
 </Window>

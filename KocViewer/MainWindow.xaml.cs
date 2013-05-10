@@ -6,13 +6,15 @@ using SharpKml.Dom;
 using Smile;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Data;
 using Telerik.Windows.Controls;
 
 namespace KocViewer
 {
     public partial class MainWindow : Window
     {
+        public static readonly DependencyProperty CacheDirectoryProperty =
+        DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
+
         public static readonly DependencyProperty FileNameProperty =
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -27,6 +29,9 @@ namespace KocViewer
 
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsSettingsVisibleProperty =
+        DependencyProperty.Register("IsSettingsVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -62,13 +67,13 @@ namespace KocViewer
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
 
-            this.SetBinding(MainWindow.IsSensorButtonVisibleProperty, new Binding
-            {
-                Path = new PropertyPath("IsSensorButtonVisible"),
-                Source = Properties.Settings.Default
-            });
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, this.CacheDirectory);
+        }
 
-            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, @"D:\Data\Cache");
+        public string CacheDirectory
+        {
+            get { return (string)GetValue(CacheDirectoryProperty); }
+            set { SetValue(CacheDirectoryProperty, value); }
         }
 
         public string FileName
@@ -99,6 +104,12 @@ namespace KocViewer
         {
             get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
             set { SetValue(IsSensorButtonVisibleProperty, value); }
+        }
+
+        public bool IsSettingsVisible
+        {
+            get { return (bool)GetValue(IsSettingsVisibleProperty); }
+            set { SetValue(IsSettingsVisibleProperty, value); }
         }
 
         public bool IsTallySelected

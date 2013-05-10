@@ -94,5 +94,17 @@ namespace KocViewer.Properties {
                 this["IsSensorButtonVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\")]
+        public string CacheDirectory {
+            get {
+                return ((string)(this["CacheDirectory"]));
+            }
+            set {
+                this["CacheDirectory"] = value;
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using LibBn;
 using LibPipeline;
 using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace KocViewer
@@ -15,11 +15,23 @@ namespace KocViewer
             base.OnAttached();
             this.AssociatedObject.Closed += AssociatedObject_Closed;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
         }
 
         private void AssociatedObject_Closed(object sender, EventArgs e)
         {
             BnGraphWriter.WritePositions(Config.NetworkFile, this.AssociatedObject.GraphControl.SourceGraph);
+            Properties.Settings.Default.Save();
+        }
+
+        private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.IsKeyDown(Key.S) &&
+                e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) &&
+                e.KeyboardDevice.IsKeyDown(Key.LeftAlt))
+            {
+                this.AssociatedObject.IsSettingsVisible = !this.AssociatedObject.IsSettingsVisible;
+            }
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
