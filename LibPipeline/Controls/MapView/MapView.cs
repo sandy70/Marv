@@ -87,6 +87,14 @@ namespace LibPipeline
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
         }
 
+        public void ZoomToExtent(LocationRect locationRect)
+        {
+            this.ZoomToExtent(south: locationRect.South,
+                west: locationRect.West,
+                north: locationRect.North,
+                east: locationRect.East);
+        }
+
         /// <summary>
         /// calculates a suitable zoom level given a boundary
         /// </summary>
