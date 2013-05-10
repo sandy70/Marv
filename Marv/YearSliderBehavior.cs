@@ -3,7 +3,7 @@ using Microsoft.Surface.Presentation.Controls;
 using System.Windows;
 using System.Windows.Interactivity;
 
-namespace KocViewer
+namespace Marv
 {
     internal class YearSliderBehavior : Behavior<SurfaceSlider>
     {

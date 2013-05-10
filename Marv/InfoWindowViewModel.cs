@@ -1,7 +1,7 @@
 ﻿using LibPipeline;
 using System.ComponentModel;
 
-namespace KocViewer
+namespace Marv
 {
     public class InfoWindowViewModel : INotifyPropertyChanged
     {

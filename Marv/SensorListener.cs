@@ -4,7 +4,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Windows.Threading;
 
-namespace KocViewer
+namespace Marv
 {
     public class SensorListener
     {

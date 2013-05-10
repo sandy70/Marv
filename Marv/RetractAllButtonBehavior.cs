@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Interactivity;
 using Telerik.Windows.Controls;
 
-namespace KocViewer
+namespace Marv
 {
     internal class RetractAllButtonBehavior : Behavior<RadButton>
     {

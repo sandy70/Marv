@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:libmarv="clr-namespace:LibMarv;assembly=LibMarv"
-                    xmlns:local="clr-namespace:KocViewer"
-                    xmlns:properties="clr-namespace:KocViewer.Properties"
+                    xmlns:local="clr-namespace:Marv"
+                    xmlns:properties="clr-namespace:Marv.Properties"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
     <DropShadowEffect x:Key="DropShadowDeeper" Opacity="0.5" ShadowDepth="0" BlurRadius="10" />

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace KocViewer
+namespace Marv
 {
     internal class KocDataReader
     {

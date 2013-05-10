@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
 
-namespace KocViewer
+namespace Marv
 {
     internal class MainWindowGraphControlBehavior : Behavior<MainWindow>
     {

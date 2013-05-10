@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace KocViewer
+namespace Marv
 {
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
@@ -14,21 +14,26 @@ namespace KocViewer
         {
             base.OnAttached();
             this.AssociatedObject.Closed += AssociatedObject_Closed;
+            this.AssociatedObject.Closing += AssociatedObject_Closing;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
         }
 
         private void AssociatedObject_Closed(object sender, EventArgs e)
         {
-            BnGraphWriter.WritePositions(Config.NetworkFile, this.AssociatedObject.GraphControl.SourceGraph);
+            BnGraphWriter.WritePositions(this.AssociatedObject.FileName, this.AssociatedObject.GraphControl.SourceGraph);
+        }
+
+        private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
             Properties.Settings.Default.Save();
         }
 
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.IsKeyDown(Key.S) &&
-                e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) &&
-                e.KeyboardDevice.IsKeyDown(Key.LeftAlt))
+                (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)) &&
+                (e.KeyboardDevice.IsKeyDown(Key.LeftAlt) || e.KeyboardDevice.IsKeyDown(Key.RightAlt)))
             {
                 this.AssociatedObject.IsSettingsVisible = !this.AssociatedObject.IsSettingsVisible;
             }
@@ -37,7 +42,6 @@ namespace KocViewer
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            window.FileName = Config.NetworkFile;
 
             window.ProfileLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
             window.TallyLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.TallyFileName);

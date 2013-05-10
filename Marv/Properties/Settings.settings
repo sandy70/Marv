@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="KocViewer.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Marv.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
@@ -15,13 +15,16 @@
       <Value Profile="(Default)">D:\Data\Koc\Tally.xlsx</Value>
     </Setting>
     <Setting Name="ProfileFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\Profile.xlsx</Value>
+      <Value Profile="(Default)">D:\Data\Koc\ProfileShifted.xlsx</Value>
     </Setting>
     <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="CacheDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.\</Value>
+    </Setting>
+    <Setting Name="FileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\Koc\Corrosion.net</Value>
     </Setting>
   </Settings>
 </SettingsFile>

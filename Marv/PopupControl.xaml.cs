@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
-namespace KocViewer
+namespace Marv
 {
     public partial class PopupControl : UserControl
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace KocViewer.Properties {
+namespace Marv.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -73,7 +73,7 @@ namespace KocViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Profile.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\ProfileShifted.xlsx")]
         public string ProfileFileName {
             get {
                 return ((string)(this["ProfileFileName"]));
@@ -104,6 +104,18 @@ namespace KocViewer.Properties {
             }
             set {
                 this["CacheDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Corrosion.net")]
+        public string FileName {
+            get {
+                return ((string)(this["FileName"]));
+            }
+            set {
+                this["FileName"] = value;
             }
         }
     }

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Windows;
 using Telerik.Windows.Controls;
 
-namespace KocViewer
+namespace Marv
 {
     public partial class MainWindow : Window
     {
@@ -185,7 +185,7 @@ namespace KocViewer
                     lastYearVertexValues = this.VertexValuesByYear[this.SelectedYear - 1];
                 }
 
-                var vertexValues = bnUpdater.GetVertexValues(Config.NetworkFile, defaultInputs, userInputs, lastYearVertexValues);
+                var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
                 this.VertexValuesByYear[this.SelectedYear] = vertexValues;
                 this.GraphControl.SourceGraph.CopyFrom(vertexValues);
                 this.GraphControl.SourceGraph.CalculateMostProbableStates();
