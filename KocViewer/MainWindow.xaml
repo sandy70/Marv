@@ -32,8 +32,7 @@
             <libpipeline:MapView Name="MapView"
                                  Grid.Column="0"
                                  IsManipulationEnabled="True"
-                                 MaxZoomLevel="21"
-                                 StartExtent="20,-120,40,-60">
+                                 MaxZoomLevel="21">
                 
                 <libpipeline:PolylineControl x:Name="ProfileControl"
                                              CursorFill="#FFBA73"

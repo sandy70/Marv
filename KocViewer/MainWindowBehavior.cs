@@ -30,6 +30,8 @@ namespace KocViewer
             window.ProfileLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
             window.TallyLocations = ExcelReader.ReadPropertyLocations<PropertyLocation>(Properties.Settings.Default.TallyFileName);
 
+            window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
+
             KocDataReader kocDataReader = new KocDataReader();
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
