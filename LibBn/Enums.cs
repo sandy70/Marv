@@ -22,6 +22,6 @@
     public static class Groups
     {
         public static readonly string All = "all";
-        public static readonly string Default = "overview";
+        public static readonly string Default = "0";
     }
 }
