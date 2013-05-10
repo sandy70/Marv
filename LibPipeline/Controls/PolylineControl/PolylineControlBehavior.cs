@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using System.Linq;
 
 namespace LibPipeline
 {
@@ -50,32 +49,6 @@ namespace LibPipeline
             {
                 mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
             }
-        }
-
-        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
-        {
-            var mapView = sender as MapView;
-
-            var points = new List<Point>();
-
-            foreach (var location in this.AssociatedObject.Locations)
-            {
-                points.Add(mapView.LocationToViewportPoint(location.AsMapControlLocation()));
-            }
-
-            var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
-            douglasPeuckerReducer.Tolerance = 5;
-
-            var simplifiedPoints = douglasPeuckerReducer.Reduce();
-
-            var simplifiedLocations = new List<Location>();
-
-            foreach (var point in simplifiedPoints)
-            {
-                simplifiedLocations.Add(mapView.ViewportPointToLocation(point).AsLibPipelineLocation());
-            }
-
-            this.AssociatedObject.SimplifiedLocations = simplifiedLocations;
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
@@ -138,8 +111,25 @@ namespace LibPipeline
         {
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
-            
+
             // this.OnDown();
+        }
+
+        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
+        {
+            if (this.AssociatedObject.Locations == null)
+            {
+                return;
+            }
+
+            var mapView = sender as MapView;
+
+            var points = mapView.ILocationsToViewportPoints(this.AssociatedObject.Locations);
+
+            var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
+            douglasPeuckerReducer.Tolerance = 5;
+
+            this.AssociatedObject.SimplifiedLocations = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce());
         }
 
         private void OnDown()
