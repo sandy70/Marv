@@ -84,8 +84,3 @@ namespace LibMarv
         }
     }
 }
-
-namespace System.Windows
-{
-    public delegate void RoutedEventHandler<TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
-}
