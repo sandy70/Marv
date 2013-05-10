@@ -167,6 +167,7 @@
       <DependentUpon>BnGraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Countries.cs" />
+    <Compile Include="Dynamic.cs" />
     <Compile Include="EarthquakeService.cs" />
     <Compile Include="IEnumerableILocationToIEnumerableLocationConverter.cs" />
     <Compile Include="ILocation.cs" />
@@ -176,7 +177,7 @@
     <Compile Include="LocationRectConverter.cs" />
     <Compile Include="Controls\MapView\MapView.cs" />
     <Compile Include="Controls\MapView\MapViewBehavior.cs" />
-    <Compile Include="MultiLocationReader.cs" />
+    <Compile Include="ExcelReader.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
@@ -199,6 +200,8 @@
     <Compile Include="Pipeline\PipelineProperties.cs" />
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyLocation.cs" />
+    <Compile Include="TileLayers.cs" />
     <Compile Include="ValueEventArgs.cs" />
     <Compile Include="Controls\SliderProgressBar\SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
