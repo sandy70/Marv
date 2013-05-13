@@ -61,7 +61,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Tally.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\TallyShifted.xlsx")]
         public string TallyFileName {
             get {
                 return ((string)(this["TallyFileName"]));

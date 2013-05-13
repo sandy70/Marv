@@ -107,7 +107,7 @@
         <GridSplitter Grid.Column="1"
                       ResizeBehavior="PreviousAndNext"
                       ResizeDirection="Columns"
-                      Width="10" />
+                      Width="30" />
 
         <!-- GraphControl -->
         <Grid Grid.Column="2">
