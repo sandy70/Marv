@@ -11,6 +11,13 @@ namespace LibPipeline
             TileSource = new TileSource("http://otile{n}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png")
         };
 
+        public static TileLayer MapQuestMap = new TileLayer
+        {
+            SourceName = "MapQuestMap",
+            Description = "MapQuest Map",
+            TileSource = new TileSource("http://otile{n}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png")
+        };
+
         public static TileLayer OsmMap = new TileLayer
         {
             SourceName = "OsmMap",
