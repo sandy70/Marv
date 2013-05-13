@@ -959,7 +959,7 @@ namespace Smile
 			}
 		}
 
-		void SetNodeTable(int nodeHandle, double def __gc[,])
+		void SetNodeTable(int nodeHandle, Double def [,])
 		{
 			int nRows = def.GetLength(0);
 			int nCols = def.GetLength(1);
@@ -976,7 +976,7 @@ namespace Smile
 			SetNodeDefinition(nodeHandle, definition);
 		}
 
-		void SetNodeTable(String * nodeId, double def __gc[,])
+		void SetNodeTable(String * nodeId, Double def [,])
 		{
 			SetNodeTable(ValidateNodeId(nodeId), def);
 		}
