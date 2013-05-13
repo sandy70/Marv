@@ -1,18 +1,21 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:libmarv="clr-namespace:LibMarv;assembly=LibMarv"
                     xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
     <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    <libpipeline:BooleanNotConverter x:Key="BooleanNotConverter" />
-    <libpipeline:BooleanToColorConverter x:Key="BooleanToColorConverter" />
-    <libpipeline:BooleanToStringConverter x:Key="IsCheckedToImageSource" TrueString="/LibPipeline;component/Resources/Icons/antenna.png" FalseString="/LibPipeline;component/Resources/Icons/antenna-no-signal.png" />
-    <libpipeline:BooleanToStringConverter x:Key="IsHeaderToColor" TrueString="#b11d01" FalseString="#20aeff" />
-    <libpipeline:BooleanToStringConverter x:Key="IsLockedToImageSourceConverter" TrueString="/LibPipeline;component/Resources/Icons/lock.png" FalseString="/LibPipeline;component/Resources/Icons/unlock.png" />
-    <libpipeline:BooleanToStringConverter x:Key="IsEvidenceEnteredToColor" TrueString="#78ba00" FalseString="#20aeff" />
-    <libpipeline:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
-    <libpipeline:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
-    <libpipeline:DecimalToPercentageConverter x:Key="DecimalToPercentage" />
-    <libpipeline:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
-    <libpipeline:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
+    <libmarv:BooleanNotConverter x:Key="BooleanNotConverter" />
+    <libmarv:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+    <libpipeline:ILocationToLocationConverter x:Key="ILocationToLocation" />
+    <libpipeline:IEnumerableILocationToIEnumerableLocationConverter x:Key="IEnumerableILocationToIEnumerableLocation" />
+    <libmarv:BooleanToStringConverter x:Key="IsCheckedToImageSource" TrueString="/LibPipeline;component/Resources/Icons/antenna.png" FalseString="/LibPipeline;component/Resources/Icons/antenna-no-signal.png" />
+    <libmarv:BooleanToStringConverter x:Key="IsHeaderToColor" TrueString="#b11d01" FalseString="#20aeff" />
+    <libmarv:BooleanToStringConverter x:Key="IsLockedToImageSourceConverter" TrueString="/LibPipeline;component/Resources/Icons/lock.png" FalseString="/LibPipeline;component/Resources/Icons/unlock.png" />
+    <libmarv:BooleanToStringConverter x:Key="IsEvidenceEnteredToColor" TrueString="#78ba00" FalseString="#20aeff" />
+    <libmarv:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    <libmarv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
+    <libmarv:DecimalToPercentageConverter x:Key="DecimalToPercentage" />
+    <libmarv:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
+    <libmarv:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
+    <libmarv:NullToVisibilityConverter x:Key="NullToVisibility" />
 </ResourceDictionary>

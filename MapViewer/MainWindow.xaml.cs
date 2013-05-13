@@ -1,28 +1,74 @@
-﻿using System.Windows;
-using LibPipeline;
-using System;
+﻿using LibPipeline;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace MapViewer
 {
     public partial class MainWindow : Window
     {
-        public static readonly DependencyProperty LevelProperty =
-        DependencyProperty.Register("Level", typeof(double), typeof(MainWindow), new PropertyMetadata(1.0));
+        public static readonly DependencyProperty LocationsProperty =
+        DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
-        public MainWindow()
+        public IEnumerable<ILocation> Locations
         {
-            InitializeComponent();
-
-            int pixelX; int pixelY;
-            TileSystem.LatLongToPixelXY(22.59, 54.89, 8, out pixelX, out pixelY);
-
-            Console.WriteLine("X: " + pixelX + ", Y: " + pixelY);
+            get { return (IEnumerable<ILocation>)GetValue(LocationsProperty); }
+            set { SetValue(LocationsProperty, value); }
         }
 
-        public double Level
+        //public static readonly DependencyProperty EarthquakesProperty =
+        //DependencyProperty.Register("Earthquakes", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedEarthquakes));
+
+        //public static readonly DependencyProperty MultiLocationProperty =
+        //DependencyProperty.Register("MultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+
+        //public static readonly DependencyProperty MultiLocationsProperty =
+        //DependencyProperty.Register("MultiLocations", typeof(ObservableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiLocation>(), ChangedMultiLocations));
+
+        //public static readonly DependencyProperty SelectedMultiLocationProperty =
+        //DependencyProperty.Register("SelectedMultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+
+        //public MainWindow()
+        //{
+        //    InitializeComponent();
+        //}
+
+        //public MultiLocation Earthquakes
+        //{
+        //    get { return (MultiLocation)GetValue(EarthquakesProperty); }
+        //    set { SetValue(EarthquakesProperty, value); }
+        //}
+
+        //public MultiLocation MultiLocation
+        //{
+        //    get { return (MultiLocation)GetValue(MultiLocationProperty); }
+        //    set { SetValue(MultiLocationProperty, value); }
+        //}
+
+        //public ObservableCollection<MultiLocation> MultiLocations
+        //{
+        //    get { return (ObservableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
+        //    set { SetValue(MultiLocationsProperty, value); }
+        //}
+
+        //public MultiLocation SelectedMultiLocation
+        //{
+        //    get { return (MultiLocation)GetValue(SelectedMultiLocationProperty); }
+        //    set { SetValue(SelectedMultiLocationProperty, value); }
+        //}
+
+        private static void ChangedEarthquakes(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            get { return (double)GetValue(LevelProperty); }
-            set { SetValue(LevelProperty, value); }
+            var mainWindow = d as MainWindow;
+
+            //foreach (var location in mainWindow.Earthquakes.Locations)
+            //{
+            //    Console.WriteLine(location.Latitude + ", " + location.Longitude);
+            //}
+        }
+
+        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as MainWindow;
         }
     }
 }

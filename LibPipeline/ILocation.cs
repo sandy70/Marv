@@ -1,7 +1,14 @@
-﻿namespace LibPipeline
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LibPipeline
 {
-    public interface ILocation : ILocation2D
+    public interface ILocation
     {
-        double? Elevation { get; set; }
+        double Latitude { get; set; }
+        double Longitude { get; set; }
     }
 }

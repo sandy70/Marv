@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Marv.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="StartYear" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2004</Value>
+    </Setting>
+    <Setting Name="EndYear" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2012</Value>
+    </Setting>
+    <Setting Name="FitToPad" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="TallyFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\Koc\TallyShifted.xlsx</Value>
+    </Setting>
+    <Setting Name="ProfileFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\Koc\ProfileShifted.xlsx</Value>
+    </Setting>
+    <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CacheDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\</Value>
+    </Setting>
+    <Setting Name="FileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\Koc\Corrosion.net</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -727,6 +727,11 @@ namespace Smile
 			return HandlesToIds(net->GetChildren(nodeHandle));
 		}
 
+		int GetNodeHandle(String * nodeId)
+		{
+			return ValidateNodeId(nodeId);
+		}
+
 		String* GetNodeId(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
@@ -871,6 +876,30 @@ namespace Smile
 			return CopyDoubleArray(*pArray);
 		}
 
+		double GetNodeTable(int nodeHandle)__gc [,]
+		{
+			Double defVector __gc[] = GetNodeDefinition(nodeHandle);
+			int nRows = GetOutcomeCount(nodeHandle);
+			int nCols = defVector.Length / nRows;
+
+			double def __gc[,] = new double __gc[nRows, nCols];
+
+			for(int i = 0;i < defVector.Length;i++)
+			{
+				int row = i % nRows;
+				int col = i / nRows;
+
+				def[row, col] = defVector[i];
+			}
+
+			return def;
+		}
+
+		double GetNodeTable(String * nodeId)__gc [,]
+		{
+			return GetNodeTable(ValidateNodeId(nodeId));
+		}
+
 		void SetNodeDefinition(String *nodeId, Double definition[])
 		{
 			SetNodeDefinition(ValidateNodeId(nodeId), definition);
@@ -928,6 +957,28 @@ namespace Smile
 			{
 				static_cast<DSL_ciDefinition *>(nodeDef)->CiToCpt();
 			}
+		}
+
+		void SetNodeTable(int nodeHandle, Double def [,])
+		{
+			int nRows = def.GetLength(0);
+			int nCols = def.GetLength(1);
+			Double definition[] = new Double[nRows * nCols];
+
+			for(int col = 0;col < nCols;col++)
+			{
+				for(int row = 0;row < nRows;row++)
+				{
+					definition[nRows * col + row] = def[row, col];
+				}
+			}
+
+			SetNodeDefinition(nodeHandle, definition);
+		}
+
+		void SetNodeTable(String * nodeId, Double def [,])
+		{
+			SetNodeTable(ValidateNodeId(nodeId), def);
 		}
 
 		Int32 GetNoisyParentStrengths(int nodeHandle, int parentIndex)__gc []
@@ -1513,6 +1564,11 @@ namespace Smile
 		void SetEvidence(String *nodeId, String *outcomeId)
 		{
 			SetEvidence(ValidateNodeId(nodeId), outcomeId);
+		}
+
+		void SetSoftEvidence(String * nodeId, double aEvidence __gc[])
+		{
+			SetSoftEvidence(ValidateNodeId(nodeId), aEvidence);
 		}
 
 		void SetSoftEvidence(int nodeHandle, double aEvidence __gc[])

@@ -1,4 +1,4 @@
-﻿using Microsoft.Maps.MapControl.WPF;
+﻿using MapControl;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,13 +14,12 @@ namespace LibPipeline
         private string color;
         private LandcoverViewModel landcoverViewModel;
         private ObservableCollection<Location> locations;
-        private Pipeline pipeline;
+        //private MultiLocation pipeline;
         private ObservableCollection<Point> riverCrossingPoints;
         private ObservableCollection<Point> roadCrossingPoints;
         private PipelineSegmentInstant selectedInstant;
         private int selectedInstantIndex;
         private Location selectedLocation;
-        private PipelineSegment selectedSegment;
         private LocationCollection selectedSegmentPolyline;
         private Visibility selectedSegmentVisibility;
         private LocationCollection simplifiedLocations;
@@ -33,13 +32,12 @@ namespace LibPipeline
             this.Color = PipelineViewModel.UnselectedColor;
             this.LandcoverViewModel = new LandcoverViewModel();
             this.Locations = new ObservableCollection<Location>();
-            this.Pipeline = new Pipeline();
+            //this.Pipeline = new MultiLocation();
             this.RiverCrossingPoints = new ObservableCollection<Point>();
             this.RoadCrossingPoints = new ObservableCollection<Point>();
             this.SelectedInstant = new PipelineSegmentInstant();
             this.SelectedInstantIndex = 0;
             this.SelectedLocation = new Location();
-            this.SelectedSegment = new PipelineSegment();
             this.SelectedSegmentVisibility = Visibility.Collapsed;
             this.SelectedSegmentPolyline = new LocationCollection();
             this.SimplifiedLocations = new LocationCollection();
@@ -80,15 +78,15 @@ namespace LibPipeline
             }
         }
 
-        public Pipeline Pipeline
-        {
-            get { return pipeline; }
-            set
-            {
-                pipeline = value;
-                OnPropertyChanged("Pipeline");
-            }
-        }
+        //public MultiLocation Pipeline
+        //{
+        //    get { return pipeline; }
+        //    set
+        //    {
+        //        pipeline = value;
+        //        OnPropertyChanged("MultiLocation");
+        //    }
+        //}
 
         public ObservableCollection<Point> RiverCrossingPoints
         {
@@ -137,16 +135,6 @@ namespace LibPipeline
             {
                 selectedLocation = value;
                 OnPropertyChanged("SelectedLocation");
-            }
-        }
-
-        public PipelineSegment SelectedSegment
-        {
-            get { return selectedSegment; }
-            set
-            {
-                selectedSegment = value;
-                OnPropertyChanged("SelectedSegment");
             }
         }
 
@@ -213,58 +201,6 @@ namespace LibPipeline
         public void Clear()
         {
             // do nothing
-        }
-
-        public void SelectNearestSegment(Location location)
-        {
-            PipelineSegment nearestSegment = null;
-            double nearestDistance = Double.MaxValue;
-            int nearestLocationIndex = 0;
-
-            int nSegments = this.Pipeline.Segments.Count;
-
-            for (int i = 0; i < nSegments; i++)
-            {
-                PipelineSegment segment = this.Pipeline.Segments[i];
-
-                double distance = Utils.DistanceBetweenLocation(segment, location);
-
-                if (distance < nearestDistance)
-                {
-                    nearestDistance = distance;
-                    nearestSegment = segment;
-                    nearestLocationIndex = i;
-                }
-            }
-
-            this.SelectedSegment = nearestSegment;
-            this.SelectedLocation = new Location { Latitude = (double)this.SelectedSegment.Latitude, Longitude = (double)this.SelectedSegment.Longitude };
-
-            if (this.SelectedSegment.Instants.Count > 0)
-                this.SelectedInstant = this.SelectedSegment.Instants[this.SelectedInstantIndex];
-
-            if (nearestLocationIndex == 0)
-            {
-                LocationCollection selectedSegment = new LocationCollection();
-                selectedSegment.Add(this.Pipeline.Segments[0].AsLocation());
-                selectedSegment.Add(this.Pipeline.Segments[1].AsLocation());
-                this.SelectedSegmentPolyline = selectedSegment;
-            }
-            else if (nearestLocationIndex == nSegments - 1)
-            {
-                LocationCollection selectedSegment = new LocationCollection();
-                selectedSegment.Add(this.Pipeline.Segments[nSegments - 1].AsLocation());
-                selectedSegment.Add(this.Pipeline.Segments[nSegments - 2].AsLocation());
-                this.SelectedSegmentPolyline = selectedSegment;
-            }
-            else
-            {
-                LocationCollection selectedSegment = new LocationCollection();
-                selectedSegment.Add(this.Pipeline.Segments[nearestLocationIndex - 1].AsLocation());
-                selectedSegment.Add(this.Pipeline.Segments[nearestLocationIndex].AsLocation());
-                selectedSegment.Add(this.Pipeline.Segments[nearestLocationIndex + 1].AsLocation());
-                this.SelectedSegmentPolyline = selectedSegment;
-            }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

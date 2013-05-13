@@ -149,7 +149,7 @@ namespace LibPipeline
 
         private void BnVertexViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("IsSelected") && this.IsSelected == false)
+            if (e.PropertyName.Equals("IsCursorVisible") && this.IsSelected == false)
             {
                 this.IsLocked = true;
             }

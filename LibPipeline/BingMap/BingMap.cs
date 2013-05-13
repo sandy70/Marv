@@ -27,24 +27,24 @@ namespace LibPipeline
 
         public void GoToCanada()
         {
-            this.GoToRect(new LocationRect(72, -142, 40, -47));
+            //this.GoToRect(new LocationRect(72, -142, 40, -47));
         }
 
         public void GoToKuwait()
         {
-            this.GoToRect(new LocationRect(31, 46, 28, 49));
+            //this.GoToRect(new LocationRect(31, 46, 28, 49));
         }
 
         public void GoToRect(LocationRect locationRect)
         {
-            this.SetView(locationRect);
+            //this.SetView(locationRect);
             this.Heading = 0;
             this.Update();
         }
 
         public void GoToUsa()
         {
-            this.GoToRect(new LocationRect(50, -125, 15, -65));
+            //this.GoToRect(new LocationRect(50, -125, 15, -65));
         }
 
         public void Update(bool force = false)

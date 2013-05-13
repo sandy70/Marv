@@ -1,52 +1,13 @@
-﻿using Microsoft.Maps.MapControl.WPF;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Linq;
 
 namespace LibPipeline
 {
     public static partial class Extensions
     {
-        public static Location AsLocation(this ILocation location)
-        {
-            if (location.HasValue())
-            {
-                return new Location { Altitude = (double)location.Elevation, Latitude = (double)location.Latitude, Longitude = (double)location.Longitude };
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
-        {
-            if (val.CompareTo(min) < 0) return min;
-            else if (val.CompareTo(max) > 0) return max;
-            else return val;
-        }
-
-        public static void FillDistanceFromOrigin(this IEnumerable<IPipelineLocation> locations)
-        {
-            int nData = locations.Count();
-            locations.ElementAt(0).DistanceFromOrigin = 0;
-            double lastDistance = 0;
-
-            for (int d = 1; d < nData; d++)
-            {
-                double? thisDistance = Utils.DistanceBetweenLocations(locations.ElementAt(d), locations.ElementAt(d - 1));
-
-                if (thisDistance.HasValue)
-                {
-                    locations.ElementAt(d).DistanceFromOrigin = thisDistance + lastDistance;
-                    lastDistance = locations.ElementAt(d).DistanceFromOrigin.Value;
-                }
-            }
-        }
-
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -151,106 +112,50 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static bool HasValue(this ILocation location)
+        public static ILocation NearestTo(this IEnumerable<ILocation> locations, ILocation queryLocation)
         {
-            if (location.Elevation.HasValue && location.Latitude.HasValue && location.Longitude.HasValue)
+            if (locations == null || queryLocation == null)
             {
-                return true;
+                return null;
             }
-            else
-            {
-                return false;
-            }
-        }
 
-        public static bool HasValue(this IPipelineLocation location)
-        {
-            if (location.Elevation.HasValue && location.Latitude.HasValue && location.Longitude.HasValue && location.DistanceFromOrigin.HasValue)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static void Print(this Point point)
-        {
-            Console.WriteLine("x: " + point.X + ", y: " + point.Y);
-        }
-
-        public static void Print(this ILocation location)
-        {
-            Console.WriteLine("lat: " + location.Latitude + ", lon: " + location.Longitude + ", elev: " + location.Elevation);
-        }
-
-        public static void Print(this ObservableCollection<Location> locations)
-        {
-            if (locations == null)
-                return;
+            double nearestDistance = Double.MaxValue;
+            ILocation nearestLocation = locations.FirstOrDefault();
 
             foreach (var location in locations)
-                Console.WriteLine("lat: " + location.Latitude + ", lon: " + location.Longitude + ", elev: " + location.Altitude);
-        }
-
-        public static LocationCollection ViewportPointsAsLocationCollection(this List<Point> points, BingMap bingMap)
-        {
-            LocationCollection locations = new LocationCollection();
-
-            foreach (var point in points)
             {
-                Location location = bingMap.ViewportPointToLocation(point);
-                locations.Add(location);
-            }
+                double distance = Utils.Distance(location, queryLocation);
 
-            return locations;
-        }
-
-        public static ObservableCollection<Location> ViewportPointsAsLocations(this List<Point> points, BingMap bingMap)
-        {
-            ObservableCollection<Location> locations = new ObservableCollection<Location>();
-
-            foreach (var point in points)
-            {
-                Location location = bingMap.ViewportPointToLocation(point);
-                locations.Add(location);
-            }
-
-            return locations;
-        }
-
-        public static ObservableCollection<Location> WithinViewport(this ObservableCollection<Location> segments, BingMap bingMap)
-        {
-            ObservableCollection<Location> insideLocations = new ObservableCollection<Location>();
-            LocationRect boundingRect = bingMap.BoundingRectangle;
-
-            // Calculate padding. Since distances are small, using lat, lon values works
-            double pad = Math.Max(Math.Abs(boundingRect.East - boundingRect.West),
-                                  Math.Abs(boundingRect.North - boundingRect.South));
-
-            foreach (var segment in segments)
-            {
-                if (boundingRect.South - pad <= segment.Latitude && segment.Latitude <= boundingRect.North + pad &&
-                   boundingRect.West - pad <= segment.Longitude && segment.Longitude <= boundingRect.East + pad)
+                if (distance < nearestDistance)
                 {
-                    insideLocations.Add(segment);
+                    nearestDistance = distance;
+                    nearestLocation = location;
                 }
             }
 
-            return insideLocations;
+            return nearestLocation;
         }
 
-        public static List<Location> Corners(this LocationRect locRect)
+        public static MapControl.Location AsMapControlLocation(this ILocation location)
         {
-            var corners = new List<Location>();
+            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
 
-            corners.Add(locRect.Northwest);
-            corners.Add(locRect.Northeast);
-            corners.Add(locRect.Southeast);
-            corners.Add(locRect.Southwest);
+        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
+        {
+            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
 
-            return corners;
+        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
+        {
+            var locationRect = new LocationRect();
+
+            locationRect.South = locations.Min(x => x.Latitude);
+            locationRect.West = locations.Min(x => x.Longitude);
+            locationRect.North = locations.Max(x => x.Latitude);
+            locationRect.East = locations.Max(x => x.Longitude);
+
+            return locationRect;
         }
     }
 }

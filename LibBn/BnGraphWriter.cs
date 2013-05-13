@@ -61,13 +61,16 @@ namespace LibBn
         {
             string grouppositions = "";
 
-            foreach (var kvp in vertex.PositionsByGroup.AllButLast())
+            if (vertex.PositionsByGroup.Count > 0)
             {
-                grouppositions += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
-            }
+                foreach (var kvp in vertex.PositionsByGroup.AllButLast())
+                {
+                    grouppositions += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
+                }
 
-            var kvpLast = vertex.PositionsByGroup.Last();
-            grouppositions += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
+                var kvpLast = vertex.PositionsByGroup.Last();
+                grouppositions += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
+            }
 
             newProperties.Add(new UserProperty { name = "grouppositions", value = grouppositions });
         }
