@@ -123,7 +123,7 @@
                                         FileName="{Binding FileName, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}"
-                                        StartingGroup="0"
+                                        StartingGroup="all"
                                         VertexValues="{Binding SelectedVertexValues, ElementName=Root}"/>
 
             <telerik:RadButton Name="RetractAllButton"
