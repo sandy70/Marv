@@ -10,7 +10,7 @@ namespace LibPipeline
         public void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-            graphControl.SelectedGroup = Groups.Default;
+            graphControl.Back();
         }
 
         protected override void OnAttached()

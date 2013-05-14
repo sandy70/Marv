@@ -10,6 +10,11 @@ namespace LibBn
     {
         public BnGraph Generate(BnGraph srcGraph, string group)
         {
+            if (srcGraph == null)
+            {
+                return null;
+            }
+
             // Extract the header vertices
             BnGraph partGraph = new BnGraph();
 

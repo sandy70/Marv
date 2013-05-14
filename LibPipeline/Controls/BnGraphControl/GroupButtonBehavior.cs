@@ -61,12 +61,6 @@ namespace LibPipeline
             {
                 (connection as FrameworkElement).BeginAnimation(RadDiagramShape.OpacityProperty, fadeOutAnimation);
             }
-
-            graphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
-            {
-                RoutedEvent = BnGraphControl.GroupButtonClickedEvent,
-                Value = vertexViewModel
-            });
         }
     }
 }

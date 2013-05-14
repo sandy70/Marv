@@ -24,11 +24,11 @@ namespace LibPipeline
         public static readonly RoutedEvent FileNotFoundEvent =
         EventManager.RegisterRoutedEvent("FileNotFound", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(BnGraphControl));
 
-        public static readonly RoutedEvent GroupButtonClickedEvent =
-        EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
-
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
+
+        public static readonly DependencyProperty IsBackButtonVisibleProperty =
+        DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
@@ -72,6 +72,8 @@ namespace LibPipeline
         public static readonly DependencyProperty VertexValuesProperty =
         DependencyProperty.Register("VertexValues", typeof(IEnumerable<BnVertexValue>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedVertexValues));
 
+        private Stack<BnGraph> graphStack = new Stack<BnGraph>();
+
         public BnGraphControl()
         {
             InitializeComponent();
@@ -81,12 +83,6 @@ namespace LibPipeline
         {
             add { AddHandler(FileNotFoundEvent, value); }
             remove { RemoveHandler(FileNotFoundEvent, value); }
-        }
-
-        public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> GroupButtonClicked
-        {
-            add { AddHandler(GroupButtonClickedEvent, value); }
-            remove { RemoveHandler(GroupButtonClickedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> NewEvidenceAvailable
@@ -135,6 +131,12 @@ namespace LibPipeline
         {
             get { return (Color)GetValue(IncomingConnectionHighlightColorProperty); }
             set { SetValue(IncomingConnectionHighlightColorProperty, value); }
+        }
+
+        public bool IsBackButtonVisible
+        {
+            get { return (bool)GetValue(IsBackButtonVisibleProperty); }
+            set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
         public bool IsGroupButtonVisible
@@ -195,6 +197,28 @@ namespace LibPipeline
         {
             get { return (IEnumerable<BnVertexValue>)GetValue(VertexValuesProperty); }
             set { SetValue(VertexValuesProperty, value); }
+        }
+
+        public void Back()
+        {
+            this.graphStack.Pop();
+            this.DisplayGraph = this.graphStack.Peek();
+
+            if (this.graphStack.Count <= 1)
+            {
+                this.IsBackButtonVisible = false;
+            }
+        }
+
+        public void Forward(BnGraph graph)
+        {
+            this.graphStack.Push(graph);
+            this.DisplayGraph = graph;
+
+            if (this.graphStack.Count > 1)
+            {
+                this.IsBackButtonVisible = true;
+            }
         }
 
         private async static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -301,17 +325,15 @@ namespace LibPipeline
             else
             {
                 PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup);
+                graphControl.Forward(partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup));
 
                 if (graphControl.SelectedGroup.Equals(Groups.Default))
                 {
                     graphControl.IsGroupButtonVisible = true;
-                    graphControl.BackButton.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     graphControl.IsGroupButtonVisible = false;
-                    graphControl.BackButton.Visibility = Visibility.Visible;
                 }
             }
         }

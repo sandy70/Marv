@@ -255,7 +255,7 @@
         <telerik:RadButton Name="BackButton"
                            HorizontalAlignment="Left" VerticalAlignment="Top"
                            Margin="10"
-                           Visibility="Collapsed"
+                           Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                            Width="50" Height="50">
             <i:Interaction.Behaviors>
                 <libpipeline:BackButtonBehavior />
