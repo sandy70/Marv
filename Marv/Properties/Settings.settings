@@ -24,7 +24,10 @@
       <Value Profile="(Default)">.\</Value>
     </Setting>
     <Setting Name="FileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\Corrosion.net</Value>
+      <Value Profile="(Default)">D:\Data\SCC\HighpH_failure.net</Value>
+    </Setting>
+    <Setting Name="StartingGroup" Type="System.String" Scope="User">
+      <Value Profile="(Default)">all</Value>
     </Setting>
   </Settings>
 </SettingsFile>

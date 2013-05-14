@@ -16,6 +16,7 @@
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="FileName" Value="{Binding Default.FileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="StartingGroup" Value="{Binding Default.StartingGroup, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
         </Style>
     </Window.Resources>
 
@@ -123,7 +124,7 @@
                                         FileName="{Binding FileName, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}"
-                                        StartingGroup="0"
+                                        StartingGroup="{Binding StartingGroup, ElementName=Root}"
                                         VertexValues="{Binding SelectedVertexValues, ElementName=Root}"/>
 
             <telerik:RadButton Name="RetractAllButton"

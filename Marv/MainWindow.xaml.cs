@@ -51,6 +51,9 @@ namespace Marv
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(Config.StartYear));
 
+        public static readonly DependencyProperty StartingGroupProperty =
+        DependencyProperty.Register("StartingGroup", typeof(string), typeof(MainWindow), new PropertyMetadata("all"));
+
         public static readonly DependencyProperty TallyLocationsProperty =
         DependencyProperty.Register("TallyLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -146,6 +149,12 @@ namespace Marv
         {
             get { return (int)GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public string StartingGroup
+        {
+            get { return (string)GetValue(StartingGroupProperty); }
+            set { SetValue(StartingGroupProperty, value); }
         }
 
         public IEnumerable<ILocation> TallyLocations
