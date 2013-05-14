@@ -220,6 +220,7 @@ namespace LibPipeline
             if (File.Exists(graphControl.FileName))
             {
                 graphControl.SourceGraph = await BnGraphReader<BnVertexViewModel>.ReadAsync(graphControl.FileName);
+                graphControl.graphStack.Clear();
 
                 // We need to do this so that ChangedSelectedGroup is fired
                 graphControl.SelectedGroup = null;
