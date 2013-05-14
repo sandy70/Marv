@@ -66,6 +66,9 @@ namespace LibPipeline
         public static readonly DependencyProperty SourceGraphProperty =
         DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null, ChangedSourceGraph));
 
+        public static readonly DependencyProperty StartingGroupProperty =
+        DependencyProperty.Register("StartingGroup", typeof(string), typeof(BnGraphControl), new PropertyMetadata("all"));
+
         public static readonly DependencyProperty VertexValuesProperty =
         DependencyProperty.Register("VertexValues", typeof(IEnumerable<BnVertexValue>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedVertexValues));
 
@@ -182,6 +185,12 @@ namespace LibPipeline
             set { SetValue(SourceGraphProperty, value); }
         }
 
+        public string StartingGroup
+        {
+            get { return (string)GetValue(StartingGroupProperty); }
+            set { SetValue(StartingGroupProperty, value); }
+        }
+
         public IEnumerable<BnVertexValue> VertexValues
         {
             get { return (IEnumerable<BnVertexValue>)GetValue(VertexValuesProperty); }
@@ -199,7 +208,7 @@ namespace LibPipeline
 
                 // We need to do this so that ChangedSelectedGroup is fired
                 graphControl.SelectedGroup = null;
-                graphControl.SelectedGroup = Groups.Default;
+                graphControl.SelectedGroup = graphControl.StartingGroup;
             }
             else
             {
@@ -339,6 +348,5 @@ namespace LibPipeline
                 }
             }
         }
-
     }
 }
