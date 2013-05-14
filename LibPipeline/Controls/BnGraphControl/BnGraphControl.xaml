@@ -37,11 +37,9 @@
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
-                    <Setter Property="SourceConnectorPosition" Value="Bottom" />
                     <Setter Property="StrokeThickness" Value="10" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
-                    <Setter Property="TargetConnectorPosition" Value="Top" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate />
@@ -99,8 +97,7 @@
                                                     Margin="5,0,5,0"/>
 
                                             <!-- Static Text "Certainty" -->
-                                            <Grid Margin="10"
-                                                  Visibility="{Binding IsGrouped, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                            <Grid Margin="10">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition />
                                                     <ColumnDefinition Width="100" />
@@ -125,8 +122,7 @@
                                                                          MostProbableState="{Binding MostProbableState}"
                                                                          SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
                                                                          States="{Binding States}"
-                                                                         StatesFontSize="12"
-                                                                         Visibility="{Binding IsGrouped, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                                         StatesFontSize="12">
                                                 <i:Interaction.Behaviors>
                                                     <libpipeline:BnStatesControlBehavior />
                                                 </i:Interaction.Behaviors>
@@ -135,8 +131,7 @@
                                             <!-- Units -->
                                             <TextBlock FontSize="14"
                                                        Margin="10"
-                                                       Text="{Binding Units, StringFormat=Units: {0}}" 
-                                                       Visibility="{Binding IsGrouped, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                                                       Text="{Binding Units, StringFormat=Units: {0}}" />
 
                                             <!-- Description -->
                                             <TextBlock FontSize="14"

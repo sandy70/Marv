@@ -33,9 +33,6 @@ namespace LibPipeline
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty IsGroupedProperty =
-        DependencyProperty.Register("IsGrouped", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true, ChangedIsGrouped));
-
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
 
@@ -145,12 +142,6 @@ namespace LibPipeline
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
-        public bool IsGrouped
-        {
-            get { return (bool)GetValue(IsGroupedProperty); }
-            set { SetValue(IsGroupedProperty, value); }
-        }
-
         public bool IsSensorButtonVisible
         {
             get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
@@ -243,36 +234,12 @@ namespace LibPipeline
             }
         }
 
-        private static void ChangedIsGrouped(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (!graphControl.IsGrouped)
-            {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, Groups.All);
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-            }
-            else
-            {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup);
-            }
-        }
-
         private static void ChangedSelectedGroup(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var graphControl = d as BnGraphControl;
 
-            if (graphControl.IsGrouped)
-            {
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-                BnGraphControl.UpdateDisplayGraph(graphControl);
-            }
-            else
-            {
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-            }
+            graphControl.HighlightGroup(graphControl.SelectedGroup);
+            BnGraphControl.UpdateDisplayGraph(graphControl);
         }
 
         private static void ChangedSourceGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -289,14 +256,7 @@ namespace LibPipeline
                     {
                         if (a.PropertyName.Equals("DisplayPosition"))
                         {
-                            if (graphControl.IsGrouped)
-                            {
-                                vertexViewModel.PositionsByGroup[graphControl.SelectedGroup] = vertexViewModel.DisplayPosition;
-                            }
-                            else
-                            {
-                                vertexViewModel.PositionsByGroup[Groups.All] = vertexViewModel.DisplayPosition;
-                            }
+                            vertexViewModel.PositionsByGroup[graphControl.SelectedGroup] = vertexViewModel.DisplayPosition;
                         }
                     };
                 }

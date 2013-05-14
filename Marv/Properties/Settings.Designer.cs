@@ -109,7 +109,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\SCC\\HighpH_failure.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Corrosion.net")]
         public string FileName {
             get {
                 return ((string)(this["FileName"]));
