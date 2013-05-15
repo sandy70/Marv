@@ -4,6 +4,13 @@ namespace LibPipeline
 {
     public static class TileLayers
     {
+        public static TileLayer MapBoxTerrain = new TileLayer
+        {
+            SourceName = "MapBoxTerrain",
+            Description = "MapBox Terrain",
+            TileSource = new TileSource("http://a.tiles.mapbox.com/v3/vinodkhare.map-vu2qowlx/{z}/{x}/{y}.png")
+        };
+
         public static TileLayer MapQuestSat = new TileLayer
         {
             SourceName = "MapQuestSat",

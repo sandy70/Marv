@@ -71,6 +71,7 @@ namespace Marv
             InitializeComponent();
 
             TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, this.CacheDirectory);
+            this.MapView.TileLayer = TileLayers.MapBoxTerrain;
         }
 
         public string CacheDirectory

@@ -147,11 +147,11 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0"
-                    Content="{Binding Path=Value, ElementName=YearSlider}"
-                    Background="Black"
-                    Foreground="White"
-                    FontSize="24" FontWeight="Bold"
-                    HorizontalContentAlignment="Center" />
+                       Content="{Binding Path=Value, ElementName=YearSlider}"
+                       Background="Black"
+                       Foreground="White"
+                       FontSize="24" FontWeight="Bold"
+                       HorizontalContentAlignment="Center" />
 
                 <surface:SurfaceSlider Name="YearSlider"
                                        Grid.Column="1"
@@ -168,21 +168,21 @@
         </Grid>
 
         <local:PopupControl x:Name="PopupControl"
-                           Grid.Column="0" Grid.ColumnSpan="3"
-                           Background="#DDDDDD"
-                           Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                           Margin="50"
-                           VerticalAlignment="Top" HorizontalAlignment="Left"
-                           Visibility="Collapsed"
-                           Width="300" Height="50" />
+                            Grid.Column="0" Grid.ColumnSpan="3"
+                            Background="#DDDDDD"
+                            Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                            Margin="50"
+                            VerticalAlignment="Top" HorizontalAlignment="Left"
+                            Visibility="Collapsed"
+                            Width="300" Height="50" />
 
         <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
-                                Grid.Column="0" Grid.ColumnSpan="3"
-                                Background="#DDDDDD"
-                                Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}"
-                                Padding="10"
-                                VerticalAlignment="Top" HorizontalAlignment="Left"
-                                Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+                                 Grid.Column="0" Grid.ColumnSpan="3"
+                                 Background="#DDDDDD"
+                                 Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                 Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}"
+                                 Padding="10"
+                                 VerticalAlignment="Top" HorizontalAlignment="Left"
+                                 Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
     </Grid>
 </Window>
