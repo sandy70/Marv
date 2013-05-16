@@ -16,6 +16,8 @@ namespace LibBn
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
         public Network Network = new Network();
+
+        private string associatedGroup;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private NetworkStructure structure = new NetworkStructure();
 
@@ -34,6 +36,24 @@ namespace LibBn
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public string AssociatedGroup
+        {
+            get
+            {
+                return this.associatedGroup;
+            }
+
+            set
+            {
+                if (value != this.associatedGroup)
+                {
+                    this.associatedGroup = value;
+
+                    this.OnPropertyChanged("AssociatedGroup");
+                }
+            }
+        }
 
         public ObservableCollection<string> Groups
         {
@@ -143,10 +163,26 @@ namespace LibBn
             }
         }
 
+        public void FillDisplayPositions()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                if (vertex.PositionsByGroup.ContainsKey(this.AssociatedGroup))
+                {
+                    vertex.DisplayPosition = vertex.PositionsByGroup[this.AssociatedGroup];
+                }
+                else
+                {
+                    vertex.DisplayPosition = vertex.Position;
+                }
+            }
+        }
+
         public BnGraph GetGroup(string group)
         {
             // Extract the header vertices
             BnGraph partGraph = new BnGraph();
+            partGraph.AssociatedGroup = group;
 
             foreach (var vertex in this.Vertices)
             {
