@@ -11,19 +11,32 @@ namespace GroupViewer
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Closed += AssociatedObject_Closed;
+            //this.AssociatedObject.Closed += AssociatedObject_Closed;
+            this.AssociatedObject.Closing += AssociatedObject_Closing;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
         }
 
-        private void AssociatedObject_Closed(object sender, EventArgs e)
+        private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (Settings.Default.IsGraphSaveEnabled)
             {
-                BnGraphWriter.WritePositions(Properties.Settings.Default.FileName, this.AssociatedObject.GraphControl.SourceGraph);
+                //BnGraphWriter.WritePositions(Properties.Settings.Default.FileName, this.AssociatedObject.GraphControl.SourceGraph);
+                this.AssociatedObject.GraphControl.SourceGraph.Write(Properties.Settings.Default.FileName);
             }
 
             Properties.Settings.Default.Save();
         }
+
+        //private void AssociatedObject_Closed(object sender, EventArgs e)
+        //{
+        //    if (Settings.Default.IsGraphSaveEnabled)
+        //    {
+        //        //BnGraphWriter.WritePositions(Properties.Settings.Default.FileName, this.AssociatedObject.GraphControl.SourceGraph);
+        //        this.AssociatedObject.GraphControl.SourceGraph.Write(Properties.Settings.Default.FileName);
+        //    }
+
+        //    Properties.Settings.Default.Save();
+        //}
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
