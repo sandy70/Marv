@@ -1,10 +1,13 @@
 ﻿using QuickGraph;
+using QuickGraph.Algorithms.RankedShortestPath;
 using Smile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows;
 using Telerik.Windows.Diagrams.Core;
 
 namespace LibBn
@@ -14,6 +17,7 @@ namespace LibBn
     {
         public Network Network = new Network();
         private ObservableCollection<string> groups = new ObservableCollection<string>();
+        private NetworkStructure structure = new NetworkStructure();
 
         public BnGraph()
         {
@@ -58,6 +62,44 @@ namespace LibBn
             get { return this.Edges; }
         }
 
+        public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
+        {
+            var graph = new BnGraph();
+            graph.structure = NetworkStructure.Read(fileName);
+            graph.Network.ReadFile(fileName);
+            graph.Network.UpdateBeliefs();
+
+            // Add all the vertices
+            foreach (var node in graph.structure.Nodes)
+            {
+                var vertex = new TVertex();
+
+                vertex.Key = node.Key;
+                vertex.Description = node.ParseStringProperty("HR_HTML_Desc");
+                vertex.Groups = node.ParseGroups();
+                vertex.HeaderOfGroup = node.ParseStringProperty("headerofgroup");
+                vertex.Name = node.ParseStringProperty("label");
+                vertex.Position = node.ParsePosition();
+                vertex.PositionsByGroup = node.ParsePositionByGroup();
+                vertex.Units = node.ParseStringProperty("units");
+
+                vertex.States = graph.Network.ParseStates(node.Key);
+
+                graph.AddVertex(vertex);
+            }
+
+            // Add all the edges
+            foreach (var srcNode in graph.structure.Nodes)
+            {
+                foreach (var dstNode in srcNode.Children)
+                {
+                    graph.AddEdge(srcNode.Key, dstNode.Key);
+                }
+            }
+
+            return graph;
+        }
+
         public void AddEdge(string key1, string key2)
         {
             if (key1.Equals(key2)) return;
@@ -92,7 +134,7 @@ namespace LibBn
         {
             foreach (var srcVertexValue in vertexValues)
             {
-                BnVertex dstVertex = this.GetVertexByKey(srcVertexValue.Key);
+                BnVertex dstVertex = this.GetVertex(srcVertexValue.Key);
 
                 if (dstVertex != null)
                 {
@@ -101,7 +143,63 @@ namespace LibBn
             }
         }
 
-        public BnVertex GetVertexByKey(string key)
+        public BnGraph GetGroup(string group)
+        {
+            // Extract the header vertices
+            BnGraph partGraph = new BnGraph();
+
+            foreach (var vertex in this.Vertices)
+            {
+                if (vertex.Groups.Contains(group))
+                {
+                    partGraph.AddVertex(vertex);
+
+                    Point positionByGroup;
+
+                    if (vertex.PositionsByGroup.TryGetValue(group, out positionByGroup))
+                    {
+                        vertex.DisplayPosition = positionByGroup;
+                    }
+                    else
+                    {
+                        vertex.PositionsByGroup.Add(group, vertex.Position);
+                        vertex.DisplayPosition = vertex.Position;
+                    }
+                }
+            }
+
+            // Process for each pair
+            foreach (var srcVertex in partGraph.Vertices)
+            {
+                foreach (var dstVertex in partGraph.Vertices)
+                {
+                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<BnVertex, BnEdge>(this, (edge) => { return 1; });
+                    algorithm.Compute(srcVertex, dstVertex);
+
+                    foreach (var path in algorithm.ComputedShortestPaths)
+                    {
+                        BnVertex src = path.First().Source;
+
+                        foreach (var edge in path)
+                        {
+                            if (partGraph.Vertices.Contains(edge.Target))
+                            {
+                                if (!partGraph.HasEdge(src.Key, edge.Target.Key))
+                                {
+                                    partGraph.AddEdge(src.Key, edge.Target.Key);
+                                }
+
+                                src = edge.Target;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return partGraph;
+        }
+
+        public BnVertex GetVertex(string key)
         {
             foreach (var vertex in this.Vertices)
             {
@@ -126,6 +224,19 @@ namespace LibBn
             }
 
             return hasEdge;
+        }
+
+        public void Write(string fileName)
+        {
+            var structure = NetworkStructure.Read(fileName);
+
+            foreach (var node in structure.Nodes)
+            {
+                node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
+                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionsByGroup.String() + "\"";
+            }
+
+            structure.Write(fileName);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
