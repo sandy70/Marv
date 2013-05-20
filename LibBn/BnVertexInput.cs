@@ -23,7 +23,7 @@ namespace LibBn
             }
             else
             {
-                this.InputType = VertexInputType.Distribution;
+                this.InputType = VertexInputType.SoftEvidence;
                 this.Evidence = new List<double>();
 
                 foreach (var state in vertex.States)

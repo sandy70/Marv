@@ -8,7 +8,7 @@
 
     public enum VertexInputType
     {
-        Distribution,
+        SoftEvidence,
         PastYear,
         StateSelected
     }

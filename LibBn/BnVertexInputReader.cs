@@ -37,7 +37,7 @@ namespace LibBn
             }
             else if (inputTypeIndex == 2)
             {
-                return VertexInputType.Distribution;
+                return VertexInputType.SoftEvidence;
             }
             else
             {
@@ -61,7 +61,7 @@ namespace LibBn
                 {
                     int.TryParse(data[v, 3], out vertexInput.SelectedStateIndex);
                 }
-                else if (vertexInput.InputType == VertexInputType.Distribution)
+                else if (vertexInput.InputType == VertexInputType.SoftEvidence)
                 {
                     int i = 3;
 
@@ -100,7 +100,7 @@ namespace LibBn
                 {
                     int.TryParse(data[v, 3], out vertexInput.SelectedStateIndex);
                 }
-                else if (vertexInput.InputType == VertexInputType.Distribution)
+                else if (vertexInput.InputType == VertexInputType.SoftEvidence)
                 {
                     int i = 3;
 

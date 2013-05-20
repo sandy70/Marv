@@ -56,7 +56,7 @@ namespace LibBn
             {
                 network.SetEvidence(nodeHandle, input.SelectedStateIndex);
             }
-            else if (input.InputType == VertexInputType.Distribution)
+            else if (input.InputType == VertexInputType.SoftEvidence)
             {
                 int nStates = network.GetOutcomeCount(nodeHandle);
                 double[] evidence = new double[nStates];
