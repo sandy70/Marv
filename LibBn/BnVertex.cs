@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smile;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,10 +17,23 @@ namespace LibBn
         private bool isHeader = false;
         private string key = "";
         private string name = "";
+        private Network network;
+        private int nodeHandle;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
         private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
         private string units = "";
+
+        public BnVertex()
+        {
+        }
+
+        public BnVertex(Network aNetwork)
+        {
+            this.network = aNetwork;
+            this.nodeHandle = this.network.GetNode(key);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Description
@@ -110,6 +124,11 @@ namespace LibBn
             {
                 key = value;
                 OnPropertyChanged("Key");
+
+                if (this.Network != null)
+                {
+                    this.nodeHandle = this.Network.GetNode(this.Key);
+                }
             }
         }
 
@@ -120,6 +139,28 @@ namespace LibBn
             {
                 name = value;
                 OnPropertyChanged("Name");
+            }
+        }
+
+        public Network Network
+        {
+            get
+            {
+                return this.network;
+            }
+
+            set
+            {
+                if (value != this.network)
+                {
+                    this.network = value;
+                    this.OnPropertyChanged("Network");
+
+                    if (this.Network != null)
+                    {
+                        this.Network.GetNode(this.Key);
+                    }
+                }
             }
         }
 
@@ -232,6 +273,43 @@ namespace LibBn
                 return this.States.IndexOf(selectedState);
         }
 
+        public int GetStateIndex(string stateKey)
+        {
+            int stateIndex = -1;
+
+            foreach (var state in this.States)
+            {
+                if (state.Key.Equals(stateKey))
+                {
+                    return states.IndexOf(state);
+                }
+            }
+
+            return stateIndex;
+        }
+
+        public void SetEvidence(double[] evidence)
+        {
+            this.network.SetSoftEvidence(this.Key, evidence);
+        }
+
+        public void SetEvidence(string stateKey)
+        {
+            this.network.SetEvidence(this.Key, this.GetStateIndex(stateKey));
+        }
+
+        public void SetEvidence(VertexEvidence vertexEvidence)
+        {
+            if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
+            {
+                this.SetEvidence(vertexEvidence.StateIndex);
+            }
+            else if (vertexEvidence.EvidenceType == EvidenceType.SoftEvidence)
+            {
+                this.SetEvidence(vertexEvidence.Evidence);
+            }
+        }
+
         public void SetSelectedStateIndex(int index)
         {
             int nStates = this.States.Count;
@@ -249,10 +327,33 @@ namespace LibBn
             }
         }
 
+        internal double GetStateValue(string stateKey)
+        {
+            var stateIndex = this.GetStateIndex(stateKey);
+            var nodeValue = this.Network.GetNodeValue(this.Key);
+            var stateValue = nodeValue[stateIndex];
+            return stateValue;
+
+            // return this.network.GetNodeValue(this.Key)[this.GetStateIndex(stateKey)];
+        }
+
+        internal void SetValue(Dictionary<string, double> vertexValue)
+        {
+            foreach (var state in this.States)
+            {
+                state.Value = vertexValue[state.Key];
+            }
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void SetEvidence(int stateIndex)
+        {
+            this.Network.SetEvidence(this.Key, stateIndex);
         }
     }
 }
