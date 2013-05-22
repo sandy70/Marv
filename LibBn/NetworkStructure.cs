@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smile;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,14 +9,21 @@ namespace LibBn
     public class NetworkStructure
     {
         public List<string> Footer = new List<string>();
-
-        public List<NetworkStructureNode> Nodes = new List<NetworkStructureNode>();
-
+        public List<NetworkStructureVertex> Nodes = new List<NetworkStructureVertex>();
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
+        private Network network = null;
+
+        public NetworkStructure(Network aNetwork)
+        {
+            this.network = aNetwork;
+        }
 
         public static NetworkStructure Read(string path)
         {
-            var structure = new NetworkStructure();
+            var network = new Network();
+            network.ReadFile(path);
+
+            var structure = new NetworkStructure(network);
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
 
@@ -23,11 +31,12 @@ namespace LibBn
 
             for (int i = 0; i < nLines; i++)
             {
+                // Parse the node section
                 if (fileLines[i].StartsWith("node"))
                 {
                     var parts = fileLines[i].Split(new char[] { ' ' }, 2).ToList();
 
-                    var node = new NetworkStructureNode { Key = parts[1] };
+                    var node = new NetworkStructureVertex { Key = parts[1] };
 
                     structure.Nodes.Add(node);
 
@@ -46,6 +55,7 @@ namespace LibBn
                     }
                 }
 
+                // Parse the header 'net' section
                 else if (fileLines[i].Equals("net"))
                 {
                     while (!fileLines[i].Equals("{"))
@@ -63,12 +73,14 @@ namespace LibBn
                     }
                 }
 
+                // Else just add to the footer. Later these might be 'potential' objects
                 else
                 {
                     structure.Footer.Add(fileLines[i]);
                 }
             }
 
+            // Parse links
             foreach (var node in structure.Nodes)
             {
                 var linkValueString = node.Properties["HR_LinkMode"];
@@ -78,11 +90,55 @@ namespace LibBn
                 {
                     var subParts = part.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    node.Children.Add(structure.GetNode(subParts[0]));
+                    if (structure.HasNode(subParts[0]))
+                    {
+                        node.Children.Add(structure.GetNode(subParts[0]));
+                    }
                 }
             }
 
+            structure.FixStates();
+
             return structure;
+        }
+
+        public void FixStates()
+        {
+            foreach (var node in this.Nodes)
+            {
+                var states = node.ParseStates();
+
+                foreach (var prop in node.Properties.Where(x => x.Key.StartsWith("HR_State_")).ToList())
+                {
+                    node.Properties.Remove(prop.Key);
+                }
+
+                foreach (var state in states)
+                {
+                    int n = states.IndexOf(state);
+                    node.Properties[String.Format("HR_State_{0}", n)] = "\"" + state + "\"";
+                }
+            }
+        }
+
+        public NetworkStructureVertex GetNode(string key)
+        {
+            return this.Nodes.Where(x => x.Key.Equals(key)).FirstOrDefault();
+        }
+
+        public bool HasNode(string key)
+        {
+            bool hasNode = false;
+
+            foreach (var node in this.Nodes)
+            {
+                if (node.Key.Equals(key))
+                {
+                    hasNode = true;
+                }
+            }
+
+            return hasNode;
         }
 
         public void Write(string path)
@@ -118,25 +174,6 @@ namespace LibBn
                 foreach (var line in this.Footer)
                 {
                     writer.WriteLine(line);
-                }
-            }
-        }
-
-        public void FixStates()
-        {
-            foreach (var node in this.Nodes)
-            {
-                var states = node.ParseStates();
-
-                foreach (var prop in node.Properties.Where(x => x.Key.StartsWith("HR_State_")).ToList())
-                {
-                    node.Properties.Remove(prop.Key);
-                }
-
-                foreach (var state in states)
-                {
-                    int n = states.IndexOf(state);
-                    node.Properties[String.Format("HR_State_{0}", n)] = "\"" + state + "\"";
                 }
             }
         }
