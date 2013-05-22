@@ -4,6 +4,7 @@ namespace LibBn
 {
     public class BnVertexInput
     {
+        public Dictionary<string, double> aEvidence = new Dictionary<string, double>();
         public List<double> Evidence = new List<double>();
         public VertexInputType InputType;
         public string InputVertexKey;
