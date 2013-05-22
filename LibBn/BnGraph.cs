@@ -16,11 +16,12 @@ namespace LibBn
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
         public Network Network = new Network();
-
+        
+        private Dictionary<string, Dictionary<string, double>> _value;
         private string associatedGroup;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private NetworkStructure structure = new NetworkStructure();
-
+        
         public BnGraph()
         {
         }
@@ -82,10 +83,34 @@ namespace LibBn
             get { return this.Edges; }
         }
 
+        public Dictionary<string, Dictionary<string, double>> Value
+        {
+            get
+            {
+                return this._value;
+            }
+
+            set
+            {
+                if (value != this._value)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+
+                    foreach (var vertexKey in this._value.Keys)
+                    {
+                        this.GetVertex(vertexKey)
+                            .SetValue(this._value[vertexKey]);
+                    }
+                }
+            }
+        }
+
         public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
         {
             var graph = new BnGraph();
             graph.structure = NetworkStructure.Read(fileName);
+
             graph.Network.ReadFile(fileName);
             graph.Network.UpdateBeliefs();
 
@@ -99,10 +124,10 @@ namespace LibBn
                 vertex.Groups = node.ParseGroups();
                 vertex.HeaderOfGroup = node.ParseStringProperty("headerofgroup");
                 vertex.Name = node.ParseStringProperty("label");
+                vertex.Network = graph.Network;
                 vertex.Position = node.ParsePosition();
                 vertex.PositionsByGroup = node.ParsePositionByGroup();
                 vertex.Units = node.ParseStringProperty("units");
-
                 vertex.States = graph.Network.ParseStates(node.Key);
 
                 graph.AddVertex(vertex);
@@ -159,21 +184,6 @@ namespace LibBn
                 if (dstVertex != null)
                 {
                     dstVertex.CopyFrom(srcVertexValue);
-                }
-            }
-        }
-
-        public void FillDisplayPositions()
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                if (vertex.PositionsByGroup.ContainsKey(this.AssociatedGroup))
-                {
-                    vertex.DisplayPosition = vertex.PositionsByGroup[this.AssociatedGroup];
-                }
-                else
-                {
-                    vertex.DisplayPosition = vertex.Position;
                 }
             }
         }
@@ -235,6 +245,25 @@ namespace LibBn
             return partGraph;
         }
 
+        public Dictionary<string, Dictionary<string, double>> GetNetworkValue()
+        {
+            var graphValue = new Dictionary<string, Dictionary<string, double>>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                var vertexValue = new Dictionary<string, double>();
+
+                foreach (var state in vertex.States)
+                {
+                    vertexValue[state.Key] = vertex.GetStateValue(state.Key);
+                }
+
+                graphValue[vertex.Key] = vertexValue;
+            }
+
+            return graphValue;
+        }
+
         public BnVertex GetVertex(string key)
         {
             foreach (var vertex in this.Vertices)
@@ -244,6 +273,7 @@ namespace LibBn
                     return vertex;
                 }
             }
+
             return null;
         }
 
@@ -260,6 +290,40 @@ namespace LibBn
             }
 
             return hasEdge;
+        }
+
+        public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.GetVertex(vertexKey)
+                    .SetEvidence(graphEvidence[vertexKey]);
+            }
+        }
+
+        public void UpdateBeliefs()
+        {
+            this.Network.UpdateBeliefs();
+        }
+
+        public void UpdateDisplayPositions()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                if (vertex.PositionsByGroup.ContainsKey(this.AssociatedGroup))
+                {
+                    vertex.DisplayPosition = vertex.PositionsByGroup[this.AssociatedGroup];
+                }
+                else
+                {
+                    vertex.DisplayPosition = vertex.Position;
+                }
+            }
+        }
+
+        public void UpdateValue()
+        {
+            this.Value = this.GetNetworkValue();
         }
 
         public void Write(string fileName)
