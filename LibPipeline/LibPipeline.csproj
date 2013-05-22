@@ -75,6 +75,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\mongocsharpdriver.1.7\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ProjNet">
@@ -145,6 +148,9 @@
   <ItemGroup>
     <Compile Include="BingMap\BingMap.cs" />
     <Compile Include="BingMap\BingMapUpdateBehavior.cs" />
+    <Compile Include="InputStore.cs" />
+    <Compile Include="NormalDistribution.cs" />
+    <Compile Include="ValueStore.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnStatesControlBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnVertexViewModel.cs" />
@@ -222,9 +228,12 @@
       <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
       <Name>MapControl.WPF</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
+      <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
+      <Name>SmileNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\Extensions.BnGraph.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

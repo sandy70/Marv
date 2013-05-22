@@ -91,7 +91,6 @@
   <ItemGroup>
     <Compile Include="BnEdge.cs" />
     <Compile Include="BnGraph.cs" />
-    <Compile Include="BnGraphWriter.cs" />
     <Compile Include="BnState.cs" />
     <Compile Include="BnUpdater.cs" />
     <Compile Include="BnVertex.cs" />
@@ -101,12 +100,11 @@
     <Compile Include="CsvReader.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="BnGraphReader.cs" />
     <Compile Include="BnInputStore.cs" />
-    <Compile Include="NetworkHeaderReader.cs" />
-    <Compile Include="NetworkHeaderWriter.cs" />
-    <Compile Include="PartGraphGenerator.cs" />
+    <Compile Include="NetworkStructure.cs" />
+    <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VertexEvidence.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

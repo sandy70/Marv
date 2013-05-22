@@ -24,7 +24,10 @@ namespace LibPipeline
         DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
+
+        public static readonly RoutedEvent SelectionChangedEvent =
+        EventManager.RegisterRoutedEvent("SelectionChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<ILocation>>), typeof(PolylineControl));
 
         public static readonly DependencyProperty SimplifiedLocationsProperty =
         DependencyProperty.Register("SimplifiedLocations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null));
@@ -35,6 +38,12 @@ namespace LibPipeline
         public PolylineControl()
         {
             InitializeComponent();
+        }
+
+        public event RoutedEventHandler<ValueEventArgs<ILocation>> SelectionChanged
+        {
+            add { AddHandler(SelectionChangedEvent, value); }
+            remove { RemoveHandler(SelectionChangedEvent, value); }
         }
 
         public Brush CursorFill
@@ -85,6 +94,12 @@ namespace LibPipeline
             set { SetValue(StrokeProperty, value); }
         }
 
+        public void UpdateVisual()
+        {
+            this.MapPanel.InvalidateVisual();
+            this.MapPanel.UpdateLayout();
+        }
+
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pipelineControl = d as PolylineControl;
@@ -93,10 +108,14 @@ namespace LibPipeline
             pipelineControl.CursorLocation = pipelineControl.SelectedLocation;
         }
 
-        public void UpdateVisual()
+        private static void ChangedSelectedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            this.MapPanel.InvalidateVisual();
-            this.MapPanel.UpdateLayout();
+            var polylineControl = d as PolylineControl;
+            polylineControl.RaiseEvent(new ValueEventArgs<ILocation>
+            {
+                RoutedEvent = PolylineControl.SelectionChangedEvent,
+                Value = polylineControl.SelectedLocation
+            });
         }
     }
 }

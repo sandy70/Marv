@@ -24,9 +24,6 @@ namespace Marv
         public static readonly DependencyProperty FileNameProperty =
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty GroundOverlayProperty =
-        DependencyProperty.Register("GroundOverlay", typeof(GroundOverlay), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
@@ -104,12 +101,6 @@ namespace Marv
         {
             get { return (string)GetValue(FileNameProperty); }
             set { SetValue(FileNameProperty, value); }
-        }
-
-        public GroundOverlay GroundOverlay
-        {
-            get { return (GroundOverlay)GetValue(GroundOverlayProperty); }
-            set { SetValue(GroundOverlayProperty, value); }
         }
 
         public bool IsGroupButtonVisible
@@ -230,7 +221,7 @@ namespace Marv
                 var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
                 this.VertexValuesByYear[this.SelectedYear] = vertexValues;
                 this.GraphControl.SourceGraph.CopyFrom(vertexValues);
-                this.GraphControl.SourceGraph.CalculateMostProbableStates();
+                this.GraphControl.SourceGraph.UpdateMostProbableStates();
 
                 return true;
             }
@@ -244,18 +235,17 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (!window.valueStore.HasLocationValue(window.SelectedProfileLocation))
+            if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
             {
-                window.PopupControl.ShowTextIndeterminate("Running model.");
-                var locationValue = await MainWindow.RunModelAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
-                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
-                window.PopupControl.Hide();
+                window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
             }
             else
             {
-                var locationValue = window.valueStore.GetLocationValue(window.SelectedProfileLocation);
+                window.PopupControl.ShowTextIndeterminate("Running model.");
+                var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
                 window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
+                window.PopupControl.Hide();
             }
         }
 
@@ -270,87 +260,11 @@ namespace Marv
             else
             {
                 window.PopupControl.ShowTextIndeterminate("Running model.");
-                var locationValue = await MainWindow.RunModelAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+                var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
                 window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
                 window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
                 window.PopupControl.Hide();
             }
-        }
-
-        private static Dictionary<int, Dictionary<string, Dictionary<string, double>>>
-            RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
-        {
-            var inputStore = new InputStore();
-            var locationValue = new Dictionary<int, Dictionary<string, Dictionary<string, double>>>();
-
-            for (int year = startYear; year <= endYear; year++)
-            {
-                var graphInput = inputStore.GetGraphInput(year);
-                var graphEvidence = new Dictionary<string, VertexEvidence>();
-
-                var fixedVariables = new Dictionary<string, int>
-                {
-                    { "dia", 6 },
-                    { "t", 5 },
-                    { "coattype", 2 },
-                    { "surfaceprep", 4 },
-                    { "C8", 2 },
-                    { "Kd", 0 },
-                    { "Cs", 5 },
-                    { "Rs", 4 },
-                    { "pratio", 3 },
-                    { "freq", 3 },
-                    { "Kd_w", 10 },
-                    { "Kd_b", 10 },
-                    { "CP", 5 },
-                    { "rho", 4 },
-                    { "Co2", 3 },
-                    { "millscale", 1 },
-                    { "wd", 2 },
-                    { "T", 5 },
-                    { "P", 5 }
-                };
-
-                foreach (var variable in fixedVariables)
-                {
-                    graphEvidence[variable.Key] = new VertexEvidence
-                    {
-                        EvidenceType = EvidenceType.StateSelected,
-                        StateIndex = variable.Value
-                    };
-                }
-
-                var stateValues = new List<int> { 1000, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0 };
-
-                var location = selectedLocation as dynamic;
-                var mean = location.Pressure;
-                var variance = Math.Pow(location.Pressure - location.Pressure_Min, 2);
-                var normalDistribution = new NormalDistribution(mean, variance);
-
-                graphEvidence["P"] = new VertexEvidence
-                {
-                    Evidence = new double[stateValues.Count - 1],
-                    EvidenceType = EvidenceType.SoftEvidence
-                };
-
-                for (int i = 0; i < stateValues.Count - 1; i++)
-                {
-                    graphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
-                }
-
-                graph.SetEvidence(graphEvidence);
-                graph.UpdateBeliefs();
-
-                locationValue[year] = graph.GetNetworkValue();
-            }
-
-            return locationValue;
-        }
-
-        private static Task<Dictionary<int, Dictionary<string, Dictionary<string, double>>>>
-            RunModelAsync(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
-        {
-            return Task.Run(() => MainWindow.RunModel(selectedLocation, graph, startYear, endYear));
         }
     }
 }
