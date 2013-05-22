@@ -77,6 +77,8 @@ namespace Marv
 
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
+        private ValueStore valueStore = new ValueStore();
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
@@ -240,86 +242,95 @@ namespace Marv
 
         private static async void ChangedSelectedProfileLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("ChangedSelectedProfileLocation");
-
             var window = d as MainWindow;
-            Console.WriteLine("Running");
-            window.PopupControl.ShowTextIndeterminate("Running model.");
-            await MainWindow.RunModel(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-            window.PopupControl.Hide();
-            Console.WriteLine("Ran");
+
+            if (!window.valueStore.HasLocationValue(window.SelectedProfileLocation))
+            {
+                window.PopupControl.ShowTextIndeterminate("Running model.");
+                var locationValue = await MainWindow.RunModelAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
+                window.PopupControl.Hide();
+            }
+            else
+            {
+                var locationValue = window.valueStore.GetLocationValue(window.SelectedProfileLocation);
+                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+            }
         }
 
-        private static Task RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        private static Dictionary<int, Dictionary<string, Dictionary<string, double>>> RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
         {
-            return Task.Run(() =>
+            var inputStore = new InputStore();
+            var locationValue = new Dictionary<int, Dictionary<string, Dictionary<string, double>>>();
+
+            for (int year = startYear; year <= endYear; year++)
+            {
+                var graphInput = inputStore.GetGraphInput(year);
+                var graphEvidence = new Dictionary<string, VertexEvidence>();
+
+                var fixedVariables = new Dictionary<string, int>
                 {
-                    var inputStore = new InputStore();
-                    var valueStore = new ValueStore();
+                    { "dia", 6 },
+                    { "t", 5 },
+                    { "coattype", 2 },
+                    { "surfaceprep", 4 },
+                    { "C8", 2 },
+                    { "Kd", 0 },
+                    { "Cs", 5 },
+                    { "Rs", 4 },
+                    { "pratio", 3 },
+                    { "freq", 3 },
+                    { "Kd_w", 10 },
+                    { "Kd_b", 10 },
+                    { "CP", 5 },
+                    { "rho", 4 },
+                    { "Co2", 3 },
+                    { "millscale", 1 },
+                    { "wd", 2 },
+                    { "T", 5 },
+                    { "P", 5 }
+                };
 
-                    //int startYear = this.StartYear;
-                    //int endYear = this.EndYear;
-
-                    for (int year = startYear; year <= endYear; year++)
+                foreach (var variable in fixedVariables)
+                {
+                    graphEvidence[variable.Key] = new VertexEvidence
                     {
-                        var graphInput = inputStore.GetGraphInput(year);
-                        var graphEvidence = new Dictionary<string, VertexEvidence>();
+                        EvidenceType = EvidenceType.StateSelected,
+                        StateIndex = variable.Value
+                    };
+                }
 
-                        var fixedVariables = new Dictionary<string, int>
-                        {
-                            { "dia", 6 },
-                            { "t", 5 },
-                            { "coattype", 2 },
-                            { "surfaceprep", 4 },
-                            { "C8", 2 },
-                            { "Kd", 0 },
-                            { "Cs", 5 },
-                            { "Rs", 4 },
-                            { "pratio", 3 },
-                            { "freq", 3 },
-                            { "Kd_w", 10 },
-                            { "Kd_b", 10 },
-                            { "CP", 5 },
-                            { "rho", 4 },
-                            { "Co2", 3 },
-                            { "millscale", 1 },
-                            { "wd", 2 },
-                            { "T", 5 },
-                            { "P", 5 }
-                        };
+                var stateValues = new List<int> { 1000, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0 };
 
-                        foreach (var variable in fixedVariables)
-                        {
-                            graphEvidence[variable.Key] = new VertexEvidence
-                            {
-                                EvidenceType = EvidenceType.StateSelected,
-                                StateIndex = variable.Value
-                            };
-                        }
+                var location = selectedLocation as dynamic;
+                var mean = location.Pressure;
+                var variance = Math.Pow(location.Pressure - location.Pressure_Min, 2);
+                var normalDistribution = new NormalDistribution(mean, variance);
 
-                        var stateValues = new List<int> { 1000, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0 };
+                graphEvidence["P"] = new VertexEvidence
+                {
+                    Evidence = new double[stateValues.Count - 1],
+                    EvidenceType = EvidenceType.SoftEvidence
+                };
 
-                        var location = selectedLocation as dynamic;
-                        var mean = location.Pressure;
-                        var variance = Math.Pow(location.Pressure - location.Pressure_Min, 2);
-                        var normalDistribution = new NormalDistribution(mean, variance);
+                for (int i = 0; i < stateValues.Count - 1; i++)
+                {
+                    graphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
+                }
 
-                        graphEvidence["P"] = new VertexEvidence
-                        {
-                            Evidence = new double[stateValues.Count - 1],
-                            EvidenceType = EvidenceType.SoftEvidence
-                        };
+                graph.SetEvidence(graphEvidence);
+                graph.UpdateBeliefs();
+                
+                locationValue[year] = graph.GetNetworkValue();
+            }
 
-                        for (int i = 0; i < stateValues.Count - 1; i++)
-                        {
-                            graphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
-                        }
+            return locationValue;
+        }
 
-                        graph.SetEvidence(graphEvidence);
-                        graph.UpdateBeliefs();
-                        graph.UpdateValue();
-                    }
-                });
+        private static Task<Dictionary<int, Dictionary<string, Dictionary<string, double>>>> RunModelAsync(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        {
+            return Task.Run(() => MainWindow.RunModel(selectedLocation, graph, startYear, endYear));
         }
     }
 }
