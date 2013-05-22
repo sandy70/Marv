@@ -17,6 +17,7 @@ namespace LibBn
         private bool isEvidenceEntered = false;
         private bool isHeader = false;
         private string key = "";
+        private BnState mostProbableState = null;
         private string name = "";
         private Network network;
         private int nodeHandle;
@@ -133,6 +134,23 @@ namespace LibBn
             }
         }
 
+        public BnState MostProbableState
+        {
+            get
+            {
+                return this.mostProbableState;
+            }
+
+            set
+            {
+                if (value != this.mostProbableState)
+                {
+                    this.mostProbableState = value;
+                    this.OnPropertyChanged("MostProbableState");
+                }
+            }
+        }
+
         public string Name
         {
             get { return name; }
@@ -244,6 +262,8 @@ namespace LibBn
                     {
                         state.Value = this.Value[state.Key];
                     }
+
+                    this.UpdateMostProbableState();
                 }
             }
         }
@@ -348,6 +368,21 @@ namespace LibBn
                     this.States[i].Value = 0;
                 }
             }
+        }
+
+        public void UpdateMostProbableState()
+        {
+            BnState mostProbableState = new BnState { Value = double.MinValue, Key = "" };
+
+            foreach (var state in this.States)
+            {
+                if (state.Value > mostProbableState.Value)
+                {
+                    mostProbableState = state;
+                }
+            }
+
+            this.MostProbableState = mostProbableState;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
