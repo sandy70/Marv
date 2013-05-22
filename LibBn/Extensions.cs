@@ -46,31 +46,6 @@ namespace LibBn
             } while (hasRemainingItems);
         }
 
-        public static BnVertexInput Find(this Dictionary<int, List<BnVertexInput>> vertexInputsByYear, int year, string key)
-        {
-            var vertexInputs = vertexInputsByYear.SingleOrDefault(x => x.Key == year).Value;
-
-            if (vertexInputs == null)
-            {
-                return null;
-            }
-            else
-            {
-                var vertexInput = vertexInputs.SingleOrDefault(x => x.Key.Equals(key));
-                return vertexInput;
-            }
-        }
-
-        public static BnVertex GetVertex(this IEnumerable<BnVertex> vertices, string key)
-        {
-            foreach (var vertex in vertices)
-            {
-                if (vertex.Key.Equals(key)) return vertex;
-            }
-
-            return null;
-        }
-
         public static ObservableCollection<BnState> ParseStates(this Network network, string key)
         {
             var states = new ObservableCollection<BnState>();

@@ -147,8 +147,8 @@ namespace LibBn
         {
             if (key1.Equals(key2)) return;
 
-            BnVertex v1 = this.Vertices.GetVertex(key1);
-            BnVertex v2 = this.Vertices.GetVertex(key2);
+            BnVertex v1 = this.GetVertex(key1);
+            BnVertex v2 = this.GetVertex(key2);
 
             if (v1 != null && v2 != null)
             {
