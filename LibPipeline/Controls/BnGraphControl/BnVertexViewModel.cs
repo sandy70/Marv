@@ -1,5 +1,6 @@
 ﻿﻿using LibBn;
 using System.ComponentModel;
+using Smile;
 
 namespace LibPipeline
 {
@@ -12,8 +13,13 @@ namespace LibPipeline
         private BnState mostProbableState = null;
         private double opacity = 1;
 
-        public BnVertexViewModel()
-            : base()
+        public BnVertexViewModel() : base()
+        {
+            this.PropertyChanged += BnVertexViewModel_PropertyChanged;
+        }
+
+        public BnVertexViewModel(Network network)
+            : base(network)
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
         }

@@ -11,6 +11,7 @@ namespace LibPipeline
         {
             var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
             graphControl.Back();
+            graphControl.IsGroupButtonVisible = true;
         }
 
         protected override void OnAttached()

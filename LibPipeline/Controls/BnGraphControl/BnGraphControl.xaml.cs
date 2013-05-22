@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Diagrams.Core;
 
 namespace LibPipeline
 {
@@ -70,6 +71,7 @@ namespace LibPipeline
         DependencyProperty.Register("VertexValues", typeof(IEnumerable<BnVertexValue>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedVertexValues));
 
         private Stack<BnGraph> graphStack = new Stack<BnGraph>();
+        private Stack<string> groupStack = new Stack<string>();
 
         public BnGraphControl()
         {
@@ -194,6 +196,7 @@ namespace LibPipeline
         {
             this.graphStack.Pop();
             this.DisplayGraph = this.graphStack.Peek();
+            this.DisplayGraph.UpdateDisplayPositions();
 
             if (this.graphStack.Count <= 1)
             {
@@ -212,14 +215,14 @@ namespace LibPipeline
             }
         }
 
-        private async static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var graphControl = d as BnGraphControl;
             var fileName = e.NewValue as string;
 
             if (File.Exists(graphControl.FileName))
             {
-                graphControl.SourceGraph = await BnGraphReader<BnVertexViewModel>.ReadAsync(graphControl.FileName);
+                graphControl.SourceGraph = BnGraph.Read<BnVertexViewModel>(graphControl.FileName);
                 graphControl.graphStack.Clear();
 
                 // We need to do this so that ChangedSelectedGroup is fired
@@ -285,8 +288,7 @@ namespace LibPipeline
             }
             else
             {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.Forward(partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup));
+                graphControl.Forward(graphControl.SourceGraph.GetGroup(graphControl.SelectedGroup));
 
                 if (graphControl.SelectedGroup.Equals(Groups.Default))
                 {
