@@ -97,10 +97,9 @@ namespace LibBn
                     this._value = value;
                     this.OnPropertyChanged("Value");
 
-                    foreach (var vertexKey in this._value.Keys)
+                    foreach (var vertexKey in this.Value.Keys)
                     {
-                        this.GetVertex(vertexKey)
-                            .SetValue(this._value[vertexKey]);
+                        this.GetVertex(vertexKey).Value = this.Value[vertexKey];
                     }
                 }
             }

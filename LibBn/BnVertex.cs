@@ -9,6 +9,7 @@ namespace LibBn
 {
     public class BnVertex : INotifyPropertyChanged
     {
+        private Dictionary<string, double> _value;
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
@@ -225,6 +226,28 @@ namespace LibBn
             }
         }
 
+        public Dictionary<string, double> Value
+        {
+            get
+            {
+                return this._value;
+            }
+
+            set
+            {
+                if (value != this._value)
+                {
+                    this._value = value;
+                    this.OnPropertyChanged("Value");
+
+                    foreach (var state in this.States)
+                    {
+                        state.Value = this.Value[state.Key];
+                    }
+                }
+            }
+        }
+
         public void CopyFrom(BnVertexValue srcVertexValue)
         {
             this.IsEvidenceEntered = srcVertexValue.IsEvidenceEntered;
@@ -288,16 +311,6 @@ namespace LibBn
             return stateIndex;
         }
 
-        public void SetEvidence(double[] evidence)
-        {
-            this.network.SetSoftEvidence(this.Key, evidence);
-        }
-
-        public void SetEvidence(string stateKey)
-        {
-            this.network.SetEvidence(this.Key, this.GetStateIndex(stateKey));
-        }
-
         public void SetEvidence(VertexEvidence vertexEvidence)
         {
             if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
@@ -337,18 +350,15 @@ namespace LibBn
             // return this.network.GetNodeValue(this.Key)[this.GetStateIndex(stateKey)];
         }
 
-        internal void SetValue(Dictionary<string, double> vertexValue)
-        {
-            foreach (var state in this.States)
-            {
-                state.Value = vertexValue[state.Key];
-            }
-        }
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void SetEvidence(double[] evidence)
+        {
+            this.network.SetSoftEvidence(this.Key, evidence);
         }
 
         private void SetEvidence(int stateIndex)
