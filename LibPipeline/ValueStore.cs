@@ -69,6 +69,27 @@ namespace LibPipeline
             }
         }
 
+        public bool HasGraphValue(int year, ILocation location)
+        {
+            if (this.HasLocationValue(location))
+            {
+                var locationValue = this.pipelineValue[location];
+
+                if (locationValue.ContainsKey(year))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool HasLocationValue(ILocation location)
         {
             if (this.pipelineValue.ContainsKey(location))
