@@ -107,20 +107,6 @@ namespace LibBn
             return states;
         }
 
-        public static void Remove(this Dictionary<int, List<BnVertexInput>> vertexInputsByYear, int year, string key)
-        {
-            var vertexInputs = vertexInputsByYear.SingleOrDefault(x => x.Key == year).Value;
-
-            if (vertexInputs == null)
-            {
-                // do nothing
-            }
-            else
-            {
-                vertexInputs.RemoveAll(x => x.Key == key);
-            }
-        }
-
         public static string String(this IEnumerable<string> strings)
         {
             var str = "";
