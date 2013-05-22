@@ -113,7 +113,7 @@ namespace LibBn
             graph.Network.UpdateBeliefs();
 
             // Add all the vertices
-            foreach (var node in structure.Nodes)
+            foreach (var node in structure.Vertices)
             {
                 var vertex = new TVertex();
 
@@ -132,7 +132,7 @@ namespace LibBn
             }
 
             // Add all the edges
-            foreach (var srcNode in structure.Nodes)
+            foreach (var srcNode in structure.Vertices)
             {
                 foreach (var dstNode in srcNode.Children)
                 {
@@ -319,16 +319,16 @@ namespace LibBn
             }
         }
 
-        public void UpdateValue()
+        public Dictionary<string, Dictionary<string, double>> UpdateValue()
         {
-            this.Value = this.GetNetworkValue();
+            return this.Value = this.GetNetworkValue();
         }
 
         public void Write(string fileName)
         {
             var structure = NetworkStructure.Read(fileName);
 
-            foreach (var node in structure.Nodes)
+            foreach (var node in structure.Vertices)
             {
                 node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
                 node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionsByGroup.String() + "\"";
