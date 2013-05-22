@@ -55,7 +55,7 @@ namespace Marv
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
-        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
+        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
 
         public static readonly DependencyProperty SourceGraphProperty =
         DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
@@ -259,7 +259,26 @@ namespace Marv
             }
         }
 
-        private static Dictionary<int, Dictionary<string, Dictionary<string, double>>> RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        private static async void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as MainWindow;
+
+            if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
+            {
+                window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
+            }
+            else
+            {
+                window.PopupControl.ShowTextIndeterminate("Running model.");
+                var locationValue = await MainWindow.RunModelAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
+                window.PopupControl.Hide();
+            }
+        }
+
+        private static Dictionary<int, Dictionary<string, Dictionary<string, double>>>
+            RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
         {
             var inputStore = new InputStore();
             var locationValue = new Dictionary<int, Dictionary<string, Dictionary<string, double>>>();
@@ -321,14 +340,15 @@ namespace Marv
 
                 graph.SetEvidence(graphEvidence);
                 graph.UpdateBeliefs();
-                
+
                 locationValue[year] = graph.GetNetworkValue();
             }
 
             return locationValue;
         }
 
-        private static Task<Dictionary<int, Dictionary<string, Dictionary<string, double>>>> RunModelAsync(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        private static Task<Dictionary<int, Dictionary<string, Dictionary<string, double>>>>
+            RunModelAsync(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
         {
             return Task.Run(() => MainWindow.RunModel(selectedLocation, graph, startYear, endYear));
         }
