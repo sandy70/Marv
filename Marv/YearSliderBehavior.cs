@@ -12,7 +12,7 @@ namespace Marv
             if (e.NewValue % 1 == 0)
             {
                 MainWindow window = Application.Current.MainWindow as MainWindow;
-                window.SelectedVertexValues = window.VertexValuesByYear[(int)e.NewValue];
+                // window.SelectedVertexValues = window.VertexValuesByYear[(int)e.NewValue];
             }
         }
 

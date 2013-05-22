@@ -1,10 +1,13 @@
 ﻿using Caching;
 using LibBn;
 using LibPipeline;
+using LibPipline;
 using MapControl;
 using SharpKml.Dom;
 using Smile;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
 
@@ -14,6 +17,9 @@ namespace Marv
     {
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
+
+        public static readonly DependencyProperty EndYearProperty =
+        DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
         public static readonly DependencyProperty FileNameProperty =
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
@@ -40,7 +46,7 @@ namespace Marv
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("SelectedProfileLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
 
         public static readonly DependencyProperty SelectedTallyLocationProperty =
         DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
@@ -49,10 +55,16 @@ namespace Marv
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
-        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(Config.StartYear));
+        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
+
+        public static readonly DependencyProperty SourceGraphProperty =
+        DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartingGroupProperty =
         DependencyProperty.Register("StartingGroup", typeof(string), typeof(MainWindow), new PropertyMetadata("all"));
+
+        public static readonly DependencyProperty StartYearProperty =
+        DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
 
         public static readonly DependencyProperty TallyLocationsProperty =
         DependencyProperty.Register("TallyLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
@@ -78,6 +90,12 @@ namespace Marv
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
+        }
+
+        public int EndYear
+        {
+            get { return (int)GetValue(EndYearProperty); }
+            set { SetValue(EndYearProperty, value); }
         }
 
         public string FileName
@@ -152,10 +170,22 @@ namespace Marv
             set { SetValue(SelectedYearProperty, value); }
         }
 
+        public BnGraph SourceGraph
+        {
+            get { return (BnGraph)GetValue(SourceGraphProperty); }
+            set { SetValue(SourceGraphProperty, value); }
+        }
+
         public string StartingGroup
         {
             get { return (string)GetValue(StartingGroupProperty); }
             set { SetValue(StartingGroupProperty, value); }
+        }
+
+        public int StartYear
+        {
+            get { return (int)GetValue(StartYearProperty); }
+            set { SetValue(StartYearProperty, value); }
         }
 
         public IEnumerable<ILocation> TallyLocations
@@ -206,6 +236,90 @@ namespace Marv
             {
                 return false;
             }
+        }
+
+        private static async void ChangedSelectedProfileLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            Console.WriteLine("ChangedSelectedProfileLocation");
+
+            var window = d as MainWindow;
+            Console.WriteLine("Running");
+            window.PopupControl.ShowTextIndeterminate("Running model.");
+            await MainWindow.RunModel(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+            window.PopupControl.Hide();
+            Console.WriteLine("Ran");
+        }
+
+        private static Task RunModel(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        {
+            return Task.Run(() =>
+                {
+                    var inputStore = new InputStore();
+                    var valueStore = new ValueStore();
+
+                    //int startYear = this.StartYear;
+                    //int endYear = this.EndYear;
+
+                    for (int year = startYear; year <= endYear; year++)
+                    {
+                        var graphInput = inputStore.GetGraphInput(year);
+                        var graphEvidence = new Dictionary<string, VertexEvidence>();
+
+                        var fixedVariables = new Dictionary<string, int>
+                        {
+                            { "dia", 6 },
+                            { "t", 5 },
+                            { "coattype", 2 },
+                            { "surfaceprep", 4 },
+                            { "C8", 2 },
+                            { "Kd", 0 },
+                            { "Cs", 5 },
+                            { "Rs", 4 },
+                            { "pratio", 3 },
+                            { "freq", 3 },
+                            { "Kd_w", 10 },
+                            { "Kd_b", 10 },
+                            { "CP", 5 },
+                            { "rho", 4 },
+                            { "Co2", 3 },
+                            { "millscale", 1 },
+                            { "wd", 2 },
+                            { "T", 5 },
+                            { "P", 5 }
+                        };
+
+                        foreach (var variable in fixedVariables)
+                        {
+                            graphEvidence[variable.Key] = new VertexEvidence
+                            {
+                                EvidenceType = EvidenceType.StateSelected,
+                                StateIndex = variable.Value
+                            };
+                        }
+
+                        var stateValues = new List<int> { 1000, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0 };
+
+                        var location = selectedLocation as dynamic;
+                        var mean = location.Pressure;
+                        var variance = Math.Pow(location.Pressure - location.Pressure_Min, 2);
+                        var normalDistribution = new NormalDistribution(mean, variance);
+
+                        graphEvidence["P"] = new VertexEvidence
+                        {
+                            Evidence = new double[stateValues.Count - 1],
+                            EvidenceType = EvidenceType.SoftEvidence
+                        };
+
+                        for (int i = 0; i < stateValues.Count - 1; i++)
+                        {
+                            graphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
+                        }
+
+                        graph.SetEvidence(graphEvidence);
+                        graph.UpdateBeliefs();
+                        graph.UpdateValue();
+                    }
+                });
         }
     }
 }

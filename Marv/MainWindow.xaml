@@ -14,9 +14,11 @@
     <Window.Resources>
         <Style TargetType="local:MainWindow">
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="FileName" Value="{Binding Default.FileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="StartingGroup" Value="{Binding Default.StartingGroup, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
         </Style>
     </Window.Resources>
 
@@ -36,7 +38,8 @@
             <libpipeline:MapView Name="MapView"
                                  Grid.Column="0"
                                  IsManipulationEnabled="True"
-                                 MaxZoomLevel="21">
+                                 MaxZoomLevel="21"
+                                 StartExtent="20,-110,50,-80">
                 
                 <libpipeline:PolylineControl x:Name="ProfileControl"
                                              CursorFill="#FFBA73"
@@ -103,6 +106,9 @@
                                             Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                 </Grid>
             </Border>
+            
+            <!-- The statusbar -->
+            
         </Grid>
 
         <GridSplitter Grid.Column="1"
@@ -124,7 +130,7 @@
                                         FileName="{Binding FileName, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}"
-                                        StartingGroup="{Binding StartingGroup, ElementName=Root}"
+                                        StartingGroup="0"
                                         VertexValues="{Binding SelectedVertexValues, ElementName=Root}"/>
 
             <telerik:RadButton Name="RetractAllButton"
@@ -157,7 +163,8 @@
                                        Grid.Column="1"
                                        Background="Black"
                                        IsSnapToTickEnabled="True"
-                                       Minimum="2004" Maximum="2012"
+                                       Maximum="{Binding EndYear, ElementName=Root}"
+                                       Minimum="{Binding StartYear, ElementName=Root}"
                                        TickPlacement="BottomRight"
                                        Value="{Binding SelectedYear, ElementName=Root}">
                     <i:Interaction.Behaviors>
@@ -171,10 +178,9 @@
                             Grid.Column="0" Grid.ColumnSpan="3"
                             Background="#DDDDDD"
                             Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                            Margin="50"
+                            Margin="10"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
-                            Visibility="Collapsed"
-                            Width="300" Height="50" />
+                            Visibility="Collapsed" />
 
         <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
                                  Grid.Column="0" Grid.ColumnSpan="3"

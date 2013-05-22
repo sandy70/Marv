@@ -27,7 +27,7 @@
       <Value Profile="(Default)">D:\Data\SCC\HighpH_failure.net</Value>
     </Setting>
     <Setting Name="StartingGroup" Type="System.String" Scope="User">
-      <Value Profile="(Default)">all</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

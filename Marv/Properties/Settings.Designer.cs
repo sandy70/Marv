@@ -121,7 +121,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("all")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public string StartingGroup {
             get {
                 return ((string)(this["StartingGroup"]));
