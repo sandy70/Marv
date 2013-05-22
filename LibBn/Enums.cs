@@ -24,4 +24,10 @@
         public static readonly string All = "all";
         public static readonly string Default = "0";
     }
+
+    public enum EvidenceType
+    {
+        SoftEvidence,
+        StateSelected
+    }
 }
