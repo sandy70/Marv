@@ -113,20 +113,20 @@ namespace LibBn
             graph.Network.UpdateBeliefs();
 
             // Add all the vertices
-            foreach (var node in structure.Vertices)
+            foreach (var structureVertex in structure.Vertices)
             {
                 var vertex = new TVertex();
 
-                vertex.Key = node.Key;
-                vertex.Description = node.ParseStringProperty("HR_HTML_Desc");
-                vertex.Groups = node.ParseGroups();
-                vertex.HeaderOfGroup = node.ParseStringProperty("headerofgroup");
-                vertex.Name = node.ParseStringProperty("label");
+                vertex.Key = structureVertex.Key;
+                vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
+                vertex.Groups = structureVertex.ParseGroups();
+                vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
+                vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Network = graph.Network;
-                vertex.Position = node.ParsePosition();
-                vertex.PositionsByGroup = node.ParsePositionByGroup();
-                vertex.Units = node.ParseStringProperty("units");
-                vertex.States = graph.Network.ParseStates(node.Key);
+                vertex.Position = structureVertex.ParsePosition();
+                vertex.PositionsByGroup = structureVertex.ParsePositionByGroup();
+                vertex.Units = structureVertex.ParseStringProperty("units");
+                vertex.States = graph.Network.ParseStates(structureVertex.Key);
 
                 graph.AddVertex(vertex);
             }
@@ -294,8 +294,12 @@ namespace LibBn
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
-                this.GetVertex(vertexKey)
-                    .SetEvidence(graphEvidence[vertexKey]);
+                var vertex = this.GetVertex(vertexKey);
+                
+                if(vertex != null)
+                {
+                    vertex.SetEvidence(graphEvidence[vertexKey]);
+                }
             }
         }
 
@@ -316,6 +320,14 @@ namespace LibBn
                 {
                     vertex.DisplayPosition = vertex.Position;
                 }
+            }
+        }
+
+        public void UpdateMostProbableStates()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.UpdateMostProbableState();
             }
         }
 
