@@ -265,7 +265,7 @@ namespace LibPipeline
                     };
                 }
 
-                graphControl.SourceGraph.CalculateMostProbableStates();
+                graphControl.SourceGraph.UpdateMostProbableStates();
             }
         }
 
@@ -276,7 +276,7 @@ namespace LibPipeline
             if (graphControl.SourceGraph != null)
             {
                 graphControl.SourceGraph.CopyFrom(graphControl.VertexValues);
-                graphControl.SourceGraph.CalculateMostProbableStates();
+                graphControl.SourceGraph.UpdateMostProbableStates();
             }
         }
 

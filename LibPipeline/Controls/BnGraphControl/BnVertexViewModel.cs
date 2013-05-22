@@ -1,6 +1,6 @@
 ﻿﻿using LibBn;
-using System.ComponentModel;
 using Smile;
+using System.ComponentModel;
 
 namespace LibPipeline
 {
@@ -10,10 +10,10 @@ namespace LibPipeline
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
-        private BnState mostProbableState = null;
         private double opacity = 1;
 
-        public BnVertexViewModel() : base()
+        public BnVertexViewModel()
+            : base()
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
         }
@@ -89,23 +89,6 @@ namespace LibPipeline
             }
         }
 
-        public BnState MostProbableState
-        {
-            get
-            {
-                return this.mostProbableState;
-            }
-
-            set
-            {
-                if (value != this.mostProbableState)
-                {
-                    this.mostProbableState = value;
-                    this.OnPropertyChanged("MostProbableState");
-                }
-            }
-        }
-
         public double Opacity
         {
             get
@@ -152,6 +135,8 @@ namespace LibPipeline
                 }
             }
         }
+
+        
 
         private void BnVertexViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
