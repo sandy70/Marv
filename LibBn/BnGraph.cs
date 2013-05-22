@@ -20,7 +20,6 @@ namespace LibBn
         private Dictionary<string, Dictionary<string, double>> _value;
         private string associatedGroup;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
-        private NetworkStructure structure = new NetworkStructure();
         
         public BnGraph()
         {
@@ -108,13 +107,13 @@ namespace LibBn
         public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
         {
             var graph = new BnGraph();
-            graph.structure = NetworkStructure.Read(fileName);
+            var structure = NetworkStructure.Read(fileName);
 
             graph.Network.ReadFile(fileName);
             graph.Network.UpdateBeliefs();
 
             // Add all the vertices
-            foreach (var node in graph.structure.Nodes)
+            foreach (var node in structure.Nodes)
             {
                 var vertex = new TVertex();
 
@@ -133,7 +132,7 @@ namespace LibBn
             }
 
             // Add all the edges
-            foreach (var srcNode in graph.structure.Nodes)
+            foreach (var srcNode in structure.Nodes)
             {
                 foreach (var dstNode in srcNode.Children)
                 {
