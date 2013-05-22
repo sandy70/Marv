@@ -9,7 +9,7 @@ namespace LibBn
     public class NetworkStructure
     {
         public List<string> Footer = new List<string>();
-        public List<NetworkStructureVertex> Nodes = new List<NetworkStructureVertex>();
+        public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
         private Network network = null;
 
@@ -38,7 +38,7 @@ namespace LibBn
 
                     var node = new NetworkStructureVertex { Key = parts[1] };
 
-                    structure.Nodes.Add(node);
+                    structure.Vertices.Add(node);
 
                     while (!fileLines[i].Equals("{"))
                     {
@@ -80,20 +80,13 @@ namespace LibBn
                 }
             }
 
-            // Parse links
-            foreach (var node in structure.Nodes)
+            // Parse Children
+            foreach (var vertex in structure.Vertices)
             {
-                var linkValueString = node.Properties["HR_LinkMode"];
-                var parts = linkValueString.Split(new char[] { '[', ']', '"' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
+                foreach (var childHandle in structure.network.GetChildren(vertex.Key))
                 {
-                    var subParts = part.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    if (structure.HasNode(subParts[0]))
-                    {
-                        node.Children.Add(structure.GetNode(subParts[0]));
-                    }
+                    var childKey = structure.network.GetNodeId(childHandle);
+                    vertex.Children.Add(structure.GetVertex(childKey));
                 }
             }
 
@@ -104,7 +97,7 @@ namespace LibBn
 
         public void FixStates()
         {
-            foreach (var node in this.Nodes)
+            foreach (var node in this.Vertices)
             {
                 var states = node.ParseStates();
 
@@ -121,16 +114,16 @@ namespace LibBn
             }
         }
 
-        public NetworkStructureVertex GetNode(string key)
+        public NetworkStructureVertex GetVertex(string key)
         {
-            return this.Nodes.Where(x => x.Key.Equals(key)).FirstOrDefault();
+            return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
         }
 
         public bool HasNode(string key)
         {
             bool hasNode = false;
 
-            foreach (var node in this.Nodes)
+            foreach (var node in this.Vertices)
             {
                 if (node.Key.Equals(key))
                 {
@@ -155,7 +148,7 @@ namespace LibBn
 
                 writer.WriteLine("}");
 
-                foreach (var node in this.Nodes)
+                foreach (var node in this.Vertices)
                 {
                     writer.WriteLine();
                     writer.WriteLine("node {0}", node.Key);
