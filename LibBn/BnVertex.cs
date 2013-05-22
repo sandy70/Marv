@@ -311,6 +311,16 @@ namespace LibBn
             return stateIndex;
         }
 
+        public double GetStateValue(string stateKey)
+        {
+            var stateIndex = this.GetStateIndex(stateKey);
+            var nodeValue = this.Network.GetNodeValue(this.Key);
+            var stateValue = nodeValue[stateIndex];
+            return stateValue;
+
+            // return this.network.GetNodeValue(this.Key)[this.GetStateIndex(stateKey)];
+        }
+
         public void SetEvidence(VertexEvidence vertexEvidence)
         {
             if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
@@ -338,16 +348,6 @@ namespace LibBn
                     this.States[i].Value = 0;
                 }
             }
-        }
-
-        internal double GetStateValue(string stateKey)
-        {
-            var stateIndex = this.GetStateIndex(stateKey);
-            var nodeValue = this.Network.GetNodeValue(this.Key);
-            var stateValue = nodeValue[stateIndex];
-            return stateValue;
-
-            // return this.network.GetNodeValue(this.Key)[this.GetStateIndex(stateKey)];
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
