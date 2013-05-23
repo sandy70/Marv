@@ -21,6 +21,7 @@ namespace LibBn
         private string name = "";
         private Network network;
         private int nodeHandle;
+        private BnGraph parent;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
         private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
@@ -30,10 +31,11 @@ namespace LibBn
         {
         }
 
-        public BnVertex(Network aNetwork)
+        public BnVertex(BnGraph parent, Network aNetwork)
         {
-            this.network = aNetwork;
-            this.nodeHandle = this.network.GetNode(key);
+            this.Network = network;
+            this.nodeHandle = this.Network.GetNode(key);
+            this.Parent = parent;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -179,6 +181,23 @@ namespace LibBn
                     {
                         this.Network.GetNode(this.Key);
                     }
+                }
+            }
+        }
+
+        public BnGraph Parent
+        {
+            get
+            {
+                return this.parent;
+            }
+
+            set
+            {
+                if (value != this.parent)
+                {
+                    this.parent = value;
+                    this.OnPropertyChanged("Parent");
                 }
             }
         }

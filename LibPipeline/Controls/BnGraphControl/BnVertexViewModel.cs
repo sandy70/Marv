@@ -18,8 +18,8 @@ namespace LibPipeline
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
         }
 
-        public BnVertexViewModel(Network network)
-            : base(network)
+        public BnVertexViewModel(BnGraph parent, Network network)
+            : base(parent, network)
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
         }
@@ -135,8 +135,6 @@ namespace LibPipeline
                 }
             }
         }
-
-        
 
         private void BnVertexViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

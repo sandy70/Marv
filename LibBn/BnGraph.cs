@@ -123,6 +123,7 @@ namespace LibBn
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Network = graph.Network;
+                vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.PositionsByGroup = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");
