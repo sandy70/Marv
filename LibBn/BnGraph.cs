@@ -16,11 +16,12 @@ namespace LibBn
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
         public Network Network = new Network();
-        
+
         private Dictionary<string, Dictionary<string, double>> _value;
         private string associatedGroup;
+        private string defaultGroup = "all";
         private ObservableCollection<string> groups = new ObservableCollection<string>();
-        
+
         public BnGraph()
         {
         }
@@ -51,6 +52,23 @@ namespace LibBn
                     this.associatedGroup = value;
 
                     this.OnPropertyChanged("AssociatedGroup");
+                }
+            }
+        }
+
+        public string DefaultGroup
+        {
+            get
+            {
+                return this.defaultGroup;
+            }
+
+            set
+            {
+                if (value != this.defaultGroup)
+                {
+                    this.defaultGroup = value;
+                    this.OnPropertyChanged("DefaultGroup");
                 }
             }
         }
@@ -111,6 +129,8 @@ namespace LibBn
 
             graph.Network.ReadFile(fileName);
             graph.Network.UpdateBeliefs();
+
+            graph.DefaultGroup = structure.ParseDefaultGroup();
 
             // Add all the vertices
             foreach (var structureVertex in structure.Vertices)
@@ -296,8 +316,8 @@ namespace LibBn
             foreach (var vertexKey in graphEvidence.Keys)
             {
                 var vertex = this.GetVertex(vertexKey);
-                
-                if(vertex != null)
+
+                if (vertex != null)
                 {
                     vertex.SetEvidence(graphEvidence[vertexKey]);
                 }

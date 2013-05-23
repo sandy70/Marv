@@ -9,8 +9,8 @@ namespace LibBn
     public class NetworkStructure
     {
         public List<string> Footer = new List<string>();
-        public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
+        public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
         private Network network = null;
 
         public NetworkStructure(Network aNetwork)
@@ -132,6 +132,23 @@ namespace LibBn
             }
 
             return hasNode;
+        }
+
+        public string ParseDefaultGroup()
+        {
+            if (this.Properties.ContainsKey("HR_Desc"))
+            {
+                var descValueString = this.Properties["HR_Desc"];
+
+                var parts = descValueString.Split("\"=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Count() == 2)
+                {
+                    return parts[1];
+                }
+            }
+
+            return "all";
         }
 
         public void Write(string path)
