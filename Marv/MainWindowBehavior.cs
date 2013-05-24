@@ -1,11 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
-using LibPipline;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
@@ -24,7 +20,11 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.AssociatedObject.GraphControl.SourceGraph.Write(this.AssociatedObject.FileName);
+            foreach (var graph in this.AssociatedObject.Graphs)
+            {
+                graph.Write(graph.FileName);
+            }
+
             Properties.Settings.Default.Save();
         }
 
@@ -39,7 +39,6 @@ namespace Marv
             else if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
-
             }
         }
 
@@ -47,25 +46,29 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.PopupControl.ShowTextIndeterminate("Reading Profile");
-            window.ProfileLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
-            window.PopupControl.Hide();
+            await window.Dispatcher.BeginInvoke(new Action(async () =>
+                {
+                    window.PopupControl.ShowTextIndeterminate("Reading Profile");
+                    window.ProfileLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
+                    window.PopupControl.Hide();
 
-            window.PopupControl.ShowTextIndeterminate("Reading tally");
-            window.TallyLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.TallyFileName);
-            window.PopupControl.Hide();
+                    window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
 
-            window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
+                    window.PopupControl.ShowTextIndeterminate("Reading tally");
+                    window.TallyLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.TallyFileName);
+                    window.PopupControl.Hide();
+                }));
+
+            await window.Dispatcher.BeginInvoke(new Action(async () =>
+                {
+                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC 2013 05 21.net"));
+                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
+                }));
 
             KocDataReader kocDataReader = new KocDataReader();
             window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
             kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
-
-            // var graphs = new ObservableCollection<BnGraph>();
-            window.Graphs.Add(BnGraph.Read<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC 2013 05 21.net"));
-            window.Graphs.Add(BnGraph.Read<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
-            // window.Graphs = graphs;
 
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }

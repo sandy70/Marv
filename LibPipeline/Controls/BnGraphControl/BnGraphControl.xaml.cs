@@ -175,6 +175,19 @@ namespace LibPipeline
             set { SetValue(SelectedGroupProperty, value); }
         }
 
+        public Dictionary<BnGraph, string> SelectedGroups
+        {
+            get
+            {
+                return selectedGroups;
+            }
+
+            set
+            {
+                selectedGroups = value;
+            }
+        }
+
         public BnVertexViewModel SelectedVertexViewModel
         {
             get { return (BnVertexViewModel)GetValue(SelectedVertexViewModelProperty); }
@@ -228,6 +241,22 @@ namespace LibPipeline
             }
         }
 
+        public void UpdateDisplayGraphToDefaultGroups()
+        {
+            if (this.Graphs != null && this.Graphs.Count() > 0)
+            {
+                var displayGraph = new BnGraph();
+
+                foreach (var graph in this.Graphs)
+                {
+                    this.selectedGroups[graph] = graph.DefaultGroup;
+                    displayGraph.Add(graph.GetGroup(graph.DefaultGroup));
+                }
+
+                this.DisplayGraph = displayGraph;
+            }
+        }
+
         private static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var graphControl = d as BnGraphControl;
@@ -259,13 +288,15 @@ namespace LibPipeline
             {
                 if (graphControl.Graphs is INotifyCollectionChanged)
                 {
-                    (graphControl.Graphs as INotifyCollectionChanged).CollectionChanged += (s1, e1) =>
+                    (graphControl.Graphs as INotifyCollectionChanged).CollectionChanged += (o1, e1) =>
                         {
                             graphControl.UpdateDisplayGraphToDefaultGroups();
+                            graphControl.AttachHandler();
                         };
                 }
 
                 graphControl.UpdateDisplayGraphToDefaultGroups();
+                graphControl.AttachHandler();
             }
         }
 
@@ -291,12 +322,12 @@ namespace LibPipeline
                     {
                         if (a.PropertyName.Equals("DisplayPosition"))
                         {
-                            vertexViewModel.PositionsByGroup[graphControl.SelectedGroup] = vertexViewModel.DisplayPosition;
+                            vertexViewModel.Positions[graphControl.SelectedGroup] = vertexViewModel.DisplayPosition;
                         }
                     };
                 }
 
-                graphControl.SourceGraph.UpdateMostProbableStates();
+                // graphControl.SourceGraph.UpdateMostProbableStates();
             }
         }
 
@@ -307,7 +338,8 @@ namespace LibPipeline
             if (graphControl.SourceGraph != null)
             {
                 graphControl.SourceGraph.CopyFrom(graphControl.VertexValues);
-                graphControl.SourceGraph.UpdateMostProbableStates();
+
+                // graphControl.SourceGraph.UpdateMostProbableStates();
             }
         }
 
@@ -328,6 +360,23 @@ namespace LibPipeline
                 else
                 {
                     graphControl.IsGroupButtonVisible = false;
+                }
+            }
+        }
+
+        private void AttachHandler()
+        {
+            foreach (var graph in this.Graphs)
+            {
+                foreach (var vertex in graph.Vertices)
+                {
+                    vertex.PropertyChanged += (o2, e2) =>
+                    {
+                        if (e2.PropertyName.Equals("DisplayPosition"))
+                        {
+                            vertex.Positions[this.selectedGroups[graph]] = vertex.DisplayPosition;
+                        }
+                    };
                 }
             }
         }
@@ -362,32 +411,6 @@ namespace LibPipeline
                 {
                     (shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeOutAnimation);
                 }
-            }
-        }
-
-        private void UpdateDisplayGraph()
-        {
-            var displayGraph = new BnGraph();
-
-            foreach (var graph in this.Graphs)
-            {
-                var selectedGroup = this.selectedGroups[graph];
-                displayGraph.Add(graph.GetGroup(selectedGroup));
-            }
-
-            this.DisplayGraph = displayGraph;
-        }
-
-        private void UpdateDisplayGraphToDefaultGroups()
-        {
-            if (this.Graphs != null && this.Graphs.Count() > 0)
-            {
-                foreach (var graph in this.Graphs)
-                {
-                    this.selectedGroups[graph] = graph.DefaultGroup;
-                }
-
-                this.UpdateDisplayGraph();
             }
         }
     }
