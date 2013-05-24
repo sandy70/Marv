@@ -21,6 +21,7 @@ namespace LibBn
         private Dictionary<string, Dictionary<string, double>> _value;
         private string associatedGroup;
         private string defaultGroup = "all";
+        private string fileName;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
 
         public BnGraph()
@@ -71,6 +72,14 @@ namespace LibBn
                     this.defaultGroup = value;
                     this.OnPropertyChanged("DefaultGroup");
                 }
+            }
+        }
+
+        public string FileName
+        {
+            get
+            {
+                return this.fileName;
             }
         }
 
@@ -132,6 +141,7 @@ namespace LibBn
             graph.Network.UpdateBeliefs();
 
             graph.DefaultGroup = structure.ParseDefaultGroup();
+            graph.fileName = fileName;
 
             // Add all the vertices
             foreach (var structureVertex in structure.Vertices)
@@ -146,7 +156,7 @@ namespace LibBn
                 vertex.Network = graph.Network;
                 vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionsByGroup = structureVertex.ParsePositionByGroup();
+                vertex.PositionForGroup = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = graph.Network.ParseStates(structureVertex.Key);
 
@@ -161,6 +171,7 @@ namespace LibBn
                     graph.AddEdge(srcNode.Key, dstNode.Key);
                 }
             }
+
 
             graph.UpdateValue();
             return graph;
@@ -241,13 +252,13 @@ namespace LibBn
 
                     Point positionByGroup;
 
-                    if (vertex.PositionsByGroup.TryGetValue(group, out positionByGroup))
+                    if (vertex.PositionForGroup.TryGetValue(group, out positionByGroup))
                     {
                         vertex.DisplayPosition = positionByGroup;
                     }
                     else
                     {
-                        vertex.PositionsByGroup.Add(group, vertex.Position);
+                        vertex.PositionForGroup.Add(group, vertex.Position);
                         vertex.DisplayPosition = vertex.Position;
                     }
                 }
@@ -353,9 +364,9 @@ namespace LibBn
         {
             foreach (var vertex in this.Vertices)
             {
-                if (vertex.PositionsByGroup.ContainsKey(this.AssociatedGroup))
+                if (vertex.PositionForGroup.ContainsKey(this.AssociatedGroup))
                 {
-                    vertex.DisplayPosition = vertex.PositionsByGroup[this.AssociatedGroup];
+                    vertex.DisplayPosition = vertex.PositionForGroup[this.AssociatedGroup];
                 }
                 else
                 {
@@ -376,7 +387,7 @@ namespace LibBn
             foreach (var node in structure.Vertices)
             {
                 node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
-                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionsByGroup.String() + "\"";
+                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionForGroup.String() + "\"";
             }
 
             structure.Write(fileName);
