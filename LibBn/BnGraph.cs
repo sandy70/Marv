@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Diagrams.Core;
 
@@ -161,7 +162,13 @@ namespace LibBn
                 }
             }
 
+            graph.UpdateValue();
             return graph;
+        }
+
+        public static Task<BnGraph> ReadAsync<TVertex>(string fileName) where TVertex : BnVertex, new()
+        {
+            return Task.Run(() => BnGraph.Read<TVertex>(fileName));
         }
 
         public void Add(BnGraph graph)
@@ -354,14 +361,6 @@ namespace LibBn
                 {
                     vertex.DisplayPosition = vertex.Position;
                 }
-            }
-        }
-
-        public void UpdateMostProbableStates()
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.UpdateMostProbableState();
             }
         }
 
