@@ -34,7 +34,7 @@ namespace LibBn
             set
             {
                 _value = value;
-                OnPropertyChanged("Value");
+                OnPropertyChanged("Values");
             }
         }
 

@@ -63,12 +63,9 @@
                                         Background="White"
                                         ConnectionColor="#252525"
                                         DisplayGraph="{Binding DisplayGraph, ElementName=Root, Mode=TwoWay}"
-                                        FileName="{Binding FileName, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="False"
-                                        SelectedGroup="{Binding SelectedGroup, ElementName=Root, Mode=TwoWay}"
-                                        SelectedVertexViewModel="{Binding SelectedVertexViewModel, ElementName=Root, Mode=TwoWay}"
-                                        SourceGraph="{Binding SourceGraph, ElementName=Root, Mode=TwoWay}"/>
+                                        SelectedVertexViewModel="{Binding SelectedVertexViewModel, ElementName=Root, Mode=TwoWay}"/>
 
             <GridSplitter Grid.Column="1"
                       ResizeBehavior="PreviousAndNext"

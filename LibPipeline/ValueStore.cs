@@ -69,8 +69,10 @@ namespace LibPipeline
             }
         }
 
-        public bool HasGraphValue(int year, ILocation location)
+        public bool HasGraphValue(int year, ILocation location = null)
         {
+            if (location == null) return false;
+
             if (this.HasLocationValue(location))
             {
                 var locationValue = this.pipelineValue[location];

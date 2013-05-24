@@ -226,7 +226,7 @@ namespace Marv
 
                 var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
                 this.VertexValuesByYear[this.SelectedYear] = vertexValues;
-                this.GraphControl.SourceGraph.CopyFrom(vertexValues);
+                // this.GraphControl.SourceGraph.CopyFrom(vertexValues);
                 // this.GraphControl.SourceGraph.UpdateMostProbableStates();
 
                 return true;
@@ -243,7 +243,7 @@ namespace Marv
 
             if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
             {
-                window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
+                // window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
             }
             else
             {
@@ -261,7 +261,7 @@ namespace Marv
 
             if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
             {
-                window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
+                // window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
             }
             else
             {

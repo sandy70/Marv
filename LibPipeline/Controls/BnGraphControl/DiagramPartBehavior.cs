@@ -18,42 +18,8 @@ namespace LibPipeline
         {
             base.OnAttached();
             this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
-            this.AssociatedObject.ShapeDoubleClicked += AssociatedObject_ShapeDoubleClicked;
             this.AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
             this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
-        }
-
-        private void AssociatedObject_ShapeDoubleClicked(object sender, ShapeRoutedEventArgs e)
-        {
-            var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-
-            var fadeOutAnimation = new DoubleAnimation
-            {
-                From = 1,
-                To = 0.2,
-                Duration = new Duration(TimeSpan.FromMilliseconds(300))
-            };
-
-            var fadeInAnimation = new DoubleAnimation
-            {
-                From = 0.2,
-                To = 1,
-                BeginTime = TimeSpan.FromSeconds(0),
-                Duration = new Duration(TimeSpan.FromMilliseconds(300))
-            };
-
-            var vertexViewModel = (e.Shape as RadDiagramShape).DataContext as BnVertexViewModel;
-
-            if (vertexViewModel.Groups.Contains(graphControl.SelectedGroup))
-            {
-                vertexViewModel.Groups.Remove(graphControl.SelectedGroup);
-                (e.Shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeOutAnimation);
-            }
-            else
-            {
-                vertexViewModel.Groups.Add(graphControl.SelectedGroup);
-                (e.Shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeInAnimation);
-            }
         }
 
         private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)

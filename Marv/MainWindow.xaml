@@ -129,9 +129,7 @@
                                         ConnectionColor="#252525"
                                         Graphs="{Binding Graphs, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
-                                        IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}"
-                                        StartingGroup="0"
-                                        VertexValues="{Binding SelectedVertexValues, ElementName=Root}"/>
+                                        IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
 
             <telerik:RadButton Name="RetractAllButton"
                             Grid.Row="0"

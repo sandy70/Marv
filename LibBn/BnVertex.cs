@@ -219,7 +219,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, Point> PositionForGroup
+        public Dictionary<string, Point> Positions
         {
             get
             {
@@ -231,7 +231,7 @@ namespace LibBn
                 if (value != this.positionsByGroup)
                 {
                     this.positionsByGroup = value;
-                    this.OnPropertyChanged("PositionForGroup");
+                    this.OnPropertyChanged("Positions");
                 }
             }
         }
@@ -263,7 +263,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, double> Value
+        public Dictionary<string, double> Values
         {
             get
             {
@@ -275,11 +275,11 @@ namespace LibBn
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Value");
+                    this.OnPropertyChanged("Values");
 
                     foreach (var state in this.States)
                     {
-                        state.Value = this.Value[state.Key];
+                        state.Value = this.Values[state.Key];
                     }
 
                     this.UpdateMostProbableState();

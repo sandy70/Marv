@@ -17,13 +17,13 @@ namespace Marv
         {
             var window = this.AssociatedObject.FindParent<MainWindow>();
 
-            foreach (var vertex in window.GraphControl.SourceGraph.Vertices)
-            {
-                var vertexViewModel = vertex as BnVertexViewModel;
-                window.RemoveInput(vertexViewModel);
-            }
+            //foreach (var vertex in window.GraphControl.SourceGraph.Vertices)
+            //{
+            //    var vertexViewModel = vertex as BnVertexViewModel;
+            //    window.RemoveInput(vertexViewModel);
+            //}
 
-            window.TryUpdateNetwork();
+            //window.TryUpdateNetwork();
         }
     }
 }

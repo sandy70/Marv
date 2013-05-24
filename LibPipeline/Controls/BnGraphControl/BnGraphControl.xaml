@@ -155,7 +155,7 @@
                                                     </Style>
                                                 </StackPanel.Resources>
                                                 <telerik:RadButton Name="GroupButton"
-                                                                   Visibility="{Binding IsGroupButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                                   Visibility="{Binding IsHeader, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                                                     <telerik:RadButton.Template>
                                                         <ControlTemplate>
                                                             <Border Background="#686868">

@@ -65,7 +65,7 @@ namespace LibBn
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Value");
+                    this.OnPropertyChanged("Values");
                 }
             }
         }
