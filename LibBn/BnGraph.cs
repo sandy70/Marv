@@ -164,6 +164,19 @@ namespace LibBn
             return graph;
         }
 
+        public void Add(BnGraph graph)
+        {
+            foreach (var vertex in graph.Vertices)
+            {
+                this.AddVertex(vertex);
+            }
+
+            foreach (var edge in graph.Edges)
+            {
+                this.AddEdge(edge);
+            }
+        }
+
         public void AddEdge(string key1, string key2)
         {
             if (key1.Equals(key2)) return;

@@ -127,7 +127,7 @@
                                         Grid.Row="0"
                                         Background="White"
                                         ConnectionColor="#252525"
-                                        FileName="{Binding FileName, ElementName=Root}"
+                                        Graphs="{Binding Graphs, ElementName=Root}"
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}"
                                         StartingGroup="0"

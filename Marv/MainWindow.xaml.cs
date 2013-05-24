@@ -1,13 +1,10 @@
 ﻿using Caching;
 using LibBn;
 using LibPipeline;
-using LibPipline;
 using MapControl;
-using SharpKml.Dom;
 using Smile;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.Windows;
 using Telerik.Windows.Controls;
 
@@ -23,6 +20,9 @@ namespace Marv
 
         public static readonly DependencyProperty FileNameProperty =
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty GraphsProperty =
+        DependencyProperty.Register("Graphs", typeof(ObservableCollection<BnGraph>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<BnGraph>()));
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -101,6 +101,12 @@ namespace Marv
         {
             get { return (string)GetValue(FileNameProperty); }
             set { SetValue(FileNameProperty, value); }
+        }
+
+        public ObservableCollection<BnGraph> Graphs
+        {
+            get { return (ObservableCollection<BnGraph>)GetValue(GraphsProperty); }
+            set { SetValue(GraphsProperty, value); }
         }
 
         public bool IsGroupButtonVisible
@@ -241,11 +247,11 @@ namespace Marv
             }
             else
             {
-                window.PopupControl.ShowTextIndeterminate("Running model.");
-                var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
-                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
-                window.PopupControl.Hide();
+                //window.PopupControl.ShowTextIndeterminate("Running model.");
+                //var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+                //window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+                //window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
+                //window.PopupControl.Hide();
             }
         }
 
@@ -259,11 +265,11 @@ namespace Marv
             }
             else
             {
-                window.PopupControl.ShowTextIndeterminate("Running model.");
-                var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-                window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
-                window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
-                window.PopupControl.Hide();
+                //window.PopupControl.ShowTextIndeterminate("Running model.");
+                //var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
+                //window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
+                //window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
+                //window.PopupControl.Hide();
             }
         }
     }

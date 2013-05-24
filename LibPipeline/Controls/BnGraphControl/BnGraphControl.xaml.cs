@@ -1,13 +1,14 @@
 ﻿using LibBn;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Telerik.Windows.Controls;
-using Telerik.Windows.Diagrams.Core;
 
 namespace LibPipeline
 {
@@ -24,6 +25,9 @@ namespace LibPipeline
 
         public static readonly RoutedEvent FileNotFoundEvent =
         EventManager.RegisterRoutedEvent("FileNotFound", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(BnGraphControl));
+
+        public static readonly DependencyProperty GraphsProperty =
+        DependencyProperty.Register("Graphs", typeof(IEnumerable<BnGraph>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedGraphs));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -71,7 +75,10 @@ namespace LibPipeline
         DependencyProperty.Register("VertexValues", typeof(IEnumerable<BnVertexValue>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedVertexValues));
 
         private Stack<BnGraph> graphStack = new Stack<BnGraph>();
+
         private Stack<string> groupStack = new Stack<string>();
+
+        private Dictionary<BnGraph, string> selectedGroups = new Dictionary<BnGraph, string>();
 
         public BnGraphControl()
         {
@@ -124,6 +131,12 @@ namespace LibPipeline
         {
             get { return (string)GetValue(FileNameProperty); }
             set { SetValue(FileNameProperty, value); }
+        }
+
+        public IEnumerable<BnGraph> Graphs
+        {
+            get { return (IEnumerable<BnGraph>)GetValue(GraphsProperty); }
+            set { SetValue(GraphsProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
@@ -238,6 +251,24 @@ namespace LibPipeline
             }
         }
 
+        private static void ChangedGraphs(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var graphControl = d as BnGraphControl;
+
+            if (graphControl.Graphs != null)
+            {
+                if (graphControl.Graphs is INotifyCollectionChanged)
+                {
+                    (graphControl.Graphs as INotifyCollectionChanged).CollectionChanged += (s1, e1) =>
+                        {
+                            graphControl.UpdateDisplayGraphToDefaultGroups();
+                        };
+                }
+
+                graphControl.UpdateDisplayGraphToDefaultGroups();
+            }
+        }
+
         private static void ChangedSelectedGroup(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var graphControl = d as BnGraphControl;
@@ -331,6 +362,32 @@ namespace LibPipeline
                 {
                     (shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeOutAnimation);
                 }
+            }
+        }
+
+        private void UpdateDisplayGraph()
+        {
+            var displayGraph = new BnGraph();
+
+            foreach (var graph in this.Graphs)
+            {
+                var selectedGroup = this.selectedGroups[graph];
+                displayGraph.Add(graph.GetGroup(selectedGroup));
+            }
+
+            this.DisplayGraph = displayGraph;
+        }
+
+        private void UpdateDisplayGraphToDefaultGroups()
+        {
+            if (this.Graphs != null && this.Graphs.Count() > 0)
+            {
+                foreach (var graph in this.Graphs)
+                {
+                    this.selectedGroups[graph] = graph.DefaultGroup;
+                }
+
+                this.UpdateDisplayGraph();
             }
         }
     }
