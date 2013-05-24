@@ -219,7 +219,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, Point> PositionsByGroup
+        public Dictionary<string, Point> PositionForGroup
         {
             get
             {
@@ -231,7 +231,7 @@ namespace LibBn
                 if (value != this.positionsByGroup)
                 {
                     this.positionsByGroup = value;
-                    this.OnPropertyChanged("PositionsByGroup");
+                    this.OnPropertyChanged("PositionForGroup");
                 }
             }
         }
@@ -296,21 +296,6 @@ namespace LibBn
             {
                 this.States[s].Value = srcVertexValue.States[s];
             }
-        }
-
-        public BnState GetMostProbableState()
-        {
-            BnState mostProbableState = new BnState { Value = double.MinValue, Key = "" };
-
-            foreach (var state in this.States)
-            {
-                if (state.Value > mostProbableState.Value)
-                {
-                    mostProbableState = state;
-                }
-            }
-
-            return mostProbableState;
         }
 
         public int GetSelectedStateIndex()
