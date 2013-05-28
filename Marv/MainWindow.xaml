@@ -27,21 +27,23 @@
         <local:MainWindowGraphControlBehavior />
     </i:Interaction.Behaviors>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+    <telerik:RadTabControl>
+        <telerik:RadTabItem Header="Main">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
-            <libpipeline:MapView Name="MapView"
+                <Grid Grid.Column="0">
+                    <libpipeline:MapView Name="MapView"
                                  Grid.Column="0"
                                  IsManipulationEnabled="True"
                                  MaxZoomLevel="21"
                                  StartExtent="20,-110,50,-80">
-                
-                <libpipeline:PolylineControl x:Name="ProfileControl"
+
+                        <libpipeline:PolylineControl x:Name="ProfileControl"
                                              CursorFill="#FFBA73"
                                              CursorStroke="#FFA040"
                                              Locations="{Binding ProfileLocations, ElementName=Root}"
@@ -49,47 +51,47 @@
                                              Stroke="#FF8100"
                                              Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
 
-                <libpipeline:PolylineControl x:Name="TallyControl"
+                        <libpipeline:PolylineControl x:Name="TallyControl"
                                              CursorFill="#FFD673"
                                              CursorStroke="#FFC740"
                                              Locations="{Binding TallyLocations, ElementName=Root}"
                                              SelectedLocation="{Binding SelectedTallyLocation, ElementName=Root, Mode=TwoWay}"
                                              Stroke="#FFB400"
                                              Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
-            </libpipeline:MapView>
+                    </libpipeline:MapView>
 
-            <Border Background="#DDDDDD"
+                    <Border Background="#DDDDDD"
                     Effect="{StaticResource ResourceKey=DropShadow}"
                     Margin="10"
                     Padding="5"
                     VerticalAlignment="Top" HorizontalAlignment="Right"
                     Width="350">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
 
-                    <telerik:RadRadioButton Name="ProfileRadioButton"
+                            <telerik:RadRadioButton Name="ProfileRadioButton"
                                             Grid.Row="0" Grid.Column="0"
                                             Content="Profile"
                                             Foreground="Black"
                                             GroupName="PipelineInfo"
                                             IsChecked="{Binding IsProfileSelected, ElementName=Root}" />
 
-                    <telerik:RadRadioButton Name="TallyRadioButton"
+                            <telerik:RadRadioButton Name="TallyRadioButton"
                                             Grid.Row="0" Grid.Column="1"
                                             Content="Tally"
                                             Foreground="Black"
                                             GroupName="PipelineInfo"
                                             IsChecked="{Binding IsTallySelected, ElementName=Root}"/>
 
-                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                            <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
                                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
@@ -97,33 +99,33 @@
                                              Item="{Binding SelectedProfileLocation, ElementName=Root}"
                                              Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                    <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
+                            <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
                                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                             AutoGeneratePropertyDefinitions="True"
                                             DescriptionPanelVisibility="Collapsed"
                                             IsReadOnly="True"
                                             Item="{Binding SelectedTallyLocation, ElementName=Root}"
                                             Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
-                </Grid>
-            </Border>
-            
-            <!-- The statusbar -->
-            
-        </Grid>
+                        </Grid>
+                    </Border>
 
-        <GridSplitter Grid.Column="1"
+                    <!-- The statusbar -->
+
+                </Grid>
+
+                <GridSplitter Grid.Column="1"
                       ResizeBehavior="PreviousAndNext"
                       ResizeDirection="Columns"
                       Width="30" />
 
-        <!-- GraphControl -->
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
+                <!-- GraphControl -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
 
-            <libpipeline:BnGraphControl Name="GraphControl"
+                    <libpipeline:BnGraphControl Name="GraphControl"
                                         Grid.Row="0"
                                         Background="White"
                                         ConnectionColor="#252525"
@@ -131,33 +133,33 @@
                                         IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                         IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
 
-            <telerik:RadButton Name="RetractAllButton"
+                    <telerik:RadButton Name="RetractAllButton"
                             Grid.Row="0"
                             HorizontalAlignment="Right" VerticalAlignment="Top"
                             Margin="0,70,10,0"
                             Visibility="Visible"
                             Width="50" Height="50">
-                <i:Interaction.Behaviors>
-                    <local:RetractAllButtonBehavior />
-                </i:Interaction.Behaviors>
+                        <i:Interaction.Behaviors>
+                            <local:RetractAllButtonBehavior />
+                        </i:Interaction.Behaviors>
 
-                <Image Source="Resources/Icons/erase.png" />
-            </telerik:RadButton>
+                        <Image Source="Resources/Icons/erase.png" />
+                    </telerik:RadButton>
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0"
+                        <Label Grid.Column="0"
                        Content="{Binding Path=Value, ElementName=YearSlider}"
                        Background="Black"
                        Foreground="White"
                        FontSize="24" FontWeight="Bold"
                        HorizontalContentAlignment="Center" />
 
-                <surface:SurfaceSlider Name="YearSlider"
+                        <surface:SurfaceSlider Name="YearSlider"
                                        Grid.Column="1"
                                        Background="Black"
                                        IsSnapToTickEnabled="True"
@@ -165,14 +167,14 @@
                                        Minimum="{Binding StartYear, ElementName=Root}"
                                        TickPlacement="BottomRight"
                                        Value="{Binding SelectedYear, ElementName=Root}">
-                    <i:Interaction.Behaviors>
-                        <local:YearSliderBehavior />
-                    </i:Interaction.Behaviors>
-                </surface:SurfaceSlider>
-            </Grid>
-        </Grid>
+                            <i:Interaction.Behaviors>
+                                <local:YearSliderBehavior />
+                            </i:Interaction.Behaviors>
+                        </surface:SurfaceSlider>
+                    </Grid>
+                </Grid>
 
-        <local:PopupControl x:Name="PopupControl"
+                <local:PopupControl x:Name="PopupControl"
                             Grid.Column="0" Grid.ColumnSpan="3"
                             Background="#DDDDDD"
                             Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
@@ -180,7 +182,7 @@
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Visibility="Collapsed" />
 
-        <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
+                <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
                                  Grid.Column="0" Grid.ColumnSpan="3"
                                  Background="#DDDDDD"
                                  Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
@@ -188,5 +190,36 @@
                                  Padding="10"
                                  VerticalAlignment="Top" HorizontalAlignment="Left"
                                  Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
-    </Grid>
+            </Grid>
+        </telerik:RadTabItem>
+        
+        <telerik:RadTabItem Header="Plots">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <telerik:RadCartesianChart>
+                    <telerik:RadCartesianChart.Behaviors>
+                        <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" />
+                    </telerik:RadCartesianChart.Behaviors>
+                    
+                    <telerik:RadCartesianChart.HorizontalAxis>
+                        <telerik:LinearAxis />
+                    </telerik:RadCartesianChart.HorizontalAxis>
+                    
+                    <telerik:RadCartesianChart.VerticalAxis>
+                        <telerik:LinearAxis />
+                    </telerik:RadCartesianChart.VerticalAxis>
+                    
+                    <telerik:ScatterLineSeries ItemsSource="{Binding Points, ElementName=Root}"
+                                               XValueBinding="X"
+                                               YValueBinding="Y" />
+                </telerik:RadCartesianChart>
+            </Grid>
+        </telerik:RadTabItem>
+    </telerik:RadTabControl>
+    
+
 </Window>

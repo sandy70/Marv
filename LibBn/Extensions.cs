@@ -8,10 +8,6 @@ using System.Windows;
 
 namespace LibBn
 {
-    public class VertexValue : Dictionary<string, double> { }
-    public class GraphValue : Dictionary<string, VertexValue> { }
-    public class IntervalValue : Dictionary<int, GraphValue> { }
-
     public static class Extensions
     {
         public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> source)
@@ -48,6 +44,11 @@ namespace LibBn
                         yield return cache.Dequeue();
                 }
             } while (hasRemainingItems);
+        }
+
+        public static VertexEvidence GetVertexEvidence(this IEnumerable<VertexEvidence> graphEvidence, string vertexKey)
+        {
+            return graphEvidence.SingleOrDefault(x => x.Key.Equals(vertexKey));
         }
 
         public static ObservableCollection<BnState> ParseStates(this Network network, string key)
@@ -249,4 +250,10 @@ namespace LibBn
             return false;
         }
     }
+
+    public class GraphValue : Dictionary<string, VertexValue> { }
+
+    public class IntervalValue : Dictionary<int, GraphValue> { }
+
+    public class VertexValue : Dictionary<string, double> { }
 }

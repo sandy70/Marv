@@ -74,6 +74,10 @@ namespace Marv
             window.Model.StartYear = window.StartYear;
             window.Model.EndYear = window.EndYear;
 
+            window.Points.Add(new Point { X = 0, Y = 1 });
+            window.Points.Add(new Point { X = 1, Y = 2 }); 
+            window.Points.Add(new Point { X = 3, Y = 3 });
+
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }
 

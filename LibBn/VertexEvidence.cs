@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibBn
+﻿namespace LibBn
 {
     public class VertexEvidence
     {
-        public EvidenceType EvidenceType;
-        public double[] Evidence;
-        public int StateIndex;
+        public double[] Evidence { get; set; }
+
+        public EvidenceType EvidenceType { get; set; }
+
+        public string Key { get; set; }
+
+        public int StateIndex { get; set; }
     }
 }

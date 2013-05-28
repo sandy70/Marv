@@ -4,10 +4,8 @@ using LibPipeline;
 using MapControl;
 using Smile;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using Telerik.Windows.Controls;
-using System.Linq;
 
 namespace Marv
 {
@@ -23,7 +21,7 @@ namespace Marv
         DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty GraphsProperty =
-        DependencyProperty.Register("Graphs", typeof(ObservableCollection<BnGraph>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<BnGraph>()));
+        DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -39,6 +37,9 @@ namespace Marv
 
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty PointsProperty =
+        DependencyProperty.Register("Points", typeof(List<Point>), typeof(MainWindow), new PropertyMetadata(new List<Point>()));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
@@ -76,6 +77,7 @@ namespace Marv
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
         private Model model = new Model();
+
         private ValueStore valueStore = new ValueStore();
 
         public MainWindow()
@@ -105,9 +107,9 @@ namespace Marv
             set { SetValue(FileNameProperty, value); }
         }
 
-        public ObservableCollection<BnGraph> Graphs
+        public GraphCollection Graphs
         {
-            get { return (ObservableCollection<BnGraph>)GetValue(GraphsProperty); }
+            get { return (GraphCollection)GetValue(GraphsProperty); }
             set { SetValue(GraphsProperty, value); }
         }
 
@@ -145,6 +147,12 @@ namespace Marv
         {
             get { return model; }
             set { model = value; }
+        }
+
+        public List<Point> Points
+        {
+            get { return (List<Point>)GetValue(PointsProperty); }
+            set { SetValue(PointsProperty, value); }
         }
 
         public IEnumerable<ILocation> ProfileLocations
@@ -282,7 +290,7 @@ namespace Marv
             else
             {
                 window.PopupControl.ShowTextIndeterminate("Running model.");
-                
+
                 window.Model.SelectedLocation = window.SelectedProfileLocation;
                 var intervalValues = await window.Model.RunAsync();
 
