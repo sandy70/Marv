@@ -1,13 +1,36 @@
-﻿using System;
+﻿using LibBn;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Linq;
 
 namespace LibPipeline
 {
     public static partial class Extensions
     {
+        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
+        {
+            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
+
+        public static MapControl.Location AsMapControlLocation(this ILocation location)
+        {
+            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
+
+        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
+        {
+            var locationRect = new LocationRect();
+
+            locationRect.South = locations.Min(x => x.Latitude);
+            locationRect.West = locations.Min(x => x.Longitude);
+            locationRect.North = locations.Max(x => x.Latitude);
+            locationRect.East = locations.Max(x => x.Longitude);
+
+            return locationRect;
+        }
+
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -56,6 +79,11 @@ namespace LibPipeline
                 //use recursion to proceed with next level
                 return FindParent<T>(parentObject);
             }
+        }
+
+        public static BnGraph GetGraph(this IEnumerable<BnGraph> graphs, string name)
+        {
+            return graphs.SingleOrDefault(x => x.Name.Equals(name));
         }
 
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
@@ -134,28 +162,6 @@ namespace LibPipeline
             }
 
             return nearestLocation;
-        }
-
-        public static MapControl.Location AsMapControlLocation(this ILocation location)
-        {
-            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
-        {
-            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
-        {
-            var locationRect = new LocationRect();
-
-            locationRect.South = locations.Min(x => x.Latitude);
-            locationRect.West = locations.Min(x => x.Longitude);
-            locationRect.North = locations.Max(x => x.Latitude);
-            locationRect.East = locations.Max(x => x.Longitude);
-
-            return locationRect;
         }
     }
 }

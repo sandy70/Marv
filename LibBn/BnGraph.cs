@@ -18,11 +18,12 @@ namespace LibBn
     {
         public Network Network = new Network();
 
-        private Dictionary<string, Dictionary<string, double>> _value;
+        private GraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
         private string fileName;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
+        private string name;
 
         public BnGraph()
         {
@@ -110,7 +111,25 @@ namespace LibBn
             get { return this.Edges; }
         }
 
-        public Dictionary<string, Dictionary<string, double>> Value
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value != this.name)
+                {
+                    this.name = value;
+
+                    this.OnPropertyChanged("Name");
+                }
+            }
+        }
+
+        public GraphValue Value
         {
             get
             {
@@ -122,11 +141,11 @@ namespace LibBn
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Values");
+                    this.OnPropertyChanged("Value");
 
                     foreach (var vertexKey in this.Value.Keys)
                     {
-                        this.GetVertex(vertexKey).Values = this.Value[vertexKey];
+                        this.GetVertex(vertexKey).Value = this.Value[vertexKey];
                     }
                 }
             }
@@ -135,13 +154,13 @@ namespace LibBn
         public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
         {
             var graph = new BnGraph();
-            var structure = NetworkStructure.Read(fileName);
-
+            graph.fileName = fileName;
             graph.Network.ReadFile(fileName);
             graph.Network.UpdateBeliefs();
 
+            var structure = NetworkStructure.Read(fileName);
             graph.DefaultGroup = structure.ParseDefaultGroup();
-            graph.fileName = fileName;
+            graph.Name = structure.ParseName();
 
             // Add all the vertices
             foreach (var structureVertex in structure.Vertices)
@@ -172,7 +191,6 @@ namespace LibBn
                     graph.AddEdge(srcNode.Key, dstNode.Key);
                 }
             }
-
 
             graph.UpdateValue();
             return graph;
@@ -296,13 +314,13 @@ namespace LibBn
             return partGraph;
         }
 
-        public Dictionary<string, Dictionary<string, double>> GetNetworkValue()
+        public GraphValue GetNetworkValue()
         {
-            var graphValue = new Dictionary<string, Dictionary<string, double>>();
+            var graphValue = new GraphValue();
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new Dictionary<string, double>();
+                var vertexValue = new VertexValue();
 
                 foreach (var state in vertex.States)
                 {
@@ -376,7 +394,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, Dictionary<string, double>> UpdateValue()
+        public GraphValue UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }

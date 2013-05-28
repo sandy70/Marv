@@ -140,15 +140,42 @@ namespace LibBn
             {
                 var descValueString = this.Properties["HR_Desc"];
 
-                var parts = descValueString.Split("\"=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                if (parts.Count() == 2)
+                foreach (var part in parts)
                 {
-                    return parts[1];
+                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (subParts[0].Equals("defaultgroup"))
+                    {
+                        return subParts[1];
+                    }
                 }
             }
 
             return "all";
+        }
+
+        public string ParseName()
+        {
+            if (this.Properties.ContainsKey("HR_Desc"))
+            {
+                var descValueString = this.Properties["HR_Desc"];
+
+                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
+                {
+                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (subParts[0].Equals("name"))
+                    {
+                        return subParts[1];
+                    }
+                }
+            }
+
+            return "";
         }
 
         public void Write(string path)

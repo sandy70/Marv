@@ -13,7 +13,7 @@
 
 using System;
 
-namespace LibPipline
+namespace LibPipeline
 {
   /// <summary>
   /// Class NormalDist represents the normal (Gaussian) probability distribution

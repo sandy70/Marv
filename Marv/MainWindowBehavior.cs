@@ -70,6 +70,10 @@ namespace Marv
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
             kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
+            window.Model.Graphs = window.Graphs;
+            window.Model.StartYear = window.StartYear;
+            window.Model.EndYear = window.EndYear;
+
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }
 

@@ -1,83 +1,68 @@
-﻿using System.Collections.Generic;
+﻿using LibBn;
+using System.Collections.Generic;
 
 namespace LibPipeline
 {
+    public class ModelValue : Dictionary<BnGraph, PipelineValue> { }
+
+    public class PipelineValue : Dictionary<ILocation, IntervalValue> { }
+
     public class ValueStore
     {
-        private ILocation defaultLocation = new Location();
+        private ModelValue modelValue = new ModelValue();
 
-        private Dictionary<ILocation, Dictionary<int, Dictionary<string, Dictionary<string, double>>>> pipelineValue =
-            new Dictionary<ILocation, Dictionary<int, Dictionary<string, Dictionary<string, double>>>>();
-
-        public Dictionary<string, Dictionary<string, double>> GetGraphValue(int year, ILocation location = null)
+        public GraphValue GetGraphValue(int year, ILocation location, BnGraph graph)
         {
-            if (location == null) location = this.defaultLocation;
+            var intervalValue = this.GetIntervalValue(location, graph);
 
-            var locationValue = this.GetLocationValue(location);
-
-            if (locationValue.ContainsKey(year))
+            if (intervalValue.ContainsKey(year))
             {
-                return locationValue[year];
+                return intervalValue[year];
             }
             else
             {
-                return locationValue[year] = new Dictionary<string, Dictionary<string, double>>();
+                return intervalValue[year] = new GraphValue();
             }
         }
 
-        public Dictionary<int, Dictionary<string, Dictionary<string, double>>> GetLocationValue(ILocation location)
+        public IntervalValue GetIntervalValue(ILocation location, BnGraph graph)
         {
-            if (this.pipelineValue.ContainsKey(location))
+            var pipelineValue = this.GetPipelineValue(graph);
+
+            if (pipelineValue.ContainsKey(location))
             {
-                return this.pipelineValue[location];
+                return pipelineValue[location];
             }
             else
             {
-                return this.pipelineValue[location] = new Dictionary<int, Dictionary<string, Dictionary<string, double>>>();
+                return pipelineValue[location] = new IntervalValue();
             }
         }
 
-        public double GetStateValue(string stateKey, string vertexKey = "__DEFAULT__", int year = int.MinValue, ILocation location = null)
+        public PipelineValue GetPipelineValue(BnGraph graph)
         {
-            if (location == null) location = this.defaultLocation;
-
-            var vertexValue = this.GetVertexValue(vertexKey, year, location);
-
-            if (vertexValue.ContainsKey(stateKey))
+            if (this.modelValue.ContainsKey(graph))
             {
-                return vertexValue[stateKey];
+                return this.modelValue[graph];
             }
             else
             {
-                return vertexValue[stateKey] = 0;
+                return this.modelValue[graph] = new PipelineValue();
             }
         }
 
-        public Dictionary<string, double> GetVertexValue(string key, int year = int.MinValue, ILocation location = null)
+        public bool HasGraphValue(int year, ILocation location, BnGraph graph)
         {
-            if (location == null) location = this.defaultLocation;
-
-            var graphValue = this.GetGraphValue(year, location);
-
-            if (graphValue.ContainsKey(key))
+            if (graph == null || location == null)
             {
-                return graphValue[key];
+                return false;
             }
-            else
+
+            if (this.HasIntervalValue(location, graph))
             {
-                return graphValue[key] = new Dictionary<string, double>();
-            }
-        }
+                var intervalValue = this.GetIntervalValue(location, graph);
 
-        public bool HasGraphValue(int year, ILocation location = null)
-        {
-            if (location == null) return false;
-
-            if (this.HasLocationValue(location))
-            {
-                var locationValue = this.pipelineValue[location];
-
-                if (locationValue.ContainsKey(year))
+                if (intervalValue.ContainsKey(year))
                 {
                     return true;
                 }
@@ -92,9 +77,50 @@ namespace LibPipeline
             }
         }
 
-        public bool HasLocationValue(ILocation location)
+        public bool HasGraphValues(int year, ILocation location, IEnumerable<BnGraph> graphs)
         {
-            if (this.pipelineValue.ContainsKey(location))
+            var hasGraphValues = true;
+
+            foreach (var graph in graphs)
+            {
+                if (!this.HasGraphValue(year, location, graph))
+                {
+                    hasGraphValues = false;
+                }
+            }
+
+            return hasGraphValues;
+        }
+
+        public bool HasIntervalValue(ILocation location, BnGraph graph)
+        {
+            if (graph == null) return false;
+            if (location == null) return false;
+
+            if (this.HasPipelineValue(graph))
+            {
+                var pipelineValue = this.GetPipelineValue(graph);
+
+                if (pipelineValue.ContainsKey(location))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool HasPipelineValue(BnGraph graph)
+        {
+            if (graph == null) return false;
+
+            if (this.modelValue.ContainsKey(graph))
             {
                 return true;
             }
@@ -104,27 +130,9 @@ namespace LibPipeline
             }
         }
 
-        public void SetGraphValue(Dictionary<string, Dictionary<string, double>> graphValue, int year, ILocation location = null)
+        public void SetIntervalValue(IntervalValue intervalValue, ILocation location, BnGraph graph)
         {
-            if (location == null) location = this.defaultLocation;
-
-            var locationValue = this.GetLocationValue(location);
-
-            locationValue[year] = graphValue;
-        }
-
-        public void SetLocationValue(Dictionary<int, Dictionary<string, Dictionary<string, double>>> locationValue, ILocation location)
-        {
-            this.pipelineValue[location] = locationValue;
-        }
-
-        public void SetStateValue(double value, string stateKey, string vertexKey = "__DEFAULT__", int year = int.MinValue, ILocation location = null)
-        {
-            if (location == null) location = this.defaultLocation;
-
-            var vertexValue = this.GetVertexValue(vertexKey, year, location);
-
-            vertexValue[stateKey] = value;
+            this.GetPipelineValue(graph)[location] = intervalValue;
         }
     }
 }

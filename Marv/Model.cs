@@ -1,28 +1,58 @@
 ﻿using LibBn;
 using LibPipeline;
-using LibPipline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Marv
 {
-    public static class Model
+    public class Model
     {
-        private static object _lock = new object();
+        private object _lock = new object();
+        private int endYear;
+        private IEnumerable<BnGraph> graphs;
+        private ILocation selectedLocation;
+        private int startYear;
 
-        public static Dictionary<int, Dictionary<string, Dictionary<string, double>>>
-            Run(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        public int EndYear
         {
-            var inputStore = new InputStore();
-            var locationValue = new Dictionary<int, Dictionary<string, Dictionary<string, double>>>();
+            get { return endYear; }
+            set { endYear = value; }
+        }
+
+        public IEnumerable<BnGraph> Graphs
+        {
+            get { return graphs; }
+            set { graphs = value; }
+        }
+
+        public ILocation SelectedLocation
+        {
+            get { return selectedLocation; }
+            set { selectedLocation = value; }
+        }
+
+        public int StartYear
+        {
+            get { return startYear; }
+            set { startYear = value; }
+        }
+
+        public Dictionary<BnGraph, IntervalValue> Run()
+        {
+            var intervalValues = new Dictionary<BnGraph, IntervalValue>();
+
+            var sccGraph = this.Graphs.GetGraph("nnphscc");
+            var failureGraph = this.Graphs.GetGraph("nnphsccfailure");
+
+            var sccIntervalValue = new IntervalValue();
+            var failureIntervalValue = new IntervalValue();
 
             for (int year = startYear; year <= endYear; year++)
             {
-                var graphInput = inputStore.GetGraphInput(year);
-                var graphEvidence = new Dictionary<string, VertexEvidence>();
+                var sccGraphEvidence = new Dictionary<string, VertexEvidence>();
+                var failureGraphEvidence = new Dictionary<string, VertexEvidence>();
 
                 var fixedVariables = new Dictionary<string, int>
                 {
@@ -49,7 +79,7 @@ namespace Marv
 
                 foreach (var variable in fixedVariables)
                 {
-                    graphEvidence[variable.Key] = new VertexEvidence
+                    sccGraphEvidence[variable.Key] = new VertexEvidence
                     {
                         EvidenceType = EvidenceType.StateSelected,
                         StateIndex = variable.Value
@@ -63,17 +93,17 @@ namespace Marv
                 var variance = Math.Pow(location.Pressure / 14.5 - location.Pressure_Min / 14.5, 2);
                 var normalDistribution = new NormalDistribution(mean, variance);
 
-                graphEvidence["P"] = new VertexEvidence
+                sccGraphEvidence["P"] = new VertexEvidence
                 {
                     Evidence = new double[stateValues.Count - 1],
                     EvidenceType = EvidenceType.SoftEvidence
                 };
 
-                graphEvidence["age"] = new VertexEvidence { EvidenceType = EvidenceType.StateSelected, StateIndex = Math.Min(year - startYear, 99) };
+                sccGraphEvidence["age"] = new VertexEvidence { EvidenceType = EvidenceType.StateSelected, StateIndex = Math.Min(year - startYear, 99) };
 
                 if (year == startYear)
                 {
-                    graphEvidence["ocl"] = new VertexEvidence
+                    sccGraphEvidence["ocl"] = new VertexEvidence
                     {
                         Evidence = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
                         EvidenceType = EvidenceType.SoftEvidence
@@ -81,16 +111,16 @@ namespace Marv
                 }
                 else
                 {
-                    graphEvidence["ocl"] = new VertexEvidence
+                    sccGraphEvidence["ocl"] = new VertexEvidence
                     {
-                        Evidence = locationValue[year - 1]["cl"].Select(x => x.Value).ToArray(),
+                        Evidence = sccIntervalValue[year - 1]["cl"].Select(x => x.Value).ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
 
                 if (year == startYear)
                 {
-                    graphEvidence["ocd"] = new VertexEvidence
+                    sccGraphEvidence["ocd"] = new VertexEvidence
                     {
                         Evidence = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
                         EvidenceType = EvidenceType.SoftEvidence
@@ -98,16 +128,16 @@ namespace Marv
                 }
                 else
                 {
-                    graphEvidence["ocd"] = new VertexEvidence
+                    sccGraphEvidence["ocd"] = new VertexEvidence
                     {
-                        Evidence = locationValue[year - 1]["cd"].Select(x => x.Value).ToArray(),
+                        Evidence = sccIntervalValue[year - 1]["cd"].Select(x => x.Value).ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
 
                 if (year == startYear)
                 {
-                    graphEvidence["ocdc"] = new VertexEvidence
+                    sccGraphEvidence["ocdc"] = new VertexEvidence
                     {
                         Evidence = new double[] { 0, 0, 0, 1 },
                         EvidenceType = EvidenceType.SoftEvidence
@@ -115,35 +145,60 @@ namespace Marv
                 }
                 else
                 {
-                    graphEvidence["ocdc"] = new VertexEvidence
+                    sccGraphEvidence["ocdc"] = new VertexEvidence
                     {
-                        Evidence = locationValue[year - 1]["cdc"].Select(x => x.Value).ToArray(),
+                        Evidence = sccIntervalValue[year - 1]["cdc"].Select(x => x.Value).ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
 
                 for (int i = 0; i < stateValues.Count - 1; i++)
                 {
-                    graphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
+                    sccGraphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
                 }
 
-                graph.SetEvidence(graphEvidence);
-                graph.UpdateBeliefs();
+                sccGraph.SetEvidence(sccGraphEvidence);
+                sccGraph.UpdateBeliefs();
 
-                locationValue[year] = graph.GetNetworkValue();
+                sccIntervalValue[year] = sccGraph.GetNetworkValue();
+
+                failureGraphEvidence["cd"] = new VertexEvidence
+                {
+                    Evidence = sccIntervalValue[year]["cd"].Select(x => x.Value).ToArray(),
+                    EvidenceType = EvidenceType.SoftEvidence
+                };
+
+                failureGraphEvidence["cl"] = new VertexEvidence
+                {
+                    Evidence = sccIntervalValue[year]["cl"].Select(x => x.Value).ToArray(),
+                    EvidenceType = EvidenceType.SoftEvidence
+                };
+
+                failureGraphEvidence["ft"] = new VertexEvidence
+                {
+                    EvidenceType = EvidenceType.StateSelected,
+                    StateIndex = 5  // 300 - 350
+                };
+
+                failureGraph.SetEvidence(failureGraphEvidence);
+                failureGraph.UpdateBeliefs();
+
+                failureIntervalValue[year] = failureGraph.GetNetworkValue();
             }
 
-            return locationValue;
+            intervalValues[sccGraph] = sccIntervalValue;
+            intervalValues[failureGraph] = failureIntervalValue;
+
+            return intervalValues;
         }
 
-        public static Task<Dictionary<int, Dictionary<string, Dictionary<string, double>>>>
-            RunAsync(ILocation selectedLocation, BnGraph graph, int startYear, int endYear)
+        public Task<Dictionary<BnGraph, IntervalValue>>  RunAsync()
         {
             return Task.Run(() =>
             {
-                lock (Model._lock)
+                lock (this._lock)
                 {
-                    return Model.Run(selectedLocation, graph, startYear, endYear);
+                    return this.Run();
                 }
             });
         }

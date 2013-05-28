@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using Telerik.Windows.Controls;
+using System.Linq;
 
 namespace Marv
 {
@@ -74,6 +75,7 @@ namespace Marv
 
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
+        private Model model = new Model();
         private ValueStore valueStore = new ValueStore();
 
         public MainWindow()
@@ -139,6 +141,12 @@ namespace Marv
             set { SetValue(IsTallySelectedProperty, value); }
         }
 
+        public Model Model
+        {
+            get { return model; }
+            set { model = value; }
+        }
+
         public IEnumerable<ILocation> ProfileLocations
         {
             get { return (IEnumerable<ILocation>)GetValue(ProfileLocationsProperty); }
@@ -167,12 +175,6 @@ namespace Marv
         {
             get { return (int)GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
-        }
-
-        public BnGraph SourceGraph
-        {
-            get { return (BnGraph)GetValue(SourceGraphProperty); }
-            set { SetValue(SourceGraphProperty, value); }
         }
 
         public string StartingGroup
@@ -226,6 +228,7 @@ namespace Marv
 
                 var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
                 this.VertexValuesByYear[this.SelectedYear] = vertexValues;
+
                 // this.GraphControl.SourceGraph.CopyFrom(vertexValues);
                 // this.GraphControl.SourceGraph.UpdateMostProbableStates();
 
@@ -241,17 +244,27 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
+            if (window.valueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
             {
-                // window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
+                foreach (var graph in window.Graphs)
+                {
+                    graph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                }
             }
             else
             {
-                //window.PopupControl.ShowTextIndeterminate("Running model.");
-                //var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-                //window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
-                //window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
-                //window.PopupControl.Hide();
+                window.PopupControl.ShowTextIndeterminate("Running model.");
+
+                window.Model.SelectedLocation = window.SelectedProfileLocation;
+                var intervalValues = await window.Model.RunAsync();
+
+                foreach (var graph in intervalValues.Keys)
+                {
+                    graph.Value = intervalValues[graph][window.SelectedYear];
+                    window.valueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
+                }
+
+                window.PopupControl.Hide();
             }
         }
 
@@ -259,17 +272,27 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.valueStore.HasGraphValue(window.SelectedYear, window.SelectedProfileLocation))
+            if (window.valueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
             {
-                // window.GraphControl.SourceGraph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation);
+                foreach (var graph in window.Graphs)
+                {
+                    graph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                }
             }
             else
             {
-                //window.PopupControl.ShowTextIndeterminate("Running model.");
-                //var locationValue = await Model.RunAsync(window.SelectedProfileLocation, window.GraphControl.SourceGraph, window.StartYear, window.EndYear);
-                //window.GraphControl.SourceGraph.Value = locationValue[window.SelectedYear];
-                //window.valueStore.SetLocationValue(locationValue, window.SelectedProfileLocation);
-                //window.PopupControl.Hide();
+                window.PopupControl.ShowTextIndeterminate("Running model.");
+                
+                window.Model.SelectedLocation = window.SelectedProfileLocation;
+                var intervalValues = await window.Model.RunAsync();
+
+                foreach (var graph in intervalValues.Keys)
+                {
+                    graph.Value = intervalValues[graph][window.SelectedYear];
+                    window.valueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
+                }
+
+                window.PopupControl.Hide();
             }
         }
     }

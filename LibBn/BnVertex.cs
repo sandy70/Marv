@@ -263,7 +263,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, double> Values
+        public Dictionary<string, double> Value
         {
             get
             {
@@ -275,11 +275,11 @@ namespace LibBn
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Values");
+                    this.OnPropertyChanged("Value");
 
                     foreach (var state in this.States)
                     {
-                        state.Value = this.Values[state.Key];
+                        state.Value = this.Value[state.Key];
                     }
 
                     this.UpdateMostProbableState();
