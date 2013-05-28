@@ -287,17 +287,6 @@ namespace LibBn
             }
         }
 
-        public void CopyFrom(BnVertexValue srcVertexValue)
-        {
-            this.IsEvidenceEntered = srcVertexValue.IsEvidenceEntered;
-            int nStates = srcVertexValue.States.Count;
-
-            for (int s = 0; s < nStates; s++)
-            {
-                this.States[s].Value = srcVertexValue.States[s];
-            }
-        }
-
         public int GetSelectedStateIndex()
         {
             BnState selectedState = null;

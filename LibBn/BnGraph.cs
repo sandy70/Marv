@@ -244,19 +244,6 @@ namespace LibBn
             }
         }
 
-        public void CopyFrom(IEnumerable<BnVertexValue> vertexValues)
-        {
-            foreach (var srcVertexValue in vertexValues)
-            {
-                BnVertex dstVertex = this.GetVertex(srcVertexValue.Key);
-
-                if (dstVertex != null)
-                {
-                    dstVertex.CopyFrom(srcVertexValue);
-                }
-            }
-        }
-
         public BnGraph GetGroup(string group)
         {
             // Extract the header vertices
