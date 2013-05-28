@@ -204,6 +204,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GraphCollection.cs" />
+    <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="PopupControl.xaml.cs">
