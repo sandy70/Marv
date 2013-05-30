@@ -18,12 +18,6 @@ namespace LibPipeline
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
         }
 
-        public BnVertexViewModel(BnGraph parent, Network network)
-            : base(parent, network)
-        {
-            this.PropertyChanged += BnVertexViewModel_PropertyChanged;
-        }
-
         public bool IsExpanded
         {
             get
