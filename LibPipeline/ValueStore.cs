@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace LibPipeline
 {
-    public class ModelValue : Dictionary<BnGraph, PipelineValue> { }
+    public class ModelValue : Dictionary<BnGraph, IntervalValue> { }
 
-    public class PipelineValue : Dictionary<ILocation, IntervalValue> { }
+    public class PipelineValue : Dictionary<ILocation, ModelValue> { }
 
     public class ValueStore
     {
