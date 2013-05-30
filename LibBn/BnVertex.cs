@@ -25,6 +25,7 @@ namespace LibBn
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
         private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
+        private VertexType type = VertexType.None;
         private string units = "";
 
         public BnVertex()
@@ -243,6 +244,23 @@ namespace LibBn
             {
                 states = value;
                 OnPropertyChanged("States");
+            }
+        }
+
+        public VertexType Type
+        {
+            get
+            {
+                return this.type;
+            }
+
+            set
+            {
+                if (value != this.type)
+                {
+                    this.type = value;
+                    this.OnPropertyChanged("Type");
+                }
             }
         }
 
