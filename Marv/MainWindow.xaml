@@ -225,7 +225,7 @@
                                      Margin="10"
                                      VerticalAlignment="Top"
                                      Width="200"
-                                     ItemsSource="{Binding Graphs[nnphscc].Vertices, ElementName=Root}">
+                                     ItemsSource="{Binding Graphs[nnphscc].NumericVertices, ElementName=Root}">
                     <telerik:RadComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" />
