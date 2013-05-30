@@ -206,17 +206,32 @@
                     </telerik:RadCartesianChart.Behaviors>
                     
                     <telerik:RadCartesianChart.HorizontalAxis>
-                        <telerik:LinearAxis />
+                        <telerik:LinearAxis Maximum="{Binding EndYear, ElementName=Root}"
+                                            Minimum="{Binding StartYear, ElementName=Root}" />
                     </telerik:RadCartesianChart.HorizontalAxis>
                     
                     <telerik:RadCartesianChart.VerticalAxis>
-                        <telerik:LinearAxis />
+                        <telerik:CategoricalAxis />
                     </telerik:RadCartesianChart.VerticalAxis>
                     
-                    <telerik:ScatterLineSeries ItemsSource="{Binding Points, ElementName=Root}"
-                                               XValueBinding="X"
-                                               YValueBinding="Y" />
+                    <telerik:SplineSeries CategoryBinding="Y"
+                                          ItemsSource="{Binding Points, ElementName=Root}"
+                                          ValueBinding="X" />
                 </telerik:RadCartesianChart>
+                
+                <telerik:RadComboBox Name="LocationSeriesComboBox"
+                                     Height="20"
+                                     HorizontalAlignment="Right"
+                                     Margin="10"
+                                     VerticalAlignment="Top"
+                                     Width="200"
+                                     ItemsSource="{Binding Graphs[nnphscc].Vertices, ElementName=Root}">
+                    <telerik:RadComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </telerik:RadComboBox.ItemTemplate>
+                </telerik:RadComboBox>
             </Grid>
         </telerik:RadTabItem>
     </telerik:RadTabControl>

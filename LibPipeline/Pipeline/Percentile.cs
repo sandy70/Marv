@@ -38,7 +38,7 @@ namespace LibPipeline
             set
             {
                 _DistanceFromOrigin = value;
-                OnPropertyChanged("DistanceFromOrigin");
+                OnPropertyChanged("Distances");
             }
         }
 

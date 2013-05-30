@@ -21,7 +21,7 @@ namespace Marv
 
         private Model model = new Model();
 
-        private ValueStore valueStore = new ValueStore();
+        public ValueStore ValueStore = new ValueStore();
 
         public MainWindow()
         {
@@ -81,11 +81,11 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.valueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
+            if (window.ValueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
             {
                 foreach (var graph in window.Graphs)
                 {
-                    graph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                    graph.Value = window.ValueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
                 }
             }
             else
@@ -98,7 +98,7 @@ namespace Marv
                 foreach (var graph in intervalValues.Keys)
                 {
                     graph.Value = intervalValues[graph][window.SelectedYear];
-                    window.valueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
+                    window.ValueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
                 }
 
                 window.PopupControl.Hide();
@@ -109,11 +109,11 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.valueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
+            if (window.ValueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
             {
                 foreach (var graph in window.Graphs)
                 {
-                    graph.Value = window.valueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                    graph.Value = window.ValueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
                 }
             }
             else
@@ -126,7 +126,7 @@ namespace Marv
                 foreach (var graph in intervalValues.Keys)
                 {
                     graph.Value = intervalValues[graph][window.SelectedYear];
-                    window.valueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
+                    window.ValueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
                 }
 
                 window.PopupControl.Hide();

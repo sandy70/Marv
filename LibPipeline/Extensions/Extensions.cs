@@ -31,6 +31,29 @@ namespace LibPipeline
             return locationRect;
         }
 
+        public static Dictionary<ILocation, double> Distances(this IEnumerable<ILocation> locations)
+        {
+            var distances = new Dictionary<ILocation, double>();
+
+            ILocation lastLocation;
+
+            if (locations.Count() > 0)
+            {
+                lastLocation = locations.First();
+                distances[lastLocation] = 0;
+
+                if (locations.Count() > 1)
+                {
+                    foreach (var location in locations.Skip(1))
+                    {
+                        distances[location] = distances[lastLocation] + Utils.Distance(lastLocation, location);
+                    }
+                }
+            }
+
+            return distances;
+        }
+
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)

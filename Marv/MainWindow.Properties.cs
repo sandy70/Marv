@@ -1,6 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace Marv
@@ -35,7 +36,7 @@ namespace Marv
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty PointsProperty =
-        DependencyProperty.Register("Points", typeof(List<Point>), typeof(MainWindow), new PropertyMetadata(new List<Point>()));
+        DependencyProperty.Register("Points", typeof(ObservableCollection<Point>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<Point>()));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
@@ -124,9 +125,9 @@ namespace Marv
             set { model = value; }
         }
 
-        public List<Point> Points
+        public ObservableCollection<Point> Points
         {
-            get { return (List<Point>)GetValue(PointsProperty); }
+            get { return (ObservableCollection<Point>)GetValue(PointsProperty); }
             set { SetValue(PointsProperty, value); }
         }
 

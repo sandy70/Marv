@@ -6,6 +6,12 @@
         User
     }
 
+    public enum EvidenceType
+    {
+        SoftEvidence,
+        StateSelected
+    }
+
     public enum VertexInputType
     {
         SoftEvidence,
@@ -19,15 +25,16 @@
         Summary
     }
 
+    public enum VertexType
+    {
+        Interval,
+        None,
+        Number
+    }
+
     public static class Groups
     {
         public static readonly string All = "all";
         public static readonly string Default = "0";
-    }
-
-    public enum EvidenceType
-    {
-        SoftEvidence,
-        StateSelected
     }
 }

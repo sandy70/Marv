@@ -1,8 +1,10 @@
 ﻿using LibBn;
 using LibPipeline;
+using Microsoft.Win32;
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
@@ -28,7 +30,7 @@ namespace Marv
             Properties.Settings.Default.Save();
         }
 
-        private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
+        private async void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.IsKeyDown(Key.S) &&
                 (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)) &&
@@ -39,6 +41,27 @@ namespace Marv
             else if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
+                   (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+            {
+                var dialog = new OpenFileDialog
+                {
+                    DefaultExt = ".net",
+                    Filter = "Hugin Network Files (.net)|*.net",
+                    Multiselect = true
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    var window = this.AssociatedObject;
+                    window.Graphs.Clear();
+
+                    foreach (var fileName in dialog.FileNames)
+                    {
+                        window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+                    }
+                }
             }
         }
 
@@ -74,11 +97,25 @@ namespace Marv
             window.Model.StartYear = window.StartYear;
             window.Model.EndYear = window.EndYear;
 
-            window.Points.Add(new Point { X = 0, Y = 1 });
-            window.Points.Add(new Point { X = 1, Y = 2 }); 
-            window.Points.Add(new Point { X = 3, Y = 3 });
-
+            window.LocationSeriesComboBox.SelectionChanged += LocationSeriesComboBox_SelectionChanged;
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
+        }
+
+        private void LocationSeriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var selectedVertex = window.LocationSeriesComboBox.SelectedItem as BnVertex;
+
+            window.Points.Clear();
+
+            for (int year = window.StartYear; year <= window.EndYear;year++)
+            {
+                window.Points.Add(new Point
+                {
+                    X = year,
+                    Y = window.ValueStore.GetGraphValue(year, window.SelectedProfileLocation, window.Graphs.GetGraph("nnphscc"))[selectedVertex.Key].Max(x => x.Value)
+                });
+            }
         }
 
         private void SensorListener_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)

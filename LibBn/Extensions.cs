@@ -61,6 +61,11 @@ namespace LibBn
             string[] names = new string[nStates];
             double[] values = network.GetNodeValue(nodeHandle);
 
+            if (key.Equals("cdc"))
+            {
+                var prop = network.GetNodeType(nodeHandle);
+            }
+
             foreach (var prop in network.GetNodeUserProperties(nodeHandle))
             {
                 if (prop.name.Contains("HR_State_"))
