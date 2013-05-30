@@ -53,7 +53,6 @@ namespace LibBn
                 if (value != this.associatedGroup)
                 {
                     this.associatedGroup = value;
-
                     this.OnPropertyChanged("AssociatedGroup");
                 }
             }
@@ -126,6 +125,24 @@ namespace LibBn
 
                     this.OnPropertyChanged("Name");
                 }
+            }
+        }
+
+        public IEnumerable<BnVertex> NumericVertices
+        {
+            get
+            {
+                var numericVertices = new List<BnVertex>();
+
+                foreach (var vertex in this.Vertices)
+                {
+                    if (vertex.Type == VertexType.Interval || vertex.Type == VertexType.Number)
+                    {
+                        numericVertices.Add(vertex);
+                    }
+                }
+
+                return numericVertices.AsEnumerable();
             }
         }
 
