@@ -84,7 +84,7 @@ namespace Marv
 
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC 2013 05 21.net"));
+                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC.net"));
                     window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
                 }));
 
@@ -104,17 +104,22 @@ namespace Marv
         private void LocationSeriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
+            var graph = window.Graphs["nnphscc"];
             var selectedVertex = window.LocationSeriesComboBox.SelectedItem as BnVertex;
 
             window.Points.Clear();
 
             for (int year = window.StartYear; year <= window.EndYear;year++)
             {
+                var vertexValue = window.ValueStore.GetGraphValue(year, window.SelectedProfileLocation, graph)[selectedVertex.Key];
+
                 window.Points.Add(new Point
                 {
                     X = year,
-                    Y = window.ValueStore.GetGraphValue(year, window.SelectedProfileLocation, window.Graphs.GetGraph("nnphscc"))[selectedVertex.Key].Max(x => x.Value)
+                    Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
                 });
+
+                Console.WriteLine(graph.GetVertex(selectedVertex.Key).GetMean(vertexValue));
             }
         }
 
