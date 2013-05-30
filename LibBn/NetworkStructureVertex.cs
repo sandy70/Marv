@@ -12,7 +12,7 @@ namespace LibBn
         public string Key = "";
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
 
-        internal ObservableCollection<string> ParseGroups()
+        public ObservableCollection<string> ParseGroups()
         {
             var groups = new ObservableCollection<string>();
 
@@ -37,7 +37,7 @@ namespace LibBn
             return groups;
         }
 
-        internal Point ParsePosition()
+        public Point ParsePosition()
         {
             var posValueString = this.Properties["position"];
 
@@ -52,7 +52,7 @@ namespace LibBn
             return position;
         }
 
-        internal Dictionary<string, Point> ParsePositionByGroup()
+        public Dictionary<string, Point> ParsePositionByGroup()
         {
             var positionsByGroup = new Dictionary<string, Point>();
 
@@ -79,7 +79,7 @@ namespace LibBn
             return positionsByGroup;
         }
 
-        internal List<string> ParseStates()
+        public List<string> ParseStates()
         {
             var states = new List<string>();
             var subtype = "";
@@ -150,7 +150,44 @@ namespace LibBn
             return states;
         }
 
-        internal string ParseStringProperty(string str)
+        public void ParseStatesMinMax(ObservableCollection<BnState> states)
+        {
+            var subtype = "";
+
+            if (this.Properties.TryGetValue("subtype", out subtype))
+            {
+                if (subtype.Equals("interval"))
+                {
+                    var stateStrings = this.Properties["state_values"]
+                                           .Split(new char[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                           .ToList();
+
+                    var nStatesStrings = stateStrings.Count;
+
+                    for (int i = 0; i < nStatesStrings - 1; i++)
+                    {
+                        states[i].Min = double.Parse(stateStrings[i]);
+                        states[i].Max = double.Parse(stateStrings[i + 1]);
+                    }
+                }
+                else if (subtype.Equals("number"))
+                {
+                    var stateStrings = this.Properties["state_values"]
+                                           .Split(new char[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                           .ToList();
+
+                    var nStatesStrings = stateStrings.Count;
+
+                    for (int i = 0; i < nStatesStrings; i++)
+                    {
+                        states[i].Min = double.Parse(stateStrings[i]);
+                        states[i].Max = double.Parse(stateStrings[i]);
+                    }
+                }
+            }
+        }
+
+        public string ParseStringProperty(string str)
         {
             var htmlDesc = "";
 
@@ -160,6 +197,24 @@ namespace LibBn
             }
 
             return htmlDesc;
+        }
+
+        public VertexType ParseSubType()
+        {
+            var typeString = this.ParseStringProperty("subtype");
+
+            if (typeString.Equals("number"))
+            {
+                return VertexType.Number;
+            }
+            else if (typeString.Equals("interval"))
+            {
+                return VertexType.Interval;
+            }
+            else
+            {
+                return VertexType.None;
+            }
         }
     }
 }
