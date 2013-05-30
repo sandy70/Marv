@@ -28,17 +28,6 @@ namespace LibBn
         private VertexType type = VertexType.None;
         private string units = "";
 
-        public BnVertex()
-        {
-        }
-
-        public BnVertex(BnGraph parent, Network aNetwork)
-        {
-            this.Network = network;
-            this.nodeHandle = this.Network.GetNode(key);
-            this.Parent = parent;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Description
@@ -303,6 +292,33 @@ namespace LibBn
                     this.UpdateMostProbableState();
                 }
             }
+        }
+
+        public double GetMean(Dictionary<string, double> value)
+        {
+            double numer = 0;
+            double denom = 0;
+
+            if (this.Type == VertexType.Number)
+            {
+                foreach (var state in this.States)
+                {
+                    numer += state.Min * value[state.Key];
+                    denom += value[state.Key];
+                }
+            }
+            else if (this.Type == VertexType.Interval)
+            {
+                foreach (var state in this.States)
+                {
+                    double mid = (state.Min + state.Max) / 2;
+
+                    numer += mid * value[state.Key];
+                    denom += value[state.Key];
+                }
+            }
+
+            return numer / denom;
         }
 
         public int GetSelectedStateIndex()
