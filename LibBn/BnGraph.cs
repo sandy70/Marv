@@ -179,6 +179,9 @@ namespace LibBn
                 vertex.Positions = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = graph.Network.ParseStates(structureVertex.Key);
+                vertex.Type = structureVertex.ParseSubType();
+
+                structureVertex.ParseStatesMinMax(vertex.States);
 
                 graph.AddVertex(vertex);
             }
