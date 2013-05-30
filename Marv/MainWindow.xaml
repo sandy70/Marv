@@ -211,12 +211,12 @@
                     </telerik:RadCartesianChart.HorizontalAxis>
                     
                     <telerik:RadCartesianChart.VerticalAxis>
-                        <telerik:CategoricalAxis />
+                        <telerik:LinearAxis />
                     </telerik:RadCartesianChart.VerticalAxis>
                     
-                    <telerik:SplineSeries CategoryBinding="Y"
-                                          ItemsSource="{Binding Points, ElementName=Root}"
-                                          ValueBinding="X" />
+                    <telerik:ScatterLineSeries ItemsSource="{Binding Points, ElementName=Root}"
+                                            XValueBinding="X" 
+                                            YValueBinding="Y"/>
                 </telerik:RadCartesianChart>
                 
                 <telerik:RadComboBox Name="LocationSeriesComboBox"
