@@ -1,4 +1,5 @@
 ﻿using LibBn;
+using System;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
@@ -17,7 +18,7 @@ namespace LibPipeline
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
             var vertexViewModel = statesControl.DataContext as BnVertexViewModel;
-            var selectedState = this.AssociatedObject.Tag as BnState;
+            var selectedState = this.AssociatedObject.DataContext as BnState;
 
             vertexViewModel.SelectState(selectedState);
 
