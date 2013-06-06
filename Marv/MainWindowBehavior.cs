@@ -32,6 +32,8 @@ namespace Marv
 
         private async void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
+            var window = this.AssociatedObject;
+
             if (e.KeyboardDevice.IsKeyDown(Key.S) &&
                 (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)) &&
                 (e.KeyboardDevice.IsKeyDown(Key.LeftAlt) || e.KeyboardDevice.IsKeyDown(Key.RightAlt)))
@@ -41,6 +43,19 @@ namespace Marv
             else if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
+                int nLocations = window.ProfileLocations.Count();
+                int nCompleted = 0;
+
+                foreach (var location in window.ProfileLocations)
+                {
+                    window.NearNeutralPhSccModel.SelectedLocation = location;
+
+                    var locationValue = await window.NearNeutralPhSccModel.RunAsync();
+
+                    window.PipelineValue[location] = locationValue;
+
+                    Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
+                }
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
@@ -54,7 +69,6 @@ namespace Marv
 
                 if (dialog.ShowDialog() == true)
                 {
-                    var window = this.AssociatedObject;
                     window.Graphs.Clear();
 
                     foreach (var fileName in dialog.FileNames)
@@ -93,9 +107,9 @@ namespace Marv
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
             kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
-            window.Model.Graphs = window.Graphs;
-            window.Model.StartYear = window.StartYear;
-            window.Model.EndYear = window.EndYear;
+            window.NearNeutralPhSccModel.Graphs = window.Graphs;
+            window.NearNeutralPhSccModel.StartYear = window.StartYear;
+            window.NearNeutralPhSccModel.EndYear = window.EndYear;
 
             window.LocationSeriesComboBox.SelectionChanged += LocationSeriesComboBox_SelectionChanged;
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
@@ -111,15 +125,17 @@ namespace Marv
 
             for (int year = window.StartYear; year <= window.EndYear;year++)
             {
-                var vertexValue = window.ValueStore.GetGraphValue(year, window.SelectedProfileLocation, graph)[selectedVertex.Key];
+                var vertexValue = window.PipelineValue
+                                        .GetLocationValue(window.SelectedProfileLocation)
+                                        .GetModelValue(year)
+                                        .GetGraphValue("nnphscc")
+                                        .GetVertexValue(selectedVertex.Key);
 
                 window.Points.Add(new Point
                 {
                     X = year,
                     Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
                 });
-
-                Console.WriteLine(graph.GetVertex(selectedVertex.Key).GetMean(vertexValue));
             }
         }
 
