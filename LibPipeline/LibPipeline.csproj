@@ -150,7 +150,6 @@
     <Compile Include="BingMap\BingMapUpdateBehavior.cs" />
     <Compile Include="InputStore.cs" />
     <Compile Include="NormalDistribution.cs" />
-    <Compile Include="ValueStore.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnStatesControlBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnVertexViewModel.cs" />
@@ -184,6 +183,7 @@
     <Compile Include="Controls\MapView\MapView.cs" />
     <Compile Include="Controls\MapView\MapViewBehavior.cs" />
     <Compile Include="ExcelReader.cs" />
+    <Compile Include="PipelineValue.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />

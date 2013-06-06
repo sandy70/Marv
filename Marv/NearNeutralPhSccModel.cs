@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Marv
 {
-    public class Model
+    public class NearNeutralPhSccModel
     {
         private object _lock = new object();
         private int endYear;
@@ -39,15 +39,15 @@ namespace Marv
             set { startYear = value; }
         }
 
-        public Dictionary<BnGraph, IntervalValue> Run()
+        public LocationValue Run()
         {
-            var intervalValues = new Dictionary<BnGraph, IntervalValue>();
+            var intervalValue = new LocationValue();
 
             var sccGraph = this.Graphs.GetGraph("nnphscc");
             var failureGraph = this.Graphs.GetGraph("nnphsccfailure");
 
-            var sccIntervalValue = new IntervalValue();
-            var failureIntervalValue = new IntervalValue();
+            var sccIntervalValue = new LocationValue();
+            var failureIntervalValue = new LocationValue();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -113,7 +113,12 @@ namespace Marv
                 {
                     sccGraphEvidence["ocl"] = new VertexEvidence
                     {
-                        Evidence = sccIntervalValue[year - 1]["cl"].Select(x => x.Value).ToArray(),
+                        Evidence = intervalValue.GetModelValue(year - 1)
+                                                .GetGraphValue("nnphscc")
+                                                .GetVertexValue("cl")
+                                                .Select(x => x.Value)
+                                                .ToArray(),
+
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -130,7 +135,12 @@ namespace Marv
                 {
                     sccGraphEvidence["ocd"] = new VertexEvidence
                     {
-                        Evidence = sccIntervalValue[year - 1]["cd"].Select(x => x.Value).ToArray(),
+                        Evidence = intervalValue.GetModelValue(year - 1)
+                                                .GetGraphValue("nnphscc")
+                                                .GetVertexValue("cd")
+                                                .Select(x => x.Value)
+                                                .ToArray(),
+
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -147,7 +157,12 @@ namespace Marv
                 {
                     sccGraphEvidence["ocdc"] = new VertexEvidence
                     {
-                        Evidence = sccIntervalValue[year - 1]["cdc"].Select(x => x.Value).ToArray(),
+                        Evidence = intervalValue.GetModelValue(year - 1)
+                                                .GetGraphValue("nnphscc")
+                                                .GetVertexValue("cdc")
+                                                .Select(x => x.Value)
+                                                .ToArray(),
+
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -160,17 +175,27 @@ namespace Marv
                 sccGraph.SetEvidence(sccGraphEvidence);
                 sccGraph.UpdateBeliefs();
 
-                sccIntervalValue[year] = sccGraph.GetNetworkValue();
+                intervalValue.GetModelValue(year).SetGraphValue("nnphscc", sccGraph.GetNetworkValue());
 
                 failureGraphEvidence["cd"] = new VertexEvidence
                 {
-                    Evidence = sccIntervalValue[year]["cd"].Select(x => x.Value).ToArray(),
+                    Evidence = intervalValue.GetModelValue(year)
+                                            .GetGraphValue("nnphscc")
+                                            .GetVertexValue("cd")
+                                            .Select(x => x.Value)
+                                            .ToArray(),
+
                     EvidenceType = EvidenceType.SoftEvidence
                 };
 
                 failureGraphEvidence["cl"] = new VertexEvidence
                 {
-                    Evidence = sccIntervalValue[year]["cl"].Select(x => x.Value).ToArray(),
+                    Evidence = intervalValue.GetModelValue(year)
+                                            .GetGraphValue("nnphscc")
+                                            .GetVertexValue("cl")
+                                            .Select(x => x.Value)
+                                            .ToArray(),
+
                     EvidenceType = EvidenceType.SoftEvidence
                 };
 
@@ -183,16 +208,13 @@ namespace Marv
                 failureGraph.SetEvidence(failureGraphEvidence);
                 failureGraph.UpdateBeliefs();
 
-                failureIntervalValue[year] = failureGraph.GetNetworkValue();
+                intervalValue.GetModelValue(year).SetGraphValue("nnphsccfailure", failureGraph.GetNetworkValue());
             }
 
-            intervalValues[sccGraph] = sccIntervalValue;
-            intervalValues[failureGraph] = failureIntervalValue;
-
-            return intervalValues;
+            return intervalValue;
         }
 
-        public Task<Dictionary<BnGraph, IntervalValue>>  RunAsync()
+        public Task<LocationValue>  RunAsync()
         {
             return Task.Run(() =>
             {

@@ -119,7 +119,7 @@ namespace Marv
             set { SetValue(IsTallySelectedProperty, value); }
         }
 
-        public Model Model
+        public NearNeutralPhSccModel NearNeutralPhSccModel
         {
             get { return model; }
             set { model = value; }

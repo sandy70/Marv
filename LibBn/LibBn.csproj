@@ -101,6 +101,10 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="BnInputStore.cs" />
+    <Compile Include="GraphCollection.cs" />
+    <Compile Include="GraphValue.cs" />
+    <Compile Include="LocationValue.cs" />
+    <Compile Include="ModelValue.cs" />
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
