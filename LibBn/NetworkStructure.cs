@@ -210,7 +210,10 @@ namespace LibBn
 
                 foreach (var line in this.Footer)
                 {
-                    writer.WriteLine(line);
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        writer.WriteLine(line);
+                    }
                 }
             }
         }
