@@ -256,9 +256,9 @@ namespace LibBn
         }
     }
 
-    public class GraphValue : Dictionary<string, VertexValue> { }
-
-    public class IntervalValue : Dictionary<int, GraphValue> { }
+    
 
     public class VertexValue : Dictionary<string, double> { }
+
+    
 }
