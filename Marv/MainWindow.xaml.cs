@@ -11,6 +11,8 @@ namespace Marv
 {
     public partial class MainWindow : Window
     {
+        public PipelineValue PipelineValue = new PipelineValue();
+
         public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
         public BnInputStore InputManager = new BnInputStore();
@@ -19,9 +21,7 @@ namespace Marv
 
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
 
-        private Model model = new Model();
-
-        public ValueStore ValueStore = new ValueStore();
+        private NearNeutralPhSccModel model = new NearNeutralPhSccModel();
 
         public MainWindow()
         {
@@ -81,27 +81,46 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.ValueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
+            if (window.PipelineValue.HasLocationValue(window.SelectedProfileLocation))
             {
-                foreach (var graph in window.Graphs)
+                var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
+
+                if (locationValue.HasModelValue(window.SelectedYear))
                 {
-                    graph.Value = window.ValueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                    var modelValue = locationValue.GetModelValue(window.SelectedYear);
+
+                    foreach (var graph in window.Graphs)
+                    {
+                        if (modelValue.HasGraphValue(graph.Name))
+                        {
+                            var graphValue = modelValue.GetGraphValue(graph.Name);
+                            graph.Value = graphValue;
+                        }
+                    }
                 }
             }
             else
             {
                 window.PopupControl.ShowTextIndeterminate("Running model.");
-
-                window.Model.SelectedLocation = window.SelectedProfileLocation;
-                var intervalValues = await window.Model.RunAsync();
-
-                foreach (var graph in intervalValues.Keys)
-                {
-                    graph.Value = intervalValues[graph][window.SelectedYear];
-                    window.ValueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
-                }
-
+                
+                window.NearNeutralPhSccModel.SelectedLocation = window.SelectedProfileLocation;
+                
+                var locationValue = await window.NearNeutralPhSccModel.RunAsync();
+                
                 window.PopupControl.Hide();
+                
+                window.PipelineValue[window.SelectedProfileLocation] = locationValue;
+
+                var modelValue = locationValue.GetModelValue(window.SelectedYear);
+
+                foreach (var graph in window.Graphs)
+                {
+                    if (modelValue.HasGraphValue(graph.Name))
+                    {
+                        var graphValue = modelValue.GetGraphValue(graph.Name);
+                        graph.Value = graphValue;
+                    }
+                }
             }
         }
 
@@ -109,27 +128,46 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.ValueStore.HasGraphValues(window.SelectedYear, window.SelectedProfileLocation, window.Graphs))
+            if (window.PipelineValue.HasLocationValue(window.SelectedProfileLocation))
             {
-                foreach (var graph in window.Graphs)
+                var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
+
+                if (locationValue.HasModelValue(window.SelectedYear))
                 {
-                    graph.Value = window.ValueStore.GetGraphValue(window.SelectedYear, window.SelectedProfileLocation, graph);
+                    var modelValue = locationValue.GetModelValue(window.SelectedYear);
+
+                    foreach (var graph in window.Graphs)
+                    {
+                        if (modelValue.HasGraphValue(graph.Name))
+                        {
+                            var graphValue = modelValue.GetGraphValue(graph.Name);
+                            graph.Value = graphValue;
+                        }
+                    }
                 }
             }
             else
             {
                 window.PopupControl.ShowTextIndeterminate("Running model.");
 
-                window.Model.SelectedLocation = window.SelectedProfileLocation;
-                var intervalValues = await window.Model.RunAsync();
-
-                foreach (var graph in intervalValues.Keys)
-                {
-                    graph.Value = intervalValues[graph][window.SelectedYear];
-                    window.ValueStore.SetIntervalValue(intervalValues[graph], window.SelectedProfileLocation, graph);
-                }
+                window.NearNeutralPhSccModel.SelectedLocation = window.SelectedProfileLocation;
+                
+                var locationValue = await window.NearNeutralPhSccModel.RunAsync();
 
                 window.PopupControl.Hide();
+
+                window.PipelineValue[window.SelectedProfileLocation] = locationValue;
+
+                var modelValue = locationValue.GetModelValue(window.SelectedYear);
+
+                foreach (var graph in window.Graphs)
+                {
+                    if (modelValue.HasGraphValue(graph.Name))
+                    {
+                        var graphValue = modelValue.GetGraphValue(graph.Name);
+                        graph.Value = graphValue;
+                    }
+                }
             }
         }
     }
