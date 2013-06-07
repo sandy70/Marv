@@ -115,7 +115,7 @@ namespace LibPipeline
             }
         }
 
-        public void SelectState(BnState selectedState)
+        public void SelectState(State selectedState)
         {
             foreach (var state in this.States)
             {

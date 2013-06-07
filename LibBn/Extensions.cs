@@ -51,9 +51,9 @@ namespace LibBn
             return graphEvidence.SingleOrDefault(x => x.Key.Equals(vertexKey));
         }
 
-        public static ObservableCollection<BnState> ParseStates(this Network network, string key)
+        public static ObservableCollection<State> ParseStates(this Network network, string key)
         {
-            var states = new ObservableCollection<BnState>();
+            var states = new ObservableCollection<State>();
 
             var nodeHandle = network.GetNodeHandle(key);
 
@@ -82,7 +82,7 @@ namespace LibBn
 
             for (int s = 0; s < nStates; s++)
             {
-                states.Add(new BnState
+                states.Add(new State
                 {
                     Key = names[s],
                     Value = values[s]

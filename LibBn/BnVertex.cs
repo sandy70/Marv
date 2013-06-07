@@ -17,14 +17,14 @@ namespace LibBn
         private bool isEvidenceEntered = false;
         private bool isHeader = false;
         private string key = "";
-        private BnState mostProbableState = null;
+        private State mostProbableState = null;
         private string name = "";
         private Network network;
         private int nodeHandle;
         private BnGraph parent;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
-        private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
+        private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.None;
         private string units = "";
 
@@ -126,7 +126,7 @@ namespace LibBn
             }
         }
 
-        public BnState MostProbableState
+        public State MostProbableState
         {
             get
             {
@@ -226,7 +226,7 @@ namespace LibBn
             }
         }
 
-        public ObservableCollection<BnState> States
+        public ObservableCollection<State> States
         {
             get { return states; }
             set
@@ -323,7 +323,7 @@ namespace LibBn
 
         public int GetSelectedStateIndex()
         {
-            BnState selectedState = null;
+            State selectedState = null;
             int oneCount = 0;
 
             foreach (var state in this.States)
@@ -399,7 +399,7 @@ namespace LibBn
 
         public void UpdateMostProbableState()
         {
-            BnState mostProbableState = new BnState { Value = double.MinValue, Key = "" };
+            State mostProbableState = new State { Value = double.MinValue, Key = "" };
 
             foreach (var state in this.States)
             {

@@ -150,7 +150,7 @@ namespace LibBn
             return states;
         }
 
-        public void ParseStatesMinMax(ObservableCollection<BnState> states)
+        public void ParseStatesMinMax(ObservableCollection<State> states)
         {
             var subtype = "";
 

@@ -18,11 +18,11 @@ namespace LibPipeline
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
             var vertexViewModel = statesControl.DataContext as BnVertexViewModel;
-            var selectedState = this.AssociatedObject.DataContext as BnState;
+            var selectedState = this.AssociatedObject.DataContext as State;
 
             vertexViewModel.SelectState(selectedState);
 
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
                 RoutedEvent = BnStatesControl.StateSelectedEvent,
                 Value = selectedState
@@ -32,9 +32,9 @@ namespace LibPipeline
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<double> e)
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
-            var selectedState = this.AssociatedObject.DataContext as BnState;
+            var selectedState = this.AssociatedObject.DataContext as State;
 
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
                 RoutedEvent = BnStatesControl.ValueEnteredEvent,
                 Value = selectedState
