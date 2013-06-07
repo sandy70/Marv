@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibBn
 {
-    public class GraphValue
+    public class BnGraphValue
     {
         private Dictionary<string, BnVertexValue> vertexValuesByKey = new Dictionary<string, BnVertexValue>();
 

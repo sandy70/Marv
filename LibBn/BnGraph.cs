@@ -18,7 +18,7 @@ namespace LibBn
     {
         public Network Network = new Network();
 
-        private GraphValue _value;
+        private BnGraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
         private string fileName;
@@ -146,7 +146,7 @@ namespace LibBn
             }
         }
 
-        public GraphValue Value
+        public BnGraphValue Value
         {
             get
             {
@@ -321,9 +321,9 @@ namespace LibBn
             return partGraph;
         }
 
-        public GraphValue GetNetworkValue()
+        public BnGraphValue GetNetworkValue()
         {
-            var graphValue = new GraphValue();
+            var graphValue = new BnGraphValue();
 
             foreach (var vertex in this.Vertices)
             {
@@ -394,7 +394,7 @@ namespace LibBn
             }
         }
 
-        public GraphValue UpdateValue()
+        public BnGraphValue UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }

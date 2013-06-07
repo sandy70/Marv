@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace LibBn
 {
-    public class ModelValue : Dictionary<string, GraphValue>
+    public class ModelValue : Dictionary<string, BnGraphValue>
     {
-        public GraphValue GetGraphValue(string graphName)
+        public BnGraphValue GetGraphValue(string graphName)
         {
             if (this.HasGraphValue(graphName))
             {
@@ -16,11 +16,11 @@ namespace LibBn
             }
             else
             {
-                return this[graphName] = new GraphValue();
+                return this[graphName] = new BnGraphValue();
             }
         }
 
-        public void SetGraphValue(string graphName, GraphValue graphValue)
+        public void SetGraphValue(string graphName, BnGraphValue graphValue)
         {
             this[graphName] = graphValue;
         }
