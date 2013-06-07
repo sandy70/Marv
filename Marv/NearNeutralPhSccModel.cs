@@ -116,7 +116,6 @@ namespace Marv
                         Evidence = intervalValue.GetModelValue(year - 1)
                                                 .GetGraphValue("nnphscc")
                                                 .GetVertexValue("cl")
-                                                .Select(x => x.Value)
                                                 .ToArray(),
 
                         EvidenceType = EvidenceType.SoftEvidence
@@ -138,7 +137,6 @@ namespace Marv
                         Evidence = intervalValue.GetModelValue(year - 1)
                                                 .GetGraphValue("nnphscc")
                                                 .GetVertexValue("cd")
-                                                .Select(x => x.Value)
                                                 .ToArray(),
 
                         EvidenceType = EvidenceType.SoftEvidence
@@ -160,7 +158,6 @@ namespace Marv
                         Evidence = intervalValue.GetModelValue(year - 1)
                                                 .GetGraphValue("nnphscc")
                                                 .GetVertexValue("cdc")
-                                                .Select(x => x.Value)
                                                 .ToArray(),
 
                         EvidenceType = EvidenceType.SoftEvidence
@@ -182,7 +179,6 @@ namespace Marv
                     Evidence = intervalValue.GetModelValue(year)
                                             .GetGraphValue("nnphscc")
                                             .GetVertexValue("cd")
-                                            .Select(x => x.Value)
                                             .ToArray(),
 
                     EvidenceType = EvidenceType.SoftEvidence
@@ -193,7 +189,6 @@ namespace Marv
                     Evidence = intervalValue.GetModelValue(year)
                                             .GetGraphValue("nnphscc")
                                             .GetVertexValue("cl")
-                                            .Select(x => x.Value)
                                             .ToArray(),
 
                     EvidenceType = EvidenceType.SoftEvidence

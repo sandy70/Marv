@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace LibBn
 {
-    public class BnVertexValue : INotifyPropertyChanged
+    public class BnVertexValue : IEnumerable<double>, INotifyPropertyChanged
     {
+        private Dictionary<string, double> stateValueByKey = new Dictionary<string, double>();
         private bool isEvidenceEntered;
         private string key;
-        private IEnumerable<BnStateValue> stateValues = new ObservableCollection<BnStateValue>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,27 +49,30 @@ namespace LibBn
             }
         }
 
-        public IEnumerable<BnStateValue> StateValues
+        public double GetStateValue(string stateKey)
         {
-            get
-            {
-                return this.stateValues;
-            }
+            return this.stateValueByKey[stateKey];
+        }
 
-            set
-            {
-                if (value != this.stateValues)
-                {
-                    this.stateValues = value;
-                    this.OnPropertyChanged("StateValues");
-                }
-            }
+        public void SetStateValue(string stateKey, double value)
+        {
+            this.stateValueByKey[stateKey] = value;
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return this.stateValueByKey.Values.GetEnumerator();
+        }
+
+        IEnumerator<double> IEnumerable<double>.GetEnumerator()
+        {
+            return this.stateValueByKey.Values.GetEnumerator();
         }
     }
 }

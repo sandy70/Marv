@@ -91,7 +91,6 @@
   <ItemGroup>
     <Compile Include="BnEdge.cs" />
     <Compile Include="BnGraph.cs" />
-    <Compile Include="BnStateValue.cs" />
     <Compile Include="BnState.cs" />
     <Compile Include="BnUpdater.cs" />
     <Compile Include="BnVertex.cs" />

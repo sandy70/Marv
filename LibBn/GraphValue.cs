@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LibBn
 {
-    public class GraphValue : Dictionary<string, VertexValue>
+    public class GraphValue
     {
-        public VertexValue GetVertexValue(string vertexKey)
+        private Dictionary<string, BnVertexValue> vertexValuesByKey = new Dictionary<string, BnVertexValue>();
+
+        public BnVertexValue GetVertexValue(string vertexKey)
         {
-            if (this.HasVertexValue(vertexKey))
-            {
-                return this[vertexKey];
-            }
-            else
-            {
-                return this[vertexKey] = new VertexValue();
-            }
+            return this.vertexValuesByKey[vertexKey];
         }
 
         public bool HasVertexValue(string vertexKey)
         {
-            return this.ContainsKey(vertexKey);
+            return this.vertexValuesByKey.ContainsKey(vertexKey);
+        }
+
+        public void SetVertexValue(string vertexKey, BnVertexValue vertexValue)
+        {
+            this.vertexValuesByKey[vertexKey] = vertexValue;
         }
     }
 }

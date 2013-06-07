@@ -160,9 +160,9 @@ namespace LibBn
                     this._value = value;
                     this.OnPropertyChanged("Value");
 
-                    foreach (var vertexKey in this.Value.Keys)
+                    foreach (var vertex in this.Vertices)
                     {
-                        this.GetVertex(vertexKey).Value = this.Value[vertexKey];
+                        vertex.Value = this.Value.GetVertexValue(vertex.Key);
                     }
                 }
             }
@@ -327,14 +327,7 @@ namespace LibBn
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new VertexValue();
-
-                foreach (var state in vertex.States)
-                {
-                    vertexValue[state.Key] = vertex.GetStateValue(state.Key);
-                }
-
-                graphValue[vertex.Key] = vertexValue;
+                graphValue.SetVertexValue(vertex.Key, vertex.GetValueFromNetwork());
             }
 
             return graphValue;

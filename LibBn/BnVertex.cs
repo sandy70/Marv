@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using System.Linq;
 
 namespace LibBn
 {
     public class BnVertex : INotifyPropertyChanged
     {
-        private Dictionary<string, double> _value;
+        private BnVertexValue _value;
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
@@ -270,7 +271,7 @@ namespace LibBn
             }
         }
 
-        public Dictionary<string, double> Value
+        public BnVertexValue Value
         {
             get
             {
@@ -286,7 +287,7 @@ namespace LibBn
 
                     foreach (var state in this.States)
                     {
-                        state.Value = this.Value[state.Key];
+                        state.Value = this.Value.GetStateValue(state.Key);
                     }
 
                     this.UpdateMostProbableState();
@@ -294,7 +295,7 @@ namespace LibBn
             }
         }
 
-        public double GetMean(Dictionary<string, double> value)
+        public double GetMean(BnVertexValue vertexValue)
         {
             double numer = 0;
             double denom = 0;
@@ -303,8 +304,8 @@ namespace LibBn
             {
                 foreach (var state in this.States)
                 {
-                    numer += state.Min * value[state.Key];
-                    denom += value[state.Key];
+                    numer += state.Min * vertexValue.GetStateValue(state.Key);
+                    denom += vertexValue.GetStateValue(state.Key);
                 }
             }
             else if (this.Type == VertexType.Interval)
@@ -313,8 +314,8 @@ namespace LibBn
                 {
                     double mid = (state.Min + state.Max) / 2;
 
-                    numer += mid * value[state.Key];
-                    denom += value[state.Key];
+                    numer += mid * vertexValue.GetStateValue(state.Key);
+                    denom += vertexValue.GetStateValue(state.Key);
                 }
             }
 
@@ -356,16 +357,6 @@ namespace LibBn
             }
 
             return stateIndex;
-        }
-
-        public double GetStateValue(string stateKey)
-        {
-            var stateIndex = this.GetStateIndex(stateKey);
-            var nodeValue = this.Network.GetNodeValue(this.Key);
-            var stateValue = nodeValue[stateIndex];
-            return stateValue;
-
-            // return this.network.GetNodeValue(this.Key)[this.GetStateIndex(stateKey)];
         }
 
         public void SetEvidence(VertexEvidence vertexEvidence)
@@ -426,6 +417,18 @@ namespace LibBn
         private void SetEvidence(int stateIndex)
         {
             this.Network.SetEvidence(this.Key, stateIndex);
+        }
+
+        public BnVertexValue GetValueFromNetwork()
+        {
+            var vertexValue = new BnVertexValue();
+
+            foreach (var state in this.States)
+            {
+                vertexValue.SetStateValue(state.Key, this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)]);
+            }
+
+            return vertexValue;
         }
     }
 }
