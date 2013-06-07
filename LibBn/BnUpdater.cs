@@ -39,7 +39,7 @@ namespace LibBn
 
                 for (int s = 0; s < nStates; s++)
                 {
-                    vertexValue.States.Add(values[s]);
+                    // vertexValue.States.Add(values[s]);
                 }
 
                 vertexValues.Add(vertexValue);
@@ -83,7 +83,7 @@ namespace LibBn
 
                     for (int s = 0; s < nStates; s++)
                     {
-                        evidence[s] = lastVertex.States[s];
+                        // evidence[s] = lastVertex.States[s];
                     }
 
                     network.SetSoftEvidence(nodeHandle, evidence);

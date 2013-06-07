@@ -64,8 +64,8 @@ namespace Marv
                     lastYearVertexValues = this.VertexValuesByYear[this.SelectedYear - 1];
                 }
 
-                var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
-                this.VertexValuesByYear[this.SelectedYear] = vertexValues;
+                // var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
+                // this.VertexValuesByYear[this.SelectedYear] = vertexValues;
 
                 // this.GraphControl.SourceGraph.CopyFrom(vertexValues);
                 // this.GraphControl.SourceGraph.UpdateMostProbableStates();

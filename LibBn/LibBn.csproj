@@ -89,11 +89,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Edge.cs" />
+    <Compile Include="BnEdge.cs" />
     <Compile Include="BnGraph.cs" />
-    <Compile Include="State.cs" />
+    <Compile Include="BnStateValue.cs" />
+    <Compile Include="BnState.cs" />
     <Compile Include="BnUpdater.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="BnVertex.cs" />
     <Compile Include="BnVertexInput.cs" />
     <Compile Include="BnVertexInputReader.cs" />
     <Compile Include="BnVertexValue.cs" />

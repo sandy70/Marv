@@ -40,7 +40,7 @@ namespace Marv
 
                 for (int p = 1; p < nParts; p++)
                 {
-                    vertexValue.States.Add(Double.Parse(parts[p]));
+                    // vertexValue.States.Add(Double.Parse(parts[p]));
                 }
 
                 vertexValues.Add(vertexValue);

@@ -1,15 +1,11 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace LibBn
 {
-    [Serializable]
-    public class BnState : INotifyPropertyChanged
+    public class BnStateValue : INotifyPropertyChanged
     {
         private double _value;
         private string key;
-        private double max = double.MinValue;
-        private double min = double.MinValue;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -26,42 +22,6 @@ namespace LibBn
                 {
                     this.key = value;
                     this.OnPropertyChanged("Key");
-                }
-            }
-        }
-
-        public double Max
-        {
-            get
-            {
-                return this.max;
-            }
-
-            set
-            {
-                if (value != this.max)
-                {
-                    this.max = value;
-
-                    this.OnPropertyChanged("Max");
-                }
-            }
-        }
-
-        public double Min
-        {
-            get
-            {
-                return this.min;
-            }
-
-            set
-            {
-                if (value != this.min)
-                {
-                    this.min = value;
-
-                    this.OnPropertyChanged("Min");
                 }
             }
         }
