@@ -14,6 +14,7 @@
     <Window.Resources>
         <Style TargetType="local:MainWindow">
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="DataBaseFileName" Value="{Binding Default.DataBaseFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="FileName" Value="{Binding Default.FileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
@@ -200,7 +201,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 
-                <telerik:RadCartesianChart>
+                <telerik:RadCartesianChart Width="800"
+                                           HorizontalAlignment="Right">
                     <telerik:RadCartesianChart.Behaviors>
                         <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" />
                     </telerik:RadCartesianChart.Behaviors>
@@ -210,28 +212,36 @@
                                             Minimum="{Binding StartYear, ElementName=Root}" />
                     </telerik:RadCartesianChart.HorizontalAxis>
                     
-                    <telerik:RadCartesianChart.VerticalAxis>
-                        <telerik:LinearAxis />
-                    </telerik:RadCartesianChart.VerticalAxis>
-                    
-                    <telerik:ScatterLineSeries ItemsSource="{Binding Points, ElementName=Root}"
-                                            XValueBinding="X" 
-                                            YValueBinding="Y"/>
+                    <telerik:RadCartesianChart.SeriesProvider>
+                        <telerik:ChartSeriesProvider Source="{Binding MultiPoints, ElementName=Root}">
+                            <telerik:ChartSeriesProvider.SeriesDescriptors>
+
+                                <telerik:ScatterSeriesDescriptor ItemsSourcePath="Points"
+                                                                 XValuePath="X"
+                                                                 YValuePath="Y">
+                                    <telerik:ScatterSeriesDescriptor.Style>
+                                        <Style TargetType="telerik:ScatterLineSeries">
+                                            <Setter Property="VerticalAxis">
+                                                <Setter.Value>
+                                                    <telerik:LinearAxis />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </telerik:ScatterSeriesDescriptor.Style>
+                                </telerik:ScatterSeriesDescriptor>
+                            </telerik:ChartSeriesProvider.SeriesDescriptors>
+                        </telerik:ChartSeriesProvider>
+                    </telerik:RadCartesianChart.SeriesProvider>
                 </telerik:RadCartesianChart>
-                
-                <telerik:RadComboBox Name="LocationSeriesComboBox"
-                                     Height="20"
-                                     HorizontalAlignment="Right"
-                                     Margin="10"
-                                     VerticalAlignment="Top"
-                                     Width="200"
-                                     ItemsSource="{Binding Graphs[nnphscc].NumericVertices, ElementName=Root}">
-                    <telerik:RadComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </telerik:RadComboBox.ItemTemplate>
-                </telerik:RadComboBox>
+
+                <telerik:RadAutoCompleteBox Name="AutoCompleteBox"
+                                    HorizontalAlignment="Right"
+                                    Margin="10"
+                                    VerticalAlignment="Top"
+                                    Width="500"
+                                    DisplayMemberPath="Name"
+                                    ItemsSource="{Binding Graphs[nnphscc].NumericVertices, ElementName=Root}">
+                </telerik:RadAutoCompleteBox>
             </Grid>
         </telerik:RadTabItem>
     </telerik:RadTabControl>

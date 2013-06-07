@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace LibPipeline
 {
-    public class BnVertexViewModel : Vertex
+    public class BnVertexViewModel : BnVertex
     {
         private bool isExpanded = false;
         private bool isLocked = true;
@@ -115,7 +115,7 @@ namespace LibPipeline
             }
         }
 
-        public void SelectState(State selectedState)
+        public void SelectState(BnState selectedState)
         {
             foreach (var state in this.States)
             {

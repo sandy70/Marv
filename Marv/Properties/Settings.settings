@@ -29,5 +29,8 @@
     <Setting Name="StartingGroup" Type="System.String" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="DataBaseFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\SCC\NNphSCC\data.db</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -2,6 +2,7 @@
 using LibPipeline;
 using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -111,31 +112,38 @@ namespace Marv
             window.NearNeutralPhSccModel.StartYear = window.StartYear;
             window.NearNeutralPhSccModel.EndYear = window.EndYear;
 
-            window.LocationSeriesComboBox.SelectionChanged += LocationSeriesComboBox_SelectionChanged;
+            window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }
 
-        private void LocationSeriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
             var graph = window.Graphs["nnphscc"];
-            var selectedVertex = window.LocationSeriesComboBox.SelectedItem as BnVertex;
 
-            window.Points.Clear();
+            window.MultiPoints.Clear();
 
-            for (int year = window.StartYear; year <= window.EndYear;year++)
+            foreach(var selectedItem in window.AutoCompleteBox.SelectedItems)
             {
-                var vertexValue = window.PipelineValue
-                                        .GetLocationValue(window.SelectedProfileLocation)
-                                        .GetModelValue(year)
-                                        .GetGraphValue("nnphscc")
-                                        .GetVertexValue(selectedVertex.Key);
+                var selectedVertex = selectedItem as BnVertex;
+                var points = new ObservableCollection<Point>();
 
-                window.Points.Add(new Point
+                for (int year = window.StartYear; year <= window.EndYear; year++)
                 {
-                    X = year,
-                    Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
-                });
+                    var vertexValue = window.PipelineValue
+                                            .GetLocationValue(window.SelectedProfileLocation)
+                                            .GetModelValue(year)
+                                            .GetGraphValue("nnphscc")
+                                            .GetVertexValue(selectedVertex.Key);
+
+                    points.Add(new Point
+                    {
+                        X = year,
+                        Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
+                    });
+                }
+
+                window.MultiPoints.Add(new MultiPoint { Name = selectedVertex.Name, Points = points });
             }
         }
 

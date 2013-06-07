@@ -11,7 +11,7 @@ namespace LibBn
         public string Key;
         public int SelectedStateIndex;
 
-        public void FillFrom(Vertex vertex)
+        public void FillFrom(BnVertex vertex)
         {
             int selectedStateIndex = vertex.GetSelectedStateIndex();
 

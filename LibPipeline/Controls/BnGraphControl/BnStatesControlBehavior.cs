@@ -12,7 +12,7 @@ namespace LibPipeline
             this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
         }
 
-        private void AssociatedObject_StateSelected(object sender, ValueEventArgs<State> e)
+        private void AssociatedObject_StateSelected(object sender, ValueEventArgs<BnState> e)
         {
             var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
             var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
@@ -25,7 +25,7 @@ namespace LibPipeline
             });
         }
 
-        private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<State> e)
+        private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<BnState> e)
         {
             var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
             vertexViewModel.IsEvidenceEntered = true;

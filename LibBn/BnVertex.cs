@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace LibBn
 {
-    public class Vertex : INotifyPropertyChanged
+    public class BnVertex : INotifyPropertyChanged
     {
         private Dictionary<string, double> _value;
         private string description = "";
@@ -17,14 +17,14 @@ namespace LibBn
         private bool isEvidenceEntered = false;
         private bool isHeader = false;
         private string key = "";
-        private State mostProbableState = null;
+        private BnState mostProbableState = null;
         private string name = "";
         private Network network;
         private int nodeHandle;
         private BnGraph parent;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
-        private ObservableCollection<State> states = new ObservableCollection<State>();
+        private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
         private VertexType type = VertexType.None;
         private string units = "";
 
@@ -126,7 +126,7 @@ namespace LibBn
             }
         }
 
-        public State MostProbableState
+        public BnState MostProbableState
         {
             get
             {
@@ -226,7 +226,7 @@ namespace LibBn
             }
         }
 
-        public ObservableCollection<State> States
+        public ObservableCollection<BnState> States
         {
             get { return states; }
             set
@@ -323,7 +323,7 @@ namespace LibBn
 
         public int GetSelectedStateIndex()
         {
-            State selectedState = null;
+            BnState selectedState = null;
             int oneCount = 0;
 
             foreach (var state in this.States)
@@ -399,7 +399,7 @@ namespace LibBn
 
         public void UpdateMostProbableState()
         {
-            State mostProbableState = new State { Value = double.MinValue, Key = "" };
+            BnState mostProbableState = new BnState { Value = double.MinValue, Key = "" };
 
             foreach (var state in this.States)
             {

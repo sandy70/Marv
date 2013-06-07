@@ -108,6 +108,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\mongocsharpdriver.1.7\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
+    <Reference Include="NDatabase3">
+      <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
+    </Reference>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
@@ -205,6 +208,7 @@
     </ApplicationDefinition>
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
+    <Compile Include="MultiPoint.cs" />
     <Compile Include="NearNeutralPhSccModel.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>

@@ -8,7 +8,7 @@ namespace LibBn
 {
     public class GraphCollection : ObservableCollection<BnGraph>
     {
-        private ObservableCollection<Vertex> vertices = new ObservableCollection<Vertex>();
+        private ObservableCollection<BnVertex> vertices = new ObservableCollection<BnVertex>();
 
         public GraphCollection()
             : base()
@@ -16,7 +16,7 @@ namespace LibBn
             this.CollectionChanged += GraphCollection_CollectionChanged;
         }
 
-        public ObservableCollection<Vertex> Vertices
+        public ObservableCollection<BnVertex> Vertices
         {
             get
             {
@@ -75,12 +75,12 @@ namespace LibBn
             }
         }
 
-        private void newGraph_VertexAdded(Vertex vertex)
+        private void newGraph_VertexAdded(BnVertex vertex)
         {
             this.Vertices.Add(vertex);
         }
 
-        private void newGraph_VertexRemoved(Vertex vertex)
+        private void newGraph_VertexRemoved(BnVertex vertex)
         {
             this.Vertices.Remove(vertex);
         }

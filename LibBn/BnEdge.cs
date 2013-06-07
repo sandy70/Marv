@@ -1,16 +1,15 @@
-﻿using QuickGraph;
-using System;
+﻿using System;
 using System.ComponentModel;
 using Telerik.Windows.Diagrams.Core;
 
 namespace LibBn
 {
     [Serializable]
-    public class BnEdge : Edge<Vertex>, ILink<Vertex>, INotifyPropertyChanged
+    public class BnEdge : QuickGraph.Edge<BnVertex>, ILink<BnVertex>, INotifyPropertyChanged
     {
         private double _value = 1;
 
-        public BnEdge(Vertex source, Vertex target)
+        public BnEdge(BnVertex source, BnVertex target)
             : base(source, target)
         {
         }
@@ -41,13 +40,13 @@ namespace LibBn
             }
         }
 
-        public new Vertex Source
+        public new BnVertex Source
         {
             get { return base.Source; }
             set { }
         }
 
-        public new Vertex Target
+        public new BnVertex Target
         {
             get { return base.Target; }
             set { }

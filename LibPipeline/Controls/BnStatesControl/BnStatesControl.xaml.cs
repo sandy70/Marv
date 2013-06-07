@@ -15,35 +15,35 @@ namespace LibPipeline
         DependencyProperty.Register("IsExpanded", typeof(bool), typeof(BnStatesControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty MostProbableStateProperty =
-        DependencyProperty.Register("MostProbableState", typeof(State), typeof(BnStatesControl), new PropertyMetadata(null));
+        DependencyProperty.Register("MostProbableState", typeof(BnState), typeof(BnStatesControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SliderForegroundProperty =
         DependencyProperty.Register("SliderForeground", typeof(Brush), typeof(BnStatesControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
         public static readonly RoutedEvent StateSelectedEvent =
-        EventManager.RegisterRoutedEvent("StateSelected", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(BnStatesControl));
+        EventManager.RegisterRoutedEvent("StateSelected", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnState>>), typeof(BnStatesControl));
 
         public static readonly DependencyProperty StatesFontSizeProperty =
         DependencyProperty.Register("StatesFontSize", typeof(double), typeof(BnStatesControl), new PropertyMetadata(10.0));
 
         public static readonly DependencyProperty StatesProperty =
-        DependencyProperty.Register("States", typeof(IEnumerable<State>), typeof(BnStatesControl), new PropertyMetadata(null));
+        DependencyProperty.Register("States", typeof(IEnumerable<BnState>), typeof(BnStatesControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent ValueEnteredEvent =
-        EventManager.RegisterRoutedEvent("ValueEntered", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(BnStatesControl));
+        EventManager.RegisterRoutedEvent("ValueEntered", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnState>>), typeof(BnStatesControl));
 
         public BnStatesControl()
         {
             InitializeComponent();
         }
 
-        public event RoutedEventHandler<ValueEventArgs<State>> StateSelected
+        public event RoutedEventHandler<ValueEventArgs<BnState>> StateSelected
         {
             add { AddHandler(StateSelectedEvent, value); }
             remove { RemoveHandler(StateSelectedEvent, value); }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<State>> ValueEntered
+        public event RoutedEventHandler<ValueEventArgs<BnState>> ValueEntered
         {
             add { AddHandler(ValueEnteredEvent, value); }
             remove { RemoveHandler(ValueEnteredEvent, value); }
@@ -61,9 +61,9 @@ namespace LibPipeline
             set { SetValue(IsExpandedProperty, value); }
         }
 
-        public State MostProbableState
+        public BnState MostProbableState
         {
-            get { return (State)GetValue(MostProbableStateProperty); }
+            get { return (BnState)GetValue(MostProbableStateProperty); }
             set { SetValue(MostProbableStateProperty, value); }
         }
 
@@ -73,9 +73,9 @@ namespace LibPipeline
             set { SetValue(SliderForegroundProperty, value); }
         }
 
-        public IEnumerable<State> States
+        public IEnumerable<BnState> States
         {
-            get { return (IEnumerable<State>)GetValue(StatesProperty); }
+            get { return (IEnumerable<BnState>)GetValue(StatesProperty); }
             set { SetValue(StatesProperty, value); }
         }
 
@@ -88,7 +88,7 @@ namespace LibPipeline
         private static void SelectedStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var statesControl = d as BnStatesControl;
-            var selectedState = e.NewValue as State;
+            var selectedState = e.NewValue as BnState;
 
             foreach (var state in statesControl.States)
             {

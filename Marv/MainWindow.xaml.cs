@@ -6,6 +6,7 @@ using Smile;
 using System.Collections.Generic;
 using System.Windows;
 using Telerik.Windows.Controls;
+using NDatabase.Api;
 
 namespace Marv
 {

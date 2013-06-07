@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace LibBn
 {
     [Serializable]
-    public class State : INotifyPropertyChanged
+    public class BnState : INotifyPropertyChanged
     {
         private double _value;
         private string key;

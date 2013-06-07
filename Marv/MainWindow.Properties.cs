@@ -11,6 +11,9 @@ namespace Marv
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
+        public static readonly DependencyProperty DataBaseFileNameProperty =
+        DependencyProperty.Register("DataBaseFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
@@ -34,6 +37,9 @@ namespace Marv
 
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty MultiPointsProperty =
+        DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
 
         public static readonly DependencyProperty PointsProperty =
         DependencyProperty.Register("Points", typeof(ObservableCollection<Point>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<Point>()));
@@ -69,6 +75,12 @@ namespace Marv
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
+        }
+
+        public string DataBaseFileName
+        {
+            get { return (string)GetValue(DataBaseFileNameProperty); }
+            set { SetValue(DataBaseFileNameProperty, value); }
         }
 
         public int EndYear
@@ -117,6 +129,12 @@ namespace Marv
         {
             get { return (bool)GetValue(IsTallySelectedProperty); }
             set { SetValue(IsTallySelectedProperty, value); }
+        }
+
+        public ObservableCollection<MultiPoint> MultiPoints
+        {
+            get { return (ObservableCollection<MultiPoint>)GetValue(MultiPointsProperty); }
+            set { SetValue(MultiPointsProperty, value); }
         }
 
         public NearNeutralPhSccModel NearNeutralPhSccModel

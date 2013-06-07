@@ -14,7 +14,7 @@ using Telerik.Windows.Diagrams.Core;
 namespace LibBn
 {
     [Serializable]
-    public class BnGraph : BidirectionalGraph<Vertex, BnEdge>, IGraphSource, INotifyPropertyChanged
+    public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
         public Network Network = new Network();
 
@@ -128,11 +128,11 @@ namespace LibBn
             }
         }
 
-        public IEnumerable<Vertex> NumericVertices
+        public IEnumerable<BnVertex> NumericVertices
         {
             get
             {
-                var numericVertices = new List<Vertex>();
+                var numericVertices = new List<BnVertex>();
 
                 foreach (var vertex in this.Vertices)
                 {
@@ -168,7 +168,7 @@ namespace LibBn
             }
         }
 
-        public static BnGraph Read<TVertex>(string fileName) where TVertex : Vertex, new()
+        public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
         {
             var graph = new BnGraph();
             graph.fileName = fileName;
@@ -216,7 +216,7 @@ namespace LibBn
             return graph;
         }
 
-        public static Task<BnGraph> ReadAsync<TVertex>(string fileName) where TVertex : Vertex, new()
+        public static Task<BnGraph> ReadAsync<TVertex>(string fileName) where TVertex : BnVertex, new()
         {
             return Task.Run(() => BnGraph.Read<TVertex>(fileName));
         }
@@ -238,8 +238,8 @@ namespace LibBn
         {
             if (key1.Equals(key2)) return;
 
-            Vertex v1 = this.GetVertex(key1);
-            Vertex v2 = this.GetVertex(key2);
+            BnVertex v1 = this.GetVertex(key1);
+            BnVertex v2 = this.GetVertex(key2);
 
             if (v1 != null && v2 != null)
             {
@@ -248,7 +248,7 @@ namespace LibBn
         }
 
         public void AddVertices<TVertex>(ObservableCollection<TVertex> vertices)
-            where TVertex : Vertex
+            where TVertex : BnVertex
         {
             foreach (var vertex in vertices)
             {
@@ -295,12 +295,12 @@ namespace LibBn
             {
                 foreach (var dstVertex in partGraph.Vertices)
                 {
-                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<Vertex, BnEdge>(this, (edge) => { return 1; });
+                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<BnVertex, BnEdge>(this, (edge) => { return 1; });
                     algorithm.Compute(srcVertex, dstVertex);
 
                     foreach (var path in algorithm.ComputedShortestPaths)
                     {
-                        Vertex src = path.First().Source;
+                        BnVertex src = path.First().Source;
 
                         foreach (var edge in path)
                         {
@@ -340,7 +340,7 @@ namespace LibBn
             return graphValue;
         }
 
-        public Vertex GetVertex(string key)
+        public BnVertex GetVertex(string key)
         {
             foreach (var vertex in this.Vertices)
             {
