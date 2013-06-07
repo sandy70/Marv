@@ -6,11 +6,11 @@ using Telerik.Windows.Diagrams.Core;
 namespace LibBn
 {
     [Serializable]
-    public class BnEdge : Edge<BnVertex>, ILink<BnVertex>, INotifyPropertyChanged
+    public class BnEdge : Edge<Vertex>, ILink<Vertex>, INotifyPropertyChanged
     {
         private double _value = 1;
 
-        public BnEdge(BnVertex source, BnVertex target)
+        public BnEdge(Vertex source, Vertex target)
             : base(source, target)
         {
         }
@@ -41,13 +41,13 @@ namespace LibBn
             }
         }
 
-        public new BnVertex Source
+        public new Vertex Source
         {
             get { return base.Source; }
             set { }
         }
 
-        public new BnVertex Target
+        public new Vertex Target
         {
             get { return base.Target; }
             set { }

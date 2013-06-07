@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace LibBn
 {
-    public class BnVertex : INotifyPropertyChanged
+    public class Vertex : INotifyPropertyChanged
     {
         private Dictionary<string, double> _value;
         private string description = "";

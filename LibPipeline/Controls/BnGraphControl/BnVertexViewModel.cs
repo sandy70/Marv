@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace LibPipeline
 {
-    public class BnVertexViewModel : BnVertex
+    public class BnVertexViewModel : Vertex
     {
         private bool isExpanded = false;
         private bool isLocked = true;
