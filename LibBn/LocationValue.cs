@@ -1,4 +1,6 @@
-﻿namespace LibBn
+﻿using System.Collections.Generic;
+
+namespace LibBn
 {
-    public class LocationValue : KeyValueStore<int, ModelValue> { }
+    public class LocationValue : Dictionary<int, ModelValue> { }
 }

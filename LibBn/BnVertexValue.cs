@@ -6,5 +6,5 @@ using System.Linq;
 
 namespace LibBn
 {
-    public class BnVertexValue : KeyValueStore<string, double> { }
+    public class BnVertexValue : Dictionary<string, double> { }
 }
