@@ -108,6 +108,7 @@
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="KeyValueStore.cs" />
     <Compile Include="VertexEvidence.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -31,8 +31,8 @@ namespace LibBn
             foreach (var nodeId in network.GetAllNodeIds())
             {
                 var vertexValue = new BnVertexValue();
-                vertexValue.IsEvidenceEntered = userInputs.Exists(x => x.Key.Equals(nodeId));
-                vertexValue.Key = nodeId;
+                // vertexValue.IsEvidenceEntered = userInputs.Exists(x => x.Key.Equals(nodeId));
+                // vertexValue.Key = nodeId;
 
                 double[] values = network.GetNodeValue(nodeId);
                 var nStates = values.Count();
@@ -76,7 +76,7 @@ namespace LibBn
                 }
                 else
                 {
-                    var lastVertex = lastYearVertexValues.Single(x => x.Key.Equals(input.InputVertexKey));
+                    // var lastVertex = lastYearVertexValues.Single(x => x.Key.Equals(input.InputVertexKey));
 
                     int nStates = network.GetOutcomeCount(nodeHandle);
                     double[] evidence = new double[nStates];

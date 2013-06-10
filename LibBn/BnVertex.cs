@@ -287,7 +287,7 @@ namespace LibBn
 
                     foreach (var state in this.States)
                     {
-                        state.Value = this.Value.GetStateValue(state.Key);
+                        state.Value = this.Value.GetValue(state.Key);
                     }
 
                     this.UpdateMostProbableState();
@@ -304,8 +304,8 @@ namespace LibBn
             {
                 foreach (var state in this.States)
                 {
-                    numer += state.Min * vertexValue.GetStateValue(state.Key);
-                    denom += vertexValue.GetStateValue(state.Key);
+                    numer += state.Min * vertexValue.GetValue(state.Key);
+                    denom += vertexValue.GetValue(state.Key);
                 }
             }
             else if (this.Type == VertexType.Interval)
@@ -314,8 +314,8 @@ namespace LibBn
                 {
                     double mid = (state.Min + state.Max) / 2;
 
-                    numer += mid * vertexValue.GetStateValue(state.Key);
-                    denom += vertexValue.GetStateValue(state.Key);
+                    numer += mid * vertexValue.GetValue(state.Key);
+                    denom += vertexValue.GetValue(state.Key);
                 }
             }
 
@@ -425,7 +425,7 @@ namespace LibBn
 
             foreach (var state in this.States)
             {
-                vertexValue.SetStateValue(state.Key, this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)]);
+                vertexValue.SetValue(state.Key, this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)]);
             }
 
             return vertexValue;

@@ -162,7 +162,7 @@ namespace LibBn
 
                     foreach (var vertex in this.Vertices)
                     {
-                        vertex.Value = this.Value.GetVertexValue(vertex.Key);
+                        vertex.Value = this.Value.GetValue(vertex.Key);
                     }
                 }
             }
@@ -327,7 +327,7 @@ namespace LibBn
 
             foreach (var vertex in this.Vertices)
             {
-                graphValue.SetVertexValue(vertex.Key, vertex.GetValueFromNetwork());
+                graphValue.SetValue(vertex.Key, vertex.GetValueFromNetwork());
             }
 
             return graphValue;

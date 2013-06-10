@@ -86,15 +86,15 @@ namespace Marv
             {
                 var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
 
-                if (locationValue.HasModelValue(window.SelectedYear))
+                if (locationValue.HasValue(window.SelectedYear))
                 {
-                    var modelValue = locationValue.GetModelValue(window.SelectedYear);
+                    var modelValue = locationValue.GetValue(window.SelectedYear);
 
                     foreach (var graph in window.Graphs)
                     {
-                        if (modelValue.HasGraphValue(graph.Name))
+                        if (modelValue.HasValue(graph.Name))
                         {
-                            var graphValue = modelValue.GetGraphValue(graph.Name);
+                            var graphValue = modelValue.GetValue(graph.Name);
                             graph.Value = graphValue;
                         }
                     }
@@ -112,13 +112,13 @@ namespace Marv
                 
                 window.PipelineValue[window.SelectedProfileLocation] = locationValue;
 
-                var modelValue = locationValue.GetModelValue(window.SelectedYear);
+                var modelValue = locationValue.GetValue(window.SelectedYear);
 
                 foreach (var graph in window.Graphs)
                 {
-                    if (modelValue.HasGraphValue(graph.Name))
+                    if (modelValue.HasValue(graph.Name))
                     {
-                        var graphValue = modelValue.GetGraphValue(graph.Name);
+                        var graphValue = modelValue.GetValue(graph.Name);
                         graph.Value = graphValue;
                     }
                 }
@@ -133,15 +133,15 @@ namespace Marv
             {
                 var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
 
-                if (locationValue.HasModelValue(window.SelectedYear))
+                if (locationValue.HasValue(window.SelectedYear))
                 {
-                    var modelValue = locationValue.GetModelValue(window.SelectedYear);
+                    var modelValue = locationValue.GetValue(window.SelectedYear);
 
                     foreach (var graph in window.Graphs)
                     {
-                        if (modelValue.HasGraphValue(graph.Name))
+                        if (modelValue.HasValue(graph.Name))
                         {
-                            var graphValue = modelValue.GetGraphValue(graph.Name);
+                            var graphValue = modelValue.GetValue(graph.Name);
                             graph.Value = graphValue;
                         }
                     }

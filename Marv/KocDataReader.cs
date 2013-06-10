@@ -36,7 +36,7 @@ namespace Marv
                 int nParts = parts.Count();
 
                 BnVertexValue vertexValue = new BnVertexValue();
-                vertexValue.Key = key;
+                // vertexValue.Key = key;
 
                 for (int p = 1; p < nParts; p++)
                 {
