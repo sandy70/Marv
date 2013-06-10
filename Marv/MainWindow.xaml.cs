@@ -86,15 +86,15 @@ namespace Marv
             {
                 var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
 
-                if (locationValue.HasValue(window.SelectedYear))
+                if (locationValue.ContainsKey(window.SelectedYear))
                 {
-                    var modelValue = locationValue.GetValue(window.SelectedYear);
+                    var modelValue = locationValue[window.SelectedYear];
 
                     foreach (var graph in window.Graphs)
                     {
-                        if (modelValue.HasValue(graph.Name))
+                        if (modelValue.ContainsKey(graph.Name))
                         {
-                            var graphValue = modelValue.GetValue(graph.Name);
+                            var graphValue = modelValue[graph.Name];
                             graph.Value = graphValue;
                         }
                     }
@@ -112,13 +112,13 @@ namespace Marv
                 
                 window.PipelineValue[window.SelectedProfileLocation] = locationValue;
 
-                var modelValue = locationValue.GetValue(window.SelectedYear);
+                var modelValue = locationValue[window.SelectedYear];
 
                 foreach (var graph in window.Graphs)
                 {
-                    if (modelValue.HasValue(graph.Name))
+                    if (modelValue.ContainsKey(graph.Name))
                     {
-                        var graphValue = modelValue.GetValue(graph.Name);
+                        var graphValue = modelValue[graph.Name];
                         graph.Value = graphValue;
                     }
                 }
@@ -133,15 +133,15 @@ namespace Marv
             {
                 var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
 
-                if (locationValue.HasValue(window.SelectedYear))
+                if (locationValue.ContainsKey(window.SelectedYear))
                 {
-                    var modelValue = locationValue.GetValue(window.SelectedYear);
+                    var modelValue = locationValue[window.SelectedYear];
 
                     foreach (var graph in window.Graphs)
                     {
-                        if (modelValue.HasValue(graph.Name))
+                        if (modelValue.ContainsKey(graph.Name))
                         {
-                            var graphValue = modelValue.GetValue(graph.Name);
+                            var graphValue = modelValue[graph.Name];
                             graph.Value = graphValue;
                         }
                     }
@@ -159,13 +159,13 @@ namespace Marv
 
                 window.PipelineValue[window.SelectedProfileLocation] = locationValue;
 
-                var modelValue = locationValue.GetModelValue(window.SelectedYear);
+                var modelValue = locationValue[window.SelectedYear];
 
                 foreach (var graph in window.Graphs)
                 {
-                    if (modelValue.HasGraphValue(graph.Name))
+                    if (modelValue.ContainsKey(graph.Name))
                     {
-                        var graphValue = modelValue.GetGraphValue(graph.Name);
+                        var graphValue = modelValue[graph.Name];
                         graph.Value = graphValue;
                     }
                 }

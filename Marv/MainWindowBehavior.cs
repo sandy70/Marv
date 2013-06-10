@@ -130,11 +130,7 @@ namespace Marv
 
                 for (int year = window.StartYear; year <= window.EndYear; year++)
                 {
-                    var vertexValue = window.PipelineValue
-                                            .GetLocationValue(window.SelectedProfileLocation)
-                                            .GetValue(year)
-                                            .GetValue("nnphscc")
-                                            .GetValue(selectedVertex.Key);
+                    var vertexValue = window.PipelineValue[window.SelectedProfileLocation][year]["nnphscc"][selectedVertex.Key];
 
                     points.Add(new Point
                     {

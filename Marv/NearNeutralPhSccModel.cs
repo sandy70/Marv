@@ -113,7 +113,7 @@ namespace Marv
                 {
                     sccGraphEvidence["ocl"] = new VertexEvidence
                     {
-                        Evidence = intervalValue.GetValue(year - 1).GetValue("nnphscc").GetValue("cl").ToArray(),
+                        Evidence = intervalValue[year - 1]["nnphscc"]["cl"].Values.ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -130,11 +130,7 @@ namespace Marv
                 {
                     sccGraphEvidence["ocd"] = new VertexEvidence
                     {
-                        Evidence = intervalValue.GetValue(year - 1)
-                                                .GetValue("nnphscc")
-                                                .GetValue("cd")
-                                                .ToArray(),
-
+                        Evidence = intervalValue[year - 1]["nnphscc"]["cd"].Values.ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -151,11 +147,7 @@ namespace Marv
                 {
                     sccGraphEvidence["ocdc"] = new VertexEvidence
                     {
-                        Evidence = intervalValue.GetValue(year - 1)
-                                                .GetValue("nnphscc")
-                                                .GetValue("cdc")
-                                                .ToArray(),
-
+                        Evidence = intervalValue[year - 1]["nnphscc"]["cdc"].Values.ToArray(),
                         EvidenceType = EvidenceType.SoftEvidence
                     };
                 }
@@ -168,25 +160,17 @@ namespace Marv
                 sccGraph.SetEvidence(sccGraphEvidence);
                 sccGraph.UpdateBeliefs();
 
-                intervalValue.GetModelValue(year).SetValue("nnphscc", sccGraph.GetNetworkValue());
+                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetNetworkValue();
 
                 failureGraphEvidence["cd"] = new VertexEvidence
                 {
-                    Evidence = intervalValue.GetValue(year)
-                                            .GetValue("nnphscc")
-                                            .GetValue("cd")
-                                            .ToArray(),
-
+                    Evidence = intervalValue[year]["nnphscc"]["cd"].Values.ToArray(),
                     EvidenceType = EvidenceType.SoftEvidence
                 };
 
                 failureGraphEvidence["cl"] = new VertexEvidence
                 {
-                    Evidence = intervalValue.GetValue(year)
-                                            .GetValue("nnphscc")
-                                            .GetValue("cl")
-                                            .ToArray(),
-
+                    Evidence = intervalValue[year]["nnphscc"]["cl"].Values.ToArray(),
                     EvidenceType = EvidenceType.SoftEvidence
                 };
 
@@ -199,7 +183,7 @@ namespace Marv
                 failureGraph.SetEvidence(failureGraphEvidence);
                 failureGraph.UpdateBeliefs();
 
-                intervalValue.GetValue(year).SetValue("nnphsccfailure", failureGraph.GetNetworkValue());
+                intervalValue[year]["nnphsccfailure"] = failureGraph.GetNetworkValue();
             }
 
             return intervalValue;
