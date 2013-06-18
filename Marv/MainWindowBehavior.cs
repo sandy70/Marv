@@ -1,6 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
 using Microsoft.Win32;
+using NDatabase;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -83,6 +84,8 @@ namespace Marv
         private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
+
+            window.DataBase = OdbFactory.Open(window.DataBaseFileName);
 
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {

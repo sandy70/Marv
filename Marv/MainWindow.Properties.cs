@@ -48,7 +48,7 @@ namespace Marv
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
+        DependencyProperty.Register("SelectedProfileLocation", typeof(PropertyLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
 
         public static readonly DependencyProperty SelectedTallyLocationProperty =
         DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
@@ -155,9 +155,9 @@ namespace Marv
             set { SetValue(ProfileLocationsProperty, value); }
         }
 
-        public ILocation SelectedProfileLocation
+        public PropertyLocation SelectedProfileLocation
         {
-            get { return (ILocation)GetValue(SelectedProfileLocationProperty); }
+            get { return (PropertyLocation)GetValue(SelectedProfileLocationProperty); }
             set { SetValue(SelectedProfileLocationProperty, value); }
         }
 

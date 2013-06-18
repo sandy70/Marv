@@ -1,18 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace LibPipeline
 {
     public class PropertyLocation : Dynamic, ILocation, INotifyPropertyChanged
     {
+        private int id;
         private double latitude;
         private double longitude;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Id
+        {
+            get
+            {
+                return this.id;
+            }
+
+            set
+            {
+                if (value != this.id)
+                {
+                    this.id = value;
+
+                    this.OnPropertyChanged("Id");
+                }
+            }
+        }
 
         public double Latitude
         {
