@@ -18,6 +18,7 @@ namespace LibBn
     {
         public Network Network = new Network();
 
+        private object _lock = new object();
         private BnGraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
@@ -331,6 +332,16 @@ namespace LibBn
             }
 
             return graphValue;
+        }
+
+        public BnGraphValue GetNetworkValue(Dictionary<string, VertexEvidence> graphEvidence)
+        {
+            lock (this._lock)
+            {
+                this.SetEvidence(graphEvidence);
+                this.UpdateBeliefs();
+                return this.GetNetworkValue();
+            }
         }
 
         public BnVertex GetVertex(string key)
