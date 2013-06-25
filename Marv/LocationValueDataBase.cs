@@ -11,34 +11,52 @@ namespace Marv
 {
     public class LocationValueDataBase : INotifyPropertyChanged
     {
-        private static string Extension = ".db";
-        private static int FilesPerFolder = 1000;
         private object _lock = new object();
-        private string fileName = null;
+        private string extension = ".db";
+        private int filesPerFolder = 1000;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string FileName
+        public string Extension
         {
             get
             {
-                return this.fileName;
+                return this.extension;
             }
 
             set
             {
-                if (value != this.fileName)
+                if (value != this.extension)
                 {
-                    this.fileName = value;
-                    this.OnPropertyChanged("FileName");
+                    this.extension = value;
+
+                    this.OnPropertyChanged("Extension");
+                }
+            }
+        }
+
+        public int FilesPerFolder
+        {
+            get
+            {
+                return this.filesPerFolder;
+            }
+
+            set
+            {
+                if (value != this.filesPerFolder)
+                {
+                    this.filesPerFolder = value;
+
+                    this.OnPropertyChanged("FilesPerFolder");
                 }
             }
         }
 
         public string GetFileName(int id)
         {
-            string folderName = (id / LocationValueDataBase.FilesPerFolder).ToString();
-            string fileName = (id % LocationValueDataBase.FilesPerFolder).ToString() + LocationValueDataBase.Extension;
+            string folderName = (id / this.FilesPerFolder).ToString();
+            string fileName = (id % this.FilesPerFolder).ToString() + this.Extension;
 
             return Path.Combine(folderName, fileName);
         }
