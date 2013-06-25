@@ -425,7 +425,15 @@ namespace LibBn
 
             foreach (var state in this.States)
             {
-                vertexValue[state.Key] = this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
+                try
+                {
+                    vertexValue[state.Key] = this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
+                }
+                catch (SmileException smileException)
+                {
+                    Console.WriteLine(smileException.Message);
+                    vertexValue[state.Key] = 0;
+                }
             }
 
             return vertexValue;
