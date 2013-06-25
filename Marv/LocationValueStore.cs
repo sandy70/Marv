@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace Marv
 {
-    public class LocationValueStore : INotifyPropertyChanged
+    public class LocationValueStore : ViewModel
     {
         private NearNeutralPhSccModel model;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public NearNeutralPhSccModel Model
         {
@@ -69,12 +67,6 @@ namespace Marv
             }
 
             return locationValue;
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

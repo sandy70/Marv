@@ -206,8 +206,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Debug.cs" />
-    <Compile Include="FileNameProvider.cs" />
     <Compile Include="LocationValueStore.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
@@ -223,7 +221,6 @@
     <Compile Include="YearScatterSeriesData.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="InfoWindowViewModel.cs" />
-    <Compile Include="YearScatterSeriesDataBase.cs" />
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
