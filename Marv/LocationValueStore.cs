@@ -2,6 +2,7 @@
 using LibPipeline;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,28 +10,9 @@ namespace Marv
 {
     public class LocationValueStore : INotifyPropertyChanged
     {
-        private LocationValueDataBase locationValueDataBase = new LocationValueDataBase();
         private NearNeutralPhSccModel model;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public LocationValueDataBase LocationValueDataBase
-        {
-            get
-            {
-                return this.locationValueDataBase;
-            }
-
-            set
-            {
-                if (value != this.locationValueDataBase)
-                {
-                    this.locationValueDataBase = value;
-
-                    this.OnPropertyChanged("LocationValueDataBase");
-                }
-            }
-        }
 
         public NearNeutralPhSccModel Model
         {
@@ -54,7 +36,22 @@ namespace Marv
         {
             Console.WriteLine("LocationValueStore: getting location value with id: " + location.Id);
 
-            var locationValues = await this.LocationValueDataBase.GetLocationValuesAsync(location.Id);
+            var filesPerFolder = 1000;
+            var extension = ".db";
+
+            var dataBase = new ObjectDataBase<LocationValue>()
+            {
+                FileNamePredicate = () =>
+                    {
+                        string folderName = (location.Id / filesPerFolder).ToString();
+                        string fileName = (location.Id % filesPerFolder).ToString() + extension;
+
+                        return Path.Combine(folderName, fileName);
+                    }
+            };
+
+            var locationValues = await dataBase.GetValuesAsync(x => x.Id == location.Id);
+
             var locationValue = new LocationValue();
 
             if (locationValues.Count() > 0)
@@ -68,7 +65,7 @@ namespace Marv
                 locationValue = await this.Model.RunAsync(location);
                 locationValue.Id = location.Id;
 
-                this.LocationValueDataBase.StoreAsync(locationValue);
+                dataBase.StoreAsync(locationValue);
             }
 
             return locationValue;
