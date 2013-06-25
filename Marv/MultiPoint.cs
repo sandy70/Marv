@@ -6,28 +6,9 @@ namespace Marv
 {
     public class MultiPoint : INotifyPropertyChanged
     {
-        private string name;
         private ObservableCollection<Point> points = new ObservableCollection<Point>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-
-                    this.OnPropertyChanged("Name");
-                }
-            }
-        }
 
         public ObservableCollection<Point> Points
         {
@@ -41,7 +22,6 @@ namespace Marv
                 if (value != this.points)
                 {
                     this.points = value;
-
                     this.OnPropertyChanged("Points");
                 }
             }
