@@ -12,7 +12,6 @@ namespace Marv
         private object _lock = new object();
         private int endYear;
         private IEnumerable<BnGraph> graphs;
-        private ILocation selectedLocation;
         private int startYear;
 
         public int EndYear
@@ -27,20 +26,16 @@ namespace Marv
             set { graphs = value; }
         }
 
-        public ILocation SelectedLocation
-        {
-            get { return selectedLocation; }
-            set { selectedLocation = value; }
-        }
-
         public int StartYear
         {
             get { return startYear; }
             set { startYear = value; }
         }
 
-        public LocationValue Run()
+        public LocationValue Run(PropertyLocation aLocation)
         {
+            Console.WriteLine("Running model with id: " + aLocation.Id);
+
             var intervalValue = new LocationValue();
 
             var sccGraph = this.Graphs.GetGraph("nnphscc");
@@ -88,7 +83,7 @@ namespace Marv
 
                 var stateValues = new List<int> { 1000, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0 };
 
-                var location = selectedLocation as dynamic;
+                var location = aLocation as dynamic;
                 var mean = location.Pressure / 14.5;
                 var variance = Math.Pow(location.Pressure / 14.5 - location.Pressure_Min / 14.5, 2);
                 var normalDistribution = new NormalDistribution(mean, variance);
@@ -157,10 +152,10 @@ namespace Marv
                     sccGraphEvidence["P"].Evidence[i] = normalDistribution.CDF(stateValues[i]) - normalDistribution.CDF(stateValues[i + 1]);
                 }
 
-                sccGraph.SetEvidence(sccGraphEvidence);
-                sccGraph.UpdateBeliefs();
+                // sccGraph.SetEvidence(sccGraphEvidence);
+                // sccGraph.UpdateBeliefs();
 
-                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetNetworkValue();
+                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetNetworkValue(sccGraphEvidence);
 
                 failureGraphEvidence["cd"] = new VertexEvidence
                 {
@@ -186,16 +181,17 @@ namespace Marv
                 intervalValue[year]["nnphsccfailure"] = failureGraph.GetNetworkValue();
             }
 
+            Console.WriteLine("Ran model with id: " + aLocation.Id);
             return intervalValue;
         }
 
-        public Task<LocationValue>  RunAsync()
+        public Task<LocationValue>  RunAsync(PropertyLocation location)
         {
             return Task.Run(() =>
             {
                 lock (this._lock)
                 {
-                    return this.Run();
+                    return this.Run(location);
                 }
             });
         }
