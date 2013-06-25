@@ -39,6 +39,11 @@ namespace LibBn
             }
         }
 
+        public override string ToString()
+        {
+            return base.ToString() + " Id: " + this.Id;
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
