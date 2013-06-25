@@ -11,9 +11,6 @@ namespace Marv
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
-        public static readonly DependencyProperty DataBaseFileNameProperty =
-        DependencyProperty.Register("DataBaseFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
@@ -38,6 +35,9 @@ namespace Marv
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty LocationValueStoreProperty =
+        DependencyProperty.Register("LocationValueStore", typeof(LocationValueStore), typeof(MainWindow), new PropertyMetadata(new LocationValueStore()));
+
         public static readonly DependencyProperty MultiPointsProperty =
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
 
@@ -45,7 +45,10 @@ namespace Marv
         DependencyProperty.Register("Points", typeof(ObservableCollection<Point>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<Point>()));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
-        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedLocationValueProperty =
+        DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
         DependencyProperty.Register("SelectedProfileLocation", typeof(PropertyLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
@@ -75,12 +78,6 @@ namespace Marv
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
-        }
-
-        public string DataBaseFileName
-        {
-            get { return (string)GetValue(DataBaseFileNameProperty); }
-            set { SetValue(DataBaseFileNameProperty, value); }
         }
 
         public int EndYear
@@ -131,6 +128,12 @@ namespace Marv
             set { SetValue(IsTallySelectedProperty, value); }
         }
 
+        public LocationValueStore LocationValueStore
+        {
+            get { return (LocationValueStore)GetValue(LocationValueStoreProperty); }
+            set { SetValue(LocationValueStoreProperty, value); }
+        }
+
         public ObservableCollection<MultiPoint> MultiPoints
         {
             get { return (ObservableCollection<MultiPoint>)GetValue(MultiPointsProperty); }
@@ -139,8 +142,14 @@ namespace Marv
 
         public NearNeutralPhSccModel NearNeutralPhSccModel
         {
-            get { return model; }
-            set { model = value; }
+            get
+            {
+                return model;
+            }
+            set
+            {
+                model = value;
+            }
         }
 
         public ObservableCollection<Point> Points
@@ -149,16 +158,43 @@ namespace Marv
             set { SetValue(PointsProperty, value); }
         }
 
-        public IEnumerable<ILocation> ProfileLocations
+        public IEnumerable<PropertyLocation> ProfileLocations
         {
-            get { return (IEnumerable<ILocation>)GetValue(ProfileLocationsProperty); }
+            get { return (IEnumerable<PropertyLocation>)GetValue(ProfileLocationsProperty); }
             set { SetValue(ProfileLocationsProperty, value); }
+        }
+
+        public LocationValue SelectedLocationValue
+        {
+            get
+            {
+                return (LocationValue)GetValue(SelectedLocationValueProperty);
+            }
+
+            set
+            {
+                SetValue(SelectedLocationValueProperty, value);
+
+                var modelValue = this.SelectedLocationValue[this.SelectedYear];
+
+                foreach (var graph in this.Graphs)
+                {
+                    var graphValue = modelValue[graph.Name];
+                    graph.Value = graphValue;
+                }
+            }
         }
 
         public PropertyLocation SelectedProfileLocation
         {
-            get { return (PropertyLocation)GetValue(SelectedProfileLocationProperty); }
-            set { SetValue(SelectedProfileLocationProperty, value); }
+            get
+            {
+                return (PropertyLocation)GetValue(SelectedProfileLocationProperty);
+            }
+            set
+            {
+                SetValue(SelectedProfileLocationProperty, value);
+            }
         }
 
         public ILocation SelectedTallyLocation

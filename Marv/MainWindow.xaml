@@ -14,7 +14,6 @@
     <Window.Resources>
         <Style TargetType="local:MainWindow">
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="DataBaseFileName" Value="{Binding Default.DataBaseFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="FileName" Value="{Binding Default.FileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
@@ -168,9 +167,6 @@
                                        Minimum="{Binding StartYear, ElementName=Root}"
                                        TickPlacement="BottomRight"
                                        Value="{Binding SelectedYear, ElementName=Root}">
-                            <i:Interaction.Behaviors>
-                                <local:YearSliderBehavior />
-                            </i:Interaction.Behaviors>
                         </surface:SurfaceSlider>
                     </Grid>
                 </Grid>

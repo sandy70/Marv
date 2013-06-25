@@ -1,7 +1,6 @@
 ﻿using LibBn;
 using LibPipeline;
 using Microsoft.Win32;
-using NDatabase;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -50,13 +49,11 @@ namespace Marv
 
                 foreach (var location in window.ProfileLocations)
                 {
-                    window.NearNeutralPhSccModel.SelectedLocation = location;
-
-                    var locationValue = await window.NearNeutralPhSccModel.RunAsync();
-
-                    window.PipelineValue[location] = locationValue;
+                    window.SelectedProfileLocation = location;
 
                     Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
+
+                    if (nCompleted > 100) break;
                 }
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
@@ -84,8 +81,6 @@ namespace Marv
         private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
-            window.DataBase = OdbFactory.Open(window.DataBaseFileName);
 
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
@@ -115,6 +110,8 @@ namespace Marv
             window.NearNeutralPhSccModel.StartYear = window.StartYear;
             window.NearNeutralPhSccModel.EndYear = window.EndYear;
 
+            window.LocationValueStore.Model = window.NearNeutralPhSccModel;
+
             window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }
@@ -126,14 +123,14 @@ namespace Marv
 
             window.MultiPoints.Clear();
 
-            foreach(var selectedItem in window.AutoCompleteBox.SelectedItems)
+            foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
             {
                 var selectedVertex = selectedItem as BnVertex;
                 var points = new ObservableCollection<Point>();
 
                 for (int year = window.StartYear; year <= window.EndYear; year++)
                 {
-                    var vertexValue = window.PipelineValue[window.SelectedProfileLocation][year]["nnphscc"][selectedVertex.Key];
+                    var vertexValue = window.SelectedLocationValue[year]["nnphscc"][selectedVertex.Key];
 
                     points.Add(new Point
                     {
@@ -142,7 +139,7 @@ namespace Marv
                     });
                 }
 
-                window.MultiPoints.Add(new MultiPoint { Name = selectedVertex.Name, Points = points });
+                window.MultiPoints.Add(new MultiPoint { Points = points });
             }
         }
 

@@ -10,6 +10,7 @@ using System.Windows;
 using Telerik.Windows.Controls;
 using System.Linq;
 using NDatabase.Api;
+using System.Threading.Tasks;
 
 namespace Marv
 {
@@ -20,8 +21,8 @@ namespace Marv
         public PipelineValue PipelineValue = new PipelineValue();
         public SensorListener SensorListener = new SensorListener();
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
-        public IOdb DataBase = OdbFactory.OpenInMemory();
         private NearNeutralPhSccModel model = new NearNeutralPhSccModel();
+        private object _lock = new object();
 
         public MainWindow()
         {
@@ -80,85 +81,19 @@ namespace Marv
         private static async void ChangedSelectedProfileLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-
-            var locationValues = window.DataBase.QueryAndExecute<LocationValue>().Where(x => x.Id == window.SelectedProfileLocation.Id);
-
-            if (locationValues.Count() > 0)
-            {
-                var locationValue = locationValues.First();
-                var modelValue = locationValue[window.SelectedYear];
-
-                foreach (var graph in window.Graphs)
-                {
-                    var graphValue = modelValue[graph.Name];
-                    graph.Value = graphValue;
-                }
-            }
-            else
-            {
-                window.PopupControl.ShowTextIndeterminate("Running model.");
-                window.NearNeutralPhSccModel.SelectedLocation = window.SelectedProfileLocation;
-                var locationValue = await window.NearNeutralPhSccModel.RunAsync();
-                window.PopupControl.Hide();
-
-                window.DataBase.Store(locationValue);
-
-                // window.PipelineValue[window.SelectedProfileLocation] = locationValue;
-
-                var modelValue = locationValue[window.SelectedYear];
-
-                foreach (var graph in window.Graphs)
-                {
-                    var graphValue = modelValue[graph.Name];
-                    graph.Value = graphValue;
-                }
-            }
+            window.SelectedLocationValue = await window.LocationValueStore.GetLocationValueAsync(window.SelectedProfileLocation);
         }
 
-        private static async void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
-            if (window.PipelineValue.HasLocationValue(window.SelectedProfileLocation))
+            var modelValue = window.SelectedLocationValue[window.SelectedYear];
+
+            foreach (var graph in window.Graphs)
             {
-                var locationValue = window.PipelineValue.GetLocationValue(window.SelectedProfileLocation);
-
-                if (locationValue.ContainsKey(window.SelectedYear))
-                {
-                    var modelValue = locationValue[window.SelectedYear];
-
-                    foreach (var graph in window.Graphs)
-                    {
-                        if (modelValue.ContainsKey(graph.Name))
-                        {
-                            var graphValue = modelValue[graph.Name];
-                            graph.Value = graphValue;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                window.PopupControl.ShowTextIndeterminate("Running model.");
-
-                window.NearNeutralPhSccModel.SelectedLocation = window.SelectedProfileLocation;
-
-                var locationValue = await window.NearNeutralPhSccModel.RunAsync();
-
-                window.PopupControl.Hide();
-
-                window.PipelineValue[window.SelectedProfileLocation] = locationValue;
-
-                var modelValue = locationValue[window.SelectedYear];
-
-                foreach (var graph in window.Graphs)
-                {
-                    if (modelValue.ContainsKey(graph.Name))
-                    {
-                        var graphValue = modelValue[graph.Name];
-                        graph.Value = graphValue;
-                    }
-                }
+                var graphValue = modelValue[graph.Name];
+                graph.Value = graphValue;
             }
         }
     }
