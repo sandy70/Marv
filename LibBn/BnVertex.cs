@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 
 namespace LibBn
 {
@@ -295,6 +295,12 @@ namespace LibBn
             }
         }
 
+        public void ClearEvidence()
+        {
+            this.Network.ClearEvidence(this.Key);
+            this.IsEvidenceEntered = false;
+        }
+
         public double GetMean(BnVertexValue vertexValue)
         {
             double numer = 0;
@@ -359,6 +365,26 @@ namespace LibBn
             return stateIndex;
         }
 
+        public BnVertexValue GetValueFromNetwork()
+        {
+            var vertexValue = new BnVertexValue();
+
+            foreach (var state in this.States)
+            {
+                try
+                {
+                    vertexValue[state.Key] = this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
+                }
+                catch (SmileException smileException)
+                {
+                    Console.WriteLine(smileException.Message);
+                    vertexValue[state.Key] = 0;
+                }
+            }
+
+            return vertexValue;
+        }
+
         public void SetEvidence(VertexEvidence vertexEvidence)
         {
             if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
@@ -386,6 +412,25 @@ namespace LibBn
                     this.States[i].Value = 0;
                 }
             }
+        }
+
+        public VertexEvidence ToEvidence()
+        {
+            int selectedStateIndex = this.GetSelectedStateIndex();
+            var vertexEvidence = new VertexEvidence();
+
+            if (selectedStateIndex >= 0)
+            {
+                vertexEvidence.EvidenceType = EvidenceType.StateSelected;
+                vertexEvidence.StateIndex = selectedStateIndex;
+            }
+            else
+            {
+                vertexEvidence.EvidenceType = EvidenceType.SoftEvidence;
+                vertexEvidence.Evidence = this.States.Select(x => x.Value).ToArray();
+            }
+
+            return vertexEvidence;
         }
 
         public void UpdateMostProbableState()
@@ -417,26 +462,6 @@ namespace LibBn
         private void SetEvidence(int stateIndex)
         {
             this.Network.SetEvidence(this.Key, stateIndex);
-        }
-
-        public BnVertexValue GetValueFromNetwork()
-        {
-            var vertexValue = new BnVertexValue();
-
-            foreach (var state in this.States)
-            {
-                try
-                {
-                    vertexValue[state.Key] = this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
-                }
-                catch (SmileException smileException)
-                {
-                    Console.WriteLine(smileException.Message);
-                    vertexValue[state.Key] = 0;
-                }
-            }
-
-            return vertexValue;
         }
     }
 }

@@ -80,38 +80,46 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
+            //await window.Dispatcher.BeginInvoke(new Action(async () =>
+            //    {
+            //        window.PopupControl.ShowTextIndeterminate("Reading Profile");
+            //        window.ProfileLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
+            //        window.PopupControl.Hide();
+
+            //        window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
+
+            //        window.PopupControl.ShowTextIndeterminate("Reading tally");
+            //        window.TallyLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.TallyFileName);
+            //        window.PopupControl.Hide();
+            //    }));
+
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    window.PopupControl.ShowTextIndeterminate("Reading Profile");
-                    window.ProfileLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
-                    window.PopupControl.Hide();
+                    if (window.NetworkFileNames != null)
+                    {
+                        foreach (var fileName in window.NetworkFileNames)
+                        {
+                            window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+                        }
+                    }
 
-                    window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
-
-                    window.PopupControl.ShowTextIndeterminate("Reading tally");
-                    window.TallyLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.TallyFileName);
-                    window.PopupControl.Hide();
+                    //window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC.net"));
+                    //window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
                 }));
 
-            await window.Dispatcher.BeginInvoke(new Action(async () =>
-                {
-                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC.net"));
-                    window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
-                }));
+            //KocDataReader kocDataReader = new KocDataReader();
+            //window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
+            //window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
+            //kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
-            KocDataReader kocDataReader = new KocDataReader();
-            window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
-            window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
-            kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
+            //window.NearNeutralPhSccModel.Graphs = window.Graphs;
+            //window.NearNeutralPhSccModel.StartYear = window.StartYear;
+            //window.NearNeutralPhSccModel.EndYear = window.EndYear;
 
-            window.NearNeutralPhSccModel.Graphs = window.Graphs;
-            window.NearNeutralPhSccModel.StartYear = window.StartYear;
-            window.NearNeutralPhSccModel.EndYear = window.EndYear;
+            //window.LocationValueStore.Model = window.NearNeutralPhSccModel;
 
-            window.LocationValueStore.Model = window.NearNeutralPhSccModel;
-
-            window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
-            window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
+            //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
+            //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

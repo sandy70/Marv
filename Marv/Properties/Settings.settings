@@ -27,7 +27,7 @@
       <Value Profile="(Default)">D:\Data\SCC\HighpH_failure.net</Value>
     </Setting>
     <Setting Name="StartingGroup" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">all</Value>
     </Setting>
     <Setting Name="DataBaseFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Data\SCC\NNphSCC\data.db</Value>

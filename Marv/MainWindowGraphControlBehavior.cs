@@ -1,6 +1,7 @@
 ﻿using LibBn;
 using LibPipeline;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
@@ -29,29 +30,20 @@ namespace Marv
         private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var window = this.AssociatedObject;
-            window.AddInput(e.Value);
+            var vertex = e.Value;
 
-            var success = window.TryUpdateNetwork();
-
-            if (!success)
-            {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
-                window.InputManager.RemoveVertexInput(BnInputType.User, window.SelectedYear, e.Value.Key);
-                window.TryUpdateNetwork();
-            }
+            var graphEvidence = new Dictionary<string, VertexEvidence>();
+            graphEvidence[vertex.Key] = vertex.ToEvidence();
+            vertex.Parent.UpdateValue(graphEvidence);
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
-            var window = this.AssociatedObject;
-            window.RemoveInput(e.Value);
+            var vertex = e.Value;
 
-            var success = window.TryUpdateNetwork();
-
-            if (!success)
-            {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
-            }
+            vertex.ClearEvidence();
+            vertex.Parent.UpdateBeliefs();
+            vertex.Parent.UpdateValue();
         }
 
         private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)

@@ -265,6 +265,14 @@ namespace LibBn
             }
         }
 
+        public void ClearEvidence()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.ClearEvidence();
+            }
+        }
+
         public BnGraph GetGroup(string group)
         {
             // Extract the header vertices
@@ -407,6 +415,13 @@ namespace LibBn
 
         public BnGraphValue UpdateValue()
         {
+            return this.Value = this.GetNetworkValue();
+        }
+
+        public BnGraphValue UpdateValue(Dictionary<string, VertexEvidence> graphEvidence)
+        {
+            this.SetEvidence(graphEvidence);
+            this.UpdateBeliefs();
             return this.Value = this.GetNetworkValue();
         }
 
