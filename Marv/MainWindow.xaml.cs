@@ -18,7 +18,6 @@ namespace Marv
     {
         public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
         public BnInputStore InputManager = new BnInputStore();
-        public PipelineValue PipelineValue = new PipelineValue();
         public SensorListener SensorListener = new SensorListener();
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
         private NearNeutralPhSccModel model = new NearNeutralPhSccModel();

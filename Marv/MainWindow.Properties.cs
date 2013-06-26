@@ -14,9 +14,6 @@ namespace Marv
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
-        public static readonly DependencyProperty FileNameProperty =
-        DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty GraphsProperty =
         DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
 
@@ -84,12 +81,6 @@ namespace Marv
         {
             get { return (int)GetValue(EndYearProperty); }
             set { SetValue(EndYearProperty, value); }
-        }
-
-        public string FileName
-        {
-            get { return (string)GetValue(FileNameProperty); }
-            set { SetValue(FileNameProperty, value); }
         }
 
         public GraphCollection Graphs

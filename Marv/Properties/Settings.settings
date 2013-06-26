@@ -32,5 +32,8 @@
     <Setting Name="DataBaseFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Data\SCC\NNphSCC\data.db</Value>
     </Setting>
+    <Setting Name="IsMapVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

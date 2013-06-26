@@ -49,11 +49,9 @@ namespace Marv
 
                 foreach (var location in window.ProfileLocations)
                 {
+                    await window.LocationValueStore.GetLocationValueAsync(location);
                     window.SelectedProfileLocation = location;
-
                     Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
-
-                    if (nCompleted > 100) break;
                 }
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&

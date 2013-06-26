@@ -142,5 +142,17 @@ namespace Marv.Properties {
                 this["DataBaseFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsMapVisible {
+            get {
+                return ((bool)(this["IsMapVisible"]));
+            }
+            set {
+                this["IsMapVisible"] = value;
+            }
+        }
     }
 }
