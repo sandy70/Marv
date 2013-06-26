@@ -6,7 +6,6 @@ namespace LibPipeline
 {
     public class BnVertexViewModel : BnVertex
     {
-        private bool isExpanded = false;
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
@@ -16,20 +15,6 @@ namespace LibPipeline
             : base()
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
-        }
-
-        public bool IsExpanded
-        {
-            get
-            {
-                return this.isExpanded;
-            }
-
-            set
-            {
-                this.isExpanded = value;
-                this.OnPropertyChanged("IsExpanded");
-            }
         }
 
         public bool IsLocked

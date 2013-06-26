@@ -8,21 +8,21 @@ namespace LibPipeline
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.StateSelected += AssociatedObject_StateSelected;
+            this.AssociatedObject.StateDoubleClicked += AssociatedObject_StateDoubleClicked;
             this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
         }
 
-        private void AssociatedObject_StateSelected(object sender, ValueEventArgs<BnState> e)
+        private void AssociatedObject_StateDoubleClicked(object sender, ValueEventArgs<BnState> e)
         {
             var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-            var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
-            vertexViewModel.IsEvidenceEntered = true;
 
-            parentGraphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+            parentGraphControl.RaiseEvent(new BnGraphControlEventArgs
             {
-                RoutedEvent = BnGraphControl.NewEvidenceAvailableEvent,
-                Value = vertexViewModel
+                RoutedEvent = BnGraphControl.StateDoubleClickedEvent,
+                State = e.Value,
+                Vertex = this.AssociatedObject.DataContext as BnVertexViewModel
             });
+
         }
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<BnState> e)

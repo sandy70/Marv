@@ -120,6 +120,19 @@ namespace Marv
 
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
+            window.RetractAllButton.Click += RetractAllButton_Click;
+        }
+
+        private void RetractAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window  = this.AssociatedObject;
+
+            foreach (var graph in window.Graphs)
+            {
+                graph.ClearEvidence();
+                graph.UpdateBeliefs();
+                graph.UpdateValue();
+            }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

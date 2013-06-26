@@ -189,6 +189,7 @@ namespace LibBn
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
+                vertex.IsExpanded = structureVertex.ParseIsExpanded();
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Network = graph.Network;
@@ -433,6 +434,7 @@ namespace LibBn
             {
                 node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
                 node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).Positions.String() + "\"";
+                node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
             }
 
             structure.Write(fileName);

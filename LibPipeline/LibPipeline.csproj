@@ -148,6 +148,7 @@
   <ItemGroup>
     <Compile Include="BingMap\BingMap.cs" />
     <Compile Include="BingMap\BingMapUpdateBehavior.cs" />
+    <Compile Include="Controls\BnGraphControl\BnGraphControlEventArgs.cs" />
     <Compile Include="InputStore.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />

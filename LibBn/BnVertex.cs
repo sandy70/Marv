@@ -16,6 +16,7 @@ namespace LibBn
         private ObservableCollection<String> groups = new ObservableCollection<String>();
         private string headerOfGroup;
         private bool isEvidenceEntered = false;
+        private bool isExpanded;
         private bool isHeader = false;
         private string key = "";
         private BnState mostProbableState = null;
@@ -98,6 +99,24 @@ namespace LibBn
                 {
                     this.isEvidenceEntered = value;
                     this.OnPropertyChanged("IsEvidenceEntered");
+                }
+            }
+        }
+
+        public bool IsExpanded
+        {
+            get
+            {
+                return this.isExpanded;
+            }
+
+            set
+            {
+                if (value != this.isExpanded)
+                {
+                    this.isExpanded = value;
+
+                    this.OnPropertyChanged("IsExpanded");
                 }
             }
         }
@@ -297,7 +316,11 @@ namespace LibBn
 
         public void ClearEvidence()
         {
-            this.Network.ClearEvidence(this.Key);
+            if (this.Network.IsEvidence(this.Key))
+            {
+                this.Network.ClearEvidence(this.Key);
+            }
+
             this.IsEvidenceEntered = false;
         }
 
@@ -395,6 +418,8 @@ namespace LibBn
             {
                 this.SetEvidence(vertexEvidence.Evidence);
             }
+
+            this.IsEvidenceEntered = true;
         }
 
         public void SetSelectedStateIndex(int index)
@@ -461,7 +486,14 @@ namespace LibBn
 
         private void SetEvidence(int stateIndex)
         {
-            this.Network.SetEvidence(this.Key, stateIndex);
+            try
+            {
+                this.Network.SetEvidence(this.Key, stateIndex);
+            }
+            catch (SmileException exception)
+            {
+                throw new InconsistentEvidenceException();
+            }
         }
     }
 }

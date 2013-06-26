@@ -1,14 +1,10 @@
 ﻿using LibBn;
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using Telerik.Windows.Controls;
 
 namespace LibPipeline
 {
@@ -53,6 +49,9 @@ namespace LibPipeline
         public static readonly DependencyProperty ShapeOpacityProperty =
         DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
 
+        public static readonly RoutedEvent StateDoubleClickedEvent =
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
+
         private Dictionary<BnGraph, string> selectedGroups = new Dictionary<BnGraph, string>();
 
         public BnGraphControl()
@@ -82,6 +81,12 @@ namespace LibPipeline
         {
             add { AddHandler(SensorButtonUncheckedEvent, value); }
             remove { RemoveHandler(SensorButtonUncheckedEvent, value); }
+        }
+
+        public event RoutedEventHandler<BnGraphControlEventArgs> StateDoubleClicked
+        {
+            add { AddHandler(StateDoubleClickedEvent, value); }
+            remove { RemoveHandler(StateDoubleClickedEvent, value); }
         }
 
         public Color ConnectionColor

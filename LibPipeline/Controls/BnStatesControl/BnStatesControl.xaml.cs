@@ -20,8 +20,8 @@ namespace LibPipeline
         public static readonly DependencyProperty SliderForegroundProperty =
         DependencyProperty.Register("SliderForeground", typeof(Brush), typeof(BnStatesControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
-        public static readonly RoutedEvent StateSelectedEvent =
-        EventManager.RegisterRoutedEvent("StateSelected", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnState>>), typeof(BnStatesControl));
+        public static readonly RoutedEvent StateDoubleClickedEvent =
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnState>>), typeof(BnStatesControl));
 
         public static readonly DependencyProperty StatesFontSizeProperty =
         DependencyProperty.Register("StatesFontSize", typeof(double), typeof(BnStatesControl), new PropertyMetadata(10.0));
@@ -37,10 +37,10 @@ namespace LibPipeline
             InitializeComponent();
         }
 
-        public event RoutedEventHandler<ValueEventArgs<BnState>> StateSelected
+        public event RoutedEventHandler<ValueEventArgs<BnState>> StateDoubleClicked
         {
-            add { AddHandler(StateSelectedEvent, value); }
-            remove { RemoveHandler(StateSelectedEvent, value); }
+            add { AddHandler(StateDoubleClickedEvent, value); }
+            remove { RemoveHandler(StateDoubleClickedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<BnState>> ValueEntered

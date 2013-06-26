@@ -37,6 +37,20 @@ namespace LibBn
             return groups;
         }
 
+        public bool ParseIsExpanded()
+        {
+            var valueString = this.ParseStringProperty("isexpanded");
+
+            if (valueString.ToLower().Equals("true"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public Point ParsePosition()
         {
             var posValueString = this.Properties["position"];

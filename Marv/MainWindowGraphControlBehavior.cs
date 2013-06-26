@@ -21,20 +21,35 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
+            window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
             window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
             window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
             window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
         }
 
-        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
         {
             var window = this.AssociatedObject;
-            var vertex = e.Value;
 
-            var graphEvidence = new Dictionary<string, VertexEvidence>();
-            graphEvidence[vertex.Key] = vertex.ToEvidence();
-            vertex.Parent.UpdateValue(graphEvidence);
+            var vertexEvidence = new VertexEvidence
+            {
+                EvidenceType = EvidenceType.StateSelected,
+                StateIndex = e.Vertex.States.IndexOf(e.State)
+            };
+
+            try
+            {
+                e.Vertex.SetEvidence(vertexEvidence);
+                e.Vertex.Parent.UpdateBeliefs();
+                e.Vertex.Parent.UpdateValue();
+            }
+            catch (InconsistentEvidenceException exception)
+            {
+                window.PopupControl.ShowText("Inconsistent evidence entered.");
+                e.Vertex.IsEvidenceEntered = false;
+                e.Vertex.Parent.UpdateBeliefs();
+                e.Vertex.Parent.UpdateValue();
+            }
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
