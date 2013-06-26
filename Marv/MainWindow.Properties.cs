@@ -2,6 +2,7 @@
 using LibPipeline;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 
 namespace Marv
@@ -43,6 +44,9 @@ namespace Marv
 
         public static readonly DependencyProperty MultiPointsProperty =
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
+
+        public static readonly DependencyProperty NetworkFileNamesProperty =
+        DependencyProperty.Register("NetworkFileNames", typeof(StringCollection), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
@@ -156,6 +160,12 @@ namespace Marv
             {
                 model = value;
             }
+        }
+
+        public StringCollection NetworkFileNames
+        {
+            get { return (StringCollection)GetValue(NetworkFileNamesProperty); }
+            set { SetValue(NetworkFileNamesProperty, value); }
         }
 
         public IEnumerable<PropertyLocation> ProfileLocations
