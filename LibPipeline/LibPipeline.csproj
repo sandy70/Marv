@@ -152,7 +152,7 @@
     <Compile Include="InputStore.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
-    <Compile Include="Controls\BnGraphControl\BnStatesControlBehavior.cs" />
+    <Compile Include="Controls\BnStatesControl\BnStatesControlBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnVertexViewModel.cs" />
     <Compile Include="Controls\BnGraphControl\ExpanderButtonBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\GroupButtonBehavior.cs" />

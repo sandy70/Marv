@@ -12,6 +12,10 @@
     <UserControl.Resources>
         <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
+    
+    <i:Interaction.Behaviors>
+        <local:BnStatesControlBehavior />
+    </i:Interaction.Behaviors>
 
     <Grid>
         <!-- The states -->

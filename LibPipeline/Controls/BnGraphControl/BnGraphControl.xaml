@@ -126,9 +126,6 @@
                                                                          SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
                                                                          States="{Binding States}"
                                                                          StatesFontSize="12">
-                                                <i:Interaction.Behaviors>
-                                                    <libpipeline:BnStatesControlBehavior />
-                                                </i:Interaction.Behaviors>
                                             </libpipeline:BnStatesControl>
 
                                             <!-- Units -->
