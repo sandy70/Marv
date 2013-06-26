@@ -42,23 +42,17 @@ namespace Marv
 
                 try
                 {
-                    e.Vertex.SetEvidence(vertexEvidence);
-                    e.Vertex.Parent.UpdateBeliefs();
-                    e.Vertex.Parent.UpdateValue();
+                    e.Vertex.SetEvidenceAndUpdateParentValue(vertexEvidence);
                 }
                 catch (InconsistentEvidenceException exception)
                 {
                     window.PopupControl.ShowText("Inconsistent evidence entered.");
-                    e.Vertex.ClearEvidence();
-                    e.Vertex.Parent.UpdateBeliefs();
-                    e.Vertex.Parent.UpdateValue();
+                    e.Vertex.ClearEvidenceAndUpdateParentValue();
                 }
             }
             else
             {
-                e.Vertex.ClearEvidence();
-                e.Vertex.Parent.UpdateBeliefs();
-                e.Vertex.Parent.UpdateValue();
+                e.Vertex.ClearEvidenceAndUpdateParentValue();
             }
         }
 
@@ -67,29 +61,20 @@ namespace Marv
             var window = this.AssociatedObject;
             var vertex = e.Value;
 
-            var graphEvidence = new Dictionary<string, VertexEvidence>();
-            graphEvidence[vertex.Key] = vertex.ToEvidence();
-
             try
             {
-                vertex.Parent.UpdateValue(graphEvidence);
+                vertex.SetEvidenceAndUpdateParentValue();
             }
             catch(InconsistentEvidenceException exception)
             {
                 window.PopupControl.ShowText("Inconsistent evidence entered.");
-                vertex.IsEvidenceEntered = false;
-                vertex.Parent.UpdateBeliefs();
-                vertex.Parent.UpdateValue();
+                vertex.ClearEvidenceAndUpdateParentValue();
             }
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
-            var vertex = e.Value;
-
-            vertex.ClearEvidence();
-            vertex.Parent.UpdateBeliefs();
-            vertex.Parent.UpdateValue();
+            e.Value.ClearEvidenceAndUpdateParentValue();
         }
 
         private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)

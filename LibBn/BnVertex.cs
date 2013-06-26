@@ -334,12 +334,23 @@ namespace LibBn
 
         public void ClearEvidence()
         {
-            if (this.Network.IsEvidence(this.Key))
+            try
             {
                 this.Network.ClearEvidence(this.Key);
             }
+            catch (SmileException exception)
+            {
+                // do nothing
+            }
 
             this.IsEvidenceEntered = false;
+        }
+
+        public BnGraphValue ClearEvidenceAndUpdateParentValue()
+        {
+            this.ClearEvidence();
+            this.Parent.UpdateBeliefs();
+            return this.Parent.UpdateValue();
         }
 
         public double GetMean(BnVertexValue vertexValue)
@@ -438,6 +449,18 @@ namespace LibBn
             }
 
             this.IsEvidenceEntered = true;
+        }
+
+        public BnGraphValue SetEvidenceAndUpdateParentValue()
+        {
+            return this.SetEvidenceAndUpdateParentValue(this.ToEvidence());
+        }
+
+        public BnGraphValue SetEvidenceAndUpdateParentValue(VertexEvidence vertexEvidence)
+        {
+            this.SetEvidence(vertexEvidence);
+            this.Parent.UpdateBeliefs();
+            return this.Parent.UpdateValue();
         }
 
         public void SetSelectedStateIndex(int index)
