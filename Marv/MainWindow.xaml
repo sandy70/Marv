@@ -125,7 +125,7 @@
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition Height="50" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <libpipeline:BnGraphControl Name="GraphControl"
@@ -149,51 +149,54 @@
                         <Image Source="Resources/Icons/erase.png" />
                     </telerik:RadButton>
 
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1"
+                          Height="50"
+                          Visibility="{Binding IsYearSliderVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                       Content="{Binding Path=Value, ElementName=YearSlider}"
-                       Background="Black"
-                       Foreground="White"
-                       FontSize="24" FontWeight="Bold"
-                       HorizontalContentAlignment="Center" />
+                               Content="{Binding Path=Value, ElementName=YearSlider}"
+                               Background="Black"
+                               Foreground="White"
+                               FontSize="24" FontWeight="Bold"
+                               HorizontalContentAlignment="Center" />
 
                         <surface:SurfaceSlider Name="YearSlider"
-                                       Grid.Column="1"
-                                       Background="Black"
-                                       IsSnapToTickEnabled="True"
-                                       Maximum="{Binding EndYear, ElementName=Root}"
-                                       Minimum="{Binding StartYear, ElementName=Root}"
-                                       TickPlacement="BottomRight"
-                                       Value="{Binding SelectedYear, ElementName=Root}">
+                                               Grid.Column="1"
+                                               Background="Black"
+                                               IsSnapToTickEnabled="True"
+                                               Maximum="{Binding EndYear, ElementName=Root}"
+                                               Minimum="{Binding StartYear, ElementName=Root}"
+                                               TickPlacement="BottomRight"
+                                               Value="{Binding SelectedYear, ElementName=Root}">
                         </surface:SurfaceSlider>
                     </Grid>
                 </Grid>
 
                 <local:PopupControl x:Name="PopupControl"
-                            Grid.Column="0" Grid.ColumnSpan="3"
-                            Background="#DDDDDD"
-                            Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                            Margin="10"
-                            VerticalAlignment="Top" HorizontalAlignment="Left"
-                            Visibility="Collapsed" />
+                                    Grid.Column="0" Grid.ColumnSpan="3"
+                                    Background="#DDDDDD"
+                                    Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                    Margin="10"
+                                    VerticalAlignment="Top" HorizontalAlignment="Left"
+                                    Visibility="Collapsed" />
 
                 <telerik:RadPropertyGrid Name="SettingsPropertyGrid"
-                                 Grid.Column="0" Grid.ColumnSpan="3"
-                                 Background="#DDDDDD"
-                                 Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                 Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}"
-                                 Padding="10"
-                                 VerticalAlignment="Top" HorizontalAlignment="Left"
-                                 Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+                                         Grid.Column="0" Grid.ColumnSpan="3"
+                                         Background="#DDDDDD"
+                                         Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                         Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}"
+                                         Padding="10"
+                                         VerticalAlignment="Top" HorizontalAlignment="Left"
+                                         Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
             </Grid>
         </telerik:RadTabItem>
         
-        <telerik:RadTabItem Header="Plots">
+        <telerik:RadTabItem Header="Plots"
+                            Visibility="Collapsed">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
