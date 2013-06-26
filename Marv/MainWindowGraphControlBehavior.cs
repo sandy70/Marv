@@ -32,22 +32,31 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            var vertexEvidence = new VertexEvidence
+            if (e.Vertex.SelectedState != e.State)
             {
-                EvidenceType = EvidenceType.StateSelected,
-                StateIndex = e.Vertex.States.IndexOf(e.State)
-            };
+                var vertexEvidence = new VertexEvidence
+                {
+                    EvidenceType = EvidenceType.StateSelected,
+                    StateIndex = e.Vertex.States.IndexOf(e.State)
+                };
 
-            try
-            {
-                e.Vertex.SetEvidence(vertexEvidence);
-                e.Vertex.Parent.UpdateBeliefs();
-                e.Vertex.Parent.UpdateValue();
+                try
+                {
+                    e.Vertex.SetEvidence(vertexEvidence);
+                    e.Vertex.Parent.UpdateBeliefs();
+                    e.Vertex.Parent.UpdateValue();
+                }
+                catch (InconsistentEvidenceException exception)
+                {
+                    window.PopupControl.ShowText("Inconsistent evidence entered.");
+                    e.Vertex.ClearEvidence();
+                    e.Vertex.Parent.UpdateBeliefs();
+                    e.Vertex.Parent.UpdateValue();
+                }
             }
-            catch (InconsistentEvidenceException exception)
+            else
             {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
-                e.Vertex.IsEvidenceEntered = false;
+                e.Vertex.ClearEvidence();
                 e.Vertex.Parent.UpdateBeliefs();
                 e.Vertex.Parent.UpdateValue();
             }

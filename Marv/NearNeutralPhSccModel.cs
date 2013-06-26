@@ -155,7 +155,7 @@ namespace Marv
                 // sccGraph.SetEvidence(sccGraphEvidence);
                 // sccGraph.UpdateBeliefs();
 
-                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetNetworkValue(sccGraphEvidence);
+                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetValueFromNetwork(sccGraphEvidence);
 
                 failureGraphEvidence["cd"] = new VertexEvidence
                 {
@@ -178,7 +178,7 @@ namespace Marv
                 failureGraph.SetEvidence(failureGraphEvidence);
                 failureGraph.UpdateBeliefs();
 
-                intervalValue[year]["nnphsccfailure"] = failureGraph.GetNetworkValue();
+                intervalValue[year]["nnphsccfailure"] = failureGraph.GetValueFromNetwork();
             }
 
             Console.WriteLine("Ran model with id: " + aLocation.Id);

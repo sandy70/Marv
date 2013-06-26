@@ -331,7 +331,17 @@ namespace LibBn
             return partGraph;
         }
 
-        public BnGraphValue GetNetworkValue()
+        public BnGraphValue GetValueFromNetwork(Dictionary<string, VertexEvidence> graphEvidence)
+        {
+            lock (this._lock)
+            {
+                this.SetEvidence(graphEvidence);
+                this.UpdateBeliefs();
+                return this.GetValueFromNetwork();
+            }
+        }
+
+        public BnGraphValue GetValueFromNetwork()
         {
             var graphValue = new BnGraphValue();
 
@@ -341,16 +351,6 @@ namespace LibBn
             }
 
             return graphValue;
-        }
-
-        public BnGraphValue GetNetworkValue(Dictionary<string, VertexEvidence> graphEvidence)
-        {
-            lock (this._lock)
-            {
-                this.SetEvidence(graphEvidence);
-                this.UpdateBeliefs();
-                return this.GetNetworkValue();
-            }
         }
 
         public BnVertex GetVertex(string key)
@@ -396,7 +396,14 @@ namespace LibBn
 
         public void UpdateBeliefs()
         {
-            this.Network.UpdateBeliefs();
+            try
+            {
+                this.Network.UpdateBeliefs();
+            }
+            catch (SmileException exception)
+            {
+                throw new InconsistentEvidenceException();
+            }
         }
 
         public void UpdateDisplayPositions()
@@ -416,14 +423,14 @@ namespace LibBn
 
         public BnGraphValue UpdateValue()
         {
-            return this.Value = this.GetNetworkValue();
+            return this.Value = this.GetValueFromNetwork();
         }
 
         public BnGraphValue UpdateValue(Dictionary<string, VertexEvidence> graphEvidence)
         {
             this.SetEvidence(graphEvidence);
             this.UpdateBeliefs();
-            return this.Value = this.GetNetworkValue();
+            return this.Value = this.GetValueFromNetwork();
         }
 
         public void Write(string fileName)

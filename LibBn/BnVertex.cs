@@ -26,6 +26,7 @@ namespace LibBn
         private BnGraph parent;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
+        private BnState selectedState;
         private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
         private VertexType type = VertexType.None;
         private string units = "";
@@ -242,6 +243,23 @@ namespace LibBn
                 {
                     this.positionsByGroup = value;
                     this.OnPropertyChanged("Positions");
+                }
+            }
+        }
+
+        public BnState SelectedState
+        {
+            get
+            {
+                return this.selectedState;
+            }
+
+            set
+            {
+                if (value != this.selectedState)
+                {
+                    this.selectedState = value;
+                    this.OnPropertyChanged("SelectedState");
                 }
             }
         }
@@ -489,6 +507,7 @@ namespace LibBn
             try
             {
                 this.Network.SetEvidence(this.Key, stateIndex);
+                this.SelectedState = this.States[stateIndex];
             }
             catch (SmileException exception)
             {
