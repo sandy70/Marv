@@ -344,6 +344,7 @@ namespace LibBn
             }
 
             this.IsEvidenceEntered = false;
+            this.SelectedState = null;
         }
 
         public BnGraphValue ClearEvidenceAndUpdateParentValue()
