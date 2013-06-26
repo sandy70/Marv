@@ -15,12 +15,14 @@ namespace LibPipeline
         private void AssociatedObject_StateDoubleClicked(object sender, ValueEventArgs<BnState> e)
         {
             var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
+            var state = e.Value;
+            var vertex = this.AssociatedObject.DataContext as BnVertexViewModel;
 
             parentGraphControl.RaiseEvent(new BnGraphControlEventArgs
             {
                 RoutedEvent = BnGraphControl.StateDoubleClickedEvent,
-                State = e.Value,
-                Vertex = this.AssociatedObject.DataContext as BnVertexViewModel
+                State = state,
+                Vertex = vertex
             });
 
         }
