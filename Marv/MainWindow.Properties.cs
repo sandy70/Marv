@@ -35,6 +35,9 @@ namespace Marv
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsYearSliderVisibleProperty =
+        DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
         public static readonly DependencyProperty LocationValueStoreProperty =
         DependencyProperty.Register("LocationValueStore", typeof(LocationValueStore), typeof(MainWindow), new PropertyMetadata(new LocationValueStore()));
 
@@ -123,6 +126,12 @@ namespace Marv
         {
             get { return (bool)GetValue(IsTallySelectedProperty); }
             set { SetValue(IsTallySelectedProperty, value); }
+        }
+
+        public bool IsYearSliderVisible
+        {
+            get { return (bool)GetValue(IsYearSliderVisibleProperty); }
+            set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
         public LocationValueStore LocationValueStore
