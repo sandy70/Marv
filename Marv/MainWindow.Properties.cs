@@ -20,6 +20,9 @@ namespace Marv
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsMapVisibleProperty =
+        DependencyProperty.Register("IsMapVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsProfileSelectedProperty =
         DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
@@ -37,9 +40,6 @@ namespace Marv
 
         public static readonly DependencyProperty MultiPointsProperty =
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
-
-        public static readonly DependencyProperty PointsProperty =
-        DependencyProperty.Register("Points", typeof(ObservableCollection<Point>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<Point>()));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
@@ -95,6 +95,12 @@ namespace Marv
             set { SetValue(IsGroupButtonVisibleProperty, value); }
         }
 
+        public bool IsMapVisible
+        {
+            get { return (bool)GetValue(IsMapVisibleProperty); }
+            set { SetValue(IsMapVisibleProperty, value); }
+        }
+
         public bool IsProfileSelected
         {
             get { return (bool)GetValue(IsProfileSelectedProperty); }
@@ -141,12 +147,6 @@ namespace Marv
             {
                 model = value;
             }
-        }
-
-        public ObservableCollection<Point> Points
-        {
-            get { return (ObservableCollection<Point>)GetValue(PointsProperty); }
-            set { SetValue(PointsProperty, value); }
         }
 
         public IEnumerable<PropertyLocation> ProfileLocations
