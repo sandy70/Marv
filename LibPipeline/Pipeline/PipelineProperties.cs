@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace LibPipeline
@@ -9,7 +8,6 @@ namespace LibPipeline
     {
         private string _Commodity;
         private double _Diameter;
-        private ObjectId _Id;
 
         private double _Inhibitor;
 
@@ -42,16 +40,6 @@ namespace LibPipeline
             {
                 _Diameter = value;
                 OnPropertyChanged("Diameter");
-            }
-        }
-
-        public ObjectId Id
-        {
-            get { return _Id; }
-            set
-            {
-                _Id = value;
-                OnPropertyChanged("Id");
             }
         }
 
