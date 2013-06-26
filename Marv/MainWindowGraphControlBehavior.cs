@@ -22,6 +22,7 @@ namespace Marv
             var window = this.AssociatedObject;
 
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
+            window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
             window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
             window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
             window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
@@ -49,6 +50,27 @@ namespace Marv
                 e.Vertex.IsEvidenceEntered = false;
                 e.Vertex.Parent.UpdateBeliefs();
                 e.Vertex.Parent.UpdateValue();
+            }
+        }
+
+        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
+        {
+            var window = this.AssociatedObject;
+            var vertex = e.Value;
+
+            var graphEvidence = new Dictionary<string, VertexEvidence>();
+            graphEvidence[vertex.Key] = vertex.ToEvidence();
+
+            try
+            {
+                vertex.Parent.UpdateValue(graphEvidence);
+            }
+            catch(InconsistentEvidenceException exception)
+            {
+                window.PopupControl.ShowText("Inconsistent evidence entered.");
+                vertex.IsEvidenceEntered = false;
+                vertex.Parent.UpdateBeliefs();
+                vertex.Parent.UpdateValue();
             }
         }
 
