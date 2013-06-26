@@ -154,5 +154,17 @@ namespace Marv.Properties {
                 this["IsMapVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsYearSliderVisible {
+            get {
+                return ((bool)(this["IsYearSliderVisible"]));
+            }
+            set {
+                this["IsYearSliderVisible"] = value;
+            }
+        }
     }
 }
