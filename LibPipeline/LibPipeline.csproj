@@ -62,10 +62,6 @@
     <Reference Include="log4net">
       <HintPath>..\..\Libraries\LinqToExcel\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Maps.MapControl.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BingMapsWpfControl.1.0.0\lib\net40-client\Microsoft.Maps.MapControl.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Surface.Presentation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -138,8 +134,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BingMap\BingMap.cs" />
-    <Compile Include="BingMap\BingMapUpdateBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnGraphControlEventArgs.cs" />
     <Compile Include="InputStore.cs" />
     <Compile Include="NormalDistribution.cs" />
@@ -181,7 +175,6 @@
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="BingMap\IMapLayer.cs" />
     <Compile Include="Pipeline\LandcoverViewModel.cs" />
     <Compile Include="Pipeline\Percentile.cs" />
     <Compile Include="PointClusterer.cs" />
@@ -292,6 +285,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
