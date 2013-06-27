@@ -1,9 +1,0 @@
-﻿<Application x:Class="GroupViewer.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:properties="clr-namespace:GroupViewer.Properties"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-        <ResourceDictionary Source="ResourceDictionary.xaml" />
-    </Application.Resources>
-</Application>
