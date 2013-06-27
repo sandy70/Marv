@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace LibMarv
+namespace LibPipeline
 {
     [ValueConversion(typeof(bool), typeof(Brush))]
     public class BooleanToColorConverter : DependencyObject, IValueConverter

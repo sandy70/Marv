@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace LibMarv
+namespace LibPipeline
 {
     [ValueConversion(typeof(double), typeof(LinearGradientBrush))]
     public class DoubleToJetGradientConverter : IValueConverter
