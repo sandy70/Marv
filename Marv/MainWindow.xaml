@@ -29,7 +29,22 @@
     </i:Interaction.Behaviors>
 
     <Grid>
-        <telerik:RadTabControl Name="TabControl">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <telerik:RadMenu Grid.Row="0"
+                         Visibility="{Binding IsMenuVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+            <telerik:RadMenuItem Header="Edit"
+                                 VerticalAlignment="Top">
+                <telerik:RadMenuItem Name="EditNetworkFilesMenuItem"
+                                     Header="File List" />
+            </telerik:RadMenuItem>
+        </telerik:RadMenu>
+        
+        <telerik:RadTabControl Name="TabControl"
+                               Grid.Row="1">
             <telerik:RadTabItem Header="Main">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -250,6 +265,7 @@
         </telerik:RadTabControl>
 
         <Grid Name="EditNetworkFileNamesControl"
+              Grid.Row="1"
               Visibility="{Binding IsEditNetworkFileNamesControlVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />

@@ -121,6 +121,14 @@ namespace Marv
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
             window.RetractAllButton.Click += RetractAllButton_Click;
+            window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
+        }
+
+        private void EditNetworkFilesMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.IsEditNetworkFileNamesControlVisible = true;
         }
 
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
