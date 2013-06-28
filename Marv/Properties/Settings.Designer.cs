@@ -109,42 +109,6 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\SCC\\HighpH_failure.net")]
-        public string FileName {
-            get {
-                return ((string)(this["FileName"]));
-            }
-            set {
-                this["FileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("all")]
-        public string StartingGroup {
-            get {
-                return ((string)(this["StartingGroup"]));
-            }
-            set {
-                this["StartingGroup"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\SCC\\NNphSCC\\data.db")]
-        public string DataBaseFileName {
-            get {
-                return ((string)(this["DataBaseFileName"]));
-            }
-            set {
-                this["DataBaseFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IsMapVisible {
             get {
@@ -171,13 +135,25 @@ namespace Marv.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
             "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>D:\\Downloads\\Corrosion_2013.03.03.net</string>\r\n</ArrayOfString>")]
+            "tring>D:\\Data\\Networks\\Corrosion_2013.03.03.net</string>\r\n</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection NetworkFileNames {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["NetworkFileNames"]));
             }
             set {
                 this["NetworkFileNames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsMenuVisible {
+            get {
+                return ((bool)(this["IsMenuVisible"]));
+            }
+            set {
+                this["IsMenuVisible"] = value;
             }
         }
     }

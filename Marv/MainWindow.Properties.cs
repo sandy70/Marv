@@ -9,6 +9,15 @@ namespace Marv
 {
     public partial class MainWindow
     {
+        public bool IsEditNetworkFileNamesControlVisible
+        {
+            get { return (bool)GetValue(IsEditNetworkFileNamesControlVisibleProperty); }
+            set { SetValue(IsEditNetworkFileNamesControlVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsEditNetworkFileNamesControlVisibleProperty =
+        DependencyProperty.Register("IsEditNetworkFileNamesControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
