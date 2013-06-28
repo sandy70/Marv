@@ -41,7 +41,7 @@
     <Setting Name="NetworkFileNames" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;D:\Downloads\FreeCorp.net&lt;/string&gt;
+  &lt;string&gt;D:\Downloads\Corrosion_2013.03.03.net&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
   </Settings>

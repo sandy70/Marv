@@ -61,11 +61,6 @@ namespace LibBn
             string[] names = new string[nStates];
             double[] values = network.GetNodeValue(nodeHandle);
 
-            if (key.Equals("cdc"))
-            {
-                var prop = network.GetNodeType(nodeHandle);
-            }
-
             foreach (var prop in network.GetNodeUserProperties(nodeHandle))
             {
                 if (prop.name.Contains("HR_State_"))
@@ -82,11 +77,16 @@ namespace LibBn
 
             for (int s = 0; s < nStates; s++)
             {
-                states.Add(new BnState
+                // If a node in the network file has only one state, SMILE for some reason returns two nodes
+                // The name for the other node will be null. So we must check for it.
+                if (names[s] != null)
                 {
-                    Key = names[s],
-                    Value = values[s]
-                });
+                    states.Add(new BnState
+                    {
+                        Key = names[s],
+                        Value = values[s]
+                    });
+                }
             }
 
             return states;
