@@ -9,15 +9,6 @@ namespace Marv
 {
     public partial class MainWindow
     {
-        public bool IsEditNetworkFileNamesControlVisible
-        {
-            get { return (bool)GetValue(IsEditNetworkFileNamesControlVisibleProperty); }
-            set { SetValue(IsEditNetworkFileNamesControlVisibleProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsEditNetworkFileNamesControlVisibleProperty =
-        DependencyProperty.Register("IsEditNetworkFileNamesControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
@@ -27,11 +18,17 @@ namespace Marv
         public static readonly DependencyProperty GraphsProperty =
         DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
 
+        public static readonly DependencyProperty IsEditNetworkFileNamesControlVisibleProperty =
+        DependencyProperty.Register("IsEditNetworkFileNamesControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsMapVisibleProperty =
         DependencyProperty.Register("IsMapVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsMenuVisibleProperty =
+        DependencyProperty.Register("IsMenuVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsProfileSelectedProperty =
         DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -105,6 +102,12 @@ namespace Marv
             set { SetValue(GraphsProperty, value); }
         }
 
+        public bool IsEditNetworkFileNamesControlVisible
+        {
+            get { return (bool)GetValue(IsEditNetworkFileNamesControlVisibleProperty); }
+            set { SetValue(IsEditNetworkFileNamesControlVisibleProperty, value); }
+        }
+
         public bool IsGroupButtonVisible
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
@@ -115,6 +118,12 @@ namespace Marv
         {
             get { return (bool)GetValue(IsMapVisibleProperty); }
             set { SetValue(IsMapVisibleProperty, value); }
+        }
+
+        public bool IsMenuVisible
+        {
+            get { return (bool)GetValue(IsMenuVisibleProperty); }
+            set { SetValue(IsMenuVisibleProperty, value); }
         }
 
         public bool IsProfileSelected
