@@ -1,5 +1,4 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:libmarv="clr-namespace:LibMarv;assembly=LibMarv"
                     xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
                     xmlns:local="clr-namespace:Marv"
                     xmlns:properties="clr-namespace:Marv.Properties"

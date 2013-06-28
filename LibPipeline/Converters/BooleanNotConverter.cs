@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace LibMarv
+namespace LibPipeline
 {
     [ValueConversion(typeof(bool), typeof(bool))]
     public class BooleanNotConverter : IValueConverter

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace LibMarv
+namespace LibPipeline
 {
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class NullToVisibilityConverter : DependencyObject, IValueConverter

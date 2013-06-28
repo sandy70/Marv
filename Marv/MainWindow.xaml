@@ -1,5 +1,4 @@
 ﻿<Window x:Class="Marv.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:bingmaps="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:libbn="clr-namespace:LibBn;assembly=LibBn"
         xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"

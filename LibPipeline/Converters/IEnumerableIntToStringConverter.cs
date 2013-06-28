@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace LibMarv
+namespace LibPipeline
 {
     [ValueConversion(typeof(IEnumerable<int>), typeof(string))]
     public class IEnumerableIntToStringConverter : IValueConverter
