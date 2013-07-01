@@ -29,7 +29,7 @@
     <Setting Name="IsYearSliderVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="NetworkFileNames" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="NetworkFileNames" Type="LibPipeline.ObservableStringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;D:\Data\Networks\Corrosion_2013.03.03.net&lt;/string&gt;
@@ -37,9 +37,6 @@
     </Setting>
     <Setting Name="IsMenuVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="Setting" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

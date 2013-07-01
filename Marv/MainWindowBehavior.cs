@@ -93,20 +93,6 @@ namespace Marv
             //        window.PopupControl.Hide();
             //    }));
 
-            await window.Dispatcher.BeginInvoke(new Action(async () =>
-                {
-                    if (window.NetworkFileNames != null)
-                    {
-                        foreach (var fileName in window.NetworkFileNames)
-                        {
-                            window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
-                        }
-                    }
-
-                    //window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpHSCC.net"));
-                    //window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\SCC\NNpHSCC\NNpH_failure.net"));
-                }));
-
             //KocDataReader kocDataReader = new KocDataReader();
             //window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
             //window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
@@ -123,6 +109,60 @@ namespace Marv
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditNetworkFileNamesControlBackButton.Click += EditNetworkFileNamesControlBackButton_Click;
+            window.NetworkFilesAddButton.Click += NetworkFilesAddButton_Click;
+            window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
+        }
+
+        private void NetworkFilesRemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            int removedIndex = -1;
+
+            if (window.SelectedNetworkFileName != null)
+            {
+                removedIndex = window.NetworkFileNames.IndexOf(window.SelectedNetworkFileName);
+                window.NetworkFileNames.Remove(window.SelectedNetworkFileName);
+            }
+            else
+            {
+                if (window.NetworkFileNames.Count > 0)
+                {
+                    removedIndex = 0;
+                    window.NetworkFileNames.RemoveAt(0);
+                }
+            }
+
+            if (removedIndex >= 0)
+            {
+                if (window.NetworkFileNames.Count > removedIndex)
+                {
+                    window.SelectedNetworkFileName = window.NetworkFileNames[removedIndex];
+                }
+                else
+                {
+                    window.SelectedNetworkFileName = window.NetworkFileNames.Last();
+                }
+            }
+        }
+
+        private void NetworkFilesAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".net",
+                Filter = "Hugin Network Files (.net)|*.net",
+                Multiselect = true
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                foreach (var fileName in dialog.FileNames)
+                {
+                    window.NetworkFileNames.Add(fileName);
+                }
+            }
         }
 
         private void EditNetworkFileNamesControlBackButton_Click(object sender, RoutedEventArgs e)

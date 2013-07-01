@@ -298,18 +298,36 @@
             </Grid>
             
             <ListView Grid.Row="1"
-                      ItemsSource="{Binding NetworkFileNames, ElementName=Root}">
+                      ItemsSource="{Binding NetworkFileNames, ElementName=Root}"
+                      SelectedItem="{Binding SelectedNetworkFileName, ElementName=Root}"
+                      SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border Background="LightGray"
                                 Margin="5">
-                            <TextBox Text="{Binding Path=.}"
-                                     FontSize="24" 
-                                     Margin="5" />
+                            <TextBlock Text="{Binding Path=.}"
+                                       FontSize="24" 
+                                       Margin="5" />
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal">
+                <telerik:RadButton Name="NetworkFilesAddButton"
+                                   Content="Add"
+                                   Height="40" Width="100"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center"
+                                   Margin="5" />
+
+                <telerik:RadButton Name="NetworkFilesRemoveButton"
+                                   Content="Remove"
+                                   Height="40" Width="100"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center"
+                                   Margin="5" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

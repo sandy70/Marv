@@ -1,8 +1,8 @@
 ﻿using LibBn;
 using LibPipeline;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Windows;
 
 namespace Marv
@@ -55,13 +55,16 @@ namespace Marv
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
 
         public static readonly DependencyProperty NetworkFileNamesProperty =
-        DependencyProperty.Register("NetworkFileNames", typeof(StringCollection), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("NetworkFileNames", typeof(ObservableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedNetworkFileNameProperty =
+        DependencyProperty.Register("SelectedNetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
         DependencyProperty.Register("SelectedProfileLocation", typeof(PropertyLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
@@ -189,9 +192,9 @@ namespace Marv
             }
         }
 
-        public StringCollection NetworkFileNames
+        public ObservableStringCollection NetworkFileNames
         {
-            get { return (StringCollection)GetValue(NetworkFileNamesProperty); }
+            get { return (ObservableStringCollection)GetValue(NetworkFileNamesProperty); }
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
@@ -220,6 +223,12 @@ namespace Marv
                     graph.Value = graphValue;
                 }
             }
+        }
+
+        public string SelectedNetworkFileName
+        {
+            get { return (string)GetValue(SelectedNetworkFileNameProperty); }
+            set { SetValue(SelectedNetworkFileNameProperty, value); }
         }
 
         public PropertyLocation SelectedProfileLocation
@@ -268,6 +277,32 @@ namespace Marv
         {
             get { return (IEnumerable<ILocation>)GetValue(TallyLocationsProperty); }
             set { SetValue(TallyLocationsProperty, value); }
+        }
+
+        private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as MainWindow;
+
+            window.NetworkFileNames.CollectionChanged += async (sender, ev) =>
+                {
+                    var graphs = new GraphCollection();
+
+                    foreach (var fileName in window.NetworkFileNames)
+                    {
+                        graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+                    }
+
+                    window.Graphs = graphs;
+                };
+
+            var newGraphs = new GraphCollection();
+
+            foreach (var fileName in window.NetworkFileNames)
+            {
+                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+            }
+
+            window.Graphs = newGraphs;
         }
     }
 }

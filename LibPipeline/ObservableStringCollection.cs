@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Marv
+namespace LibPipeline
 {
     public class ObservableStringCollection : ObservableCollection<string>
     {

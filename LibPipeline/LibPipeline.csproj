@@ -175,6 +175,7 @@
     <Compile Include="Controls\MapView\MapView.cs" />
     <Compile Include="Controls\MapView\MapViewBehavior.cs" />
     <Compile Include="ExcelReader.cs" />
+    <Compile Include="ObservableStringCollection.cs" />
     <Compile Include="PipelineValue.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
