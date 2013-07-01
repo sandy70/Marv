@@ -122,12 +122,22 @@ namespace Marv
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
+            window.EditNetworkFileNamesControlBackButton.Click += EditNetworkFileNamesControlBackButton_Click;
+        }
+
+        private void EditNetworkFileNamesControlBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.IsEditNetworkFileNamesControlVisible = false;
+            window.IsTabControlVisible = true;
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
+            window.IsTabControlVisible = false;
             window.IsEditNetworkFileNamesControlVisible = true;
         }
 
@@ -150,24 +160,24 @@ namespace Marv
 
             window.MultiPoints.Clear();
 
-            foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
-            {
-                var selectedVertex = selectedItem as BnVertex;
-                var points = new ObservableCollection<Point>();
+            //foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
+            //{
+            //    var selectedVertex = selectedItem as BnVertex;
+            //    var points = new ObservableCollection<Point>();
 
-                for (int year = window.StartYear; year <= window.EndYear; year++)
-                {
-                    var vertexValue = window.SelectedLocationValue[year]["nnphscc"][selectedVertex.Key];
+            //    for (int year = window.StartYear; year <= window.EndYear; year++)
+            //    {
+            //        var vertexValue = window.SelectedLocationValue[year]["nnphscc"][selectedVertex.Key];
 
-                    points.Add(new Point
-                    {
-                        X = year,
-                        Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
-                    });
-                }
+            //        points.Add(new Point
+            //        {
+            //            X = year,
+            //            Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
+            //        });
+            //    }
 
-                window.MultiPoints.Add(new MultiPoint { Points = points });
-            }
+            //    window.MultiPoints.Add(new MultiPoint { Points = points });
+            //}
         }
 
         private void SensorListener_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)

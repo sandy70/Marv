@@ -39,6 +39,9 @@ namespace Marv
         public static readonly DependencyProperty IsSettingsVisibleProperty =
         DependencyProperty.Register("IsSettingsVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsTabControlVisibleProperty =
+        DependencyProperty.Register("IsTabControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
@@ -142,6 +145,12 @@ namespace Marv
         {
             get { return (bool)GetValue(IsSettingsVisibleProperty); }
             set { SetValue(IsSettingsVisibleProperty, value); }
+        }
+
+        public bool IsTabControlVisible
+        {
+            get { return (bool)GetValue(IsTabControlVisibleProperty); }
+            set { SetValue(IsTabControlVisibleProperty, value); }
         }
 
         public bool IsTallySelected

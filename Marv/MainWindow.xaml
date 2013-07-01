@@ -43,10 +43,12 @@
             </telerik:RadMenuItem>
         </telerik:RadMenu>
         
-        <telerik:RadTabControl Name="TabControl"
-                               Grid.Row="1">
-            <telerik:RadTabItem Header="Main">
-                <Grid>
+        <!--<telerik:RadTabControl Name="TabControl"
+                               Grid.Row="1"
+                               Visibility="{Binding IsTabControlVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+            <telerik:RadTabItem Header="Main">-->
+                <Grid Grid.Row="1"
+                      Visibility="{Binding IsTabControlVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -209,7 +211,7 @@
                                              VerticalAlignment="Top" HorizontalAlignment="Left"
                                              Visibility="{Binding IsSettingsVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                 </Grid>
-            </telerik:RadTabItem>
+            <!--</telerik:RadTabItem>
         
             <telerik:RadTabItem Header="Plots"
                                 Visibility="Collapsed">
@@ -262,7 +264,7 @@
                     </telerik:RadAutoCompleteBox>
                 </Grid>
             </telerik:RadTabItem>
-        </telerik:RadTabControl>
+        </telerik:RadTabControl>-->
 
         <Grid Name="EditNetworkFileNamesControl"
               Grid.Row="1"
@@ -278,8 +280,8 @@
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                
-                <Button>
+
+                <Button Name="EditNetworkFileNamesControlBackButton">
                     <Button.Template>
                         <ControlTemplate>
                             <Image Source="Resources\back-dark.png" />
