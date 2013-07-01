@@ -291,17 +291,5 @@ namespace Marv
 
             await window.ReadGraphs();
         }
-
-        private async Task ReadGraphs()
-        {
-            var newGraphs = new GraphCollection();
-
-            foreach (var fileName in this.NetworkFileNames)
-            {
-                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
-            }
-
-            this.Graphs = newGraphs;
-        }
     }
 }
