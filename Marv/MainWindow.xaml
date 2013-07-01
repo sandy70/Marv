@@ -275,7 +275,7 @@
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             
-            <Grid>
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition />
@@ -296,6 +296,20 @@
                            Margin="5"
                            Text="Network Files" />
             </Grid>
+            
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding NetworkFileNames, ElementName=Root}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="LightGray"
+                                Margin="5">
+                            <TextBox Text="{Binding Path=.}"
+                                     FontSize="24" 
+                                     Margin="5" />
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Window>

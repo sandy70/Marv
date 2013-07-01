@@ -196,7 +196,7 @@ namespace LibBn
                 vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.Positions = structureVertex.ParsePositionByGroup();
-                vertex.Units = structureVertex.ParseStringProperty("units");
+                vertex.Units = structureVertex.ParseStringProperty("unit");
                 vertex.States = graph.Network.ParseStates(structureVertex.Key);
                 vertex.Type = structureVertex.ParseSubType();
 

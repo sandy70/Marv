@@ -204,6 +204,7 @@
     <Compile Include="MultiPoint.cs" />
     <Compile Include="NearNeutralPhSccModel.cs" />
     <Compile Include="ObjectDataBase.cs" />
+    <Compile Include="ObservableStringCollection.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
