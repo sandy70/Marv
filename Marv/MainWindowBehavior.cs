@@ -140,7 +140,14 @@ namespace Marv
                 }
                 else
                 {
-                    window.SelectedNetworkFileName = window.NetworkFileNames.Last();
+                    if (window.NetworkFileNames.Count > 0)
+                    {
+                        window.SelectedNetworkFileName = window.NetworkFileNames.Last();
+                    }
+                    else
+                    {
+                        window.SelectedNetworkFileName = null;
+                    }
                 }
             }
         }

@@ -2,15 +2,11 @@
 using LibBn;
 using LibPipeline;
 using MapControl;
-using NDatabase;
 using Smile;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
-using System.Linq;
-using NDatabase.Api;
-using System.Threading.Tasks;
 
 namespace Marv
 {
@@ -20,8 +16,8 @@ namespace Marv
         public BnInputStore InputManager = new BnInputStore();
         public SensorListener SensorListener = new SensorListener();
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
-        private NearNeutralPhSccModel model = new NearNeutralPhSccModel();
         private object _lock = new object();
+        private NearNeutralPhSccModel model = new NearNeutralPhSccModel();
 
         public MainWindow()
         {
@@ -94,6 +90,18 @@ namespace Marv
                 var graphValue = modelValue[graph.Name];
                 graph.Value = graphValue;
             }
+        }
+
+        private async Task ReadGraphs()
+        {
+            var newGraphs = new GraphCollection();
+
+            foreach (var fileName in this.NetworkFileNames)
+            {
+                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+            }
+
+            this.Graphs = newGraphs;
         }
     }
 }

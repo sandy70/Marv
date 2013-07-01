@@ -158,18 +158,18 @@ namespace LibPipeline
 
         public void UpdateDisplayGraphToDefaultGroups()
         {
+            var displayGraph = new BnGraph();
+
             if (this.Graphs != null && this.Graphs.Count() > 0)
             {
-                var displayGraph = new BnGraph();
-
                 foreach (var graph in this.Graphs)
                 {
                     this.selectedGroups[graph] = graph.DefaultGroup;
                     displayGraph.Add(graph.GetGroup(graph.DefaultGroup));
                 }
-
-                this.DisplayGraph = displayGraph;
             }
+
+            this.DisplayGraph = displayGraph;
         }
 
         private static void ChangedGraphs(DependencyObject d, DependencyPropertyChangedEventArgs e)
