@@ -3,7 +3,9 @@ using LibPipeline;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 
 namespace Marv
 {
@@ -246,10 +248,36 @@ namespace Marv
 
             window.NetworkFileNames.CollectionChanged += async (sender, ev) =>
                 {
-                    await window.ReadGraphs();
+                    if (ev.NewItems != null)
+                    {
+                        foreach (var fileName in ev.NewItems)
+                        {
+                            window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName as string));
+                        }
+                    }
+
+                    if (ev.OldItems != null)
+                    {
+                        foreach (var fileName in ev.OldItems)
+                        {
+                            var graphToRemove = window.Graphs.Where(x => x.FileName.Equals(fileName as string)).FirstOrDefault();
+
+                            if (graphToRemove != null)
+                            {
+                                window.Graphs.Remove(graphToRemove);
+                            }
+                        }
+                    }
                 };
 
-            await window.ReadGraphs();
+            var newGraphs = new GraphCollection();
+
+            foreach (var fileName in window.NetworkFileNames)
+            {
+                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+            }
+
+            window.Graphs = newGraphs;
         }
     }
 }

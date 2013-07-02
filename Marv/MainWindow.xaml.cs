@@ -92,22 +92,5 @@ namespace Marv
                 graph.Value = graphValue;
             }
         }
-
-        private async Task ReadGraphs()
-        {
-            Console.WriteLine("Reading graphs");
-
-            var newGraphs = new GraphCollection();
-
-            foreach (var fileName in this.NetworkFileNames)
-            {
-                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
-                Console.WriteLine("Read: " + fileName);
-            }
-
-            this.Graphs = newGraphs;
-
-            int a = 1 + 9;
-        }
     }
 }

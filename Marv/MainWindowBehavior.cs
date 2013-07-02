@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using Telerik.Windows;
 
 namespace Marv
 {
@@ -138,14 +139,14 @@ namespace Marv
             //}
         }
 
-        private void EditNetworkFilesMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+        private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
             window.TransitionControl.SelectElement("EditNetworkFilesControl");
         }
 
-        private void EditSettingsMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+        private void EditSettingsMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
@@ -175,42 +176,6 @@ namespace Marv
         private void NetworkFilesRemoveButton_Click(object sender, RoutedEventArgs e)
         {
             this.AssociatedObject.NetworkFileNames.RemoveSelected();
-
-            //var window = this.AssociatedObject;
-            //int removedIndex = -1;
-
-            //if (window.NetworkFileNames.SelectedItem != null)
-            //{
-            //    removedIndex = window.NetworkFileNames.IndexOf(window.SelectedNetworkFileName);
-            //    window.NetworkFileNames.Remove(window.SelectedNetworkFileName);
-            //}
-            //else
-            //{
-            //    if (window.NetworkFileNames.Count > 0)
-            //    {
-            //        removedIndex = 0;
-            //        window.NetworkFileNames.RemoveAt(0);
-            //    }
-            //}
-
-            //if (removedIndex >= 0)
-            //{
-            //    if (window.NetworkFileNames.Count > removedIndex)
-            //    {
-            //        window.SelectedNetworkFileName = window.NetworkFileNames[removedIndex];
-            //    }
-            //    else
-            //    {
-            //        if (window.NetworkFileNames.Count > 0)
-            //        {
-            //            window.SelectedNetworkFileName = window.NetworkFileNames.Last();
-            //        }
-            //        else
-            //        {
-            //            window.SelectedNetworkFileName = null;
-            //        }
-            //    }
-            //}
         }
 
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
