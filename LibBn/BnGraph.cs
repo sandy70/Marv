@@ -196,11 +196,16 @@ namespace LibBn
                 vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.Positions = structureVertex.ParsePositionByGroup();
-                vertex.Units = structureVertex.ParseStringProperty("unit");
+                vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = graph.Network.ParseStates(structureVertex.Key);
                 vertex.Type = structureVertex.ParseSubType();
 
                 structureVertex.ParseStatesMinMax(vertex.States);
+
+                if (string.IsNullOrWhiteSpace(vertex.Units))
+                {
+                    vertex.Units = "n/a";
+                }
 
                 graph.AddVertex(vertex);
             }
@@ -442,6 +447,8 @@ namespace LibBn
                 node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
                 node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).Positions.String() + "\"";
                 node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
+                node.Properties["label"] = "\"" + this.GetVertex(node.Key).Name + "\"";
+                node.Properties["units"] = "\"" + this.GetVertex(node.Key).Units + "\"";
             }
 
             structure.Write(fileName);
