@@ -136,9 +136,9 @@ namespace Marv.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
             "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
             "tring>D:\\Data\\Networks\\Corrosion_2013.03.03.net</string>\r\n</ArrayOfString>")]
-        public global::LibPipeline.ObservableStringCollection NetworkFileNames {
+        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
             get {
-                return ((global::LibPipeline.ObservableStringCollection)(this["NetworkFileNames"]));
+                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
             }
             set {
                 this["NetworkFileNames"] = value;

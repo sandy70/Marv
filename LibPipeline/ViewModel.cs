@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Marv
+namespace LibPipeline
 {
     public class ViewModel : INotifyPropertyChanged
     {

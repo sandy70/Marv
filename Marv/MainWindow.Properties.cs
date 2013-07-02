@@ -52,16 +52,13 @@ namespace Marv
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
 
         public static readonly DependencyProperty NetworkFileNamesProperty =
-        DependencyProperty.Register("NetworkFileNames", typeof(ObservableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
+        DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
         DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedNetworkFileNameProperty =
-        DependencyProperty.Register("SelectedNetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
         DependencyProperty.Register("SelectedProfileLocation", typeof(PropertyLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
@@ -162,9 +159,9 @@ namespace Marv
             }
         }
 
-        public ObservableStringCollection NetworkFileNames
+        public SelectableStringCollection NetworkFileNames
         {
-            get { return (ObservableStringCollection)GetValue(NetworkFileNamesProperty); }
+            get { return (SelectableStringCollection)GetValue(NetworkFileNamesProperty); }
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
@@ -193,12 +190,6 @@ namespace Marv
                     graph.Value = graphValue;
                 }
             }
-        }
-
-        public string SelectedNetworkFileName
-        {
-            get { return (string)GetValue(SelectedNetworkFileNameProperty); }
-            set { SetValue(SelectedNetworkFileNameProperty, value); }
         }
 
         public PropertyLocation SelectedProfileLocation
@@ -251,8 +242,6 @@ namespace Marv
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("ChangedNetworkFileNames");
-
             var window = d as MainWindow;
 
             window.NetworkFileNames.CollectionChanged += async (sender, ev) =>

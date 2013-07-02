@@ -203,6 +203,7 @@
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyLocation.cs" />
+    <Compile Include="SelectableCollection.cs" />
     <Compile Include="TileLayers.cs" />
     <Compile Include="ValueEventArgs.cs" />
     <Compile Include="Controls\SliderProgressBar\SliderProgressBar.xaml.cs">
@@ -210,6 +211,7 @@
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="Controls\BnGraphControl\DiagramPartBehavior.cs" />
+    <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibBn\LibBn.csproj">

@@ -2,7 +2,7 @@
 
 namespace LibPipeline
 {
-    public class ObservableStringCollection : ObservableCollection<string>
+    public class SelectableStringCollection : SelectableCollection<string>
     {
     }
 }

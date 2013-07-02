@@ -209,7 +209,6 @@
     </Compile>
     <Compile Include="RetractAllButtonBehavior.cs" />
     <Compile Include="SensorListener.cs" />
-    <Compile Include="ViewModel.cs" />
     <Compile Include="YearScatterSeriesData.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="InfoWindowViewModel.cs" />
