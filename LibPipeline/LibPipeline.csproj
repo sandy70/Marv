@@ -132,6 +132,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\BnGraphControl\BnGraphControlEventArgs.cs" />
+    <Compile Include="Controls\EditableTextBox\EditableTextBox.xaml.cs">
+      <DependentUpon>EditableTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TransitionControl\TransitionControInner.xaml.cs">
+      <DependentUpon>TransitionControInner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TransitionControl\TransitionControl.cs" />
     <Compile Include="Converters\BooleanNotConverter.cs" />
     <Compile Include="Converters\BooleanToColorConverter.cs" />
     <Compile Include="Converters\BooleanToStringConverter.cs" />
@@ -230,6 +237,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\EditableTextBox\EditableTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\PolylineControl\PolylineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -237,6 +248,10 @@
     <Page Include="Controls\SliderProgressBar\SliderProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TransitionControl\TransitionControInner.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Resource Include="ResourceDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>

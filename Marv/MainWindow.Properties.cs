@@ -3,7 +3,6 @@ using LibPipeline;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Marv
@@ -18,9 +17,6 @@ namespace Marv
 
         public static readonly DependencyProperty GraphsProperty =
         DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
-
-        public static readonly DependencyProperty IsEditNetworkFileNamesControlVisibleProperty =
-        DependencyProperty.Register("IsEditNetworkFileNamesControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -37,11 +33,11 @@ namespace Marv
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsSettingsControlVisibleProperty =
+        DependencyProperty.Register("IsSettingsControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsSettingsVisibleProperty =
         DependencyProperty.Register("IsSettingsVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsTabControlVisibleProperty =
-        DependencyProperty.Register("IsTabControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsTallySelectedProperty =
         DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -79,9 +75,6 @@ namespace Marv
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
 
-        public static readonly DependencyProperty SourceGraphProperty =
-        DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty StartingGroupProperty =
         DependencyProperty.Register("StartingGroup", typeof(string), typeof(MainWindow), new PropertyMetadata("all"));
 
@@ -109,12 +102,6 @@ namespace Marv
             set { SetValue(GraphsProperty, value); }
         }
 
-        public bool IsEditNetworkFileNamesControlVisible
-        {
-            get { return (bool)GetValue(IsEditNetworkFileNamesControlVisibleProperty); }
-            set { SetValue(IsEditNetworkFileNamesControlVisibleProperty, value); }
-        }
-
         public bool IsGroupButtonVisible
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
@@ -133,28 +120,10 @@ namespace Marv
             set { SetValue(IsMenuVisibleProperty, value); }
         }
 
-        public bool IsProfileSelected
-        {
-            get { return (bool)GetValue(IsProfileSelectedProperty); }
-            set { SetValue(IsProfileSelectedProperty, value); }
-        }
-
         public bool IsSensorButtonVisible
         {
             get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
             set { SetValue(IsSensorButtonVisibleProperty, value); }
-        }
-
-        public bool IsSettingsVisible
-        {
-            get { return (bool)GetValue(IsSettingsVisibleProperty); }
-            set { SetValue(IsSettingsVisibleProperty, value); }
-        }
-
-        public bool IsTabControlVisible
-        {
-            get { return (bool)GetValue(IsTabControlVisibleProperty); }
-            set { SetValue(IsTabControlVisibleProperty, value); }
         }
 
         public bool IsTallySelected
@@ -282,6 +251,8 @@ namespace Marv
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            Console.WriteLine("ChangedNetworkFileNames");
+
             var window = d as MainWindow;
 
             window.NetworkFileNames.CollectionChanged += async (sender, ev) =>

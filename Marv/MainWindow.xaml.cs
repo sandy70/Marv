@@ -3,6 +3,7 @@ using LibBn;
 using LibPipeline;
 using MapControl;
 using Smile;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -94,14 +95,19 @@ namespace Marv
 
         private async Task ReadGraphs()
         {
+            Console.WriteLine("Reading graphs");
+
             var newGraphs = new GraphCollection();
 
             foreach (var fileName in this.NetworkFileNames)
             {
                 newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+                Console.WriteLine("Read: " + fileName);
             }
 
             this.Graphs = newGraphs;
+
+            int a = 1 + 9;
         }
     }
 }

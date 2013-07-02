@@ -2,7 +2,6 @@
 using LibPipeline;
 using Microsoft.Win32;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,13 +34,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            if (e.KeyboardDevice.IsKeyDown(Key.S) &&
-                (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)) &&
-                (e.KeyboardDevice.IsKeyDown(Key.LeftAlt) || e.KeyboardDevice.IsKeyDown(Key.RightAlt)))
-            {
-                this.AssociatedObject.IsSettingsVisible = !this.AssociatedObject.IsSettingsVisible;
-            }
-            else if (e.KeyboardDevice.IsKeyDown(Key.R) &&
+            if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
                 int nLocations = window.ProfileLocations.Count();
@@ -53,6 +46,11 @@ namespace Marv
                     window.SelectedProfileLocation = location;
                     Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
                 }
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.M) &&
+               (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+            {
+                window.IsMenuVisible = !window.IsMenuVisible;
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
@@ -76,7 +74,7 @@ namespace Marv
             }
         }
 
-        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
@@ -108,9 +106,70 @@ namespace Marv
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
-            window.EditNetworkFileNamesControlBackButton.Click += EditNetworkFileNamesControlBackButton_Click;
+            window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
             window.NetworkFilesAddButton.Click += NetworkFilesAddButton_Click;
             window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var graph = window.Graphs["nnphscc"];
+
+            window.MultiPoints.Clear();
+
+            //foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
+            //{
+            //    var selectedVertex = selectedItem as BnVertex;
+            //    var points = new ObservableCollection<Point>();
+
+            //    for (int year = window.StartYear; year <= window.EndYear; year++)
+            //    {
+            //        var vertexValue = window.SelectedLocationValue[year]["nnphscc"][selectedVertex.Key];
+
+            //        points.Add(new Point
+            //        {
+            //            X = year,
+            //            Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
+            //        });
+            //    }
+
+            //    window.MultiPoints.Add(new MultiPoint { Points = points });
+            //}
+        }
+
+        private void EditNetworkFilesMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.TransitionControl.SelectElement("EditNetworkFilesControl");
+        }
+
+        private void EditSettingsMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.TransitionControl.SelectElement("SettingsControl");
+        }
+
+        private void NetworkFilesAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".net",
+                Filter = "Hugin Network Files (.net)|*.net",
+                Multiselect = true
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                foreach (var fileName in dialog.FileNames)
+                {
+                    window.NetworkFileNames.Add(fileName);
+                }
+            }
         }
 
         private void NetworkFilesRemoveButton_Click(object sender, RoutedEventArgs e)
@@ -152,45 +211,9 @@ namespace Marv
             }
         }
 
-        private void NetworkFilesAddButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var dialog = new OpenFileDialog
-            {
-                DefaultExt = ".net",
-                Filter = "Hugin Network Files (.net)|*.net",
-                Multiselect = true
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                foreach (var fileName in dialog.FileNames)
-                {
-                    window.NetworkFileNames.Add(fileName);
-                }
-            }
-        }
-
-        private void EditNetworkFileNamesControlBackButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            window.IsEditNetworkFileNamesControlVisible = false;
-            window.IsTabControlVisible = true;
-        }
-
-        private void EditNetworkFilesMenuItem_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            window.IsTabControlVisible = false;
-            window.IsEditNetworkFileNamesControlVisible = true;
-        }
-
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var window  = this.AssociatedObject;
+            var window = this.AssociatedObject;
 
             foreach (var graph in window.Graphs)
             {
@@ -198,33 +221,6 @@ namespace Marv
                 graph.UpdateBeliefs();
                 graph.UpdateValue();
             }
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            var graph = window.Graphs["nnphscc"];
-
-            window.MultiPoints.Clear();
-
-            //foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
-            //{
-            //    var selectedVertex = selectedItem as BnVertex;
-            //    var points = new ObservableCollection<Point>();
-
-            //    for (int year = window.StartYear; year <= window.EndYear; year++)
-            //    {
-            //        var vertexValue = window.SelectedLocationValue[year]["nnphscc"][selectedVertex.Key];
-
-            //        points.Add(new Point
-            //        {
-            //            X = year,
-            //            Y = graph.GetVertex(selectedVertex.Key).GetMean(vertexValue)
-            //        });
-            //    }
-
-            //    window.MultiPoints.Add(new MultiPoint { Points = points });
-            //}
         }
 
         private void SensorListener_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
