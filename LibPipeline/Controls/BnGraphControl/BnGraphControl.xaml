@@ -86,13 +86,13 @@
                                                     Visibility="Visible">
 
                                             <!-- Title -->
-                                            <TextBlock Grid.Column="0"
-                                                       FontSize="16"
-                                                       FontWeight="Bold"
-                                                       Margin="5"
-                                                       Text="{Binding Name}"
-                                                       TextWrapping="Wrap"
-                                                       VerticalAlignment="Center" />
+                                            <local:EditableTextBox Grid.Column="0"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="Black"
+                                                                   Margin="5"
+                                                                   Text="{Binding Name, Mode=TwoWay}"
+                                                                   VerticalAlignment="Center" />
 
                                             <!-- Header Accent -->
                                             <Border Background="{Binding IsHeader, Converter={StaticResource ResourceKey=IsHeaderToColor}}"
@@ -129,9 +129,18 @@
                                             </libpipeline:BnStatesControl>
 
                                             <!-- Units -->
-                                            <TextBlock FontSize="14"
-                                                       Margin="10"
-                                                       Text="{Binding Units, StringFormat=Units: {0}}" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Foreground="Black"
+                                                           FontSize="14"
+                                                           Margin="10"
+                                                           Text="Units:" />
+                                                
+                                                <local:EditableTextBox Foreground="Black"
+                                                                       FontSize="14"
+                                                                       Margin="10"
+                                                                       Text="{Binding Units, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            
 
                                             <!-- Description -->
                                             <TextBlock FontSize="14"
