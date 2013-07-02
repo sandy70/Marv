@@ -28,8 +28,9 @@
         <Button Name="BackButton">
             <Button.Template>
                 <ControlTemplate>
-                    <Button Content="Back"
-                            Margin="5" />
+                    <Button Margin="5">
+                        <Image Source="/LibPipeline;component/Resources/Icons/back-dark.png" />
+                    </Button>
                 </ControlTemplate>
             </Button.Template>
         </Button>
