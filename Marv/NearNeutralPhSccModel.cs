@@ -32,7 +32,7 @@ namespace Marv
             set { startYear = value; }
         }
 
-        public LocationValue Run(PropertyLocation aLocation)
+        public LocationValue Run(LocationWithId aLocation)
         {
             Console.WriteLine("Running model with id: " + aLocation.Id);
 
@@ -185,7 +185,7 @@ namespace Marv
             return intervalValue;
         }
 
-        public Task<LocationValue>  RunAsync(PropertyLocation location)
+        public Task<LocationValue>  RunAsync(LocationWithId location)
         {
             return Task.Run(() =>
             {

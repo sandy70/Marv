@@ -57,13 +57,13 @@ namespace Marv
         DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
-        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<PropertyLocation>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<LocationWithId>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(PropertyLocation), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
+        DependencyProperty.Register("SelectedProfileLocation", typeof(LocationWithId), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
 
         public static readonly DependencyProperty SelectedTallyLocationProperty =
         DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
@@ -167,9 +167,9 @@ namespace Marv
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
-        public IEnumerable<PropertyLocation> ProfileLocations
+        public IEnumerable<LocationWithId> ProfileLocations
         {
-            get { return (IEnumerable<PropertyLocation>)GetValue(ProfileLocationsProperty); }
+            get { return (IEnumerable<LocationWithId>)GetValue(ProfileLocationsProperty); }
             set { SetValue(ProfileLocationsProperty, value); }
         }
 
@@ -194,11 +194,11 @@ namespace Marv
             }
         }
 
-        public PropertyLocation SelectedProfileLocation
+        public LocationWithId SelectedProfileLocation
         {
             get
             {
-                return (PropertyLocation)GetValue(SelectedProfileLocationProperty);
+                return (LocationWithId)GetValue(SelectedProfileLocationProperty);
             }
             set
             {

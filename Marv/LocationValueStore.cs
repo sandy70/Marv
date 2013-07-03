@@ -30,7 +30,7 @@ namespace Marv
             }
         }
 
-        public async Task<LocationValue> GetLocationValueAsync(PropertyLocation location)
+        public async Task<LocationValue> GetLocationValueAsync(LocationWithId location)
         {
             Console.WriteLine("LocationValueStore: getting location value with id: " + location.Id);
 

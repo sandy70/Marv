@@ -3,7 +3,7 @@
 namespace LibPipeline
 {
     [TypeConverter(typeof(LocationRectConverter))]
-    public class LocationRect : INotifyPropertyChanged
+    public class LocationRect : ViewModel
     {
         private double east;
         private double north;
@@ -13,8 +13,6 @@ namespace LibPipeline
         private Location southEast = new Location();
         private Location southWest = new Location();
         private double west;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public double East
         {
@@ -174,12 +172,6 @@ namespace LibPipeline
                     this.SouthWest.Longitude = this.West;
                 }
             }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
