@@ -2,12 +2,10 @@
 
 namespace LibPipeline
 {
-    public class Location : ILocation, INotifyPropertyChanged
+    public class Location : Dynamic, ILocation
     {
         private double latitude;
         private double longitude;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public double Latitude
         {
@@ -43,12 +41,6 @@ namespace LibPipeline
                     this.OnPropertyChanged("Longitude");
                 }
             }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

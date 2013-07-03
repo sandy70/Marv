@@ -46,13 +46,6 @@ namespace LibPipeline
                                     (location as dynamic).Description = eq.Element("description").Value;
                                     return location;
                                 });
-
-                //var multiLocation = new MultiLocation
-                //    {
-                //        Locations = locations
-                //    };
-
-                //callback(null, new EarthquakeEventArgs(multiLocation));
             };
 
             client.OpenReadAsync(new Uri("http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml"));
@@ -60,12 +53,6 @@ namespace LibPipeline
 
         public class EarthquakeEventArgs : EventArgs
         {
-            //public EarthquakeEventArgs(MultiLocation multiLocation)
-            //{
-            //    MultiLocation = multiLocation;
-            //}
-
-            //public MultiLocation MultiLocation { get; set; }
         }
     }
 }

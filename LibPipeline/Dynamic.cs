@@ -5,9 +5,44 @@ using System.Linq;
 
 namespace LibPipeline
 {
-    public class Dynamic : DynamicObject
+    public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public object this[string name]
+        {
+            get
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    if (dictionary.ContainsKey(name))
+                    {
+                        return dictionary[name];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return this.GetType().GetProperty(name).GetValue(this);
+                }
+            }
+            set
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    dictionary[name] = value;
+                }
+                else
+                {
+                    this.GetType().GetProperty(name).SetValue(this, value);
+                }
+            }
+        }
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
@@ -57,46 +92,22 @@ namespace LibPipeline
                 this.GetType().GetProperty(name).SetValue(this, value);
             }
 
+            this.OnPropertyChanged(name);
+
             return true;
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             dictionary[binder.Name] = value;
+            this.OnPropertyChanged(binder.Name);
             return true;
         }
 
-        public object this[string name]
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            get
-            {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    if (dictionary.ContainsKey(name))
-                    {
-                        return dictionary[name];
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return this.GetType().GetProperty(name).GetValue(this);
-                }
-            }
-            set
-            {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    dictionary[name] = value;
-                }
-                else
-                {
-                    this.GetType().GetProperty(name).SetValue(this, value);
-                }
-            }
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
