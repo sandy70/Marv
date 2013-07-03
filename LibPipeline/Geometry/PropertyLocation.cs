@@ -2,7 +2,7 @@
 
 namespace LibPipeline
 {
-    public class PropertyLocation : Location
+    public class LocationWithId : Location
     {
         private int id;
 
