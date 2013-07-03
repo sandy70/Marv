@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="LibPipeline.Dynamic" Collapsed="true">
     <Position X="3.75" Y="1.5" Width="2" />
     <TypeIdentifier>
@@ -22,14 +22,14 @@
       <FileName>Geometry\Location.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LibPipeline.PropertyLocation">
+  <Class Name="LibPipeline.LocationWithId">
     <Position X="3.75" Y="5.25" Width="2" />
     <Members>
       <Field Name="id" Hidden="true" />
     </Members>
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Geometry\PropertyLocation.cs</FileName>
+      <FileName>Geometry\LocationWithId.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
