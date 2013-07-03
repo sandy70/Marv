@@ -2,7 +2,7 @@
 
 namespace LibPipeline
 {
-    public class Location : Dynamic, ILocation
+    public class Location : Dynamic
     {
         private double latitude;
         private double longitude;

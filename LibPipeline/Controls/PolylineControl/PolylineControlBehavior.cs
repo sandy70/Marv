@@ -11,7 +11,7 @@ namespace LibPipeline
     internal class PolylineControlBehavior : Behavior<PolylineControl>
     {
         private bool isDragging = false;
-        private Stack<ILocation> locationStack = new Stack<ILocation>();
+        private Stack<Location> locationStack = new Stack<Location>();
         private DispatcherTimer timer = new DispatcherTimer();
 
         protected override void OnAttached()

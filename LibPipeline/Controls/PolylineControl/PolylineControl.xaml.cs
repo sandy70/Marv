@@ -12,7 +12,7 @@ namespace LibPipeline
         DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
         public static readonly DependencyProperty CursorLocationProperty =
-        DependencyProperty.Register("CursorLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("CursorLocation", typeof(Location), typeof(PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty CursorStrokeProperty =
         DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
@@ -21,16 +21,16 @@ namespace LibPipeline
         DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(PolylineControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty LocationsProperty =
-        DependencyProperty.Register("Locations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
+        DependencyProperty.Register("Locations", typeof(IEnumerable<Location>), typeof(PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(ILocation), typeof(PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
+        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
 
         public static readonly RoutedEvent SelectionChangedEvent =
-        EventManager.RegisterRoutedEvent("SelectionChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<ILocation>>), typeof(PolylineControl));
+        EventManager.RegisterRoutedEvent("SelectionChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Location>>), typeof(PolylineControl));
 
         public static readonly DependencyProperty SimplifiedLocationsProperty =
-        DependencyProperty.Register("SimplifiedLocations", typeof(IEnumerable<ILocation>), typeof(PolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("SimplifiedLocations", typeof(IEnumerable<Location>), typeof(PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StrokeProperty =
         DependencyProperty.Register("Stroke", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
@@ -40,7 +40,7 @@ namespace LibPipeline
             InitializeComponent();
         }
 
-        public event RoutedEventHandler<ValueEventArgs<ILocation>> SelectionChanged
+        public event RoutedEventHandler<ValueEventArgs<Location>> SelectionChanged
         {
             add { AddHandler(SelectionChangedEvent, value); }
             remove { RemoveHandler(SelectionChangedEvent, value); }
@@ -52,9 +52,9 @@ namespace LibPipeline
             set { SetValue(CursorFillProperty, value); }
         }
 
-        public ILocation CursorLocation
+        public Location CursorLocation
         {
-            get { return (ILocation)GetValue(CursorLocationProperty); }
+            get { return (Location)GetValue(CursorLocationProperty); }
             set { SetValue(CursorLocationProperty, value); }
         }
 
@@ -70,21 +70,21 @@ namespace LibPipeline
             set { SetValue(IsCursorVisibleProperty, value); }
         }
 
-        public IEnumerable<ILocation> Locations
+        public IEnumerable<Location> Locations
         {
-            get { return (IEnumerable<ILocation>)GetValue(LocationsProperty); }
+            get { return (IEnumerable<Location>)GetValue(LocationsProperty); }
             set { SetValue(LocationsProperty, value); }
         }
 
-        public ILocation SelectedLocation
+        public Location SelectedLocation
         {
-            get { return (ILocation)GetValue(SelectedLocationProperty); }
+            get { return (Location)GetValue(SelectedLocationProperty); }
             set { SetValue(SelectedLocationProperty, value); }
         }
 
-        public IEnumerable<ILocation> SimplifiedLocations
+        public IEnumerable<Location> SimplifiedLocations
         {
-            get { return (IEnumerable<ILocation>)GetValue(SimplifiedLocationsProperty); }
+            get { return (IEnumerable<Location>)GetValue(SimplifiedLocationsProperty); }
             set { SetValue(SimplifiedLocationsProperty, value); }
         }
 
@@ -111,7 +111,7 @@ namespace LibPipeline
         private static void ChangedSelectedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var polylineControl = d as PolylineControl;
-            polylineControl.RaiseEvent(new ValueEventArgs<ILocation>
+            polylineControl.RaiseEvent(new ValueEventArgs<Location>
             {
                 RoutedEvent = PolylineControl.SelectionChangedEvent,
                 Value = polylineControl.SelectedLocation

@@ -34,7 +34,7 @@ namespace LibPipeline
             set { SetValue(StartExtentProperty, value); }
         }
 
-        public IEnumerable<Point> ILocationsToViewportPoints(IEnumerable<ILocation> locations)
+        public List<Point> ILocationsToViewportPoints(IEnumerable<Location> locations)
         {
             var points = new List<Point>();
 
@@ -46,7 +46,7 @@ namespace LibPipeline
             return points;
         }
 
-        public IEnumerable<ILocation> ViewportPointsToILocations(IEnumerable<Point> points)
+        public List<Location> ViewportPointsToILocations(IEnumerable<Point> points)
         {
             var locations = new List<Location>();
 

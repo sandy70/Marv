@@ -14,7 +14,7 @@ namespace LibPipeline
             return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
 
-        public static MapControl.Location AsMapControlLocation(this ILocation location)
+        public static MapControl.Location AsMapControlLocation(this Location location)
         {
             return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
@@ -38,11 +38,11 @@ namespace LibPipeline
             else return val;
         }
 
-        public static Dictionary<ILocation, double> Distances(this IEnumerable<ILocation> locations)
+        public static Dictionary<Location, double> Distances(this IEnumerable<Location> locations)
         {
-            var distances = new Dictionary<ILocation, double>();
+            var distances = new Dictionary<Location, double>();
 
-            ILocation lastLocation;
+            Location lastLocation;
 
             if (locations.Count() > 0)
             {
@@ -170,7 +170,7 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static ILocation NearestTo(this IEnumerable<ILocation> locations, ILocation queryLocation)
+        public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
         {
             if (locations == null || queryLocation == null)
             {
@@ -178,7 +178,7 @@ namespace LibPipeline
             }
 
             double nearestDistance = Double.MaxValue;
-            ILocation nearestLocation = locations.FirstOrDefault();
+            var nearestLocation = locations.FirstOrDefault();
 
             foreach (var location in locations)
             {
