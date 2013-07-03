@@ -16,9 +16,9 @@ namespace LibBn
         {
             var groups = new ObservableCollection<string>();
 
-            if (this.Properties.ContainsKey("group"))
+            if (this.Properties.ContainsKey("groups"))
             {
-                var groupsValueString = this.Properties["group"];
+                var groupsValueString = this.Properties["groups"];
 
                 var parts = groupsValueString.Split(new char[] { '"', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
