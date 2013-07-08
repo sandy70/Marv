@@ -14,6 +14,7 @@
     <Grid>
         <TextBlock Name="TextBlock"
                    Text="{Binding Text, ElementName=Root, Mode=TwoWay}"
+                   TextWrapping="Wrap"
                    Visibility="{Binding IsEditable, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}"/>
 
         <TextBox Name="TextBox"
