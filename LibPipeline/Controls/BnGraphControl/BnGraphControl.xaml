@@ -38,7 +38,7 @@
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
-                    <Setter Property="SourceConnectorPosition" Value="Bottom" />
+                    <!--<Setter Property="SourceConnectorPosition" Value="Bottom" />-->
                     <Setter Property="StrokeThickness" Value="10" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
