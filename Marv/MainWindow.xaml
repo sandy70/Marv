@@ -147,9 +147,17 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <!-- Logo -->
+                    <Image Source="Resources/logo.png"
+                           Grid.Row="0"
+                           Height="140" Width="560"
+                           HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                           IsHitTestVisible="False"
+                           Margin="10" />
+
                     <libpipeline:BnGraphControl Name="GraphControl"
                                                 Grid.Row="0"
-                                                Background="White"
+                                                Background="Transparent"
                                                 ConnectionColor="#252525"
                                                 Graphs="{Binding Path=Graphs, ElementName=Root}"
                                                 IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
