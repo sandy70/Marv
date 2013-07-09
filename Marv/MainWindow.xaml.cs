@@ -5,6 +5,7 @@ using MapControl;
 using Smile;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
@@ -25,7 +26,9 @@ namespace Marv
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
 
-            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, this.CacheDirectory);
+            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MARV");
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, cacheDirectory);
+            
             this.MapView.TileLayer = TileLayers.MapBoxTerrain;
         }
 
