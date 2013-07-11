@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Diagrams.Core;
 using Smile;
+using System.IO;
 
 namespace LibBn
 {
@@ -173,7 +174,16 @@ namespace LibBn
         {
             var graph = new BnGraph();
             graph.fileName = fileName;
-            graph.Network.ReadFile(fileName);
+
+            try
+            {
+                graph.Network.ReadFile(fileName);
+            }
+            catch (SmileException exp)
+            {
+                return graph;
+            }
+            
             graph.Network.UpdateBeliefs();
 
             var structure = NetworkStructure.Read(fileName);

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using Smile;
 
 namespace Marv
 {
@@ -274,7 +275,16 @@ namespace Marv
 
             foreach (var fileName in window.NetworkFileNames)
             {
-                newGraphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
+                var graph = await BnGraph.ReadAsync<BnVertexViewModel>(fileName);
+
+                if (graph.Vertices.Count() > 0)
+                {
+                    newGraphs.Add(graph);
+                }
+                else
+                {
+                    window.PopupControl.ShowText("File not found: " + fileName);
+                }
             }
 
             window.Graphs = newGraphs;
