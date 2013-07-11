@@ -57,7 +57,14 @@ namespace LibPipeline
                 }
                 else
                 {
-                    this.TextBox.RaiseEvent(e);
+                    if (this.IsEditable)
+                    {
+                        this.TextBox.RaiseEvent(e);
+                    }
+                    else
+                    {
+                        this.FindParent<FrameworkElement>().RaiseEvent(e);
+                    }
                 }
             }
         }
