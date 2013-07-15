@@ -79,7 +79,7 @@ namespace Marv
         private static async void ChangedSelectedProfileLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-            window.SelectedLocationValue = await window.LocationValueStore.GetLocationValueAsync(window.SelectedProfileLocation);
+            // window.SelectedLocationValue = await window.LocationValueStore.GetLocationValueAsync(window.SelectedProfileLocation);
         }
 
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)

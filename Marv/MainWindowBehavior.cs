@@ -82,13 +82,15 @@ namespace Marv
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     window.PopupControl.ShowTextIndeterminate("Reading Profile");
-                    window.ProfileLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
+                    // window.ProfileLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
+                    window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName));
                     window.PopupControl.Hide();
 
-                    window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
+                    // window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
 
                     window.PopupControl.ShowTextIndeterminate("Reading tally");
-                    window.TallyLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName);
+                    // window.TallyLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName);
+                    window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName));
                     window.PopupControl.Hide();
                 }));
 

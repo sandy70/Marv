@@ -1,12 +1,9 @@
 ﻿using LibBn;
 using LibPipeline;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Linq;
-using Smile;
+using System.Windows;
 
 namespace Marv
 {
@@ -50,6 +47,9 @@ namespace Marv
 
         public static readonly DependencyProperty LocationValueStoreProperty =
         DependencyProperty.Register("LocationValueStore", typeof(LocationValueStore), typeof(MainWindow), new PropertyMetadata(new LocationValueStore()));
+
+        public static readonly DependencyProperty MultiLocationsProperty =
+        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(new SelectableCollection<MultiLocation>()));
 
         public static readonly DependencyProperty MultiPointsProperty =
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
@@ -142,6 +142,12 @@ namespace Marv
         {
             get { return (LocationValueStore)GetValue(LocationValueStoreProperty); }
             set { SetValue(LocationValueStoreProperty, value); }
+        }
+
+        public SelectableCollection<MultiLocation> MultiLocations
+        {
+            get { return (SelectableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
+            set { SetValue(MultiLocationsProperty, value); }
         }
 
         public ObservableCollection<MultiPoint> MultiPoints

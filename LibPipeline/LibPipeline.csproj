@@ -148,6 +148,7 @@
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Geometry\MultiLocation.cs" />
     <Compile Include="ILocationToLocationConverter.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />

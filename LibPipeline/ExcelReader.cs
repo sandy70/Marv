@@ -42,16 +42,16 @@ namespace LibPipeline
             return locations;
         }
 
-        public static Task<List<Location>> ReadLocationsAsync<TLocation>(string fileName, string sheetName = "Sheet1")
+        public static Task<List<Location>> ReadLocationsAsync(string fileName, string sheetName = "Sheet1")
         {
             return Task.Run(() => ExcelReader.ReadLocations(fileName, sheetName));
         }
 
-        public static List<Location> ReadLocationsWithProperties(string fileName, string sheetName = "Sheet1")
+        public static MultiLocation ReadLocationsWithProperties(string fileName, string sheetName = "Sheet1")
         {
             var excel = new ExcelQueryFactory(fileName);
             var id = 0L;
-            var locations = new List<Location>();
+            var locations = new MultiLocation();
 
             var colNames = excel.GetColumnNames(sheetName);
 
@@ -87,7 +87,7 @@ namespace LibPipeline
             return locations;
         }
 
-        public static Task<List<Location>> ReadLocationsWithPropertiesAsync(string fileName, string sheetName = "Sheet1")
+        public static Task<MultiLocation> ReadLocationsWithPropertiesAsync(string fileName, string sheetName = "Sheet1")
         {
             return Task.Run(() => ExcelReader.ReadLocationsWithProperties(fileName, sheetName));
         }
