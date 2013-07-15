@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace LibPipeline
 {
-    public class PipelineValue : Dictionary<ILocation, LocationValue>
+    public class PipelineValue : Dictionary<Location, LocationValue>
     {
-        public bool HasLocationValue(ILocation location)
+        public bool HasLocationValue(Location location)
         {
             return this.ContainsKey(location);
         }
 
-        public LocationValue GetLocationValue(ILocation location)
+        public LocationValue GetLocationValue(Location location)
         {
             return this[location];
         }

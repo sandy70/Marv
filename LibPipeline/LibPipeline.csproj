@@ -148,6 +148,7 @@
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="ILocationToLocationConverter.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnStatesControl\BnStatesControlBehavior.cs" />
@@ -174,8 +175,6 @@
     <Compile Include="Geometry\Dynamic.cs" />
     <Compile Include="EarthquakeService.cs" />
     <Compile Include="IEnumerableILocationToIEnumerableLocationConverter.cs" />
-    <Compile Include="ILocation.cs" />
-    <Compile Include="ILocationToLocationConverter.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
     <Compile Include="LocationRectConverter.cs" />

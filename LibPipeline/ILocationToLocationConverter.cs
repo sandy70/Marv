@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace LibPipeline
 {
-    [ValueConversion(typeof(ILocation), typeof(MapControl.Location))]
+    [ValueConversion(typeof(Location), typeof(MapControl.Location))]
     public class ILocationToLocationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is ILocation)
+            if (value is Location)
             {
-                var location = value as ILocation;
+                var location = value as Location;
                 return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
             }
             else
