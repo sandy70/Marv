@@ -296,6 +296,9 @@
     <None Include="Resources\Inputs\profile.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Networks\Blowout - with groups.net">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Outputs\Output2004.vertices">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -133,20 +133,6 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>D:\\Data\\Networks\\Corrosion_2013.03.03.net</string>\r\n</ArrayOfString>")]
-        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
-            get {
-                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
-            }
-            set {
-                this["NetworkFileNames"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IsMenuVisible {
             get {
@@ -154,6 +140,20 @@ namespace Marv.Properties {
             }
             set {
                 this["IsMenuVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>Resources\\Networks\\Blowout - with groups.net</string>\r\n</ArrayOfString>")]
+        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
+            get {
+                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
+            }
+            set {
+                this["NetworkFileNames"] = value;
             }
         }
     }

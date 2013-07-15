@@ -340,6 +340,8 @@
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{2D598198-E62C-40C6-B513-E02BB777F5CD}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{3D0E7517-A5C2-4784-A231-EB20D6C45C52}</td><td>RESOURCES</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT3</td><td>{08A2A2F7-1E2A-471B-9DDB-60FDFA42732A}</td><td>NETWORKS</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ImageFileCache.dll</td><td>{3E3243EF-986A-4DC3-A04C-8D391ACA1BAC}</td><td>INSTALLDIR</td><td>2</td><td/><td>imagefilecache.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Ionic.Zip.Reduced.dll</td><td>{92F3F67D-7CF5-4506-99D8-20C487FBABB6}</td><td>INSTALLDIR</td><td>2</td><td/><td>ionic.zip.reduced.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>LibBn.dll</td><td>{FC6C459E-5ACD-4333-A4B1-46ECF426346C}</td><td>INSTALLDIR</td><td>2</td><td/><td>libbn.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -1084,6 +1086,8 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT</td></row>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 	</table>
 
 	<table name="CustomAction">
@@ -1099,6 +1103,7 @@
 		<row><td>ISSelfRegisterCosting</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterCosting</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>257</td><td>SetAllUsers.dll</td><td>SetAllUsers</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
@@ -1183,6 +1188,7 @@
 		<row><td>MARV_SETUP</td><td>DNV</td><td>MARV</td><td/><td>0</td><td/></row>
 		<row><td>MY_PRODUCT_NAME</td><td>DNV</td><td>MYPROD~1|My Product Name</td><td/><td>0</td><td/></row>
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
+		<row><td>NETWORKS</td><td>RESOURCES</td><td>Networks</td><td/><td>0</td><td/></row>
 		<row><td>NetHoodFolder</td><td>TARGETDIR</td><td>.:NetHood</td><td/><td>0</td><td/></row>
 		<row><td>PersonalFolder</td><td>TARGETDIR</td><td>.:Personal</td><td/><td>0</td><td/></row>
 		<row><td>PrimaryVolumePath</td><td>TARGETDIR</td><td>.:Primar~1|PrimaryVolumePath</td><td/><td>0</td><td/></row>
@@ -1190,6 +1196,7 @@
 		<row><td>ProgramFiles64Folder</td><td>TARGETDIR</td><td>.:Prog64~1|Program Files 64</td><td/><td>0</td><td/></row>
 		<row><td>ProgramFilesFolder</td><td>TARGETDIR</td><td>.:PROGRA~1|program files</td><td/><td>0</td><td/></row>
 		<row><td>ProgramMenuFolder</td><td>TARGETDIR</td><td>.:Programs</td><td/><td>3</td><td/></row>
+		<row><td>RESOURCES</td><td>INSTALLDIR</td><td>RESOUR~1|Resources</td><td/><td>0</td><td/></row>
 		<row><td>RecentFolder</td><td>TARGETDIR</td><td>.:Recent</td><td/><td>0</td><td/></row>
 		<row><td>SendToFolder</td><td>TARGETDIR</td><td>.:SendTo</td><td/><td>3</td><td/></row>
 		<row><td>StartMenuFolder</td><td>TARGETDIR</td><td>.:STARTM~1|Start Menu</td><td/><td>3</td><td/></row>
@@ -1897,6 +1904,8 @@
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>AlwaysInstall</td><td>ImageFileCache.dll</td></row>
 		<row><td>AlwaysInstall</td><td>Ionic.Zip.Reduced.dll</td></row>
 		<row><td>AlwaysInstall</td><td>LibBn.dll</td></row>
@@ -1947,6 +1956,7 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
+		<row><td>blowout___with_groups.net1</td><td>ISX_DEFAULTCOMPONENT3</td><td>BLOWOU~1.NET|Blowout - with groups.net</td><td>0</td><td/><td/><td/><td>1</td><td>D:\Code\Marv\Marv\bin\Debug\Resources\Networks\Blowout - with groups.net</td><td>1</td><td/></row>
 		<row><td>imagefilecache.dll</td><td>ImageFileCache.dll</td><td>IMAGEF~1.DLL|ImageFileCache.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\Code\Marv\Marv\bin\Debug\ImageFileCache.dll</td><td>1</td><td/></row>
 		<row><td>imagefilecache.pdb</td><td>ISX_DEFAULTCOMPONENT</td><td>IMAGEF~1.PDB|ImageFileCache.pdb</td><td>0</td><td/><td/><td/><td>1</td><td>D:\Code\Marv\Marv\bin\Debug\ImageFileCache.pdb</td><td>1</td><td/></row>
 		<row><td>ionic.zip.reduced.dll</td><td>Ionic.Zip.Reduced.dll</td><td>IONICZ~1.DLL|Ionic.Zip.Reduced.dll</td><td>0</td><td/><td/><td/><td>1</td><td>D:\Code\Marv\Marv\bin\Debug\Ionic.Zip.Reduced.dll</td><td>1</td><td/></row>
@@ -2169,6 +2179,8 @@
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_16371DA8_03D5_4206_8CB2_D0946A10B621_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_4CC1DC6D_73F3_4FA2_A7EF_0F334F4917C7_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT3</td><td/><td/><td>_873B20CA_16FB_47F8_918F_9150AF1DBB91_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ImageFileCache.dll</td><td/><td/><td>_9E7FA6CD_D105_49E4_BE4B_DBA248EE4732_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Ionic.Zip.Reduced.dll</td><td/><td/><td>_1158D267_46E2_48D8_87F6_2D1A58BD6ADE_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>LibBn.dll</td><td/><td/><td>_CDE10F97_0D4A_4707_A806_C6C36417774A_FILTER</td><td/><td/><td/><td/></row>
@@ -2289,6 +2301,8 @@
 		<col def="S0">IncludeFiles</col>
 		<col def="S0">ExcludeFiles</col>
 		<col def="I4">ISAttributes</col>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td>D:\Code\Marv\Marv\Resources</td><td>4</td><td/><td/><td>8</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT3</td><td>D:\Code\Marv\Marv\bin\Debug\Resources</td><td>4</td><td/><td/><td>8</td></row>
 	</table>
 
 	<table name="ISFeatureDIMReferences">
@@ -2510,6 +2524,7 @@
 		<row><td>ISProductFolder</td><td/><td/><td>1</td></row>
 		<row><td>ISProjectDataFolder</td><td/><td/><td>1</td></row>
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
+		<row><td>Marv</td><td>Marv\Marv.csproj</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
@@ -2823,7 +2838,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>DNV</td><td>0</td><td/><td>1268867178</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>DNV</td><td>0</td><td/><td>1268851371</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>1268865130</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>1268865130</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_OS</td><td>1033</td><td>The operating system is not adequate for running [ProductName].</td><td>0</td><td/><td>1268865130</td></row>
@@ -3925,8 +3940,8 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>1268865130</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>1268865130</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>1268865130</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://www.DNV.com</td><td>0</td><td/><td>1268867178</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>DNV</td><td>0</td><td/><td>1268867178</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://www.DNV.com</td><td>0</td><td/><td>1268851371</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>DNV</td><td>0</td><td/><td>1268851371</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>Launch MARV</td><td>0</td><td/><td>1268857066</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>1268865130</td></row>
 	</table>
@@ -4083,6 +4098,7 @@
 		<row><td>ISSelfRegisterCosting</td><td/><td>2201</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td/><td>5601</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td/><td>6601</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td/><td>2202</td><td/><td/></row>
 		<row><td>InstallFiles</td><td/><td>4000</td><td>InstallFiles</td><td/></row>
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
@@ -4114,7 +4130,7 @@
 		<row><td>RegisterUser</td><td/><td>6000</td><td>RegisterUser</td><td/></row>
 		<row><td>RemoveDuplicateFiles</td><td/><td>3400</td><td>RemoveDuplicateFiles</td><td/></row>
 		<row><td>RemoveEnvironmentStrings</td><td/><td>3300</td><td>RemoveEnvironmentStrings</td><td/></row>
-		<row><td>RemoveExistingProducts</td><td/><td>1410</td><td>RemoveExistingProducts</td><td/></row>
+		<row><td>RemoveExistingProducts</td><td/><td>1500</td><td>RemoveExistingProducts</td><td/></row>
 		<row><td>RemoveFiles</td><td/><td>3500</td><td>RemoveFiles</td><td/></row>
 		<row><td>RemoveFolders</td><td/><td>3600</td><td>RemoveFolders</td><td/></row>
 		<row><td>RemoveIniValues</td><td/><td>3100</td><td>RemoveIniValues</td><td/></row>
@@ -4170,7 +4186,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{38D4F1CF-A98D-45DF-B43B-AB174A37DC11}</td></row>
 		<row><td>ISUSSignature</td><td>{508A0F33-ED64-407C-A552-BDAFD943FF87}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewObjects</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewObjects,viewRelease,viewSystemSearch,viewUI,viewUpgradePaths,viewFeatureFiles,viewAppFiles</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
 		<row><td>MsiLogFile</td><td/></row>
@@ -4199,6 +4215,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>FileCost</td><td/><td>900</td><td>FileCost</td><td/></row>
 		<row><td>FindRelatedProducts</td><td/><td>430</td><td>FindRelatedProducts</td><td/></row>
 		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td>ISPreventDowngrade</td><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>InstallWelcome</td><td>Not Installed</td><td>1210</td><td>InstallWelcome</td><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>
 		<row><td>LaunchConditions</td><td>Not Installed</td><td>410</td><td>LaunchConditions</td><td/></row>
