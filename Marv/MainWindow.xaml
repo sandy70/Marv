@@ -80,7 +80,7 @@
                                                      Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
                     </libpipeline:MapView>
 
-                    <!--<Border Background="#DDDDDD"
+                    <Border Background="#DDDDDD"
                                 Effect="{StaticResource ResourceKey=DropShadow}"
                                 Margin="10"
                                 Padding="5"
@@ -128,7 +128,7 @@
                                                 Item="{Binding SelectedTallyLocation, ElementName=Root}"
                                                 Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                             </Grid>
-                        </Border>-->
+                        </Border>
 
                     <!-- The statusbar -->
 
