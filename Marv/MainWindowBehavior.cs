@@ -75,33 +75,33 @@ namespace Marv
             }
         }
 
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
-            //await window.Dispatcher.BeginInvoke(new Action(async () =>
-            //    {
-            //        window.PopupControl.ShowTextIndeterminate("Reading Profile");
-            //        window.ProfileLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.ProfileFileName);
-            //        window.PopupControl.Hide();
+            await window.Dispatcher.BeginInvoke(new Action(async () =>
+                {
+                    window.PopupControl.ShowTextIndeterminate("Reading Profile");
+                    window.ProfileLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
+                    window.PopupControl.Hide();
 
-            //        window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
+                    window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
 
-            //        window.PopupControl.ShowTextIndeterminate("Reading tally");
-            //        window.TallyLocations = await ExcelReader.ReadPropertyLocationsAsync<PropertyLocation>(Properties.Settings.Default.TallyFileName);
-            //        window.PopupControl.Hide();
-            //    }));
+                    window.PopupControl.ShowTextIndeterminate("Reading tally");
+                    window.TallyLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName);
+                    window.PopupControl.Hide();
+                }));
 
-            //KocDataReader kocDataReader = new KocDataReader();
-            //window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
-            //window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
-            //kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
+            KocDataReader kocDataReader = new KocDataReader();
+            window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
+            window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
+            kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
-            //window.NearNeutralPhSccModel.Graphs = window.Graphs;
-            //window.NearNeutralPhSccModel.StartYear = window.StartYear;
-            //window.NearNeutralPhSccModel.EndYear = window.EndYear;
+            window.NearNeutralPhSccModel.Graphs = window.Graphs;
+            window.NearNeutralPhSccModel.StartYear = window.StartYear;
+            window.NearNeutralPhSccModel.EndYear = window.EndYear;
 
-            //window.LocationValueStore.Model = window.NearNeutralPhSccModel;
+            window.LocationValueStore.Model = window.NearNeutralPhSccModel;
 
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;

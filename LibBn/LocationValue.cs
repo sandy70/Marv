@@ -5,11 +5,11 @@ namespace LibBn
 {
     public class LocationValue : Dictionary<int, ModelValue>, INotifyPropertyChanged
     {
-        private int id;
+        private long id;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Id
+        public long Id
         {
             get
             {
@@ -21,7 +21,6 @@ namespace LibBn
                 if (value != this.id)
                 {
                     this.id = value;
-
                     this.OnPropertyChanged("Id");
                 }
             }

@@ -32,9 +32,9 @@ namespace Marv
             set { startYear = value; }
         }
 
-        public LocationValue Run(LocationWithId aLocation)
+        public LocationValue Run(Location aLocation)
         {
-            Console.WriteLine("Running model with id: " + aLocation.Id);
+            Console.WriteLine("Running model with id: " + aLocation.Guid.ToInt64());
 
             var intervalValue = new LocationValue();
 
@@ -181,11 +181,11 @@ namespace Marv
                 intervalValue[year]["nnphsccfailure"] = failureGraph.GetValueFromNetwork();
             }
 
-            Console.WriteLine("Ran model with id: " + aLocation.Id);
+            Console.WriteLine("Ran model with id: " + aLocation.Guid.ToInt64());
             return intervalValue;
         }
 
-        public Task<LocationValue>  RunAsync(LocationWithId location)
+        public Task<LocationValue>  RunAsync(Location location)
         {
             return Task.Run(() =>
             {

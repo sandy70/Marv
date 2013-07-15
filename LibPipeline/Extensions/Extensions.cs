@@ -19,7 +19,7 @@ namespace LibPipeline
             return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
 
-        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
+        public static LocationRect Bounds(this IEnumerable<Location> locations)
         {
             var locationRect = new LocationRect();
 

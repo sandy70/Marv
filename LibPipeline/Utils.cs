@@ -1,31 +1,11 @@
-﻿using MapControl;
-using System;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace LibPipeline
 {
     public static class Utils
     {
-        public static double[,] MatrixStringToDouble(string[,] str)
-        {
-            int nRows = str.GetLength(0);
-            int nCols = str.GetLength(1);
-
-            double[,] dbl = new double[nRows, nCols];
-
-            for (int r = 0; r < nRows; r++)
-            {
-                for (int c = 0; c < nCols; c++)
-                {
-                    Double.TryParse(str[r, c], out dbl[r, c]);
-                }
-            }
-
-            return dbl;
-        }
-
         public static double Distance(Location l1, Location l2)
         {
             double distance = 0;
@@ -70,6 +50,39 @@ namespace LibPipeline
             double blue = Math.Min(fourValue + 0.5, -fourValue + 2.5);
 
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
+        }
+
+        public static Guid ToGuid(this long n)
+        {
+            var guidBinary = new byte[16];
+
+            Array.Copy(Guid.NewGuid().ToByteArray(), 0, guidBinary, 0, 8);
+            Array.Copy(BitConverter.GetBytes(n), 0, guidBinary, 8, 8);
+
+            return new Guid(guidBinary);
+        }
+
+        public static double[,] MatrixStringToDouble(string[,] str)
+        {
+            int nRows = str.GetLength(0);
+            int nCols = str.GetLength(1);
+
+            double[,] dbl = new double[nRows, nCols];
+
+            for (int r = 0; r < nRows; r++)
+            {
+                for (int c = 0; c < nCols; c++)
+                {
+                    Double.TryParse(str[r, c], out dbl[r, c]);
+                }
+            }
+
+            return dbl;
+        }
+
+        public static long ToInt64(this Guid guid)
+        {
+            return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
     }
 }

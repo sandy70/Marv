@@ -8,10 +8,10 @@ namespace LibPipeline
 {
     public class ExcelReader
     {
-        public static IEnumerable<ILocation> ReadLocations<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : ILocation, new()
+        public static List<Location> ReadLocations(string fileName, string sheetName = "Sheet1")
         {
             var excel = new ExcelQueryFactory(fileName);
-            var locations = new List<TLocation>();
+            var locations = new List<Location>();
 
             var colNames = excel.GetColumnNames(sheetName);
 
@@ -22,7 +22,7 @@ namespace LibPipeline
                     continue;
                 }
 
-                var location = new TLocation();
+                var location = new Location();
 
                 foreach (var colName in colNames)
                 {
@@ -39,19 +39,19 @@ namespace LibPipeline
                 locations.Add(location);
             }
 
-            return locations as IEnumerable<ILocation>;
+            return locations;
         }
 
-        public static Task<IEnumerable<ILocation>> ReadLocationsAsync<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : ILocation, new()
+        public static Task<List<Location>> ReadLocationsAsync<TLocation>(string fileName, string sheetName = "Sheet1")
         {
-            return Task.Run(() => ExcelReader.ReadLocations<TLocation>(fileName, sheetName));
+            return Task.Run(() => ExcelReader.ReadLocations(fileName, sheetName));
         }
 
-        public static IEnumerable<TLocation> ReadPropertyLocations<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : LocationWithId, IDynamicMetaObjectProvider, new()
+        public static List<Location> ReadLocationsWithProperties(string fileName, string sheetName = "Sheet1")
         {
             var excel = new ExcelQueryFactory(fileName);
-            var id = 0;
-            var locations = new List<TLocation>();
+            var id = 0L;
+            var locations = new List<Location>();
 
             var colNames = excel.GetColumnNames(sheetName);
 
@@ -62,8 +62,8 @@ namespace LibPipeline
                     continue;
                 }
 
-                var location = new TLocation();
-                location.Id = id++;
+                var location = new Location();
+                location.Guid = id.ToGuid();
 
                 foreach (var colName in colNames)
                 {
@@ -87,9 +87,9 @@ namespace LibPipeline
             return locations;
         }
 
-        public static Task<IEnumerable<TLocation>> ReadPropertyLocationsAsync<TLocation>(string fileName, string sheetName = "Sheet1") where TLocation : LocationWithId, IDynamicMetaObjectProvider, new()
+        public static Task<List<Location>> ReadLocationsWithPropertiesAsync(string fileName, string sheetName = "Sheet1")
         {
-            return Task.Run(() => ExcelReader.ReadPropertyLocations<TLocation>(fileName, sheetName));
+            return Task.Run(() => ExcelReader.ReadLocationsWithProperties(fileName, sheetName));
         }
     }
 }

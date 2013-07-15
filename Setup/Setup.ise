@@ -4186,7 +4186,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{38D4F1CF-A98D-45DF-B43B-AB174A37DC11}</td></row>
 		<row><td>ISUSSignature</td><td>{508A0F33-ED64-407C-A552-BDAFD943FF87}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewObjects,viewRelease,viewSystemSearch,viewUI,viewUpgradePaths,viewFeatureFiles,viewAppFiles</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewObjects,viewRelease,viewSystemSearch,viewUI,viewUpgradePaths,viewFeatureFiles,viewAppFiles,viewSetupTypes,viewSetupDesign,viewProject,viewDependencies</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
 		<row><td>MsiLogFile</td><td/></row>

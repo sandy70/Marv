@@ -58,7 +58,7 @@ namespace Marv
         DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
         public static readonly DependencyProperty ProfileLocationsProperty =
-        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<LocationWithId>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
@@ -82,7 +82,7 @@ namespace Marv
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
 
         public static readonly DependencyProperty TallyLocationsProperty =
-        DependencyProperty.Register("TallyLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("TallyLocations", typeof(IEnumerable<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public string CacheDirectory
         {
@@ -168,9 +168,9 @@ namespace Marv
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
-        public IEnumerable<LocationWithId> ProfileLocations
+        public IEnumerable<Location> ProfileLocations
         {
-            get { return (IEnumerable<LocationWithId>)GetValue(ProfileLocationsProperty); }
+            get { return (IEnumerable<Location>)GetValue(ProfileLocationsProperty); }
             set { SetValue(ProfileLocationsProperty, value); }
         }
 
@@ -195,11 +195,11 @@ namespace Marv
             }
         }
 
-        public LocationWithId SelectedProfileLocation
+        public Location SelectedProfileLocation
         {
             get
             {
-                return (LocationWithId)GetValue(SelectedProfileLocationProperty);
+                return (Location)GetValue(SelectedProfileLocationProperty);
             }
             set
             {
@@ -237,9 +237,9 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        public IEnumerable<ILocation> TallyLocations
+        public IEnumerable<Location> TallyLocations
         {
-            get { return (IEnumerable<ILocation>)GetValue(TallyLocationsProperty); }
+            get { return (IEnumerable<Location>)GetValue(TallyLocationsProperty); }
             set { SetValue(TallyLocationsProperty, value); }
         }
 
