@@ -20,15 +20,7 @@ namespace LibPipeline
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
 
             timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += (o, e) =>
-                {
-                    if (this.locationStack.Count > 0)
-                    {
-                        this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
-                        this.locationStack.Clear();
-                        timer.Stop();
-                    }
-                };
+            timer.Tick += timer_Tick;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
@@ -154,11 +146,23 @@ namespace LibPipeline
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
+
             this.locationStack.Push(nearestLocation);
 
             if (!timer.IsEnabled)
             {
                 timer.Start();
+            }
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (this.locationStack.Count > 0)
+            {
+                // this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
+                this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
+                this.locationStack.Clear();
+                timer.Stop();
             }
         }
     }

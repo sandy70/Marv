@@ -57,17 +57,8 @@ namespace Marv
         public static readonly DependencyProperty NetworkFileNamesProperty =
         DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
-        public static readonly DependencyProperty ProfileLocationsProperty =
-        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<Location>), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(Location), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
-
-        public static readonly DependencyProperty SelectedTallyLocationProperty =
-        DependencyProperty.Register("SelectedTallyLocation", typeof(Location), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
@@ -80,9 +71,6 @@ namespace Marv
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
-
-        public static readonly DependencyProperty TallyLocationsProperty =
-        DependencyProperty.Register("TallyLocations", typeof(IEnumerable<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public string CacheDirectory
         {
@@ -174,12 +162,6 @@ namespace Marv
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
-        public IEnumerable<Location> ProfileLocations
-        {
-            get { return (IEnumerable<Location>)GetValue(ProfileLocationsProperty); }
-            set { SetValue(ProfileLocationsProperty, value); }
-        }
-
         public LocationValue SelectedLocationValue
         {
             get
@@ -199,24 +181,6 @@ namespace Marv
                     graph.Value = graphValue;
                 }
             }
-        }
-
-        public Location SelectedProfileLocation
-        {
-            get
-            {
-                return (Location)GetValue(SelectedProfileLocationProperty);
-            }
-            set
-            {
-                SetValue(SelectedProfileLocationProperty, value);
-            }
-        }
-
-        public Location SelectedTallyLocation
-        {
-            get { return (Location)GetValue(SelectedTallyLocationProperty); }
-            set { SetValue(SelectedTallyLocationProperty, value); }
         }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues
@@ -241,12 +205,6 @@ namespace Marv
         {
             get { return (int)GetValue(StartYearProperty); }
             set { SetValue(StartYearProperty, value); }
-        }
-
-        public IEnumerable<Location> TallyLocations
-        {
-            get { return (IEnumerable<Location>)GetValue(TallyLocationsProperty); }
-            set { SetValue(TallyLocationsProperty, value); }
         }
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)

@@ -65,85 +65,29 @@
                                          MaxZoomLevel="21"
                                          StartExtent="20,-110,50,-80"
                                          Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                        <mapcontrol:MapItemsControl ItemsSource="{Binding MultiLocations, ElementName=Root}">
+                        <mapcontrol:MapItemsControl ItemsSource="{Binding MultiLocations, ElementName=Root}"
+                                                    SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                    SelectionChanged="MapItemsControl_SelectionChanged">
                             <mapcontrol:MapItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <libpipeline:PolylineControl CursorFill="#FFBA73"
-                                                     CursorStroke="#FFA040"
-                                                     Locations="{Binding}"
-                                                     SelectedLocation="{Binding SelectedItem}"
-                                                     Stroke="#FF8100"
-                                                     Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                                                                 CursorStroke="#FFA040"
+                                                                 Locations="{Binding}"
+                                                                 Stroke="#FF8100"/>
                                 </DataTemplate>
                             </mapcontrol:MapItemsControl.ItemTemplate>
-                            
-                                <!--<libpipeline:PolylineControl CursorFill="#FFBA73"
-                                                     CursorStroke="#FFA040"
-                                                     Locations="{Binding ProfileLocations, ElementName=Root}"
-                                                     SelectedLocation="{Binding SelectedProfileLocation, ElementName=Root, Mode=TwoWay}"
-                                                     Stroke="#FF8100"
-                                                     Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
-
-                            <libpipeline:PolylineControl CursorFill="#FFD673"
-                                                     CursorStroke="#FFC740"
-                                                     Locations="{Binding TallyLocations, ElementName=Root}"
-                                                     SelectedLocation="{Binding SelectedTallyLocation, ElementName=Root, Mode=TwoWay}"
-                                                     Stroke="#FFB400"
-                                                     Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>-->
                         </mapcontrol:MapItemsControl>
                     </libpipeline:MapView>
 
-                    <Border Background="#DDDDDD"
-                                Effect="{StaticResource ResourceKey=DropShadow}"
-                                Margin="10"
-                                Padding="5"
-                                VerticalAlignment="Top" HorizontalAlignment="Right"
-                                Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
-                                Width="350">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <telerik:RadRadioButton Name="ProfileRadioButton"
-                                                Grid.Row="0" Grid.Column="0"
-                                                Content="Profile"
-                                                Foreground="Black"
-                                                GroupName="PipelineInfo"
-                                                IsChecked="{Binding IsProfileSelected, ElementName=Root}" />
-
-                                <telerik:RadRadioButton Name="TallyRadioButton"
-                                                Grid.Row="0" Grid.Column="1"
-                                                Content="Tally"
-                                                Foreground="Black"
-                                                GroupName="PipelineInfo"
-                                                IsChecked="{Binding IsTallySelected, ElementName=Root}"/>
-
-                                <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                 AutoGeneratePropertyDefinitions="True"
-                                                 DescriptionPanelVisibility="Collapsed"
-                                                 IsReadOnly="True"
-                                                 Item="{Binding SelectedProfileLocation, ElementName=Root}"
-                                                 Visibility="{Binding IsProfileSelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
-
-                                <telerik:RadPropertyGrid Name="PipelineTallyPropertyGrid"
-                                                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                AutoGeneratePropertyDefinitions="True"
-                                                DescriptionPanelVisibility="Collapsed"
-                                                IsReadOnly="True"
-                                                Item="{Binding SelectedTallyLocation, ElementName=Root}"
-                                                Visibility="{Binding IsTallySelected, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
-                            </Grid>
-                        </Border>
-
-                    <!-- The statusbar -->
+                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                             AutoGeneratePropertyDefinitions="True"
+                                             DescriptionPanelVisibility="Collapsed"
+                                             Width="350"
+                                             HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             IsReadOnly="True"
+                                             Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                             Margin="10"/>
 
                 </Grid>
 

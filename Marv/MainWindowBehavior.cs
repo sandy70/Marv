@@ -38,13 +38,13 @@ namespace Marv
             if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
-                int nLocations = window.ProfileLocations.Count();
+                int nLocations = window.MultiLocations.SelectedItem.Count();
                 int nCompleted = 0;
 
-                foreach (var location in window.ProfileLocations)
+                foreach (var location in window.MultiLocations.SelectedItem)
                 {
                     await window.LocationValueStore.GetLocationValueAsync(location);
-                    window.SelectedProfileLocation = location;
+                    window.MultiLocations.SelectedItem.SelectedItem = location;
                     Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
                 }
             }
@@ -82,14 +82,12 @@ namespace Marv
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     window.PopupControl.ShowTextIndeterminate("Reading Profile");
-                    // window.ProfileLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
                     window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName));
                     window.PopupControl.Hide();
 
                     // window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
 
                     window.PopupControl.ShowTextIndeterminate("Reading tally");
-                    // window.TallyLocations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName);
                     window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName));
                     window.PopupControl.Hide();
                 }));

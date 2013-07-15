@@ -27,7 +27,7 @@
                                 StrokeThickness="10" />
 
         <mapcontrol:MapPanel Name="MapPanel"
-                             Visibility="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
+                             Visibility="{Binding SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
             <Ellipse Name="Ellipse"
                      mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
                      Fill="{Binding CursorFill, ElementName=Root}"
