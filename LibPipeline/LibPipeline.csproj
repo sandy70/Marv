@@ -202,7 +202,6 @@
     <Compile Include="Pipeline\PipelineProperties.cs" />
     <Compile Include="Pipeline\PipelineSegmentInstant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Geometry\LocationWithId.cs" />
     <Compile Include="SelectableCollection.cs" />
     <Compile Include="TileLayers.cs" />
     <Compile Include="ValueEventArgs.cs" />

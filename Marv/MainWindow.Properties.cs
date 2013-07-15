@@ -64,7 +64,7 @@ namespace Marv
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(LocationWithId), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
+        DependencyProperty.Register("SelectedProfileLocation", typeof(Location), typeof(MainWindow), new PropertyMetadata(null, ChangedSelectedProfileLocation));
 
         public static readonly DependencyProperty SelectedTallyLocationProperty =
         DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
