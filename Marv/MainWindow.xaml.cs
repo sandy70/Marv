@@ -163,12 +163,19 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            var modelValue = window.SelectedLocationValue[window.SelectedYear];
-
-            foreach (var graph in window.Graphs)
+            if (window.SelectedLocationValue != null)
             {
-                var graphValue = modelValue[graph.Name];
-                graph.Value = graphValue;
+                var modelValue = window.SelectedLocationValue[window.SelectedYear];
+
+                foreach (var graph in window.Graphs)
+                {
+                    var graphValue = modelValue[graph.Name];
+                    graph.Value = graphValue;
+                }
+            }
+            else
+            {
+                window.PopupControl.ShowText("Computing data.");
             }
         }
 
