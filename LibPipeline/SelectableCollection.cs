@@ -10,7 +10,22 @@ namespace LibPipeline
         private bool isFirstSelectedOnAdd = true;
         private T selectedItem = default(T);
 
-        public event ValueEventHandler<T> SelectionChanged;
+        private ValueEventHandler<T> selectionChanged;
+
+        public event ValueEventHandler<T> SelectionChanged
+        {
+            add
+            {
+                if (this.selectionChanged == null || !this.selectionChanged.GetInvocationList().Contains(value))
+                {
+                    this.selectionChanged += value;
+                }
+            }
+            remove
+            {
+                this.selectionChanged -= value;
+            }
+        }
 
         public bool IsFirstSelectedOnAdd
         {
@@ -40,6 +55,8 @@ namespace LibPipeline
             {
                 this.selectedItem = value;
                 this.OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
+
+                this.OnSelectionChanged();
             }
         }
 
@@ -120,8 +137,8 @@ namespace LibPipeline
 
         private void OnSelectionChanged()
         {
-            if (this.SelectionChanged != null)
-                this.SelectionChanged(this, new ValueEventArgs<T> { Value = this.SelectedItem });
+            if (this.selectionChanged != null)
+                this.selectionChanged(this, new ValueEventArgs<T> { Value = this.SelectedItem });
         }
     }
 }

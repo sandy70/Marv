@@ -208,30 +208,48 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static async void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
             if (window.MultiLocations != null)
             {
-                window.MultiLocations.CollectionChanged += (o1, e1) =>
+                window.MultiLocations.SelectionChanged += async (s1, e1) =>
                     {
-                        foreach (var item in e1.NewItems)
-                        {
-                            var multiLocation = item as MultiLocation;
+                        var multiLocation = e1.Value;
 
-                            if (multiLocation != null)
-                            {
-                                (multiLocation as INotifyPropertyChanged).PropertyChanged += async (o2, e2) =>
+                        if (multiLocation != null)
+                        {
+                            multiLocation.SelectionChanged += async (s2, e2) =>
+                                {
+                                    var location = e2.Value;
+
+                                    if (location != null)
                                     {
-                                        if (e2.PropertyName.Equals("SelectedItem"))
-                                        {
-                                            window.SelectedLocationValue = await window.GetLocationValueAsync(multiLocation.SelectedItem);
-                                        }
-                                    };
+                                        window.SelectedLocationValue = await window.GetLocationValueAsync(location);
+                                    }
+                                };
+
+                            var loc = multiLocation.SelectedItem;
+
+                            if (loc != null)
+                            {
+                                window.SelectedLocationValue = await window.GetLocationValueAsync(loc);
                             }
                         }
                     };
+
+                var mLocation = window.MultiLocations.SelectedItem;
+
+                if (mLocation != null)
+                {
+                    var location = mLocation.SelectedItem;
+
+                    if (location != null)
+                    {
+                        window.SelectedLocationValue = await window.GetLocationValueAsync(location);
+                    }
+                }
             }
         }
 

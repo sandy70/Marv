@@ -68,9 +68,11 @@ namespace Marv
             else
             {
                 Console.WriteLine("LocationValueStore: location value for id: " + location.Guid.ToInt64() + " NOT found in database.");
+                this.PopupControl.ShowTextIndeterminate("Running model.");
                 locationValue = await NearNeutralPhSccModel.RunAsync(location, this.Graphs, this.StartYear, this.EndYear);
                 locationValue.Id = location.Guid.ToInt64();
                 await dataBase.WriteAsync(locationValue);
+                this.PopupControl.Hide();
             }
 
             return locationValue;

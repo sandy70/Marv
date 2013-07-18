@@ -90,9 +90,9 @@ namespace Marv
 
                     // window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
 
-                    window.PopupControl.ShowTextIndeterminate("Reading tally");
-                    window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName));
-                    window.PopupControl.Hide();
+                    // window.PopupControl.ShowTextIndeterminate("Reading tally");
+                    // window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.TallyFileName));
+                    // window.PopupControl.Hide();
                 }));
 
             KocDataReader kocDataReader = new KocDataReader();
