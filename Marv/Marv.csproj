@@ -94,9 +94,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\LinqToExcel\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Surface.Presentation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="NDatabase3">
       <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
     </Reference>
