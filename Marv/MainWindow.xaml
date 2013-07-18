@@ -69,8 +69,7 @@
                                          StartExtent="20,-110,50,-80"
                                          Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                         <mapcontrol:MapItemsControl ItemsSource="{Binding MultiLocations, ElementName=Root}"
-                                                    SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}"
-                                                    SelectionChanged="MapItemsControl_SelectionChanged">
+                                                    SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
                             <mapcontrol:MapItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <libpipeline:PolylineControl CursorFill="#FFBA73"

@@ -153,12 +153,6 @@ namespace Marv
             }
         }
 
-        private static async void ChangedSelectedProfileLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var window = d as MainWindow;
-            window.SelectedLocationValue = await window.LocationValueStore.GetLocationValueAsync(window.MultiLocations.SelectedItem.SelectedItem);
-        }
-
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
@@ -177,10 +171,6 @@ namespace Marv
             {
                 window.PopupControl.ShowText("Computing data.");
             }
-        }
-
-        private void MapItemsControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
         }
     }
 }
