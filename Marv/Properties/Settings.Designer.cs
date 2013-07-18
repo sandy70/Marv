@@ -156,5 +156,17 @@ namespace Marv.Properties {
                 this["NetworkFileNames"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsLogoVisible {
+            get {
+                return ((bool)(this["IsLogoVisible"]));
+            }
+            set {
+                this["IsLogoVisible"] = value;
+            }
+        }
     }
 }

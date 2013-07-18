@@ -9,7 +9,6 @@ namespace LibPipeline
     {
         private bool isFirstSelectedOnAdd = true;
         private T selectedItem = default(T);
-
         private ValueEventHandler<T> selectionChanged;
 
         public event ValueEventHandler<T> SelectionChanged

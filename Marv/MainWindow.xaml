@@ -15,6 +15,7 @@
         <Style TargetType="local:MainWindow">
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
@@ -56,7 +57,7 @@
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -112,7 +113,8 @@
                            Height="140" Width="560"
                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
                            IsHitTestVisible="False"
-                           Margin="10" />
+                           Margin="10"
+                           Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
 
                     <libpipeline:BnGraphControl Name="GraphControl"
                                                 Grid.Row="0"

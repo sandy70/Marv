@@ -2,7 +2,6 @@
 using LibPipeline;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
@@ -21,6 +20,9 @@ namespace Marv
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsLogoVisibleProperty =
+        DependencyProperty.Register("IsLogoVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsMapVisibleProperty =
         DependencyProperty.Register("IsMapVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -95,6 +97,12 @@ namespace Marv
         {
             get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
             set { SetValue(IsGroupButtonVisibleProperty, value); }
+        }
+
+        public bool IsLogoVisible
+        {
+            get { return (bool)GetValue(IsLogoVisibleProperty); }
+            set { SetValue(IsLogoVisibleProperty, value); }
         }
 
         public bool IsMapVisible
