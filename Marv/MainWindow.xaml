@@ -151,14 +151,14 @@
                                    FontSize="24" FontWeight="Bold"
                                    HorizontalContentAlignment="Center" />
 
-                        <surface:SurfaceSlider Grid.Column="1"
+                        <telerik:RadSlider Grid.Column="1"
                                                Background="Black"
                                                IsSnapToTickEnabled="True"
                                                Maximum="{Binding EndYear, ElementName=Root}"
                                                Minimum="{Binding StartYear, ElementName=Root}"
                                                TickPlacement="BottomRight"
                                                Value="{Binding SelectedYear, ElementName=Root}">
-                        </surface:SurfaceSlider>
+                        </telerik:RadSlider>
                     </Grid>
                 </Grid>
 
