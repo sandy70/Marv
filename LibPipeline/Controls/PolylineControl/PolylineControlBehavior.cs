@@ -37,7 +37,7 @@ namespace LibPipeline
             this.AssociatedObject.Ellipse.TouchMove += Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += Ellipse_TouchUp;
 
-            var mapView = this.AssociatedObject.Parent as MapView;
+            var mapView = this.AssociatedObject.FindParent<MapView>();
 
             if (mapView != null)
             {
@@ -124,6 +124,8 @@ namespace LibPipeline
             douglasPeuckerReducer.Tolerance = 5;
 
             this.AssociatedObject.SimplifiedLocations = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce());
+
+            Console.WriteLine("mapView_ZoomLevelChanged");
         }
 
         private void OnDown()
@@ -159,7 +161,6 @@ namespace LibPipeline
         {
             if (this.locationStack.Count > 0)
             {
-                // this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
                 this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
                 this.locationStack.Clear();
                 timer.Stop();
