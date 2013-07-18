@@ -145,7 +145,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                                   Content="{Binding Path=Value, ElementName=YearSlider}"
+                                   Content="{Binding SelectedYear, ElementName=Root}"
                                    Background="Black"
                                    Foreground="White"
                                    FontSize="24" FontWeight="Bold"
