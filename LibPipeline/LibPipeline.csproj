@@ -210,6 +210,7 @@
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="Controls\BnGraphControl\DiagramPartBehavior.cs" />
+    <Compile Include="ValueEventHandler.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

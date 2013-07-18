@@ -10,6 +10,8 @@ namespace LibPipeline
         private bool isFirstSelectedOnAdd = true;
         private T selectedItem = default(T);
 
+        public event ValueEventHandler<T> SelectionChanged;
+
         public bool IsFirstSelectedOnAdd
         {
             get
@@ -114,6 +116,12 @@ namespace LibPipeline
                     this.SelectedItem = default(T);
                 }
             }
+        }
+
+        private void OnSelectionChanged()
+        {
+            if (this.SelectionChanged != null)
+                this.SelectionChanged(this, new ValueEventArgs<T> { Value = this.SelectedItem });
         }
     }
 }
