@@ -144,21 +144,23 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-
+                        
+                        <!-- Year Label -->
                         <Label Grid.Column="0"
                                    Content="{Binding SelectedYear, ElementName=Root}"
-                                   Background="Black"
-                                   Foreground="White"
+                                   Background="White"
+                                   Foreground="Black"
                                    FontSize="24" FontWeight="Bold"
                                    HorizontalContentAlignment="Center" />
 
+                        <!-- Year Slider -->
                         <telerik:RadSlider Grid.Column="1"
-                                               Background="Black"
-                                               IsSnapToTickEnabled="True"
-                                               Maximum="{Binding EndYear, ElementName=Root}"
-                                               Minimum="{Binding StartYear, ElementName=Root}"
-                                               TickPlacement="BottomRight"
-                                               Value="{Binding SelectedYear, ElementName=Root}">
+                                            Background="Black"
+                                            IsSnapToTickEnabled="True"
+                                            Maximum="{Binding EndYear, ElementName=Root}"
+                                            Minimum="{Binding StartYear, ElementName=Root}"
+                                            TickPlacement="BottomRight"
+                                            Value="{Binding SelectedYear, ElementName=Root}">
                         </telerik:RadSlider>
                     </Grid>
                 </Grid>
