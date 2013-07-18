@@ -454,7 +454,7 @@ namespace LibBn
 
             foreach (var node in structure.Vertices)
             {
-                node.Properties["group"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
+                node.Properties["groups"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
                 node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).Positions.String() + "\"";
                 node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
                 node.Properties["label"] = "\"" + this.GetVertex(node.Key).Name + "\"";
