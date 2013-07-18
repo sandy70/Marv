@@ -44,6 +44,9 @@
 
                 <telerik:RadMenuItem Name="EditSettingsMenuItem"
                                      Header="Settings" />
+
+                <telerik:RadMenuItem Name="RunModelMenuItem"
+                                     Header="Run Model" />
             </telerik:RadMenuItem>
         </telerik:RadMenu>
         
@@ -215,6 +218,28 @@
                                        HorizontalAlignment="Left" VerticalAlignment="Center"
                                        Margin="5" />
                 </StackPanel>
+            </Grid>
+            
+            <!-- Run Model Control -->
+            <Grid Name="RunModelControl"
+                  libpipeline:TransitionControl.DisplayName="RunModel"
+                  libpipeline:TransitionControl.IsHeaderVisible="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                
+                <libpipeline:SliderProgressBar Name="ModelProgressBar"
+                                               Grid.Row="0"
+                                               Height="100"
+                                               Margin="10"
+                                               SliderForeground="Blue"
+                                               Value="0"
+                                               VerticalAlignment="Top" />
+                
+                <telerik:RadButton Name="RunModelButton"
+                                   Grid.Row="1"
+                                   Content="Run Model" />
             </Grid>
         </libpipeline:TransitionControl>
         

@@ -64,6 +64,7 @@ namespace LibPipeline
 
                 var location = new Location();
                 location.Guid = id.ToGuid();
+                id++;
 
                 foreach (var colName in colNames)
                 {

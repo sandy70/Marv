@@ -2,6 +2,7 @@
 using LibPipeline;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
@@ -49,7 +50,7 @@ namespace Marv
         DependencyProperty.Register("LocationValueStore", typeof(LocationValueStore), typeof(MainWindow), new PropertyMetadata(new LocationValueStore()));
 
         public static readonly DependencyProperty MultiLocationsProperty =
-        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(new SelectableCollection<MultiLocation>()));
+        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
         public static readonly DependencyProperty MultiPointsProperty =
         DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
@@ -205,6 +206,33 @@ namespace Marv
         {
             get { return (int)GetValue(StartYearProperty); }
             set { SetValue(StartYearProperty, value); }
+        }
+
+        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as MainWindow;
+
+            if (window.MultiLocations != null)
+            {
+                window.MultiLocations.CollectionChanged += (o1, e1) =>
+                    {
+                        foreach (var item in e1.NewItems)
+                        {
+                            var multiLocation = item as MultiLocation;
+
+                            if (multiLocation != null)
+                            {
+                                (multiLocation as INotifyPropertyChanged).PropertyChanged += async (o2, e2) =>
+                                    {
+                                        if (e2.PropertyName.Equals("SelectedItem"))
+                                        {
+                                            window.SelectedLocationValue = await window.GetLocationValueAsync(multiLocation.SelectedItem);
+                                        }
+                                    };
+                            }
+                        }
+                    };
+            }
         }
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)

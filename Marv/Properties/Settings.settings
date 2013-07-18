@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2004</Value>
+      <Value Profile="(Default)">1980</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2012</Value>
+      <Value Profile="(Default)">2010</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
@@ -15,7 +15,7 @@
       <Value Profile="(Default)">D:\Data\Koc\Tally.xlsx</Value>
     </Setting>
     <Setting Name="ProfileFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\ProfileShifted.xlsx</Value>
+      <Value Profile="(Default)">D:\Data\BP\BpData.xlsx</Value>
     </Setting>
     <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -33,10 +33,11 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="NetworkFileNames" Type="LibPipeline.SelectableStringCollection" Scope="User">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;Resources\Networks\Blowout - with groups.net&lt;/string&gt;
-&lt;/ArrayOfString&gt;</Value>
+      <Value Profile="(Default)">
+          &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+            &lt;string&gt;Resources\Networks\Blowout - with groups.net&lt;/string&gt;
+          &lt;/ArrayOfString&gt;
+        </Value>
     </Setting>
   </Settings>
 </SettingsFile>

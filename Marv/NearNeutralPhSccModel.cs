@@ -9,37 +9,14 @@ namespace Marv
 {
     public class NearNeutralPhSccModel
     {
-        private object _lock = new object();
-        private int endYear;
-        private IEnumerable<BnGraph> graphs;
-        private int startYear;
-
-        public int EndYear
-        {
-            get { return endYear; }
-            set { endYear = value; }
-        }
-
-        public IEnumerable<BnGraph> Graphs
-        {
-            get { return graphs; }
-            set { graphs = value; }
-        }
-
-        public int StartYear
-        {
-            get { return startYear; }
-            set { startYear = value; }
-        }
-
-        public LocationValue Run(Location aLocation)
+        public static LocationValue Run(Location aLocation, IEnumerable<BnGraph> graphs, int startYear, int endYear)
         {
             Console.WriteLine("Running model with id: " + aLocation.Guid.ToInt64());
 
             var intervalValue = new LocationValue();
 
-            var sccGraph = this.Graphs.GetGraph("nnphscc");
-            var failureGraph = this.Graphs.GetGraph("nnphsccfailure");
+            var sccGraph = graphs.GetGraph("nnphscc");
+            var failureGraph = graphs.GetGraph("nnphsccfailure");
 
             var sccIntervalValue = new LocationValue();
             var failureIntervalValue = new LocationValue();
@@ -185,14 +162,11 @@ namespace Marv
             return intervalValue;
         }
 
-        public Task<LocationValue>  RunAsync(Location location)
+        public static Task<LocationValue> RunAsync(Location location, IEnumerable<BnGraph> graphs, int startYear, int endYear)
         {
             return Task.Run(() =>
             {
-                lock (this._lock)
-                {
-                    return this.Run(location);
-                }
+                return NearNeutralPhSccModel.Run(location, graphs, startYear, endYear);
             });
         }
     }

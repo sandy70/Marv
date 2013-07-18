@@ -1,5 +1,6 @@
 ﻿using LibPipeline;
 using NDatabase;
+using NDatabase.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,27 +45,36 @@ namespace Marv
             }
         }
 
-        public IEnumerable<T> GetValues(Func<T, bool> predicate)
+        public IEnumerable<T> ReadValues(Func<T, bool> predicate)
         {
             lock (this._lock)
             {
-                IEnumerable<T> locationValues;
+                IEnumerable<T> locationValues = null;
 
-                using (var odb = OdbFactory.Open(this.FileName))
+                try
                 {
-                    locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
+                    using (var odb = OdbFactory.Open(this.FileName))
+                    {
+                        locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
+                    }
+                }
+                catch(OdbRuntimeException exp)
+                {
+                    // We are having these problems when the file is corrupt.
+                    // So let's delete the file and try again
+                    // TODO
                 }
 
                 return locationValues;
             }
         }
 
-        public Task<IEnumerable<T>> GetValuesAsync(Func<T, bool> predicate)
+        public Task<IEnumerable<T>> ReadValuesAsync(Func<T, bool> predicate)
         {
-            return Task.Run(() => this.GetValues(predicate));
+            return Task.Run(() => this.ReadValues(predicate));
         }
 
-        public void Store(T anObject)
+        public void Write(T anObject)
         {
             lock (this._lock)
             {
@@ -77,9 +87,9 @@ namespace Marv
             }
         }
 
-        public Task StoreAsync(T anObject)
+        public Task WriteAsync(T anObject)
         {
-            return Task.Run(() => this.Store(anObject));
+            return Task.Run(() => this.Write(anObject));
         }
     }
 }

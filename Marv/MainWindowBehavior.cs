@@ -3,6 +3,7 @@ using LibPipeline;
 using Microsoft.Win32;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,7 +44,7 @@ namespace Marv
 
                 foreach (var location in window.MultiLocations.SelectedItem)
                 {
-                    await window.LocationValueStore.GetLocationValueAsync(location);
+                    var locationValue = await window.LocationValueStore.GetLocationValueAsync(location);
                     window.MultiLocations.SelectedItem.SelectedItem = location;
                     Console.WriteLine("Completed " + ++nCompleted + " of " + nLocations + " on " + DateTime.Now);
                 }
@@ -79,6 +80,8 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
+            window.MultiLocations = new SelectableCollection<MultiLocation>();
+
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     window.PopupControl.ShowTextIndeterminate("Reading Profile");
@@ -97,12 +100,6 @@ namespace Marv
             window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
             kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
-            window.NearNeutralPhSccModel.Graphs = window.Graphs;
-            window.NearNeutralPhSccModel.StartYear = window.StartYear;
-            window.NearNeutralPhSccModel.EndYear = window.EndYear;
-
-            window.LocationValueStore.Model = window.NearNeutralPhSccModel;
-
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
             window.RetractAllButton.Click += RetractAllButton_Click;
@@ -110,6 +107,30 @@ namespace Marv
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
             window.NetworkFilesAddButton.Click += NetworkFilesAddButton_Click;
             window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
+            window.RunModelButton.Click += RunModelButton_Click;
+            window.RunModelMenuItem.Click += RunModelMenuItem_Click;
+        }
+
+        private void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            window.TransitionControl.SelectElement("RunModelControl");
+        }
+
+        private async void RunModelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            int nLocations = window.MultiLocations.SelectedItem.Count();
+            int startIndex = 2000;
+            int nCompleted = startIndex;
+
+            foreach (var location in window.MultiLocations.SelectedItem.Skip(startIndex))
+            {
+                var locationValue = await window.GetLocationValueAsync(location);
+                window.MultiLocations.SelectedItem.SelectedItem = location;
+                window.ModelProgressBar.Value = (double)nCompleted++ / (double)nLocations * 100;
+            }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

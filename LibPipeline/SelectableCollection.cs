@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace LibPipeline
 {
-    public class SelectableCollection<T> : ObservableCollection<T>
+    public class SelectableCollection<T> : ObservableCollection<T>, INotifyPropertyChanged
     {
         private T selectedItem = default(T);
 

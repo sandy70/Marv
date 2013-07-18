@@ -25,7 +25,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2004")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1980")]
         public int StartYear {
             get {
                 return ((int)(this["StartYear"]));
@@ -37,7 +37,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2012")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2010")]
         public int EndYear {
             get {
                 return ((int)(this["EndYear"]));
@@ -73,7 +73,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\ProfileShifted.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\BP\\BpData.xlsx")]
         public string ProfileFileName {
             get {
                 return ((string)(this["ProfileFileName"]));
@@ -145,9 +145,9 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>Resources\\Networks\\Blowout - with groups.net</string>\r\n</ArrayOfString>")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n          <ArrayOfString xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+            "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n            <string>Resources\\Net" +
+            "works\\Blowout - with groups.net</string>\r\n          </ArrayOfString>\r\n        ")]
         public global::LibPipeline.SelectableStringCollection NetworkFileNames {
             get {
                 return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
