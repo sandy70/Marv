@@ -7,15 +7,10 @@ namespace LibPipeline
     public class PipelineChemistry : INotifyPropertyChanged
     {
         private double _CO2;
-
         private double _Fe2Plus;
-
         private double _H2S;
-
         private double _HAc;
-
         private double _O2;
-
         private double _pH;
 
         public PipelineChemistry()
