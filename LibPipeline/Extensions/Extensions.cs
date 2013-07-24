@@ -1,6 +1,7 @@
 ﻿using LibBn;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -192,6 +193,55 @@ namespace LibPipeline
             }
 
             return nearestLocation;
+        }
+
+        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations)
+        {
+            Location start = null;
+            Location middle = null;
+            Location end = null;
+
+            var index = 0;
+
+            var segments = new ObservableCollection<MultiLocationSegment>();
+
+            foreach (var location in locations)
+            {
+                start = middle;
+                middle = end;
+                end = location;
+
+                if (index == 1)
+                {
+                    segments.Add(new MultiLocationSegment
+                    {
+                        Middle = middle,
+                        End = end
+                    });
+                }
+                else
+                {
+                    segments.Add(new MultiLocationSegment
+                    {
+                        Start = start,
+                        Middle = middle,
+                        End = end
+                    });
+
+                    if (index == locations.Count() - 1)
+                    {
+                        segments.Add(new MultiLocationSegment
+                        {
+                            Start = middle,
+                            Middle = end
+                        });
+                    }
+                }
+
+                index++;
+            }
+
+            return segments;
         }
     }
 }
