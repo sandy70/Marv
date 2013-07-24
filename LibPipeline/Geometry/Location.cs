@@ -96,5 +96,10 @@ namespace LibPipeline
                 }
             }
         }
+
+        public override string ToString()
+        {
+            return this.Latitude + ", " + this.Longitude;
+        }
     }
 }
