@@ -1,6 +1,8 @@
 ﻿<UserControl x:Class="LibPipeline.SegmentedPolylineControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:local="clr-namespace:LibPipeline"
              xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,8 +13,13 @@
         <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
     
+    <i:Interaction.Behaviors>
+        <local:SegmentedPolylineControlBehavior />
+    </i:Interaction.Behaviors>
+    
     <Grid>
-        <mapcontrol:MapItemsControl ItemsSource="{Binding Segments, ElementName=Root}">
+        <mapcontrol:MapItemsControl Name="MapPolyline"
+                                    ItemsSource="{Binding Segments, ElementName=Root}">
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
@@ -26,8 +33,8 @@
         </mapcontrol:MapItemsControl>
         
 
-        <!--<mapcontrol:MapPanel Name="MapPanel"
-                             Visibility="{Binding SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
+        <mapcontrol:MapPanel Name="MapPanel"
+                             Visibility="Visible">
             <Ellipse Name="Ellipse"
                      mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
                      Fill="{Binding CursorFill, ElementName=Root}"
@@ -37,7 +44,6 @@
                      Stroke="{Binding CursorStroke, ElementName=Root}"
                      StrokeThickness="2"
                      Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
-            
-        </mapcontrol:MapPanel>-->
+        </mapcontrol:MapPanel>
     </Grid>
 </UserControl>

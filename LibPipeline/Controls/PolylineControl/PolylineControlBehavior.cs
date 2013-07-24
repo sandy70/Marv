@@ -124,8 +124,6 @@ namespace LibPipeline
             douglasPeuckerReducer.Tolerance = 5;
 
             this.AssociatedObject.SimplifiedLocations = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce());
-
-            Console.WriteLine("mapView_ZoomLevelChanged");
         }
 
         private void OnDown()
