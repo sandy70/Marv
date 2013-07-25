@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Linq;
 
 namespace LibPipeline
 {
@@ -86,7 +88,9 @@ namespace LibPipeline
                 var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
                 douglasPeuckerReducer.Tolerance = 5;
 
-                this.Segments = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce()).ToSegments();
+                this.Segments = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce())
+                                       .WithinExtent(mapView.Extent, isPadded: true)
+                                       .ToSegments();
             }
         }
 
