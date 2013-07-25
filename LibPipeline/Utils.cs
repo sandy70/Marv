@@ -84,5 +84,15 @@ namespace LibPipeline
         {
             return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
+
+        public static Location Mid(Location l1, Location l2)
+        {
+            // This is technically not correct but should be okay for small distances
+            return new Location
+            {
+                Latitude = (l1.Latitude + l2.Latitude) / 2,
+                Longitude = (l1.Longitude + l2.Longitude) / 2,
+            };
+        }
     }
 }
