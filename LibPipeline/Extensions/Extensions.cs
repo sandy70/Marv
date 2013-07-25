@@ -10,12 +10,12 @@ namespace LibPipeline
 {
     public static partial class Extensions
     {
-        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
+        public static LibPipeline.Location ToLibPipelineLocation(this MapControl.Location location)
         {
             return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
 
-        public static MapControl.Location AsMapControlLocation(this Location location)
+        public static MapControl.Location ToMapControlLocation(this Location location)
         {
             return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
@@ -202,6 +202,7 @@ namespace LibPipeline
             Location end = null;
 
             var index = 0;
+            var random = new Random();
 
             var segments = new ObservableCollection<MultiLocationSegment>();
 
@@ -216,24 +217,27 @@ namespace LibPipeline
                     segments.Add(new MultiLocationSegment
                     {
                         Middle = middle,
-                        End = end
+                        End = Utils.Mid(middle, end),
+                        Value = random.NextDouble()
                     });
                 }
                 else
                 {
                     segments.Add(new MultiLocationSegment
                     {
-                        Start = start,
+                        Start = Utils.Mid(start, middle),
                         Middle = middle,
-                        End = end
+                        End = Utils.Mid(middle, end),
+                        Value = random.NextDouble()
                     });
 
                     if (index == locations.Count() - 1)
                     {
                         segments.Add(new MultiLocationSegment
                         {
-                            Start = middle,
-                            Middle = end
+                            Start = Utils.Mid(middle, end),
+                            Middle = end,
+                            Value = random.NextDouble()
                         });
                     }
                 }
