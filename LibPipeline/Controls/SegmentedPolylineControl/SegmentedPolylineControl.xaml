@@ -27,7 +27,11 @@
                                             StrokeEndLineCap="Round"
                                             StrokeLineJoin="Round"
                                             StrokeStartLineCap="Round"
-                                            StrokeThickness="10" />
+                                            StrokeThickness="10">
+                        <i:Interaction.Behaviors>
+                            <local:MapPoylineBehavior />
+                        </i:Interaction.Behaviors>
+                    </mapcontrol:MapPolyline>
                 </DataTemplate>
             </mapcontrol:MapItemsControl.ItemTemplate>
         </mapcontrol:MapItemsControl>
