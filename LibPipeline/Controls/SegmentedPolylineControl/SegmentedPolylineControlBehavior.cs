@@ -41,8 +41,14 @@ namespace LibPipeline
 
             if (mapView != null)
             {
+                mapView.ViewportMoved += mapView_ViewportMoved;
                 mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
             }
+        }
+
+        private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
+        {
+            this.AssociatedObject.UpdateSegments();
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
