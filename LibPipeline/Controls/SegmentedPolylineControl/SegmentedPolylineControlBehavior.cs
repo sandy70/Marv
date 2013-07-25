@@ -1,23 +1,15 @@
-﻿using System;
+﻿using MapControl;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using System.Windows.Input;
-using System.Windows;
-using MapControl;
 
 namespace LibPipeline
 {
     public class SegmentedPolylineControlBehavior : Behavior<SegmentedPolylineControl>
     {
-        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
-        {
-            this.AssociatedObject.UpdateSegments();
-        }
-
         private bool isDragging = false;
         private Stack<Location> locationStack = new Stack<Location>();
         private DispatcherTimer timer = new DispatcherTimer();
@@ -99,8 +91,6 @@ namespace LibPipeline
         {
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
-
-            // this.OnDown();
         }
 
         private void MapPolyline_MouseUp(object sender, MouseButtonEventArgs e)
@@ -113,8 +103,11 @@ namespace LibPipeline
         {
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
+        }
 
-            // this.OnDown();
+        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
+        {
+            this.AssociatedObject.UpdateSegments();
         }
 
         private void OnDown()
