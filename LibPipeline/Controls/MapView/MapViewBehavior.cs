@@ -12,6 +12,7 @@ namespace LibPipeline
     class MapViewBehavior : Behavior<MapView>
     {
         private int discreteZoomLevel = 100;
+        private Location previousCenter = null;
 
         protected override void OnAttached()
         {
@@ -22,7 +23,7 @@ namespace LibPipeline
 
         private void AssociatedObject_ViewportChanged(object sender, EventArgs e)
         {
-            Console.WriteLine(this.AssociatedObject.Extent);
+            var mapView = this.AssociatedObject;
 
             int zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
 
@@ -36,11 +37,34 @@ namespace LibPipeline
                     Value = this.discreteZoomLevel
                 });
             }
+
+            var rect = new LocationRect
+            {
+                NorthWest = Utils.Mid(mapView.Center, mapView.Extent.NorthWest),
+                SouthEast = Utils.Mid(mapView.Center, mapView.Extent.SouthEast)
+            };
+
+            if (this.previousCenter == null)
+            {
+                this.previousCenter = mapView.Center;
+            }
+
+            if (!this.previousCenter.IsWithin(rect))
+            {
+                this.previousCenter = mapView.Center;
+
+                mapView.RaiseEvent(new ValueEventArgs<Location>
+                {
+                    RoutedEvent = MapView.ViewportMovedEvent,
+                    Value = this.previousCenter
+                });
+            }
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var mapControl = this.AssociatedObject;
+            this.previousCenter = mapControl.Center;
 
             if (mapControl.StartExtent != null)
             {
