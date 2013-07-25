@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interactivity;
-using System.Linq;
 
 namespace LibPipeline
 {
@@ -14,6 +13,30 @@ namespace LibPipeline
 
         public static readonly RoutedEvent ZoomLevelChangedEvent =
         EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<int>>), typeof(MapView));
+
+        public LocationRect Extent
+        {
+            get 
+            {
+                LocationRect rect = new LocationRect();
+
+                rect.NorthEast = this.ViewportPointToLocation(new Point { X = 0, Y = 0 }).ToLibPipelineLocation();
+                rect.SouthWest = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height }).ToLibPipelineLocation();
+
+                return rect;
+            }
+
+            set 
+            {
+                this.ZoomToExtent(south: value.South,
+                                  west: value.West,
+                                  north: value.North,
+                                  east: value.East);
+            }
+        }
+
+        public static readonly DependencyProperty ExtentProperty =
+        DependencyProperty.Register("Extent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
 
         public MapView()
             : base()
@@ -40,7 +63,7 @@ namespace LibPipeline
 
             foreach (var location in locations)
             {
-                points.Add(this.LocationToViewportPoint(location.AsMapControlLocation()));
+                points.Add(this.LocationToViewportPoint(location.ToMapControlLocation()));
             }
 
             return points;
@@ -52,7 +75,7 @@ namespace LibPipeline
 
             foreach (var point in points)
             {
-                locations.Add(this.ViewportPointToLocation(point).AsLibPipelineLocation());
+                locations.Add(this.ViewportPointToLocation(point).ToLibPipelineLocation());
             }
 
             return locations;
@@ -85,14 +108,6 @@ namespace LibPipeline
         public void ZoomToExtent(Location bottomLeft, Location topRight)
         {
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
-        }
-
-        public void ZoomToExtent(LocationRect locationRect)
-        {
-            this.ZoomToExtent(south: locationRect.South,
-                west: locationRect.West,
-                north: locationRect.North,
-                east: locationRect.East);
         }
 
         /// <summary>

@@ -22,6 +22,8 @@ namespace LibPipeline
 
         private void AssociatedObject_ViewportChanged(object sender, EventArgs e)
         {
+            Console.WriteLine(this.AssociatedObject.Extent);
+
             int zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
 
             if (zl != this.discreteZoomLevel)
@@ -42,10 +44,7 @@ namespace LibPipeline
 
             if (mapControl.StartExtent != null)
             {
-                mapControl.ZoomToExtent(north: mapControl.StartExtent.North,
-                    west: mapControl.StartExtent.West,
-                    south: mapControl.StartExtent.South,
-                    east: mapControl.StartExtent.East);
+                mapControl.Extent = mapControl.StartExtent;
             }
         }
     }
