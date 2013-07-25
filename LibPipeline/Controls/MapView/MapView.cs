@@ -8,35 +8,17 @@ namespace LibPipeline
 {
     public class MapView : Map
     {
+        public static readonly DependencyProperty ExtentProperty =
+        DependencyProperty.Register("Extent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
+
         public static readonly DependencyProperty StartExtentProperty =
         DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
 
+        public static readonly RoutedEvent ViewportMovedEvent =
+        EventManager.RegisterRoutedEvent("ViewportMoved", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Location>>), typeof(MapView));
+
         public static readonly RoutedEvent ZoomLevelChangedEvent =
         EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<int>>), typeof(MapView));
-
-        public LocationRect Extent
-        {
-            get 
-            {
-                LocationRect rect = new LocationRect();
-
-                rect.NorthEast = this.ViewportPointToLocation(new Point { X = 0, Y = 0 }).ToLibPipelineLocation();
-                rect.SouthWest = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height }).ToLibPipelineLocation();
-
-                return rect;
-            }
-
-            set 
-            {
-                this.ZoomToExtent(south: value.South,
-                                  west: value.West,
-                                  north: value.North,
-                                  east: value.East);
-            }
-        }
-
-        public static readonly DependencyProperty ExtentProperty =
-        DependencyProperty.Register("Extent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
 
         public MapView()
             : base()
@@ -45,10 +27,37 @@ namespace LibPipeline
             behaviors.Add(new MapViewBehavior());
         }
 
+        public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
+        {
+            add { AddHandler(ViewportMovedEvent, value); }
+            remove { RemoveHandler(ViewportMovedEvent, value); }
+        }
+
         public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
         {
             add { AddHandler(ZoomLevelChangedEvent, value); }
             remove { RemoveHandler(ZoomLevelChangedEvent, value); }
+        }
+
+        public LocationRect Extent
+        {
+            get
+            {
+                LocationRect rect = new LocationRect();
+
+                rect.NorthWest = this.ViewportPointToLocation(new Point { X = 0, Y = 0 }).ToLibPipelineLocation();
+                rect.SouthEast = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height }).ToLibPipelineLocation();
+
+                return rect;
+            }
+
+            set
+            {
+                this.ZoomToExtent(south: value.South,
+                                  west: value.West,
+                                  north: value.North,
+                                  east: value.East);
+            }
         }
 
         public LocationRect StartExtent
