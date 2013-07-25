@@ -173,5 +173,11 @@ namespace LibPipeline
                 }
             }
         }
+
+        public override string ToString()
+        {
+            string str = "N:" + this.North + " E:" + this.East + " S:" + this.South + " W:" + this.West;
+            return base.ToString() + ": " + str;
+        }
     }
 }
