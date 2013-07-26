@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace LibPipeline
 {
@@ -31,6 +32,14 @@ namespace LibPipeline
                     this.NorthEast.Longitude = this.East;
                     this.SouthEast.Longitude = this.East;
                 }
+            }
+        }
+
+        public double MaxDimension
+        {
+            get
+            {
+                return Math.Max(this.North - this.South, this.East - this.West);
             }
         }
 
@@ -176,8 +185,19 @@ namespace LibPipeline
 
         public override string ToString()
         {
-            string str = "N:" + this.North + " E:" + this.East + " S:" + this.South + " W:" + this.West;
+            string str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
             return base.ToString() + ": " + str;
+        }
+
+        public LocationRect GetPadded(double pad)
+        {
+            return new LocationRect
+            {
+                North = this.North + pad,
+                West = this.West - pad,
+                South = this.South - pad,
+                East = this.East + pad
+            };
         }
     }
 }
