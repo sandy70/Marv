@@ -118,12 +118,11 @@ namespace LibPipeline
 
             var mapView = sender as MapView;
 
-            var points = mapView.ILocationsToViewportPoints(this.AssociatedObject.Locations);
-
-            var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
-            douglasPeuckerReducer.Tolerance = 5;
-
-            this.AssociatedObject.SimplifiedLocations = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce());
+            this.AssociatedObject.SimplifiedLocations = this.AssociatedObject
+                                                            .Locations
+                                                            .ToViewportPoints(mapView)
+                                                            .Reduce(5)
+                                                            .ToLocations(mapView);
         }
 
         private void OnDown()
