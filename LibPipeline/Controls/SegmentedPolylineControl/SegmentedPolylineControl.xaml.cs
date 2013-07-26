@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Linq;
 
 namespace LibPipeline
 {
@@ -29,6 +27,9 @@ namespace LibPipeline
 
         public static readonly DependencyProperty SelectedLocationProperty =
         DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty ToleranceProperty =
+        DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
 
         public SegmentedPolylineControl()
         {
@@ -77,6 +78,12 @@ namespace LibPipeline
             set { SetValue(SelectedLocationProperty, value); }
         }
 
+        public double Tolerance
+        {
+            get { return (double)GetValue(ToleranceProperty); }
+            set { SetValue(ToleranceProperty, value); }
+        }
+
         public void UpdateSegments()
         {
             var mapView = this.FindParent<MapView>();
@@ -86,7 +93,7 @@ namespace LibPipeline
                 this.Segments = this.Locations
                                     .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension))
                                     .ToViewportPoints(mapView)
-                                    .Reduce(0.1)
+                                    .Reduce(this.Tolerance)
                                     .ToLocations(mapView)
                                     .ToSegments();
             }
