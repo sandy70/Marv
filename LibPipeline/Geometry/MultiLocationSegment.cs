@@ -5,7 +5,6 @@ namespace LibPipeline
 {
     public class MultiLocationSegment : ViewModel, IEnumerable<Location>
     {
-        private double _value;
         private Location end = null;
         private Location middle = null;
         private Location start = null;
@@ -66,14 +65,14 @@ namespace LibPipeline
         {
             get
             {
-                return this._value;
+                return this.Middle.Value;
             }
 
             set
             {
-                if (value != this._value)
+                if (value != this.Middle.Value)
                 {
-                    this._value = value;
+                    this.Middle.Value = value;
                     this.OnPropertyChanged("Value");
                 }
             }
