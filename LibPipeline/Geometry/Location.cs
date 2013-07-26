@@ -2,7 +2,7 @@
 
 namespace LibPipeline
 {
-    public class Location : Dynamic
+    public class Location : Dynamic, IPoint
     {
         private double _value;
         private Guid guid;
@@ -95,6 +95,54 @@ namespace LibPipeline
                     this.OnPropertyChanged("Value");
                 }
             }
+        }
+
+        public double X
+        {
+            get
+            {
+                return this.Longitude;
+            }
+
+            set
+            {
+                if (value != this.Longitude)
+                {
+                    this.Longitude = value;
+                    this.OnPropertyChanged("X");
+                }
+            }
+        }
+
+        public double Y
+        {
+            get
+            {
+                return this.Latitude;
+            }
+
+            set
+            {
+                if (value != this.Latitude)
+                {
+                    this.Latitude = value;
+                    this.OnPropertyChanged("Y");
+                }
+            }
+        }
+
+        public static implicit operator Location(MapControl.Location mLocation)
+        {
+            return new Location
+            {
+                Latitude = mLocation.Latitude,
+                Longitude = mLocation.Longitude
+            };
+        }
+
+        public bool IsWithin(LocationRect rect)
+        {
+            return this.Latitude > rect.South && this.Latitude < rect.North && this.Longitude > rect.West && this.Longitude < rect.East;
         }
 
         public override string ToString()
