@@ -83,14 +83,12 @@ namespace LibPipeline
 
             if (mapView != null && this.Locations != null)
             {
-                var points = mapView.ILocationsToViewportPoints(this.Locations);
-
-                var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
-                douglasPeuckerReducer.Tolerance = 5;
-
-                this.Segments = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce())
-                                       .WithinExtent(mapView.Extent, isPadded: true)
-                                       .ToSegments();
+                this.Segments = this.Locations
+                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension))
+                                    .ToViewportPoints(mapView)
+                                    .Reduce(0.1)
+                                    .ToLocations(mapView)
+                                    .ToSegments();
             }
         }
 
