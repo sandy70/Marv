@@ -1,4 +1,5 @@
 ﻿using LibBn;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,56 +11,11 @@ namespace LibPipeline
 {
     public static partial class Extensions
     {
-        public static LibPipeline.Location ToLibPipelineLocation(this MapControl.Location location)
-        {
-            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static MapControl.Location ToMapControlLocation(this Location location)
-        {
-            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static LocationRect Bounds(this IEnumerable<Location> locations)
-        {
-            var locationRect = new LocationRect();
-
-            locationRect.South = locations.Min(x => x.Latitude);
-            locationRect.West = locations.Min(x => x.Longitude);
-            locationRect.North = locations.Max(x => x.Latitude);
-            locationRect.East = locations.Max(x => x.Longitude);
-
-            return locationRect;
-        }
-
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
             else if (val.CompareTo(max) > 0) return max;
             else return val;
-        }
-
-        public static Dictionary<Location, double> Distances(this IEnumerable<Location> locations)
-        {
-            var distances = new Dictionary<Location, double>();
-
-            Location lastLocation;
-
-            if (locations.Count() > 0)
-            {
-                lastLocation = locations.First();
-                distances[lastLocation] = 0;
-
-                if (locations.Count() > 1)
-                {
-                    foreach (var location in locations.Skip(1))
-                    {
-                        distances[location] = distances[lastLocation] + Utils.Distance(lastLocation, location);
-                    }
-                }
-            }
-
-            return distances;
         }
 
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
@@ -171,81 +127,71 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
+        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10)
         {
-            if (locations == null || queryLocation == null)
+            var nPoints = points.Count();
+
+            // If points are null or too few then return
+            if (points == null || nPoints < 3)
             {
-                return null;
+                return points;
             }
 
-            double nearestDistance = Double.MaxValue;
-            var nearestLocation = locations.FirstOrDefault();
+            var first = points.First();
+            var last = points.Last();
 
-            foreach (var location in locations)
+            var maxDistance = double.MinValue;
+            var maxDistancePoint = first;
+
+            foreach (var point in points)
             {
-                double distance = Utils.Distance(location, queryLocation);
+                var distance = Utils.Distance(first, last, point);
 
-                if (distance < nearestDistance)
+                if (distance > maxDistance)
                 {
-                    nearestDistance = distance;
-                    nearestLocation = location;
+                    maxDistance = distance;
+                    maxDistancePoint = point;
                 }
             }
 
-            return nearestLocation;
+            if (maxDistance > tolerance)
+            {
+                return points.TakeUntil(x => x == maxDistancePoint)
+                             .Reduce(tolerance)
+                             .Concat(points.SkipWhile(x => x != maxDistancePoint)
+                                           .Reduce(tolerance)
+                                           .Skip(1));
+
+            }
+            else
+            {
+                first.Value = Math.Max(points.Take(nPoints / 2).Max(point => point.Value), first.Value);
+                last.Value = Math.Max(points.Skip(nPoints / 2).Max(point => point.Value), last.Value);
+
+                return points.Take(1).Concat(last);
+            }
         }
 
-        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations)
+        public static LibPipeline.Location ToLibPipelineLocation(this MapControl.Location location)
         {
-            Location start = null;
-            Location middle = null;
-            Location end = null;
+            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
 
-            var index = 0;
-            var random = new Random();
-
-            var segments = new ObservableCollection<MultiLocationSegment>();
-
-            foreach (var location in locations)
+        public static IEnumerable<Location> ToLocations(this IEnumerable<IPoint> points, MapView mapView)
+        {
+            return points.Select(point =>
             {
-                start = middle;
-                middle = end;
-                end = location;
+                Location location = mapView.ViewportPointToLocation(new Point { X = point.X, Y = point.Y });
+                location.Value = point.Value;
 
-                if (index == 1)
-                {
-                    segments.Add(new MultiLocationSegment
-                    {
-                        Middle = middle,
-                        End = Utils.Mid(middle, end),
-                        Value = random.NextDouble()
-                    });
-                }
-                else
-                {
-                    segments.Add(new MultiLocationSegment
-                    {
-                        Start = Utils.Mid(start, middle),
-                        Middle = middle,
-                        End = Utils.Mid(middle, end),
-                        Value = random.NextDouble()
-                    });
+                return location;
+            })
+            .ToList();
+        }
 
-                    if (index == locations.Count() - 1)
-                    {
-                        segments.Add(new MultiLocationSegment
-                        {
-                            Start = Utils.Mid(middle, end),
-                            Middle = end,
-                            Value = random.NextDouble()
-                        });
-                    }
-                }
-
-                index++;
-            }
-
-            return segments;
+        public static MapControl.Location ToMapControlLocation(this Location location)
+        {
+            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
     }
 }
