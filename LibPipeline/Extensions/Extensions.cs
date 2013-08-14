@@ -2,8 +2,9 @@
 using MoreLinq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -127,49 +128,74 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10)
+        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10, double minPoints = 2)
         {
             var nPoints = points.Count();
 
             // If points are null or too few then return
-            if (points == null || nPoints < 3)
+            if (points == null || nPoints <= minPoints)
             {
                 return points;
             }
 
-            var first = points.First();
-            var last = points.Last();
-
-            var maxDistance = double.MinValue;
-            var maxDistancePoint = first;
-
-            foreach (var point in points)
+            if (nPoints <= minPoints)
             {
-                var distance = Utils.Distance(first, last, point);
-
-                if (distance > maxDistance)
-                {
-                    maxDistance = distance;
-                    maxDistancePoint = point;
-                }
-            }
-
-            if (maxDistance > tolerance)
-            {
-                return points.TakeUntil(x => x == maxDistancePoint)
-                             .Reduce(tolerance)
-                             .Concat(points.SkipWhile(x => x != maxDistancePoint)
-                                           .Reduce(tolerance)
-                                           .Skip(1));
-
+                return points;
             }
             else
             {
-                first.Value = Math.Max(points.Take(nPoints / 2).Max(point => point.Value), first.Value);
-                last.Value = Math.Max(points.Skip(nPoints / 2).Max(point => point.Value), last.Value);
+                var first = points.First();
+                var last = points.Last();
 
-                return points.Take(1).Concat(last);
+                var maxDistance = double.MinValue;
+                var maxDistancePoint = first;
+
+                foreach (var point in points)
+                {
+                    var distance = Utils.Distance(first, last, point);
+
+                    if (distance > maxDistance)
+                    {
+                        maxDistance = distance;
+                        maxDistancePoint = point;
+                    }
+                }
+
+                if (maxDistance > tolerance)
+                {
+                    return points.TakeUntil(x => x == maxDistancePoint)
+                                    .Reduce(tolerance, minPoints)
+                                    .Concat(points.SkipWhile(x => x != maxDistancePoint)
+                                                .Reduce(tolerance, minPoints)
+                                                .Skip(1));
+                }
+                else
+                {
+                    var testIndex = (int)(nPoints / minPoints);
+                    IPoint nearest = points.First();
+
+                    var p = points.Where((point, i) =>
+                            {
+                                if ((i == 0) || (i == nPoints - 1) || (i % testIndex == 0))
+                                {
+                                    nearest = point;
+                                    return true;
+                                }
+                                else
+                                {
+                                    nearest.Value = Math.Max(nearest.Value, point.Value);
+                                    return false;
+                                }
+                            });
+
+                    return p;
+                }
             }
+        }
+
+        public static Task<IEnumerable<IPoint>> ReduceAsync(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Run(() => points.Reduce(tolerance, minPoints), cancellationToken);
         }
 
         public static LibPipeline.Location ToLibPipelineLocation(this MapControl.Location location)
