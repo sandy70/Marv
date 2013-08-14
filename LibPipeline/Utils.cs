@@ -101,5 +101,21 @@ namespace LibPipeline
                 };
             }
         }
+
+        public static double Distance(IPoint p1, IPoint p2, IPoint p)
+        {
+            var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
+
+            var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+            
+            var height = area / bottom * 2;
+
+            return height;
+        }
+
+        public static double Distance(IPoint p1, IPoint p2)
+        {
+            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+        }
     }
 }
