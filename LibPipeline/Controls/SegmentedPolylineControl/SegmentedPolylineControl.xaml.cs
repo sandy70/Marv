@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,6 +11,9 @@ namespace LibPipeline
 {
     public partial class SegmentedPolylineControl : UserControl
     {
+        private Task<IEnumerable<IPoint>> reductionTask = null;
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+
         public static readonly DependencyProperty CursorFillProperty =
         DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
@@ -30,6 +37,9 @@ namespace LibPipeline
 
         public static readonly DependencyProperty ToleranceProperty =
         DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
+
+        public static readonly DependencyProperty ValueMemberPathProperty =
+        DependencyProperty.Register("ValueMemberPath", typeof(string), typeof(SegmentedPolylineControl), new PropertyMetadata("Value"));
 
         public SegmentedPolylineControl()
         {
@@ -84,6 +94,12 @@ namespace LibPipeline
             set { SetValue(ToleranceProperty, value); }
         }
 
+        public string ValueMemberPath
+        {
+            get { return (string)GetValue(ValueMemberPathProperty); }
+            set { SetValue(ValueMemberPathProperty, value); }
+        }
+
         public void UpdateSegments()
         {
             var mapView = this.FindParent<MapView>();
@@ -91,11 +107,42 @@ namespace LibPipeline
             if (mapView != null && this.Locations != null)
             {
                 this.Segments = this.Locations
-                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension))
-                                    .ToViewportPoints(mapView)
-                                    .Reduce(this.Tolerance)
+                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension * 2))
+                                    .ToViewportPoints(mapView, this.ValueMemberPath)
+                                    .Reduce(this.Tolerance, 0.1)
                                     .ToLocations(mapView)
                                     .ToSegments();
+            }
+        }
+
+        public async Task UpdateSegmentsAsync()
+        {
+            var mapView = this.FindParent<MapView>();
+
+            if (mapView != null && this.Locations != null)
+            {
+                if (this.reductionTask == null)
+                {
+                    Console.WriteLine("No task running.");
+                }
+                else if(this.reductionTask.Status == TaskStatus.Running)
+                {
+                    Console.WriteLine("Task running.");
+                    this.tokenSource.Cancel();
+                    this.reductionTask.Wait();
+                }
+
+                this.tokenSource = new CancellationTokenSource();
+
+                this.reductionTask = this.Locations
+                                         .ToViewportPoints(mapView, this.ValueMemberPath)
+                                         .ReduceAsync(this.Tolerance, 5, this.tokenSource.Token);
+
+                var reducedPoints = await this.reductionTask;
+
+                this.Segments = reducedPoints.ToLocations(mapView)
+                                             .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension))
+                                             .ToSegments();
             }
         }
 
