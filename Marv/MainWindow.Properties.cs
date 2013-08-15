@@ -186,8 +186,11 @@ namespace Marv
 
                 foreach (var graph in this.Graphs)
                 {
-                    var graphValue = modelValue[graph.Name];
-                    graph.Value = graphValue;
+                    if (modelValue.ContainsKey(graph.Name))
+                    {
+                        var graphValue = modelValue[graph.Name];
+                        graph.Value = graphValue;
+                    }
                 }
             }
         }

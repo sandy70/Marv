@@ -24,10 +24,10 @@
       <Value Profile="(Default)">.\</Value>
     </Setting>
     <Setting Name="IsMapVisible" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsYearSliderVisible" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IsMenuVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -35,7 +35,8 @@
     <Setting Name="NetworkFileNames" Type="LibPipeline.SelectableStringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;Resources\Networks\Blowout - with groups.net&lt;/string&gt;
+  &lt;string&gt;D:\Data\SCC\NNphSCC\NNpHSCC.net&lt;/string&gt;
+  &lt;string&gt;D:\Data\SCC\NNphSCC\NNpH_failure.net&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="IsLogoVisible" Type="System.Boolean" Scope="User">

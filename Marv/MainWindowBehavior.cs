@@ -85,7 +85,16 @@ namespace Marv
             await window.Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     window.PopupControl.ShowTextIndeterminate("Reading Profile");
-                    window.MultiLocations.Add(await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName));
+                    var locations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
+
+                    var random = new Random();
+
+                    foreach(var location in locations)
+                    {
+                        location.Value = random.NextDouble();
+                    }
+
+                    window.MultiLocations.Add(locations);
                     window.PopupControl.Hide();
 
                     // window.MapView.ZoomToExtent(window.ProfileLocations.Bounds());
@@ -109,6 +118,13 @@ namespace Marv
             window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
             window.RunModelButton.Click += RunModelButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
+
+            var earthquakes = await Utils.ReadEarthquakesAsync();
+
+            foreach (var eq in earthquakes)
+            {
+                Console.WriteLine("Earthquake of magnitude " + eq.Value + " at " + eq + " on " + eq["Date"]);
+            }
         }
 
         private void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)

@@ -15,6 +15,7 @@
     <libpipeline:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
     <libpipeline:DecimalToPercentageConverter x:Key="DecimalToPercentage" />
     <libpipeline:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
+    <libpipeline:DoubleToBrushConverter x:Key="DoubleToBrush" />
     <libpipeline:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
     <libpipeline:NullToVisibilityConverter x:Key="NullToVisibility" />
 </ResourceDictionary>
