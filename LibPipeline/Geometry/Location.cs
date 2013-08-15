@@ -149,5 +149,16 @@ namespace LibPipeline
         {
             return this.Latitude + ", " + this.Longitude;
         }
+
+        public static Location Parse(string locationString)
+        {
+            var parts = locationString.Split(" ".ToCharArray());
+
+            return new Location
+            {
+                Latitude = double.Parse(parts[0]),
+                Longitude = double.Parse(parts[1])
+            };
+        }
     }
 }
