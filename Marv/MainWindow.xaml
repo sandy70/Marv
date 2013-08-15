@@ -57,18 +57,18 @@
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
+                <Grid Grid.Column="0"
+                      Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                     <libpipeline:MapView Name="MapView"
                                          Grid.Column="0"
                                          IsManipulationEnabled="True"
                                          MaxZoomLevel="21"
-                                         StartExtent="20,-110,50,-80"
-                                         Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                         StartExtent="20,-110,50,-80">
                         <mapcontrol:MapItemsControl ItemsSource="{Binding MultiLocations, ElementName=Root}"
                                                     SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
                             <mapcontrol:MapItemsControl.ItemContainerStyle>
