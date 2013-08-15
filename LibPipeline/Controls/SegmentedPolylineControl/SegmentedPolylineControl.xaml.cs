@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,9 +12,6 @@ namespace LibPipeline
 {
     public partial class SegmentedPolylineControl : UserControl
     {
-        private Task<IEnumerable<IPoint>> reductionTask = null;
-        private CancellationTokenSource tokenSource = new CancellationTokenSource();
-
         public static readonly DependencyProperty CursorFillProperty =
         DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
@@ -29,8 +27,11 @@ namespace LibPipeline
         public static readonly DependencyProperty LocationsProperty =
         DependencyProperty.Register("Locations", typeof(MultiLocation), typeof(SegmentedPolylineControl), new PropertyMetadata(null, ChangedLocations));
 
+        public static readonly DependencyProperty NameLocationProperty =
+        DependencyProperty.Register("NameLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SegmentsProperty =
-        DependencyProperty.Register("Segments", typeof(ObservableCollection<MultiLocationSegment>), typeof(SegmentedPolylineControl), new PropertyMetadata(new ObservableCollection<MultiLocationSegment>()));
+        DependencyProperty.Register("Segments", typeof(ObservableCollection<MultiLocationSegment>), typeof(SegmentedPolylineControl), new PropertyMetadata(new ObservableCollection<MultiLocationSegment>(), ChangedSegments));
 
         public static readonly DependencyProperty SelectedLocationProperty =
         DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
@@ -76,6 +77,12 @@ namespace LibPipeline
             set { SetValue(LocationsProperty, value); }
         }
 
+        public Location NameLocation
+        {
+            get { return (Location)GetValue(NameLocationProperty); }
+            set { SetValue(NameLocationProperty, value); }
+        }
+
         public ObservableCollection<MultiLocationSegment> Segments
         {
             get { return (ObservableCollection<MultiLocationSegment>)GetValue(SegmentsProperty); }
@@ -107,42 +114,11 @@ namespace LibPipeline
             if (mapView != null && this.Locations != null)
             {
                 this.Segments = this.Locations
-                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension * 2))
+                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
                                     .ToViewportPoints(mapView, this.ValueMemberPath)
                                     .Reduce(this.Tolerance, 0.1)
                                     .ToLocations(mapView)
                                     .ToSegments();
-            }
-        }
-
-        public async Task UpdateSegmentsAsync()
-        {
-            var mapView = this.FindParent<MapView>();
-
-            if (mapView != null && this.Locations != null)
-            {
-                if (this.reductionTask == null)
-                {
-                    Console.WriteLine("No task running.");
-                }
-                else if(this.reductionTask.Status == TaskStatus.Running)
-                {
-                    Console.WriteLine("Task running.");
-                    this.tokenSource.Cancel();
-                    this.reductionTask.Wait();
-                }
-
-                this.tokenSource = new CancellationTokenSource();
-
-                this.reductionTask = this.Locations
-                                         .ToViewportPoints(mapView, this.ValueMemberPath)
-                                         .ReduceAsync(this.Tolerance, 5, this.tokenSource.Token);
-
-                var reducedPoints = await this.reductionTask;
-
-                this.Segments = reducedPoints.ToLocations(mapView)
-                                             .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension))
-                                             .ToSegments();
             }
         }
 
@@ -155,6 +131,15 @@ namespace LibPipeline
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as SegmentedPolylineControl).UpdateSegments();
+        }
+
+        private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+
+            var nSegments = control.Segments.Count();
+
+            control.NameLocation = control.Segments.ElementAt(nSegments / 2).Middle;
         }
     }
 }
