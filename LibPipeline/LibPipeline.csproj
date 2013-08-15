@@ -154,12 +154,16 @@
     <Compile Include="Converters\DoubleToBrushConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DoubleToDoubleMapper.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
     <Compile Include="Geometry\MultiLocation.cs" />
     <Compile Include="Geometry\MultiLocationSegment.cs" />
     <Compile Include="Geometry\MultiLocationSegmentEnumerator.cs" />
     <Compile Include="ILocationToLocationConverter.cs" />
+    <Compile Include="IMapDoubleToDouble.cs" />
     <Compile Include="IPoint.cs" />
+    <Compile Include="MapDoubleToDouble.cs" />
+    <Compile Include="MapEarthquakeMagnitudeToRadius.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnStatesControl\BnStatesControlBehavior.cs" />
@@ -184,7 +188,6 @@
     </Compile>
     <Compile Include="Countries.cs" />
     <Compile Include="Geometry\Dynamic.cs" />
-    <Compile Include="EarthquakeService.cs" />
     <Compile Include="IEnumerableILocationToIEnumerableLocationConverter.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />

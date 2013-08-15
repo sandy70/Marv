@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace LibPipeline
+namespace LibPipeline 
 {
     [ValueConversion(typeof(bool), typeof(string))]
     public class BooleanToStringConverter : DependencyObject, IValueConverter
