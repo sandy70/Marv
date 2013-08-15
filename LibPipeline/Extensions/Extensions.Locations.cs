@@ -101,7 +101,7 @@ namespace LibPipeline
             return segments;
         }
 
-        public static IEnumerable<Location> ToViewportPoints(this IEnumerable<Location> locations, MapView mapView)
+        public static IEnumerable<Location> ToViewportPoints(this IEnumerable<Location> locations, MapView mapView, string valueMemberPath = "Value")
         {
             return locations.Select(location =>
             {
@@ -109,7 +109,7 @@ namespace LibPipeline
 
                 return new Location
                 {
-                    Value = location.Value,
+                    Value = (double)location[valueMemberPath],
                     X = point.X,
                     Y = point.Y
                 };
