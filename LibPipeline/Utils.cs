@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace LibPipeline
 {
@@ -42,6 +47,22 @@ namespace LibPipeline
             return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
         }
 
+        public static double Distance(IPoint p1, IPoint p2, IPoint p)
+        {
+            var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
+
+            var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+
+            var height = area / bottom * 2;
+
+            return height;
+        }
+
+        public static double Distance(IPoint p1, IPoint p2)
+        {
+            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+        }
+
         public static Color DoubleToColor(double value)
         {
             double fourValue = 4 * value;
@@ -52,14 +73,26 @@ namespace LibPipeline
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        public static Guid ToGuid(this long n)
+        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync()
         {
-            var guidBinary = new byte[16];
+            var webClient = new WebClient();
 
-            Array.Copy(Guid.NewGuid().ToByteArray(), 0, guidBinary, 0, 8);
-            Array.Copy(BitConverter.GetBytes(n), 0, guidBinary, 8, 8);
+            var stream = await webClient.OpenReadTaskAsync(new Uri("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.atom"));
 
-            return new Guid(guidBinary);
+            var xDocument = XDocument.Load(stream);
+
+            return xDocument.Root.Elements("{http://www.w3.org/2005/Atom}entry")
+                                 .Select(entry =>
+                                 {
+                                     var location = Location.Parse(entry.Element("{http://www.georss.org/georss}point").Value);
+
+                                     location.Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3));
+
+                                     location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
+                                     location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
+
+                                     return location;
+                                 });
         }
 
         public static double[,] MatrixStringToDouble(string[,] str)
@@ -80,11 +113,6 @@ namespace LibPipeline
             return dbl;
         }
 
-        public static long ToInt64(this Guid guid)
-        {
-            return BitConverter.ToInt64(guid.ToByteArray(), 8);
-        }
-
         public static Location Mid(Location l1, Location l2)
         {
             if (l1 == null || l2 == null)
@@ -102,20 +130,19 @@ namespace LibPipeline
             }
         }
 
-        public static double Distance(IPoint p1, IPoint p2, IPoint p)
+        public static Guid ToGuid(this long n)
         {
-            var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
+            var guidBinary = new byte[16];
 
-            var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-            
-            var height = area / bottom * 2;
+            Array.Copy(Guid.NewGuid().ToByteArray(), 0, guidBinary, 0, 8);
+            Array.Copy(BitConverter.GetBytes(n), 0, guidBinary, 8, 8);
 
-            return height;
+            return new Guid(guidBinary);
         }
 
-        public static double Distance(IPoint p1, IPoint p2)
+        public static long ToInt64(this Guid guid)
         {
-            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+            return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
     }
 }
