@@ -1,5 +1,4 @@
-﻿using MapControl;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
