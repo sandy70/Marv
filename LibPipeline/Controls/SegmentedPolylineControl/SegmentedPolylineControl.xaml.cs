@@ -116,7 +116,7 @@ namespace LibPipeline
                 this.Segments = this.Locations
                                     .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
                                     .ToViewportPoints(mapView, this.ValueMemberPath)
-                                    .Reduce(this.Tolerance, 0.1)
+                                    .Reduce(this.Tolerance)
                                     .ToLocations(mapView)
                                     .ToSegments();
             }
@@ -139,7 +139,10 @@ namespace LibPipeline
 
             var nSegments = control.Segments.Count();
 
-            control.NameLocation = control.Segments.ElementAt(nSegments / 2).Middle;
+            if (nSegments > 0)
+            {
+                control.NameLocation = control.Segments.ElementAt(nSegments / 2).Middle;
+            }
         }
     }
 }
