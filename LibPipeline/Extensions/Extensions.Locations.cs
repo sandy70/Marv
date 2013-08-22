@@ -84,15 +84,15 @@ namespace LibPipeline
                         Middle = middle,
                         End = Utils.Mid(middle, end),
                     });
+                }
 
-                    if (index == locations.Count() - 1)
+                if (index == locations.Count() - 1)
+                {
+                    segments.Add(new MultiLocationSegment
                     {
-                        segments.Add(new MultiLocationSegment
-                        {
-                            Start = Utils.Mid(middle, end),
-                            Middle = end,
-                        });
-                    }
+                        Start = Utils.Mid(middle, end),
+                        Middle = end,
+                    });
                 }
             }
 
