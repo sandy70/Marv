@@ -52,6 +52,9 @@ namespace LibPipeline
         public static readonly RoutedEvent StateDoubleClickedEvent =
         EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
 
+        public static readonly DependencyProperty ZoomProperty =
+        DependencyProperty.Register("Zoom", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
+
         private Dictionary<BnGraph, string> selectedGroups = new Dictionary<BnGraph, string>();
 
         public BnGraphControl()
@@ -154,6 +157,12 @@ namespace LibPipeline
         {
             get { return (double)GetValue(ShapeOpacityProperty); }
             set { SetValue(ShapeOpacityProperty, value); }
+        }
+
+        public double Zoom
+        {
+            get { return (double)GetValue(ZoomProperty); }
+            set { SetValue(ZoomProperty, value); }
         }
 
         public void UpdateDisplayGraphToDefaultGroups()

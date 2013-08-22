@@ -45,8 +45,8 @@ namespace LibPipeline
             {
                 LocationRect rect = new LocationRect();
 
-                rect.NorthWest = this.ViewportPointToLocation(new Point { X = 0, Y = 0 }).ToLibPipelineLocation();
-                rect.SouthEast = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height }).ToLibPipelineLocation();
+                rect.NorthWest = this.ViewportPointToLocation(new Point { X = 0, Y = 0 });
+                rect.SouthEast = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height });
 
                 return rect;
             }
@@ -84,7 +84,7 @@ namespace LibPipeline
 
             foreach (var point in points)
             {
-                locations.Add(this.ViewportPointToLocation(point).ToLibPipelineLocation());
+                locations.Add(this.ViewportPointToLocation(point));
             }
 
             return locations;

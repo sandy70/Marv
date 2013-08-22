@@ -96,24 +96,23 @@ namespace LibPipeline
                 }
             }
 
-            Console.WriteLine("nSegments: " + segments.Count);
-
             return segments;
         }
 
         public static IEnumerable<Location> ToViewportPoints(this IEnumerable<Location> locations, MapView mapView, string valueMemberPath = "Value")
         {
             return locations.Select(location =>
-            {
-                var point = mapView.LocationToViewportPoint(location.ToMapControlLocation());
+                                {
+                                    var point = mapView.LocationToViewportPoint(location.ToMapControlLocation());
 
-                return new Location
-                {
-                    Value = (double)location[valueMemberPath],
-                    X = point.X,
-                    Y = point.Y
-                };
-            }).ToList();
+                                    return new Location
+                                    {
+                                        Value = (double)location[valueMemberPath],
+                                        X = point.X,
+                                        Y = point.Y
+                                    };
+                                })
+                            .ToList();
         }
 
         public static IEnumerable<Location> Within(this IEnumerable<Location> locations, LocationRect rect)

@@ -86,13 +86,7 @@ namespace Marv
                 {
                     window.PopupControl.ShowTextIndeterminate("Reading Profile");
                     var locations = await ExcelReader.ReadLocationsWithPropertiesAsync(Properties.Settings.Default.ProfileFileName);
-
-                    var random = new Random();
-
-                    foreach(var location in locations)
-                    {
-                        location.Value = random.NextDouble();
-                    }
+                    locations.Name = "Profile";
 
                     window.MultiLocations.Add(locations);
                     window.PopupControl.Hide();
@@ -104,10 +98,10 @@ namespace Marv
                     // window.PopupControl.Hide();
                 }));
 
-            KocDataReader kocDataReader = new KocDataReader();
-            window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
-            window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
-            kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
+            //KocDataReader kocDataReader = new KocDataReader();
+            //window.VertexValuesByYear = kocDataReader.ReadVertexValuesForAllYears();
+            //window.SelectedVertexValues = window.VertexValuesByYear.First().Value;
+            //kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
@@ -118,13 +112,6 @@ namespace Marv
             window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
             window.RunModelButton.Click += RunModelButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
-
-            var earthquakes = await Utils.ReadEarthquakesAsync();
-
-            foreach (var eq in earthquakes)
-            {
-                Console.WriteLine("Earthquake of magnitude " + eq.Value + " at " + eq + " on " + eq["Date"]);
-            }
         }
 
         private void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)

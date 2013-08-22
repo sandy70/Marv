@@ -198,21 +198,16 @@ namespace LibPipeline
             return Task.Run(() => points.Reduce(tolerance, minPoints), cancellationToken);
         }
 
-        public static LibPipeline.Location ToLibPipelineLocation(this MapControl.Location location)
-        {
-            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
         public static IEnumerable<Location> ToLocations(this IEnumerable<IPoint> points, MapView mapView)
         {
             return points.Select(point =>
-            {
-                Location location = mapView.ViewportPointToLocation(new Point { X = point.X, Y = point.Y });
-                location.Value = point.Value;
-
-                return location;
-            })
-            .ToList();
+                             {
+                                 Location location = mapView.ViewportPointToLocation(new Point { X = point.X, Y = point.Y });
+                                 location.Value = point.Value;
+ 
+                                 return location;
+                             })
+                         .ToList();
         }
 
         public static MapControl.Location ToMapControlLocation(this Location location)

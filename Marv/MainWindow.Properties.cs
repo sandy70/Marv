@@ -182,14 +182,17 @@ namespace Marv
             {
                 SetValue(SelectedLocationValueProperty, value);
 
-                var modelValue = this.SelectedLocationValue[this.SelectedYear];
-
-                foreach (var graph in this.Graphs)
+                if (this.SelectedLocationValue.ContainsKey(this.SelectedYear))
                 {
-                    if (modelValue.ContainsKey(graph.Name))
+                    var modelValue = this.SelectedLocationValue[this.SelectedYear];
+
+                    foreach (var graph in this.Graphs)
                     {
-                        var graphValue = modelValue[graph.Name];
-                        graph.Value = graphValue;
+                        if (modelValue.ContainsKey(graph.Name))
+                        {
+                            var graphValue = modelValue[graph.Name];
+                            graph.Value = graphValue;
+                        }
                     }
                 }
             }
