@@ -57,6 +57,8 @@ namespace LibPipeline
                 {
                     this.GetType().GetProperty(name).SetValue(this, value);
                 }
+
+                this.OnPropertyChanged(new PropertyChangedEventArgs(name));
             }
         }
     }

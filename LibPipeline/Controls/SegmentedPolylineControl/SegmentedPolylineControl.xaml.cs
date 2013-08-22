@@ -13,16 +13,16 @@ namespace LibPipeline
     public partial class SegmentedPolylineControl : UserControl
     {
         public static readonly DependencyProperty CursorFillProperty =
-        DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
+        DependencyProperty.Register("CursorFill", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
         public static readonly DependencyProperty CursorLocationProperty =
         DependencyProperty.Register("CursorLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty CursorStrokeProperty =
-        DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
+        DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
         public static readonly DependencyProperty IsCursorVisibleProperty =
-        DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(PolylineControl), new PropertyMetadata(true));
+        DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(SegmentedPolylineControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LocationsProperty =
         DependencyProperty.Register("Locations", typeof(MultiLocation), typeof(SegmentedPolylineControl), new PropertyMetadata(null, ChangedLocations));

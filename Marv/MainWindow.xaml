@@ -69,14 +69,16 @@
                                          IsManipulationEnabled="True"
                                          MaxZoomLevel="21"
                                          StartExtent="20,-110,50,-80">
-                        <mapcontrol:MapItemsControl ItemsSource="{Binding MultiLocations, ElementName=Root}"
+                        <mapcontrol:MapItemsControl Name="MapItemsControl"
+                                                    ItemsSource="{Binding MultiLocations, ElementName=Root}"
                                                     SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
                             <mapcontrol:MapItemsControl.ItemContainerStyle>
                                 <Style TargetType="mapcontrol:MapItem">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <libpipeline:SegmentedPolylineControl Locations="{Binding}" />
+                                                <libpipeline:SegmentedPolylineControl IsCursorVisible="{Binding [IsSelected]}"
+                                                                                      Locations="{Binding}" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>

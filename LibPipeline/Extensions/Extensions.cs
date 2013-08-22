@@ -128,15 +128,15 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10, double minPoints = 2)
+        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, int level = 0)
         {
-            var nPoints = points.Count();
-
             // If points are null or too few then return
-            if (points == null || nPoints <= minPoints)
+            if (points == null)
             {
                 return points;
             }
+
+            var nPoints = points.Count();
 
             if (nPoints <= minPoints)
             {
@@ -164,10 +164,10 @@ namespace LibPipeline
                 if (maxDistance > tolerance)
                 {
                     return points.TakeUntil(x => x == maxDistancePoint)
-                                    .Reduce(tolerance, minPoints)
-                                    .Concat(points.SkipWhile(x => x != maxDistancePoint)
-                                                .Reduce(tolerance, minPoints)
-                                                .Skip(1));
+                                 .Reduce(tolerance, minPoints, level + 1)
+                                 .Concat(points.SkipWhile(x => x != maxDistancePoint)
+                                               .Reduce(tolerance, minPoints, level + 1)
+                                               .Skip(1));
                 }
                 else
                 {
