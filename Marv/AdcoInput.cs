@@ -35,7 +35,7 @@ namespace Marv
 
         public static SelectableCollection<MultiLocation> Read()
         {
-            using (var package = new ExcelPackage(new FileInfo(@"D:\Data\ADCO02\ADCO 5.xlsx")))
+            using (var package = new ExcelPackage(new FileInfo(@"D:\Data\ADCO02\ADCO 6.xlsx")))
             {
                 var multiLocations = new SelectableCollection<MultiLocation>();
                 var nHeaderRows = 3;
@@ -43,7 +43,7 @@ namespace Marv
                 var rowIndex = nHeaderRows + 1;
                 var sheet = package.Workbook.Worksheets.Single(worksheet => worksheet.Name == "data");
 
-                var nameColumnIndex = sheet.GetColumnIndex("name");
+                var nameColumnIndex = sheet.GetColumnIndex("R1C1");
                 var name = sheet.GetValue(rowIndex, nameColumnIndex);
 
                 while (name != null)
@@ -66,23 +66,17 @@ namespace Marv
                     var pipelineEndRowIndex = pipelineStartRowIndices[pipelineIndex];
 
                     var multiLocation = new MultiLocation();
-                    multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "name") as string;
+                    multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "R1C1") as string;
                     multiLocation["StartYear"] = sheet.GetValue(pipelineStartRowIndex, "START");
 
                     for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
                     {
                         multiLocation.Add(new Location
                         {
-                            Latitude = (double)sheet.GetValue(rowIndex, "inlet_latitude"),
-                            Longitude = (double)sheet.GetValue(rowIndex, "inlet_longitude")
+                            Latitude = (double)sheet.GetValue(rowIndex, "Latitude"),
+                            Longitude = (double)sheet.GetValue(rowIndex, "Longitude")
                         });
                     }
-
-                    multiLocation.Add(new Location
-                    {
-                        Latitude = (double)sheet.GetValue(pipelineEndRowIndex - 1, "outlet_latitude"),
-                        Longitude = (double)sheet.GetValue(pipelineEndRowIndex - 1, "outlet_longitude")
-                    });
 
                     multiLocations.Add(multiLocation);
 
