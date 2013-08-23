@@ -202,7 +202,6 @@
     <Compile Include="LocationValueStore.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
-    <Compile Include="MultiPoint.cs" />
     <Compile Include="NearNeutralPhSccModel.cs" />
     <Compile Include="ObjectDataBase.cs" />
     <Compile Include="PopupControl.xaml.cs">
@@ -210,7 +209,6 @@
     </Compile>
     <Compile Include="RetractAllButtonBehavior.cs" />
     <Compile Include="SensorListener.cs" />
-    <Compile Include="YearScatterSeriesData.cs" />
     <Compile Include="Config.cs" />
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>

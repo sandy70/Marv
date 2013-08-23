@@ -105,6 +105,9 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read();
 
+            // Calculate start and end years
+
+
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
             window.RetractAllButton.Click += RetractAllButton_Click;
@@ -121,8 +124,6 @@ namespace Marv
         {
             foreach(var item in e.AddedItems)
             {
-                var multiLocation = item as MultiLocation;
-                multiLocation["IsSelected"] = true;
             }
         }
 
@@ -152,8 +153,6 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             var graph = window.Graphs["nnphscc"];
-
-            window.MultiPoints.Clear();
 
             //foreach (var selectedItem in window.AutoCompleteBox.SelectedItems)
             //{

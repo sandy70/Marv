@@ -198,6 +198,7 @@
     <Compile Include="Controls\SegmentedPolylineControl\SegmentedPolylineControl.xaml.cs">
       <DependentUpon>SegmentedPolylineControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MetaObject.cs" />
     <Compile Include="SelectableStringCollection.cs" />
     <Compile Include="PipelineValue.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />

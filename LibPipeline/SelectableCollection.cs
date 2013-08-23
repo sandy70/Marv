@@ -1,12 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 
 namespace LibPipeline
 {
     public class SelectableCollection<T> : ObservableCollection<T>
     {
+        private Dictionary<string, object> dictionary = new Dictionary<string, object>();
         private bool isFirstSelectedOnAdd = true;
         private T selectedItem = default(T);
         private ValueEventHandler<T> selectionChanged;
@@ -57,6 +62,47 @@ namespace LibPipeline
 
                 this.OnSelectionChanged();
             }
+        }
+
+        public object this[string name]
+        {
+            get
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    if (dictionary.ContainsKey(name))
+                    {
+                        return dictionary[name];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return this.GetType().GetProperty(name).GetValue(this);
+                }
+            }
+
+            set
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    dictionary[name] = value;
+                }
+                else
+                {
+                    this.GetType().GetProperty(name).SetValue(this, value);
+                }
+
+                this.OnPropertyChanged(new PropertyChangedEventArgs(name));
+            }
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return this.dictionary.ContainsKey(key);
         }
 
         public void RemoveSelected()

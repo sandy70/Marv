@@ -54,9 +54,6 @@ namespace Marv
         public static readonly DependencyProperty MultiLocationsProperty =
         DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
-        public static readonly DependencyProperty MultiPointsProperty =
-        DependencyProperty.Register("MultiPoints", typeof(ObservableCollection<MultiPoint>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<MultiPoint>()));
-
         public static readonly DependencyProperty NetworkFileNamesProperty =
         DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
@@ -147,12 +144,6 @@ namespace Marv
             set { SetValue(MultiLocationsProperty, value); }
         }
 
-        public ObservableCollection<MultiPoint> MultiPoints
-        {
-            get { return (ObservableCollection<MultiPoint>)GetValue(MultiPointsProperty); }
-            set { SetValue(MultiPointsProperty, value); }
-        }
-
         public NearNeutralPhSccModel NearNeutralPhSccModel
         {
             get
@@ -228,6 +219,13 @@ namespace Marv
 
             if (window.MultiLocations != null)
             {
+                if (window.MultiLocations.Count > 0)
+                {
+                    // Calculate start year and end year
+                    window.StartYear = window.MultiLocations.Min(multiLocation => (int)multiLocation["StartYear"]);
+                    window.EndYear = window.MultiLocations.Max(multiLocation => (int)multiLocation["StartYear"]);
+                }
+
                 window.MultiLocations.SelectionChanged += async (s1, e1) =>
                     {
                         var multiLocation = e1.Value;
@@ -265,6 +263,8 @@ namespace Marv
                     }
                 }
             }
+
+            
         }
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)

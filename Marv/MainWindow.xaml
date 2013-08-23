@@ -77,11 +77,13 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <libpipeline:SegmentedPolylineControl IsCursorVisible="{Binding [IsSelected]}"
+                                                <libpipeline:SegmentedPolylineControl IsCursorVisible="{Binding IsSelected}"
                                                                                       Locations="{Binding}" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
+                                    
+                                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                                 </Style>
                             </mapcontrol:MapItemsControl.ItemContainerStyle>
                         </mapcontrol:MapItemsControl>

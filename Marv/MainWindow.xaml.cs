@@ -141,12 +141,6 @@ namespace Marv
                     lastYearVertexValues = this.VertexValuesByYear[this.SelectedYear - 1];
                 }
 
-                // var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
-                // this.VertexValuesByYear[this.SelectedYear] = vertexValues;
-
-                // this.GraphControl.SourceGraph.CopyFrom(vertexValues);
-                // this.GraphControl.SourceGraph.UpdateMostProbableStates();
-
                 return true;
             }
             catch (SmileException exp)
@@ -157,22 +151,7 @@ namespace Marv
 
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var window = d as MainWindow;
-
-            if (window.SelectedLocationValue != null)
-            {
-                var modelValue = window.SelectedLocationValue[window.SelectedYear];
-
-                foreach (var graph in window.Graphs)
-                {
-                    var graphValue = modelValue[graph.Name];
-                    graph.Value = graphValue;
-                }
-            }
-            else
-            {
-                window.PopupControl.ShowText("Computing data.");
-            }
+            
         }
     }
 }

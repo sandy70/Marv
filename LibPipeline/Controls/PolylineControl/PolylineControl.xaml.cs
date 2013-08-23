@@ -91,8 +91,8 @@ namespace LibPipeline
 
         public void UpdateVisual()
         {
-            this.MapPanel.InvalidateVisual();
-            this.MapPanel.UpdateLayout();
+            // this.MapPanel.InvalidateVisual();
+            // this.MapPanel.UpdateLayout();
         }
 
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)

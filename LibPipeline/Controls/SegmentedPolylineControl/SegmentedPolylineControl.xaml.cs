@@ -22,7 +22,7 @@ namespace LibPipeline
         DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
         public static readonly DependencyProperty IsCursorVisibleProperty =
-        DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(SegmentedPolylineControl), new PropertyMetadata(false));
+        DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(SegmentedPolylineControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty LocationsProperty =
         DependencyProperty.Register("Locations", typeof(MultiLocation), typeof(SegmentedPolylineControl), new PropertyMetadata(null, ChangedLocations));
@@ -124,13 +124,20 @@ namespace LibPipeline
 
         public void UpdateVisual()
         {
-            this.MapPanel.InvalidateVisual();
-            this.MapPanel.UpdateLayout();
+            // this.MapPanel.InvalidateVisual();
+            // this.MapPanel.UpdateLayout();
         }
 
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as SegmentedPolylineControl).UpdateSegments();
+            var control = d as SegmentedPolylineControl;
+
+            if (control.Locations != null)
+            {
+                control.CursorLocation = control.Locations.First();
+            }
+
+            control.UpdateSegments();
         }
 
         private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)
