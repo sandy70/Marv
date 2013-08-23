@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,6 +17,12 @@ namespace LibPipeline
         public static readonly DependencyProperty CursorStrokeProperty =
         DependencyProperty.Register("CursorStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
+        public static readonly DependencyProperty DisabledStrokeProperty =
+        DependencyProperty.Register("DisabledStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
+
+        public static readonly DependencyProperty DoubleToBrushMapProperty =
+        DependencyProperty.Register("DoubleToBrushMap", typeof(IDoubleToBrushMap), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty IsCursorVisibleProperty =
         DependencyProperty.Register("IsCursorVisible", typeof(bool), typeof(SegmentedPolylineControl), new PropertyMetadata(true));
 
@@ -35,6 +37,9 @@ namespace LibPipeline
 
         public static readonly DependencyProperty SelectedLocationProperty =
         DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty StrokeProperty =
+        DependencyProperty.Register("Stroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Blue)));
 
         public static readonly DependencyProperty ToleranceProperty =
         DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
@@ -63,6 +68,18 @@ namespace LibPipeline
         {
             get { return (Brush)GetValue(CursorStrokeProperty); }
             set { SetValue(CursorStrokeProperty, value); }
+        }
+
+        public Brush DisabledStroke
+        {
+            get { return (Brush)GetValue(DisabledStrokeProperty); }
+            set { SetValue(DisabledStrokeProperty, value); }
+        }
+
+        public IDoubleToBrushMap DoubleToBrushMap
+        {
+            get { return (IDoubleToBrushMap)GetValue(DoubleToBrushMapProperty); }
+            set { SetValue(DoubleToBrushMapProperty, value); }
         }
 
         public bool IsCursorVisible
@@ -95,6 +112,12 @@ namespace LibPipeline
             set { SetValue(SelectedLocationProperty, value); }
         }
 
+        public Brush Stroke
+        {
+            get { return (Brush)GetValue(StrokeProperty); }
+            set { SetValue(StrokeProperty, value); }
+        }
+
         public double Tolerance
         {
             get { return (double)GetValue(ToleranceProperty); }
@@ -111,6 +134,20 @@ namespace LibPipeline
         {
             var mapView = this.FindParent<MapView>();
 
+            IDoubleToBrushMap doubleToBrushMap;
+            Brush stroke;
+
+            if (this.IsEnabled)
+            {
+                doubleToBrushMap = this.DoubleToBrushMap;
+                stroke = this.Stroke;
+            }
+            else
+            {
+                doubleToBrushMap = null;
+                stroke = this.DisabledStroke;
+            }
+
             if (mapView != null && this.Locations != null)
             {
                 this.Segments = this.Locations
@@ -118,7 +155,7 @@ namespace LibPipeline
                                     .ToViewportPoints(mapView, this.ValueMemberPath)
                                     .Reduce(this.Tolerance)
                                     .ToLocations(mapView)
-                                    .ToSegments();
+                                    .ToSegments(doubleToBrushMap, stroke);
             }
         }
 
@@ -126,6 +163,16 @@ namespace LibPipeline
         {
             // this.MapPanel.InvalidateVisual();
             // this.MapPanel.UpdateLayout();
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property.Name == "IsEnabled")
+            {
+                this.UpdateSegments();
+            }
         }
 
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)

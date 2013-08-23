@@ -1,7 +1,6 @@
 ﻿using LibBn;
 using LibPipeline;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
@@ -263,8 +262,6 @@ namespace Marv
                     }
                 }
             }
-
-            
         }
 
         private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -312,6 +309,23 @@ namespace Marv
             }
 
             window.Graphs = newGraphs;
+        }
+
+        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as MainWindow;
+
+            foreach (var multiLocation in window.MultiLocations)
+            {
+                if ((int)multiLocation["StartYear"] > window.SelectedYear)
+                {
+                    multiLocation.IsEnabled = false;
+                }
+                else
+                {
+                    multiLocation.IsEnabled = true;
+                }
+            }
         }
     }
 }

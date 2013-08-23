@@ -115,16 +115,8 @@ namespace Marv
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
             window.NetworkFilesAddButton.Click += NetworkFilesAddButton_Click;
             window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
-            window.MapItemsControl.SelectionChanged += MapItemsControl_SelectionChanged;
             window.RunModelButton.Click += RunModelButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
-        }
-
-        private void MapItemsControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach(var item in e.AddedItems)
-            {
-            }
         }
 
         private void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)

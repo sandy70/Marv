@@ -23,7 +23,7 @@
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
-                                            Stroke="{Binding Value, Converter={StaticResource ResourceKey=DoubleToBrush}}"
+                                            Stroke="{Binding ValueStroke}"
                                             StrokeEndLineCap="Round"
                                             StrokeLineJoin="Round"
                                             StrokeStartLineCap="Round"

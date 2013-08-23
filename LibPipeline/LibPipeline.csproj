@@ -160,6 +160,7 @@
     <Compile Include="Geometry\MultiLocationSegment.cs" />
     <Compile Include="Geometry\MultiLocationSegmentEnumerator.cs" />
     <Compile Include="ILocationToLocationConverter.cs" />
+    <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />
     <Compile Include="IPoint.cs" />
     <Compile Include="MapDoubleToDouble.cs" />

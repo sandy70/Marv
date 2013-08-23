@@ -7,7 +7,7 @@ using System.Windows.Media;
 namespace LibPipeline
 {
     [ValueConversion(typeof(double), typeof(Brush))]
-    public class DoubleToBrushConverter : IValueConverter
+    public class DoubleToBrushConverter : DependencyObject, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

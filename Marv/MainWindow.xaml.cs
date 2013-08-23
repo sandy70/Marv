@@ -149,9 +149,6 @@ namespace Marv
             }
         }
 
-        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            
-        }
+
     }
 }

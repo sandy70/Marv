@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace LibPipeline
 {
@@ -45,7 +46,7 @@ namespace LibPipeline
             return nearestLocation;
         }
 
-        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations)
+        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations, IDoubleToBrushMap doubleToBrushMap = null, Brush stroke = null)
         {
             Location start = null;
             Location middle = null;
@@ -74,6 +75,9 @@ namespace LibPipeline
                     {
                         Middle = middle,
                         End = Utils.Mid(middle, end),
+
+                        DoubleToBrushMap = doubleToBrushMap,
+                        Stroke = stroke
                     });
                 }
                 else
@@ -83,6 +87,9 @@ namespace LibPipeline
                         Start = Utils.Mid(start, middle),
                         Middle = middle,
                         End = Utils.Mid(middle, end),
+
+                        DoubleToBrushMap = doubleToBrushMap,
+                        Stroke = stroke
                     });
                 }
 
@@ -92,6 +99,9 @@ namespace LibPipeline
                     {
                         Start = Utils.Mid(middle, end),
                         Middle = end,
+
+                        DoubleToBrushMap = doubleToBrushMap,
+                        Stroke = stroke
                     });
                 }
             }
