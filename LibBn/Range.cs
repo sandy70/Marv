@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LibPipeline
+namespace LibBn
 {
     public class Range<T> where T : IComparable<T>
     {
