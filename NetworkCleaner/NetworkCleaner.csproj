@@ -94,9 +94,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibBn\LibBn.csproj">
+    <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
       <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
-      <Name>LibBn</Name>
+      <Name>LibNetwork</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

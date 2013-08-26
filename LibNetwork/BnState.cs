@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class BnState : INotifyPropertyChanged
     {
         private double _value;
         private string key;
-        private double max = double.MinValue;
-        private double min = double.MinValue;
+        private Range<double> range;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -28,38 +27,19 @@ namespace LibBn
             }
         }
 
-        public double Max
+        public Range<double> Range
         {
             get
             {
-                return this.max;
+                return this.range;
             }
 
             set
             {
-                if (value != this.max)
+                if (value != this.range)
                 {
-                    this.max = value;
-
-                    this.OnPropertyChanged("Max");
-                }
-            }
-        }
-
-        public double Min
-        {
-            get
-            {
-                return this.min;
-            }
-
-            set
-            {
-                if (value != this.min)
-                {
-                    this.min = value;
-
-                    this.OnPropertyChanged("Min");
+                    this.range = value;
+                    this.OnPropertyChanged("Range");
                 }
             }
         }

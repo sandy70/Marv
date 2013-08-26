@@ -1,4 +1,4 @@
-﻿using LibBn;
+﻿using LibNetwork;
 using System.Windows.Interactivity;
 
 namespace LibPipeline

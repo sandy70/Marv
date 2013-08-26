@@ -145,22 +145,6 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>D:\Data\SCC\NNphSCC\NNpHSCC.net</string>
-  <string>D:\Data\SCC\NNphSCC\NNpH_failure.net</string>
-</ArrayOfString>")]
-        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
-            get {
-                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
-            }
-            set {
-                this["NetworkFileNames"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IsLogoVisible {
             get {
@@ -168,6 +152,18 @@ namespace Marv.Properties {
             }
             set {
                 this["IsLogoVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_03.net")]
+        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
+            get {
+                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
+            }
+            set {
+                this["NetworkFileNames"] = value;
             }
         }
     }

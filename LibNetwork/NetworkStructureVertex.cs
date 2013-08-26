@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class NetworkStructureVertex
     {
@@ -93,9 +93,48 @@ namespace LibBn
             return positionsByGroup;
         }
 
-        public List<string> ParseStates()
+        public Range<double> ParseStateRange(int stateIndex)
         {
-            var states = new List<string>();
+            var key = "HR_State_" + stateIndex;
+            var range = new Range<double>();
+
+            if (this.Properties.ContainsKey(key))
+            {
+                var stateString = this.Properties[key];
+
+                if (String.IsNullOrEmpty(stateString))
+                {
+                    range = null;
+                }
+                else
+                {
+                    var stateStringParts = stateString.Split("\":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (stateStringParts.Count() == 2)
+                    {
+                        range = new Range<double>
+                        {
+                            Max = Double.Parse(stateStringParts[0]),
+                            Min = Double.Parse(stateStringParts[1])
+                        };
+                    }
+                    else
+                    {
+                        range = null;
+                    }
+                }
+            }
+            else
+            {
+                range = null;
+            }
+
+            return range;
+        }
+
+        public ObservableCollection<BnState> ParseStates()
+        {
+            var states = new ObservableCollection<BnState>();
             var subtype = "";
 
             if (this.Properties.TryGetValue("subtype", out subtype))
@@ -110,7 +149,16 @@ namespace LibBn
 
                     for (int i = 0; i < nStatesStrings - 1; i++)
                     {
-                        states.Add(String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]));
+                        states.Add(new BnState
+                        {
+                            Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
+
+                            Range = new Range<double>
+                            {
+                                Max = double.Parse(stateStrings[i + 1]),
+                                Min = double.Parse(stateStrings[i])
+                            }
+                        });
                     }
                 }
                 else if (subtype.Equals("number"))
@@ -123,7 +171,10 @@ namespace LibBn
 
                     for (int i = 0; i < nStatesStrings; i++)
                     {
-                        states.Add(stateStrings[i]);
+                        states.Add(new BnState
+                        {
+                            Key = stateStrings[i]
+                        });
                     }
                 }
             }
@@ -131,6 +182,7 @@ namespace LibBn
             {
                 var statesString = "";
                 var stateString = "";
+                var stateIndex = 0;
 
                 if (this.Properties.TryGetValue("states", out statesString))
                 {
@@ -141,7 +193,15 @@ namespace LibBn
                         {
                             if (isReading)
                             {
-                                states.Add(stateString);
+                                var range = this.ParseStateRange(stateIndex);
+
+                                states.Add(new BnState
+                                {
+                                    Key = stateString,
+                                    Range = range
+                                });
+
+                                stateIndex++;
                                 stateString = "";
                             }
 
@@ -180,8 +240,8 @@ namespace LibBn
 
                     for (int i = 0; i < nStatesStrings - 1; i++)
                     {
-                        states[i].Min = double.Parse(stateStrings[i]);
-                        states[i].Max = double.Parse(stateStrings[i + 1]);
+                        // states[i].Min = double.Parse(stateStrings[i]);
+                        // states[i].Max = double.Parse(stateStrings[i + 1]);
                     }
                 }
                 else if (subtype.Equals("number"))
@@ -194,8 +254,8 @@ namespace LibBn
 
                     for (int i = 0; i < nStatesStrings; i++)
                     {
-                        states[i].Min = double.Parse(stateStrings[i]);
-                        states[i].Max = double.Parse(stateStrings[i]);
+                        // states[i].Min = double.Parse(stateStrings[i]);
+                        // states[i].Max = double.Parse(stateStrings[i]);
                     }
                 }
             }

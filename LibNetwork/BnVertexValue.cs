@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class BnVertexValue : Dictionary<string, double> 
     {

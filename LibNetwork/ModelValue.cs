@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class ModelValue : Dictionary<string, BnGraphValue> { }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class Range<T> where T : IComparable<T>
     {

@@ -232,9 +232,9 @@
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibBn\LibBn.csproj">
-      <Project>{087FC54E-3111-48CA-8F13-20296CDB7C71}</Project>
-      <Name>LibBn</Name>
+    <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
+      <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
+      <Name>LibNetwork</Name>
     </ProjectReference>
     <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
       <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>

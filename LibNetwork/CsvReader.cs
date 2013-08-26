@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class CsvReader
     {

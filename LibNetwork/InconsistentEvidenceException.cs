@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LibBn
+namespace LibNetwork
 {
     [Serializable]
     public class InconsistentEvidenceException : Exception

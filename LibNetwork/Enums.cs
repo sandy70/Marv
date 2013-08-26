@@ -1,4 +1,4 @@
-﻿namespace LibBn
+﻿namespace LibNetwork
 {
     public enum BnInputType
     {

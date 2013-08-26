@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace LibPipeline
@@ -11,7 +12,7 @@ namespace LibPipeline
         private Location middle = null;
         private Location start = null;
         private Brush stroke;
-
+        
         public IDoubleToBrushMap DoubleToBrushMap
         {
             get
@@ -111,6 +112,7 @@ namespace LibPipeline
                 {
                     this.Middle.Value = value;
                     this.OnPropertyChanged("Value");
+                    this.OnPropertyChanged("ValueStroke");
                 }
             }
         }

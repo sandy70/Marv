@@ -346,13 +346,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Marv\LibBn\LibBn.csproj">
-      <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
-      <Name>LibBn</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Marv\LibPipeline\LibPipeline.csproj">
       <Project>{6cd9bd09-2796-4324-ba10-7dcb000ee8eb}</Project>
       <Name>LibPipeline</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
+      <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
+      <Name>LibNetwork</Name>
     </ProjectReference>
     <ProjectReference Include="..\MapControl\Caching\ImageFileCache\ImageFileCache.csproj">
       <Project>{86470440-fee2-4120-af5a-3762fb9c536f}</Project>

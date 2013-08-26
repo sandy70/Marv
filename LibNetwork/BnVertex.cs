@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class BnVertex : INotifyPropertyChanged
     {
@@ -363,7 +363,7 @@ namespace LibBn
             {
                 foreach (var state in this.States)
                 {
-                    numer += state.Min * vertexValue[state.Key];
+                    numer += state.Range.Min * vertexValue[state.Key];
                     denom += vertexValue[state.Key];
                 }
             }
@@ -371,7 +371,7 @@ namespace LibBn
             {
                 foreach (var state in this.States)
                 {
-                    double mid = (state.Min + state.Max) / 2;
+                    double mid = (state.Range.Min + state.Range.Max) / 2;
 
                     numer += mid * vertexValue[state.Key];
                     denom += vertexValue[state.Key];

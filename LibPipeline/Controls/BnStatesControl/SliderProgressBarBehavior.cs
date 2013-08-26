@@ -1,4 +1,4 @@
-﻿using LibBn;
+﻿using LibNetwork;
 using System;
 using System.Windows.Input;
 using System.Windows.Interactivity;

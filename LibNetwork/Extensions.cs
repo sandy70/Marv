@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-namespace LibBn
+namespace LibNetwork
 {
     public static class Extensions
     {

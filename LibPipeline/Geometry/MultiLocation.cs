@@ -39,7 +39,7 @@ namespace LibPipeline
 
             set
             {
-                if (value != this.isSelected)
+                if (this.IsEnabled)
                 {
                     this.isSelected = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs("IsSelected"));

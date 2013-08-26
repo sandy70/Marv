@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class LocationValue : Dictionary<int, ModelValue>, INotifyPropertyChanged
     {

@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class GraphCollection : ObservableCollection<BnGraph>
     {

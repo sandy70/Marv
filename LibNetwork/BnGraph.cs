@@ -1,5 +1,6 @@
 ﻿using QuickGraph;
 using QuickGraph.Algorithms.RankedShortestPath;
+using Smile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Diagrams.Core;
-using Smile;
-using System.IO;
 
-namespace LibBn
+namespace LibNetwork
 {
     [Serializable]
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
@@ -183,7 +182,7 @@ namespace LibBn
             {
                 return graph;
             }
-            
+
             graph.Network.UpdateBeliefs();
 
             var structure = NetworkStructure.Read(fileName);
@@ -207,10 +206,8 @@ namespace LibBn
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.Positions = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");
-                vertex.States = graph.Network.ParseStates(structureVertex.Key);
+                vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
-
-                structureVertex.ParseStatesMinMax(vertex.States);
 
                 if (string.IsNullOrWhiteSpace(vertex.Units))
                 {
@@ -346,16 +343,6 @@ namespace LibBn
             return partGraph;
         }
 
-        public BnGraphValue GetValueFromNetwork(Dictionary<string, VertexEvidence> graphEvidence)
-        {
-            lock (this._lock)
-            {
-                this.SetEvidence(graphEvidence);
-                this.UpdateBeliefs();
-                return this.GetValueFromNetwork();
-            }
-        }
-
         public BnGraphValue GetValueFromNetwork()
         {
             var graphValue = new BnGraphValue();
@@ -366,6 +353,16 @@ namespace LibBn
             }
 
             return graphValue;
+        }
+
+        public BnGraphValue GetValueFromNetwork(Dictionary<string, VertexEvidence> graphEvidence)
+        {
+            lock (this._lock)
+            {
+                this.SetEvidence(graphEvidence);
+                this.UpdateBeliefs();
+                return this.GetValueFromNetwork();
+            }
         }
 
         public BnVertex GetVertex(string key)

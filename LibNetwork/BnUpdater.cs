@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class BnUpdater
     {

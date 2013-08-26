@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibBn
+namespace LibNetwork
 {
     public class BnGraphValue : Dictionary<string, BnVertexValue> { }
 }

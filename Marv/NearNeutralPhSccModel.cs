@@ -1,4 +1,4 @@
-﻿using LibBn;
+﻿using LibNetwork;
 using LibPipeline;
 using System;
 using System.Collections.Generic;
@@ -166,7 +166,8 @@ namespace Marv
         {
             return Task.Run(() =>
             {
-                return NearNeutralPhSccModel.Run(location, graphs, startYear, endYear);
+                // return NearNeutralPhSccModel.Run(location, graphs, startYear, endYear);
+                return new LocationValue();
             });
         }
     }

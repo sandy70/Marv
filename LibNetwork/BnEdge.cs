@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Telerik.Windows.Diagrams.Core;
 
-namespace LibBn
+namespace LibNetwork
 {
     [Serializable]
     public class BnEdge : QuickGraph.Edge<BnVertex>, ILink<BnVertex>, INotifyPropertyChanged
