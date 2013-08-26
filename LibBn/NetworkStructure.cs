@@ -90,7 +90,7 @@ namespace LibBn
                 }
             }
 
-            structure.FixStates();
+            // structure.FixStates();
 
             return structure;
         }

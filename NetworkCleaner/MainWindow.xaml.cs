@@ -46,7 +46,7 @@ namespace NetworkCleaner
         private void CleanButton_Click(object sender, RoutedEventArgs e)
         {
             var structure = NetworkStructure.Read(this.InputFileName);
-            structure.FixStates();
+            // structure.FixStates();
             structure.Write(this.OutputFileName);
             this.StatusText = "Done!";
         }
