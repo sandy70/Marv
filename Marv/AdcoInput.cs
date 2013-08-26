@@ -77,7 +77,8 @@ namespace Marv
                         multiLocation.Add(new Location
                         {
                             Latitude = (double)sheet.GetValue(rowIndex, "Latitude"),
-                            Longitude = (double)sheet.GetValue(rowIndex, "Longitude")
+                            Longitude = (double)sheet.GetValue(rowIndex, "Longitude"),
+                            Name = sheet.GetValue(rowIndex, "section inlet").ToString()
                         });
                     }
 
