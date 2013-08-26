@@ -7,12 +7,12 @@ namespace LibPipeline
         /// <summary>
         /// Maximum value of the range
         /// </summary>
-        public T Maximum { get; set; }
+        public T Max { get; set; }
 
         /// <summary>
         /// Minimum value of the range
         /// </summary>
-        public T Minimum { get; set; }
+        public T Min { get; set; }
 
         /// <summary>
         /// Determines if another range is inside the bounds of this range
@@ -21,7 +21,7 @@ namespace LibPipeline
         /// <returns>True if range is inside, else false</returns>
         public Boolean ContainsRange(Range<T> Range)
         {
-            return this.IsValid() && Range.IsValid() && this.ContainsValue(Range.Minimum) && this.ContainsValue(Range.Maximum);
+            return this.IsValid() && Range.IsValid() && this.ContainsValue(Range.Min) && this.ContainsValue(Range.Max);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace LibPipeline
         /// <returns>True if the value is inside Range, else false</returns>
         public Boolean ContainsValue(T value)
         {
-            return (Minimum.CompareTo(value) <= 0) && (value.CompareTo(Maximum) <= 0);
+            return (Min.CompareTo(value) <= 0) && (value.CompareTo(Max) <= 0);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace LibPipeline
         /// <returns>True if range is inclusive, else false</returns>
         public Boolean IsInsideRange(Range<T> Range)
         {
-            return this.IsValid() && Range.IsValid() && Range.ContainsValue(this.Minimum) && Range.ContainsValue(this.Maximum);
+            return this.IsValid() && Range.IsValid() && Range.ContainsValue(this.Min) && Range.ContainsValue(this.Max);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace LibPipeline
         /// <returns>True if range is valid, else false</returns>
         public Boolean IsValid()
         {
-            return Minimum.CompareTo(Maximum) <= 0;
+            return Min.CompareTo(Max) <= 0;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace LibPipeline
         /// <returns>String representation of the Range</returns>
         public override string ToString()
         {
-            return String.Format("[{0} - {1}]", Minimum, Maximum);
+            return String.Format("[{0} - {1}]", Min, Max);
         }
     }
 }
