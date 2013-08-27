@@ -19,12 +19,6 @@
         StateSelected
     }
 
-    public enum VertexState
-    {
-        Details,
-        Summary
-    }
-
     public enum VertexType
     {
         Interval,
