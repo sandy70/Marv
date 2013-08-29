@@ -13,7 +13,6 @@ using Telerik.Windows.Diagrams.Core;
 
 namespace LibNetwork
 {
-    [Serializable]
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
         public Network Network = new Network();
@@ -201,7 +200,6 @@ namespace LibNetwork
                 vertex.IsExpanded = structureVertex.ParseIsExpanded();
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
-                vertex.Network = graph.Network;
                 vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.Positions = structureVertex.ParsePositionByGroup();
