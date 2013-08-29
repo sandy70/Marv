@@ -35,7 +35,7 @@ namespace LibPipeline
 
         public void Dispose()
         {
-            // Do nothing
+           // do nothing
         }
 
         public bool MoveNext()

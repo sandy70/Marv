@@ -71,7 +71,7 @@ namespace Marv
                 this.PopupControl.ShowTextIndeterminate("Running model.");
                 locationValue = await NearNeutralPhSccModel.RunAsync(location, this.Graphs, this.StartYear, this.EndYear);
                 locationValue.Id = location.Guid.ToInt64();
-                await dataBase.WriteAsync(locationValue);
+                // await dataBase.WriteAsync(locationValue);
                 this.PopupControl.Hide();
             }
 

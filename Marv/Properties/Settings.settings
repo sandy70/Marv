@@ -6,7 +6,7 @@
       <Value Profile="(Default)">1980</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2010</Value>
+      <Value Profile="(Default)">2014</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
@@ -35,8 +35,8 @@
     <Setting Name="IsLogoVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="NetworkFileNames" Type="LibPipeline.SelectableStringCollection" Scope="User">
-      <Value Profile="(Default)">D:\Data\ADCO02\ADCO_03.net</Value>
+    <Setting Name="InputFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO 6.xlsx</Value>
     </Setting>
   </Settings>
 </SettingsFile>

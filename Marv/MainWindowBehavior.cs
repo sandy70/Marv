@@ -2,6 +2,8 @@
 using LibPipeline;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -104,9 +106,9 @@ namespace Marv
             //kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
             window.MultiLocations = AdcoInput.Read();
-
+            var graph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_04.net");
+            window.Graphs.Add(graph);
             // Calculate start and end years
-
 
             //window.AutoCompleteBox.SelectionChanged += ComboBox_SelectionChanged;
             //window.SensorListener.NewEvidenceAvailable += SensorListener_NewEvidenceAvailable;
@@ -127,18 +129,37 @@ namespace Marv
 
         private async void RunModelButton_Click(object sender, RoutedEventArgs e)
         {
+            int startIndex = 0;
             var window = this.AssociatedObject;
+            var multiLocation = window.MultiLocations.SelectedItem;
+            var inputFileName = window.InputFileName;
+            var endYear = window.EndYear;
 
-            int nLocations = window.MultiLocations.SelectedItem.Count();
-            int startIndex = 2000;
-            int nCompleted = startIndex;
+            await Task.Run(() =>
+                {
+                    var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_04.net");
+                    var nCompleted = startIndex;
+                    var nLocations = multiLocation.Count();
+                    var startYear = (int)multiLocation["StartYear"];
 
-            foreach (var location in window.MultiLocations.SelectedItem.Skip(startIndex))
-            {
-                var locationValue = await window.GetLocationValueAsync(location);
-                window.MultiLocations.SelectedItem.SelectedItem = location;
-                window.ModelProgressBar.Value = (double)nCompleted++ / (double)nLocations * 100;
-            }
+                    var database = new ObjectDataBase<ModelValue>();
+                    
+                    foreach (var location in multiLocation.Skip(startIndex))
+                    {
+                        var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+
+                        var modelValue = graph.Run(graphEvidence, startYear, endYear);
+
+                        Console.WriteLine("Ran " + nCompleted++ + " of " + nLocations);
+
+                        database.FileNamePredicate = () =>
+                            {
+                                return Path.Combine(multiLocation.Name, location.Name + ".db");
+                            };
+
+                        database.Write(modelValue);
+                    }
+                });
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

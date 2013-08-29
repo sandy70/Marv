@@ -37,7 +37,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2010")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2014")]
         public int EndYear {
             get {
                 return ((int)(this["EndYear"]));
@@ -157,13 +157,13 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_03.net")]
-        public global::LibPipeline.SelectableStringCollection NetworkFileNames {
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 6.xlsx")]
+        public string InputFileName {
             get {
-                return ((global::LibPipeline.SelectableStringCollection)(this["NetworkFileNames"]));
+                return ((string)(this["InputFileName"]));
             }
             set {
-                this["NetworkFileNames"] = value;
+                this["InputFileName"] = value;
             }
         }
     }

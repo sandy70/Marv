@@ -6,8 +6,5 @@ using System.Linq;
 
 namespace LibNetwork
 {
-    public class BnVertexValue : Dictionary<string, double> 
-    {
-        
-    }
+    public class BnVertexValue : Dictionary<string, double> {}
 }

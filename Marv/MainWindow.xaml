@@ -15,6 +15,7 @@
         <Style TargetType="local:MainWindow">
             <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="InputFileName" Value="{Binding Default.InputFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />

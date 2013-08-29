@@ -17,12 +17,12 @@ namespace LibNetwork
     {
         public Network Network = new Network();
 
-        private object _lock = new object();
         private BnGraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
         private string fileName;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
+        private Dictionary<string, string> loops = new Dictionary<string, string>();
         private string name;
 
         public BnGraph()
@@ -108,6 +108,23 @@ namespace LibNetwork
         IEnumerable<ILink> IGraphSource.Links
         {
             get { return this.Edges; }
+        }
+
+        public Dictionary<string, string> Loops
+        {
+            get
+            {
+                return this.loops;
+            }
+
+            set
+            {
+                if (value != this.loops)
+                {
+                    this.loops = value;
+                    this.OnPropertyChanged("Loops");
+                }
+            }
         }
 
         public string Name
@@ -197,6 +214,7 @@ namespace LibNetwork
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
+                vertex.InputVertexKey = structureVertex.ParseStringProperty("inputvertexkey");
                 vertex.IsExpanded = structureVertex.ParseIsExpanded();
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
@@ -213,6 +231,11 @@ namespace LibNetwork
                 }
 
                 graph.AddVertex(vertex);
+
+                if (!String.IsNullOrWhiteSpace(vertex.InputVertexKey))
+                {
+                    graph.Loops[vertex.Key] = vertex.InputVertexKey;
+                }
             }
 
             // Add all the edges
@@ -341,13 +364,30 @@ namespace LibNetwork
             return partGraph;
         }
 
-        public BnGraphValue GetValueFromNetwork()
+        public BnGraphValue GetNetworkValue()
         {
             var graphValue = new BnGraphValue();
 
+            this.UpdateBeliefs();
+
             foreach (var vertex in this.Vertices)
             {
-                graphValue[vertex.Key] = vertex.GetValueFromNetwork();
+                var vertexValue = new BnVertexValue();
+
+                foreach (var state in vertex.States)
+                {
+                    try
+                    {
+                        vertexValue[state.Key] = this.Network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
+                    }
+                    catch (SmileException smileException)
+                    {
+                        Console.WriteLine(smileException.Message);
+                        vertexValue[state.Key] = 0;
+                    }
+                }
+
+                graphValue[vertex.Key] = vertexValue;
             }
 
             return graphValue;
@@ -355,12 +395,9 @@ namespace LibNetwork
 
         public BnGraphValue GetValueFromNetwork(Dictionary<string, VertexEvidence> graphEvidence)
         {
-            lock (this._lock)
-            {
-                this.SetEvidence(graphEvidence);
-                this.UpdateBeliefs();
-                return this.GetValueFromNetwork();
-            }
+            this.SetEvidence(graphEvidence);
+            this.UpdateBeliefs();
+            return this.GetNetworkValue();
         }
 
         public BnVertex GetVertex(string key)
@@ -391,6 +428,45 @@ namespace LibNetwork
             return hasEdge;
         }
 
+        public ModelValue Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        {
+            var modelValue = new ModelValue();
+
+            for (int year = startYear; year <= endYear; year++)
+            {
+                if (year > startYear)
+                {
+                    foreach (var srcVertexKey in this.Loops.Keys)
+                    {
+                        var dstVertexKey = this.Loops[srcVertexKey];
+
+                        var lastGraphValue = modelValue[year - 1];
+
+                        var lastVertexValue = lastGraphValue[srcVertexKey];
+
+                        graphEvidence[dstVertexKey] = new SoftEvidence
+                        {
+                            Evidence = lastVertexValue.Values.ToArray()
+                        };
+                    }
+                }
+
+                this.SetEvidence(graphEvidence);
+
+                modelValue[year] = this.GetNetworkValue();
+            }
+
+            return modelValue;
+        }
+
+        public Task<ModelValue> RunAsync(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        {
+            return Task.Run(() =>
+                {
+                    return this.Run(graphEvidence, startYear, endYear);
+                });
+        }
+
         public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
@@ -402,6 +478,24 @@ namespace LibNetwork
                     vertex.SetEvidence(graphEvidence[vertexKey]);
                 }
             }
+        }
+
+        public void SetEvidence(Dictionary<string, IEvidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                graphEvidence[vertexKey].Set(this, vertexKey);
+            }
+        }
+
+        public void SetVertexEvidence(string vertexKey, int stateIndex)
+        {
+            this.Network.SetEvidence(vertexKey, stateIndex);
+        }
+
+        public void SetVertexEvidence(string vertexKey, double[] evidence)
+        {
+                this.Network.SetSoftEvidence(vertexKey, evidence);
         }
 
         public void UpdateBeliefs()
@@ -433,14 +527,14 @@ namespace LibNetwork
 
         public BnGraphValue UpdateValue()
         {
-            return this.Value = this.GetValueFromNetwork();
+            return this.Value = this.GetNetworkValue();
         }
 
         public BnGraphValue UpdateValue(Dictionary<string, VertexEvidence> graphEvidence)
         {
             this.SetEvidence(graphEvidence);
             this.UpdateBeliefs();
-            return this.Value = this.GetValueFromNetwork();
+            return this.Value = this.GetNetworkValue();
         }
 
         public void Write(string fileName)

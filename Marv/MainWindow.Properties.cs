@@ -17,6 +17,9 @@ namespace Marv
         public static readonly DependencyProperty GraphsProperty =
         DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
 
+        public static readonly DependencyProperty InputFileNameProperty =
+        DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
@@ -59,6 +62,9 @@ namespace Marv
         public static readonly DependencyProperty SelectedLocationValueProperty =
         DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty SelectedMultiLocationProperty =
+        DependencyProperty.Register("SelectedMultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SelectedVertexValuesProperty =
         DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -87,6 +93,12 @@ namespace Marv
         {
             get { return (GraphCollection)GetValue(GraphsProperty); }
             set { SetValue(GraphsProperty, value); }
+        }
+
+        public string InputFileName
+        {
+            get { return (string)GetValue(InputFileNameProperty); }
+            set { SetValue(InputFileNameProperty, value); }
         }
 
         public bool IsGroupButtonVisible
@@ -186,6 +198,12 @@ namespace Marv
                     }
                 }
             }
+        }
+
+        public MultiLocation SelectedMultiLocation
+        {
+            get { return (MultiLocation)GetValue(SelectedMultiLocationProperty); }
+            set { SetValue(SelectedMultiLocationProperty, value); }
         }
 
         public IEnumerable<BnVertexValue> SelectedVertexValues

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace LibNetwork
 {
-    public class LocationValue : Dictionary<int, ModelValue>, INotifyPropertyChanged
+    public class LocationValue : Dictionary<int, OldModelValue>, INotifyPropertyChanged
     {
         private long id;
 
@@ -26,7 +26,7 @@ namespace LibNetwork
             }
         }
 
-        public ModelValue GetModelValue(int year)
+        public OldModelValue GetModelValue(int year)
         {
             if (this.ContainsKey(year))
             {
@@ -34,7 +34,7 @@ namespace LibNetwork
             }
             else
             {
-                return this[year] = new ModelValue();
+                return this[year] = new OldModelValue();
             }
         }
 

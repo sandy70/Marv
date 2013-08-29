@@ -9,5 +9,7 @@
         public string Key { get; set; }
 
         public int StateIndex { get; set; }
+
+        public virtual void SetOnVertex(BnVertex vertex) {}
     }
 }

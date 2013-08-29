@@ -7,21 +7,13 @@ namespace LibPipeline
     public class LandcoverViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<Point> _BarrenPoints;
-
         private ObservableCollection<Point> _DevelopedPoints;
-
         private ObservableCollection<Point> _FarmPoints;
-
         private ObservableCollection<Point> _ForestPoints;
-
         private ObservableCollection<Point> _GrassPoints;
-
         private ObservableCollection<Point> _ShrubsPoints;
-
         private ObservableCollection<Point> _UnknownPoints;
-
         private ObservableCollection<Point> _WaterIcePoints;
-
         private ObservableCollection<Point> _WetlandPoints;
 
         public LandcoverViewModel()

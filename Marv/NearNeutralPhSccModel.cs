@@ -155,7 +155,7 @@ namespace Marv
                 failureGraph.SetEvidence(failureGraphEvidence);
                 failureGraph.UpdateBeliefs();
 
-                intervalValue[year]["nnphsccfailure"] = failureGraph.GetValueFromNetwork();
+                intervalValue[year]["nnphsccfailure"] = failureGraph.GetNetworkValue();
             }
 
             Console.WriteLine("Ran model with id: " + aLocation.Guid.ToInt64());

@@ -41,6 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -89,14 +90,6 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Libraries\SharpKml\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToExcel, Version=1.7.1.0, Culture=neutral, PublicKeyToken=9c8ea65a58f03f1f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\LinqToExcel\LinqToExcel.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\LinqToExcel\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="NDatabase3">
       <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
     </Reference>
@@ -121,24 +114,6 @@
     </Reference>
     <Reference Include="QuickGraph.Serialization.Contracts">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\CodeContracts\QuickGraph.Serialization.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\LinqToExcel\Remotion.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Data.Linq, Version=1.13.52.2, Culture=neutral, PublicKeyToken=8c59a1bf3e8d42c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\LinqToExcel\Remotion.Data.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Interfaces, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\LinqToExcel\Remotion.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq">
-      <HintPath>..\..\Libraries\LinqToExcel\Remotion.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpKml">
-      <HintPath>..\..\Libraries\SharpKml\SharpKml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

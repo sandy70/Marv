@@ -15,6 +15,7 @@ namespace LibNetwork
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
         private string headerOfGroup;
+        private string inputVertexKey;
         private bool isEvidenceEntered = false;
         private bool isExpanded;
         private bool isHeader = false;
@@ -83,6 +84,23 @@ namespace LibNetwork
             {
                 headerOfGroup = value;
                 OnPropertyChanged("HeaderOfGroup");
+            }
+        }
+
+        public string InputVertexKey
+        {
+            get
+            {
+                return this.inputVertexKey;
+            }
+
+            set
+            {
+                if (value != this.inputVertexKey)
+                {
+                    this.inputVertexKey = value;
+                    this.OnPropertyChanged("InputVertexKey");
+                }
             }
         }
 
@@ -395,26 +413,6 @@ namespace LibNetwork
             return stateIndex;
         }
 
-        public BnVertexValue GetValueFromNetwork()
-        {
-            var vertexValue = new BnVertexValue();
-
-            foreach (var state in this.States)
-            {
-                try
-                {
-                    vertexValue[state.Key] = this.Parent.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
-                }
-                catch (SmileException smileException)
-                {
-                    Console.WriteLine(smileException.Message);
-                    vertexValue[state.Key] = 0;
-                }
-            }
-
-            return vertexValue;
-        }
-
         public void SetEvidence(VertexEvidence vertexEvidence)
         {
             if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
@@ -429,10 +427,22 @@ namespace LibNetwork
             this.IsEvidenceEntered = true;
         }
 
-        public void SetEvidence(IEvidence evidence)
+        public void SetEvidence(double[] evidence)
         {
-            evidence.SetOnVertex(this);
-            this.IsEvidenceEntered = true;
+            this.Parent.Network.SetSoftEvidence(this.Key, evidence);
+        }
+
+        public void SetEvidence(int stateIndex)
+        {
+            try
+            {
+                this.Parent.Network.SetEvidence(this.Key, stateIndex);
+                this.SelectedState = this.States[stateIndex];
+            }
+            catch (SmileException exception)
+            {
+                throw new InconsistentEvidenceException();
+            }
         }
 
         public BnGraphValue SetEvidenceAndUpdateParentValue()
@@ -502,24 +512,6 @@ namespace LibNetwork
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void SetEvidence(double[] evidence)
-        {
-            this.Parent.Network.SetSoftEvidence(this.Key, evidence);
-        }
-
-        public void SetEvidence(int stateIndex)
-        {
-            try
-            {
-                this.Parent.Network.SetEvidence(this.Key, stateIndex);
-                this.SelectedState = this.States[stateIndex];
-            }
-            catch (SmileException exception)
-            {
-                throw new InconsistentEvidenceException();
-            }
         }
     }
 }

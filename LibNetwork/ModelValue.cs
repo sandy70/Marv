@@ -2,5 +2,7 @@
 
 namespace LibNetwork
 {
-    public class ModelValue : Dictionary<string, BnGraphValue> { }
+    public class OldModelValue : Dictionary<string, BnGraphValue> { }
+
+    public class ModelValue : Dictionary<int, BnGraphValue> { }
 }
