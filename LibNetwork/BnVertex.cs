@@ -21,7 +21,6 @@ namespace LibNetwork
         private string key = "";
         private BnState mostProbableState = null;
         private string name = "";
-        private Network network;
         private int nodeHandle;
         private BnGraph parent;
         private Point position;
@@ -140,9 +139,9 @@ namespace LibNetwork
                 key = value;
                 OnPropertyChanged("Key");
 
-                if (this.Network != null)
+                if (this.Parent != null && this.Parent.Network != null)
                 {
-                    this.nodeHandle = this.Network.GetNode(this.Key);
+                    this.nodeHandle = this.Parent.Network.GetNode(this.Key);
                 }
             }
         }
@@ -171,28 +170,6 @@ namespace LibNetwork
             {
                 name = value;
                 OnPropertyChanged("Name");
-            }
-        }
-
-        public Network Network
-        {
-            get
-            {
-                return this.network;
-            }
-
-            set
-            {
-                if (value != this.network)
-                {
-                    this.network = value;
-                    this.OnPropertyChanged("Network");
-
-                    if (this.Network != null)
-                    {
-                        this.Network.GetNode(this.Key);
-                    }
-                }
             }
         }
 
@@ -336,7 +313,7 @@ namespace LibNetwork
         {
             try
             {
-                this.Network.ClearEvidence(this.Key);
+                this.Parent.Network.ClearEvidence(this.Key);
             }
             catch (SmileException exception)
             {
@@ -426,7 +403,7 @@ namespace LibNetwork
             {
                 try
                 {
-                    vertexValue[state.Key] = this.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
+                    vertexValue[state.Key] = this.Parent.Network.GetNodeValue(this.Key)[this.GetStateIndex(state.Key)];
                 }
                 catch (SmileException smileException)
                 {
@@ -449,6 +426,12 @@ namespace LibNetwork
                 this.SetEvidence(vertexEvidence.Evidence);
             }
 
+            this.IsEvidenceEntered = true;
+        }
+
+        public void SetEvidence(IEvidence evidence)
+        {
+            evidence.SetOnVertex(this);
             this.IsEvidenceEntered = true;
         }
 
@@ -521,16 +504,16 @@ namespace LibNetwork
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void SetEvidence(double[] evidence)
+        public void SetEvidence(double[] evidence)
         {
-            this.network.SetSoftEvidence(this.Key, evidence);
+            this.Parent.Network.SetSoftEvidence(this.Key, evidence);
         }
 
-        private void SetEvidence(int stateIndex)
+        public void SetEvidence(int stateIndex)
         {
             try
             {
-                this.Network.SetEvidence(this.Key, stateIndex);
+                this.Parent.Network.SetEvidence(this.Key, stateIndex);
                 this.SelectedState = this.States[stateIndex];
             }
             catch (SmileException exception)
