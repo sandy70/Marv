@@ -3,6 +3,7 @@ using NDatabase;
 using NDatabase.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -78,6 +79,12 @@ namespace Marv
         {
             lock (this._lock)
             {
+                // If the file already exists, then delete it
+                if (File.Exists(this.FileName))
+                {
+                    File.Delete(this.FileName);
+                }
+
                 using (var odb = OdbFactory.Open(this.FileName))
                 {
                     Console.WriteLine("Storing: " + anObject);
