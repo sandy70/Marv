@@ -46,11 +46,6 @@ namespace LibPipeline
             }
         }
 
-        private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
-        {
-            this.AssociatedObject.UpdateSegments();
-        }
-
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.OnDown();
@@ -109,6 +104,11 @@ namespace LibPipeline
         {
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
+        }
+
+        private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
+        {
+            this.AssociatedObject.UpdateSegments();
         }
 
         private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
