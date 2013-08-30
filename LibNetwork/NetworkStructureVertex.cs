@@ -114,8 +114,8 @@ namespace LibNetwork
                     {
                         range = new Range<double>
                         {
-                            Max = Double.Parse(stateStringParts[0]),
-                            Min = Double.Parse(stateStringParts[1])
+                            Max = Double.Parse(stateStringParts[1]),
+                            Min = Double.Parse(stateStringParts[0])
                         };
                     }
                     else

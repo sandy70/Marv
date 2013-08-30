@@ -244,9 +244,10 @@ namespace Marv
 
         private static IEvidence ParseDistribution(string evidenceString, BnVertex vertex)
         {
-            IEvidence evidence = null;
             var parts = evidenceString.Trim()
                                       .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            double[] evidenceArray = new double[vertex.States.Count];
 
             foreach (var part in parts)
             {
@@ -261,37 +262,24 @@ namespace Marv
 
                     if (Double.TryParse(partsOfPart[0], out value))
                     {
-                        double[] evidenceArray = new double[vertex.States.Count];
 
                         foreach (var state in vertex.States)
                         {
                             if (state.Range.ContainsValue(value))
                             {
-                                evidenceArray[vertex.States.IndexOf(state)] = probability;
+                                evidenceArray[vertex.States.IndexOf(state)] += probability;
                             }
                         }
-
-                        evidence = new SoftEvidence
-                        {
-                            Evidence = evidenceArray
-                        };
                     }
                     else
                     {
-                        double[] evidenceArray = new double[vertex.States.Count];
-
                         foreach (var state in vertex.States)
                         {
                             if (state.Key == partsOfPart[0])
                             {
-                                evidenceArray[vertex.States.IndexOf(state)] = probability;
+                                evidenceArray[vertex.States.IndexOf(state)] += probability;
                             }
                         }
-
-                        evidence = new SoftEvidence
-                        {
-                            Evidence = evidenceArray
-                        };
                     }
                 }
                 else
@@ -300,7 +288,10 @@ namespace Marv
                 }
             }
 
-            return evidence;
+            return new SoftEvidence
+            {
+                Evidence = evidenceArray
+            };
         }
 
         private static IEvidence ParseRange(string evidenceString, BnVertex vertex)

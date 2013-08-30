@@ -135,8 +135,8 @@ namespace Marv
             var inputFileName = window.InputFileName;
             var endYear = window.EndYear;
 
-            await Task.Run(() =>
-                {
+            //await Task.Run(() =>
+            //    {
                     var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_04.net");
                     var nCompleted = startIndex;
                     var nLocations = multiLocation.Count();
@@ -159,7 +159,7 @@ namespace Marv
 
                         database.Write(modelValue);
                     }
-                });
+                //});
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

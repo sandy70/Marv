@@ -234,7 +234,7 @@ namespace LibNetwork
 
                 if (!String.IsNullOrWhiteSpace(vertex.InputVertexKey))
                 {
-                    graph.Loops[vertex.Key] = vertex.InputVertexKey;
+                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
                 }
             }
 
@@ -453,7 +453,32 @@ namespace LibNetwork
 
                 this.SetEvidence(graphEvidence);
 
-                modelValue[year] = this.GetNetworkValue();
+                var graphValue = new BnGraphValue();
+
+                this.UpdateBeliefs();
+
+                foreach (var vertex in this.Vertices)
+                {
+                    var vertexValue = new BnVertexValue();
+
+                    foreach (var state in vertex.States)
+                    {
+                        try
+                        {
+                            var nodeValue = this.Network.GetNodeValue(vertex.Key);
+                            vertexValue[state.Key] = nodeValue[vertex.GetStateIndex(state.Key)];
+                        }
+                        catch (SmileException smileException)
+                        {
+                            Console.WriteLine(smileException.Message);
+                            vertexValue[state.Key] = 0;
+                        }
+                    }
+
+                    graphValue[vertex.Key] = vertexValue;
+                }
+
+                modelValue[year] = graphValue;
             }
 
             return modelValue;
@@ -495,7 +520,7 @@ namespace LibNetwork
 
         public void SetVertexEvidence(string vertexKey, double[] evidence)
         {
-                this.Network.SetSoftEvidence(vertexKey, evidence);
+            this.Network.SetSoftEvidence(vertexKey, evidence);
         }
 
         public void UpdateBeliefs()

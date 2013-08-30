@@ -1,6 +1,7 @@
 ﻿using LibNetwork;
 using LibPipeline;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -59,8 +60,8 @@ namespace Marv
         public static readonly DependencyProperty NetworkFileNamesProperty =
         DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
 
-        public static readonly DependencyProperty SelectedLocationValueProperty =
-        DependencyProperty.Register("SelectedLocationValue", typeof(LocationValue), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedLocationModelValueProperty =
+        DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedMultiLocationProperty =
         DependencyProperty.Register("SelectedMultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
@@ -173,31 +174,10 @@ namespace Marv
             set { SetValue(NetworkFileNamesProperty, value); }
         }
 
-        public LocationValue SelectedLocationValue
+        public ModelValue SelectedLocationModelValue
         {
-            get
-            {
-                return (LocationValue)GetValue(SelectedLocationValueProperty);
-            }
-
-            set
-            {
-                SetValue(SelectedLocationValueProperty, value);
-
-                if (this.SelectedLocationValue.ContainsKey(this.SelectedYear))
-                {
-                    var modelValue = this.SelectedLocationValue[this.SelectedYear];
-
-                    foreach (var graph in this.Graphs)
-                    {
-                        if (modelValue.ContainsKey(graph.Name))
-                        {
-                            var graphValue = modelValue[graph.Name];
-                            graph.Value = graphValue;
-                        }
-                    }
-                }
-            }
+            get { return (ModelValue)GetValue(SelectedLocationModelValueProperty); }
+            set { SetValue(SelectedLocationModelValueProperty, value); }
         }
 
         public MultiLocation SelectedMultiLocation
@@ -230,7 +210,7 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        private static async void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
@@ -243,41 +223,12 @@ namespace Marv
                     window.EndYear = window.MultiLocations.Max(multiLocation => (int)multiLocation["StartYear"]);
                 }
 
-                window.MultiLocations.SelectionChanged += async (s1, e1) =>
-                    {
-                        var multiLocation = e1.Value;
-
-                        if (multiLocation != null)
-                        {
-                            multiLocation.SelectionChanged += async (s2, e2) =>
-                                {
-                                    var location = e2.Value;
-
-                                    if (location != null)
-                                    {
-                                        window.SelectedLocationValue = await window.GetLocationValueAsync(location);
-                                    }
-                                };
-
-                            var loc = multiLocation.SelectedItem;
-
-                            if (loc != null)
-                            {
-                                window.SelectedLocationValue = await window.GetLocationValueAsync(loc);
-                            }
-                        }
-                    };
-
-                var mLocation = window.MultiLocations.SelectedItem;
-
-                if (mLocation != null)
+                foreach (var multiLocation in window.MultiLocations)
                 {
-                    var location = mLocation.SelectedItem;
-
-                    if (location != null)
-                    {
-                        window.SelectedLocationValue = await window.GetLocationValueAsync(location);
-                    }
+                    // Attach event so that we can load data when selection changes
+                    // The -= ensures that events aren't subscribed twice
+                    multiLocation.SelectionChanged -= window.multiLocation_SelectionChanged;
+                    multiLocation.SelectionChanged += window.multiLocation_SelectionChanged;
                 }
             }
         }
@@ -344,6 +295,37 @@ namespace Marv
                     multiLocation.IsEnabled = true;
                 }
             }
+
+            if (window.SelectedLocationModelValue != null)
+            {
+                if (window.SelectedLocationModelValue.ContainsKey(window.SelectedYear))
+                {
+                    window.Graphs.First().Value = window.SelectedLocationModelValue[window.SelectedYear];
+                }
+            }
+        }
+
+        private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
+        {
+            var database = new ObjectDataBase<ModelValue>
+            {
+                FileNamePredicate = () =>
+                    {
+                        var selectedMultiLocation = this.MultiLocations.SelectedItem;
+                        var selectedLocation = selectedMultiLocation.SelectedItem;
+
+                        return Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
+                    }
+            };
+
+            var modelValues = database.ReadValues(x => true);
+
+            if (modelValues != null && modelValues.Count() > 0)
+            {
+                this.SelectedLocationModelValue = modelValues.First();
+            }
+
+            this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
         }
     }
 }
