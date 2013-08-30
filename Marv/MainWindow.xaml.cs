@@ -15,7 +15,6 @@ namespace Marv
     public partial class MainWindow : Window
     {
         public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
-        public BnInputStore InputManager = new BnInputStore();
         public SensorListener SensorListener = new SensorListener();
         public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
         private object _lock = new object();
@@ -30,12 +29,6 @@ namespace Marv
             MapControl.TileImageLoader.Cache = new ImageFileCache(MapControl.TileImageLoader.DefaultCacheName, cacheDirectory);
 
             this.MapView.TileLayer = TileLayers.MapBoxTerrain;
-        }
-
-        public void AddInput(BnVertexViewModel vertexViewModel)
-        {
-            var vertexInput = this.InputManager.GetVertexInput(BnInputType.User, this.SelectedYear, vertexViewModel.Key);
-            vertexInput.FillFrom(vertexViewModel);
         }
 
         public async Task<LocationValue> GetLocationValueAsync(Location location)
@@ -116,20 +109,10 @@ namespace Marv
             return locationValue;
         }
 
-        public void RemoveInput(BnVertexViewModel vertexViewModel)
-        {
-            this.InputManager.RemoveVertexInput(BnInputType.User, this.SelectedYear, vertexViewModel.Key);
-        }
-
         public bool TryUpdateNetwork()
         {
             try
             {
-                var defaultInputs = this.InputManager.GetGraphInput(BnInputType.Default, this.SelectedYear);
-                var userInputs = this.InputManager.GetGraphInput(BnInputType.User, this.SelectedYear);
-
-                var bnUpdater = new BnUpdater();
-
                 List<BnVertexValue> lastYearVertexValues = null;
 
                 if (this.SelectedYear == Config.StartYear)

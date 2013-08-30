@@ -241,14 +241,12 @@ namespace Marv
         private void SensorListener_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var window = this.AssociatedObject;
-            window.AddInput(e.Value);
 
             var success = window.TryUpdateNetwork();
 
             if (!success)
             {
                 window.PopupControl.ShowText("Inconsistent evidence entered.");
-                window.InputManager.RemoveVertexInput(BnInputType.User, window.SelectedYear, e.Value.Key);
                 window.TryUpdateNetwork();
             }
         }

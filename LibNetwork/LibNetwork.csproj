@@ -93,19 +93,15 @@
     <Compile Include="BnEdge.cs" />
     <Compile Include="BnGraph.cs" />
     <Compile Include="BnState.cs" />
-    <Compile Include="BnUpdater.cs" />
     <Compile Include="BnVertex.cs" />
-    <Compile Include="BnVertexInput.cs" />
-    <Compile Include="BnVertexInputReader.cs" />
     <Compile Include="BnVertexValue.cs" />
     <Compile Include="CsvReader.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="BnInputStore.cs" />
     <Compile Include="GraphCollection.cs" />
     <Compile Include="BnGraphValue.cs" />
-    <Compile Include="HardEvidence.cs" />
-    <Compile Include="IEvidence.cs" />
+    <Compile Include="Evidence\HardEvidence.cs" />
+    <Compile Include="Evidence\IEvidence.cs" />
     <Compile Include="InconsistentEvidenceException.cs" />
     <Compile Include="LocationValue.cs" />
     <Compile Include="ModelValue.cs" />
@@ -113,7 +109,7 @@
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
-    <Compile Include="SoftEvidence.cs" />
+    <Compile Include="Evidence\SoftEvidence.cs" />
     <Compile Include="VertexEvidence.cs" />
   </ItemGroup>
   <ItemGroup>
