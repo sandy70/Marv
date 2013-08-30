@@ -18,19 +18,10 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAQAAAAEAAAAAAAAAIAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ABAgQAAAAEAAAAAEAAAIAAQECAAEBQAAAAEgAAAAYAA=</HashCode>
       <FileName>Geometry\Location.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="LibPipeline.LocationWithId">
-    <Position X="3.75" Y="5.25" Width="2" />
-    <Members>
-      <Field Name="id" Hidden="true" />
-    </Members>
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Geometry\LocationWithId.cs</FileName>
-    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
