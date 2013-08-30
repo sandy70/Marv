@@ -21,14 +21,6 @@ namespace LibPipeline
         public static readonly DependencyProperty LocationsProperty =
         DependencyProperty.Register("Locations", typeof(MultiLocation), typeof(PolylineControlBase), new PropertyMetadata(null, ChangedLocations));
 
-        private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControlBase;
-            control.OnChangedLocations();
-        }
-
-        protected virtual void OnChangedLocations() { }
-
         public static readonly DependencyProperty SelectedLocationProperty =
         DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PolylineControlBase), new PropertyMetadata(null));
 
@@ -75,6 +67,16 @@ namespace LibPipeline
         {
             get { return (Brush)GetValue(StrokeProperty); }
             set { SetValue(StrokeProperty, value); }
+        }
+
+        protected virtual void OnChangedLocations()
+        {
+        }
+
+        private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as PolylineControlBase;
+            control.OnChangedLocations();
         }
     }
 }

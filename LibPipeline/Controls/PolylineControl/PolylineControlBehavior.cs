@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace LibPipeline
 {
-    internal class PolylineControlBehavior : Behavior<PolylineControl>
+    internal class PolylineControlBehavior : Behavior<PolylineControlBase>
     {
         private bool isDragging = false;
         private Stack<Location> locationStack = new Stack<Location>();

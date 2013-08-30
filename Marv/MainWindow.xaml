@@ -78,7 +78,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <libpipeline:PolylineControl IsCursorVisible="{Binding IsSelected}"
+                                                <libpipeline:SegmentedPolylineControl IsCursorVisible="{Binding IsSelected}"
                                                                                       IsEnabled="{Binding IsEnabled}"
                                                                                       Locations="{Binding}"  />
                                             </ControlTemplate>
