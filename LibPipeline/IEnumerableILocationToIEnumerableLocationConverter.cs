@@ -13,7 +13,7 @@ namespace LibPipeline
             if (value is IEnumerable<Location>)
             {
                 var locations = value as IEnumerable<Location>;
-                return locations.Select<Location, MapControl.Location>(x => new MapControl.Location { Latitude = x.Latitude, Longitude = x.Longitude });
+                return locations.Select<Location, MapControl.Location>(x => x.ToMapControlLocation());
             }
             else
             {
@@ -26,7 +26,7 @@ namespace LibPipeline
             if (value is IEnumerable<MapControl.Location>)
             {
                 var locations = value as IEnumerable<MapControl.Location>;
-                return locations.Select<MapControl.Location, LibPipeline.Location>(x => new LibPipeline.Location { Latitude = x.Latitude, Longitude = x.Longitude });
+                return locations.Select<MapControl.Location, Location>(x => x);
             }
             else
             {
