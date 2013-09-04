@@ -455,7 +455,7 @@ namespace LibNetwork
 
                 var graphValue = new BnGraphValue();
 
-                this.UpdateBeliefs();
+                // this.UpdateBeliefs();
 
                 foreach (var vertex in this.Vertices)
                 {
@@ -510,6 +510,7 @@ namespace LibNetwork
             foreach (var vertexKey in graphEvidence.Keys)
             {
                 graphEvidence[vertexKey].Set(this, vertexKey);
+                this.UpdateBeliefs();
             }
         }
 

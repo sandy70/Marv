@@ -106,7 +106,7 @@ namespace Marv
             //kocDataReader.ReadVertexInputsForAllYears(window.InputManager);
 
             window.MultiLocations = AdcoInput.Read();
-            var graph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_04.net");
+            var graph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
             window.Graphs.Add(graph);
             // Calculate start and end years
 
@@ -121,10 +121,42 @@ namespace Marv
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
         }
 
-        private void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
+            //var window = this.AssociatedObject;
+            //window.TransitionControl.SelectElement("RunModelControl");
+
+            int startIndex = 0;
             var window = this.AssociatedObject;
-            window.TransitionControl.SelectElement("RunModelControl");
+            var multiLocation = window.MultiLocations.SelectedItem;
+            var inputFileName = window.InputFileName;
+            var endYear = window.EndYear;
+
+            await Task.Run(() =>
+            {
+                var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
+                var nCompleted = startIndex;
+                var nLocations = multiLocation.Count();
+                var startYear = (int)multiLocation["StartYear"];
+
+                var database = new ObjectDataBase<ModelValue>();
+
+                foreach (var location in multiLocation.Skip(startIndex))
+                {
+                    var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+
+                    var modelValue = graph.Run(graphEvidence, startYear, endYear);
+
+                    Console.WriteLine("Ran " + nCompleted++ + " of " + nLocations);
+
+                    database.FileNamePredicate = () =>
+                    {
+                        return Path.Combine(multiLocation.Name, location.Name + ".db");
+                    };
+
+                    database.Write(modelValue);
+                }
+            });
         }
 
         private async void RunModelButton_Click(object sender, RoutedEventArgs e)
@@ -135,9 +167,9 @@ namespace Marv
             var inputFileName = window.InputFileName;
             var endYear = window.EndYear;
 
-            //await Task.Run(() =>
-            //    {
-                    var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_04.net");
+            await Task.Run(() =>
+                {
+                    var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
                     var nCompleted = startIndex;
                     var nLocations = multiLocation.Count();
                     var startYear = (int)multiLocation["StartYear"];
@@ -159,7 +191,7 @@ namespace Marv
 
                         database.Write(modelValue);
                     }
-                //});
+                });
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

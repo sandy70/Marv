@@ -63,17 +63,8 @@ namespace Marv
         public static readonly DependencyProperty SelectedLocationModelValueProperty =
         DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedMultiLocationProperty =
-        DependencyProperty.Register("SelectedMultiLocation", typeof(MultiLocation), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedVertexValuesProperty =
-        DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
-
-        public static readonly DependencyProperty StartingGroupProperty =
-        DependencyProperty.Register("StartingGroup", typeof(string), typeof(MainWindow), new PropertyMetadata("all"));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
@@ -180,28 +171,10 @@ namespace Marv
             set { SetValue(SelectedLocationModelValueProperty, value); }
         }
 
-        public MultiLocation SelectedMultiLocation
-        {
-            get { return (MultiLocation)GetValue(SelectedMultiLocationProperty); }
-            set { SetValue(SelectedMultiLocationProperty, value); }
-        }
-
-        public IEnumerable<BnVertexValue> SelectedVertexValues
-        {
-            get { return (IEnumerable<BnVertexValue>)GetValue(SelectedVertexValuesProperty); }
-            set { SetValue(SelectedVertexValuesProperty, value); }
-        }
-
         public int SelectedYear
         {
             get { return (int)GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
-        }
-
-        public string StartingGroup
-        {
-            get { return (string)GetValue(StartingGroupProperty); }
-            set { SetValue(StartingGroupProperty, value); }
         }
 
         public int StartYear
@@ -325,7 +298,13 @@ namespace Marv
                 this.SelectedLocationModelValue = modelValues.First();
             }
 
-            this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
+            if (this.SelectedLocationModelValue != null)
+            {
+                if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
+                {
+                    this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
+                }
+            }
         }
     }
 }
