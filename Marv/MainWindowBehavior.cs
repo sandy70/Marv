@@ -91,33 +91,37 @@ namespace Marv
 
         private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
+            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
             int startIndex = 0;
             var window = this.AssociatedObject;
 
             var endYear = window.EndYear;
             var inputFileName = window.InputFileName;
-            var multiLocation = window.MultiLocations.SelectedItem;
-            
-            await Task.Run(() =>
+
+            foreach (var multiLocation in window.MultiLocations)
             {
-                var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
-                var nCompleted = startIndex;
-                var nLocations = multiLocation.Count();
-                var startYear = (int)multiLocation["StartYear"];
+                // var multiLocation = window.MultiLocations.SelectedItem;
 
-                foreach (var location in multiLocation.Skip(startIndex))
+                await Task.Run(() =>
                 {
-                    var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+                    var nCompleted = startIndex;
+                    var nLocations = multiLocation.Count();
+                    var startYear = (int)multiLocation["StartYear"];
 
-                    var modelValue = graph.Run(graphEvidence, startYear, endYear);
+                    foreach (var location in multiLocation.Skip(startIndex))
+                    {
+                        var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
 
-                    Console.WriteLine("Ran " + nCompleted++ + " of " + nLocations);
+                        var modelValue = graph.Run(graphEvidence, startYear, endYear);
 
-                    var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+                        Console.WriteLine("Ran " + ++nCompleted + " of " + nLocations);
 
-                    ObjectDataBase.Write(fileName, modelValue);
-                }
-            });
+                        var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+
+                        ObjectDataBase.Write(fileName, modelValue);
+                    }
+                });
+            }
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

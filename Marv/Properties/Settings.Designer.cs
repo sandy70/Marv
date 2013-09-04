@@ -166,5 +166,17 @@ namespace Marv.Properties {
                 this["InputFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsPropertyGridVisible {
+            get {
+                return ((bool)(this["IsPropertyGridVisible"]));
+            }
+            set {
+                this["IsPropertyGridVisible"] = value;
+            }
+        }
     }
 }

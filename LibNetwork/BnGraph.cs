@@ -366,9 +366,9 @@ namespace LibNetwork
 
         public BnGraphValue GetNetworkValue()
         {
-            var graphValue = new BnGraphValue();
-
             this.UpdateBeliefs();
+
+            var graphValue = new BnGraphValue();
 
             foreach (var vertex in this.Vertices)
             {
@@ -391,13 +391,6 @@ namespace LibNetwork
             }
 
             return graphValue;
-        }
-
-        public BnGraphValue GetValueFromNetwork(Dictionary<string, VertexEvidence> graphEvidence)
-        {
-            this.SetEvidence(graphEvidence);
-            this.UpdateBeliefs();
-            return this.GetNetworkValue();
         }
 
         public BnVertex GetVertex(string key)
@@ -428,12 +421,24 @@ namespace LibNetwork
             return hasEdge;
         }
 
+        public BnGraphValue Run(Dictionary<string, IEvidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                graphEvidence[vertexKey].Set(this, vertexKey);
+            }
+
+            return this.GetNetworkValue();
+        }
+
         public ModelValue Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
             var modelValue = new ModelValue();
 
             for (int year = startYear; year <= endYear; year++)
             {
+                // If this is not the start year,
+                // then add the looped evidences
                 if (year > startYear)
                 {
                     foreach (var srcVertexKey in this.Loops.Keys)
@@ -451,67 +456,10 @@ namespace LibNetwork
                     }
                 }
 
-                this.SetEvidence(graphEvidence);
-
-                var graphValue = new BnGraphValue();
-
-                // this.UpdateBeliefs();
-
-                foreach (var vertex in this.Vertices)
-                {
-                    var vertexValue = new BnVertexValue();
-
-                    foreach (var state in vertex.States)
-                    {
-                        try
-                        {
-                            var nodeValue = this.Network.GetNodeValue(vertex.Key);
-                            vertexValue[state.Key] = nodeValue[vertex.GetStateIndex(state.Key)];
-                        }
-                        catch (SmileException smileException)
-                        {
-                            Console.WriteLine(smileException.Message);
-                            vertexValue[state.Key] = 0;
-                        }
-                    }
-
-                    graphValue[vertex.Key] = vertexValue;
-                }
-
-                modelValue[year] = graphValue;
+                modelValue[year] = this.Run(graphEvidence);
             }
 
             return modelValue;
-        }
-
-        public Task<ModelValue> RunAsync(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
-        {
-            return Task.Run(() =>
-                {
-                    return this.Run(graphEvidence, startYear, endYear);
-                });
-        }
-
-        public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                var vertex = this.GetVertex(vertexKey);
-
-                if (vertex != null)
-                {
-                    vertex.SetEvidence(graphEvidence[vertexKey]);
-                }
-            }
-        }
-
-        public void SetEvidence(Dictionary<string, IEvidence> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                graphEvidence[vertexKey].Set(this, vertexKey);
-                this.UpdateBeliefs();
-            }
         }
 
         public void SetVertexEvidence(string vertexKey, int stateIndex)
@@ -553,13 +501,6 @@ namespace LibNetwork
 
         public BnGraphValue UpdateValue()
         {
-            return this.Value = this.GetNetworkValue();
-        }
-
-        public BnGraphValue UpdateValue(Dictionary<string, VertexEvidence> graphEvidence)
-        {
-            this.SetEvidence(graphEvidence);
-            this.UpdateBeliefs();
             return this.Value = this.GetNetworkValue();
         }
 

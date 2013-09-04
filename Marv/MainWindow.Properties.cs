@@ -1,6 +1,5 @@
 ﻿using LibNetwork;
 using LibPipeline;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -35,6 +34,9 @@ namespace Marv
 
         public static readonly DependencyProperty IsProfileSelectedProperty =
         DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsPropertyGridVisibleProperty =
+        DependencyProperty.Register("IsPropertyGridVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -114,6 +116,12 @@ namespace Marv
             set { SetValue(IsMenuVisibleProperty, value); }
         }
 
+        public bool IsPropertyGridVisible
+        {
+            get { return (bool)GetValue(IsPropertyGridVisibleProperty); }
+            set { SetValue(IsPropertyGridVisibleProperty, value); }
+        }
+
         public bool IsSensorButtonVisible
         {
             get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
@@ -174,6 +182,31 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
+        public void ReadSelectedLocationModelValue()
+        {
+            var selectedMultiLocation = this.MultiLocations.SelectedItem;
+            var selectedLocation = selectedMultiLocation.SelectedItem;
+            var fileName = Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
+
+            var modelValues = ObjectDataBase.ReadValues<ModelValue>(fileName, x => true);
+
+            if (modelValues != null && modelValues.Count() > 0)
+            {
+                this.SelectedLocationModelValue = modelValues.First();
+            }
+        }
+
+        public void UpdateGraphValueFromModelValue()
+        {
+            if (this.SelectedLocationModelValue != null)
+            {
+                if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
+                {
+                    this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
+                }
+            }
+        }
+
         private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
@@ -182,9 +215,8 @@ namespace Marv
             {
                 if (window.MultiLocations.Count > 0)
                 {
-                    // Calculate start year and end year
+                    // Calculate start year
                     window.StartYear = window.MultiLocations.Min(multiLocation => (int)multiLocation["StartYear"]);
-                    window.EndYear = window.MultiLocations.Max(multiLocation => (int)multiLocation["StartYear"]);
                 }
 
                 foreach (var multiLocation in window.MultiLocations)
@@ -260,35 +292,13 @@ namespace Marv
                 }
             }
 
-            if (window.SelectedLocationModelValue != null)
-            {
-                if (window.SelectedLocationModelValue.ContainsKey(window.SelectedYear))
-                {
-                    window.Graphs.First().Value = window.SelectedLocationModelValue[window.SelectedYear];
-                }
-            }
+            window.UpdateGraphValueFromModelValue();
         }
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
         {
-            var selectedMultiLocation = this.MultiLocations.SelectedItem;
-            var selectedLocation = selectedMultiLocation.SelectedItem;
-            var fileName = Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
-
-            var modelValues = ObjectDataBase.ReadValues<ModelValue>(fileName, x => true);
-
-            if (modelValues != null && modelValues.Count() > 0)
-            {
-                this.SelectedLocationModelValue = modelValues.First();
-            }
-
-            if (this.SelectedLocationModelValue != null)
-            {
-                if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
-                {
-                    this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
-                }
-            }
+            this.ReadSelectedLocationModelValue();
+            this.UpdateGraphValueFromModelValue();
         }
     }
 }

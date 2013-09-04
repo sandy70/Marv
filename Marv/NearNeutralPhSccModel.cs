@@ -132,7 +132,7 @@ namespace Marv
                 // sccGraph.SetEvidence(sccGraphEvidence);
                 // sccGraph.UpdateBeliefs();
 
-                intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetValueFromNetwork(sccGraphEvidence);
+                // intervalValue.GetModelValue(year)["nnphscc"] = sccGraph.GetValueFromNetwork(sccGraphEvidence);
 
                 failureGraphEvidence["cd"] = new VertexEvidence
                 {
@@ -152,7 +152,7 @@ namespace Marv
                     StateIndex = 5  // 300 - 350
                 };
 
-                failureGraph.SetEvidence(failureGraphEvidence);
+                // failureGraph.SetEvidence(failureGraphEvidence);
                 failureGraph.UpdateBeliefs();
 
                 intervalValue[year]["nnphsccfailure"] = failureGraph.GetNetworkValue();

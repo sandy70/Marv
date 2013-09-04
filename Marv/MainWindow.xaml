@@ -19,6 +19,7 @@
             <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="NetworkFileNames" Value="{Binding Default.NetworkFileNames, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
@@ -58,7 +59,7 @@
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -66,7 +67,6 @@
                 <Grid Grid.Column="0"
                       Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                     <libpipeline:MapView Name="MapView"
-                                         Grid.Column="0"
                                          IsManipulationEnabled="True"
                                          MaxZoomLevel="21"
                                          StartExtent="20,-110,50,-80">
@@ -91,15 +91,14 @@
                         </mapcontrol:MapItemsControl>
                     </libpipeline:MapView>
 
-                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                    <!--<telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              HorizontalAlignment="Right" VerticalAlignment="Top"
                                              IsReadOnly="True"
                                              Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
                                              Margin="10"
-                                             Width="350"/>
+                                             Width="350"/>-->
                 </Grid>
 
                 <GridSplitter Grid.Column="1"
