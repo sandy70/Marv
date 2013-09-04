@@ -51,9 +51,6 @@ namespace Marv
         public static readonly DependencyProperty IsYearSliderVisibleProperty =
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty LocationValueStoreProperty =
-        DependencyProperty.Register("LocationValueStore", typeof(LocationValueStore), typeof(MainWindow), new PropertyMetadata(new LocationValueStore()));
-
         public static readonly DependencyProperty MultiLocationsProperty =
         DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
@@ -133,12 +130,6 @@ namespace Marv
         {
             get { return (bool)GetValue(IsYearSliderVisibleProperty); }
             set { SetValue(IsYearSliderVisibleProperty, value); }
-        }
-
-        public LocationValueStore LocationValueStore
-        {
-            get { return (LocationValueStore)GetValue(LocationValueStoreProperty); }
-            set { SetValue(LocationValueStoreProperty, value); }
         }
 
         public SelectableCollection<MultiLocation> MultiLocations
@@ -280,18 +271,11 @@ namespace Marv
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
         {
-            var database = new ObjectDataBase<ModelValue>
-            {
-                FileNamePredicate = () =>
-                    {
-                        var selectedMultiLocation = this.MultiLocations.SelectedItem;
-                        var selectedLocation = selectedMultiLocation.SelectedItem;
+            var selectedMultiLocation = this.MultiLocations.SelectedItem;
+            var selectedLocation = selectedMultiLocation.SelectedItem;
+            var fileName = Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
 
-                        return Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
-                    }
-            };
-
-            var modelValues = database.ReadValues(x => true);
+            var modelValues = ObjectDataBase.ReadValues<ModelValue>(fileName, x => true);
 
             if (modelValues != null && modelValues.Count() > 0)
             {

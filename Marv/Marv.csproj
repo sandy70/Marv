@@ -174,7 +174,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdcoInput.cs" />
-    <Compile Include="LocationValueStore.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="NearNeutralPhSccModel.cs" />

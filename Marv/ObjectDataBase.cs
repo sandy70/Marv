@@ -9,94 +9,46 @@ using System.Threading.Tasks;
 
 namespace Marv
 {
-    public class ObjectDataBase<T> : ViewModel where T : class
+    public static class ObjectDataBase
     {
-        protected object _lock = new object();
-
-        private Func<string> fileNamePredicate = new Func<string>(() => "");
-
-        public string FileName
+        public static IEnumerable<T> ReadValues<T>(string fileName, Func<T, bool> predicate) where T : class
         {
-            get
-            {
-                return this.fileNamePredicate();
-            }
+            IEnumerable<T> locationValues = null;
 
-            set
+            try
             {
-                this.FileNamePredicate = new Func<string>(() => value);
-                OnPropertyChanged("FileName");
-            }
-        }
-
-        public Func<string> FileNamePredicate
-        {
-            get
-            {
-                return this.fileNamePredicate;
-            }
-
-            set
-            {
-                if (value != this.fileNamePredicate)
+                using (var odb = OdbFactory.Open(fileName))
                 {
-                    this.fileNamePredicate = value;
-                    this.OnPropertyChanged("FileNamePredicate");
+                    locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
                 }
             }
-        }
-
-        public IEnumerable<T> ReadValues(Func<T, bool> predicate)
-        {
-            lock (this._lock)
+            catch(OdbRuntimeException exp)
             {
-                IEnumerable<T> locationValues = null;
-
-                try
-                {
-                    using (var odb = OdbFactory.Open(this.FileName))
-                    {
-                        locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
-                    }
-                }
-                catch(OdbRuntimeException exp)
-                {
-                    // We are having these problems when the file is corrupt.
-                    // So let's delete the file and try again
-                    // TODO
-                }
-
-                return locationValues;
+                // We are having these problems when the file is corrupt.
+                // So let's delete the file and try again
+                // TODO
             }
+
+            return locationValues;
         }
 
-        public Task<IEnumerable<T>> ReadValuesAsync(Func<T, bool> predicate)
+        public static void Write<T>(string fileName, T anObject, bool isOverWritten = true) where T : class
         {
-            return Task.Run(() => this.ReadValues(predicate));
-        }
-
-        public void Write(T anObject)
-        {
-            lock (this._lock)
+            if (isOverWritten)
             {
                 // If the file already exists, then delete it
-                if (File.Exists(this.FileName))
+                if (File.Exists(fileName))
                 {
-                    File.Delete(this.FileName);
-                }
-
-                using (var odb = OdbFactory.Open(this.FileName))
-                {
-                    Console.WriteLine("Storing: " + anObject);
-                    odb.Store<T>(anObject);
-                    Console.WriteLine("Stored: " + anObject);
+                    File.Delete(fileName);
                 }
             }
-        }
 
-        public Task WriteAsync(T anObject)
-        {
-            return Task.Run(() => this.Write(anObject));
+            using (var odb = OdbFactory.Open(fileName))
+            {
+                Console.WriteLine("Storing: " + anObject);
+                odb.Store<T>(anObject);
+                Console.WriteLine("Stored: " + anObject);
+            }
         }
     }
 }
