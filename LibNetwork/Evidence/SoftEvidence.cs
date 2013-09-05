@@ -12,7 +12,12 @@ namespace LibNetwork
 
         public void Set(BnGraph graph, string vertexKey)
         {
-            graph.SetVertexEvidence(vertexKey, this.Evidence);
+            graph.SetEvidence(vertexKey, this.Evidence);
+        }
+
+        public void Set(BnVertex vertex)
+        {
+            vertex.SetEvidence(this.Evidence);
         }
     }
 }

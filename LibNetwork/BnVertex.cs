@@ -157,7 +157,10 @@ namespace LibNetwork
                 key = value;
                 OnPropertyChanged("Key");
 
-                this.nodeHandle = this.Parent.GetNodeHandle(this.Key);
+                if (this.Parent != null)
+                {
+                    this.nodeHandle = this.Parent.GetNodeHandle(this.Key);
+                }
             }
         }
 
@@ -403,6 +406,22 @@ namespace LibNetwork
                     this.States[i].Value = 0;
                 }
             }
+        }
+
+        public BnGraphValue Run(IEvidence evidence)
+        {
+            evidence.Set(this);
+            return this.Parent.GetNetworkValue();
+        }
+
+        public void SetEvidence(int stateIndex)
+        {
+            this.Parent.SetEvidence(this.Key, stateIndex);
+        }
+
+        public void SetEvidence(double[] evidenceArray)
+        {
+            this.Parent.SetEvidence(this.Key, evidenceArray);
         }
 
         public IEvidence ToEvidence()

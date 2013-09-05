@@ -98,30 +98,27 @@ namespace Marv
             var endYear = window.EndYear;
             var inputFileName = window.InputFileName;
 
-            foreach (var multiLocation in window.MultiLocations)
+            var multiLocation = window.MultiLocations.SelectedItem;
+
+            await Task.Run(() =>
             {
-                // var multiLocation = window.MultiLocations.SelectedItem;
+                var nCompleted = startIndex;
+                var nLocations = multiLocation.Count();
+                var startYear = (int)multiLocation["StartYear"];
 
-                await Task.Run(() =>
+                foreach (var location in multiLocation.Skip(startIndex))
                 {
-                    var nCompleted = startIndex;
-                    var nLocations = multiLocation.Count();
-                    var startYear = (int)multiLocation["StartYear"];
+                    var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
 
-                    foreach (var location in multiLocation.Skip(startIndex))
-                    {
-                        var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+                    var modelValue = graph.Run(graphEvidence, startYear, endYear);
 
-                        var modelValue = graph.Run(graphEvidence, startYear, endYear);
+                    Console.WriteLine("Ran " + ++nCompleted + " of " + nLocations);
 
-                        Console.WriteLine("Ran " + ++nCompleted + " of " + nLocations);
+                    var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
 
-                        var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
-
-                        ObjectDataBase.Write(fileName, modelValue);
-                    }
-                });
-            }
+                    ObjectDataBase.Write(fileName, modelValue);
+                }
+            });
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

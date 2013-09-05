@@ -42,7 +42,7 @@ namespace Marv
 
                 try
                 {
-                    vertex.Parent.Value = vertex.Parent.Run(evidence, vertex.Key);
+                    vertex.Parent.Value = vertex.Parent.Run(vertex.Key, evidence);
                 }
                 catch (InconsistentEvidenceException exception)
                 {
@@ -63,7 +63,7 @@ namespace Marv
 
             try
             {
-                vertex.Parent.Value = vertex.Parent.Run(vertex.ToEvidence(), vertex.Key);
+                vertex.Parent.Value = vertex.Parent.Run(vertex.Key, vertex.ToEvidence());
             }
             catch(InconsistentEvidenceException exception)
             {

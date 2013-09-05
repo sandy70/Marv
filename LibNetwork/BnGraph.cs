@@ -15,8 +15,6 @@ namespace LibNetwork
 {
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
-        private Network network = new Network();
-
         private BnGraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
@@ -24,6 +22,7 @@ namespace LibNetwork
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private string name;
+        private Network network = new Network();
 
         public BnGraph()
         {
@@ -295,7 +294,6 @@ namespace LibNetwork
 
         public BnGraphValue ClearEvidence(string vertexKey)
         {
-            this.GetVertex(vertexKey).IsEvidenceEntered = false;
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
         }
@@ -419,9 +417,10 @@ namespace LibNetwork
             return hasEdge;
         }
 
-        public BnGraphValue Run(IEvidence evidence, string vertexKey)
+        public BnGraphValue Run(string vertexKey, IEvidence evidence)
         {
-            evidence.Set(this, vertexKey);
+            evidence.Set(this.GetVertex(vertexKey));
+            // evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 
@@ -466,16 +465,14 @@ namespace LibNetwork
             return modelValue;
         }
 
-        public void SetVertexEvidence(string vertexKey, int stateIndex)
+        public void SetEvidence(string vertexKey, int stateIndex)
         {
             this.network.SetEvidence(vertexKey, stateIndex);
-            this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
-        public void SetVertexEvidence(string vertexKey, double[] evidence)
+        public void SetEvidence(string vertexKey, double[] evidence)
         {
             this.network.SetSoftEvidence(vertexKey, evidence);
-            this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
         public void UpdateBeliefs()
