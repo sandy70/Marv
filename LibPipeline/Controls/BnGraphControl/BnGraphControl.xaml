@@ -20,7 +20,7 @@
     <Grid>
         <telerik:RadDiagram Name="DiagramPart"
                             ActiveTool="PanTool"
-                            GraphSource="{Binding DisplayGraph, ElementName=Root}"
+                            GraphSource="{Binding Graph, ElementName=Root}"
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="False"
                             IsEditable="False"

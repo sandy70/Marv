@@ -16,6 +16,9 @@ namespace LibPipeline
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty GraphProperty =
+        DependencyProperty.Register("Graph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty GraphsProperty =
         DependencyProperty.Register("Graphs", typeof(IEnumerable<BnGraph>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedGraphs));
 
@@ -102,6 +105,12 @@ namespace LibPipeline
         {
             get { return (BnGraph)GetValue(DisplayGraphProperty); }
             set { SetValue(DisplayGraphProperty, value); }
+        }
+
+        public BnGraph Graph
+        {
+            get { return (BnGraph)GetValue(GraphProperty); }
+            set { SetValue(GraphProperty, value); }
         }
 
         public IEnumerable<BnGraph> Graphs
