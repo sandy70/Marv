@@ -22,7 +22,6 @@ namespace LibNetwork
         private string key = "";
         private BnState mostProbableState = null;
         private string name = "";
-        private int nodeHandle = int.MinValue;
         private BnGraph parent;
         private Point position;
         private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
@@ -156,11 +155,6 @@ namespace LibNetwork
             {
                 key = value;
                 OnPropertyChanged("Key");
-
-                if (this.Parent != null)
-                {
-                    this.nodeHandle = this.Parent.GetNodeHandle(this.Key);
-                }
             }
         }
 
