@@ -282,15 +282,54 @@ namespace LibNetwork
             }
         }
 
-        public void ClearEvidence()
+        public BnGraphValue ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
             {
-                vertex.ClearEvidence();
+                vertex.IsEvidenceEntered = false;
             }
+
+            this.Network.ClearAllEvidence();
+            return this.GetNetworkValue();
         }
 
-        public BnGraph GetGroup(string group)
+        public BnGraphValue ClearEvidence(string vertexKey)
+        {
+            this.GetVertex(vertexKey).IsEvidenceEntered = false;
+            this.Network.ClearEvidence(vertexKey);
+            return this.GetNetworkValue();
+        }
+
+        public BnGraphValue GetNetworkValue()
+        {
+            this.UpdateBeliefs();
+
+            var graphValue = new BnGraphValue();
+
+            foreach (var vertex in this.Vertices)
+            {
+                var vertexValue = new BnVertexValue();
+
+                foreach (var state in vertex.States)
+                {
+                    try
+                    {
+                        vertexValue[state.Key] = this.Network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
+                    }
+                    catch (SmileException smileException)
+                    {
+                        Console.WriteLine(smileException.Message);
+                        vertexValue[state.Key] = 0;
+                    }
+                }
+
+                graphValue[vertex.Key] = vertexValue;
+            }
+
+            return graphValue;
+        }
+
+        public BnGraph GetSubGraph(string group)
         {
             // Extract the header vertices
             BnGraph partGraph = new BnGraph();
@@ -345,35 +384,6 @@ namespace LibNetwork
             }
 
             return partGraph;
-        }
-
-        public BnGraphValue GetNetworkValue()
-        {
-            this.UpdateBeliefs();
-
-            var graphValue = new BnGraphValue();
-
-            foreach (var vertex in this.Vertices)
-            {
-                var vertexValue = new BnVertexValue();
-
-                foreach (var state in vertex.States)
-                {
-                    try
-                    {
-                        vertexValue[state.Key] = this.Network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
-                    }
-                    catch (SmileException smileException)
-                    {
-                        Console.WriteLine(smileException.Message);
-                        vertexValue[state.Key] = 0;
-                    }
-                }
-
-                graphValue[vertex.Key] = vertexValue;
-            }
-
-            return graphValue;
         }
 
         public BnVertex GetVertex(string key)

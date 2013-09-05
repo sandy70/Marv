@@ -176,7 +176,6 @@
     <Compile Include="AdcoInput.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
-    <Compile Include="NearNeutralPhSccModel.cs" />
     <Compile Include="ObjectDataBase.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>

@@ -146,18 +146,6 @@ namespace Marv
             set { SetValue(MultiLocationsProperty, value); }
         }
 
-        public NearNeutralPhSccModel NearNeutralPhSccModel
-        {
-            get
-            {
-                return model;
-            }
-            set
-            {
-                model = value;
-            }
-        }
-
         public SelectableStringCollection NetworkFileNames
         {
             get { return (SelectableStringCollection)GetValue(NetworkFileNamesProperty); }

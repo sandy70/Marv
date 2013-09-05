@@ -174,7 +174,7 @@ namespace LibPipeline
                 foreach (var graph in this.Graphs)
                 {
                     this.selectedGroups[graph] = graph.DefaultGroup;
-                    displayGraph.Add(graph.GetGroup(graph.DefaultGroup));
+                    displayGraph.Add(graph.GetSubGraph(graph.DefaultGroup));
                 }
             }
 

@@ -327,28 +327,6 @@ namespace LibNetwork
             }
         }
 
-        public void ClearEvidence()
-        {
-            try
-            {
-                this.Parent.Network.ClearEvidence(this.Key);
-            }
-            catch (SmileException exception)
-            {
-                // do nothing
-            }
-
-            this.IsEvidenceEntered = false;
-            this.SelectedState = null;
-        }
-
-        public BnGraphValue ClearEvidenceAndUpdateParentValue()
-        {
-            this.ClearEvidence();
-            this.Parent.UpdateBeliefs();
-            return this.Parent.UpdateValue();
-        }
-
         public double GetMean(BnVertexValue vertexValue)
         {
             double numer = 0;
@@ -430,23 +408,27 @@ namespace LibNetwork
             }
         }
 
-        public VertexEvidence ToEvidence()
+        public IEvidence ToEvidence()
         {
             int selectedStateIndex = this.GetSelectedStateIndex();
-            var vertexEvidence = new VertexEvidence();
+            IEvidence evidence = null;
 
             if (selectedStateIndex >= 0)
             {
-                vertexEvidence.EvidenceType = EvidenceType.StateSelected;
-                vertexEvidence.StateIndex = selectedStateIndex;
+                evidence = new HardEvidence
+                {
+                    StateIndex = selectedStateIndex
+                };
             }
             else
             {
-                vertexEvidence.EvidenceType = EvidenceType.SoftEvidence;
-                vertexEvidence.Evidence = this.States.Select(x => x.Value).ToArray();
+                evidence = new SoftEvidence
+                {
+                    Evidence = this.States.Select(x => x.Value).ToArray()
+                };
             }
 
-            return vertexEvidence;
+            return evidence;
         }
 
         public void UpdateMostProbableState()

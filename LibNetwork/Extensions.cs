@@ -46,11 +46,6 @@ namespace LibNetwork
             } while (hasRemainingItems);
         }
 
-        public static VertexEvidence GetVertexEvidence(this IEnumerable<VertexEvidence> graphEvidence, string vertexKey)
-        {
-            return graphEvidence.SingleOrDefault(x => x.Key.Equals(vertexKey));
-        }
-
         public static ObservableCollection<BnState> ParseStates(this Network network, string key)
         {
             var states = new ObservableCollection<BnState>();

@@ -21,7 +21,7 @@ namespace LibPipeline
             
             graphControl.IsBackButtonVisible = true;
             graphControl.SelectedGroups[vertexViewModel.Parent] = vertexViewModel.HeaderOfGroup;
-            graphControl.DisplayGraph = vertexViewModel.Parent.GetGroup(vertexViewModel.HeaderOfGroup);
+            graphControl.DisplayGraph = vertexViewModel.Parent.GetSubGraph(vertexViewModel.HeaderOfGroup);
         }
     }
 }

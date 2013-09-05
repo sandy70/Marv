@@ -110,7 +110,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="Evidence\SoftEvidence.cs" />
-    <Compile Include="VertexEvidence.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

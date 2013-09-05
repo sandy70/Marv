@@ -14,11 +14,7 @@ namespace Marv
 {
     public partial class MainWindow : Window
     {
-        public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
         public SensorListener SensorListener = new SensorListener();
-        public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
-        private object _lock = new object();
-        private NearNeutralPhSccModel model = new NearNeutralPhSccModel();
 
         public MainWindow()
         {
