@@ -91,14 +91,14 @@
                         </mapcontrol:MapItemsControl>
                     </libpipeline:MapView>
 
-                    <!--<telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
                                              AutoGeneratePropertyDefinitions="True"
                                              DescriptionPanelVisibility="Collapsed"
                                              HorizontalAlignment="Right" VerticalAlignment="Top"
                                              IsReadOnly="True"
                                              Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
                                              Margin="10"
-                                             Width="350"/>-->
+                                             Width="350"/>
                 </Grid>
 
                 <GridSplitter Grid.Column="1"
