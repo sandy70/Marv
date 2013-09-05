@@ -11,6 +11,9 @@ namespace Marv
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
+        public static readonly DependencyProperty DisplayGraphProperty =
+        DependencyProperty.Register("DisplayGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
@@ -72,6 +75,12 @@ namespace Marv
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
+        }
+
+        public BnGraph DisplayGraph
+        {
+            get { return (BnGraph)GetValue(DisplayGraphProperty); }
+            set { SetValue(DisplayGraphProperty, value); }
         }
 
         public int EndYear
