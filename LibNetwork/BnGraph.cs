@@ -282,23 +282,6 @@ namespace LibNetwork
             }
         }
 
-        public void AddVertices<TVertex>(ObservableCollection<TVertex> vertices)
-            where TVertex : BnVertex
-        {
-            foreach (var vertex in vertices)
-            {
-                this.AddVertex(vertex);
-
-                foreach (var group in vertex.Groups)
-                {
-                    if (!this.Groups.Contains(group))
-                    {
-                        this.Groups.Add(group);
-                    }
-                }
-            }
-        }
-
         public void ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
@@ -421,6 +404,12 @@ namespace LibNetwork
             return hasEdge;
         }
 
+        public BnGraphValue Run(IEvidence evidence, string vertexKey)
+        {
+            evidence.Set(this, vertexKey);
+            return this.GetNetworkValue();
+        }
+
         public BnGraphValue Run(Dictionary<string, IEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
@@ -465,11 +454,13 @@ namespace LibNetwork
         public void SetVertexEvidence(string vertexKey, int stateIndex)
         {
             this.Network.SetEvidence(vertexKey, stateIndex);
+            this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
         public void SetVertexEvidence(string vertexKey, double[] evidence)
         {
             this.Network.SetSoftEvidence(vertexKey, evidence);
+            this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
         public void UpdateBeliefs()

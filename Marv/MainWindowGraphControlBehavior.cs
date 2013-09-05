@@ -31,18 +31,18 @@ namespace Marv
         private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
         {
             var window = this.AssociatedObject;
+            var vertex = e.Vertex;
 
             if (e.Vertex.SelectedState != e.State)
             {
-                var vertexEvidence = new VertexEvidence
+                var evidence = new HardEvidence
                 {
-                    EvidenceType = EvidenceType.StateSelected,
-                    StateIndex = e.Vertex.States.IndexOf(e.State)
+                    StateIndex = vertex.States.IndexOf(e.State)
                 };
 
                 try
                 {
-                    e.Vertex.SetEvidenceAndUpdateParentValue(vertexEvidence);
+                    vertex.Parent.Value = vertex.Parent.Run(evidence, vertex.Key);
                 }
                 catch (InconsistentEvidenceException exception)
                 {
@@ -63,7 +63,7 @@ namespace Marv
 
             try
             {
-                vertex.SetEvidenceAndUpdateParentValue();
+                //vertex.SetEvidenceAndUpdateParentValue();
             }
             catch(InconsistentEvidenceException exception)
             {

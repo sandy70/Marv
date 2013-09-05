@@ -412,51 +412,7 @@ namespace LibNetwork
 
             return stateIndex;
         }
-
-        public void SetEvidence(VertexEvidence vertexEvidence)
-        {
-            if (vertexEvidence.EvidenceType == EvidenceType.StateSelected)
-            {
-                this.SetEvidence(vertexEvidence.StateIndex);
-            }
-            else if (vertexEvidence.EvidenceType == EvidenceType.SoftEvidence)
-            {
-                this.SetEvidence(vertexEvidence.Evidence);
-            }
-
-            this.IsEvidenceEntered = true;
-        }
-
-        public void SetEvidence(double[] evidence)
-        {
-            this.Parent.Network.SetSoftEvidence(this.Key, evidence);
-        }
-
-        public void SetEvidence(int stateIndex)
-        {
-            try
-            {
-                this.Parent.Network.SetEvidence(this.Key, stateIndex);
-                this.SelectedState = this.States[stateIndex];
-            }
-            catch (SmileException exception)
-            {
-                throw new InconsistentEvidenceException();
-            }
-        }
-
-        public BnGraphValue SetEvidenceAndUpdateParentValue()
-        {
-            return this.SetEvidenceAndUpdateParentValue(this.ToEvidence());
-        }
-
-        public BnGraphValue SetEvidenceAndUpdateParentValue(VertexEvidence vertexEvidence)
-        {
-            this.SetEvidence(vertexEvidence);
-            this.Parent.UpdateBeliefs();
-            return this.Parent.UpdateValue();
-        }
-
+        
         public void SetSelectedStateIndex(int index)
         {
             int nStates = this.States.Count;
