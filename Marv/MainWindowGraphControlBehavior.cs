@@ -42,17 +42,17 @@ namespace Marv
 
                 try
                 {
-                    vertex.Parent.Value = vertex.Parent.Run(vertex.Key, evidence);
+                    vertex.Run(evidence);
                 }
                 catch (InconsistentEvidenceException exception)
                 {
                     window.PopupControl.ShowText("Inconsistent evidence entered.");
-                    vertex.Parent.Value = vertex.Parent.ClearEvidence(vertex.Key);
+                    vertex.ClearEvidence();
                 }
             }
             else
             {
-                vertex.Parent.Value = vertex.Parent.ClearEvidence(vertex.Key);
+                vertex.ClearEvidence();
             }
         }
 
@@ -63,19 +63,19 @@ namespace Marv
 
             try
             {
-                vertex.Parent.Value = vertex.Parent.Run(vertex.Key, vertex.ToEvidence());
+                vertex.Run(vertex.ToEvidence());
             }
             catch(InconsistentEvidenceException exception)
             {
                 window.PopupControl.ShowText("Inconsistent evidence entered.");
-                vertex.Parent.Value = vertex.Parent.ClearEvidence(vertex.Key);
+                vertex.ClearEvidence();
             }
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var vertex = e.Value;
-            vertex.Parent.Value = vertex.Parent.ClearEvidence(vertex.Key);
+            vertex.ClearEvidence();
         }
 
         private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)

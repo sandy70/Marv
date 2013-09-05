@@ -14,10 +14,5 @@ namespace LibNetwork
         {
             graph.SetEvidence(vertexKey, this.Evidence);
         }
-
-        public void Set(BnVertex vertex)
-        {
-            vertex.SetEvidence(this.Evidence);
-        }
     }
 }

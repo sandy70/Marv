@@ -408,20 +408,14 @@ namespace LibNetwork
             }
         }
 
-        public BnGraphValue Run(IEvidence evidence)
+        public void Run(IEvidence evidence)
         {
-            evidence.Set(this);
-            return this.Parent.GetNetworkValue();
+            this.Parent.Value = this.Parent.Run(this.Key, evidence);
         }
 
-        public void SetEvidence(int stateIndex)
+        public void ClearEvidence()
         {
-            this.Parent.SetEvidence(this.Key, stateIndex);
-        }
-
-        public void SetEvidence(double[] evidenceArray)
-        {
-            this.Parent.SetEvidence(this.Key, evidenceArray);
+            this.Parent.Value = this.Parent.ClearEvidence(this.Key);
         }
 
         public IEvidence ToEvidence()

@@ -419,8 +419,7 @@ namespace LibNetwork
 
         public BnGraphValue Run(string vertexKey, IEvidence evidence)
         {
-            evidence.Set(this.GetVertex(vertexKey));
-            // evidence.Set(this, vertexKey);
+            evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 

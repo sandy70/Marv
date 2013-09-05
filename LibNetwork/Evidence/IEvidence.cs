@@ -9,6 +9,5 @@ namespace LibNetwork
     public interface IEvidence
     {
         void Set(BnGraph bnGraph, string vertexKey);
-        void Set(BnVertex vertex);
     }
 }
