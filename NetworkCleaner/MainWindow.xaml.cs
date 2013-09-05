@@ -56,7 +56,7 @@ namespace NetworkCleaner
             var dialog = new OpenFileDialog
             {
                 DefaultExt = ".net",
-                Filter = "Hugin Network Files (.net)|*.net",
+                Filter = "Hugin network Files (.net)|*.net",
                 Multiselect = false
             };
 
@@ -72,7 +72,7 @@ namespace NetworkCleaner
             var dialog = new SaveFileDialog
             {
                 DefaultExt = ".net",
-                Filter = "Hugin Network Files (.net)|*.net",
+                Filter = "Hugin network Files (.net)|*.net",
             };
 
             if (dialog.ShowDialog() == true)

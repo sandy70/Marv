@@ -15,7 +15,7 @@ namespace LibNetwork
 {
     public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
     {
-        public Network Network = new Network();
+        private Network network = new Network();
 
         private BnGraphValue _value;
         private string associatedGroup;
@@ -192,14 +192,14 @@ namespace LibNetwork
 
             try
             {
-                graph.Network.ReadFile(fileName);
+                graph.network.ReadFile(fileName);
             }
             catch (SmileException exp)
             {
                 return graph;
             }
 
-            graph.Network.UpdateBeliefs();
+            graph.network.UpdateBeliefs();
 
             var structure = NetworkStructure.Read(fileName);
             graph.DefaultGroup = structure.ParseDefaultGroup();
@@ -289,14 +289,14 @@ namespace LibNetwork
                 vertex.IsEvidenceEntered = false;
             }
 
-            this.Network.ClearAllEvidence();
+            this.network.ClearAllEvidence();
             return this.GetNetworkValue();
         }
 
         public BnGraphValue ClearEvidence(string vertexKey)
         {
             this.GetVertex(vertexKey).IsEvidenceEntered = false;
-            this.Network.ClearEvidence(vertexKey);
+            this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
         }
 
@@ -314,7 +314,7 @@ namespace LibNetwork
                 {
                     try
                     {
-                        vertexValue[state.Key] = this.Network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
+                        vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
                     }
                     catch (SmileException smileException)
                     {
@@ -327,6 +327,11 @@ namespace LibNetwork
             }
 
             return graphValue;
+        }
+
+        public int GetNodeHandle(string vertexKey)
+        {
+            return this.network.GetNode(vertexKey);
         }
 
         public BnGraph GetSubGraph(string group)
@@ -463,13 +468,13 @@ namespace LibNetwork
 
         public void SetVertexEvidence(string vertexKey, int stateIndex)
         {
-            this.Network.SetEvidence(vertexKey, stateIndex);
+            this.network.SetEvidence(vertexKey, stateIndex);
             this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
         public void SetVertexEvidence(string vertexKey, double[] evidence)
         {
-            this.Network.SetSoftEvidence(vertexKey, evidence);
+            this.network.SetSoftEvidence(vertexKey, evidence);
             this.GetVertex(vertexKey).IsEvidenceEntered = true;
         }
 
@@ -477,7 +482,7 @@ namespace LibNetwork
         {
             try
             {
-                this.Network.UpdateBeliefs();
+                this.network.UpdateBeliefs();
             }
             catch (SmileException exception)
             {

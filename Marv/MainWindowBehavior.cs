@@ -54,7 +54,7 @@ namespace Marv
                 var dialog = new OpenFileDialog
                 {
                     DefaultExt = ".net",
-                    Filter = "Hugin Network Files (.net)|*.net",
+                    Filter = "Hugin network Files (.net)|*.net",
                     Multiselect = true
                 };
 
@@ -145,7 +145,7 @@ namespace Marv
             var dialog = new OpenFileDialog
             {
                 DefaultExt = ".net",
-                Filter = "Hugin Network Files (.net)|*.net",
+                Filter = "Hugin network Files (.net)|*.net",
                 Multiselect = true
             };
 
