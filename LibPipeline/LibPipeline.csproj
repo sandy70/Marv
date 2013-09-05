@@ -203,7 +203,6 @@
     <Compile Include="MetaObject.cs" />
     <Compile Include="PolylineControlBase.cs" />
     <Compile Include="SelectableStringCollection.cs" />
-    <Compile Include="PipelineValue.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
     <Compile Include="DouglasPeuckerReducer.cs" />

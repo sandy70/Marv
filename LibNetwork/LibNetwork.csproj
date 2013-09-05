@@ -103,7 +103,6 @@
     <Compile Include="Evidence\HardEvidence.cs" />
     <Compile Include="Evidence\IEvidence.cs" />
     <Compile Include="InconsistentEvidenceException.cs" />
-    <Compile Include="LocationValue.cs" />
     <Compile Include="ModelValue.cs" />
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
