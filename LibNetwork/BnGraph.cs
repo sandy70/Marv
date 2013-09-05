@@ -313,6 +313,7 @@ namespace LibNetwork
                     try
                     {
                         vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
+                        vertexValue.IsEvidenceEntered = this.network.IsEvidence(vertex.Key);
                     }
                     catch (SmileException smileException)
                     {

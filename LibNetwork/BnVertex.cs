@@ -323,6 +323,7 @@ namespace LibNetwork
                     }
 
                     this.UpdateMostProbableState();
+                    this.IsEvidenceEntered = this.Value.IsEvidenceEntered;
                 }
             }
         }
