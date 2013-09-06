@@ -180,7 +180,6 @@
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RetractAllButtonBehavior.cs" />
     <Compile Include="SensorListener.cs" />
     <Compile Include="Config.cs" />
     <Page Include="PopupControl.xaml">

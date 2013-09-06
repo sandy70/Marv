@@ -103,14 +103,12 @@ namespace Marv
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
             window.TransitionControl.SelectElement("EditNetworkFilesControl");
         }
 
         private void EditSettingsMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
             window.TransitionControl.SelectElement("SettingsControl");
         }
 

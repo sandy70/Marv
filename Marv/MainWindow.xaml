@@ -137,10 +137,6 @@
                                        Margin="0,70,10,0"
                                        Visibility="Visible"
                                        Width="50" Height="50">
-                        <i:Interaction.Behaviors>
-                            <local:RetractAllButtonBehavior />
-                        </i:Interaction.Behaviors>
-
                         <Image Source="Resources/Icons/erase.png" />
                     </telerik:RadButton>
 
