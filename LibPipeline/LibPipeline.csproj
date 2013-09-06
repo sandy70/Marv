@@ -185,7 +185,6 @@
     <Compile Include="SelectableStringCollection.cs" />
     <Compile Include="Pipeline\PipelineViewModel.cs" />
     <Compile Include="PointCluster.cs" />
-    <Compile Include="DouglasPeuckerReducer.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Pipeline\LandcoverViewModel.cs" />
     <Compile Include="Pipeline\Percentile.cs" />
