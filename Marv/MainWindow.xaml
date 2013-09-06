@@ -68,7 +68,7 @@
                     <libpipeline:MapView Name="MapView"
                                          IsManipulationEnabled="True"
                                          MaxZoomLevel="21"
-                                         StartExtent="20,-110,50,-80">
+                                         StartExtent="20,50,30,60">
                         <mapcontrol:MapItemsControl Name="MapItemsControl"
                                                     ItemsSource="{Binding MultiLocations, ElementName=Root}"
                                                     SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
