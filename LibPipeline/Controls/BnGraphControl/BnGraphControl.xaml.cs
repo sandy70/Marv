@@ -10,17 +10,17 @@ namespace LibPipeline
 {
     public partial class BnGraphControl : UserControl
     {
+        public static readonly RoutedEvent BackButtonClickedEvent =
+        EventManager.RegisterRoutedEvent("BackButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
+
         public static readonly DependencyProperty ConnectionColorProperty =
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
-
-        public static readonly DependencyProperty DisplayGraphProperty =
-        DependencyProperty.Register("DisplayGraph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty GraphProperty =
         DependencyProperty.Register("Graph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty GraphsProperty =
-        DependencyProperty.Register("Graphs", typeof(IEnumerable<BnGraph>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedGraphs));
+        public static readonly RoutedEvent GroupButtonClickedEvent =
+        EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -65,6 +65,18 @@ namespace LibPipeline
             InitializeComponent();
         }
 
+        public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> BackButtonClicked
+        {
+            add { AddHandler(BackButtonClickedEvent, value); }
+            remove { RemoveHandler(BackButtonClickedEvent, value); }
+        }
+
+        public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> GroupButtonClicked
+        {
+            add { AddHandler(GroupButtonClickedEvent, value); }
+            remove { RemoveHandler(GroupButtonClickedEvent, value); }
+        }
+
         public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> NewEvidenceAvailable
         {
             add { AddHandler(NewEvidenceAvailableEvent, value); }
@@ -101,22 +113,10 @@ namespace LibPipeline
             set { SetValue(ConnectionColorProperty, value); }
         }
 
-        public BnGraph DisplayGraph
-        {
-            get { return (BnGraph)GetValue(DisplayGraphProperty); }
-            set { SetValue(DisplayGraphProperty, value); }
-        }
-
         public BnGraph Graph
         {
             get { return (BnGraph)GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
-        }
-
-        public IEnumerable<BnGraph> Graphs
-        {
-            get { return (IEnumerable<BnGraph>)GetValue(GraphsProperty); }
-            set { SetValue(GraphsProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
@@ -172,59 +172,6 @@ namespace LibPipeline
         {
             get { return (double)GetValue(ZoomProperty); }
             set { SetValue(ZoomProperty, value); }
-        }
-
-        public void UpdateDisplayGraphToDefaultGroups()
-        {
-            var displayGraph = new BnGraph();
-
-            if (this.Graphs != null && this.Graphs.Count() > 0)
-            {
-                foreach (var graph in this.Graphs)
-                {
-                    this.selectedGroups[graph] = graph.DefaultGroup;
-                    displayGraph.Add(graph.GetSubGraph(graph.DefaultGroup));
-                }
-            }
-
-            this.DisplayGraph = displayGraph;
-        }
-
-        private static void ChangedGraphs(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (graphControl.Graphs != null)
-            {
-                if (graphControl.Graphs is INotifyCollectionChanged)
-                {
-                    (graphControl.Graphs as INotifyCollectionChanged).CollectionChanged += (o1, e1) =>
-                        {
-                            graphControl.UpdateDisplayGraphToDefaultGroups();
-                            graphControl.AttachHandler();
-                        };
-                }
-
-                graphControl.UpdateDisplayGraphToDefaultGroups();
-                graphControl.AttachHandler();
-            }
-        }
-
-        private void AttachHandler()
-        {
-            foreach (var graph in this.Graphs)
-            {
-                foreach (var vertex in graph.Vertices)
-                {
-                    vertex.PropertyChanged += (o2, e2) =>
-                    {
-                        if (e2.PropertyName.Equals("DisplayPosition"))
-                        {
-                            vertex.Positions[this.selectedGroups[graph]] = vertex.DisplayPosition;
-                        }
-                    };
-                }
-            }
         }
     }
 }

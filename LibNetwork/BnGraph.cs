@@ -219,7 +219,7 @@ namespace LibNetwork
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
-                vertex.Positions = structureVertex.ParsePositionByGroup();
+                vertex.PositionForGroup = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
@@ -336,33 +336,29 @@ namespace LibNetwork
         public BnGraph GetSubGraph(string group)
         {
             // Extract the header vertices
-            BnGraph partGraph = new BnGraph();
-            partGraph.AssociatedGroup = group;
+            BnGraph subGraph = new BnGraph();
+            subGraph.AssociatedGroup = group;
 
             foreach (var vertex in this.Vertices)
             {
                 if (vertex.Groups.Contains(group))
                 {
-                    partGraph.AddVertex(vertex);
+                    subGraph.AddVertex(vertex);
 
-                    Point positionByGroup;
+                    if (!vertex.PositionForGroup.ContainsKey(group))
+                    {
+                        vertex.PositionForGroup[group] = vertex.Position;
+                    }
 
-                    if (vertex.Positions.TryGetValue(group, out positionByGroup))
-                    {
-                        vertex.DisplayPosition = positionByGroup;
-                    }
-                    else
-                    {
-                        vertex.Positions.Add(group, vertex.Position);
-                        vertex.DisplayPosition = vertex.Position;
-                    }
+                    vertex.SelectedGroup = group;
+                    vertex.DisplayPosition = vertex.PositionForGroup[group];
                 }
             }
 
             // Process for each pair
-            foreach (var srcVertex in partGraph.Vertices)
+            foreach (var srcVertex in subGraph.Vertices)
             {
-                foreach (var dstVertex in partGraph.Vertices)
+                foreach (var dstVertex in subGraph.Vertices)
                 {
                     var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<BnVertex, BnEdge>(this, (edge) => { return 1; });
                     algorithm.Compute(srcVertex, dstVertex);
@@ -373,11 +369,11 @@ namespace LibNetwork
 
                         foreach (var edge in path)
                         {
-                            if (partGraph.Vertices.Contains(edge.Target))
+                            if (subGraph.Vertices.Contains(edge.Target))
                             {
-                                if (!partGraph.HasEdge(src.Key, edge.Target.Key))
+                                if (!subGraph.HasEdge(src.Key, edge.Target.Key))
                                 {
-                                    partGraph.AddEdge(src.Key, edge.Target.Key);
+                                    subGraph.AddEdge(src.Key, edge.Target.Key);
                                 }
 
                                 src = edge.Target;
@@ -387,7 +383,7 @@ namespace LibNetwork
                 }
             }
 
-            return partGraph;
+            return subGraph;
         }
 
         public BnVertex GetVertex(string key)
@@ -491,9 +487,9 @@ namespace LibNetwork
         {
             foreach (var vertex in this.Vertices)
             {
-                if (vertex.Positions.ContainsKey(this.AssociatedGroup))
+                if (vertex.PositionForGroup.ContainsKey(this.AssociatedGroup))
                 {
-                    vertex.DisplayPosition = vertex.Positions[this.AssociatedGroup];
+                    vertex.DisplayPosition = vertex.PositionForGroup[this.AssociatedGroup];
                 }
                 else
                 {
@@ -514,7 +510,7 @@ namespace LibNetwork
             foreach (var node in structure.Vertices)
             {
                 node.Properties["groups"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
-                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).Positions.String() + "\"";
+                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionForGroup.String() + "\"";
                 node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
                 node.Properties["label"] = "\"" + this.GetVertex(node.Key).Name + "\"";
                 node.Properties["units"] = "\"" + this.GetVertex(node.Key).Units + "\"";

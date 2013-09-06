@@ -18,10 +18,16 @@ namespace LibPipeline
         {
             var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
             var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
-            
-            graphControl.IsBackButtonVisible = true;
-            graphControl.SelectedGroups[vertexViewModel.Parent] = vertexViewModel.HeaderOfGroup;
-            graphControl.DisplayGraph = vertexViewModel.Parent.GetSubGraph(vertexViewModel.HeaderOfGroup);
+
+            graphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+            {
+                RoutedEvent = BnGraphControl.GroupButtonClickedEvent,
+                Value = vertexViewModel
+            });
+
+            // graphControl.IsBackButtonVisible = true;
+            // graphControl.SelectedGroups[vertexViewModel.Parent] = vertexViewModel.HeaderOfGroup;
+            // graphControl.DisplayGraph = vertexViewModel.Parent.GetSubGraph(vertexViewModel.HeaderOfGroup);
         }
     }
 }

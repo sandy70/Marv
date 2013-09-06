@@ -1,5 +1,4 @@
-﻿using Smile;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,7 +23,8 @@ namespace LibNetwork
         private string name = "";
         private BnGraph parent;
         private Point position;
-        private Dictionary<string, Point> positionsByGroup = new Dictionary<string, Point>();
+        private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
+        private string selectedGroup;
         private BnState selectedState;
         private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
         private VertexType type = VertexType.None;
@@ -62,6 +62,11 @@ namespace LibNetwork
                 {
                     this.displayPosition = value;
                     this.OnPropertyChanged("DisplayPosition");
+
+                    if (this.DisplayPosition != null && this.SelectedGroup != null)
+                    {
+                        this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
+                    }
                 }
             }
         }
@@ -219,19 +224,36 @@ namespace LibNetwork
             }
         }
 
-        public Dictionary<string, Point> Positions
+        public Dictionary<string, Point> PositionForGroup
         {
             get
             {
-                return this.positionsByGroup;
+                return this.positionsForGroup;
             }
 
             set
             {
-                if (value != this.positionsByGroup)
+                if (value != this.positionsForGroup)
                 {
-                    this.positionsByGroup = value;
-                    this.OnPropertyChanged("Positions");
+                    this.positionsForGroup = value;
+                    this.OnPropertyChanged("PositionForGroup");
+                }
+            }
+        }
+
+        public string SelectedGroup
+        {
+            get
+            {
+                return this.selectedGroup;
+            }
+
+            set
+            {
+                if (value != this.selectedGroup)
+                {
+                    this.selectedGroup = value;
+                    this.OnPropertyChanged("SelectedGroup");
                 }
             }
         }
@@ -322,6 +344,11 @@ namespace LibNetwork
             }
         }
 
+        public void ClearEvidence()
+        {
+            this.Parent.Value = this.Parent.ClearEvidence(this.Key);
+        }
+
         public double GetMean(BnVertexValue vertexValue)
         {
             double numer = 0;
@@ -385,7 +412,12 @@ namespace LibNetwork
 
             return stateIndex;
         }
-        
+
+        public void Run(IEvidence evidence)
+        {
+            this.Parent.Value = this.Parent.Run(this.Key, evidence);
+        }
+
         public void SetSelectedStateIndex(int index)
         {
             int nStates = this.States.Count;
@@ -401,16 +433,6 @@ namespace LibNetwork
                     this.States[i].Value = 0;
                 }
             }
-        }
-
-        public void Run(IEvidence evidence)
-        {
-            this.Parent.Value = this.Parent.Run(this.Key, evidence);
-        }
-
-        public void ClearEvidence()
-        {
-            this.Parent.Value = this.Parent.ClearEvidence(this.Key);
         }
 
         public IEvidence ToEvidence()

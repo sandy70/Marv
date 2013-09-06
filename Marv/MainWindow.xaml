@@ -22,7 +22,6 @@
             <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="NetworkFileNames" Value="{Binding Default.NetworkFileNames, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
         </Style>
     </Window.Resources>
@@ -129,6 +128,7 @@
                                                 ConnectionColor="#252525"
                                                 Graph="{Binding DisplayGraph, ElementName=Root}"
                                                 IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
+                                                IsBackButtonVisible="{Binding IsBackButtonVisible, ElementName=Root}"
                                                 IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
 
                     <telerik:RadButton Name="RetractAllButton"

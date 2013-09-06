@@ -26,11 +26,7 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (var graph in this.AssociatedObject.Graphs)
-            {
-                graph.Write(graph.FileName);
-            }
-
+            this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.SourceGraph.FileName);
             Properties.Settings.Default.Save();
         }
 
@@ -51,22 +47,6 @@ namespace Marv
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
-                var dialog = new OpenFileDialog
-                {
-                    DefaultExt = ".net",
-                    Filter = "Hugin network Files (.net)|*.net",
-                    Multiselect = true
-                };
-
-                if (dialog.ShowDialog() == true)
-                {
-                    window.Graphs.Clear();
-
-                    foreach (var fileName in dialog.FileNames)
-                    {
-                        window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName));
-                    }
-                }
             }
         }
 
@@ -78,14 +58,13 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read();
 
-            var graph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
-            window.Graphs.Add(graph);
+            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
+
+            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
-            window.NetworkFilesAddButton.Click += NetworkFilesAddButton_Click;
-            window.NetworkFilesRemoveButton.Click += NetworkFilesRemoveButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
         }
 
@@ -135,41 +114,10 @@ namespace Marv
             window.TransitionControl.SelectElement("SettingsControl");
         }
 
-        private void NetworkFilesAddButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var dialog = new OpenFileDialog
-            {
-                DefaultExt = ".net",
-                Filter = "Hugin network Files (.net)|*.net",
-                Multiselect = true
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                foreach (var fileName in dialog.FileNames)
-                {
-                    window.NetworkFileNames.Add(fileName);
-                }
-            }
-        }
-
-        private void NetworkFilesRemoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.AssociatedObject.NetworkFileNames.RemoveSelected();
-        }
-
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
-            foreach (var graph in window.Graphs)
-            {
-                graph.ClearEvidence();
-                graph.UpdateBeliefs();
-                graph.UpdateValue();
-            }
+            window.SourceGraph.Value = window.SourceGraph.ClearEvidence();
         }
     }
 }

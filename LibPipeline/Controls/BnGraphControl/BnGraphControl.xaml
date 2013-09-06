@@ -256,7 +256,7 @@
                                           Margin="10"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom" />
-
+        <!-- Back Button -->
         <telerik:RadButton Name="BackButton"
                            HorizontalAlignment="Left" VerticalAlignment="Top"
                            Margin="10"

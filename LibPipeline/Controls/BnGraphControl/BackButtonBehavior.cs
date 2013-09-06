@@ -15,9 +15,13 @@ namespace LibPipeline
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
+            var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
 
-            graphControl.IsBackButtonVisible = false;
-            graphControl.UpdateDisplayGraphToDefaultGroups();
+            graphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+            {
+                RoutedEvent = BnGraphControl.BackButtonClickedEvent,
+                Value = vertexViewModel
+            });
         }
     }
 }

@@ -17,11 +17,11 @@ namespace Marv
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
-        public static readonly DependencyProperty GraphsProperty =
-        DependencyProperty.Register("Graphs", typeof(GraphCollection), typeof(MainWindow), new PropertyMetadata(new GraphCollection()));
-
         public static readonly DependencyProperty InputFileNameProperty =
         DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty IsBackButtonVisibleProperty =
+        DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsGroupButtonVisibleProperty =
         DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
@@ -59,14 +59,14 @@ namespace Marv
         public static readonly DependencyProperty MultiLocationsProperty =
         DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
-        public static readonly DependencyProperty NetworkFileNamesProperty =
-        DependencyProperty.Register("NetworkFileNames", typeof(SelectableStringCollection), typeof(MainWindow), new PropertyMetadata(null, ChangedNetworkFileNames));
-
         public static readonly DependencyProperty SelectedLocationModelValueProperty =
         DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
+
+        public static readonly DependencyProperty SourceGraphProperty =
+        DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
@@ -89,16 +89,16 @@ namespace Marv
             set { SetValue(EndYearProperty, value); }
         }
 
-        public GraphCollection Graphs
-        {
-            get { return (GraphCollection)GetValue(GraphsProperty); }
-            set { SetValue(GraphsProperty, value); }
-        }
-
         public string InputFileName
         {
             get { return (string)GetValue(InputFileNameProperty); }
             set { SetValue(InputFileNameProperty, value); }
+        }
+
+        public bool IsBackButtonVisible
+        {
+            get { return (bool)GetValue(IsBackButtonVisibleProperty); }
+            set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
         public bool IsGroupButtonVisible
@@ -155,12 +155,6 @@ namespace Marv
             set { SetValue(MultiLocationsProperty, value); }
         }
 
-        public SelectableStringCollection NetworkFileNames
-        {
-            get { return (SelectableStringCollection)GetValue(NetworkFileNamesProperty); }
-            set { SetValue(NetworkFileNamesProperty, value); }
-        }
-
         public ModelValue SelectedLocationModelValue
         {
             get { return (ModelValue)GetValue(SelectedLocationModelValueProperty); }
@@ -171,6 +165,12 @@ namespace Marv
         {
             get { return (int)GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public BnGraph SourceGraph
+        {
+            get { return (BnGraph)GetValue(SourceGraphProperty); }
+            set { SetValue(SourceGraphProperty, value); }
         }
 
         public int StartYear
@@ -199,7 +199,7 @@ namespace Marv
             {
                 if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
                 {
-                    this.Graphs.First().Value = this.SelectedLocationModelValue[this.SelectedYear];
+                    this.SourceGraph.Value = this.SelectedLocationModelValue[this.SelectedYear];
                 }
             }
         }
@@ -224,53 +224,6 @@ namespace Marv
                     multiLocation.SelectionChanged += window.multiLocation_SelectionChanged;
                 }
             }
-        }
-
-        private static async void ChangedNetworkFileNames(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var window = d as MainWindow;
-
-            window.NetworkFileNames.CollectionChanged += async (sender, ev) =>
-                {
-                    if (ev.NewItems != null)
-                    {
-                        foreach (var fileName in ev.NewItems)
-                        {
-                            window.Graphs.Add(await BnGraph.ReadAsync<BnVertexViewModel>(fileName as string));
-                        }
-                    }
-
-                    if (ev.OldItems != null)
-                    {
-                        foreach (var fileName in ev.OldItems)
-                        {
-                            var graphToRemove = window.Graphs.Where(x => x.FileName.Equals(fileName as string)).FirstOrDefault();
-
-                            if (graphToRemove != null)
-                            {
-                                window.Graphs.Remove(graphToRemove);
-                            }
-                        }
-                    }
-                };
-
-            var newGraphs = new GraphCollection();
-
-            foreach (var fileName in window.NetworkFileNames)
-            {
-                var graph = await BnGraph.ReadAsync<BnVertexViewModel>(fileName);
-
-                if (graph.Vertices.Count() > 0)
-                {
-                    newGraphs.Add(graph);
-                }
-                else
-                {
-                    window.PopupControl.ShowText("File not found: " + fileName);
-                }
-            }
-
-            window.Graphs = newGraphs;
         }
 
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)

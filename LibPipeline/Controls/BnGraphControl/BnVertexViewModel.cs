@@ -130,5 +130,10 @@ namespace LibPipeline
                 }
             }
         }
+
+        public BnGraph GetSubGraph()
+        {
+            return this.Parent.GetSubGraph(this.HeaderOfGroup);
+        }
     }
 }
