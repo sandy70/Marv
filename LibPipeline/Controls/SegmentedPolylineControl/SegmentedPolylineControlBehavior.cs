@@ -27,9 +27,12 @@ namespace LibPipeline
         {
             this.AssociatedObject.UpdateVisual();
 
+            this.AssociatedObject.TouchDown += AssociatedObject_TouchDown;
+
             this.AssociatedObject.MapPolyline.MouseDown += MapPolyline_MouseDown;
             this.AssociatedObject.MapPolyline.MouseUp += MapPolyline_MouseUp;
             this.AssociatedObject.MapPolyline.TouchDown += MapPolyline_TouchDown;
+
             this.AssociatedObject.Ellipse.MouseDown += Ellipse_MouseDown;
             this.AssociatedObject.Ellipse.MouseUp += Ellipse_MouseUp;
             this.AssociatedObject.Ellipse.MouseMove += Ellipse_MouseMove;
@@ -43,6 +46,16 @@ namespace LibPipeline
             {
                 mapView.ViewportMoved += mapView_ViewportMoved;
                 mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+            }
+        }
+
+        private void AssociatedObject_TouchDown(object sender, TouchEventArgs e)
+        {
+            var mapItemsControl = this.AssociatedObject.FindParent<MapItemsControl>();
+
+            if (mapItemsControl != null)
+            {
+                mapItemsControl.SelectedItem = this.AssociatedObject.Locations;
             }
         }
 

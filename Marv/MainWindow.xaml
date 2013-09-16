@@ -80,7 +80,8 @@
                                             <ControlTemplate>
                                                 <libpipeline:SegmentedPolylineControl IsCursorVisible="{Binding IsSelected}"
                                                                                       IsEnabled="{Binding IsEnabled}"
-                                                                                      Locations="{Binding}"  />
+                                                                                      Locations="{Binding}">
+                                                </libpipeline:SegmentedPolylineControl>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>

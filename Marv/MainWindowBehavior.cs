@@ -62,9 +62,9 @@ namespace Marv
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
-            window.RetractAllButton.Click += RetractAllButton_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
+            window.RetractAllButton.Click += RetractAllButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
         }
 
