@@ -67,6 +67,7 @@
                       Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                     <libpipeline:MapView Name="MapView"
                                          IsManipulationEnabled="True"
+                                         ManipulationMode="Scale,Translate"
                                          MaxZoomLevel="21"
                                          StartExtent="20,50,30,60">
                         <mapcontrol:MapItemsControl Name="MapItemsControl"
