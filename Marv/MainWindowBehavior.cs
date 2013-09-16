@@ -30,7 +30,7 @@ namespace Marv
             Properties.Settings.Default.Save();
         }
 
-        private async void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
+        private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
             var window = this.AssociatedObject;
 
@@ -56,7 +56,7 @@ namespace Marv
 
             window.MultiLocations = new SelectableCollection<MultiLocation>();
 
-            window.MultiLocations = AdcoInput.Read();
+            window.MultiLocations = AdcoInput.Read(@"D:\Data\ADCO02\ADCO 6.xlsx");
 
             window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
 

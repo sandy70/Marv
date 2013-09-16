@@ -201,6 +201,11 @@ namespace Marv
                 {
                     this.SourceGraph.Value = this.SelectedLocationModelValue[this.SelectedYear];
                 }
+                else
+                {
+                    this.SourceGraph.SetValueToZero();
+                    this.PopupControl.ShowText("Pipeline inactive for this year.");
+                }
             }
         }
 

@@ -184,9 +184,9 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static SelectableCollection<MultiLocation> Read()
+        public static SelectableCollection<MultiLocation> Read(string fileName)
         {
-            using (var package = new ExcelPackage(new FileInfo(@"D:\Data\ADCO02\ADCO 6.xlsx")))
+            using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
                 var multiLocations = new SelectableCollection<MultiLocation>();
                 var nHeaderRows = 3;

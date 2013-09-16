@@ -524,5 +524,13 @@ namespace LibNetwork
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void SetValueToZero()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.SetValueToZero();
+            }
+        }
     }
 }

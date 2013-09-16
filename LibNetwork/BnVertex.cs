@@ -435,6 +435,14 @@ namespace LibNetwork
             }
         }
 
+        public void SetValueToZero()
+        {
+            foreach (var state in this.States)
+            {
+                state.Value = 0;
+            }
+        }
+
         public IEvidence ToEvidence()
         {
             int selectedStateIndex = this.GetSelectedStateIndex();
