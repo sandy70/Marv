@@ -2,10 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 
 namespace LibPipeline
 {
@@ -103,6 +100,11 @@ namespace LibPipeline
         public bool ContainsKey(string key)
         {
             return this.dictionary.ContainsKey(key);
+        }
+
+        public void RaisePropertyChanged(string propertyName)
+        {
+            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         public void RemoveSelected()

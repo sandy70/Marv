@@ -1,9 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace LibPipeline
 {
     public class MultiLocation : SelectableCollection<Location>
     {
+        private Dictionary<string, double> _value = new Dictionary<string, double>();
         private bool isEnabled = true;
         private bool isSelected = false;
         private string name = "";
@@ -60,6 +62,28 @@ namespace LibPipeline
                 {
                     this.name = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                }
+            }
+        }
+
+        public Dictionary<string, double> Value
+        {
+            get
+            {
+                return this._value;
+            }
+
+            set
+            {
+                if (value != this._value)
+                {
+                    this._value = value;
+                    this.RaisePropertyChanged("Value");
+
+                    foreach (var location in this)
+                    {
+                        location.Value = this.Value[location.Name];
+                    }
                 }
             }
         }
