@@ -46,7 +46,7 @@ namespace LibPipeline
             return nearestLocation;
         }
 
-        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations, IDoubleToBrushMap doubleToBrushMap = null, Brush stroke = null)
+        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations)
         {
             Location start = null;
             Location middle = null;
@@ -75,9 +75,6 @@ namespace LibPipeline
                     {
                         Middle = middle,
                         End = Utils.Mid(middle, end),
-
-                        DoubleToBrushMap = doubleToBrushMap,
-                        Stroke = stroke
                     });
                 }
                 else
@@ -87,9 +84,6 @@ namespace LibPipeline
                         Start = Utils.Mid(start, middle),
                         Middle = middle,
                         End = Utils.Mid(middle, end),
-
-                        DoubleToBrushMap = doubleToBrushMap,
-                        Stroke = stroke
                     });
                 }
 
@@ -99,9 +93,6 @@ namespace LibPipeline
                     {
                         Start = Utils.Mid(middle, end),
                         Middle = end,
-
-                        DoubleToBrushMap = doubleToBrushMap,
-                        Stroke = stroke
                     });
                 }
             }

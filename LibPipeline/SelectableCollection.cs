@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LibPipeline
 {
-    public class SelectableCollection<T> : ObservableCollection<T>
+    public class SelectableCollection<T> : ObservableCollection<T>, INotifyPropertyChanged
     {
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
         private bool isFirstSelectedOnAdd = true;

@@ -12,7 +12,7 @@ namespace LibPipeline
         DependencyProperty.Register("DisabledStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
         public static readonly DependencyProperty DoubleToBrushMapProperty =
-        DependencyProperty.Register("DoubleToBrushMap", typeof(IDoubleToBrushMap), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("DoubleToBrushMap", typeof(IDoubleToBrushMap), typeof(SegmentedPolylineControl), new PropertyMetadata(new DoubleToBrushMap()));
 
         public static readonly DependencyProperty NameLocationProperty =
         DependencyProperty.Register("NameLocation", typeof(Location), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
@@ -92,7 +92,12 @@ namespace LibPipeline
                                     .ToViewportPoints(mapView, this.ValueMemberPath)
                                     .Reduce(this.Tolerance)
                                     .ToLocations(mapView)
-                                    .ToSegments(doubleToBrushMap, stroke);
+                                    .ToSegments();
+
+                foreach (var segment in this.Segments)
+                {
+                    segment.Stroke = this.DoubleToBrushMap.Map(segment.Value);
+                }
             }
         }
 

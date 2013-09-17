@@ -1,34 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace LibPipeline
 {
     public class MultiLocationSegment : ViewModel, IEnumerable<Location>
     {
-        private IDoubleToBrushMap doubleToBrushMap = null;
         private Location end = null;
         private Location middle = null;
         private Location start = null;
         private Brush stroke;
-        
-        public IDoubleToBrushMap DoubleToBrushMap
-        {
-            get
-            {
-                return this.doubleToBrushMap;
-            }
-
-            set
-            {
-                if (value != this.doubleToBrushMap)
-                {
-                    this.doubleToBrushMap = value;
-                    this.OnPropertyChanged("DoubleToBrushMap");
-                }
-            }
-        }
 
         public Location End
         {
@@ -112,22 +93,6 @@ namespace LibPipeline
                 {
                     this.Middle.Value = value;
                     this.OnPropertyChanged("Value");
-                    this.OnPropertyChanged("ValueStroke");
-                }
-            }
-        }
-
-        public Brush ValueStroke
-        {
-            get
-            {
-                if (this.DoubleToBrushMap == null)
-                {
-                    return this.Stroke;
-                }
-                else
-                {
-                    return this.DoubleToBrushMap.Map(this.Value);
                 }
             }
         }

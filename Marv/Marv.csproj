@@ -185,6 +185,7 @@
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
     <Compile Include="Config.cs" />
     <Page Include="PopupControl.xaml">

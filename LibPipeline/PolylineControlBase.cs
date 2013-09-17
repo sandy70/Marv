@@ -69,6 +69,8 @@ namespace LibPipeline
             set { SetValue(StrokeProperty, value); }
         }
 
+        // Virtual function will be overridden in derived classes
+        // Do not remove
         protected virtual void OnChangedLocations()
         {
         }

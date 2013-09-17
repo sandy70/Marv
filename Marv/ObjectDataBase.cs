@@ -65,9 +65,9 @@ namespace Marv
 
             using (var odb = OdbFactory.Open(fileName))
             {
-                Console.WriteLine("Storing: " + anObject);
+                Logger.Info("Storing: {0}", anObject);
                 odb.Store<T>(anObject);
-                Console.WriteLine("Stored: " + anObject);
+                Logger.Info("Stored: {0}", anObject);
             }
         }
     }

@@ -10,4 +10,5 @@
     <libpipeline:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
     <libpipeline:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
     <properties:Settings x:Key="Settings" />
+    <local:RiskValueToBrushMap x:Key="RiskValueToBrushMap" />
 </ResourceDictionary>

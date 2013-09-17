@@ -61,7 +61,7 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read(@"D:\Data\ADCO02\ADCO 6.xlsx");
 
-            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
+            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
@@ -76,7 +76,7 @@ namespace Marv
         {
             var dbRoot = "POF";
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
-            var stateKey = "No Fail";
+            var stateKey = "No fail";
             var vertexKey = "B08";
 
             var window = this.AssociatedObject;
@@ -116,7 +116,7 @@ namespace Marv
 
         private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
-            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_06.net");
+            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
             int startIndex = 0;
             var window = this.AssociatedObject;
 

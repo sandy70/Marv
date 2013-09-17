@@ -138,6 +138,7 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\DoubleToDoubleMapper.cs" />
+    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
     <Compile Include="Geometry\MultiLocation.cs" />
     <Compile Include="Geometry\MultiLocationSegment.cs" />

@@ -23,7 +23,7 @@
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
-                                            Stroke="{Binding ValueStroke}"
+                                            Stroke="{Binding Stroke}"
                                             StrokeEndLineCap="Round"
                                             StrokeLineJoin="Round"
                                             StrokeStartLineCap="Round"
@@ -49,12 +49,12 @@
                      StrokeThickness="2"
                      Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
             
-            <!--<TextBlock Name="NameTextBlock"
+            <TextBlock Name="NameTextBlock"
                        mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
                        Background="LightGray"
                        FontSize="14"
                        Height="Auto" Width="Auto"
-                       Text="{Binding Locations.Name, ElementName=Root}" />-->
+                       Text="{Binding Locations.Name, ElementName=Root}" />
         </mapcontrol:MapPanel>
     </Grid>
 </local:PolylineControlBase>

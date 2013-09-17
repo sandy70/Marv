@@ -1,5 +1,6 @@
 ﻿using LibNetwork;
 using LibPipeline;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,9 @@ namespace Marv
 
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty RiskValueToBrushMapProperty =
+        DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
 
         public static readonly DependencyProperty SelectedLocationModelValueProperty =
         DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
@@ -165,6 +169,12 @@ namespace Marv
             set { SetValue(MultiLocationValueTimeSeriesProperty, value); }
         }
 
+        public RiskValueToBrushMap RiskValueToBrushMap
+        {
+            get { return (RiskValueToBrushMap)GetValue(RiskValueToBrushMapProperty); }
+            set { SetValue(RiskValueToBrushMapProperty, value); }
+        }
+
         public ModelValue SelectedLocationModelValue
         {
             get { return (ModelValue)GetValue(SelectedLocationModelValueProperty); }
@@ -207,13 +217,17 @@ namespace Marv
 
         public void ReadSelectedLocationModelValue()
         {
-            var selectedMultiLocation = this.MultiLocations.SelectedItem;
+            Logger.Trace("");
+
+            var multiLocation = this.MultiLocations.SelectedItem;
+            var location = multiLocation.SelectedItem;
 
             try
             {
-                this.SelectedLocationModelValue = this.ReadModelValue(selectedMultiLocation, selectedMultiLocation.SelectedItem);
+                var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+                this.SelectedLocationModelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
             }
-            catch (ModelValueNotFoundException exp)
+            catch (OdbDataNotFoundException exp)
             {
                 this.PopupControl.ShowText("Value not found for this location. Run model first.");
             }
@@ -287,16 +301,24 @@ namespace Marv
             {
                 window.PopupControl.ShowText("Pipeline value not available for year: " + window.SelectedYear);
             }
+            catch (NullReferenceException exp)
+            {
+                // do nothing for now
+            }
         }
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
         {
+            Logger.Trace("");
+
             this.ReadSelectedLocationModelValue();
             this.UpdateGraphValueFromModelValue();
         }
 
         private void MultiLocations_SelectionChanged(object sender, ValueEventArgs<MultiLocation> e)
         {
+            Logger.Trace("");
+
             var fileName = Path.Combine("POF", e.Value.Name + "_pof.db");
 
             try
@@ -306,7 +328,7 @@ namespace Marv
             }
             catch (OdbDataNotFoundException exp)
             {
-                this.PopupControl.ShowText("No data found for this location. Calculate Value first.");
+                this.PopupControl.ShowText("No data found for this pipeline. Calculate Value first.");
             }
         }
     }

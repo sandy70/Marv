@@ -1,6 +1,7 @@
 ﻿using Caching;
 using LibNetwork;
 using LibPipeline;
+using NLog;
 using Smile;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Marv
     public partial class MainWindow : Window
     {
         public SensorListener SensorListener = new SensorListener();
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MainWindow()
         {
