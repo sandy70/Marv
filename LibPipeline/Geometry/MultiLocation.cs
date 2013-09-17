@@ -5,7 +5,7 @@ namespace LibPipeline
 {
     public class MultiLocation : SelectableCollection<Location>
     {
-        private Dictionary<string, double> _value = new Dictionary<string, double>();
+        private MultiLocationValue _value = new MultiLocationValue();
         private bool isEnabled = true;
         private bool isSelected = false;
         private string name = "";
@@ -66,7 +66,7 @@ namespace LibPipeline
             }
         }
 
-        public Dictionary<string, double> Value
+        public MultiLocationValue Value
         {
             get
             {

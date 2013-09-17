@@ -148,6 +148,8 @@
     <Compile Include="IPoint.cs" />
     <Compile Include="MapDoubleToDouble.cs" />
     <Compile Include="MapEarthquakeMagnitudeToRadius.cs" />
+    <Compile Include="Geometry\MultiLocationValue.cs" />
+    <Compile Include="Geometry\MultiLocationValueTimeSeries.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnStatesControl\BnStatesControlBehavior.cs" />

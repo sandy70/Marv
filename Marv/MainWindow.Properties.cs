@@ -1,5 +1,6 @@
 ﻿using LibNetwork;
 using LibPipeline;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -58,6 +59,9 @@ namespace Marv
 
         public static readonly DependencyProperty MultiLocationsProperty =
         DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
+
+        public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
+        DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationModelValueProperty =
         DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
@@ -155,6 +159,12 @@ namespace Marv
             set { SetValue(MultiLocationsProperty, value); }
         }
 
+        public MultiLocationValueTimeSeries MultiLocationValueTimeSeries
+        {
+            get { return (MultiLocationValueTimeSeries)GetValue(MultiLocationValueTimeSeriesProperty); }
+            set { SetValue(MultiLocationValueTimeSeriesProperty, value); }
+        }
+
         public ModelValue SelectedLocationModelValue
         {
             get { return (ModelValue)GetValue(SelectedLocationModelValueProperty); }
@@ -179,17 +189,33 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        public void ReadSelectedLocationModelValue()
+        public ModelValue ReadModelValue(MultiLocation multiLocation, Location location)
         {
-            var selectedMultiLocation = this.MultiLocations.SelectedItem;
-            var selectedLocation = selectedMultiLocation.SelectedItem;
-            var fileName = Path.Combine(selectedMultiLocation.Name, selectedLocation.Name + ".db");
+            var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
 
             var modelValues = ObjectDataBase.ReadValues<ModelValue>(fileName, x => true);
 
             if (modelValues != null && modelValues.Count() > 0)
             {
-                this.SelectedLocationModelValue = modelValues.First();
+                return modelValues.First();
+            }
+            else
+            {
+                throw new ModelValueNotFoundException("Unable to find file " + fileName);
+            }
+        }
+
+        public void ReadSelectedLocationModelValue()
+        {
+            var selectedMultiLocation = this.MultiLocations.SelectedItem;
+
+            try
+            {
+                this.SelectedLocationModelValue = this.ReadModelValue(selectedMultiLocation, selectedMultiLocation.SelectedItem);
+            }
+            catch (ModelValueNotFoundException exp)
+            {
+                this.PopupControl.ShowText("Value not found for this location. Run model first.");
             }
         }
 
@@ -215,6 +241,10 @@ namespace Marv
 
             if (window.MultiLocations != null)
             {
+                // Prevent duplicated subscription
+                window.MultiLocations.SelectionChanged -= window.MultiLocations_SelectionChanged;
+                window.MultiLocations.SelectionChanged += window.MultiLocations_SelectionChanged;
+
                 if (window.MultiLocations.Count > 0)
                 {
                     // Calculate start year
@@ -248,12 +278,36 @@ namespace Marv
             }
 
             window.UpdateGraphValueFromModelValue();
+
+            try
+            {
+                window.MultiLocations.SelectedItem.Value = window.MultiLocationValueTimeSeries[window.SelectedYear];
+            }
+            catch (KeyNotFoundException exp)
+            {
+                window.PopupControl.ShowText("Pipeline value not available for year: " + window.SelectedYear);
+            }
         }
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
         {
             this.ReadSelectedLocationModelValue();
             this.UpdateGraphValueFromModelValue();
+        }
+
+        private void MultiLocations_SelectionChanged(object sender, ValueEventArgs<MultiLocation> e)
+        {
+            var fileName = Path.Combine("POF", e.Value.Name + "_pof.db");
+
+            try
+            {
+                this.MultiLocationValueTimeSeries = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
+                this.MultiLocations.SelectedItem.Value = this.MultiLocationValueTimeSeries[this.SelectedYear];
+            }
+            catch (OdbDataNotFoundException exp)
+            {
+                this.PopupControl.ShowText("No data found for this location. Calculate Value first.");
+            }
         }
     }
 }

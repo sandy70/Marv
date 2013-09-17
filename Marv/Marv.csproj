@@ -181,6 +181,7 @@
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="ModelValueNotFoundException.cs" />
     <Compile Include="ObjectDataBase.cs" />
+    <Compile Include="OdbDataNotFoundException.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>

@@ -49,6 +49,10 @@
 
                 <telerik:RadMenuItem Name="RunModelMenuItem"
                                      Header="Run Model" />
+                
+                <telerik:RadMenuItem Name="CalculateValueMenuItem"
+                                     Header="Calculate Value" />
+                                     
             </telerik:RadMenuItem>
         </telerik:RadMenu>
         

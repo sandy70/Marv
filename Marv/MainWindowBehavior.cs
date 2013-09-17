@@ -1,6 +1,7 @@
 ﻿using LibNetwork;
 using LibPipeline;
 using Microsoft.Win32;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,8 @@ namespace Marv
 {
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -62,10 +65,53 @@ namespace Marv
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
+            window.CalculateValueMenuItem.Click += CalculateValueMenuItem_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
+        }
+
+        private void CalculateValueMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var dbRoot = "POF";
+            var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
+            var stateKey = "No Fail";
+            var vertexKey = "B08";
+
+            var window = this.AssociatedObject;
+            var multiLocation = window.MultiLocations.SelectedItem;
+
+            foreach (var location in multiLocation)
+            {
+                try
+                {
+                    MainWindowBehavior.Logger.Debug("Running for location: " + location);
+
+                    var modelValue = window.ReadModelValue(multiLocation, location);
+
+                    foreach (var year in modelValue.Keys)
+                    {
+                        var graphValue = modelValue[year];
+                        var vertexValue = graphValue[vertexKey];
+                        var stateValue = vertexValue[stateKey];
+
+                        if (!multiLocationValueTimeSeries.ContainsKey(year))
+                        {
+                            multiLocationValueTimeSeries[year] = new MultiLocationValue();
+                        }
+
+                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
+                    }
+                }
+                catch (ModelValueNotFoundException exp)
+                {
+                    // do nothing
+                }
+            }
+
+            var fileName = Path.Combine(dbRoot, multiLocation.Name + "_pof.db");
+            ObjectDataBase.Write(fileName, multiLocationValueTimeSeries);
         }
 
         private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)

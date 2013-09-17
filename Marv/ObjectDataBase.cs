@@ -1,6 +1,7 @@
 ﻿using LibPipeline;
 using NDatabase;
 using NDatabase.Exceptions;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,8 @@ namespace Marv
 {
     public static class ObjectDataBase
     {
+        public static Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static IEnumerable<T> ReadValues<T>(string fileName, Func<T, bool> predicate) where T : class
         {
             IEnumerable<T> locationValues = null;
@@ -30,6 +33,23 @@ namespace Marv
             }
 
             return locationValues;
+        }
+
+        public static T ReadValueSingle<T>(string fileName, Func<T, bool> predicate) where T : class
+        {
+            using (var odb = OdbFactory.Open(fileName))
+            {
+                try
+                {
+                    return odb.AsQueryable<T>().Where(predicate).Single();
+                }
+                catch (InvalidOperationException exp)
+                {
+                    Logger.Error("The file " + fileName + " did not contain any data of type " + typeof(T));
+
+                    throw new OdbDataNotFoundException("The file " + fileName + " did not contain any data of type " + typeof(T), exp);
+                }
+            }
         }
 
         public static void Write<T>(string fileName, T anObject, bool isOverWritten = true) where T : class
