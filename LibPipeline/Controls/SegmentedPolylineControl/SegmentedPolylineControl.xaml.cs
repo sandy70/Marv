@@ -3,11 +3,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using NLog;
 
 namespace LibPipeline
 {
     public partial class SegmentedPolylineControl : PolylineControlBase
     {
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static readonly DependencyProperty DisabledStrokeProperty =
         DependencyProperty.Register("DisabledStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
@@ -132,6 +135,7 @@ namespace LibPipeline
 
         private void Locations_ValueChanged(object sender, ValueEventArgs<double> e)
         {
+            Logger.Trace(""):
         }
 
         private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)
