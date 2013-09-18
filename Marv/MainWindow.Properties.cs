@@ -241,10 +241,6 @@ namespace Marv
 
             if (window.MultiLocations != null)
             {
-                // Prevent duplicated subscription
-                window.MultiLocations.SelectionChanged -= window.MultiLocations_SelectionChanged;
-                window.MultiLocations.SelectionChanged += window.MultiLocations_SelectionChanged;
-
                 if (window.MultiLocations.Count > 0)
                 {
                     // Calculate start year
@@ -287,23 +283,6 @@ namespace Marv
 
             this.ReadSelectedLocationModelValue();
             this.UpdateGraphValue();
-        }
-
-        private void MultiLocations_SelectionChanged(object sender, ValueEventArgs<MultiLocation> e)
-        {
-            Logger.Trace("");
-
-            var fileName = Path.Combine("POF", e.Value.Name + "_pof.db");
-
-            try
-            {
-                this.MultiLocationValueTimeSeries = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
-                this.MultiLocations.SelectedItem.Value = this.MultiLocationValueTimeSeries[this.SelectedYear];
-            }
-            catch (OdbDataNotFoundException exp)
-            {
-                this.PopupControl.ShowText("No data found for this pipeline. Calculate Value first.");
-            }
         }
     }
 }
