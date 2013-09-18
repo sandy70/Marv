@@ -135,7 +135,9 @@ namespace LibPipeline
 
         private void Locations_ValueChanged(object sender, ValueEventArgs<double> e)
         {
-            Logger.Trace(""):
+            Logger.Trace("");
+
+            this.UpdateSegments();
         }
 
         private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)

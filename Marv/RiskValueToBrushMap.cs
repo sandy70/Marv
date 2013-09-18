@@ -12,11 +12,11 @@ namespace Marv
     {
         public Brush Map(double d)
         {
-            if (d > 0.9986)
+            if (d > 0.7)
             {
                 return new SolidColorBrush(Colors.Green);
             }
-            else if (d > 0.9983)
+            else if (d > 0.3)
             {
                 return new SolidColorBrush(Colors.Yellow);
             }
