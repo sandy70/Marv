@@ -61,17 +61,9 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read(@"D:\Data\ADCO02\ADCO 6.xlsx");
 
-            foreach (var multiLocation in window.MultiLocations)
-            {
-                try
-                {
-                    window.ValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), x => true);
-                }
-                catch (OdbDataNotFoundException exp)
-                {
-                    Logger.Info("Value not found for line {0}.", multiLocation.Name);
-                }
-            }
+            window.ReadMultiLocationsValue();
+
+            window.UpdateMultiLocationsValue();
 
             window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
 

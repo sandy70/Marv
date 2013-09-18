@@ -90,6 +90,21 @@ namespace Marv
             return Path.Combine("POF", multiLocation.Name + "_pof.db"); ;
         }
 
+        public void ReadMultiLocationsValue()
+        {
+            foreach (var multiLocation in this.MultiLocations)
+            {
+                try
+                {
+                    this.ValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), x => true);
+                }
+                catch (OdbDataNotFoundException exp)
+                {
+                    Logger.Info("Value not found for line {0}.", multiLocation.Name);
+                }
+            }
+        }
+
         public void UpdateGraphValue()
         {
             if (this.SelectedLocationModelValue != null)
