@@ -97,9 +97,17 @@ namespace LibPipeline
                                     .ToLocations(mapView)
                                     .ToSegments();
 
+
                 foreach (var segment in this.Segments)
                 {
-                    segment.Stroke = this.DoubleToBrushMap.Map(segment.Value);
+                    if (this.IsEnabled)
+                    {
+                        segment.Stroke = this.DoubleToBrushMap.Map(segment.Value);
+                    }
+                    else
+                    {
+                        segment.Stroke = this.DisabledStroke;
+                    }
                 }
             }
         }
