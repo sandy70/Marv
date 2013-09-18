@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv
+namespace LibPipeline
 {
     [Serializable]
     public class OdbDataNotFoundException : Exception
