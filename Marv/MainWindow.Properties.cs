@@ -233,21 +233,7 @@ namespace Marv
             }
         }
 
-        public void UpdateGraphValueFromModelValue()
-        {
-            if (this.SelectedLocationModelValue != null)
-            {
-                if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
-                {
-                    this.SourceGraph.Value = this.SelectedLocationModelValue[this.SelectedYear];
-                }
-                else
-                {
-                    this.SourceGraph.SetValueToZero();
-                    this.PopupControl.ShowText("Pipeline inactive for this year.");
-                }
-            }
-        }
+
 
         private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -291,20 +277,8 @@ namespace Marv
                 }
             }
 
-            window.UpdateGraphValueFromModelValue();
-
-            try
-            {
-                window.MultiLocations.SelectedItem.Value = window.MultiLocationValueTimeSeries[window.SelectedYear];
-            }
-            catch (KeyNotFoundException exp)
-            {
-                window.PopupControl.ShowText("Pipeline value not available for year: " + window.SelectedYear);
-            }
-            catch (NullReferenceException exp)
-            {
-                // do nothing for now
-            }
+            window.UpdateGraphValue();
+            window.UpdateMultiLocationsValue();
         }
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
@@ -312,7 +286,7 @@ namespace Marv
             Logger.Trace("");
 
             this.ReadSelectedLocationModelValue();
-            this.UpdateGraphValueFromModelValue();
+            this.UpdateGraphValue();
         }
 
         private void MultiLocations_SelectionChanged(object sender, ValueEventArgs<MultiLocation> e)

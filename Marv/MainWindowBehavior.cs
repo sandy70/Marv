@@ -61,6 +61,18 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read(@"D:\Data\ADCO02\ADCO 6.xlsx");
 
+            foreach (var multiLocation in window.MultiLocations)
+            {
+                try
+                {
+                    window.ValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), x => true);
+                }
+                catch (OdbDataNotFoundException exp)
+                {
+                    Logger.Info("Value not found for line {0}.", multiLocation.Name);
+                }
+            }
+
             window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
@@ -72,46 +84,17 @@ namespace Marv
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
         }
 
-        private void CalculateValueMenuItem_Click(object sender, RadRoutedEventArgs e)
+        private async void CalculateValueMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
-            var dbRoot = "POF";
-            var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
-            var stateKey = "No fail";
-            var vertexKey = "B08";
-
             var window = this.AssociatedObject;
+
             var multiLocation = window.MultiLocations.SelectedItem;
 
-            foreach (var location in multiLocation)
-            {
-                try
-                {
-                    MainWindowBehavior.Logger.Debug("Running for location: " + location);
+            window.ValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.ComputeMultiLocationValueTimeSeriesAsync(multiLocation);
 
-                    var modelValue = window.ReadModelValue(multiLocation, location);
+            window.UpdateMultiLocationsValue();
 
-                    foreach (var year in modelValue.Keys)
-                    {
-                        var graphValue = modelValue[year];
-                        var vertexValue = graphValue[vertexKey];
-                        var stateValue = vertexValue[stateKey];
-
-                        if (!multiLocationValueTimeSeries.ContainsKey(year))
-                        {
-                            multiLocationValueTimeSeries[year] = new MultiLocationValue();
-                        }
-
-                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
-                    }
-                }
-                catch (ModelValueNotFoundException exp)
-                {
-                    // do nothing
-                }
-            }
-
-            var fileName = Path.Combine(dbRoot, multiLocation.Name + "_pof.db");
-            ObjectDataBase.Write(fileName, multiLocationValueTimeSeries);
+            ObjectDataBase.Write(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), window.ValueTimeSeriesForMultiLocation[multiLocation]);
         }
 
         private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
