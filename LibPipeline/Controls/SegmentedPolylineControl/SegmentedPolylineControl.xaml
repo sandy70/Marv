@@ -49,12 +49,16 @@
                      StrokeThickness="2"
                      Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
             
-            <TextBlock Name="NameTextBlock"
-                       mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
-                       Background="LightGray"
-                       FontSize="14"
-                       Height="Auto" Width="Auto"
-                       Text="{Binding Locations.Name, ElementName=Root}" />
+            <Border Background="LightGray"
+                    mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}">
+                <TextBlock Name="NameTextBlock"
+                           Background="LightGray"
+                           FontSize="14"
+                           Height="Auto" Width="Auto"
+                           Margin="2"
+                           Text="{Binding Locations.Name, ElementName=Root}" />
+            </Border>
+                
         </mapcontrol:MapPanel>
     </Grid>
 </local:PolylineControlBase>
