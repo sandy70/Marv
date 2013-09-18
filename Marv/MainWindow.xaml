@@ -75,6 +75,7 @@
                                          MaxZoomLevel="21"
                                          StartExtent="20,50,30,60">
                         <mapcontrol:MapItemsControl Name="MapItemsControl"
+                                                    Effect="{StaticResource ResourceKey=DropShadow}"
                                                     ItemsSource="{Binding MultiLocations, ElementName=Root}"
                                                     SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
                             <mapcontrol:MapItemsControl.ItemContainerStyle>
@@ -86,7 +87,7 @@
                                                                                       DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
                                                                                       IsCursorVisible="{Binding IsSelected}"
                                                                                       IsEnabled="{Binding IsEnabled}"
-                                                                                      Locations="{Binding}" />
+                                                                                      Locations="{Binding}"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
