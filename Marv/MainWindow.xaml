@@ -82,7 +82,8 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate>
-                                                <libpipeline:SegmentedPolylineControl DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
+                                                <libpipeline:SegmentedPolylineControl DisabledStroke="DarkGray"
+                                                                                      DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
                                                                                       IsCursorVisible="{Binding IsSelected}"
                                                                                       IsEnabled="{Binding IsEnabled}"
                                                                                       Locations="{Binding}" />
