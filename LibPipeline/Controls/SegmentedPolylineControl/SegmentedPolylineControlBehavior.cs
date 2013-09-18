@@ -121,7 +121,7 @@ namespace LibPipeline
 
         private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
         {
-            // this.AssociatedObject.UpdateSegments();
+            this.AssociatedObject.UpdateSegments();
         }
 
         private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)

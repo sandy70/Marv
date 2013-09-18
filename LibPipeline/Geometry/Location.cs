@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace LibPipeline
 {
@@ -140,14 +141,13 @@ namespace LibPipeline
             };
         }
 
-        public bool IsWithin(LocationRect rect)
+        public static implicit operator Location(Point point)
         {
-            return this.Latitude > rect.South && this.Latitude < rect.North && this.Longitude > rect.West && this.Longitude < rect.East;
-        }
-
-        public override string ToString()
-        {
-            return this.Latitude + ", " + this.Longitude;
+            return new Location
+            {
+                X = point.X,
+                Y = point.Y
+            };
         }
 
         public static Location Parse(string locationString)
@@ -159,6 +159,21 @@ namespace LibPipeline
                 Latitude = double.Parse(parts[0]),
                 Longitude = double.Parse(parts[1])
             };
+        }
+
+        public bool IsWithin(LocationRect rect)
+        {
+            return this.Latitude > rect.South && this.Latitude < rect.North && this.Longitude > rect.West && this.Longitude < rect.East;
+        }
+
+        public Point ToPoint()
+        {
+            return new Point { X = this.X, Y = this.Y };
+        }
+
+        public override string ToString()
+        {
+            return this.Latitude + ", " + this.Longitude;
         }
     }
 }
