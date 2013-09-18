@@ -124,9 +124,14 @@ namespace LibPipeline
             if (this.Locations != null)
             {
                 this.CursorLocation = this.Locations.First();
+                this.Locations.ValueChanged += Locations_ValueChanged;
             }
 
             this.UpdateSegments();
+        }
+
+        private void Locations_ValueChanged(object sender, ValueEventArgs<double> e)
+        {
         }
 
         private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace LibPipeline
 {
@@ -9,6 +8,8 @@ namespace LibPipeline
         private bool isEnabled = true;
         private bool isSelected = false;
         private string name = "";
+
+        public event ValueEventHandler<double> ValueChanged;
 
         public bool IsEnabled
         {
@@ -83,6 +84,11 @@ namespace LibPipeline
                     foreach (var location in this)
                     {
                         location.Value = this.Value[location.Name];
+                    }
+
+                    if (this.ValueChanged != null)
+                    {
+                        this.ValueChanged(this, new ValueEventArgs<double> { Value = 0 });
                     }
                 }
             }
