@@ -91,7 +91,7 @@ namespace LibPipeline
             if (mapView != null && this.Locations != null)
             {
                 this.Segments = this.Locations
-                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
+                                    //.Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
                                     .ToViewportPoints(mapView, this.ValueMemberPath)
                                     .Reduce(this.Tolerance)
                                     .ToLocations(mapView)

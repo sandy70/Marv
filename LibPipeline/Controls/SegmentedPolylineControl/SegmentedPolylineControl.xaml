@@ -19,7 +19,8 @@
     
     <Grid>
         <mapcontrol:MapItemsControl Name="MapPolyline"
-                                    ItemsSource="{Binding Segments, ElementName=Root}">
+                                    ItemsSource="{Binding Segments, ElementName=Root}"
+                                    VirtualizingPanel.IsVirtualizing="True">
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
