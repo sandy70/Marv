@@ -27,7 +27,7 @@ namespace LibPipeline
                 if (value != this.east)
                 {
                     this.east = value;
-                    this.OnPropertyChanged("East");
+                    this.RaisePropertyChanged("East");
 
                     this.NorthEast.Longitude = this.East;
                     this.SouthEast.Longitude = this.East;
@@ -55,7 +55,7 @@ namespace LibPipeline
                 if (value != this.north)
                 {
                     this.north = value;
-                    this.OnPropertyChanged("North");
+                    this.RaisePropertyChanged("North");
 
                     this.NorthWest.Latitude = this.North;
                     this.NorthEast.Latitude = this.North;
@@ -75,7 +75,7 @@ namespace LibPipeline
                 if (value != this.northEast)
                 {
                     this.northEast = value;
-                    this.OnPropertyChanged("NorthEast");
+                    this.RaisePropertyChanged("NorthEast");
 
                     this.North = this.NorthEast.Latitude;
                     this.East = this.NorthEast.Longitude;
@@ -95,7 +95,7 @@ namespace LibPipeline
                 if (value != this.northWest)
                 {
                     this.northWest = value;
-                    this.OnPropertyChanged("NorthWest");
+                    this.RaisePropertyChanged("NorthWest");
 
                     this.North = this.NorthWest.Latitude;
                     this.West = this.NorthWest.Longitude;
@@ -115,7 +115,7 @@ namespace LibPipeline
                 if (value != this.south)
                 {
                     this.south = value;
-                    this.OnPropertyChanged("South");
+                    this.RaisePropertyChanged("South");
 
                     this.SouthEast.Latitude = this.South;
                     this.SouthWest.Latitude = this.South;
@@ -135,7 +135,7 @@ namespace LibPipeline
                 if (value != this.southEast)
                 {
                     this.southEast = value;
-                    this.OnPropertyChanged("SouthEast");
+                    this.RaisePropertyChanged("SouthEast");
 
                     this.South = this.SouthEast.Latitude;
                     this.East = this.SouthEast.Longitude;
@@ -155,7 +155,7 @@ namespace LibPipeline
                 if (value != this.southWest)
                 {
                     this.southWest = value;
-                    this.OnPropertyChanged("SouthWest");
+                    this.RaisePropertyChanged("SouthWest");
 
                     this.South = this.SouthWest.Latitude;
                     this.West = this.SouthWest.Longitude;
@@ -175,7 +175,7 @@ namespace LibPipeline
                 if (value != this.west)
                 {
                     this.west = value;
-                    this.OnPropertyChanged("West");
+                    this.RaisePropertyChanged("West");
 
                     this.NorthWest.Longitude = this.West;
                     this.SouthWest.Longitude = this.West;

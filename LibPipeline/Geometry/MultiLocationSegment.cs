@@ -23,7 +23,7 @@ namespace LibPipeline
                 if (value != this.end)
                 {
                     this.end = value;
-                    this.OnPropertyChanged("End");
+                    this.RaisePropertyChanged("End");
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace LibPipeline
                 {
                     this.middle = value;
 
-                    this.OnPropertyChanged("Middle");
+                    this.RaisePropertyChanged("Middle");
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace LibPipeline
                 if (value != this.start)
                 {
                     this.start = value;
-                    this.OnPropertyChanged("Start");
+                    this.RaisePropertyChanged("Start");
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace LibPipeline
                 if (value != this.stroke)
                 {
                     this.stroke = value;
-                    this.OnPropertyChanged("Stroke");
+                    this.RaisePropertyChanged("Stroke");
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace LibPipeline
                 if (value != this.Middle.Value)
                 {
                     this.Middle.Value = value;
-                    this.OnPropertyChanged("Value");
+                    this.RaisePropertyChanged("Value");
                 }
             }
         }
