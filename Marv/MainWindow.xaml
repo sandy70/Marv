@@ -52,6 +52,19 @@
                 
                 <telerik:RadMenuItem Name="CalculateValueMenuItem"
                                      Header="Calculate Value" />
+                
+                <telerik:RadMenuItem Header="Location">
+                    <telerik:RadMenuItem Name="LocationRunModelMenuItem"
+                                         Header="Run Model" />
+                </telerik:RadMenuItem>
+                
+                <telerik:RadMenuItem Header="Network">
+                    <telerik:RadMenuItem Name="NetworkRunModelMenuItem"
+                                         Header="Run Model" />
+                    
+                    <telerik:RadMenuItem Name="NetworkCalculateValue"
+                                         Header="Calculate Value" />
+                </telerik:RadMenuItem>
                                      
             </telerik:RadMenuItem>
         </telerik:RadMenu>

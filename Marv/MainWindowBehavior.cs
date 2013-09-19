@@ -59,21 +59,97 @@ namespace Marv
 
             window.MultiLocations = new SelectableCollection<MultiLocation>();
 
-            window.MultiLocations = AdcoInput.Read(@"D:\Data\ADCO02\ADCO 6.xlsx");
+            window.MultiLocations = AdcoInput.Read(@"ADCO 6.xlsx");
 
             window.ReadMultiLocationsValue();
 
             window.UpdateMultiLocationsValue();
 
-            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
+            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"ADCO_07.net");
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
             window.CalculateValueMenuItem.Click += CalculateValueMenuItem_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
+            window.LocationRunModelMenuItem.Click += LocationRunModelMenuItem_Click;
+            window.NetworkCalculateValue.Click += NetworkCalculateValue_Click;
+            window.NetworkRunModelMenuItem.Click += NetworkRunModelMenuItem_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
+        }
+
+        private async void NetworkCalculateValue_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var multiLocations = window.MultiLocations;
+
+            foreach (var multiLocation in multiLocations)
+            {
+                window.ValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.ComputeMultiLocationValueTimeSeriesAsync(multiLocation);
+
+                window.UpdateMultiLocationsValue();
+
+                ObjectDataBase.Write(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), window.ValueTimeSeriesForMultiLocation[multiLocation]);
+            }
+        }
+
+        private async void NetworkRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var graph = BnGraph.Read<BnVertexViewModel>(@"ADCO_07.net");
+            int startIndex = 0;
+            var window = this.AssociatedObject;
+
+            var endYear = window.EndYear;
+            var inputFileName = window.InputFileName;
+
+            var multiLocations = window.MultiLocations;
+
+            await Task.Run(() =>
+            {
+                foreach (var multiLocation in multiLocations)
+                {
+                    var nCompleted = startIndex;
+                    var nLocations = multiLocation.Count();
+                    var startYear = (int)multiLocation["StartYear"];
+
+                    foreach (var location in multiLocation.Skip(startIndex))
+                    {
+                        var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+
+                        graph.ClearEvidence();
+
+                        var modelValue = graph.Run(graphEvidence, startYear, endYear);
+
+                        Logger.Info("Ran location {0} of {1} on line {2}", ++nCompleted, nLocations, multiLocation.Name);
+
+                        var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+
+                        ObjectDataBase.Write(fileName, modelValue);
+                    }
+                }
+            });
+        }
+
+        private void LocationRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
+            var window = this.AssociatedObject;
+
+            var endYear = window.EndYear;
+            var inputFileName = window.InputFileName;
+
+            var multiLocation = window.MultiLocations.SelectedItem;
+            var location = multiLocation.SelectedItem;
+
+            var startYear = (int)multiLocation["StartYear"];
+
+            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+
+            var modelValue = graph.Run(graphEvidence, startYear, endYear);
+
+            ObjectDataBase.Write(MainWindow.GetFileNameForModelValue(multiLocation, location), modelValue);
         }
 
         private async void CalculateValueMenuItem_Click(object sender, RadRoutedEventArgs e)
@@ -109,6 +185,8 @@ namespace Marv
                 foreach (var location in multiLocation.Skip(startIndex))
                 {
                     var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
+
+                    graph.ClearEvidence();
 
                     var modelValue = graph.Run(graphEvidence, startYear, endYear);
 
