@@ -9,7 +9,6 @@ namespace LibPipeline
     public class SelectableCollection<T> : ObservableCollection<T>
     {
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-        private bool isFirstSelectedOnAdd = true;
         private T selectedItem = default(T);
         private ValueEventHandler<T> selectionChanged;
 
@@ -28,23 +27,6 @@ namespace LibPipeline
             }
         }
 
-        public bool IsFirstSelectedOnAdd
-        {
-            get
-            {
-                return this.isFirstSelectedOnAdd;
-            }
-
-            set
-            {
-                if (value != this.isFirstSelectedOnAdd)
-                {
-                    this.isFirstSelectedOnAdd = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("IsFirstSelectedOnAdd"));
-                }
-            }
-        }
-
         public T SelectedItem
         {
             get
@@ -57,7 +39,7 @@ namespace LibPipeline
                 this.selectedItem = value;
                 this.OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
 
-                this.OnSelectionChanged();
+                this.RaiseSelectionChanged();
             }
         }
 
@@ -97,62 +79,14 @@ namespace LibPipeline
             }
         }
 
-        public bool ContainsKey(string key)
-        {
-            return this.dictionary.ContainsKey(key);
-        }
-
         public void RaisePropertyChanged(string propertyName)
         {
             this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
-        public void RemoveSelected()
-        {
-            int removedIndex = -1;
-
-            if (this.SelectedItem != null)
-            {
-                removedIndex = this.IndexOf(this.SelectedItem);
-                this.Remove(this.SelectedItem);
-            }
-            else
-            {
-                if (this.Count > 0)
-                {
-                    removedIndex = 0;
-                    this.RemoveAt(0);
-                }
-            }
-
-            if (removedIndex >= 0)
-            {
-                if (this.Count > removedIndex)
-                {
-                    this.SelectedItem = this[removedIndex];
-                }
-                else
-                {
-                    if (this.Count > 0)
-                    {
-                        this.SelectedItem = this.Last();
-                    }
-                    else
-                    {
-                        this.SelectedItem = default(T);
-                    }
-                }
-            }
-        }
-
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
-
-            if (!this.IsFirstSelectedOnAdd)
-            {
-                return;
-            }
 
             if (e.NewItems != null && this.Count == 1)
             {
@@ -182,10 +116,12 @@ namespace LibPipeline
             }
         }
 
-        private void OnSelectionChanged()
+        private void RaiseSelectionChanged()
         {
             if (this.selectionChanged != null)
+            {
                 this.selectionChanged(this, new ValueEventArgs<T> { Value = this.SelectedItem });
+            }
         }
     }
 }

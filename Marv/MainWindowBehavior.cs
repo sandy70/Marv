@@ -124,7 +124,7 @@ namespace Marv
 
                         Logger.Info("Ran location {0} of {1} on line {2}", ++nCompleted, nLocations, multiLocation.Name);
 
-                        var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+                        var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
 
                         ObjectDataBase.Write(fileName, modelValue);
                     }

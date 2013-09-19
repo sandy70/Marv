@@ -82,12 +82,12 @@ namespace Marv
 
         public static string GetFileNameForModelValue(MultiLocation multiLocation, Location location)
         {
-            return Path.Combine(multiLocation.Name, location.Name + ".db");
+            return Path.Combine("ModelValues", multiLocation.Name, location.Name + ".db");
         }
 
         public static string GetFileNameForMultiLocationTimeSeries(MultiLocation multiLocation)
         {
-            return Path.Combine("POF", multiLocation.Name + "_pof.db"); ;
+            return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, "B08.db");
         }
 
         public void ReadMultiLocationsValue()

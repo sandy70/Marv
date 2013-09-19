@@ -1,12 +1,10 @@
-﻿using LibPipeline;
-using NDatabase;
+﻿using NDatabase;
 using NDatabase.Exceptions;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LibPipeline
 {
@@ -25,7 +23,7 @@ namespace LibPipeline
                     locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
                 }
             }
-            catch(OdbRuntimeException exp)
+            catch (OdbRuntimeException exp)
             {
                 // We are having these problems when the file is corrupt.
                 // So let's delete the file and try again
