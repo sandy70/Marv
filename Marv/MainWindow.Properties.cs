@@ -199,22 +199,6 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        public ModelValue ReadModelValue(MultiLocation multiLocation, Location location)
-        {
-            var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
-
-            var modelValues = ObjectDataBase.ReadValues<ModelValue>(fileName, x => true);
-
-            if (modelValues != null && modelValues.Count() > 0)
-            {
-                return modelValues.First();
-            }
-            else
-            {
-                throw new ModelValueNotFoundException("Unable to find file " + fileName);
-            }
-        }
-
         public void ReadSelectedLocationModelValue()
         {
             Logger.Trace("");
@@ -232,8 +216,6 @@ namespace Marv
                 this.PopupControl.ShowText("Value not found for this location. Run model first.");
             }
         }
-
-
 
         private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
