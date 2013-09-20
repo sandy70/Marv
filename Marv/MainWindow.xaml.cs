@@ -13,8 +13,8 @@ namespace Marv
 {
     public partial class MainWindow : Window
     {
+        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public SensorListener SensorListener = new SensorListener();
-        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> ValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MainWindow()
@@ -28,12 +28,12 @@ namespace Marv
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public static MultiLocationValueTimeSeries ComputeMultiLocationValueTimeSeries(MultiLocation multiLocation)
+        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation)
         {
             Logger.Info("Computing value for line {0}.", multiLocation.Name);
 
             var vertexKey = "B08";
-            var stateKey = "No fail";
+            var stateKey = "Fail";
 
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
             var nCompleted = 0;
@@ -41,7 +41,7 @@ namespace Marv
 
             foreach (var location in multiLocation)
             {
-                var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
 
                 try
                 {
@@ -69,25 +69,47 @@ namespace Marv
                 Logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
             }
 
+            var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
+            ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<MultiLocationValueTimeSeries> ComputeMultiLocationValueTimeSeriesAsync(MultiLocation multiLocation)
+        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(MultiLocation multiLocation)
         {
             return Task.Run(() =>
                 {
-                    return MainWindow.ComputeMultiLocationValueTimeSeries(multiLocation);
+                    return MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation);
                 });
         }
 
-        public static string GetFileNameForModelValue(MultiLocation multiLocation, Location location)
+        public static string GetFileNameForModelValue(string multiLocationName, string locationName)
         {
-            return Path.Combine("ModelValues", multiLocation.Name, location.Name + ".db");
+            return Path.Combine("ModelValues", multiLocationName, locationName + ".db");
         }
 
-        public static string GetFileNameForMultiLocationTimeSeries(MultiLocation multiLocation)
+        public static string GetFileNameForMultiLocationValueTimeSeries(MultiLocation multiLocation, string vertexKey, string stateKey)
         {
-            return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, "B08.db");
+            return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, vertexKey + "_" + stateKey + ".db");
+        }
+
+        public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            var graph = BnGraph.Read<BnVertexViewModel>(networkFileName);
+            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
+
+            var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
+
+            var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
+            ObjectDataBase.Write<BnGraphValueTimeSeries>(fileName, graphValueTimeSeries);
+        }
+
+        public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            return Task.Run(() =>
+                {
+                    MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+                });
         }
 
         public void ReadGraphValueTimeSeries()
@@ -99,7 +121,7 @@ namespace Marv
 
             try
             {
-                var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
                 this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<BnGraphValueTimeSeries>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
@@ -110,13 +132,14 @@ namespace Marv
             }
         }
 
-        public void ReadMultiLocationValueTimeSeries()
+        public void ReadMultiLocationValueTimeSeriesForMultiLocation()
         {
             foreach (var multiLocation in this.MultiLocations)
             {
                 try
                 {
-                    this.ValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), x => true);
+                    var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
+                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
                 }
                 catch (OdbDataNotFoundException exp)
                 {
@@ -141,7 +164,7 @@ namespace Marv
             }
         }
 
-        public void UpdateMultiLocationsValue()
+        public void UpdateMultiLocationValues()
         {
             foreach (var multiLocation in this.MultiLocations)
             {
@@ -153,9 +176,14 @@ namespace Marv
                 {
                     multiLocation.IsEnabled = true;
 
+                    if (this.MultiLocations.SelectedItem.IsEnabled == false)
+                    {
+                        this.MultiLocations.SelectedItem = multiLocation;
+                    }
+
                     try
                     {
-                        multiLocation.Value = this.ValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+                        multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
                     }
                     catch (KeyNotFoundException exp)
                     {

@@ -14,19 +14,19 @@ namespace Marv
         {
             if (d > 0.95)
             {
-                return new SolidColorBrush(Colors.Green);
+                return new SolidColorBrush(Colors.Red);
             }
             else if (d > 0.80)
             {
-                return new SolidColorBrush(Colors.Yellow);
+                return new SolidColorBrush(Colors.Orange);
             }
             else if (d > 0.50)
             {
-                return new SolidColorBrush(Colors.Orange);
+                return new SolidColorBrush(Colors.Yellow);
             }
             else
             {
-                return new SolidColorBrush(Colors.Red);
+                return new SolidColorBrush(Colors.Green);
             }
         }
 

@@ -232,7 +232,7 @@ namespace Marv
         {
             var window = d as MainWindow;
             window.UpdateGraphValue();
-            window.UpdateMultiLocationsValue();
+            window.UpdateMultiLocationValues();
         }
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)

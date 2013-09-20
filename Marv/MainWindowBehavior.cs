@@ -1,6 +1,5 @@
 ﻿using LibNetwork;
 using LibPipeline;
-using Microsoft.Win32;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
@@ -40,7 +38,6 @@ namespace Marv
             if (e.KeyboardDevice.IsKeyDown(Key.R) &&
                    (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
-
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.M) &&
                (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
@@ -63,20 +60,23 @@ namespace Marv
             window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(window.NetworkFileName);
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
-            window.ReadMultiLocationValueTimeSeries();
-            window.UpdateMultiLocationsValue();
+            window.ReadMultiLocationValueTimeSeriesForMultiLocation();
+            window.UpdateMultiLocationValues();
 
             window.ReadGraphValueTimeSeries();
             window.UpdateGraphValue();
 
-            window.CalculateValueMenuItem.Click += CalculateValueMenuItem_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
+
             window.LocationRunModelMenuItem.Click += LocationRunModelMenuItem_Click;
-            window.NetworkCalculateValue.Click += NetworkCalculateValue_Click;
+            window.PipelineRunModelMenuItem.Click += PipelineRunModelMenuItem_Click;
             window.NetworkRunModelMenuItem.Click += NetworkRunModelMenuItem_Click;
+
+            window.PipelineComputeValueMenuItem.Click += PipelineComputeValueMenuItem_Click;
+            window.NetworkComputeValue.Click += NetworkComputeValue_Click;
+
             window.RetractAllButton.Click += RetractAllButton_Click;
-            window.RunModelMenuItem.Click += RunModelMenuItem_Click;
 
             // Change map types
             window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
@@ -84,129 +84,6 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
-        }
-
-        private async void NetworkCalculateValue_Click(object sender, RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var multiLocations = window.MultiLocations;
-
-            foreach (var multiLocation in multiLocations)
-            {
-                window.ValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.ComputeMultiLocationValueTimeSeriesAsync(multiLocation);
-
-                window.UpdateMultiLocationsValue();
-
-                ObjectDataBase.Write(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), window.ValueTimeSeriesForMultiLocation[multiLocation]);
-            }
-        }
-
-        private async void NetworkRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
-            int startIndex = 0;
-
-            var endYear = window.EndYear;
-            var inputFileName = window.InputFileName;
-
-            var multiLocations = window.MultiLocations;
-
-            await Task.Run(() =>
-            {
-                foreach (var multiLocation in multiLocations)
-                {
-                    var nCompleted = startIndex;
-                    var nLocations = multiLocation.Count();
-                    var startYear = (int)multiLocation["StartYear"];
-
-                    foreach (var location in multiLocation.Skip(startIndex))
-                    {
-                        var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
-
-                        graph.ClearEvidence();
-
-                        var modelValue = graph.Run(graphEvidence, startYear, endYear);
-
-                        Logger.Info("Ran location {0} of {1} on line {2}", ++nCompleted, nLocations, multiLocation.Name);
-
-                        var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
-
-                        ObjectDataBase.Write(fileName, modelValue);
-                    }
-                }
-            });
-        }
-
-        private void LocationRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
-
-            var endYear = window.EndYear;
-            var inputFileName = window.InputFileName;
-
-            var multiLocation = window.MultiLocations.SelectedItem;
-            var location = multiLocation.SelectedItem;
-
-            var startYear = (int)multiLocation["StartYear"];
-
-            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
-
-            var modelValue = graph.Run(graphEvidence, startYear, endYear);
-
-            ObjectDataBase.Write(MainWindow.GetFileNameForModelValue(multiLocation, location), modelValue);
-        }
-
-        private async void CalculateValueMenuItem_Click(object sender, RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var multiLocation = window.MultiLocations.SelectedItem;
-
-            window.ValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.ComputeMultiLocationValueTimeSeriesAsync(multiLocation);
-
-            window.UpdateMultiLocationsValue();
-
-            ObjectDataBase.Write(MainWindow.GetFileNameForMultiLocationTimeSeries(multiLocation), window.ValueTimeSeriesForMultiLocation[multiLocation]);
-        }
-
-        private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
-            int startIndex = 0;
-
-            var endYear = window.EndYear;
-            var inputFileName = window.InputFileName;
-
-            var multiLocation = window.MultiLocations.SelectedItem;
-
-            await Task.Run(() =>
-            {
-                var nCompleted = startIndex;
-                var nLocations = multiLocation.Count();
-                var startYear = (int)multiLocation["StartYear"];
-
-                foreach (var location in multiLocation.Skip(startIndex))
-                {
-                    var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocation.Name, location.Name);
-
-                    graph.ClearEvidence();
-
-                    var modelValue = graph.Run(graphEvidence, startYear, endYear);
-
-                    Console.WriteLine("Ran " + ++nCompleted + " of " + nLocations);
-
-                    var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
-
-                    ObjectDataBase.Write(fileName, modelValue);
-                }
-            });
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)
@@ -219,6 +96,116 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             window.TransitionControl.SelectElement("SettingsControl");
+        }
+
+        private async void LocationRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var networkFileName = window.NetworkFileName;
+            var inputFileName = window.InputFileName;
+
+            var multiLocation = window.MultiLocations.SelectedItem;
+
+            var multiLocationName = multiLocation.Name;
+            var locationName = multiLocation.SelectedItem.Name;
+
+            var startYear = (int)multiLocation["StartYear"];
+            var endYear = window.EndYear;
+
+            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+        }
+
+        private async void NetworkComputeValue_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var multiLocations = window.MultiLocations;
+
+            var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
+
+            await Task.Run(() =>
+                {
+
+                    foreach (var multiLocation in multiLocations)
+                    {
+                        multiLocationValueTimeSeriesForMultiLocation[multiLocation] = MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation);
+                    }
+                });
+
+            window.MultiLocationValueTimeSeriesForMultiLocation = multiLocationValueTimeSeriesForMultiLocation;
+            window.UpdateMultiLocationValues();
+        }
+
+        private async void NetworkRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var networkFileName = window.NetworkFileName;
+            var inputFileName = window.InputFileName;
+
+            var multiLocations = window.MultiLocations;
+
+            var endYear = window.EndYear;
+
+            await Task.Run(() =>
+            {
+                foreach (var multiLocation in multiLocations)
+                {
+                    var multiLocationName = multiLocation.Name;
+
+                    var startYear = (int)multiLocation["StartYear"];
+
+                    var nCompleted = 0;
+                    var nLocations = multiLocation.Count;
+
+                    foreach (var location in multiLocation)
+                    {
+                        var locationName = location.Name;
+
+                        MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+
+                        Logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                    }
+                }
+            });
+        }
+
+        private async void PipelineComputeValueMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var multiLocation = window.MultiLocations.SelectedItem;
+
+            window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation);
+            window.UpdateMultiLocationValues();
+        }
+
+        private async void PipelineRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var networkFileName = window.NetworkFileName;
+            var inputFileName = window.InputFileName;
+
+            var multiLocation = window.MultiLocations.SelectedItem;
+            var multiLocationName = multiLocation.Name;
+
+            var startYear = (int)multiLocation["StartYear"];
+            var endYear = window.EndYear;
+
+            var nCompleted = 0;
+            var nLocations = multiLocation.Count;
+
+            await Task.Run(() =>
+                {
+                    foreach (var location in multiLocation)
+                    {
+                        var locationName = location.Name;
+
+                        MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+
+                        Logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                    }
+                });
         }
 
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)

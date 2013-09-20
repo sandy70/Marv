@@ -38,6 +38,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         
+        <!-- Menu -->
         <telerik:RadMenu Grid.Row="0"
                          Visibility="{Binding IsMenuVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
             <telerik:RadMenuItem Header="Edit"
@@ -47,24 +48,27 @@
 
                 <telerik:RadMenuItem Name="EditSettingsMenuItem"
                                      Header="Settings" />
-
-                <telerik:RadMenuItem Name="RunModelMenuItem"
-                                     Header="Run Model" />
-                
-                <telerik:RadMenuItem Name="CalculateValueMenuItem"
-                                     Header="Calculate Value" />
                 
                 <telerik:RadMenuItem Header="Location">
                     <telerik:RadMenuItem Name="LocationRunModelMenuItem"
                                          Header="Run Model" />
                 </telerik:RadMenuItem>
                 
+                <telerik:RadMenuItem Header="Pipeline">
+                    <telerik:RadMenuItem Name="PipelineRunModelMenuItem"
+                                         Header="Run Model" />
+
+                    <telerik:RadMenuItem Name="PipelineComputeValueMenuItem"
+                                         Header="Compute Value" />
+                </telerik:RadMenuItem>
+                                     
+                
                 <telerik:RadMenuItem Header="Network">
                     <telerik:RadMenuItem Name="NetworkRunModelMenuItem"
                                          Header="Run Model" />
                     
-                    <telerik:RadMenuItem Name="NetworkCalculateValue"
-                                         Header="Calculate Value" />
+                    <telerik:RadMenuItem Name="NetworkComputeValue"
+                                         Header="Compute Value" />
                 </telerik:RadMenuItem>
                 
                 <telerik:RadMenuItem Header="Map">
@@ -152,7 +156,9 @@
 
                             <telerik:PropertyDefinition Binding="{Binding Name}"
                                                         DisplayName="Name" />
-
+                        
+                            <telerik:PropertyDefinition Binding="{Binding Value}"
+                                                        DisplayName="PoF" />
                         </telerik:RadPropertyGrid.PropertyDefinitions>
                     </telerik:RadPropertyGrid>
                 </Grid>
@@ -197,6 +203,7 @@
                         <Image Source="Resources/Icons/erase.png" />
                     </telerik:RadButton>
 
+                    <!-- Year Label and Year Slider -->
                     <Grid Grid.Row="1"
                               Height="50"
                               Visibility="{Binding IsYearSliderVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
