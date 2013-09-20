@@ -130,14 +130,31 @@
                         </mapcontrol:MapItemsControl>
                     </libpipeline:MapView>
 
+                    <!-- Property Grid -->
                     <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                             AutoGeneratePropertyDefinitions="True"
+                                             AutoGeneratePropertyDefinitions="False"
                                              DescriptionPanelVisibility="Collapsed"
-                                             HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             Effect="{StaticResource ResourceKey=DropShadow}"
+                                             FieldIndicatorVisibility="Collapsed"
+                                             HorizontalAlignment="Left" VerticalAlignment="Top"
                                              IsReadOnly="True"
                                              Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
                                              Margin="10"
-                                             Width="350"/>
+                                             SearchBoxVisibility="Collapsed"
+                                             SortAndGroupButtonsVisibility="Collapsed"
+                                             Width="350">
+                        <telerik:RadPropertyGrid.PropertyDefinitions>
+                            <telerik:PropertyDefinition Binding="{Binding Latitude}"
+                                                        DisplayName="Latitude" />
+
+                            <telerik:PropertyDefinition Binding="{Binding Longitude}"
+                                                        DisplayName="Longitude" />
+
+                            <telerik:PropertyDefinition Binding="{Binding Name}"
+                                                        DisplayName="Name" />
+
+                        </telerik:RadPropertyGrid.PropertyDefinitions>
+                    </telerik:RadPropertyGrid>
                 </Grid>
 
                 <GridSplitter Grid.Column="1"
@@ -288,61 +305,5 @@
                                    Content="Run Model" />
             </Grid>
         </libpipeline:TransitionControl>
-        
-                
-            <!--</telerik:RadTabItem>
-        
-            <telerik:RadTabItem Header="Plots"
-                                Visibility="Collapsed">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                
-                    <telerik:RadCartesianChart Width="800"
-                                               HorizontalAlignment="Right">
-                        <telerik:RadCartesianChart.Behaviors>
-                            <telerik:ChartPanAndZoomBehavior PanMode="Horizontal" ZoomMode="Horizontal" />
-                        </telerik:RadCartesianChart.Behaviors>
-                    
-                        <telerik:RadCartesianChart.HorizontalAxis>
-                            <telerik:LinearAxis Maximum="{Binding EndYear, ElementName=Root}"
-                                                Minimum="{Binding StartYear, ElementName=Root}" />
-                        </telerik:RadCartesianChart.HorizontalAxis>
-                    
-                        <telerik:RadCartesianChart.SeriesProvider>
-                            <telerik:ChartSeriesProvider Source="{Binding MultiPoints, ElementName=Root}">
-                                <telerik:ChartSeriesProvider.SeriesDescriptors>
-
-                                    <telerik:ScatterSeriesDescriptor ItemsSourcePath="Points"
-                                                                     XValuePath="X"
-                                                                     YValuePath="Y">
-                                        <telerik:ScatterSeriesDescriptor.Style>
-                                            <Style TargetType="telerik:ScatterLineSeries">
-                                                <Setter Property="VerticalAxis">
-                                                    <Setter.Value>
-                                                        <telerik:LinearAxis />
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </telerik:ScatterSeriesDescriptor.Style>
-                                    </telerik:ScatterSeriesDescriptor>
-                                </telerik:ChartSeriesProvider.SeriesDescriptors>
-                            </telerik:ChartSeriesProvider>
-                        </telerik:RadCartesianChart.SeriesProvider>
-                    </telerik:RadCartesianChart>
-
-                    <telerik:RadAutoCompleteBox Name="AutoCompleteBox"
-                                        HorizontalAlignment="Right"
-                                        Margin="10"
-                                        VerticalAlignment="Top"
-                                        Width="500"
-                                        DisplayMemberPath="Name"
-                                        ItemsSource="{Binding Graphs[nnphscc].NumericVertices, ElementName=Root}">
-                    </telerik:RadAutoCompleteBox>
-                </Grid>
-            </telerik:RadTabItem>
-        </telerik:RadTabControl>-->
     </Grid>
 </Window>

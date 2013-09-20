@@ -127,6 +127,15 @@ namespace Marv
             {
                 try
                 {
+                    if ((int)multiLocation["StartYear"] > this.SelectedYear)
+                    {
+                        multiLocation.IsEnabled = false;
+                    }
+                    else
+                    {
+                        multiLocation.IsEnabled = true;
+                    }
+
                     multiLocation.Value = this.ValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
                 }
                 catch (KeyNotFoundException exp)

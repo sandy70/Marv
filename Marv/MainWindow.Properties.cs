@@ -234,6 +234,7 @@ namespace Marv
                 {
                     // Calculate start year
                     window.StartYear = window.MultiLocations.Min(multiLocation => (int)multiLocation["StartYear"]);
+                    window.SelectedYear = window.StartYear;
                 }
 
                 foreach (var multiLocation in window.MultiLocations)
@@ -249,19 +250,6 @@ namespace Marv
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-
-            foreach (var multiLocation in window.MultiLocations)
-            {
-                if ((int)multiLocation["StartYear"] > window.SelectedYear)
-                {
-                    multiLocation.IsEnabled = false;
-                }
-                else
-                {
-                    multiLocation.IsEnabled = true;
-                }
-            }
-
             window.UpdateGraphValue();
             window.UpdateMultiLocationsValue();
         }
