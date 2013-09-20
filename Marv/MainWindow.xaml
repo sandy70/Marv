@@ -214,14 +214,22 @@
                                HorizontalContentAlignment="Center" />
 
                         <!-- Year Slider -->
-                        <telerik:RadSlider Grid.Column="1"
+                        <!--<telerik:RadSlider Grid.Column="1"
                                            Background="Black"
                                            IsSnapToTickEnabled="True"
                                            Maximum="{Binding EndYear, ElementName=Root}"
                                            Minimum="{Binding StartYear, ElementName=Root}"
                                            TickPlacement="BottomRight"
                                            Value="{Binding SelectedYear, ElementName=Root}">
-                        </telerik:RadSlider>
+                        </telerik:RadSlider>-->
+                        
+                        <surface:SurfaceSlider Grid.Column="1"
+                                               Background="DarkGray"
+                                               IsSnapToTickEnabled="True"
+                                               Maximum="{Binding EndYear, ElementName=Root}"
+                                               Minimum="{Binding StartYear, ElementName=Root}"
+                                               TickPlacement="BottomRight"
+                                               Value="{Binding SelectedYear, ElementName=Root}" />
                     </Grid>
                 </Grid>
 
