@@ -178,5 +178,17 @@ namespace Marv.Properties {
                 this["IsPropertyGridVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_07.net")]
+        public string NetworkFileName {
+            get {
+                return ((string)(this["NetworkFileName"]));
+            }
+            set {
+                this["NetworkFileName"] = value;
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Marv
             var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MARV");
             MapControl.TileImageLoader.Cache = new ImageFileCache(MapControl.TileImageLoader.DefaultCacheName, cacheDirectory);
 
-            this.MapView.TileLayer = TileLayers.MapBoxSat;
+            this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
         public static MultiLocationValueTimeSeries ComputeMultiLocationValueTimeSeries(MultiLocation multiLocation)

@@ -22,6 +22,7 @@
             <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
         </Style>
     </Window.Resources>
@@ -64,6 +65,23 @@
                     
                     <telerik:RadMenuItem Name="NetworkCalculateValue"
                                          Header="Calculate Value" />
+                </telerik:RadMenuItem>
+                
+                <telerik:RadMenuItem Header="Map">
+                    <telerik:RadMenuItem Name="BingMapsAerialMenuItem"
+                                         Header="Bing Maps Aerial"  />
+                    
+                    <telerik:RadMenuItem Name="BingMapsRoadsMenuItem"
+                                         Header="Bing Maps Roads" />
+
+                    <telerik:RadMenuItem Name="MapBoxAerialMenuItem"
+                                         Header="Map Box Aerial" />
+                    
+                    <telerik:RadMenuItem Name="MapBoxRoadsMenuItem"
+                                         Header="Map Box Roads" />
+                    
+                    <telerik:RadMenuItem Name="MapBoxTerrainMenuItem"
+                                         Header="Map Box Terrain" />
                 </telerik:RadMenuItem>
                                      
             </telerik:RadMenuItem>

@@ -41,5 +41,8 @@
     <Setting Name="IsPropertyGridVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="NetworkFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO_07.net</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

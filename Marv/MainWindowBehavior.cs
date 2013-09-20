@@ -59,13 +59,13 @@ namespace Marv
 
             window.MultiLocations = new SelectableCollection<MultiLocation>();
 
-            window.MultiLocations = AdcoInput.Read(@"ADCO 6.xlsx");
+            window.MultiLocations = AdcoInput.Read(window.InputFileName);
 
             window.ReadMultiLocationsValue();
 
             window.UpdateMultiLocationsValue();
 
-            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(@"ADCO_07.net");
+            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(window.NetworkFileName);
 
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
             
@@ -77,6 +77,13 @@ namespace Marv
             window.NetworkRunModelMenuItem.Click += NetworkRunModelMenuItem_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.RunModelMenuItem.Click += RunModelMenuItem_Click;
+
+            // Change map types
+            window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
+            window.BingMapsRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsRoads;
+            window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
+            window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
+            window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
         }
 
         private async void NetworkCalculateValue_Click(object sender, RadRoutedEventArgs e)
@@ -97,9 +104,10 @@ namespace Marv
 
         private async void NetworkRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
-            var graph = BnGraph.Read<BnVertexViewModel>(@"ADCO_07.net");
-            int startIndex = 0;
             var window = this.AssociatedObject;
+
+            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
+            int startIndex = 0;
 
             var endYear = window.EndYear;
             var inputFileName = window.InputFileName;
@@ -134,8 +142,9 @@ namespace Marv
 
         private void LocationRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
-            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
             var window = this.AssociatedObject;
+
+            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
 
             var endYear = window.EndYear;
             var inputFileName = window.InputFileName;
@@ -167,9 +176,10 @@ namespace Marv
 
         private async void RunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
-            var graph = BnGraph.Read<BnVertexViewModel>(@"D:\Data\ADCO02\ADCO_07.net");
-            int startIndex = 0;
             var window = this.AssociatedObject;
+
+            var graph = BnGraph.Read<BnVertexViewModel>(window.NetworkFileName);
+            int startIndex = 0;
 
             var endYear = window.EndYear;
             var inputFileName = window.InputFileName;

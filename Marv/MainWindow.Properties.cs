@@ -1,7 +1,5 @@
 ﻿using LibNetwork;
 using LibPipeline;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -63,6 +61,9 @@ namespace Marv
 
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty NetworkFileNameProperty =
+        DependencyProperty.Register("NetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -167,6 +168,12 @@ namespace Marv
         {
             get { return (MultiLocationValueTimeSeries)GetValue(MultiLocationValueTimeSeriesProperty); }
             set { SetValue(MultiLocationValueTimeSeriesProperty, value); }
+        }
+
+        public string NetworkFileName
+        {
+            get { return (string)GetValue(NetworkFileNameProperty); }
+            set { SetValue(NetworkFileNameProperty, value); }
         }
 
         public RiskValueToBrushMap RiskValueToBrushMap
