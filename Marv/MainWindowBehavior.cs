@@ -58,17 +58,17 @@ namespace Marv
             var window = this.AssociatedObject;
 
             window.MultiLocations = new SelectableCollection<MultiLocation>();
-
             window.MultiLocations = AdcoInput.Read(window.InputFileName);
 
-            window.ReadMultiLocationValueTimeSeries();
+            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(window.NetworkFileName);
+            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
+            window.ReadMultiLocationValueTimeSeries();
             window.UpdateMultiLocationsValue();
 
-            window.SourceGraph = await BnGraph.ReadAsync<BnVertexViewModel>(window.NetworkFileName);
+            window.ReadGraphValueTimeSeries();
+            window.UpdateGraphValue();
 
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
-            
             window.CalculateValueMenuItem.Click += CalculateValueMenuItem_Click;
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
