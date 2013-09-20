@@ -35,18 +35,27 @@ namespace LibPipeline
 
         public static T ReadValueSingle<T>(string fileName, Func<T, bool> predicate) where T : class
         {
-            using (var odb = OdbFactory.Open(fileName))
+            try
             {
-                try
+                using (var odb = OdbFactory.Open(fileName))
                 {
-                    return odb.AsQueryable<T>().Where(predicate).Single();
-                }
-                catch (InvalidOperationException exp)
-                {
-                    Logger.Error("The file " + fileName + " did not contain any data of type " + typeof(T));
+                    try
+                    {
+                        return odb.AsQueryable<T>().Where(predicate).Single();
+                    }
+                    catch (InvalidOperationException exp)
+                    {
+                        Logger.Error("The file " + fileName + " did not contain any data of type " + typeof(T));
 
-                    throw new OdbDataNotFoundException("The file " + fileName + " did not contain any data of type " + typeof(T), exp);
+                        throw new OdbDataNotFoundException("The file " + fileName + " did not contain any data of type " + typeof(T), exp);
+                    }
                 }
+            }
+            catch (OdbRuntimeException exp)
+            {
+                Logger.Error("Something wrong with file {0}. Try deleting and rerunning.", fileName);
+
+                throw new OdbDataNotFoundException("The file " + fileName + " may be corrupted. Try deleting and re-running.", exp);
             }
         }
 

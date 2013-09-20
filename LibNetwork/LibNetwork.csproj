@@ -103,7 +103,7 @@
     <Compile Include="Evidence\HardEvidence.cs" />
     <Compile Include="Evidence\IEvidence.cs" />
     <Compile Include="InconsistentEvidenceException.cs" />
-    <Compile Include="ModelValue.cs" />
+    <Compile Include="BnGraphValueTimeSeries.cs" />
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
