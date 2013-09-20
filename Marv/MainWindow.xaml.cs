@@ -90,6 +90,26 @@ namespace Marv
             return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, "B08.db");
         }
 
+        public void ReadModelValue()
+        {
+            Logger.Trace("");
+
+            var multiLocation = this.MultiLocations.SelectedItem;
+            var location = multiLocation.SelectedItem;
+
+            try
+            {
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
+                this.SelectedLocationModelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
+            }
+            catch (OdbDataNotFoundException exp)
+            {
+                Logger.Warn("Value not found for location {0} on line {1}", location.Name, multiLocation.Name);
+
+                this.PopupControl.ShowText("Value not found for this location. Run model first.");
+            }
+        }
+
         public void ReadMultiLocationValueTimeSeries()
         {
             foreach (var multiLocation in this.MultiLocations)

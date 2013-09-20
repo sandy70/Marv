@@ -206,7 +206,7 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        public void ReadSelectedLocationModelValue()
+        public void ReadModelValue()
         {
             Logger.Trace("");
 
@@ -215,11 +215,13 @@ namespace Marv
 
             try
             {
-                var fileName = Path.Combine(multiLocation.Name, location.Name + ".db");
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
                 this.SelectedLocationModelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {
+                Logger.Warn("Value not found for location {0} on line {1}", location.Name, multiLocation.Name);
+
                 this.PopupControl.ShowText("Value not found for this location. Run model first.");
             }
         }
@@ -258,7 +260,7 @@ namespace Marv
         {
             Logger.Trace("");
 
-            this.ReadSelectedLocationModelValue();
+            this.ReadModelValue();
             this.UpdateGraphValue();
         }
     }
