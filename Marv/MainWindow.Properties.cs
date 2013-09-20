@@ -1,6 +1,5 @@
 ﻿using LibNetwork;
 using LibPipeline;
-using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -16,6 +15,9 @@ namespace Marv
 
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
+
+        public static readonly DependencyProperty GraphValueTimeSeriesProperty =
+        DependencyProperty.Register("GraphValueTimeSeries", typeof(BnGraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty InputFileNameProperty =
         DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
@@ -68,9 +70,6 @@ namespace Marv
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
 
-        public static readonly DependencyProperty SelectedLocationModelValueProperty =
-        DependencyProperty.Register("SelectedLocationModelValue", typeof(ModelValue), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
 
@@ -96,6 +95,12 @@ namespace Marv
         {
             get { return (int)GetValue(EndYearProperty); }
             set { SetValue(EndYearProperty, value); }
+        }
+
+        public BnGraphValueTimeSeries GraphValueTimeSeries
+        {
+            get { return (BnGraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
+            set { SetValue(GraphValueTimeSeriesProperty, value); }
         }
 
         public string InputFileName
@@ -182,12 +187,6 @@ namespace Marv
             set { SetValue(RiskValueToBrushMapProperty, value); }
         }
 
-        public ModelValue SelectedLocationModelValue
-        {
-            get { return (ModelValue)GetValue(SelectedLocationModelValueProperty); }
-            set { SetValue(SelectedLocationModelValueProperty, value); }
-        }
-
         public int SelectedYear
         {
             get { return (int)GetValue(SelectedYearProperty); }
@@ -204,26 +203,6 @@ namespace Marv
         {
             get { return (int)GetValue(StartYearProperty); }
             set { SetValue(StartYearProperty, value); }
-        }
-
-        public void ReadModelValue()
-        {
-            Logger.Trace("");
-
-            var multiLocation = this.MultiLocations.SelectedItem;
-            var location = multiLocation.SelectedItem;
-
-            try
-            {
-                var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
-                this.SelectedLocationModelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
-            }
-            catch (OdbDataNotFoundException exp)
-            {
-                Logger.Warn("Value not found for location {0} on line {1}", location.Name, multiLocation.Name);
-
-                this.PopupControl.ShowText("Value not found for this location. Run model first.");
-            }
         }
 
         private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -260,7 +239,7 @@ namespace Marv
         {
             Logger.Trace("");
 
-            this.ReadModelValue();
+            this.ReadGraphValueTimeSeries();
             this.UpdateGraphValue();
         }
     }

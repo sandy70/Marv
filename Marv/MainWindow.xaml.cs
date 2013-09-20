@@ -45,7 +45,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
+                    var modelValue = ObjectDataBase.ReadValueSingle<BnGraphValueTimeSeries>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -90,7 +90,7 @@ namespace Marv
             return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, "B08.db");
         }
 
-        public void ReadModelValue()
+        public void ReadGraphValueTimeSeries()
         {
             Logger.Trace("");
 
@@ -100,7 +100,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation, location);
-                this.SelectedLocationModelValue = ObjectDataBase.ReadValueSingle<ModelValue>(fileName, x => true);
+                this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<BnGraphValueTimeSeries>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {
@@ -127,11 +127,11 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.SelectedLocationModelValue != null)
+            if (this.GraphValueTimeSeries != null)
             {
-                if (this.SelectedLocationModelValue.ContainsKey(this.SelectedYear))
+                if (this.GraphValueTimeSeries.ContainsKey(this.SelectedYear))
                 {
-                    this.SourceGraph.Value = this.SelectedLocationModelValue[this.SelectedYear];
+                    this.SourceGraph.Value = this.GraphValueTimeSeries[this.SelectedYear];
                 }
                 else
                 {

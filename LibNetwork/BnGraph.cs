@@ -430,9 +430,9 @@ namespace LibNetwork
             return this.GetNetworkValue();
         }
 
-        public ModelValue Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public BnGraphValueTimeSeries Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var modelValue = new ModelValue();
+            var modelValue = new BnGraphValueTimeSeries();
 
             for (int year = startYear; year <= endYear; year++)
             {
