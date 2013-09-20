@@ -61,7 +61,7 @@ namespace Marv
 
             window.MultiLocations = AdcoInput.Read(window.InputFileName);
 
-            window.ReadMultiLocationsValue();
+            window.ReadMultiLocationValueTimeSeries();
 
             window.UpdateMultiLocationsValue();
 

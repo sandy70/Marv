@@ -90,7 +90,7 @@ namespace Marv
             return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, "B08.db");
         }
 
-        public void ReadMultiLocationsValue()
+        public void ReadMultiLocationValueTimeSeries()
         {
             foreach (var multiLocation in this.MultiLocations)
             {
@@ -125,22 +125,22 @@ namespace Marv
         {
             foreach (var multiLocation in this.MultiLocations)
             {
-                try
+                if ((int)multiLocation["StartYear"] > this.SelectedYear)
                 {
-                    if ((int)multiLocation["StartYear"] > this.SelectedYear)
-                    {
-                        multiLocation.IsEnabled = false;
-                    }
-                    else
-                    {
-                        multiLocation.IsEnabled = true;
-                    }
-
-                    multiLocation.Value = this.ValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+                    multiLocation.IsEnabled = false;
                 }
-                catch (KeyNotFoundException exp)
+                else
                 {
-                    Logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                    multiLocation.IsEnabled = true;
+
+                    try
+                    {
+                        multiLocation.Value = this.ValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+                    }
+                    catch (KeyNotFoundException exp)
+                    {
+                        Logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                    }
                 }
             }
         }
