@@ -9,7 +9,6 @@ namespace LibNetwork
 {
     public class Vertex : ViewModel
     {
-        private VertexValue _value;
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();

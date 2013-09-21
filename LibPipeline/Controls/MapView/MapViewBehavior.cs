@@ -6,6 +6,7 @@ using Microsoft.Surface.Presentation.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Controls;
 using System.Windows;
+using Marv.Common;
 
 namespace LibPipeline
 {

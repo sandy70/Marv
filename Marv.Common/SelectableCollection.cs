@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace LibPipeline
+namespace Marv.Common
 {
     public class SelectableCollection<T> : ObservableCollection<T>
     {

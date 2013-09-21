@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace LibPipeline
+namespace Marv.Common
 {
     public class ValueEventArgs<T> : RoutedEventArgs
     {
