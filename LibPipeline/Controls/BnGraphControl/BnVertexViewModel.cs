@@ -29,7 +29,7 @@ namespace LibPipeline
                 if (this.isLocked != value)
                 {
                     this.isLocked = value;
-                    this.OnPropertyChanged("IsLocked");
+                    this.RaisePropertyChanged("IsLocked");
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace LibPipeline
                 if (value != this.isSelected)
                 {
                     this.isSelected = value;
-                    this.OnPropertyChanged("IsSelected");
+                    this.RaisePropertyChanged("IsSelected");
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace LibPipeline
                 if (value != this.isSensorChecked)
                 {
                     this.isSensorChecked = value;
-                    this.OnPropertyChanged("IsSensorChecked");
+                    this.RaisePropertyChanged("IsSensorChecked");
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace LibPipeline
                 if (value != this.opacity)
                 {
                     this.opacity = value;
-                    this.OnPropertyChanged("Opacity");
+                    this.RaisePropertyChanged("Opacity");
                 }
             }
         }

@@ -143,24 +143,6 @@ namespace LibNetwork
             }
         }
 
-        public IEnumerable<Vertex> NumericVertices
-        {
-            get
-            {
-                var numericVertices = new List<Vertex>();
-
-                foreach (var vertex in this.Vertices)
-                {
-                    if (vertex.Type == VertexType.Interval || vertex.Type == VertexType.Number)
-                    {
-                        numericVertices.Add(vertex);
-                    }
-                }
-
-                return numericVertices.AsEnumerable();
-            }
-        }
-
         public GraphValue Value
         {
             get

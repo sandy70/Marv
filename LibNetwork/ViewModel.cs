@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace LibPipeline
+namespace LibNetwork
 {
     public class ViewModel : INotifyPropertyChanged
     {

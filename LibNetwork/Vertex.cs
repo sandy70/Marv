@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace LibNetwork
 {
-    public class Vertex : INotifyPropertyChanged
+    public class Vertex : ViewModel
     {
         private VertexValue _value;
         private string description = "";
@@ -30,8 +30,6 @@ namespace LibNetwork
         private VertexType type = VertexType.None;
         private string units = "";
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public string Description
         {
             get
@@ -44,7 +42,7 @@ namespace LibNetwork
                 if (value != this.description)
                 {
                     this.description = value;
-                    this.OnPropertyChanged("Description");
+                    this.RaisePropertyChanged("Description");
                 }
             }
         }
@@ -61,7 +59,7 @@ namespace LibNetwork
                 if (value != this.displayPosition)
                 {
                     this.displayPosition = value;
-                    this.OnPropertyChanged("DisplayPosition");
+                    this.RaisePropertyChanged("DisplayPosition");
 
                     if (this.DisplayPosition != null && this.SelectedGroup != null)
                     {
@@ -77,7 +75,7 @@ namespace LibNetwork
             set
             {
                 groups = value;
-                OnPropertyChanged("Groups");
+                RaisePropertyChanged("Groups");
             }
         }
 
@@ -87,7 +85,7 @@ namespace LibNetwork
             set
             {
                 headerOfGroup = value;
-                OnPropertyChanged("HeaderOfGroup");
+                RaisePropertyChanged("HeaderOfGroup");
             }
         }
 
@@ -103,7 +101,7 @@ namespace LibNetwork
                 if (value != this.inputVertexKey)
                 {
                     this.inputVertexKey = value;
-                    this.OnPropertyChanged("InputVertexKey");
+                    this.RaisePropertyChanged("InputVertexKey");
                 }
             }
         }
@@ -120,7 +118,7 @@ namespace LibNetwork
                 if (value != this.isEvidenceEntered)
                 {
                     this.isEvidenceEntered = value;
-                    this.OnPropertyChanged("IsEvidenceEntered");
+                    this.RaisePropertyChanged("IsEvidenceEntered");
                 }
             }
         }
@@ -138,7 +136,7 @@ namespace LibNetwork
                 {
                     this.isExpanded = value;
 
-                    this.OnPropertyChanged("IsExpanded");
+                    this.RaisePropertyChanged("IsExpanded");
                 }
             }
         }
@@ -149,7 +147,7 @@ namespace LibNetwork
             set
             {
                 isHeader = value;
-                OnPropertyChanged("IsHeader");
+                RaisePropertyChanged("IsHeader");
             }
         }
 
@@ -159,7 +157,7 @@ namespace LibNetwork
             set
             {
                 key = value;
-                OnPropertyChanged("Key");
+                RaisePropertyChanged("Key");
             }
         }
 
@@ -175,7 +173,7 @@ namespace LibNetwork
                 if (value != this.mostProbableState)
                 {
                     this.mostProbableState = value;
-                    this.OnPropertyChanged("MostProbableState");
+                    this.RaisePropertyChanged("MostProbableState");
                 }
             }
         }
@@ -186,7 +184,7 @@ namespace LibNetwork
             set
             {
                 name = value;
-                OnPropertyChanged("Name");
+                RaisePropertyChanged("Name");
             }
         }
 
@@ -202,7 +200,7 @@ namespace LibNetwork
                 if (value != this.parent)
                 {
                     this.parent = value;
-                    this.OnPropertyChanged("Parent");
+                    this.RaisePropertyChanged("Parent");
                 }
             }
         }
@@ -219,7 +217,7 @@ namespace LibNetwork
                 if (value != this.position)
                 {
                     this.position = value;
-                    this.OnPropertyChanged("Position");
+                    this.RaisePropertyChanged("Position");
                 }
             }
         }
@@ -236,7 +234,7 @@ namespace LibNetwork
                 if (value != this.positionsForGroup)
                 {
                     this.positionsForGroup = value;
-                    this.OnPropertyChanged("PositionForGroup");
+                    this.RaisePropertyChanged("PositionForGroup");
                 }
             }
         }
@@ -253,7 +251,7 @@ namespace LibNetwork
                 if (value != this.selectedGroup)
                 {
                     this.selectedGroup = value;
-                    this.OnPropertyChanged("SelectedGroup");
+                    this.RaisePropertyChanged("SelectedGroup");
                 }
             }
         }
@@ -270,7 +268,7 @@ namespace LibNetwork
                 if (value != this.selectedState)
                 {
                     this.selectedState = value;
-                    this.OnPropertyChanged("SelectedState");
+                    this.RaisePropertyChanged("SelectedState");
                 }
             }
         }
@@ -281,7 +279,7 @@ namespace LibNetwork
             set
             {
                 states = value;
-                OnPropertyChanged("States");
+                RaisePropertyChanged("States");
             }
         }
 
@@ -297,7 +295,7 @@ namespace LibNetwork
                 if (value != this.type)
                 {
                     this.type = value;
-                    this.OnPropertyChanged("Type");
+                    this.RaisePropertyChanged("Type");
                 }
             }
         }
@@ -314,33 +312,24 @@ namespace LibNetwork
                 if (value != this.units)
                 {
                     this.units = value;
-                    this.OnPropertyChanged("Units");
+                    this.RaisePropertyChanged("Units");
                 }
             }
         }
 
         public VertexValue Value
         {
-            get
-            {
-                return this._value;
-            }
-
             set
             {
-                if (value != this._value)
+                foreach (var state in this.States)
                 {
-                    this._value = value;
-                    this.OnPropertyChanged("Value");
-
-                    foreach (var state in this.States)
-                    {
-                        state.Value = this.Value[state.Key];
-                    }
-
-                    this.UpdateMostProbableState();
-                    this.IsEvidenceEntered = this.Value.IsEvidenceEntered;
+                    state.Value = value[state.Key];
                 }
+
+                this.UpdateMostProbableState();
+                this.IsEvidenceEntered = value.IsEvidenceEntered;
+
+                this.RaisePropertyChanged("Value");
             }
         }
 
@@ -408,23 +397,6 @@ namespace LibNetwork
             return stateIndex;
         }
 
-        public void SetSelectedStateIndex(int index)
-        {
-            int nStates = this.States.Count;
-
-            for (int i = 0; i < nStates; i++)
-            {
-                if (i == index)
-                {
-                    this.States[i].Value = 1;
-                }
-                else
-                {
-                    this.States[i].Value = 0;
-                }
-            }
-        }
-
         public void SetValueToZero()
         {
             foreach (var state in this.States)
@@ -469,12 +441,6 @@ namespace LibNetwork
             }
 
             this.MostProbableState = mostProbableState;
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
