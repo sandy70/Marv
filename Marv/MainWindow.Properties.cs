@@ -11,13 +11,13 @@ namespace Marv
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
         public static readonly DependencyProperty DisplayGraphProperty =
-        DependencyProperty.Register("DisplayGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
         public static readonly DependencyProperty GraphValueTimeSeriesProperty =
-        DependencyProperty.Register("GraphValueTimeSeries", typeof(BnGraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("GraphValueTimeSeries", typeof(GraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty InputFileNameProperty =
         DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
@@ -74,7 +74,7 @@ namespace Marv
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
 
         public static readonly DependencyProperty SourceGraphProperty =
-        DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("SourceGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
@@ -85,9 +85,9 @@ namespace Marv
             set { SetValue(CacheDirectoryProperty, value); }
         }
 
-        public BnGraph DisplayGraph
+        public Graph DisplayGraph
         {
-            get { return (BnGraph)GetValue(DisplayGraphProperty); }
+            get { return (Graph)GetValue(DisplayGraphProperty); }
             set { SetValue(DisplayGraphProperty, value); }
         }
 
@@ -97,9 +97,9 @@ namespace Marv
             set { SetValue(EndYearProperty, value); }
         }
 
-        public BnGraphValueTimeSeries GraphValueTimeSeries
+        public GraphValueTimeSeries GraphValueTimeSeries
         {
-            get { return (BnGraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
+            get { return (GraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
             set { SetValue(GraphValueTimeSeriesProperty, value); }
         }
 
@@ -193,9 +193,9 @@ namespace Marv
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public BnGraph SourceGraph
+        public Graph SourceGraph
         {
-            get { return (BnGraph)GetValue(SourceGraphProperty); }
+            get { return (Graph)GetValue(SourceGraphProperty); }
             set { SetValue(SourceGraphProperty, value); }
         }
 

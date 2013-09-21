@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LibNetwork
 {
-    public class BnVertexValue : Dictionary<string, double> 
+    public class VertexValue : Dictionary<string, double> 
     {
         public bool IsEvidenceEntered { get; set; }
     }

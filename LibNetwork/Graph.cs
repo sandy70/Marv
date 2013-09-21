@@ -13,9 +13,9 @@ using Telerik.Windows.Diagrams.Core;
 
 namespace LibNetwork
 {
-    public class BnGraph : BidirectionalGraph<BnVertex, BnEdge>, IGraphSource, INotifyPropertyChanged
+    public class Graph : BidirectionalGraph<Vertex, Edge>, IGraphSource, INotifyPropertyChanged
     {
-        private BnGraphValue _value;
+        private GraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
         private string fileName;
@@ -24,16 +24,16 @@ namespace LibNetwork
         private string name;
         private Network network = new Network();
 
-        public BnGraph()
+        public Graph()
         {
         }
 
-        public BnGraph(bool allowParallelEdges)
+        public Graph(bool allowParallelEdges)
             : base(allowParallelEdges)
         {
         }
 
-        public BnGraph(bool allowParallelEdges, int vertexCapacity)
+        public Graph(bool allowParallelEdges, int vertexCapacity)
             : base(allowParallelEdges, vertexCapacity)
         {
         }
@@ -144,11 +144,11 @@ namespace LibNetwork
             }
         }
 
-        public IEnumerable<BnVertex> NumericVertices
+        public IEnumerable<Vertex> NumericVertices
         {
             get
             {
-                var numericVertices = new List<BnVertex>();
+                var numericVertices = new List<Vertex>();
 
                 foreach (var vertex in this.Vertices)
                 {
@@ -162,7 +162,7 @@ namespace LibNetwork
             }
         }
 
-        public BnGraphValue Value
+        public GraphValue Value
         {
             get
             {
@@ -184,9 +184,9 @@ namespace LibNetwork
             }
         }
 
-        public static BnGraph Read<TVertex>(string fileName) where TVertex : BnVertex, new()
+        public static Graph Read<TVertex>(string fileName) where TVertex : Vertex, new()
         {
-            var graph = new BnGraph();
+            var graph = new Graph();
             graph.fileName = fileName;
 
             try
@@ -250,12 +250,12 @@ namespace LibNetwork
             return graph;
         }
 
-        public static Task<BnGraph> ReadAsync<TVertex>(string fileName) where TVertex : BnVertex, new()
+        public static Task<Graph> ReadAsync<TVertex>(string fileName) where TVertex : Vertex, new()
         {
-            return Task.Run(() => BnGraph.Read<TVertex>(fileName));
+            return Task.Run(() => Graph.Read<TVertex>(fileName));
         }
 
-        public void Add(BnGraph graph)
+        public void Add(Graph graph)
         {
             foreach (var vertex in graph.Vertices)
             {
@@ -272,16 +272,16 @@ namespace LibNetwork
         {
             if (key1.Equals(key2)) return;
 
-            BnVertex v1 = this.GetVertex(key1);
-            BnVertex v2 = this.GetVertex(key2);
+            Vertex v1 = this.GetVertex(key1);
+            Vertex v2 = this.GetVertex(key2);
 
             if (v1 != null && v2 != null)
             {
-                this.AddEdge(new BnEdge(v1, v2));
+                this.AddEdge(new Edge(v1, v2));
             }
         }
 
-        public BnGraphValue ClearEvidence()
+        public GraphValue ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
             {
@@ -292,21 +292,21 @@ namespace LibNetwork
             return this.GetNetworkValue();
         }
 
-        public BnGraphValue ClearEvidence(string vertexKey)
+        public GraphValue ClearEvidence(string vertexKey)
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
         }
 
-        public BnGraphValue GetNetworkValue()
+        public GraphValue GetNetworkValue()
         {
             this.UpdateBeliefs();
 
-            var graphValue = new BnGraphValue();
+            var graphValue = new GraphValue();
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new BnVertexValue();
+                var vertexValue = new VertexValue();
 
                 foreach (var state in vertex.States)
                 {
@@ -333,10 +333,10 @@ namespace LibNetwork
             return this.network.GetNode(vertexKey);
         }
 
-        public BnGraph GetSubGraph(string group)
+        public Graph GetSubGraph(string group)
         {
             // Extract the header vertices
-            BnGraph subGraph = new BnGraph();
+            Graph subGraph = new Graph();
             subGraph.AssociatedGroup = group;
 
             foreach (var vertex in this.Vertices)
@@ -360,12 +360,12 @@ namespace LibNetwork
             {
                 foreach (var dstVertex in subGraph.Vertices)
                 {
-                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<BnVertex, BnEdge>(this, (edge) => { return 1; });
+                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<Vertex, Edge>(this, (edge) => { return 1; });
                     algorithm.Compute(srcVertex, dstVertex);
 
                     foreach (var path in algorithm.ComputedShortestPaths)
                     {
-                        BnVertex src = path.First().Source;
+                        Vertex src = path.First().Source;
 
                         foreach (var edge in path)
                         {
@@ -386,7 +386,7 @@ namespace LibNetwork
             return subGraph;
         }
 
-        public BnVertex GetVertex(string key)
+        public Vertex GetVertex(string key)
         {
             foreach (var vertex in this.Vertices)
             {
@@ -414,13 +414,13 @@ namespace LibNetwork
             return hasEdge;
         }
 
-        public BnGraphValue Run(string vertexKey, IEvidence evidence)
+        public GraphValue Run(string vertexKey, IEvidence evidence)
         {
             evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 
-        public BnGraphValue Run(Dictionary<string, IEvidence> graphEvidence)
+        public GraphValue Run(Dictionary<string, IEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
@@ -430,9 +430,9 @@ namespace LibNetwork
             return this.GetNetworkValue();
         }
 
-        public BnGraphValueTimeSeries Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public GraphValueTimeSeries Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var modelValue = new BnGraphValueTimeSeries();
+            var modelValue = new GraphValueTimeSeries();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -498,7 +498,7 @@ namespace LibNetwork
             }
         }
 
-        public BnGraphValue UpdateValue()
+        public GraphValue UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }

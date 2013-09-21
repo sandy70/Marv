@@ -7,9 +7,9 @@ using System.Windows;
 
 namespace LibNetwork
 {
-    public class BnVertex : INotifyPropertyChanged
+    public class Vertex : INotifyPropertyChanged
     {
-        private BnVertexValue _value;
+        private VertexValue _value;
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
@@ -19,14 +19,14 @@ namespace LibNetwork
         private bool isExpanded;
         private bool isHeader = false;
         private string key = "";
-        private BnState mostProbableState = null;
+        private State mostProbableState = null;
         private string name = "";
-        private BnGraph parent;
+        private Graph parent;
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
-        private BnState selectedState;
-        private ObservableCollection<BnState> states = new ObservableCollection<BnState>();
+        private State selectedState;
+        private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.None;
         private string units = "";
 
@@ -163,7 +163,7 @@ namespace LibNetwork
             }
         }
 
-        public BnState MostProbableState
+        public State MostProbableState
         {
             get
             {
@@ -190,7 +190,7 @@ namespace LibNetwork
             }
         }
 
-        public BnGraph Parent
+        public Graph Parent
         {
             get
             {
@@ -258,7 +258,7 @@ namespace LibNetwork
             }
         }
 
-        public BnState SelectedState
+        public State SelectedState
         {
             get
             {
@@ -275,7 +275,7 @@ namespace LibNetwork
             }
         }
 
-        public ObservableCollection<BnState> States
+        public ObservableCollection<State> States
         {
             get { return states; }
             set
@@ -319,7 +319,7 @@ namespace LibNetwork
             }
         }
 
-        public BnVertexValue Value
+        public VertexValue Value
         {
             get
             {
@@ -349,7 +349,7 @@ namespace LibNetwork
             this.Parent.Value = this.Parent.ClearEvidence(this.Key);
         }
 
-        public double GetMean(BnVertexValue vertexValue)
+        public double GetMean(VertexValue vertexValue)
         {
             double numer = 0;
             double denom = 0;
@@ -378,7 +378,7 @@ namespace LibNetwork
 
         public int GetSelectedStateIndex()
         {
-            BnState selectedState = null;
+            State selectedState = null;
             int oneCount = 0;
 
             foreach (var state in this.States)
@@ -468,7 +468,7 @@ namespace LibNetwork
 
         public void UpdateMostProbableState()
         {
-            BnState mostProbableState = new BnState { Value = double.MinValue, Key = "" };
+            State mostProbableState = new State { Value = double.MinValue, Key = "" };
 
             foreach (var state in this.States)
             {

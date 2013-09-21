@@ -18,19 +18,19 @@ namespace LibPipeline
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
 
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
                 RoutedEvent = BnStatesControl.StateDoubleClickedEvent,
-                Value = this.AssociatedObject.DataContext as BnState
+                Value = this.AssociatedObject.DataContext as State
             });
         }
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<double> e)
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
-            var selectedState = this.AssociatedObject.DataContext as BnState;
+            var selectedState = this.AssociatedObject.DataContext as State;
 
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
                 RoutedEvent = BnStatesControl.ValueEnteredEvent,
                 Value = selectedState

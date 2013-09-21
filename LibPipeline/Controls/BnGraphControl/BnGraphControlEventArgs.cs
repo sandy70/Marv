@@ -5,7 +5,7 @@ namespace LibPipeline
 {
     public class BnGraphControlEventArgs : RoutedEventArgs
     {
-        private BnState state;
+        private State state;
 
         private BnVertexViewModel vertex;
 
@@ -24,7 +24,7 @@ namespace LibPipeline
         {
         }
 
-        public BnState State
+        public State State
         {
             get { return state; }
             set { state = value; }

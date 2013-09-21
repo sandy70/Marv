@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace LibPipeline
 {
-    public class BnVertexViewModel : BnVertex
+    public class BnVertexViewModel : Vertex
     {
         private bool isLocked = true;
         private bool isSelected = false;
@@ -100,7 +100,7 @@ namespace LibPipeline
             }
         }
 
-        public void SelectState(BnState selectedState)
+        public void SelectState(State selectedState)
         {
             foreach (var state in this.States)
             {
@@ -131,7 +131,7 @@ namespace LibPipeline
             }
         }
 
-        public BnGraph GetSubGraph()
+        public Graph GetSubGraph()
         {
             return this.Parent.GetSubGraph(this.HeaderOfGroup);
         }

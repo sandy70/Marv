@@ -46,9 +46,9 @@ namespace LibNetwork
             } while (hasRemainingItems);
         }
 
-        public static ObservableCollection<BnState> ParseStates(this Network network, string key)
+        public static ObservableCollection<State> ParseStates(this Network network, string key)
         {
-            var states = new ObservableCollection<BnState>();
+            var states = new ObservableCollection<State>();
 
             var nodeHandle = network.GetNodeHandle(key);
 
@@ -76,7 +76,7 @@ namespace LibNetwork
                 // The name for the other node will be null. So we must check for it.
                 if (names[s] != null)
                 {
-                    states.Add(new BnState
+                    states.Add(new State
                     {
                         Key = names[s],
                         Value = values[s]
@@ -250,10 +250,4 @@ namespace LibNetwork
             return false;
         }
     }
-
-    
-
-    public class VertexValue : Dictionary<string, double> { }
-
-    
 }

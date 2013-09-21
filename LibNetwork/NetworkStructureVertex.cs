@@ -132,9 +132,9 @@ namespace LibNetwork
             return range;
         }
 
-        public ObservableCollection<BnState> ParseStates()
+        public ObservableCollection<State> ParseStates()
         {
-            var states = new ObservableCollection<BnState>();
+            var states = new ObservableCollection<State>();
             var subtype = "";
 
             if (this.Properties.TryGetValue("subtype", out subtype))
@@ -149,7 +149,7 @@ namespace LibNetwork
 
                     for (int i = 0; i < nStatesStrings - 1; i++)
                     {
-                        states.Add(new BnState
+                        states.Add(new State
                         {
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
@@ -171,7 +171,7 @@ namespace LibNetwork
 
                     for (int i = 0; i < nStatesStrings; i++)
                     {
-                        states.Add(new BnState
+                        states.Add(new State
                         {
                             Key = stateStrings[i]
                         });
@@ -195,7 +195,7 @@ namespace LibNetwork
                             {
                                 var range = this.ParseStateRange(stateIndex);
 
-                                states.Add(new BnState
+                                states.Add(new State
                                 {
                                     Key = stateString,
                                     Range = range
@@ -224,7 +224,7 @@ namespace LibNetwork
             return states;
         }
 
-        public void ParseStatesMinMax(ObservableCollection<BnState> states)
+        public void ParseStatesMinMax(ObservableCollection<State> states)
         {
             var subtype = "";
 

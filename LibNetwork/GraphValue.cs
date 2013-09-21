@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace LibNetwork
 {
-    public class BnGraphValue : Dictionary<string, BnVertexValue> { }
+    public class GraphValue : Dictionary<string, VertexValue> { }
 }

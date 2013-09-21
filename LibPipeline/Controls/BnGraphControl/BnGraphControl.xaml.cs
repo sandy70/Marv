@@ -17,7 +17,7 @@ namespace LibPipeline
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-        DependencyProperty.Register("Graph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
+        DependencyProperty.Register("Graph", typeof(Graph), typeof(BnGraphControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent GroupButtonClickedEvent =
         EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
@@ -58,7 +58,7 @@ namespace LibPipeline
         public static readonly DependencyProperty ZoomProperty =
         DependencyProperty.Register("Zoom", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
 
-        private Dictionary<BnGraph, string> selectedGroups = new Dictionary<BnGraph, string>();
+        private Dictionary<Graph, string> selectedGroups = new Dictionary<Graph, string>();
 
         public BnGraphControl()
         {
@@ -113,9 +113,9 @@ namespace LibPipeline
             set { SetValue(ConnectionColorProperty, value); }
         }
 
-        public BnGraph Graph
+        public Graph Graph
         {
-            get { return (BnGraph)GetValue(GraphProperty); }
+            get { return (Graph)GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
         }
 
@@ -143,7 +143,7 @@ namespace LibPipeline
             set { SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
-        public Dictionary<BnGraph, string> SelectedGroups
+        public Dictionary<Graph, string> SelectedGroups
         {
             get
             {

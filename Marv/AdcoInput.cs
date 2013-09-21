@@ -65,7 +65,7 @@ namespace Marv
             }
         }
 
-        public static Dictionary<string, IEvidence> GetGraphEvidence(BnGraph graph, string fileName, string pipeName, string locationName)
+        public static Dictionary<string, IEvidence> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
@@ -242,7 +242,7 @@ namespace Marv
             }
         }
 
-        private static IEvidence ParseDistribution(string evidenceString, BnVertex vertex)
+        private static IEvidence ParseDistribution(string evidenceString, Vertex vertex)
         {
             var parts = evidenceString.Trim()
                                       .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -294,7 +294,7 @@ namespace Marv
             };
         }
 
-        private static IEvidence ParseRange(string evidenceString, BnVertex vertex)
+        private static IEvidence ParseRange(string evidenceString, Vertex vertex)
         {
             IEvidence evidence = null;
 
@@ -349,7 +349,7 @@ namespace Marv
             return evidence;
         }
 
-        private static IEvidence ParseState(string evidenceString, BnVertex vertex)
+        private static IEvidence ParseState(string evidenceString, Vertex vertex)
         {
             IEvidence evidence = null;
 

@@ -14,14 +14,14 @@ namespace LibPipeline
 
         private double _Thickness;
 
-        private ObservableCollection<BnVertexValue> _Vertices;
+        private ObservableCollection<VertexValue> _Vertices;
 
         public PipelineCorrosionModel()
         {
             this.ProbabilityOfWater = 0;
             this.Rate = 0;
             this.Thickness = 0;
-            this.Vertices = new ObservableCollection<BnVertexValue>();
+            this.Vertices = new ObservableCollection<VertexValue>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,7 +56,7 @@ namespace LibPipeline
             }
         }
 
-        public ObservableCollection<BnVertexValue> Vertices
+        public ObservableCollection<VertexValue> Vertices
         {
             get { return _Vertices; }
             set

@@ -45,7 +45,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = ObjectDataBase.ReadValueSingle<BnGraphValueTimeSeries>(fileName, x => true);
+                    var modelValue = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -95,13 +95,13 @@ namespace Marv
 
         public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
         {
-            var graph = BnGraph.Read<BnVertexViewModel>(networkFileName);
+            var graph = Graph.Read<BnVertexViewModel>(networkFileName);
             var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
 
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            ObjectDataBase.Write<BnGraphValueTimeSeries>(fileName, graphValueTimeSeries);
+            ObjectDataBase.Write<GraphValueTimeSeries>(fileName, graphValueTimeSeries);
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
@@ -122,7 +122,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<BnGraphValueTimeSeries>(fileName, x => true);
+                this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {

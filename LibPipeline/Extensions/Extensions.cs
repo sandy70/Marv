@@ -69,7 +69,7 @@ namespace LibPipeline
             }
         }
 
-        public static BnGraph GetGraph(this IEnumerable<BnGraph> graphs, string name)
+        public static Graph GetGraph(this IEnumerable<Graph> graphs, string name)
         {
             return graphs.SingleOrDefault(x => x.Name.Equals(name));
         }

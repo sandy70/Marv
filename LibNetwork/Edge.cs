@@ -5,11 +5,11 @@ using Telerik.Windows.Diagrams.Core;
 namespace LibNetwork
 {
     [Serializable]
-    public class BnEdge : QuickGraph.Edge<BnVertex>, ILink<BnVertex>, INotifyPropertyChanged
+    public class Edge : QuickGraph.Edge<Vertex>, ILink<Vertex>, INotifyPropertyChanged
     {
         private double _value = 1;
 
-        public BnEdge(BnVertex source, BnVertex target)
+        public Edge(Vertex source, Vertex target)
             : base(source, target)
         {
         }
@@ -40,13 +40,13 @@ namespace LibNetwork
             }
         }
 
-        public new BnVertex Source
+        public new Vertex Source
         {
             get { return base.Source; }
             set { }
         }
 
-        public new BnVertex Target
+        public new Vertex Target
         {
             get { return base.Target; }
             set { }
