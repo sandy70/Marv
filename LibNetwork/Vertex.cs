@@ -344,11 +344,6 @@ namespace LibNetwork
             }
         }
 
-        public void ClearEvidence()
-        {
-            this.Parent.Value = this.Parent.ClearEvidence(this.Key);
-        }
-
         public double GetMean(VertexValue vertexValue)
         {
             double numer = 0;
@@ -411,11 +406,6 @@ namespace LibNetwork
             }
 
             return stateIndex;
-        }
-
-        public void Run(IEvidence evidence)
-        {
-            this.Parent.Value = this.Parent.Run(this.Key, evidence);
         }
 
         public void SetSelectedStateIndex(int index)
