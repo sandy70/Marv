@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using Telerik.Windows.Diagrams.Core;
 
 namespace LibNetwork
@@ -255,29 +254,16 @@ namespace LibNetwork
             return Task.Run(() => Graph.Read<TVertex>(fileName));
         }
 
-        public void Add(Graph graph)
+        public void AddEdge(string srcVertexKey, string dstVertexKey)
         {
-            foreach (var vertex in graph.Vertices)
+            if (srcVertexKey.Equals(dstVertexKey)) return;
+
+            Vertex srcVertex = this.GetVertex(srcVertexKey);
+            Vertex dstVertex = this.GetVertex(dstVertexKey);
+
+            if (srcVertex != null && dstVertex != null)
             {
-                this.AddVertex(vertex);
-            }
-
-            foreach (var edge in graph.Edges)
-            {
-                this.AddEdge(edge);
-            }
-        }
-
-        public void AddEdge(string key1, string key2)
-        {
-            if (key1.Equals(key2)) return;
-
-            Vertex v1 = this.GetVertex(key1);
-            Vertex v2 = this.GetVertex(key2);
-
-            if (v1 != null && v2 != null)
-            {
-                this.AddEdge(new Edge(v1, v2));
+                this.AddEdge(new Edge(srcVertex, dstVertex));
             }
         }
 
@@ -432,7 +418,7 @@ namespace LibNetwork
 
         public GraphValueTimeSeries Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var modelValue = new GraphValueTimeSeries();
+            var graphValueTimeSeries = new GraphValueTimeSeries();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -444,7 +430,7 @@ namespace LibNetwork
                     {
                         var dstVertexKey = this.Loops[srcVertexKey];
 
-                        var lastGraphValue = modelValue[year - 1];
+                        var lastGraphValue = graphValueTimeSeries[year - 1];
 
                         var lastVertexValue = lastGraphValue[srcVertexKey];
 
@@ -455,10 +441,10 @@ namespace LibNetwork
                     }
                 }
 
-                modelValue[year] = this.Run(graphEvidence);
+                graphValueTimeSeries[year] = this.Run(graphEvidence);
             }
 
-            return modelValue;
+            return graphValueTimeSeries;
         }
 
         public void SetEvidence(string vertexKey, int stateIndex)
@@ -469,6 +455,14 @@ namespace LibNetwork
         public void SetEvidence(string vertexKey, double[] evidence)
         {
             this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetValueToZero()
+        {
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.SetValueToZero();
+            }
         }
 
         public void UpdateBeliefs()
@@ -523,14 +517,6 @@ namespace LibNetwork
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void SetValueToZero()
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.SetValueToZero();
-            }
         }
     }
 }
