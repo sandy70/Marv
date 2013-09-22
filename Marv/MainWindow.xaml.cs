@@ -2,6 +2,7 @@
 using LibNetwork;
 using LibPipeline;
 using NLog;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,19 +29,41 @@ namespace Marv
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation)
+        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation, Graph graph = null)
         {
             Logger.Info("Computing value for line {0}.", multiLocation.Name);
 
             var vertexKey = "B08";
             var stateKey = "Fail";
+            var quantity = "Mean";
 
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
             var nCompleted = 0;
             var nLocations = multiLocation.Count;
 
+            var excelFileName = Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name + ".xlsx");
+            var excelPackage = new ExcelPackage(new FileInfo(excelFileName));
+            var excelWorkSheetName = vertexKey + "_" + stateKey;
+
+            try
+            {
+                excelPackage.Workbook.Worksheets.Add(excelWorkSheetName);
+            }
+            catch (InvalidOperationException exp)
+            {
+                Logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
+            }
+
+            var excelWorkSheet = excelPackage.Workbook.Worksheets[excelWorkSheetName];
+
+            var excelRow = 1;
+
             foreach (var location in multiLocation)
             {
+                var excelCol = 1;
+
+                excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
+
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
 
                 try
@@ -49,6 +72,8 @@ namespace Marv
 
                     foreach (var year in modelValue.Keys)
                     {
+                        excelWorkSheet.SetValue(1, ++excelCol, year);
+
                         var graphValue = modelValue[year];
                         var vertexValue = graphValue[vertexKey];
                         var stateValue = vertexValue[stateKey];
@@ -59,6 +84,9 @@ namespace Marv
                         }
 
                         multiLocationValueTimeSeries[year][location.Name] = stateValue;
+
+                        var extractedValue = stateValue;
+                        excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
                     }
                 }
                 catch (OdbDataNotFoundException exp)
@@ -69,8 +97,10 @@ namespace Marv
                 Logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
             }
 
-            var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+            excelPackage.Save();
+
+            // var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
+            // ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
 
             return multiLocationValueTimeSeries;
         }

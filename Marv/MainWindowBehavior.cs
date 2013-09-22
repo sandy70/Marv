@@ -120,16 +120,16 @@ namespace Marv
         private async void NetworkComputeValue_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
+            var graph = window.SourceGraph;
             var multiLocations = window.MultiLocations;
 
             var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
 
             await Task.Run(() =>
                 {
-
                     foreach (var multiLocation in multiLocations)
                     {
-                        multiLocationValueTimeSeriesForMultiLocation[multiLocation] = MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation);
+                        multiLocationValueTimeSeriesForMultiLocation[multiLocation] = MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
                     }
                 });
 
