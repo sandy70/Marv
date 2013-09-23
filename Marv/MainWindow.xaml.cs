@@ -33,9 +33,10 @@ namespace Marv
         {
             Logger.Info("Computing value for line {0}.", multiLocation.Name);
 
-            var vertexKey = "B08";
+            var vertexKey = "B05_1";
+            var vertexName = graph.GetVertex(vertexKey).Name;
             var stateKey = "Fail";
-            var quantity = "Mean";
+            var quantity = "StdDev";
 
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
             var nCompleted = 0;
@@ -43,7 +44,8 @@ namespace Marv
 
             var excelFileName = Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name + ".xlsx");
             var excelPackage = new ExcelPackage(new FileInfo(excelFileName));
-            var excelWorkSheetName = vertexKey + "_" + stateKey;
+            // var excelWorkSheetName = vertexName + "_" + stateKey;
+            var excelWorkSheetName = vertexName + "_" + quantity;
 
             try
             {
@@ -76,16 +78,18 @@ namespace Marv
 
                         var graphValue = modelValue[year];
                         var vertexValue = graphValue[vertexKey];
-                        var stateValue = vertexValue[stateKey];
+                        // var stateValue = vertexValue[stateKey];
 
                         if (!multiLocationValueTimeSeries.ContainsKey(year))
                         {
                             multiLocationValueTimeSeries[year] = new MultiLocationValue();
                         }
 
-                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
+                        // multiLocationValueTimeSeries[year][location.Name] = stateValue;
 
-                        var extractedValue = stateValue;
+                        // var extractedValue = graph.GetMean(vertexKey, vertexValue);
+                        var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
+                        // var extractedValue = stateValue;
                         excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
                     }
                 }

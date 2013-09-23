@@ -359,6 +359,32 @@ namespace LibNetwork
             return numer / denom;
         }
 
+        public double GetStandardDeviation(VertexValue vertexValue)
+        {
+            // Formula for standard deviation of a pdf
+            // stdev = sqrt(sum((x - mu)^2 * P(x));
+
+            var mu = this.GetMean(vertexValue);
+            var stdev = 0.0;
+
+            if (this.Type == VertexType.Interval)
+            {
+                var sum = 0.0;
+
+                foreach (var state in this.States)
+                {
+                    var x = (state.Range.Min + state.Range.Max) / 2;
+                    var Px = vertexValue[state.Key];
+
+                    sum += Math.Pow(x - mu, 2) * Px;
+                }
+
+                stdev = Math.Sqrt(sum);
+            }
+
+            return stdev;
+        }
+
         public int GetSelectedStateIndex()
         {
             State selectedState = null;

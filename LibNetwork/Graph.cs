@@ -367,6 +367,11 @@ namespace LibNetwork
             return null;
         }
 
+        public double GetMean(string vertexKey, VertexValue vertexValue)
+        {
+            return this.GetVertex(vertexKey).GetMean(vertexValue);
+        }
+
         public bool HasEdge(string srcKey, string dstKey)
         {
             bool hasEdge = false;
@@ -447,6 +452,11 @@ namespace LibNetwork
             }
         }
 
+        public double GetStandardDeviation(string vertexKey, VertexValue vertexValue)
+        {
+            return this.GetVertex(vertexKey).GetStandardDeviation(vertexValue);
+        }
+
         public void UpdateBeliefs()
         {
             try
@@ -485,8 +495,8 @@ namespace LibNetwork
 
             foreach (var node in structure.Vertices)
             {
-                node.Properties["groups"] = "\"" + this.GetVertex(node.Key).Groups.ToString() + "\"";
-                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionForGroup.ToString() + "\"";
+                node.Properties["groups"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
+                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionForGroup.String() + "\"";
                 node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
                 node.Properties["label"] = "\"" + this.GetVertex(node.Key).Name + "\"";
                 node.Properties["units"] = "\"" + this.GetVertex(node.Key).Units + "\"";

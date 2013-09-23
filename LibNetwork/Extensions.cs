@@ -46,7 +46,7 @@ namespace LibNetwork
             } while (hasRemainingItems);
         }
 
-        public static string ToString(this IEnumerable<string> strings)
+        public static string String(this IEnumerable<string> strings)
         {
             var str = "";
 
@@ -66,6 +66,32 @@ namespace LibNetwork
             }
 
             str += strings.Last();
+
+            return str;
+        }
+
+        public static string String(this Dictionary<string, Point> positionsByGroup)
+        {
+            var str = "";
+
+            if (positionsByGroup.Count == 0)
+            {
+                return str;
+            }
+            else if (positionsByGroup.Count == 1)
+            {
+                var kvpFirst = positionsByGroup.First();
+                str += kvpFirst.Key + "," + kvpFirst.Value.X + "," + kvpFirst.Value.Y;
+                return str;
+            }
+
+            foreach (var kvp in positionsByGroup.AllButLast())
+            {
+                str += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
+            }
+
+            var kvpLast = positionsByGroup.Last();
+            str += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
 
             return str;
         }
