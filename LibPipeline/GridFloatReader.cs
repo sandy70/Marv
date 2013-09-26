@@ -48,7 +48,6 @@ namespace LibPipeline
 
                     j++;
                 }
-                file.Close();
             }
 
             gridFloatHeader.ByteOrder = headerParts[6, 1];

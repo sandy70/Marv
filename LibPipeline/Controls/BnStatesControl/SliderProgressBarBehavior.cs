@@ -1,4 +1,6 @@
-﻿using LibBn;
+﻿using LibNetwork;
+using Marv.Common;
+using System;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
@@ -16,24 +18,20 @@ namespace LibPipeline
         private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
-            var vertexViewModel = statesControl.DataContext as BnVertexViewModel;
-            var selectedState = this.AssociatedObject.Tag as BnState;
 
-            vertexViewModel.SelectState(selectedState);
-
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
-                RoutedEvent = BnStatesControl.StateSelectedEvent,
-                Value = selectedState
+                RoutedEvent = BnStatesControl.StateDoubleClickedEvent,
+                Value = this.AssociatedObject.DataContext as State
             });
         }
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<double> e)
         {
             var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
-            var selectedState = this.AssociatedObject.DataContext as BnState;
+            var selectedState = this.AssociatedObject.DataContext as State;
 
-            statesControl.RaiseEvent(new ValueEventArgs<BnState>
+            statesControl.RaiseEvent(new ValueEventArgs<State>
             {
                 RoutedEvent = BnStatesControl.ValueEnteredEvent,
                 Value = selectedState

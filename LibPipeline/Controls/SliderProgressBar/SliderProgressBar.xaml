@@ -20,11 +20,12 @@
                     </i:Interaction.Behaviors>
                 </telerik:RadProgressBar>
 
-                <TextBlock FontSize="8"
-                           Foreground="Black"
-                           IsHitTestVisible="False"
-                           Text="{Binding Value, StringFormat=F3, ElementName=Root}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Viewbox IsHitTestVisible="False"
+                         Margin="2"
+                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Foreground="Black"
+                               Text="{Binding Value, StringFormat=F1, ElementName=Root}" />
+                </Viewbox>
             </Grid>
         </ControlTemplate>
     </telerik:RadSlider.Template>

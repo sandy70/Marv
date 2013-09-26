@@ -5,15 +5,15 @@ using System.Windows.Data;
 
 namespace LibPipeline
 {
-    [ValueConversion(typeof(IEnumerable<ILocation>), typeof(IEnumerable<MapControl.Location>))]
+    [ValueConversion(typeof(IEnumerable<Location>), typeof(IEnumerable<MapControl.Location>))]
     public class IEnumerableILocationToIEnumerableLocationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is IEnumerable<ILocation>)
+            if (value is IEnumerable<Location>)
             {
-                var locations = value as IEnumerable<ILocation>;
-                return locations.Select<ILocation, MapControl.Location>(x => new MapControl.Location { Latitude = x.Latitude, Longitude = x.Longitude });
+                var locations = value as IEnumerable<Location>;
+                return locations.Select<Location, MapControl.Location>(x => x.ToMapControlLocation());
             }
             else
             {
@@ -26,7 +26,7 @@ namespace LibPipeline
             if (value is IEnumerable<MapControl.Location>)
             {
                 var locations = value as IEnumerable<MapControl.Location>;
-                return locations.Select<MapControl.Location, LibPipeline.Location>(x => new LibPipeline.Location { Latitude = x.Latitude, Longitude = x.Longitude });
+                return locations.Select<MapControl.Location, Location>(x => x);
             }
             else
             {

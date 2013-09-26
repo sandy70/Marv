@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>LibSmile</ProjectName>
+    <ProjectName>SmileNet</ProjectName>
     <ProjectGuid>{3719AEB6-8932-4255-8F96-3F32D5894976}</ProjectGuid>
     <RootNamespace>smileNet</RootNamespace>
     <Keyword>ManagedCProj</Keyword>

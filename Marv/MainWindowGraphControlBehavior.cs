@@ -1,6 +1,8 @@
-﻿using LibBn;
+﻿using LibNetwork;
 using LibPipeline;
+using Marv.Common;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
@@ -20,38 +22,84 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
+            window.GraphControl.BackButtonClicked += GraphControl_BackButtonClicked;
+            window.GraphControl.GroupButtonClicked += GraphControl_GroupButtonClicked;
             window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
             window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
             window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
             window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
+            window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
+        }
+
+        private void GraphControl_BackButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        {
+            var window = this.AssociatedObject;
+            var vertex = e.Value;
+
+            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+            window.IsBackButtonVisible = false;
+        }
+
+        private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        {
+            var window = this.AssociatedObject;
+            var vertex = e.Value;
+
+            window.DisplayGraph = vertex.GetSubGraph();
+            window.IsBackButtonVisible = true;
+        }
+
+        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var graph = window.SourceGraph;
+            var vertex = e.Vertex;
+
+            if (e.Vertex.SelectedState != e.State)
+            {
+                var evidence = new HardEvidence
+                {
+                    StateIndex = vertex.States.IndexOf(e.State)
+                };
+
+                try
+                {
+                    graph.Value = graph.Run(vertex.Key, evidence);
+                }
+                catch (InconsistentEvidenceException exception)
+                {
+                    window.PopupControl.ShowText("Inconsistent evidence entered.");
+                    graph.Value = graph.ClearEvidence(vertex.Key);
+                }
+            }
+            else
+            {
+                graph.Value = graph.ClearEvidence(vertex.Key);
+            }
         }
 
         private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var window = this.AssociatedObject;
-            window.AddInput(e.Value);
+            var graph = window.SourceGraph;
+            var vertex = e.Value;
 
-            var success = window.TryUpdateNetwork();
-
-            if (!success)
+            try
+            {
+                graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
+            }
+            catch(InconsistentEvidenceException exception)
             {
                 window.PopupControl.ShowText("Inconsistent evidence entered.");
-                window.InputManager.RemoveVertexInput(BnInputType.User, window.SelectedYear, e.Value.Key);
-                window.TryUpdateNetwork();
+                graph.Value = graph.ClearEvidence(vertex.Key);
             }
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
-            var window = this.AssociatedObject;
-            window.RemoveInput(e.Value);
-
-            var success = window.TryUpdateNetwork();
-
-            if (!success)
-            {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
-            }
+            var graph = this.AssociatedObject.SourceGraph;
+            var vertex = e.Value;
+            graph.Value = graph.ClearEvidence(vertex.Key);
         }
 
         private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)

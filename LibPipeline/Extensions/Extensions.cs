@@ -1,13 +1,24 @@
-﻿using System;
+﻿using LibNetwork;
+using MoreLinq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Linq;
 
 namespace LibPipeline
 {
     public static partial class Extensions
     {
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
+        }
+
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -56,6 +67,11 @@ namespace LibPipeline
                 //use recursion to proceed with next level
                 return FindParent<T>(parentObject);
             }
+        }
+
+        public static Graph GetGraph(this IEnumerable<Graph> graphs, string name)
+        {
+            return graphs.SingleOrDefault(x => x.Name.Equals(name));
         }
 
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
@@ -112,50 +128,91 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static ILocation NearestTo(this IEnumerable<ILocation> locations, ILocation queryLocation)
+        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, int level = 0)
         {
-            if (locations == null || queryLocation == null)
+            // If points are null or too few then return
+            if (points == null)
             {
-                return null;
+                return points;
             }
 
-            double nearestDistance = Double.MaxValue;
-            ILocation nearestLocation = locations.FirstOrDefault();
+            var nPoints = points.Count();
 
-            foreach (var location in locations)
+            if (nPoints <= minPoints)
             {
-                double distance = Utils.Distance(location, queryLocation);
+                return points;
+            }
+            else
+            {
+                var first = points.First();
+                var last = points.Last();
 
-                if (distance < nearestDistance)
+                var maxDistance = double.MinValue;
+                var maxDistancePoint = first;
+
+                foreach (var point in points)
                 {
-                    nearestDistance = distance;
-                    nearestLocation = location;
+                    var distance = Utils.Distance(first, last, point);
+
+                    if (distance > maxDistance)
+                    {
+                        maxDistance = distance;
+                        maxDistancePoint = point;
+                    }
+                }
+
+                if (maxDistance > tolerance)
+                {
+                    return points.TakeUntil(x => x == maxDistancePoint)
+                                 .Reduce(tolerance, minPoints, level + 1)
+                                 .Concat(points.SkipWhile(x => x != maxDistancePoint)
+                                               .Reduce(tolerance, minPoints, level + 1)
+                                               .Skip(1));
+                }
+                else
+                {
+                    var testIndex = (int)(nPoints / minPoints);
+                    IPoint nearest = points.First();
+
+                    var p = points.Where((point, i) =>
+                            {
+                                if ((i == 0) || (i == nPoints - 1) || (i % testIndex == 0))
+                                {
+                                    nearest = point;
+                                    return true;
+                                }
+                                else
+                                {
+                                    nearest.Value = Math.Max(nearest.Value, point.Value);
+                                    return false;
+                                }
+                            });
+
+                    return p;
                 }
             }
-
-            return nearestLocation;
         }
 
-        public static MapControl.Location AsMapControlLocation(this ILocation location)
+        public static Task<IEnumerable<IPoint>> ReduceAsync(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Run(() => points.Reduce(tolerance, minPoints), cancellationToken);
+        }
+
+        public static IEnumerable<Location> ToLocations(this IEnumerable<IPoint> points, MapView mapView)
+        {
+            return points.Select(point =>
+                             {
+                                 Location location = mapView.ViewportPointToLocation(new Point { X = point.X, Y = point.Y });
+                                 location.Value = point.Value;
+ 
+                                 return location;
+                             })
+                         .ToList();
+        }
+
+        public static MapControl.Location ToMapControlLocation(this Location location)
         {
             return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static LibPipeline.Location AsLibPipelineLocation(this MapControl.Location location)
-        {
-            return new LibPipeline.Location { Latitude = location.Latitude, Longitude = location.Longitude };
-        }
-
-        public static LocationRect Bounds(this IEnumerable<ILocation> locations)
-        {
-            var locationRect = new LocationRect();
-
-            locationRect.South = locations.Min(x => x.Latitude);
-            locationRect.West = locations.Min(x => x.Longitude);
-            locationRect.North = locations.Max(x => x.Latitude);
-            locationRect.East = locations.Max(x => x.Longitude);
-
-            return locationRect;
         }
     }
 }

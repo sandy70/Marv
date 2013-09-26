@@ -1,10 +1,12 @@
 ﻿using Caching;
-using LibBn;
+using LibNetwork;
 using LibPipeline;
-using MapControl;
-using SharpKml.Dom;
-using Smile;
+using NLog;
+using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
 
@@ -12,189 +14,217 @@ namespace Marv
 {
     public partial class MainWindow : Window
     {
-        public static readonly DependencyProperty CacheDirectoryProperty =
-        DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
-
-        public static readonly DependencyProperty FileNameProperty =
-        DependencyProperty.Register("FileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty GroundOverlayProperty =
-        DependencyProperty.Register("GroundOverlay", typeof(GroundOverlay), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty IsGroupButtonVisibleProperty =
-        DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
-        public static readonly DependencyProperty IsProfileSelectedProperty =
-        DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
-        public static readonly DependencyProperty IsSensorButtonVisibleProperty =
-        DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
-        public static readonly DependencyProperty IsSettingsVisibleProperty =
-        DependencyProperty.Register("IsSettingsVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsTallySelectedProperty =
-        DependencyProperty.Register("IsTallySelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty ProfileLocationsProperty =
-        DependencyProperty.Register("ProfileLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedProfileLocationProperty =
-        DependencyProperty.Register("SelectedProfileLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedTallyLocationProperty =
-        DependencyProperty.Register("SelectedTallyLocation", typeof(ILocation), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedVertexValuesProperty =
-        DependencyProperty.Register("SelectedVertexValues", typeof(IEnumerable<BnVertexValue>), typeof(MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedYearProperty =
-        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(Config.StartYear));
-
-        public static readonly DependencyProperty TallyLocationsProperty =
-        DependencyProperty.Register("TallyLocations", typeof(IEnumerable<ILocation>), typeof(MainWindow), new PropertyMetadata(null));
-
-        public Dictionary<int, List<BnVertexValue>> DefaultVertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
-
-        public BnInputStore InputManager = new BnInputStore();
-
+        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public SensorListener SensorListener = new SensorListener();
-
-        public Dictionary<int, List<BnVertexValue>> VertexValuesByYear = new Dictionary<int, List<BnVertexValue>>();
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
 
-            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, this.CacheDirectory);
+            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MARV");
+            MapControl.TileImageLoader.Cache = new ImageFileCache(MapControl.TileImageLoader.DefaultCacheName, cacheDirectory);
+
+            this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public string CacheDirectory
+        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation, Graph graph = null)
         {
-            get { return (string)GetValue(CacheDirectoryProperty); }
-            set { SetValue(CacheDirectoryProperty, value); }
-        }
+            Logger.Info("Computing value for line {0}.", multiLocation.Name);
 
-        public string FileName
-        {
-            get { return (string)GetValue(FileNameProperty); }
-            set { SetValue(FileNameProperty, value); }
-        }
+            var vertexKey = "B08";
+            var vertexName = graph.GetVertex(vertexKey).Name;
+            var stateKey = "Fail";
+            var quantity = "Mean";
 
-        public GroundOverlay GroundOverlay
-        {
-            get { return (GroundOverlay)GetValue(GroundOverlayProperty); }
-            set { SetValue(GroundOverlayProperty, value); }
-        }
+            var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
+            var nCompleted = 0;
+            var nLocations = multiLocation.Count;
 
-        public bool IsGroupButtonVisible
-        {
-            get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
-            set { SetValue(IsGroupButtonVisibleProperty, value); }
-        }
+            var excelFileName = Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name + ".xlsx");
+            var excelPackage = new ExcelPackage(new FileInfo(excelFileName));
+            var excelWorkSheetName = vertexName + "_" + stateKey;
+            // var excelWorkSheetName = vertexName + "_" + quantity;
 
-        public bool IsProfileSelected
-        {
-            get { return (bool)GetValue(IsProfileSelectedProperty); }
-            set { SetValue(IsProfileSelectedProperty, value); }
-        }
-
-        public bool IsSensorButtonVisible
-        {
-            get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
-            set { SetValue(IsSensorButtonVisibleProperty, value); }
-        }
-
-        public bool IsSettingsVisible
-        {
-            get { return (bool)GetValue(IsSettingsVisibleProperty); }
-            set { SetValue(IsSettingsVisibleProperty, value); }
-        }
-
-        public bool IsTallySelected
-        {
-            get { return (bool)GetValue(IsTallySelectedProperty); }
-            set { SetValue(IsTallySelectedProperty, value); }
-        }
-
-        public IEnumerable<ILocation> ProfileLocations
-        {
-            get { return (IEnumerable<ILocation>)GetValue(ProfileLocationsProperty); }
-            set { SetValue(ProfileLocationsProperty, value); }
-        }
-
-        public ILocation SelectedProfileLocation
-        {
-            get { return (ILocation)GetValue(SelectedProfileLocationProperty); }
-            set { SetValue(SelectedProfileLocationProperty, value); }
-        }
-
-        public ILocation SelectedTallyLocation
-        {
-            get { return (ILocation)GetValue(SelectedTallyLocationProperty); }
-            set { SetValue(SelectedTallyLocationProperty, value); }
-        }
-
-        public IEnumerable<BnVertexValue> SelectedVertexValues
-        {
-            get { return (IEnumerable<BnVertexValue>)GetValue(SelectedVertexValuesProperty); }
-            set { SetValue(SelectedVertexValuesProperty, value); }
-        }
-
-        public int SelectedYear
-        {
-            get { return (int)GetValue(SelectedYearProperty); }
-            set { SetValue(SelectedYearProperty, value); }
-        }
-
-        public IEnumerable<ILocation> TallyLocations
-        {
-            get { return (IEnumerable<ILocation>)GetValue(TallyLocationsProperty); }
-            set { SetValue(TallyLocationsProperty, value); }
-        }
-
-        public void AddInput(BnVertexViewModel vertexViewModel)
-        {
-            var vertexInput = this.InputManager.GetVertexInput(BnInputType.User, this.SelectedYear, vertexViewModel.Key);
-            vertexInput.FillFrom(vertexViewModel);
-        }
-
-        public void RemoveInput(BnVertexViewModel vertexViewModel)
-        {
-            this.InputManager.RemoveVertexInput(BnInputType.User, this.SelectedYear, vertexViewModel.Key);
-        }
-
-        public bool TryUpdateNetwork()
-        {
             try
             {
-                var defaultInputs = this.InputManager.GetGraphInput(BnInputType.Default, this.SelectedYear);
-                var userInputs = this.InputManager.GetGraphInput(BnInputType.User, this.SelectedYear);
+                excelPackage.Workbook.Worksheets.Add(excelWorkSheetName);
+            }
+            catch (InvalidOperationException exp)
+            {
+                Logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
+            }
 
-                var bnUpdater = new BnUpdater();
+            var excelWorkSheet = excelPackage.Workbook.Worksheets[excelWorkSheetName];
 
-                List<BnVertexValue> lastYearVertexValues = null;
+            var excelRow = 1;
 
-                if (this.SelectedYear == Config.StartYear)
+            foreach (var location in multiLocation)
+            {
+                var excelCol = 1;
+
+                excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
+
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
+
+                try
                 {
-                    lastYearVertexValues = null;
+                    var modelValue = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+
+                    foreach (var year in modelValue.Keys)
+                    {
+                        excelWorkSheet.SetValue(1, ++excelCol, year);
+
+                        var graphValue = modelValue[year];
+                        var vertexValue = graphValue[vertexKey];
+                        var stateValue = vertexValue[stateKey];
+
+                        if (!multiLocationValueTimeSeries.ContainsKey(year))
+                        {
+                            multiLocationValueTimeSeries[year] = new MultiLocationValue();
+                        }
+
+                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
+
+                        // var extractedValue = graph.GetMean(vertexKey, vertexValue);
+                        // var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
+                        var extractedValue = stateValue;
+                        excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
+                    }
+                }
+                catch (OdbDataNotFoundException exp)
+                {
+                    Logger.Info("Value not found for location {0}.", location);
+                }
+
+                Logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
+            }
+
+            excelPackage.Save();
+
+            var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
+            ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+
+            return multiLocationValueTimeSeries;
+        }
+
+        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(MultiLocation multiLocation, Graph graph)
+        {
+            return Task.Run(() =>
+                {
+                    return MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
+                });
+        }
+
+        public static string GetFileNameForModelValue(string multiLocationName, string locationName)
+        {
+            return Path.Combine("ModelValues", multiLocationName, locationName + ".db");
+        }
+
+        public static string GetFileNameForMultiLocationValueTimeSeries(MultiLocation multiLocation, string vertexKey, string stateKey)
+        {
+            return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, vertexKey + "_" + stateKey + ".db");
+        }
+
+        public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            var graph = Graph.Read<BnVertexViewModel>(networkFileName);
+            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
+
+            var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
+
+            var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
+            ObjectDataBase.Write<GraphValueTimeSeries>(fileName, graphValueTimeSeries);
+        }
+
+        public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            return Task.Run(() =>
+                {
+                    MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+                });
+        }
+
+        public void ReadGraphValueTimeSeries()
+        {
+            Logger.Trace("");
+
+            var multiLocation = this.MultiLocations.SelectedItem;
+            var location = multiLocation.SelectedItem;
+
+            try
+            {
+                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
+                this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+            }
+            catch (OdbDataNotFoundException exp)
+            {
+                Logger.Warn("Value not found for location {0} on line {1}", location.Name, multiLocation.Name);
+
+                this.PopupControl.ShowText("Value not found for this location. Run model first.");
+            }
+        }
+
+        public void ReadMultiLocationValueTimeSeriesForMultiLocation()
+        {
+            foreach (var multiLocation in this.MultiLocations)
+            {
+                try
+                {
+                    var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
+                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
+                    var a = 1 + 1;
+                }
+                catch (OdbDataNotFoundException exp)
+                {
+                    Logger.Info("Value not found for line {0}.", multiLocation.Name);
+                }
+            }
+        }
+
+        public void UpdateGraphValue()
+        {
+            if (this.GraphValueTimeSeries != null)
+            {
+                if (this.GraphValueTimeSeries.ContainsKey(this.SelectedYear))
+                {
+                    this.SourceGraph.Value = this.GraphValueTimeSeries[this.SelectedYear];
                 }
                 else
                 {
-                    lastYearVertexValues = this.VertexValuesByYear[this.SelectedYear - 1];
+                    this.SourceGraph.SetValueToZero();
+                    this.PopupControl.ShowText("Pipeline inactive for this year.");
                 }
-
-                var vertexValues = bnUpdater.GetVertexValues(this.FileName, defaultInputs, userInputs, lastYearVertexValues);
-                this.VertexValuesByYear[this.SelectedYear] = vertexValues;
-                this.GraphControl.SourceGraph.CopyFrom(vertexValues);
-                this.GraphControl.SourceGraph.CalculateMostProbableStates();
-
-                return true;
             }
-            catch (SmileException exp)
+        }
+
+        public void UpdateMultiLocationValues()
+        {
+            foreach (var multiLocation in this.MultiLocations)
             {
-                return false;
+                if ((int)multiLocation["StartYear"] > this.SelectedYear)
+                {
+                    multiLocation.IsEnabled = false;
+                }
+                else
+                {
+                    multiLocation.IsEnabled = true;
+
+                    if (this.MultiLocations.SelectedItem.IsEnabled == false)
+                    {
+                        this.MultiLocations.SelectedItem = multiLocation;
+                    }
+
+                    try
+                    {
+                        multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+                    }
+                    catch (KeyNotFoundException exp)
+                    {
+                        Logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                    }
+                }
             }
         }
     }

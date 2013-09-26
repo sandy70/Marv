@@ -1,35 +1,20 @@
-﻿﻿using LibBn;
+﻿﻿using LibNetwork;
+using Smile;
 using System.ComponentModel;
 
 namespace LibPipeline
 {
-    public class BnVertexViewModel : BnVertex
+    public class BnVertexViewModel : Vertex
     {
-        private bool isExpanded = false;
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
-        private BnState mostProbableState = null;
         private double opacity = 1;
 
         public BnVertexViewModel()
             : base()
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
-        }
-
-        public bool IsExpanded
-        {
-            get
-            {
-                return this.isExpanded;
-            }
-
-            set
-            {
-                this.isExpanded = value;
-                this.OnPropertyChanged("IsExpanded");
-            }
         }
 
         public bool IsLocked
@@ -44,7 +29,7 @@ namespace LibPipeline
                 if (this.isLocked != value)
                 {
                     this.isLocked = value;
-                    this.OnPropertyChanged("IsLocked");
+                    this.RaisePropertyChanged("IsLocked");
                 }
             }
         }
@@ -61,7 +46,7 @@ namespace LibPipeline
                 if (value != this.isSelected)
                 {
                     this.isSelected = value;
-                    this.OnPropertyChanged("IsSelected");
+                    this.RaisePropertyChanged("IsSelected");
                 }
             }
         }
@@ -78,24 +63,7 @@ namespace LibPipeline
                 if (value != this.isSensorChecked)
                 {
                     this.isSensorChecked = value;
-                    this.OnPropertyChanged("IsSensorChecked");
-                }
-            }
-        }
-
-        public BnState MostProbableState
-        {
-            get
-            {
-                return this.mostProbableState;
-            }
-
-            set
-            {
-                if (value != this.mostProbableState)
-                {
-                    this.mostProbableState = value;
-                    this.OnPropertyChanged("MostProbableState");
+                    this.RaisePropertyChanged("IsSensorChecked");
                 }
             }
         }
@@ -112,7 +80,7 @@ namespace LibPipeline
                 if (value != this.opacity)
                 {
                     this.opacity = value;
-                    this.OnPropertyChanged("Opacity");
+                    this.RaisePropertyChanged("Opacity");
                 }
             }
         }
@@ -132,7 +100,7 @@ namespace LibPipeline
             }
         }
 
-        public void SelectState(BnState selectedState)
+        public void SelectState(State selectedState)
         {
             foreach (var state in this.States)
             {
@@ -161,6 +129,11 @@ namespace LibPipeline
                     this.IsExpanded = true;
                 }
             }
+        }
+
+        public Graph GetSubGraph()
+        {
+            return this.Parent.GetSubGraph(this.HeaderOfGroup);
         }
     }
 }

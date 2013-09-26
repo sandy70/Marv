@@ -1,16 +1,22 @@
 ﻿using MapControl;
+using Marv.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interactivity;
-using System.Linq;
 
 namespace LibPipeline
 {
     public class MapView : Map
     {
+        public static readonly DependencyProperty ExtentProperty =
+        DependencyProperty.Register("Extent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
+
         public static readonly DependencyProperty StartExtentProperty =
         DependencyProperty.Register("StartExtent", typeof(LocationRect), typeof(MapView), new PropertyMetadata(null));
+
+        public static readonly RoutedEvent ViewportMovedEvent =
+        EventManager.RegisterRoutedEvent("ViewportMoved", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Location>>), typeof(MapView));
 
         public static readonly RoutedEvent ZoomLevelChangedEvent =
         EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<int>>), typeof(MapView));
@@ -22,10 +28,37 @@ namespace LibPipeline
             behaviors.Add(new MapViewBehavior());
         }
 
+        public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
+        {
+            add { AddHandler(ViewportMovedEvent, value); }
+            remove { RemoveHandler(ViewportMovedEvent, value); }
+        }
+
         public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
         {
             add { AddHandler(ZoomLevelChangedEvent, value); }
             remove { RemoveHandler(ZoomLevelChangedEvent, value); }
+        }
+
+        public LocationRect Extent
+        {
+            get
+            {
+                LocationRect rect = new LocationRect();
+
+                rect.NorthWest = this.ViewportPointToLocation(new Point { X = 0, Y = 0 });
+                rect.SouthEast = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height });
+
+                return rect;
+            }
+
+            set
+            {
+                this.ZoomToExtent(south: value.South,
+                                  west: value.West,
+                                  north: value.North,
+                                  east: value.East);
+            }
         }
 
         public LocationRect StartExtent
@@ -34,25 +67,25 @@ namespace LibPipeline
             set { SetValue(StartExtentProperty, value); }
         }
 
-        public IEnumerable<Point> ILocationsToViewportPoints(IEnumerable<ILocation> locations)
+        public List<Point> ILocationsToViewportPoints(IEnumerable<Location> locations)
         {
             var points = new List<Point>();
 
             foreach (var location in locations)
             {
-                points.Add(this.LocationToViewportPoint(location.AsMapControlLocation()));
+                points.Add(this.LocationToViewportPoint(location.ToMapControlLocation()));
             }
 
             return points;
         }
 
-        public IEnumerable<ILocation> ViewportPointsToILocations(IEnumerable<Point> points)
+        public List<Location> ViewportPointsToILocations(IEnumerable<Point> points)
         {
             var locations = new List<Location>();
 
             foreach (var point in points)
             {
-                locations.Add(this.ViewportPointToLocation(point).AsLibPipelineLocation());
+                locations.Add(this.ViewportPointToLocation(point));
             }
 
             return locations;
@@ -85,14 +118,6 @@ namespace LibPipeline
         public void ZoomToExtent(Location bottomLeft, Location topRight)
         {
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
-        }
-
-        public void ZoomToExtent(LocationRect locationRect)
-        {
-            this.ZoomToExtent(south: locationRect.South,
-                west: locationRect.West,
-                north: locationRect.North,
-                east: locationRect.East);
         }
 
         /// <summary>

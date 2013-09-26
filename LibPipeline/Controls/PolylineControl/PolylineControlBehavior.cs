@@ -1,4 +1,5 @@
 ﻿using MapControl;
+using Marv.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -11,7 +12,7 @@ namespace LibPipeline
     internal class PolylineControlBehavior : Behavior<PolylineControl>
     {
         private bool isDragging = false;
-        private Stack<ILocation> locationStack = new Stack<ILocation>();
+        private Stack<Location> locationStack = new Stack<Location>();
         private DispatcherTimer timer = new DispatcherTimer();
 
         protected override void OnAttached()
@@ -20,15 +21,7 @@ namespace LibPipeline
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
 
             timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += (o, e) =>
-                {
-                    if (this.locationStack.Count > 0)
-                    {
-                        this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
-                        this.locationStack.Clear();
-                        timer.Stop();
-                    }
-                };
+            timer.Tick += timer_Tick;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
@@ -45,7 +38,7 @@ namespace LibPipeline
             this.AssociatedObject.Ellipse.TouchMove += Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += Ellipse_TouchUp;
 
-            var mapView = this.AssociatedObject.Parent as MapView;
+            var mapView = this.AssociatedObject.FindParent<MapView>();
 
             if (mapView != null)
             {
@@ -126,12 +119,11 @@ namespace LibPipeline
 
             var mapView = sender as MapView;
 
-            var points = mapView.ILocationsToViewportPoints(this.AssociatedObject.Locations);
-
-            var douglasPeuckerReducer = new DouglasPeuckerReducer(points);
-            douglasPeuckerReducer.Tolerance = 5;
-
-            this.AssociatedObject.SimplifiedLocations = mapView.ViewportPointsToILocations(douglasPeuckerReducer.Reduce());
+            this.AssociatedObject.SimplifiedLocations = this.AssociatedObject
+                                                            .Locations
+                                                            .ToViewportPoints(mapView)
+                                                            .Reduce(5)
+                                                            .ToLocations(mapView);
         }
 
         private void OnDown()
@@ -154,11 +146,22 @@ namespace LibPipeline
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
+
             this.locationStack.Push(nearestLocation);
 
             if (!timer.IsEnabled)
             {
                 timer.Start();
+            }
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (this.locationStack.Count > 0)
+            {
+                this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
+                this.locationStack.Clear();
+                timer.Stop();
             }
         }
     }

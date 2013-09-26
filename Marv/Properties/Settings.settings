@@ -3,19 +3,19 @@
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2004</Value>
+      <Value Profile="(Default)">1980</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2012</Value>
+      <Value Profile="(Default)">2014</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="TallyFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\TallyShifted.xlsx</Value>
+      <Value Profile="(Default)">D:\Data\Koc\Tally.xlsx</Value>
     </Setting>
     <Setting Name="ProfileFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\ProfileShifted.xlsx</Value>
+      <Value Profile="(Default)">D:\Data\BP\BpData.xlsx</Value>
     </Setting>
     <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -23,8 +23,26 @@
     <Setting Name="CacheDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.\</Value>
     </Setting>
-    <Setting Name="FileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\Corrosion.net</Value>
+    <Setting Name="IsMapVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsYearSliderVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsMenuVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="IsLogoVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="InputFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO 7.xlsx</Value>
+    </Setting>
+    <Setting Name="IsPropertyGridVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NetworkFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO_08.net</Value>
     </Setting>
   </Settings>
 </SettingsFile>

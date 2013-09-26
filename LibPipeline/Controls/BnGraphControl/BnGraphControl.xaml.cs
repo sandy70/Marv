@@ -1,28 +1,24 @@
-﻿using LibBn;
-using System;
+﻿using LibNetwork;
+using Marv.Common;
 using System.Collections.Generic;
-using System.IO;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using Telerik.Windows.Controls;
 
 namespace LibPipeline
 {
     public partial class BnGraphControl : UserControl
     {
+        public static readonly RoutedEvent BackButtonClickedEvent =
+        EventManager.RegisterRoutedEvent("BackButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
+
         public static readonly DependencyProperty ConnectionColorProperty =
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
-        public static readonly DependencyProperty DisplayGraphProperty =
-        DependencyProperty.Register("DisplayGraph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty FileNameProperty =
-        DependencyProperty.Register("FileName", typeof(string), typeof(BnGraphControl), new PropertyMetadata(null, ChangedFileName));
-
-        public static readonly RoutedEvent FileNotFoundEvent =
-        EventManager.RegisterRoutedEvent("FileNotFound", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(BnGraphControl));
+        public static readonly DependencyProperty GraphProperty =
+        DependencyProperty.Register("Graph", typeof(Graph), typeof(BnGraphControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent GroupButtonClickedEvent =
         EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
@@ -30,11 +26,8 @@ namespace LibPipeline
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
 
-        public static readonly DependencyProperty IsGroupButtonVisibleProperty =
-        DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
-
-        public static readonly DependencyProperty IsGroupedProperty =
-        DependencyProperty.Register("IsGrouped", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true, ChangedIsGrouped));
+        public static readonly DependencyProperty IsBackButtonVisibleProperty =
+        DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
@@ -48,9 +41,6 @@ namespace LibPipeline
         public static readonly RoutedEvent RetractButtonClickedEvent =
         EventManager.RegisterRoutedEvent("RetractButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
 
-        public static readonly DependencyProperty SelectedGroupProperty =
-        DependencyProperty.Register("SelectedGroup", typeof(string), typeof(BnGraphControl), new PropertyMetadata(null, ChangedSelectedGroup));
-
         public static readonly DependencyProperty SelectedVertexViewModelProperty =
         DependencyProperty.Register("SelectedVertexViewModel", typeof(BnVertexViewModel), typeof(BnGraphControl), new PropertyMetadata(null));
 
@@ -63,21 +53,23 @@ namespace LibPipeline
         public static readonly DependencyProperty ShapeOpacityProperty =
         DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
 
-        public static readonly DependencyProperty SourceGraphProperty =
-        DependencyProperty.Register("SourceGraph", typeof(BnGraph), typeof(BnGraphControl), new PropertyMetadata(null, ChangedSourceGraph));
+        public static readonly RoutedEvent StateDoubleClickedEvent =
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
 
-        public static readonly DependencyProperty VertexValuesProperty =
-        DependencyProperty.Register("VertexValues", typeof(IEnumerable<BnVertexValue>), typeof(BnGraphControl), new PropertyMetadata(null, ChangedVertexValues));
+        public static readonly DependencyProperty ZoomProperty =
+        DependencyProperty.Register("Zoom", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
+
+        private Dictionary<Graph, string> selectedGroups = new Dictionary<Graph, string>();
 
         public BnGraphControl()
         {
             InitializeComponent();
         }
 
-        public event RoutedEventHandler FileNotFound
+        public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> BackButtonClicked
         {
-            add { AddHandler(FileNotFoundEvent, value); }
-            remove { RemoveHandler(FileNotFoundEvent, value); }
+            add { AddHandler(BackButtonClickedEvent, value); }
+            remove { RemoveHandler(BackButtonClickedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> GroupButtonClicked
@@ -110,22 +102,22 @@ namespace LibPipeline
             remove { RemoveHandler(SensorButtonUncheckedEvent, value); }
         }
 
+        public event RoutedEventHandler<BnGraphControlEventArgs> StateDoubleClicked
+        {
+            add { AddHandler(StateDoubleClickedEvent, value); }
+            remove { RemoveHandler(StateDoubleClickedEvent, value); }
+        }
+
         public Color ConnectionColor
         {
             get { return (Color)GetValue(ConnectionColorProperty); }
             set { SetValue(ConnectionColorProperty, value); }
         }
 
-        public BnGraph DisplayGraph
+        public Graph Graph
         {
-            get { return (BnGraph)GetValue(DisplayGraphProperty); }
-            set { SetValue(DisplayGraphProperty, value); }
-        }
-
-        public string FileName
-        {
-            get { return (string)GetValue(FileNameProperty); }
-            set { SetValue(FileNameProperty, value); }
+            get { return (Graph)GetValue(GraphProperty); }
+            set { SetValue(GraphProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
@@ -134,16 +126,10 @@ namespace LibPipeline
             set { SetValue(IncomingConnectionHighlightColorProperty, value); }
         }
 
-        public bool IsGroupButtonVisible
+        public bool IsBackButtonVisible
         {
-            get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
-            set { SetValue(IsGroupButtonVisibleProperty, value); }
-        }
-
-        public bool IsGrouped
-        {
-            get { return (bool)GetValue(IsGroupedProperty); }
-            set { SetValue(IsGroupedProperty, value); }
+            get { return (bool)GetValue(IsBackButtonVisibleProperty); }
+            set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
         public bool IsSensorButtonVisible
@@ -158,10 +144,17 @@ namespace LibPipeline
             set { SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
-        public string SelectedGroup
+        public Dictionary<Graph, string> SelectedGroups
         {
-            get { return (string)GetValue(SelectedGroupProperty); }
-            set { SetValue(SelectedGroupProperty, value); }
+            get
+            {
+                return selectedGroups;
+            }
+
+            set
+            {
+                selectedGroups = value;
+            }
         }
 
         public BnVertexViewModel SelectedVertexViewModel
@@ -176,169 +169,10 @@ namespace LibPipeline
             set { SetValue(ShapeOpacityProperty, value); }
         }
 
-        public BnGraph SourceGraph
+        public double Zoom
         {
-            get { return (BnGraph)GetValue(SourceGraphProperty); }
-            set { SetValue(SourceGraphProperty, value); }
+            get { return (double)GetValue(ZoomProperty); }
+            set { SetValue(ZoomProperty, value); }
         }
-
-        public IEnumerable<BnVertexValue> VertexValues
-        {
-            get { return (IEnumerable<BnVertexValue>)GetValue(VertexValuesProperty); }
-            set { SetValue(VertexValuesProperty, value); }
-        }
-
-        private async static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-            var fileName = e.NewValue as string;
-
-            if (File.Exists(graphControl.FileName))
-            {
-                graphControl.SourceGraph = await BnGraphReader<BnVertexViewModel>.ReadAsync(graphControl.FileName);
-
-                // We need to do this so that ChangedSelectedGroup is fired
-                graphControl.SelectedGroup = null;
-                graphControl.SelectedGroup = Groups.Default;
-            }
-            else
-            {
-                graphControl.RaiseEvent(new ValueEventArgs<string>
-                {
-                    RoutedEvent = BnGraphControl.FileNotFoundEvent,
-                });
-            }
-        }
-
-        private static void ChangedIsGrouped(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (!graphControl.IsGrouped)
-            {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, Groups.All);
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-            }
-            else
-            {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup);
-            }
-        }
-
-        private static void ChangedSelectedGroup(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (graphControl.IsGrouped)
-            {
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-                BnGraphControl.UpdateDisplayGraph(graphControl);
-            }
-            else
-            {
-                graphControl.HighlightGroup(graphControl.SelectedGroup);
-            }
-        }
-
-        private static void ChangedSourceGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (graphControl != null && graphControl.SourceGraph != null)
-            {
-                foreach (var vertex in graphControl.SourceGraph.Vertices)
-                {
-                    BnVertexViewModel vertexViewModel = vertex as BnVertexViewModel;
-
-                    vertexViewModel.PropertyChanged += (o, a) =>
-                    {
-                        if (a.PropertyName.Equals("DisplayPosition"))
-                        {
-                            if (graphControl.IsGrouped)
-                            {
-                                vertexViewModel.PositionsByGroup[graphControl.SelectedGroup] = vertexViewModel.DisplayPosition;
-                            }
-                            else
-                            {
-                                vertexViewModel.PositionsByGroup[Groups.All] = vertexViewModel.DisplayPosition;
-                            }
-                        }
-                    };
-                }
-
-                graphControl.SourceGraph.CalculateMostProbableStates();
-            }
-        }
-
-        private static void ChangedVertexValues(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as BnGraphControl;
-
-            if (graphControl.SourceGraph != null)
-            {
-                graphControl.SourceGraph.CopyFrom(graphControl.VertexValues);
-                graphControl.SourceGraph.CalculateMostProbableStates();
-            }
-        }
-
-        private static void UpdateDisplayGraph(BnGraphControl graphControl)
-        {
-            if (graphControl.SelectedGroup == null || graphControl.SourceGraph == null)
-            {
-                return;
-            }
-            else
-            {
-                PartGraphGenerator partGraphGenerator = new PartGraphGenerator();
-                graphControl.DisplayGraph = partGraphGenerator.Generate(graphControl.SourceGraph, graphControl.SelectedGroup);
-
-                if (graphControl.SelectedGroup.Equals(Groups.Default))
-                {
-                    graphControl.IsGroupButtonVisible = true;
-                    graphControl.BackButton.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    graphControl.IsGroupButtonVisible = false;
-                    graphControl.BackButton.Visibility = Visibility.Visible;
-                }
-            }
-        }
-
-        private void HighlightGroup(string group)
-        {
-            var fadeOutAnimation = new DoubleAnimation
-            {
-                From = 1,
-                To = 0.2,
-                BeginTime = TimeSpan.FromSeconds(0.5),
-                Duration = new Duration(TimeSpan.FromMilliseconds(300))
-            };
-
-            var fadeInAnimation = new DoubleAnimation
-            {
-                From = 0.2,
-                To = 1,
-                BeginTime = TimeSpan.FromSeconds(0.5),
-                Duration = new Duration(TimeSpan.FromMilliseconds(300))
-            };
-
-            foreach (var shape in this.DiagramPart.Shapes)
-            {
-                var vertexViewModel = (shape as RadDiagramShape).DataContext as BnVertexViewModel;
-
-                if (vertexViewModel.Groups.Contains(group))
-                {
-                    (shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeInAnimation);
-                }
-                else
-                {
-                    (shape as RadDiagramShape).BeginAnimation(RadDiagramShape.OpacityProperty, fadeOutAnimation);
-                }
-            }
-        }
-
     }
 }
