@@ -157,7 +157,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 6.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 7.xlsx")]
         public string InputFileName {
             get {
                 return ((string)(this["InputFileName"]));
@@ -181,7 +181,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_07.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_08.net")]
         public string NetworkFileName {
             get {
                 return ((string)(this["NetworkFileName"]));

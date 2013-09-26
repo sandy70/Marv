@@ -131,12 +131,19 @@ namespace LibPipeline
 
             if (mapView != null && this.Locations != null)
             {
-                this.Segments = this.Locations
-                                    .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
-                                    .ToViewportPoints(mapView, this.ValueMemberPath)
-                                    .Reduce(this.Tolerance)
-                                    .ToLocations(mapView)
-                                    .ToSegments();
+                if (this.Locations.Count > 2)
+                {
+                    this.Segments = this.Locations
+                                        .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
+                                        .ToViewportPoints(mapView, this.ValueMemberPath)
+                                        .Reduce(this.Tolerance)
+                                        .ToLocations(mapView)
+                                        .ToSegments();
+                }
+                else
+                {
+                    this.Segments = this.Locations.ToSegments();
+                }
 
                 foreach (var segment in this.Segments)
                 {

@@ -174,9 +174,10 @@ namespace Marv
         private async void PipelineComputeValueMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
+            var graph = window.SourceGraph;
             var multiLocation = window.MultiLocations.SelectedItem;
 
-            window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation);
+            window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);
             window.UpdateMultiLocationValues();
         }
 

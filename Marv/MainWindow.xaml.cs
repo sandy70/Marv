@@ -33,10 +33,10 @@ namespace Marv
         {
             Logger.Info("Computing value for line {0}.", multiLocation.Name);
 
-            var vertexKey = "B05_1";
+            var vertexKey = "B08";
             var vertexName = graph.GetVertex(vertexKey).Name;
             var stateKey = "Fail";
-            var quantity = "StdDev";
+            var quantity = "Mean";
 
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
             var nCompleted = 0;
@@ -44,8 +44,8 @@ namespace Marv
 
             var excelFileName = Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name + ".xlsx");
             var excelPackage = new ExcelPackage(new FileInfo(excelFileName));
-            // var excelWorkSheetName = vertexName + "_" + stateKey;
-            var excelWorkSheetName = vertexName + "_" + quantity;
+            var excelWorkSheetName = vertexName + "_" + stateKey;
+            // var excelWorkSheetName = vertexName + "_" + quantity;
 
             try
             {
@@ -78,18 +78,18 @@ namespace Marv
 
                         var graphValue = modelValue[year];
                         var vertexValue = graphValue[vertexKey];
-                        // var stateValue = vertexValue[stateKey];
+                        var stateValue = vertexValue[stateKey];
 
                         if (!multiLocationValueTimeSeries.ContainsKey(year))
                         {
                             multiLocationValueTimeSeries[year] = new MultiLocationValue();
                         }
 
-                        // multiLocationValueTimeSeries[year][location.Name] = stateValue;
+                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
 
                         // var extractedValue = graph.GetMean(vertexKey, vertexValue);
-                        var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
-                        // var extractedValue = stateValue;
+                        // var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
+                        var extractedValue = stateValue;
                         excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
                     }
                 }
@@ -103,17 +103,17 @@ namespace Marv
 
             excelPackage.Save();
 
-            // var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            // ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+            var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
+            ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
 
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(MultiLocation multiLocation)
+        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(MultiLocation multiLocation, Graph graph)
         {
             return Task.Run(() =>
                 {
-                    return MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation);
+                    return MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
                 });
         }
 
@@ -174,6 +174,7 @@ namespace Marv
                 {
                     var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
                     this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
+                    var a = 1 + 1;
                 }
                 catch (OdbDataNotFoundException exp)
                 {
