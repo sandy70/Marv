@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Marv.Common;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
@@ -359,6 +359,28 @@ namespace LibNetwork
             return numer / denom;
         }
 
+        public int GetSelectedStateIndex()
+        {
+            State selectedState = null;
+            int oneCount = 0;
+
+            foreach (var state in this.States)
+            {
+                if (state.Value == 1)
+                {
+                    oneCount++;
+                    selectedState = state;
+                }
+
+                if (oneCount > 1) break;
+            }
+
+            if (selectedState == null)
+                return -1;
+            else
+                return this.States.IndexOf(selectedState);
+        }
+
         public double GetStandardDeviation(VertexValue vertexValue)
         {
             // Formula for standard deviation of a pdf
@@ -383,28 +405,6 @@ namespace LibNetwork
             }
 
             return stdev;
-        }
-
-        public int GetSelectedStateIndex()
-        {
-            State selectedState = null;
-            int oneCount = 0;
-
-            foreach (var state in this.States)
-            {
-                if (state.Value == 1)
-                {
-                    oneCount++;
-                    selectedState = state;
-                }
-
-                if (oneCount > 1) break;
-            }
-
-            if (selectedState == null)
-                return -1;
-            else
-                return this.States.IndexOf(selectedState);
         }
 
         public int GetStateIndex(string stateKey)

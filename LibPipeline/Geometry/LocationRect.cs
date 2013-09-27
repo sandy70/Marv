@@ -1,4 +1,4 @@
-﻿using LibNetwork;
+﻿using Marv.Common;
 using System;
 using System.ComponentModel;
 
@@ -184,12 +184,6 @@ namespace LibPipeline
             }
         }
 
-        public override string ToString()
-        {
-            string str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
-            return base.ToString() + ": " + str;
-        }
-
         public LocationRect GetPadded(double pad)
         {
             return new LocationRect
@@ -199,6 +193,12 @@ namespace LibPipeline
                 South = this.South - pad,
                 East = this.East + pad
             };
+        }
+
+        public override string ToString()
+        {
+            string str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
+            return base.ToString() + ": " + str;
         }
     }
 }

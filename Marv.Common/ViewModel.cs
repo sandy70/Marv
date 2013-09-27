@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace LibNetwork
+namespace Marv.Common
 {
     public class ViewModel : INotifyPropertyChanged
     {

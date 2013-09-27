@@ -110,12 +110,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="Evidence\SoftEvidence.cs" />
-    <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
+      <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
+      <Name>Marv.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
       <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
       <Name>SmileNet</Name>
