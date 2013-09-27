@@ -193,9 +193,7 @@
     <Compile Include="ObjectDataBase\ObjectDataBase.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="PolylineControlBase.cs" />
-    <Compile Include="PointCluster.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="PointClusterer.cs" />
     <Compile Include="CoordinateConverter.cs" />
     <Compile Include="ElevationReader.cs" />
     <Compile Include="GridFloatHeader.cs" />
