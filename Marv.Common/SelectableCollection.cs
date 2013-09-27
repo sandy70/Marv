@@ -79,11 +79,6 @@ namespace Marv.Common
             }
         }
 
-        public void RaisePropertyChanged(string propertyName)
-        {
-            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
@@ -116,7 +111,12 @@ namespace Marv.Common
             }
         }
 
-        private void RaiseSelectionChanged()
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void RaiseSelectionChanged()
         {
             if (this.selectionChanged != null)
             {
