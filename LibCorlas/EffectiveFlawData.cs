@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CorLASBurstPressure
+namespace Marv.Corlas
 {
     public class EffectiveFlawData
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace CorLASBurstPressure
+namespace Marv.Corlas
 {
     public class CorLAS
     {

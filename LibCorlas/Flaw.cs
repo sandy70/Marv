@@ -1,4 +1,4 @@
-﻿namespace CorLASBurstPressure
+﻿namespace Marv.Corlas
 {
     public class Flaw
     {
