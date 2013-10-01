@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ProjNet</id>
+    <version>1.2</version>
+    <title>Proj.NET</title>
+    <authors>SharpGIS, D_Guidi</authors>
+    <owners>SharpGIS, D_Guidi</owners>
+    <projectUrl>http://projnet.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications.</description>
+    <tags>ProjNet OGC geographical library WKT projection</tags>
+  </metadata>
+</package>
