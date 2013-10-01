@@ -43,6 +43,7 @@
     <Compile Include="Extensions.Linq.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectableCollection.cs" />
+    <Compile Include="SortedSequence.cs" />
     <Compile Include="ValueEventArgs.cs" />
     <Compile Include="ValueEventHandler.cs" />
     <Compile Include="ViewModel.cs" />
