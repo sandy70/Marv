@@ -186,7 +186,7 @@
     <Compile Include="IEnumerableILocationToIEnumerableLocationConverter.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
-    <Compile Include="LocationRectConverter.cs" />
+    <Compile Include="Geometry\LocationRectConverter.cs" />
     <Compile Include="Controls\MapView\MapView.cs" />
     <Compile Include="Controls\MapView\MapViewBehavior.cs" />
     <Compile Include="Controls\SegmentedPolylineControl\SegmentedPolylineControl.xaml.cs">
