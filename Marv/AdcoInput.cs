@@ -266,7 +266,7 @@ namespace Marv
 
                         foreach (var state in vertex.States)
                         {
-                            if (state.Range.ContainsValue(value))
+                            if (state.Range.Bounds(value))
                             {
                                 evidenceArray[vertex.States.IndexOf(state)] += probability;
                             }
@@ -381,7 +381,7 @@ namespace Marv
 
                     foreach (var state in vertex.States)
                     {
-                        if (state.Range.ContainsValue(value))
+                        if (state.Range.Bounds(value))
                         {
                             evidenceArray[vertex.States.IndexOf(state)] = 1;
                         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Marv.Common;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -93,10 +94,10 @@ namespace LibNetwork
             return positionsByGroup;
         }
 
-        public Range<double> ParseStateRange(int stateIndex)
+        public SortedSequence<double> ParseStateRange(int stateIndex)
         {
             var key = "HR_State_" + stateIndex;
-            var range = new Range<double>();
+            var range = new SortedSequence<double>();
 
             if (this.Properties.ContainsKey(key))
             {
@@ -112,11 +113,8 @@ namespace LibNetwork
 
                     if (stateStringParts.Count() == 2)
                     {
-                        range = new Range<double>
-                        {
-                            Max = Double.Parse(stateStringParts[1]),
-                            Min = Double.Parse(stateStringParts[0])
-                        };
+                        range.Add(Double.Parse(stateStringParts[1]));
+                        range.Add(Double.Parse(stateStringParts[0]));
                     }
                     else
                     {
@@ -153,10 +151,10 @@ namespace LibNetwork
                         {
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
-                            Range = new Range<double>
+                            Range = new SortedSequence<double>
                             {
-                                Max = double.Parse(stateStrings[i + 1]),
-                                Min = double.Parse(stateStrings[i])
+                               double.Parse(stateStrings[i + 1]),
+                               double.Parse(stateStrings[i])
                             }
                         });
                     }

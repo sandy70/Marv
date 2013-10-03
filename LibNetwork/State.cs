@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Marv.Common;
+using System.ComponentModel;
 
 namespace LibNetwork
 {
@@ -6,7 +7,7 @@ namespace LibNetwork
     {
         private double _value;
         private string key;
-        private Range<double> range;
+        private SortedSequence<double> range = new SortedSequence<double>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,7 +28,7 @@ namespace LibNetwork
             }
         }
 
-        public Range<double> Range
+        public SortedSequence<double> Range
         {
             get
             {
