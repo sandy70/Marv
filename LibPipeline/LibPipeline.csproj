@@ -73,9 +73,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="ProjNet">
-      <HintPath>..\packages\ProjNet.1.2\lib\net20\ProjNet.dll</HintPath>
-    </Reference>
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
