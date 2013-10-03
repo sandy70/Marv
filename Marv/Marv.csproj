@@ -87,6 +87,14 @@
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="ImageFileCache, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAML.MapControl.1.3.10\lib\net45\ImageFileCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAML.MapControl.1.3.10\lib\net45\MapControl.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Surface, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Surface\Microsoft.Surface.dll</HintPath>
@@ -343,14 +351,6 @@
     <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
       <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
       <Name>LibNetwork</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapControl\Caching\ImageFileCache\ImageFileCache.csproj">
-      <Project>{86470440-fee2-4120-af5a-3762fb9c536f}</Project>
-      <Name>ImageFileCache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
-      <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
-      <Name>MapControl.WPF</Name>
     </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
