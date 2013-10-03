@@ -197,7 +197,6 @@
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="PolylineControlBase.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="ElevationReader.cs" />
     <Compile Include="GridFloatHeader.cs" />
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
