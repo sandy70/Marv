@@ -202,7 +202,6 @@
     </Compile>
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
-    <Compile Include="Config.cs" />
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
