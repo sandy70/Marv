@@ -28,7 +28,7 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.SourceGraph.FileName);
+            this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.NetworkFileName);
             Properties.Settings.Default.Save();
         }
 

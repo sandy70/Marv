@@ -17,7 +17,6 @@ namespace LibNetwork
         private GraphValue _value;
         private string associatedGroup;
         private string defaultGroup = "all";
-        private string fileName;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private string name;
@@ -70,14 +69,6 @@ namespace LibNetwork
                     this.defaultGroup = value;
                     this.OnPropertyChanged("DefaultGroup");
                 }
-            }
-        }
-
-        public string FileName
-        {
-            get
-            {
-                return this.fileName;
             }
         }
 
@@ -168,7 +159,6 @@ namespace LibNetwork
         public static Graph Read<TVertex>(string fileName) where TVertex : Vertex, new()
         {
             var graph = new Graph();
-            graph.fileName = fileName;
 
             try
             {

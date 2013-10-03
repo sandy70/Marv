@@ -88,25 +88,6 @@ namespace LibNetwork
             return structure;
         }
 
-        public void FixStates()
-        {
-            foreach (var node in this.Vertices)
-            {
-                var states = node.ParseStates();
-
-                foreach (var prop in node.Properties.Where(x => x.Key.StartsWith("HR_State_")).ToList())
-                {
-                    node.Properties.Remove(prop.Key);
-                }
-
-                foreach (var state in states)
-                {
-                    int n = states.IndexOf(state);
-                    node.Properties[String.Format("HR_State_{0}", n)] = "\"" + state + "\"";
-                }
-            }
-        }
-
         public NetworkStructureVertex GetVertex(string key)
         {
             return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
