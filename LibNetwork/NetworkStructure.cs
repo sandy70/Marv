@@ -12,19 +12,13 @@ namespace LibNetwork
         public List<string> Footer = new List<string>();
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
         public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
-        private Network network = null;
-
-        public NetworkStructure(Network aNetwork)
-        {
-            this.network = aNetwork;
-        }
 
         public static NetworkStructure Read(string path)
         {
             var network = new Network();
             network.ReadFile(path);
 
-            var structure = new NetworkStructure(network);
+            var structure = new NetworkStructure();
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
 
@@ -84,14 +78,12 @@ namespace LibNetwork
             // Parse Children
             foreach (var vertex in structure.Vertices)
             {
-                foreach (var childHandle in structure.network.GetChildren(vertex.Key))
+                foreach (var childHandle in network.GetChildren(vertex.Key))
                 {
-                    var childKey = structure.network.GetNodeId(childHandle);
+                    var childKey = network.GetNodeId(childHandle);
                     vertex.Children.Add(structure.GetVertex(childKey));
                 }
             }
-
-            // structure.FixStates();
 
             return structure;
         }
