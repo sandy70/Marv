@@ -41,6 +41,28 @@ namespace Marv.Common
             return this.list.Contains(item);
         }
 
+        public int GetBinIndex(T item)
+        {
+            var index = -1;
+
+            if (this.Bounds(item))
+            {
+                foreach (var listItem in this.list)
+                {
+                    if (item.CompareTo(listItem) >= 0)
+                    {
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return index;
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return this.list.GetEnumerator();
