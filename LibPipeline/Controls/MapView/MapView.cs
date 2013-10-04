@@ -3,6 +3,7 @@ using Marv.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace LibPipeline
@@ -67,30 +68,6 @@ namespace LibPipeline
             set { SetValue(StartExtentProperty, value); }
         }
 
-        public List<Point> ILocationsToViewportPoints(IEnumerable<Location> locations)
-        {
-            var points = new List<Point>();
-
-            foreach (var location in locations)
-            {
-                points.Add(this.LocationToViewportPoint(location.ToMapControlLocation()));
-            }
-
-            return points;
-        }
-
-        public List<Location> ViewportPointsToILocations(IEnumerable<Point> points)
-        {
-            var locations = new List<Location>();
-
-            foreach (var point in points)
-            {
-                locations.Add(this.ViewportPointToLocation(point));
-            }
-
-            return locations;
-        }
-
         /// <summary>
         /// Zoom to most appropriate level to encompass the given rectangle
         /// </summary>
@@ -120,7 +97,7 @@ namespace LibPipeline
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
         }
 
-        protected override void OnManipulationInertiaStarting(System.Windows.Input.ManipulationInertiaStartingEventArgs e)
+        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
             base.OnManipulationInertiaStarting(e);
             e.TranslationBehavior.DesiredDeceleration = 0.001;
