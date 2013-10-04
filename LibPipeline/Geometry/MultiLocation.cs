@@ -1,5 +1,7 @@
 ﻿using Marv.Common;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace LibPipeline
 {
@@ -9,6 +11,17 @@ namespace LibPipeline
         private bool isEnabled = true;
         private bool isSelected = false;
         private string name = "";
+        private Brush stroke = new SolidColorBrush(Colors.LightBlue);
+
+        public MultiLocation()
+            : base()
+        {
+        }
+
+        public MultiLocation(IEnumerable<Location> locations)
+            : base(locations)
+        {
+        }
 
         public event ValueEventHandler<double> ValueChanged;
 
@@ -64,6 +77,23 @@ namespace LibPipeline
                 {
                     this.name = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                }
+            }
+        }
+
+        public Brush Stroke
+        {
+            get
+            {
+                return this.stroke;
+            }
+
+            set
+            {
+                if (value != this.stroke)
+                {
+                    this.stroke = value;
+                    this.RaisePropertyChanged("Stroke");
                 }
             }
         }
