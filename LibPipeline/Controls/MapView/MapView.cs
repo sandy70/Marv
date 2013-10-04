@@ -120,6 +120,12 @@ namespace LibPipeline
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
         }
 
+        protected override void OnManipulationInertiaStarting(System.Windows.Input.ManipulationInertiaStartingEventArgs e)
+        {
+            base.OnManipulationInertiaStarting(e);
+            e.TranslationBehavior.DesiredDeceleration = 0.001;
+        }
+
         /// <summary>
         /// calculates a suitable zoom level given a boundary
         /// </summary>
