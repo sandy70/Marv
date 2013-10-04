@@ -19,24 +19,33 @@
     
     <Grid>
         <mapcontrol:MapItemsControl Name="MapPolyline"
-                                    ItemsSource="{Binding Segments, ElementName=Root}"
+                                    ItemsSource="{Binding SimplifiedPolylineParts, ElementName=Root}"
                                     VirtualizingPanel.IsVirtualizing="True">
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
+                    <Grid>
+                        <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
                                             Stroke="{Binding Stroke}"
                                             StrokeEndLineCap="Round"
                                             StrokeLineJoin="Round"
                                             StrokeStartLineCap="Round"
-                                            StrokeThickness="10">
-                        <i:Interaction.Behaviors>
-                            <local:MapPoylineBehavior />
-                        </i:Interaction.Behaviors>
-                    </mapcontrol:MapPolyline>
+                                            StrokeThickness="5">
+                        </mapcontrol:MapPolyline>
+
+                        <!-- This Bigger Dummy Polyline is Location selection -->
+                        <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
+                                                Opacity="0.0"
+                                                Stroke="Red"
+                                                StrokeThickness="30">
+                            <i:Interaction.Behaviors>
+                                <local:MapPoylineBehavior />
+                            </i:Interaction.Behaviors>
+                        </mapcontrol:MapPolyline>
+                    </Grid>
+                    
                 </DataTemplate>
             </mapcontrol:MapItemsControl.ItemTemplate>
         </mapcontrol:MapItemsControl>
-        
 
         <mapcontrol:MapPanel Name="MapPanel"
                              Visibility="Visible">
@@ -50,7 +59,7 @@
                      StrokeThickness="2"
                      Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
             
-            <Border Background="LightGray"
+            <!--<Border Background="LightGray"
                     mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}">
                 <TextBlock Name="NameTextBlock"
                            Background="LightGray"
@@ -58,7 +67,7 @@
                            Height="Auto" Width="Auto"
                            Margin="2"
                            Text="{Binding Locations.Name, ElementName=Root}" />
-            </Border>
+            </Border>-->
                 
         </mapcontrol:MapPanel>
     </Grid>

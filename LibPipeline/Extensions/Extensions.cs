@@ -1,5 +1,6 @@
 ﻿using LibNetwork;
 using MoreLinq;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace LibPipeline
 {
     public static partial class Extensions
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
@@ -128,74 +131,62 @@ namespace LibPipeline
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static IEnumerable<IPoint> Reduce(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, int level = 0)
+        public static IEnumerable<Location> Reduce(this IEnumerable<Location> locations, MapView mapView, double tolerance = 10, Dictionary<Location, Point> viewportPointCache = null, int level = 0)
         {
-            // If points are null or too few then return
-            if (points == null)
+            if (locations.Count() <= 2)
             {
-                return points;
-            }
-
-            var nPoints = points.Count();
-
-            if (nPoints <= minPoints)
-            {
-                return points;
+                return locations;
             }
             else
             {
-                var first = points.First();
-                var last = points.Last();
+                var nLocations = locations.Count();
+
+                if (viewportPointCache == null)
+                {
+                    viewportPointCache = new Dictionary<Location,Point>();
+
+                    // we need to build the viewportPointCache
+                    foreach (var location in locations)
+                    {
+                        viewportPointCache[location] = mapView.LocationToViewportPoint(location.ToMapControlLocation());
+                    }
+                }
+
+                var first = locations.First();
+                var last = locations.Last();
 
                 var maxDistance = double.MinValue;
-                var maxDistancePoint = first;
+                var maxDistanceLocation = first;
 
-                foreach (var point in points)
+                foreach (var location in locations)
                 {
-                    var distance = Utils.Distance(first, last, point);
+                    var distance = Utils.Distance(viewportPointCache[first],
+                                                  viewportPointCache[last],
+                                                  viewportPointCache[location]);
 
                     if (distance > maxDistance)
                     {
                         maxDistance = distance;
-                        maxDistancePoint = point;
+                        maxDistanceLocation = location;
                     }
                 }
 
+                logger.Debug("level: {0}, nLocations: {1}, maxDistance {2}", level, nLocations, maxDistance);
+
                 if (maxDistance > tolerance)
                 {
-                    return points.TakeUntil(x => x == maxDistancePoint)
-                                 .Reduce(tolerance, minPoints, level + 1)
-                                 .Concat(points.SkipWhile(x => x != maxDistancePoint)
-                                               .Reduce(tolerance, minPoints, level + 1)
-                                               .Skip(1));
+                    return locations.TakeUntil(x => x == maxDistanceLocation)
+                                    .Reduce(mapView, tolerance, viewportPointCache, level + 1)
+                                    .Concat(locations.SkipWhile(x => x != maxDistanceLocation)
+                                                     .Reduce(mapView, tolerance, viewportPointCache, level + 1)
+                                                     .Skip(1));
                 }
                 else
                 {
-                    var testIndex = (int)(nPoints / minPoints);
-                    IPoint nearest = points.First();
-
-                    var p = points.Where((point, i) =>
-                            {
-                                if ((i == 0) || (i == nPoints - 1) || (i % testIndex == 0))
-                                {
-                                    nearest = point;
-                                    return true;
-                                }
-                                else
-                                {
-                                    nearest.Value = Math.Max(nearest.Value, point.Value);
-                                    return false;
-                                }
-                            });
-
-                    return p;
+                    return locations.Take(1)
+                                    .Concat(last);
                 }
             }
-        }
-
-        public static Task<IEnumerable<IPoint>> ReduceAsync(this IEnumerable<IPoint> points, double tolerance = 10, int minPoints = 2, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return Task.Run(() => points.Reduce(tolerance, minPoints), cancellationToken);
         }
 
         public static IEnumerable<Location> ToLocations(this IEnumerable<IPoint> points, MapView mapView)

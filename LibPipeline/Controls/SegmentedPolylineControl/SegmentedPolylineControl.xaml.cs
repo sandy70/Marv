@@ -1,6 +1,7 @@
 ﻿using Marv.Common;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -20,12 +21,6 @@ namespace LibPipeline
         public static readonly DependencyProperty NameLatitudeProperty =
         DependencyProperty.Register("NameLatitude", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(0.0, ChangedNameLatitude));
 
-        private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as SegmentedPolylineControl;
-            control.NameLocation = new Location { Latitude = control.NameLatitude, Longitude = control.NameLocation.Longitude };
-        }
-
         public static readonly DependencyProperty NameLocationPointProperty =
         DependencyProperty.Register("NameLocationPoint", typeof(Point), typeof(SegmentedPolylineControl), new PropertyMetadata(new Point(), ChangedNameLocationPoint));
 
@@ -35,26 +30,27 @@ namespace LibPipeline
         public static readonly DependencyProperty NameLongitudeProperty =
         DependencyProperty.Register("NameLongitude", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(0.0, ChangedNameLongitude));
 
-        private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as SegmentedPolylineControl;
-            control.NameLocation = new Location { Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude };
-        }
+        public static readonly DependencyProperty PolylinePartsProperty =
+        DependencyProperty.Register("PolylineParts", typeof(IEnumerable<MultiLocation>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SegmentsProperty =
-        DependencyProperty.Register("Segments", typeof(ObservableCollection<MultiLocationSegment>), typeof(SegmentedPolylineControl), new PropertyMetadata(new ObservableCollection<MultiLocationSegment>(), ChangedSegments));
+        public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
+        DependencyProperty.Register("SimplifiedPolylineParts", typeof(IEnumerable<MultiLocation>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ToleranceProperty =
         DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
 
+        public static readonly DependencyProperty ValueLevelsProperty =
+        DependencyProperty.Register("ValueLevels", typeof(SortedSequence<double>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty ValueMemberPathProperty =
         DependencyProperty.Register("ValueMemberPath", typeof(string), typeof(SegmentedPolylineControl), new PropertyMetadata("Value"));
 
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public SegmentedPolylineControl()
         {
             InitializeComponent();
+            this.ValueLevels = new SortedSequence<double> { 0.00, 0.25, 0.5, 0.75, 1.00 };
         }
 
         public Brush DisabledStroke
@@ -93,10 +89,16 @@ namespace LibPipeline
             set { SetValue(NameLongitudeProperty, value); }
         }
 
-        public ObservableCollection<MultiLocationSegment> Segments
+        public IEnumerable<MultiLocation> PolylineParts
         {
-            get { return (ObservableCollection<MultiLocationSegment>)GetValue(SegmentsProperty); }
-            set { SetValue(SegmentsProperty, value); }
+            get { return (IEnumerable<MultiLocation>)GetValue(PolylinePartsProperty); }
+            set { SetValue(PolylinePartsProperty, value); }
+        }
+
+        public IEnumerable<MultiLocation> SimplifiedPolylineParts
+        {
+            get { return (IEnumerable<MultiLocation>)GetValue(SimplifiedPolylinePartsProperty); }
+            set { SetValue(SimplifiedPolylinePartsProperty, value); }
         }
 
         public double Tolerance
@@ -105,58 +107,93 @@ namespace LibPipeline
             set { SetValue(ToleranceProperty, value); }
         }
 
+        public SortedSequence<double> ValueLevels
+        {
+            get { return (SortedSequence<double>)GetValue(ValueLevelsProperty); }
+            set { SetValue(ValueLevelsProperty, value); }
+        }
+
         public string ValueMemberPath
         {
             get { return (string)GetValue(ValueMemberPathProperty); }
             set { SetValue(ValueMemberPathProperty, value); }
         }
 
-        public void UpdateSegments()
+        public void UpdatePolylineParts()
         {
-            var mapView = this.FindParent<MapView>();
+            var oldBinIndex = -1;
+            var multiLocationParts = new List<MultiLocation>();
 
-            IDoubleToBrushMap doubleToBrushMap;
-            Brush stroke;
+            MultiLocation multiLocation = null;
 
-            if (this.IsEnabled)
+            foreach (var location in this.Locations)
             {
-                doubleToBrushMap = this.DoubleToBrushMap;
-                stroke = this.Stroke;
-            }
-            else
-            {
-                doubleToBrushMap = null;
-                stroke = this.DisabledStroke;
-            }
+                var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
 
-            if (mapView != null && this.Locations != null)
-            {
-                if (this.Locations.Count > 2)
+                if (newBinIndex != oldBinIndex)
                 {
-                    this.Segments = this.Locations
-                                        .Within(mapView.Extent.GetPadded(mapView.Extent.MaxDimension / 4))
-                                        .ToViewportPoints(mapView, this.ValueMemberPath)
-                                        .Reduce(this.Tolerance)
-                                        .ToLocations(mapView)
-                                        .ToSegments();
-                }
-                else
-                {
-                    this.Segments = this.Locations.ToSegments();
-                }
-
-                foreach (var segment in this.Segments)
-                {
-                    if (this.IsEnabled)
+                    if (multiLocation == null)
                     {
-                        segment.Stroke = this.DoubleToBrushMap.Map(segment.Value);
+                        multiLocation = new MultiLocation();
+                        multiLocation.Add(location);
+                        multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
                     else
                     {
-                        segment.Stroke = this.DisabledStroke;
+                        var mid = Utils.Mid(multiLocation.Last(), location);
+
+                        multiLocation.Add(mid);
+
+                        multiLocation = new MultiLocation();
+                        multiLocation.Add(mid);
+                        multiLocation.Add(location);
+                        multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
+
+                    multiLocationParts.Add(multiLocation);
+                }
+                else
+                {
+                    multiLocation.Add(location);
+                }
+
+                oldBinIndex = newBinIndex;
+            }
+
+            if (this.Locations.Name == "BU-384")
+            {
+                logger.Debug("We will break here.");
+            }
+
+            this.PolylineParts = multiLocationParts;
+        }
+
+        public void UpdateSimplifiedPolylineParts()
+        {
+            var mapView = this.FindParent<MapView>();
+
+            var multiLocations = new List<MultiLocation>();
+
+            if (this.PolylineParts != null)
+            {
+                foreach (var multiLocation in this.PolylineParts)
+                {
+                    var simplifiedMultiLocation = new MultiLocation(multiLocation.Reduce(mapView, this.Tolerance));
+
+                    if (this.IsEnabled)
+                    {
+                        simplifiedMultiLocation.Stroke = this.DoubleToBrushMap.Map(multiLocation[1].Value);
+                    }
+                    else
+                    {
+                        simplifiedMultiLocation.Stroke = this.DisabledStroke;
+                    }
+
+                    multiLocations.Add(simplifiedMultiLocation);
                 }
             }
+
+            this.SimplifiedPolylineParts = multiLocations;
         }
 
         public void UpdateVisual()
@@ -173,9 +210,10 @@ namespace LibPipeline
             {
                 this.CursorLocation = this.Locations.First();
                 this.Locations.ValueChanged += Locations_ValueChanged;
+                this.UpdatePolylineParts();
             }
 
-            this.UpdateSegments();
+            this.UpdateSimplifiedPolylineParts();
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -184,8 +222,14 @@ namespace LibPipeline
 
             if (e.Property.Name == "IsEnabled")
             {
-                this.UpdateSegments();
+                this.UpdateSimplifiedPolylineParts();
             }
+        }
+
+        private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+            control.NameLocation = new Location { Latitude = control.NameLatitude, Longitude = control.NameLocation.Longitude };
         }
 
         private static void ChangedNameLocationPoint(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -194,52 +238,18 @@ namespace LibPipeline
             control.NameLocation = control.NameLocationPoint;
         }
 
-        private static void ChangedSegments(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
-
-            var nSegments = control.Segments.Count();
-
-            if (nSegments > 0)
-            {
-                var oldLocation = control.NameLocation;
-                var newLocation = control.Segments.ElementAt(nSegments / 2).Middle;
-
-                if (oldLocation == null)
-                {
-                    control.NameLocation = newLocation;
-                }
-                else
-                {
-                    var xAnimation = new DoubleAnimation
-                    {
-                        From = oldLocation.X,
-                        To = newLocation.X,
-                        Duration = new Duration(TimeSpan.FromMilliseconds(300)),
-                        FillBehavior = FillBehavior.HoldEnd
-                    };
-
-                    var yAnimation = new DoubleAnimation
-                    {
-                        From = oldLocation.Y,
-                        To = newLocation.Y,
-                        Duration = new Duration(TimeSpan.FromMilliseconds(300)),
-                        FillBehavior = FillBehavior.HoldEnd
-                    };
-
-                    control.BeginAnimation(SegmentedPolylineControl.NameLongitudeProperty, xAnimation);
-                    control.BeginAnimation(SegmentedPolylineControl.NameLatitudeProperty, yAnimation);
-                }
-
-                // control.NameLocation = control.Segments.ElementAt(nSegments / 2).Middle;
-            }
+            control.NameLocation = new Location { Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude };
         }
 
         private void Locations_ValueChanged(object sender, ValueEventArgs<double> e)
         {
-            Logger.Trace("");
+            logger.Trace("");
 
-            this.UpdateSegments();
+            this.UpdatePolylineParts();
+            this.UpdateSimplifiedPolylineParts();
         }
     }
 }

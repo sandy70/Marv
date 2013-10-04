@@ -121,9 +121,7 @@ namespace LibPipeline
 
             this.AssociatedObject.SimplifiedLocations = this.AssociatedObject
                                                             .Locations
-                                                            .ToViewportPoints(mapView)
-                                                            .Reduce(5)
-                                                            .ToLocations(mapView);
+                                                            .Reduce(mapView, 5);
         }
 
         private void OnDown()
