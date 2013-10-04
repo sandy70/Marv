@@ -12,6 +12,16 @@ namespace Marv.Common
         private T selectedItem = default(T);
         private ValueEventHandler<T> selectionChanged;
 
+        public SelectableCollection()
+            : base()
+        {
+        }
+
+        public SelectableCollection(IEnumerable<T> items)
+            : base(items)
+        {
+        }
+
         public event ValueEventHandler<T> SelectionChanged
         {
             add
