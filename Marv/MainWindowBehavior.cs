@@ -16,7 +16,7 @@ namespace Marv
 {
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         protected override void OnAttached()
         {
@@ -165,7 +165,7 @@ namespace Marv
 
                         MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                        Logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                        logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
                     }
                 }
             });
@@ -205,7 +205,7 @@ namespace Marv
 
                         MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                        Logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                        logger.Info("Ran model and wrote for location {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
                     }
                 });
         }
