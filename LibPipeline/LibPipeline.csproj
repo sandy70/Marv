@@ -188,7 +188,7 @@
       <DependentUpon>SegmentedPolylineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MetaObject.cs" />
-    <Compile Include="ObjectDataBase\ObjectDataBase.cs" />
+    <Compile Include="ObjectDataBase\Odb.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="PolylineControlBase.cs" />
     <Compile Include="Extensions\Extensions.cs" />
