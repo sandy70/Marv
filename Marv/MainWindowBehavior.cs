@@ -55,17 +55,26 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.MultiLocations = new SelectableCollection<MultiLocation>();
-            window.MultiLocations = AdcoInput.Read(window.InputFileName);
-
             window.SourceGraph = await Graph.ReadAsync<BnVertexViewModel>(window.NetworkFileName);
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
-            window.ReadMultiLocationValueTimeSeriesForMultiLocation();
-            window.UpdateMultiLocationValues();
+            window.MultiLocations = new SelectableCollection<MultiLocation>();
 
-            window.ReadGraphValueTimeSeries();
-            window.UpdateGraphValue();
+            try
+            {
+                window.MultiLocations = AdcoInput.Read(window.InputFileName);
+
+                window.ReadMultiLocationValueTimeSeriesForMultiLocation();
+                window.UpdateMultiLocationValues();
+
+                window.ReadGraphValueTimeSeries();
+                window.UpdateGraphValue();
+            }
+            catch (IOException exp)
+            {
+                logger.Warn(exp.Message);
+                window.PopupControl.ShowText(exp.Message);
+            }
 
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
