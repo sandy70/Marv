@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace LibPipeline
 {
-    public static class ObjectDataBase
+    public static class Odb
     {
         public static Logger Logger = LogManager.GetCurrentClassLogger();
 

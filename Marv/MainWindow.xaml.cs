@@ -70,7 +70,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+                    var modelValue = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -104,7 +104,7 @@ namespace Marv
             excelPackage.Save();
 
             var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            ObjectDataBase.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+            Odb.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
 
             return multiLocationValueTimeSeries;
         }
@@ -135,7 +135,7 @@ namespace Marv
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            ObjectDataBase.Write<GraphValueTimeSeries>(fileName, graphValueTimeSeries);
+            Odb.Write<GraphValueTimeSeries>(fileName, graphValueTimeSeries);
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
@@ -156,7 +156,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.GraphValueTimeSeries = ObjectDataBase.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+                this.GraphValueTimeSeries = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {
@@ -173,7 +173,7 @@ namespace Marv
                 try
                 {
                     var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
-                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = ObjectDataBase.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
+                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
                     var a = 1 + 1;
                 }
                 catch (OdbDataNotFoundException exp)
