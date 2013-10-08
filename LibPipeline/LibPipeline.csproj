@@ -148,8 +148,6 @@
     <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
     <Compile Include="Geometry\MultiLocation.cs" />
-    <Compile Include="Geometry\MultiLocationSegment.cs" />
-    <Compile Include="Geometry\MultiLocationSegmentEnumerator.cs" />
     <Compile Include="ILocationToLocationConverter.cs" />
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />

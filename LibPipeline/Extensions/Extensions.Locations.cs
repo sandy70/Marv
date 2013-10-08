@@ -46,60 +46,6 @@ namespace LibPipeline
             return nearestLocation;
         }
 
-        public static ObservableCollection<MultiLocationSegment> ToSegments(this IEnumerable<Location> locations)
-        {
-            Location start = null;
-            Location middle = null;
-            Location end = null;
-
-            var index = -1;
-            var random = new Random();
-
-            var segments = new ObservableCollection<MultiLocationSegment>();
-
-            foreach (var location in locations)
-            {
-                index++;
-
-                start = middle;
-                middle = end;
-                end = location;
-
-                if (index == 0)
-                {
-                    continue;
-                }
-                else if (index == 1)
-                {
-                    segments.Add(new MultiLocationSegment
-                    {
-                        Middle = middle,
-                        End = Utils.Mid(middle, end),
-                    });
-                }
-                else
-                {
-                    segments.Add(new MultiLocationSegment
-                    {
-                        Start = Utils.Mid(start, middle),
-                        Middle = middle,
-                        End = Utils.Mid(middle, end),
-                    });
-                }
-
-                if (index == locations.Count() - 1)
-                {
-                    segments.Add(new MultiLocationSegment
-                    {
-                        Start = Utils.Mid(middle, end),
-                        Middle = end,
-                    });
-                }
-            }
-
-            return segments;
-        }
-
         public static IEnumerable<Location> ToViewportPoints(this IEnumerable<Location> locations, MapView mapView, string valueMemberPath = "Value")
         {
             return locations.Select(location =>
