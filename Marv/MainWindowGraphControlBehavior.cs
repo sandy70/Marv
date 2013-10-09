@@ -68,7 +68,13 @@ namespace Marv
                 }
                 catch (InconsistentEvidenceException exception)
                 {
-                    window.PopupControl.ShowText("Inconsistent evidence entered.");
+                    window.Notifications.Push(new NotificationTimed
+                    {
+                        Name = "Inconsistent Evidence",
+                        Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                        Duration = TimeSpan.FromSeconds(5)
+                    });
+
                     graph.Value = graph.ClearEvidence(vertex.Key);
                 }
             }
@@ -90,7 +96,13 @@ namespace Marv
             }
             catch(InconsistentEvidenceException exception)
             {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
+                window.Notifications.Push(new NotificationTimed
+                {
+                    Name = "Inconsistent Evidence",
+                    Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                    Duration = TimeSpan.FromSeconds(5)
+                });
+
                 graph.Value = graph.ClearEvidence(vertex.Key);
             }
         }
@@ -104,6 +116,8 @@ namespace Marv
 
         private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
+            var window = this.AssociatedObject;
+
             try
             {
                 this.AssociatedObject.SensorListener.Start(e.Value);
@@ -111,7 +125,12 @@ namespace Marv
             catch (IOException exp)
             {
                 this.AssociatedObject.SensorListener.Stop();
-                this.AssociatedObject.PopupControl.ShowText("Unable to open serial port. Connect receiver.");
+
+                window.Notifications.Push(new NotificationIndeterminate
+                {
+                    Name = "Serial Port Error",
+                    Description = "Unable to open serial port. Connect receiver and retry."
+                });
             }
         }
 

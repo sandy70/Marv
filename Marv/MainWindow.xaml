@@ -240,14 +240,6 @@
                     </Grid>
                 </Grid>
 
-                <local:PopupControl x:Name="PopupControl"
-                                    Grid.Column="0" Grid.ColumnSpan="3"
-                                    Background="#DDDDDD"
-                                    Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                    Margin="10"
-                                    VerticalAlignment="Top" HorizontalAlignment="Left"
-                                    Visibility="Collapsed" />
-                
                 <local:NotificationControl x:Name="NotificationControl"
                                            Grid.Column="0" Grid.ColumnSpan="3"
                                            Background="#DDDDDD"

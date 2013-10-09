@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
+using Marv.Common;
 
 namespace Marv
 {
@@ -16,7 +17,7 @@ namespace Marv
     {
         public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public SensorListener SensorListener = new SensorListener();
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public MainWindow()
         {
@@ -31,7 +32,7 @@ namespace Marv
 
         public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation, Graph graph = null)
         {
-            Logger.Info("Computing value for line {0}.", multiLocation.Name);
+            logger.Info("Computing value for line {0}.", multiLocation.Name);
 
             var vertexKey = "B08";
             var vertexName = graph.GetVertex(vertexKey).Name;
@@ -53,7 +54,7 @@ namespace Marv
             }
             catch (InvalidOperationException exp)
             {
-                Logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
+                logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
             }
 
             var excelWorkSheet = excelPackage.Workbook.Worksheets[excelWorkSheetName];
@@ -95,10 +96,10 @@ namespace Marv
                 }
                 catch (OdbDataNotFoundException exp)
                 {
-                    Logger.Info("Value not found for location {0}.", location);
+                    logger.Info("Value not found for location {0}.", location);
                 }
 
-                Logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
+                logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
             }
 
             excelPackage.Save();
@@ -148,7 +149,7 @@ namespace Marv
 
         public void ReadGraphValueTimeSeries()
         {
-            Logger.Trace("");
+            logger.Trace("");
 
             var multiLocation = this.MultiLocations.SelectedItem;
             var location = multiLocation.SelectedItem;
@@ -160,9 +161,15 @@ namespace Marv
             }
             catch (OdbDataNotFoundException exp)
             {
-                Logger.Warn("Value not found for location {0} on line {1}", location.Name, multiLocation.Name);
+                var message = "Value not found for location: " + location.Name + " on line: " + multiLocation.Name;
 
-                this.PopupControl.ShowText("Value not found for this location. Run model first.");
+                logger.Warn(message);
+
+                this.Notifications.Push(new NotificationTimed
+                {
+                    Name = "Value Not Found",
+                    Description = message
+                });
             }
         }
 
@@ -174,11 +181,10 @@ namespace Marv
                 {
                     var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
                     this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
-                    var a = 1 + 1;
                 }
                 catch (OdbDataNotFoundException exp)
                 {
-                    Logger.Info("Value not found for line {0}.", multiLocation.Name);
+                    logger.Info("Value not found for line {0}.", multiLocation.Name);
                 }
             }
         }
@@ -194,7 +200,12 @@ namespace Marv
                 else
                 {
                     this.SourceGraph.SetValueToZero();
-                    this.PopupControl.ShowText("Pipeline inactive for this year.");
+
+                    this.Notifications.Push(new NotificationTimed
+                    {
+                        Name = "Value Not Found",
+                        Description = "Pipeline is inactive for this year."
+                    });
                 }
             }
         }
@@ -222,7 +233,7 @@ namespace Marv
                     }
                     catch (KeyNotFoundException exp)
                     {
-                        Logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                        logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
                     }
                 }
             }

@@ -248,7 +248,7 @@ namespace Marv
 
         private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
         {
-            Logger.Trace("");
+            logger.Trace("");
 
             this.ReadGraphValueTimeSeries();
             this.UpdateGraphValue();
