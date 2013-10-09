@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -22,10 +21,16 @@ namespace LibPipeline
             this.MouseDown += EditableTextBox_MouseDown;
         }
 
-        private void EditableTextBox_LostFocus(object sender, RoutedEventArgs e)
+        public bool IsEditable
         {
-            this.IsEditable = false;
-            this.ReleaseMouseCapture();
+            get { return (bool)GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
+        }
+
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
 
         private void EditableTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -35,6 +40,12 @@ namespace LibPipeline
                 this.IsEditable = false;
                 this.ReleaseMouseCapture();
             }
+        }
+
+        private void EditableTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            this.IsEditable = false;
+            this.ReleaseMouseCapture();
         }
 
         private void EditableTextBox_MouseDown(object sender, MouseButtonEventArgs e)
@@ -67,18 +78,6 @@ namespace LibPipeline
                     }
                 }
             }
-        }
-
-        public bool IsEditable
-        {
-            get { return (bool)GetValue(IsEditableProperty); }
-            set { SetValue(IsEditableProperty, value); }
-        }
-
-        public string Text
-        {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
         }
     }
 }

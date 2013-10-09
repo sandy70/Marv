@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LibPipeline
+﻿namespace LibPipeline
 {
-    class MapDoubleToDouble : IMapDoubleToDouble
+    internal class MapDoubleToDouble : IMapDoubleToDouble
     {
         public double Map(double a)
         {
             return a;
         }
-
 
         public double MapBack(double b)
         {

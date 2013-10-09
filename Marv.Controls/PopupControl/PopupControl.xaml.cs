@@ -56,6 +56,27 @@ namespace Marv.Controls
             set { SetValue(RowHeightProperty, value); }
         }
 
+        public void Hide()
+        {
+            this.timer.Stop();
+
+            var animation = new DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(300)),
+            };
+
+            animation.Completed += (o, args) =>
+            {
+                this.IsCloseable = true;
+                this.IsProgressBarVisible = false;
+                this.Visibility = Visibility.Collapsed;
+            };
+
+            this.BeginAnimation(UserControl.OpacityProperty, animation);
+        }
+
         public void ShowText(string text)
         {
             this.TextBlock.Text = text;
@@ -106,27 +127,6 @@ namespace Marv.Controls
 
                 this.BeginAnimation(UserControl.OpacityProperty, animation);
             }
-        }
-
-        public void Hide()
-        {
-            this.timer.Stop();
-
-            var animation = new DoubleAnimation
-            {
-                From = 1,
-                To = 0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(300)),
-            };
-
-            animation.Completed += (o, args) =>
-            {
-                this.IsCloseable = true;
-                this.IsProgressBarVisible = false;
-                this.Visibility = Visibility.Collapsed;
-            };
-
-            this.BeginAnimation(UserControl.OpacityProperty, animation);
         }
     }
 }

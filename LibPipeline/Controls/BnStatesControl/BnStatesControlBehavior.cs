@@ -25,7 +25,6 @@ namespace LibPipeline
                 State = state,
                 Vertex = vertex
             });
-
         }
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<State> e)

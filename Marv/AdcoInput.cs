@@ -263,7 +263,6 @@ namespace Marv
 
                     if (Double.TryParse(partsOfPart[0], out value))
                     {
-
                         foreach (var state in vertex.States)
                         {
                             if (state.Range.Bounds(value))

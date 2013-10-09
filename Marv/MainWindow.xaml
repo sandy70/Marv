@@ -38,7 +38,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        
+
         <!-- Menu -->
         <telerik:RadMenu Grid.Row="0"
                          Visibility="{Binding IsMenuVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
@@ -49,12 +49,12 @@
 
                 <telerik:RadMenuItem Name="EditSettingsMenuItem"
                                      Header="Settings" />
-                
+
                 <telerik:RadMenuItem Header="Location">
                     <telerik:RadMenuItem Name="LocationRunModelMenuItem"
                                          Header="Run Model" />
                 </telerik:RadMenuItem>
-                
+
                 <telerik:RadMenuItem Header="Pipeline">
                     <telerik:RadMenuItem Name="PipelineRunModelMenuItem"
                                          Header="Run Model" />
@@ -62,39 +62,37 @@
                     <telerik:RadMenuItem Name="PipelineComputeValueMenuItem"
                                          Header="Compute Value" />
                 </telerik:RadMenuItem>
-                                     
-                
+
                 <telerik:RadMenuItem Header="Network">
                     <telerik:RadMenuItem Name="NetworkRunModelMenuItem"
                                          Header="Run Model" />
-                    
+
                     <telerik:RadMenuItem Name="NetworkComputeValue"
                                          Header="Compute Value" />
                 </telerik:RadMenuItem>
-                
+
                 <telerik:RadMenuItem Header="Map">
                     <telerik:RadMenuItem Name="BingMapsAerialMenuItem"
-                                         Header="Bing Maps Aerial"  />
-                    
+                                         Header="Bing Maps Aerial" />
+
                     <telerik:RadMenuItem Name="BingMapsRoadsMenuItem"
                                          Header="Bing Maps Roads" />
 
                     <telerik:RadMenuItem Name="MapBoxAerialMenuItem"
                                          Header="Map Box Aerial" />
-                    
+
                     <telerik:RadMenuItem Name="MapBoxRoadsMenuItem"
                                          Header="Map Box Roads" />
-                    
+
                     <telerik:RadMenuItem Name="MapBoxTerrainMenuItem"
                                          Header="Map Box Terrain" />
                 </telerik:RadMenuItem>
-                                     
             </telerik:RadMenuItem>
         </telerik:RadMenu>
-        
+
         <libpipeline:TransitionControl Name="TransitionControl"
                                        Grid.Row="1">
-            
+
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
                 <Grid.ColumnDefinitions>
@@ -124,11 +122,11 @@
                                                                                       DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
                                                                                       IsCursorVisible="{Binding IsSelected}"
                                                                                       IsEnabled="{Binding IsEnabled}"
-                                                                                      Locations="{Binding}"/>
+                                                                                      Locations="{Binding}" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    
+
                                     <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                                 </Style>
                             </mapcontrol:MapItemsControl.ItemContainerStyle>
@@ -157,7 +155,7 @@
 
                             <telerik:PropertyDefinition Binding="{Binding Name}"
                                                         DisplayName="Name" />
-                        
+
                             <telerik:PropertyDefinition Binding="{Binding Value}"
                                                         DisplayName="PoF" />
                         </telerik:RadPropertyGrid.PropertyDefinitions>
@@ -166,9 +164,9 @@
 
                 <GridSplitter Grid.Column="1"
                               ResizeBehavior="PreviousAndNext"
-                              ResizeDirection="Columns" 
+                              ResizeDirection="Columns"
                               Width="30"
-                              Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                              Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
                 <!-- GraphControl -->
                 <Grid Grid.Column="2">
@@ -184,7 +182,7 @@
                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
                            IsHitTestVisible="False"
                            Margin="10"
-                           Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                           Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
                     <libpipeline:BnGraphControl Name="GraphControl"
                                                 Grid.Row="0"
@@ -212,7 +210,7 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- Year Label -->
                         <Label Grid.Column="0"
                                Content="{Binding SelectedYear, ElementName=Root}"
@@ -230,7 +228,7 @@
                                            TickPlacement="BottomRight"
                                            Value="{Binding SelectedYear, ElementName=Root}">
                         </telerik:RadSlider>-->
-                        
+
                         <surface:SurfaceSlider Grid.Column="1"
                                                Background="DarkGray"
                                                IsSnapToTickEnabled="True"
@@ -246,12 +244,11 @@
                                                 Background="#DDDDDD"
                                                 Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                Margin="10" 
+                                                Margin="10"
                                                 MaxHeight="400"
                                                 Notifications="{Binding Notifications, ElementName=Root}"
                                                 Visibility="Collapsed"
-                                                Width="300"/>
-                                           
+                                                Width="300" />
             </Grid>
 
             <!-- Settings Control -->
@@ -279,7 +276,7 @@
                             <Border Background="LightGray"
                                 Margin="5">
                                 <TextBlock Text="{Binding Path=.}"
-                                           FontSize="24" 
+                                           FontSize="24"
                                            Margin="5" />
                             </Border>
                         </DataTemplate>
@@ -302,7 +299,7 @@
                                        Margin="5" />
                 </StackPanel>
             </Grid>
-            
+
             <!-- Run Model Control -->
             <Grid Name="RunModelControl"
                   libpipeline:TransitionControl.DisplayName="RunModel"
@@ -311,7 +308,7 @@
                     <RowDefinition />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-                
+
                 <libpipeline:SliderProgressBar Name="ModelProgressBar"
                                                Grid.Row="0"
                                                Height="100"
@@ -319,7 +316,7 @@
                                                SliderForeground="Blue"
                                                Value="0"
                                                VerticalAlignment="Top" />
-                
+
                 <telerik:RadButton Name="RunModelButton"
                                    Grid.Row="1"
                                    Content="Run Model" />

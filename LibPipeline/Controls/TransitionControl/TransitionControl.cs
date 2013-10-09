@@ -92,7 +92,7 @@ namespace LibPipeline
 
             this.Loaded += TransitionControl_Loaded;
         }
-        
+
         private void TransitionControl_Loaded(object sender, RoutedEventArgs e)
         {
             var transitionControl = this;

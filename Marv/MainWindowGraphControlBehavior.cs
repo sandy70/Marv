@@ -1,13 +1,10 @@
 ﻿using LibNetwork;
 using LibPipeline;
 using Marv.Common;
-using Marv.Controls;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
-using System.Windows.Media.Animation;
 
 namespace Marv
 {
@@ -50,40 +47,6 @@ namespace Marv
             window.IsBackButtonVisible = true;
         }
 
-        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
-            var vertex = e.Vertex;
-
-            if (e.Vertex.SelectedState != e.State)
-            {
-                var evidence = new HardEvidence
-                {
-                    StateIndex = vertex.States.IndexOf(e.State)
-                };
-
-                try
-                {
-                    graph.Value = graph.Run(vertex.Key, evidence);
-                }
-                catch (InconsistentEvidenceException exception)
-                {
-                    window.Notifications.Push(new NotificationTimed
-                    {
-                        Name = "Inconsistent Evidence",
-                        Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
-                    });
-
-                    graph.Value = graph.ClearEvidence(vertex.Key);
-                }
-            }
-            else
-            {
-                graph.Value = graph.ClearEvidence(vertex.Key);
-            }
-        }
-
         private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var window = this.AssociatedObject;
@@ -94,7 +57,7 @@ namespace Marv
             {
                 graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
             }
-            catch(InconsistentEvidenceException exception)
+            catch (InconsistentEvidenceException exception)
             {
                 window.Notifications.Push(new NotificationTimed
                 {
@@ -137,6 +100,40 @@ namespace Marv
         private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             this.AssociatedObject.SensorListener.Stop();
+        }
+
+        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var graph = window.SourceGraph;
+            var vertex = e.Vertex;
+
+            if (e.Vertex.SelectedState != e.State)
+            {
+                var evidence = new HardEvidence
+                {
+                    StateIndex = vertex.States.IndexOf(e.State)
+                };
+
+                try
+                {
+                    graph.Value = graph.Run(vertex.Key, evidence);
+                }
+                catch (InconsistentEvidenceException exception)
+                {
+                    window.Notifications.Push(new NotificationTimed
+                    {
+                        Name = "Inconsistent Evidence",
+                        Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                    });
+
+                    graph.Value = graph.ClearEvidence(vertex.Key);
+                }
+            }
+            else
+            {
+                graph.Value = graph.ClearEvidence(vertex.Key);
+            }
         }
     }
 }

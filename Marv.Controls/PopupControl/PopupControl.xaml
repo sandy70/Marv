@@ -13,12 +13,12 @@
             <ColumnDefinition />
             <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <TextBlock Name="TextBlock"
                    Grid.Column="0"
                    FontSize="14"
@@ -41,12 +41,10 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
-        
+
         <telerik:RadProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                 Height="10"
                                 IsIndeterminate="True"
-                                Visibility="{Binding IsProgressBarVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
-            
-            
+                                Visibility="{Binding IsProgressBarVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
     </Grid>
 </UserControl>

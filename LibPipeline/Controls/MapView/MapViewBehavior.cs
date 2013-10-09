@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Surface.Presentation.Controls;
-using System.Windows.Interactivity;
-using System.Windows.Controls;
+﻿using Marv.Common;
+using System;
 using System.Windows;
-using Marv.Common;
+using System.Windows.Interactivity;
 
 namespace LibPipeline
 {
-    class MapViewBehavior : Behavior<MapView>
+    internal class MapViewBehavior : Behavior<MapView>
     {
         private int discreteZoomLevel = 100;
         private Location previousCenter = null;
@@ -20,6 +15,17 @@ namespace LibPipeline
             base.OnAttached();
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
             this.AssociatedObject.ViewportChanged += AssociatedObject_ViewportChanged;
+        }
+
+        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        {
+            var mapControl = this.AssociatedObject;
+            this.previousCenter = mapControl.Center;
+
+            if (mapControl.StartExtent != null)
+            {
+                mapControl.Extent = mapControl.StartExtent;
+            }
         }
 
         private void AssociatedObject_ViewportChanged(object sender, EventArgs e)
@@ -59,17 +65,6 @@ namespace LibPipeline
                     RoutedEvent = MapView.ViewportMovedEvent,
                     Value = this.previousCenter
                 });
-            }
-        }
-
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
-        {
-            var mapControl = this.AssociatedObject;
-            this.previousCenter = mapControl.Center;
-
-            if (mapControl.StartExtent != null)
-            {
-                mapControl.Extent = mapControl.StartExtent;
             }
         }
     }

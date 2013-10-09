@@ -2,9 +2,6 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
 
 namespace LibPipeline
 {
@@ -12,7 +9,7 @@ namespace LibPipeline
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return sourceType == typeof(string) || 
+            return sourceType == typeof(string) ||
                    sourceType == typeof(LocationRect);
         }
 

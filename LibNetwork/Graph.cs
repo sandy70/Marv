@@ -256,6 +256,11 @@ namespace LibNetwork
             return this.GetNetworkValue();
         }
 
+        public double GetMean(string vertexKey, VertexValue vertexValue)
+        {
+            return this.GetVertex(vertexKey).GetMean(vertexValue);
+        }
+
         public GraphValue GetNetworkValue()
         {
             this.UpdateBeliefs();
@@ -289,6 +294,11 @@ namespace LibNetwork
         public int GetNodeHandle(string vertexKey)
         {
             return this.network.GetNode(vertexKey);
+        }
+
+        public double GetStandardDeviation(string vertexKey, VertexValue vertexValue)
+        {
+            return this.GetVertex(vertexKey).GetStandardDeviation(vertexValue);
         }
 
         public Graph GetSubGraph(string group)
@@ -355,11 +365,6 @@ namespace LibNetwork
             }
 
             return null;
-        }
-
-        public double GetMean(string vertexKey, VertexValue vertexValue)
-        {
-            return this.GetVertex(vertexKey).GetMean(vertexValue);
         }
 
         public bool HasEdge(string srcKey, string dstKey)
@@ -440,11 +445,6 @@ namespace LibNetwork
             {
                 vertex.SetValueToZero();
             }
-        }
-
-        public double GetStandardDeviation(string vertexKey, VertexValue vertexValue)
-        {
-            return this.GetVertex(vertexKey).GetStandardDeviation(vertexValue);
         }
 
         public void UpdateBeliefs()

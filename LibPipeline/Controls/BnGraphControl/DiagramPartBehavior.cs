@@ -1,11 +1,9 @@
 ﻿using Marv.Common;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
@@ -119,8 +117,6 @@ namespace LibPipeline
                 };
 
             timer.Start();
-
-            
         }
     }
 }
