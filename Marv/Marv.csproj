@@ -191,15 +191,8 @@
     <Compile Include="AdcoInput.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
-    <Compile Include="PopupControl.xaml.cs">
-      <DependentUpon>PopupControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
-    <Page Include="PopupControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

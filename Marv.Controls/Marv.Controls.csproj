@@ -78,10 +78,17 @@
     </Compile>
     <Compile Include="NotificationControl\NotificationIndeterminate.cs" />
     <Compile Include="NotificationControl\NotificationTimed.cs" />
+    <Compile Include="PopupControl\PopupControl.xaml.cs">
+      <DependentUpon>PopupControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="NotificationControl\NotificationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PopupControl\PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
