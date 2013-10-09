@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     public interface INotification
     {

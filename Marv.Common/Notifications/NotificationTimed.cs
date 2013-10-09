@@ -3,7 +3,7 @@ using NLog;
 using System;
 using System.Windows.Threading;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     public class NotificationTimed : ViewModel, INotification
     {

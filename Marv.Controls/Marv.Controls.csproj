@@ -71,13 +71,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NotificationControl\INotification.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NotificationControl\NotificationIndeterminate.cs" />
-    <Compile Include="NotificationControl\NotificationTimed.cs" />
     <Compile Include="PopupControl\PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>

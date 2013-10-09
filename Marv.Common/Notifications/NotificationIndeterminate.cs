@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     public class NotificationIndeterminate : ViewModel, INotification
     {
