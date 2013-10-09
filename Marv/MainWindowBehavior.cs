@@ -103,6 +103,18 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+
+            window.Notifications.Push(new NotificationTimed
+            {
+                Name = "Error",
+                Description = "Error! Error! Error!"
+            });
+
+            window.Notifications.Push(new NotificationIndeterminate
+            {
+                Name = "Error",
+                Description = "Error! Error! Error!"
+            });
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

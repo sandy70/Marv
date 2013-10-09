@@ -37,6 +37,7 @@
       <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +51,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Extensions.Linq.cs" />
     <Compile Include="Notifications\INotification.cs" />
+    <Compile Include="Notifications\NotificationBase.cs" />
     <Compile Include="Notifications\NotificationIndeterminate.cs" />
     <Compile Include="Notifications\NotificationTimed.cs" />
     <Compile Include="ObjectDataBase\Odb.cs" />
@@ -72,6 +74,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

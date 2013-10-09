@@ -18,8 +18,6 @@ namespace Marv.Controls
         public NotificationControl()
         {
             InitializeComponent();
-
-            this.CloseButton.Click += CloseButton_Click;
         }
 
         public ObservableCollection<INotification> Notifications
