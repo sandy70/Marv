@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
 using Marv.Common;
+using Marv.Controls;
 
 namespace Marv
 {

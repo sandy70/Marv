@@ -8,7 +8,7 @@ using System.Windows.Interactivity;
 using NLog;
 using System.Windows;
 
-namespace Marv
+namespace Marv.Controls
 {
     public class NotificationCloseButtonBehavior : Behavior<Button>
     {

@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Marv
+namespace Marv.Controls
 {
     public partial class NotificationControl : UserControl
     {

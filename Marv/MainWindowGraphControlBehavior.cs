@@ -1,6 +1,7 @@
 ﻿using LibNetwork;
 using LibPipeline;
 using Marv.Common;
+using Marv.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,7 +73,6 @@ namespace Marv
                     {
                         Name = "Inconsistent Evidence",
                         Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
-                        Duration = TimeSpan.FromSeconds(5)
                     });
 
                     graph.Value = graph.ClearEvidence(vertex.Key);

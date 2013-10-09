@@ -4,6 +4,7 @@
         xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
         xmlns:local="clr-namespace:Marv"
         xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -240,16 +241,16 @@
                     </Grid>
                 </Grid>
 
-                <local:NotificationControl x:Name="NotificationControl"
-                                           Grid.Column="0" Grid.ColumnSpan="3"
-                                           Background="#DDDDDD"
-                                           Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                           HorizontalAlignment="Right" VerticalAlignment="Top"
-                                           Margin="10" 
-                                           MaxHeight="400"
-                                           Notifications="{Binding Notifications, ElementName=Root}"
-                                           Visibility="Collapsed"
-                                           Width="300"/>
+                <marvcontrols:NotificationControl x:Name="NotificationControl"
+                                                Grid.Column="0" Grid.ColumnSpan="3"
+                                                Background="#DDDDDD"
+                                                Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                Margin="10" 
+                                                MaxHeight="400"
+                                                Notifications="{Binding Notifications, ElementName=Root}"
+                                                Visibility="Collapsed"
+                                                Width="300"/>
                                            
             </Grid>
 

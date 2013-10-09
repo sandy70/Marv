@@ -189,24 +189,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdcoInput.cs" />
-    <Compile Include="INotification.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
-    <Compile Include="NotificationCloseButtonBehavior.cs" />
-    <Compile Include="NotificationControl.xaml.cs">
-      <DependentUpon>NotificationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="NotificationIndeterminate.cs" />
-    <Compile Include="NotificationTimed.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
-    <Page Include="NotificationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -357,6 +346,10 @@
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
+      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
+      <Name>Marv.Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
       <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>

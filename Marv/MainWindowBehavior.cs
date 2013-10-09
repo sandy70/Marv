@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
+using Marv.Controls;
 
 namespace Marv
 {
@@ -79,10 +80,9 @@ namespace Marv
                 {
                     Name = "Unable to read file.",
                     Description = exp.Message,
-                    Duration = TimeSpan.FromSeconds(0.5)
                 };
 
-                window.Notifications.Push(notification);
+                window.Notifications.Push<INotification>(notification);
             }
 
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
