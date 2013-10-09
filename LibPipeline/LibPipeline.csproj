@@ -148,7 +148,6 @@
     <Compile Include="ILocationToLocationConverter.cs" />
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />
-    <Compile Include="IPoint.cs" />
     <Compile Include="MapDoubleToDouble.cs" />
     <Compile Include="Geometry\MultiLocationValue.cs" />
     <Compile Include="Geometry\MultiLocationValueTimeSeries.cs" />
@@ -194,8 +193,8 @@
     <Compile Include="Controls\SliderProgressBar\SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils.cs" />
     <Compile Include="Controls\BnGraphControl\DiagramPartBehavior.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">

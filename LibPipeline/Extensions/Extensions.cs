@@ -189,18 +189,6 @@ namespace LibPipeline
             }
         }
 
-        public static IEnumerable<Location> ToLocations(this IEnumerable<IPoint> points, MapView mapView)
-        {
-            return points.Select(point =>
-                             {
-                                 Location location = mapView.ViewportPointToLocation(new Point { X = point.X, Y = point.Y });
-                                 location.Value = point.Value;
- 
-                                 return location;
-                             })
-                         .ToList();
-        }
-
         public static MapControl.Location ToMapControlLocation(this Location location)
         {
             return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };

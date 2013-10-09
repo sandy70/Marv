@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
-using System.Linq;
 
 namespace LibPipeline
 {
@@ -42,22 +42,6 @@ namespace LibPipeline
             return distance;
         }
 
-        public static double Distance(Point p1, Point p2)
-        {
-            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-        }
-
-        public static double Distance(IPoint p1, IPoint p2, IPoint p)
-        {
-            var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
-
-            var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-
-            var height = area / bottom * 2;
-
-            return height;
-        }
-
         public static double Distance(Point p1, Point p2, Point p)
         {
             var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
@@ -78,11 +62,6 @@ namespace LibPipeline
             return height;
         }
 
-        public static double Distance(IPoint p1, IPoint p2)
-        {
-            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-        }
-
         public static Color DoubleToColor(double value)
         {
             double fourValue = 4 * value;
@@ -93,7 +72,24 @@ namespace LibPipeline
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync()
+        public static Location Mid(Location l1, Location l2)
+        {
+            if (l1 == null || l2 == null)
+            {
+                return null;
+            }
+            else
+            {
+                // This is technically not correct but should be okay for small distances
+                return new Location
+                {
+                    Latitude = (l1.Latitude + l2.Latitude) / 2,
+                    Longitude = (l1.Longitude + l2.Longitude) / 2,
+                };
+            }
+        }
+
+        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync(IProgress<double> progress)
         {
             var webClient = new WebClient();
 
@@ -113,41 +109,6 @@ namespace LibPipeline
 
                                      return location;
                                  });
-        }
-
-        public static double[,] MatrixStringToDouble(string[,] str)
-        {
-            int nRows = str.GetLength(0);
-            int nCols = str.GetLength(1);
-
-            double[,] dbl = new double[nRows, nCols];
-
-            for (int r = 0; r < nRows; r++)
-            {
-                for (int c = 0; c < nCols; c++)
-                {
-                    Double.TryParse(str[r, c], out dbl[r, c]);
-                }
-            }
-
-            return dbl;
-        }
-
-        public static Location Mid(Location l1, Location l2)
-        {
-            if (l1 == null || l2 == null)
-            {
-                return null;
-            }
-            else
-            {
-                // This is technically not correct but should be okay for small distances
-                return new Location
-                {
-                    Latitude = (l1.Latitude + l2.Latitude) / 2,
-                    Longitude = (l1.Longitude + l2.Longitude) / 2,
-                };
-            }
         }
 
         public static Guid ToGuid(this long n)

@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace LibPipeline
 {
-    public class Location : Dynamic, IPoint
+    public class Location : Dynamic
     {
         private double _value;
         private Guid guid;
