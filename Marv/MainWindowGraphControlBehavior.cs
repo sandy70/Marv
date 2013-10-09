@@ -20,22 +20,12 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.BackButtonClicked += GraphControl_BackButtonClicked;
             window.GraphControl.GroupButtonClicked += GraphControl_GroupButtonClicked;
             window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
             window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
             window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
             window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
-        }
-
-        private void GraphControl_BackButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
-        {
-            var window = this.AssociatedObject;
-            var vertex = e.Value;
-
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
-            window.IsBackButtonVisible = false;
         }
 
         private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)

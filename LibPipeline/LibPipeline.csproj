@@ -152,7 +152,6 @@
     <Compile Include="Geometry\MultiLocationValue.cs" />
     <Compile Include="Geometry\MultiLocationValueTimeSeries.cs" />
     <Compile Include="NormalDistribution.cs" />
-    <Compile Include="Controls\BnGraphControl\BackButtonBehavior.cs" />
     <Compile Include="Controls\BnStatesControl\BnStatesControlBehavior.cs" />
     <Compile Include="Controls\BnGraphControl\BnVertexViewModel.cs" />
     <Compile Include="Controls\BnGraphControl\ExpanderButtonBehavior.cs" />

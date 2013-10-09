@@ -13,19 +13,26 @@
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized">
     <Window.Resources>
-        <Style TargetType="local:MainWindow">
-            <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="InputFileName" Value="{Binding Default.InputFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="local:MainWindow">
+                <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="InputFileName" Value="{Binding Default.InputFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            </Style>
+
+        </ResourceDictionary>
     </Window.Resources>
 
     <i:Interaction.Behaviors>
@@ -192,15 +199,33 @@
                                                 IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
                                                 IsBackButtonVisible="{Binding IsBackButtonVisible, ElementName=Root}"
                                                 IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
+                    
+                    <!-- Graph Toolbar -->
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
+                                Orientation="Vertical">
+                        <!-- Retract All Button -->
+                        <surface:SurfaceButton Name="RetractAllButton"
+                                            Grid.Row="0"
+                                            Background="{StaticResource ResourceKey=BackgroundDark}"
+                                            Height="50" Width="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Margin="5"
+                                            Padding="0">
+                            <Image Source="/Marv.Common;component/Resources/Icons/Close.png" />
+                        </surface:SurfaceButton>
 
-                    <telerik:RadButton Name="RetractAllButton"
-                                       Grid.Row="0"
-                                       HorizontalAlignment="Right" VerticalAlignment="Top"
-                                       Margin="0,70,10,0"
-                                       Visibility="Visible"
-                                       Width="50" Height="50">
-                        <Image Source="Resources/Icons/erase.png" />
-                    </telerik:RadButton>
+                        <!-- Back Button -->
+                        <surface:SurfaceButton Name="BackButton"
+                                            Grid.Row="0"
+                                            Background="{StaticResource ResourceKey=BackgroundDark}"
+                                            Height="50" Width="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Margin="5"
+                                            Padding="0">
+                            <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
+                        </surface:SurfaceButton>
+                    </StackPanel>
+                    
 
                     <!-- Year Label and Year Slider -->
                     <Grid Grid.Row="1"
@@ -218,16 +243,6 @@
                                Foreground="White"
                                FontSize="24" FontWeight="Bold"
                                HorizontalContentAlignment="Center" />
-
-                        <!-- Year Slider -->
-                        <!--<telerik:RadSlider Grid.Column="1"
-                                           Background="Black"
-                                           IsSnapToTickEnabled="True"
-                                           Maximum="{Binding EndYear, ElementName=Root}"
-                                           Minimum="{Binding StartYear, ElementName=Root}"
-                                           TickPlacement="BottomRight"
-                                           Value="{Binding SelectedYear, ElementName=Root}">
-                        </telerik:RadSlider>-->
 
                         <surface:SurfaceSlider Grid.Column="1"
                                                Background="DarkGray"

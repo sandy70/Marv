@@ -255,17 +255,6 @@
                                           Margin="10"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom" />
-        <!-- Back Button -->
-        <telerik:RadButton Name="BackButton"
-                           HorizontalAlignment="Left" VerticalAlignment="Top"
-                           Margin="10"
-                           Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
-                           Width="50" Height="50">
-            <i:Interaction.Behaviors>
-                <libpipeline:BackButtonBehavior />
-            </i:Interaction.Behaviors>
 
-            <Image Source="/LibPipeline;component/Resources/Icons/back-dark.png" />
-        </telerik:RadButton>
     </Grid>
 </UserControl>

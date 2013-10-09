@@ -91,6 +91,7 @@ namespace Marv
             window.PipelineComputeValueMenuItem.Click += PipelineComputeValueMenuItem_Click;
             window.NetworkComputeValue.Click += NetworkComputeValue_Click;
 
+            window.BackButton.Click += BackButton_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
 
             // Change map types
@@ -111,6 +112,14 @@ namespace Marv
                 Name = "Error",
                 Description = "Error! Error! Error!"
             });
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+            window.IsBackButtonVisible = false;
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

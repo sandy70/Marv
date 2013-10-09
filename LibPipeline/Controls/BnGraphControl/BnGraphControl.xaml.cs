@@ -9,9 +9,6 @@ namespace LibPipeline
 {
     public partial class BnGraphControl : UserControl
     {
-        public static readonly RoutedEvent BackButtonClickedEvent =
-        EventManager.RegisterRoutedEvent("BackButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<BnVertexViewModel>>), typeof(BnGraphControl));
-
         public static readonly DependencyProperty ConnectionColorProperty =
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
@@ -62,12 +59,6 @@ namespace LibPipeline
         public BnGraphControl()
         {
             InitializeComponent();
-        }
-
-        public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> BackButtonClicked
-        {
-            add { AddHandler(BackButtonClickedEvent, value); }
-            remove { RemoveHandler(BackButtonClickedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<BnVertexViewModel>> GroupButtonClicked
