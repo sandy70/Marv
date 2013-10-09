@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="LibPipeline.BnGraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:libbn="clr-namespace:LibNetwork;assembly=LibBn"
              xmlns:libpipeline="clr-namespace:LibPipeline"
              xmlns:local="clr-namespace:LibPipeline"
              xmlns:primitives="clr-namespace:Telerik.Windows.Controls.Diagrams.Primitives;assembly=Telerik.Windows.Controls.Diagrams"
@@ -255,6 +254,5 @@
                                           Margin="10"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom" />
-
     </Grid>
 </UserControl>

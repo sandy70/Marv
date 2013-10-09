@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
     <DropShadowEffect x:Key="DropShadow" Opacity="0.3" ShadowDepth="3" />
     <SolidColorBrush x:Key="BackgroundLight" Color="LightGray" />
     <SolidColorBrush x:Key="BackgroundMedium" Color="Gray" />

@@ -201,7 +201,8 @@
                                                 IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
                     
                     <!-- Graph Toolbar -->
-                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top"
+                    <StackPanel Effect="{StaticResource ResourceKey=DropShadow}"
+                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                 Orientation="Vertical">
                         <!-- Retract All Button -->
                         <surface:SurfaceButton Name="RetractAllButton"
@@ -221,7 +222,8 @@
                                             Height="50" Width="50"
                                             HorizontalAlignment="Center" VerticalAlignment="Center"
                                             Margin="5"
-                                            Padding="0">
+                                            Padding="0"
+                                            Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                             <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
                         </surface:SurfaceButton>
                     </StackPanel>
