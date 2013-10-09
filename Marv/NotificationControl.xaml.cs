@@ -1,18 +1,31 @@
-﻿using System.Collections.ObjectModel;
+﻿using NLog;
+using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using NLog;
-using System.Collections.Specialized;
-using System;
 
 namespace Marv
 {
     public partial class NotificationControl : UserControl
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         public static readonly DependencyProperty NotificationsProperty =
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(NotificationControl), new PropertyMetadata(null, ChangedNotifications));
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public NotificationControl()
+        {
+            InitializeComponent();
+
+            this.CloseButton.Click += CloseButton_Click;
+        }
+
+        public ObservableCollection<INotification> Notifications
+        {
+            get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
+        }
 
         private static void ChangedNotifications(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -21,6 +34,18 @@ namespace Marv
             var control = d as NotificationControl;
 
             control.Notifications.CollectionChanged += control.Notifications_CollectionChanged;
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Notifications.Clear();
+        }
+
+        private void notification_Stopped(object sender, EventArgs e)
+        {
+            var notification = sender as INotification;
+            notification.Stopped -= notification_Stopped;
+            this.Notifications.Remove(notification);
         }
 
         private void Notifications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -44,24 +69,6 @@ namespace Marv
             {
                 this.Visibility = Visibility.Visible;
             }
-        }
-
-        private void notification_Stopped(object sender, EventArgs e)
-        {
-            var notification = sender as INotification;
-            notification.Stopped -= notification_Stopped;
-            this.Notifications.Remove(notification);
-        }
-
-        public NotificationControl()
-        {
-            InitializeComponent();
-        }
-
-        public ObservableCollection<INotification> Notifications
-        {
-            get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
-            set { SetValue(NotificationsProperty, value); }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Marv
 
         private double _value = 100;
         private string description = "";
+        private TimeSpan duration = TimeSpan.FromSeconds(5);
         private bool isIndeterminate = false;
         private string name = "";
 
@@ -29,6 +30,23 @@ namespace Marv
                 {
                     this.description = value;
                     this.RaisePropertyChanged("Description");
+                }
+            }
+        }
+
+        public TimeSpan Duration
+        {
+            get
+            {
+                return this.duration;
+            }
+
+            set
+            {
+                if (value != this.duration)
+                {
+                    this.duration = value;
+                    this.RaisePropertyChanged("Duration");
                 }
             }
         }
@@ -81,7 +99,7 @@ namespace Marv
 
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(30),
+                Interval = TimeSpan.FromMilliseconds(this.Duration.TotalMilliseconds / 100)
             };
 
             timer.Tick += (o, e) =>

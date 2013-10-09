@@ -74,7 +74,15 @@ namespace Marv
             catch (IOException exp)
             {
                 logger.Warn(exp.Message);
-                window.PopupControl.ShowText(exp.Message);
+
+                var notification = new NotificationTimed
+                {
+                    Name = "Unable to read file.",
+                    Description = exp.Message,
+                    Duration = TimeSpan.FromSeconds(0.5)
+                };
+
+                window.Notifications.Push(notification);
             }
 
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
@@ -95,30 +103,6 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
-
-            window.Notifications.Add(new NotificationTimed
-            {
-                Name = "Notify1",
-                Description = "Error! Error! Error!"
-            });
-
-            window.Notifications.Add(new NotificationTimed
-            {
-                Name = "Notify2",
-                Description = "Error! Error! Error!"
-            });
-
-            window.Notifications.Add(new NotificationTimed
-            {
-                Name = "Notify3",
-                Description = "Error! Error! Error!"
-            });
-
-            window.Notifications.Add(new NotificationIndeterminate
-            {
-                Name = "Notify4",
-                Description = "Error! Error! Error!"
-            });
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

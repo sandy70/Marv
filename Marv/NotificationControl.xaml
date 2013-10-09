@@ -50,12 +50,13 @@
         <surface:SurfaceListBox Grid.Row="1"
                                 HorizontalContentAlignment="Stretch"
                                 ItemsSource="{Binding Notifications, ElementName=Root}"
-                                ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <surface:SurfaceListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50" />
+                            <RowDefinition Height="40" />
                             <RowDefinition />
                             <RowDefinition Height="10" />
                         </Grid.RowDefinitions>
@@ -64,7 +65,7 @@
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
-                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Name="TextBlock"
@@ -100,7 +101,7 @@
                                    Margin="5"
                                    Text="{Binding Description}"
                                    TextTrimming="WordEllipsis"
-                                   TextWrapping="WrapWithOverflow"/>
+                                   TextWrapping="Wrap" />
                         
                         <!-- Notification Progressbar -->
                         <telerik:RadProgressBar Grid.Row="2"
