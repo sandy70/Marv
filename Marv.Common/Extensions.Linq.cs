@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Marv.Common
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> source)
         {
