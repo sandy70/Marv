@@ -96,29 +96,27 @@ namespace Marv
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
 
-            window.Notifications = new ObservableCollection<INotification>();
-
             window.Notifications.Add(new NotificationTimed
             {
-                Name = "Notify!!",
+                Name = "Notify1",
                 Description = "Error! Error! Error!"
             });
 
             window.Notifications.Add(new NotificationTimed
             {
-                Name = "Notify!!",
+                Name = "Notify2",
                 Description = "Error! Error! Error!"
             });
 
             window.Notifications.Add(new NotificationTimed
             {
-                Name = "Notify!!",
+                Name = "Notify3",
                 Description = "Error! Error! Error!"
             });
 
-            window.Notifications.Add(new NotificationTimed
+            window.Notifications.Add(new NotificationIndeterminate
             {
-                Name = "Notify!!",
+                Name = "Notify4",
                 Description = "Error! Error! Error!"
             });
         }

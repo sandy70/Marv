@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Marv
 {
     public interface INotification
     {
-        string Name { get; set; }
+        event EventHandler Stopped;
+
         string Description { get; set; }
-        double Value { get; }
+
         bool IsIndeterminate { get; }
 
-        void OnAdded();
+        string Name { get; set; }
+
+        double Value { get; }
+
+        void Start();
+
+        void Stop();
     }
 }

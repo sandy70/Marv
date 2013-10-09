@@ -192,9 +192,11 @@
     <Compile Include="INotification.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
+    <Compile Include="NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NotificationIndeterminate.cs" />
     <Compile Include="NotificationTimed.cs" />
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>

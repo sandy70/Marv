@@ -1,17 +1,20 @@
 ﻿using Marv.Common;
 using NLog;
 using System;
-using System.Windows.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Marv
 {
-    public class NotificationTimed : ViewModel, INotification
+    public class NotificationIndeterminate : ViewModel, INotification
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private double _value = 100;
         private string description = "";
-        private bool isIndeterminate = false;
+        private bool isIndeterminate = true;
         private string name = "";
 
         public event EventHandler Stopped;
@@ -78,26 +81,6 @@ namespace Marv
         public void Start()
         {
             logger.Trace("");
-
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(30),
-            };
-
-            timer.Tick += (o, e) =>
-                {
-                    if (this.Value > 0)
-                    {
-                        this.Value -= 1;
-                    }
-                    else
-                    {
-                        timer.Stop();
-                        this.Stop();
-                    }
-                };
-
-            timer.Start();
         }
 
         public void Stop()

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using NLog;
 using System.Collections.Specialized;
+using System;
 
 namespace Marv
 {
@@ -19,16 +20,37 @@ namespace Marv
 
             var control = d as NotificationControl;
 
-            control.Notifications.CollectionChanged += Notifications_CollectionChanged;
+            control.Notifications.CollectionChanged += control.Notifications_CollectionChanged;
         }
 
-        private static void Notifications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Notifications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var newItem in e.NewItems)
+            if (e.NewItems != null)
             {
-                var notification = newItem as INotification;
-                notification.OnAdded();
+                foreach (var newItem in e.NewItems)
+                {
+                    var notification = newItem as INotification;
+
+                    notification.Stopped += notification_Stopped;
+                    notification.Start();
+                }
             }
+
+            if (this.Notifications.Count == 0)
+            {
+                this.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void notification_Stopped(object sender, EventArgs e)
+        {
+            var notification = sender as INotification;
+            notification.Stopped -= notification_Stopped;
+            this.Notifications.Remove(notification);
         }
 
         public NotificationControl()
@@ -40,12 +62,6 @@ namespace Marv
         {
             get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
             set { SetValue(NotificationsProperty, value); }
-        }
-
-        public void Add(INotification notification)
-        {
-            this.Notifications.Add(notification);
-            notification.OnAdded();
         }
     }
 }

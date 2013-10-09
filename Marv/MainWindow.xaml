@@ -255,7 +255,8 @@
                                            Height="400" Width="300"
                                            HorizontalAlignment="Right" VerticalAlignment="Top"
                                            Margin="10" 
-                                           Notifications="{Binding Notifications, ElementName=Root}" />
+                                           Notifications="{Binding Notifications, ElementName=Root}"
+                                           Visibility="Collapsed"/>
                                            
             </Grid>
 
