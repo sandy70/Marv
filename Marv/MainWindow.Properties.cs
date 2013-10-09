@@ -1,6 +1,7 @@
 ﻿using LibNetwork;
 using LibPipeline;
 using Marv.Common;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
@@ -67,6 +68,9 @@ namespace Marv
 
         public static readonly DependencyProperty NetworkFileNameProperty =
         DependencyProperty.Register("NetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty NotificationsProperty =
+        DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -180,6 +184,12 @@ namespace Marv
         {
             get { return (string)GetValue(NetworkFileNameProperty); }
             set { SetValue(NetworkFileNameProperty, value); }
+        }
+
+        public ObservableCollection<INotification> Notifications
+        {
+            get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
         }
 
         public RiskValueToBrushMap RiskValueToBrushMap

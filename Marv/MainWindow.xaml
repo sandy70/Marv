@@ -247,6 +247,16 @@
                                     Margin="10"
                                     VerticalAlignment="Top" HorizontalAlignment="Left"
                                     Visibility="Collapsed" />
+                
+                <local:NotificationControl x:Name="NotificationControl"
+                                           Grid.Column="0" Grid.ColumnSpan="3"
+                                           Background="#DDDDDD"
+                                           Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                           Height="400" Width="300"
+                                           HorizontalAlignment="Right" VerticalAlignment="Top"
+                                           Margin="10" 
+                                           Notifications="{Binding Notifications, ElementName=Root}" />
+                                           
             </Grid>
 
             <!-- Settings Control -->

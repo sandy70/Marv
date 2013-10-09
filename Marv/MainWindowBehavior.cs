@@ -4,6 +4,7 @@ using Marv.Common;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,6 +95,32 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+
+            window.Notifications = new ObservableCollection<INotification>();
+
+            window.Notifications.Add(new NotificationTimed
+            {
+                Name = "Notify!!",
+                Description = "Error! Error! Error!"
+            });
+
+            window.Notifications.Add(new NotificationTimed
+            {
+                Name = "Notify!!",
+                Description = "Error! Error! Error!"
+            });
+
+            window.Notifications.Add(new NotificationTimed
+            {
+                Name = "Notify!!",
+                Description = "Error! Error! Error!"
+            });
+
+            window.Notifications.Add(new NotificationTimed
+            {
+                Name = "Notify!!",
+                Description = "Error! Error! Error!"
+            });
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)
