@@ -304,8 +304,10 @@ namespace LibNetwork
         public Graph GetSubGraph(string group)
         {
             // Extract the header vertices
-            Graph subGraph = new Graph();
-            subGraph.AssociatedGroup = group;
+            Graph subGraph = new Graph
+            {
+                DefaultGroup = group
+            };
 
             foreach (var vertex in this.Vertices)
             {
@@ -456,21 +458,6 @@ namespace LibNetwork
             catch (SmileException exception)
             {
                 throw new InconsistentEvidenceException();
-            }
-        }
-
-        public void UpdateDisplayPositions()
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                if (vertex.PositionForGroup.ContainsKey(this.AssociatedGroup))
-                {
-                    vertex.DisplayPosition = vertex.PositionForGroup[this.AssociatedGroup];
-                }
-                else
-                {
-                    vertex.DisplayPosition = vertex.Position;
-                }
             }
         }
 
