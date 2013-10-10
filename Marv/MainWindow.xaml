@@ -97,7 +97,7 @@
             </telerik:RadMenuItem>
         </telerik:RadMenu>
 
-        <libpipeline:TransitionControl Name="TransitionControl"
+        <marvcontrols:TransitionControl Name="TransitionControl"
                                        Grid.Row="1">
 
             <!-- Map and GraphControl -->
@@ -269,15 +269,15 @@
 
             <!-- Settings Control -->
             <telerik:RadPropertyGrid Name="SettingsControl"
-                                     libpipeline:TransitionControl.DisplayName="Settings"
-                                     libpipeline:TransitionControl.IsHeaderVisible="True"
+                                     marvcontrols:TransitionControl.DisplayName="Settings"
+                                     marvcontrols:TransitionControl.IsHeaderVisible="True"
                                      HorizontalAlignment="Left"
                                      Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}" />
 
             <!-- Edit Network File Control -->
             <Grid Name="EditNetworkFilesControl"
-                  libpipeline:TransitionControl.DisplayName="Network Files"
-                  libpipeline:TransitionControl.IsHeaderVisible="True">
+                  marvcontrols:TransitionControl.DisplayName="Network Files"
+                  marvcontrols:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
@@ -318,8 +318,8 @@
 
             <!-- Run Model Control -->
             <Grid Name="RunModelControl"
-                  libpipeline:TransitionControl.DisplayName="RunModel"
-                  libpipeline:TransitionControl.IsHeaderVisible="True">
+                  marvcontrols:TransitionControl.DisplayName="RunModel"
+                  marvcontrols:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
@@ -337,6 +337,6 @@
                                    Grid.Row="1"
                                    Content="Run Model" />
             </Grid>
-        </libpipeline:TransitionControl>
+        </marvcontrols:TransitionControl>
     </Grid>
 </Window>

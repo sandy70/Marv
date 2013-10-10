@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public partial class TransitionControlInner : Grid
     {

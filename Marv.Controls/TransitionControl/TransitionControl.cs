@@ -6,8 +6,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Telerik.Windows.Controls.TransitionEffects;
+using Marv.Common;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     [ContentProperty("Elements")]
     public class TransitionControl : UserControl
