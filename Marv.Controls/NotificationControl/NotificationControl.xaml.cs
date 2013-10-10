@@ -13,8 +13,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty NotificationsProperty =
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(NotificationControl), new PropertyMetadata(null, ChangedNotifications));
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         public NotificationControl()
         {
             InitializeComponent();
@@ -28,22 +26,14 @@ namespace Marv.Controls
 
         private static void ChangedNotifications(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            logger.Trace("");
-
             var control = d as NotificationControl;
-
             control.Notifications.CollectionChanged += control.Notifications_CollectionChanged;
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Notifications.Clear();
-        }
-
-        private void notification_Stopped(object sender, EventArgs e)
+        private void notification_Closed(object sender, EventArgs e)
         {
             var notification = sender as INotification;
-            notification.Closed -= notification_Stopped;
+            notification.Closed -= notification_Closed;
             this.Notifications.Remove(notification);
         }
 
@@ -55,7 +45,7 @@ namespace Marv.Controls
                 {
                     var notification = newItem as INotification;
 
-                    notification.Closed += notification_Stopped;
+                    notification.Closed += notification_Closed;
                     notification.Open();
                 }
             }
