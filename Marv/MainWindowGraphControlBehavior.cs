@@ -2,14 +2,19 @@
 using LibPipeline;
 using Marv.Common;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
+using NLog;
+using System.Windows.Threading;
 
 namespace Marv
 {
     internal class MainWindowGraphControlBehavior : Behavior<MainWindow>
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -31,9 +36,10 @@ namespace Marv
         private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
         {
             var window = this.AssociatedObject;
-            var vertex = e.Value;
+            var displayGraph = window.DisplayGraph;
+            var sourceGraph = window.SourceGraph;
 
-            window.DisplayGraph = vertex.GetSubGraph();
+            window.DisplayGraph = sourceGraph.GetSubGraph(displayGraph.DefaultGroup);
             window.IsBackButtonVisible = true;
         }
 
@@ -49,7 +55,7 @@ namespace Marv
             }
             catch (InconsistentEvidenceException exception)
             {
-                window.Notifications.Push(new NotificationTimed
+                window.Notifications.Push(new TimedNotification
                 {
                     Name = "Inconsistent Evidence",
                     Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
@@ -79,7 +85,7 @@ namespace Marv
             {
                 this.AssociatedObject.SensorListener.Stop();
 
-                window.Notifications.Push(new NotificationIndeterminate
+                window.Notifications.Push(new IndeterminateNotification
                 {
                     Name = "Serial Port Error",
                     Description = "Unable to open serial port. Connect receiver and retry."
@@ -111,7 +117,7 @@ namespace Marv
                 }
                 catch (InconsistentEvidenceException exception)
                 {
-                    window.Notifications.Push(new NotificationTimed
+                    window.Notifications.Push(new TimedNotification
                     {
                         Name = "Inconsistent Evidence",
                         Description = "Inconsistent evidence entered for vertex: " + vertex.Name,

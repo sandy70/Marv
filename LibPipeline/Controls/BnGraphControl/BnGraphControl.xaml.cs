@@ -1,9 +1,11 @@
 ﻿using LibNetwork;
 using Marv.Common;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace LibPipeline
 {
@@ -20,9 +22,6 @@ namespace LibPipeline
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
-
-        public static readonly DependencyProperty IsBackButtonVisibleProperty =
-        DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsSensorButtonVisibleProperty =
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
@@ -50,9 +49,6 @@ namespace LibPipeline
 
         public static readonly RoutedEvent StateDoubleClickedEvent =
         EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
-
-        public static readonly DependencyProperty ZoomProperty =
-        DependencyProperty.Register("Zoom", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
 
         private Dictionary<Graph, string> selectedGroups = new Dictionary<Graph, string>();
 
@@ -115,12 +111,6 @@ namespace LibPipeline
             set { SetValue(IncomingConnectionHighlightColorProperty, value); }
         }
 
-        public bool IsBackButtonVisible
-        {
-            get { return (bool)GetValue(IsBackButtonVisibleProperty); }
-            set { SetValue(IsBackButtonVisibleProperty, value); }
-        }
-
         public bool IsSensorButtonVisible
         {
             get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
@@ -158,10 +148,20 @@ namespace LibPipeline
             set { SetValue(ShapeOpacityProperty, value); }
         }
 
-        public double Zoom
+        public void AutoFit()
         {
-            get { return (double)GetValue(ZoomProperty); }
-            set { SetValue(ZoomProperty, value); }
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
+
+            timer.Tick += (o, e2) =>
+            {
+                this.DiagramPart.AutoFit();
+                timer.Stop();
+            };
+
+            timer.Start();
         }
     }
 }

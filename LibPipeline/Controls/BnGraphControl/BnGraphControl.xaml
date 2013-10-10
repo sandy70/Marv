@@ -30,8 +30,7 @@
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
                             RouteConnections="True"
-                            SelectionMode="Single"
-                            Zoom="{Binding Zoom, ElementName=Root}">
+                            SelectionMode="Single">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">

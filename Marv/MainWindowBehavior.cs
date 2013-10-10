@@ -2,12 +2,14 @@
 using LibPipeline;
 using Marv.Common;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using System.Windows.Threading;
 using Telerik.Windows;
 
 namespace Marv
@@ -72,7 +74,7 @@ namespace Marv
             {
                 logger.Warn(exp.Message);
 
-                var notification = new NotificationTimed
+                var notification = new TimedNotification
                 {
                     Name = "Unable to read file.",
                     Description = exp.Message,
@@ -101,13 +103,13 @@ namespace Marv
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
 
-            window.Notifications.Push(new NotificationTimed
+            window.Notifications.Push(new TimedNotification
             {
                 Name = "Error",
                 Description = "Error! Error! Error!"
             });
 
-            window.Notifications.Push(new NotificationIndeterminate
+            window.Notifications.Push(new IndeterminateNotification
             {
                 Name = "Error",
                 Description = "Error! Error! Error!"
@@ -117,8 +119,9 @@ namespace Marv
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
+            var sourceGraph = window.SourceGraph;
 
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+            window.DisplayGraph = sourceGraph.GetSubGraph(sourceGraph.DefaultGroup);
             window.IsBackButtonVisible = false;
         }
 

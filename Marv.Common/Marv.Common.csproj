@@ -52,8 +52,8 @@
     <Compile Include="Extensions.Linq.cs" />
     <Compile Include="Notifications\INotification.cs" />
     <Compile Include="Notifications\NotificationBase.cs" />
-    <Compile Include="Notifications\NotificationIndeterminate.cs" />
-    <Compile Include="Notifications\NotificationTimed.cs" />
+    <Compile Include="Notifications\IndeterminateNotification.cs" />
+    <Compile Include="Notifications\TimedNotification.cs" />
     <Compile Include="ObjectDataBase\Odb.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -197,7 +197,6 @@
                                                 ConnectionColor="#252525"
                                                 Graph="{Binding DisplayGraph, ElementName=Root}"
                                                 IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
-                                                IsBackButtonVisible="{Binding IsBackButtonVisible, ElementName=Root}"
                                                 IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
                     
                     <!-- Graph Toolbar -->

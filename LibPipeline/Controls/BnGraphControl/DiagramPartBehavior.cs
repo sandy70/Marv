@@ -8,17 +8,22 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
+using NLog;
+using System.Windows;
 
 namespace LibPipeline
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
-            this.AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
+
             this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
+            this.AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
+            this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
         }
 
         private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)

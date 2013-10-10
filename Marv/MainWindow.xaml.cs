@@ -18,6 +18,9 @@ namespace Marv
         public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public SensorListener SensorListener = new SensorListener();
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
+        public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
+        public string selectedGroup = null;
 
         public MainWindow()
         {
@@ -165,7 +168,7 @@ namespace Marv
 
                 logger.Warn(message);
 
-                this.Notifications.Push(new NotificationTimed
+                this.Notifications.Push(new TimedNotification
                 {
                     Name = "Value Not Found",
                     Description = message
@@ -201,7 +204,7 @@ namespace Marv
                 {
                     this.SourceGraph.SetValueToZero();
 
-                    this.Notifications.Push(new NotificationTimed
+                    this.Notifications.Push(new TimedNotification
                     {
                         Name = "Value Not Found",
                         Description = "Pipeline is inactive for this year."
