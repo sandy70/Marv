@@ -15,12 +15,12 @@ namespace Marv
 {
     public partial class MainWindow : Window
     {
-        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
-        public SensorListener SensorListener = new SensorListener();
-        private static Logger logger = LogManager.GetCurrentClassLogger();
         public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
         public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
+        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public string selectedGroup = null;
+        public SensorListener SensorListener = new SensorListener();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public MainWindow()
         {
