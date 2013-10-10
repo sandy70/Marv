@@ -12,7 +12,7 @@ namespace Marv.Common
             this.IsIndeterminate = true;
         }
 
-        public override void Start()
+        public override void Open()
         {
             // do nothing
         }

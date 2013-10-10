@@ -43,7 +43,7 @@ namespace Marv.Controls
         private void notification_Stopped(object sender, EventArgs e)
         {
             var notification = sender as INotification;
-            notification.Stopped -= notification_Stopped;
+            notification.Closed -= notification_Stopped;
             this.Notifications.Remove(notification);
         }
 
@@ -55,8 +55,8 @@ namespace Marv.Controls
                 {
                     var notification = newItem as INotification;
 
-                    notification.Stopped += notification_Stopped;
-                    notification.Start();
+                    notification.Closed += notification_Stopped;
+                    notification.Open();
                 }
             }
 

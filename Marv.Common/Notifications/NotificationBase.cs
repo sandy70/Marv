@@ -12,7 +12,7 @@ namespace Marv.Common
         private bool isIndeterminate = false;
         private string name = "";
 
-        public event EventHandler Stopped;
+        public event EventHandler Closed;
 
         public string Description
         {
@@ -82,14 +82,14 @@ namespace Marv.Common
             }
         }
 
-        public abstract void Start();
-
-        public void Stop()
+        public void Close()
         {
-            if (this.Stopped != null)
+            if (this.Closed != null)
             {
-                this.Stopped(this, new EventArgs());
+                this.Closed(this, new EventArgs());
             }
         }
+
+        public abstract void Open();
     }
 }

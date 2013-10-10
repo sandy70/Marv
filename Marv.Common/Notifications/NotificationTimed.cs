@@ -27,7 +27,7 @@ namespace Marv.Common
             }
         }
 
-        public override void Start()
+        public override void Open()
         {
             logger.Trace("");
 
@@ -45,7 +45,7 @@ namespace Marv.Common
                     else
                     {
                         timer.Stop();
-                        this.Stop();
+                        this.Close();
                     }
                 };
 

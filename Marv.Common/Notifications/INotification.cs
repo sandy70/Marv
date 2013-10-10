@@ -4,7 +4,7 @@ namespace Marv.Common
 {
     public interface INotification
     {
-        event EventHandler Stopped;
+        event EventHandler Closed;
 
         string Description { get; set; }
 
@@ -14,8 +14,8 @@ namespace Marv.Common
 
         double Value { get; }
 
-        void Start();
+        void Close();
 
-        void Stop();
+        void Open();
     }
 }

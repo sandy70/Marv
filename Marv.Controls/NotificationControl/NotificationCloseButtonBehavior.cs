@@ -22,7 +22,7 @@ namespace Marv.Controls
             logger.Debug("DataContext: {0}", this.AssociatedObject.DataContext);
 
             var notification = this.AssociatedObject.DataContext as INotification;
-            notification.Stop();
+            notification.Close();
         }
     }
 }
