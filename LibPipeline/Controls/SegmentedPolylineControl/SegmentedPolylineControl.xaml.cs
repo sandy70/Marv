@@ -195,8 +195,8 @@ namespace LibPipeline
 
         public void UpdateVisual()
         {
-            this.MapPanel.InvalidateVisual();
-            this.MapPanel.UpdateLayout();
+            // this.MapPanel.InvalidateVisual();
+            // this.MapPanel.UpdateLayout();
         }
 
         protected override void OnChangedLocations()

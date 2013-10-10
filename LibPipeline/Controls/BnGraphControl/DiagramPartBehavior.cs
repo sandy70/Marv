@@ -1,4 +1,5 @@
 ﻿using Marv.Common;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -8,8 +9,6 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
-using NLog;
-using System.Windows;
 
 namespace LibPipeline
 {

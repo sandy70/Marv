@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Marv.Common;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Telerik.Windows.Controls.TransitionEffects;
-using Marv.Common;
 
 namespace Marv.Controls
 {
