@@ -37,9 +37,10 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             var displayGraph = window.DisplayGraph;
+            var vertex = e.Value;
             var sourceGraph = window.SourceGraph;
 
-            window.DisplayGraph = sourceGraph.GetSubGraph(displayGraph.DefaultGroup);
+            window.DisplayGraph = sourceGraph.GetSubGraph(vertex.HeaderOfGroup);
             window.IsBackButtonVisible = true;
         }
 
@@ -59,7 +60,6 @@ namespace Marv
                 {
                     Name = "Inconsistent Evidence",
                     Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
-                    Duration = TimeSpan.FromSeconds(5)
                 });
 
                 graph.Value = graph.ClearEvidence(vertex.Key);
