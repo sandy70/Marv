@@ -2,11 +2,11 @@
 
 namespace Marv.Common
 {
-    public class NotificationIndeterminate : NotificationBase
+    public class IndeterminateNotification : NotificationBase
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public NotificationIndeterminate()
+        public IndeterminateNotification()
             : base()
         {
             this.IsIndeterminate = true;
