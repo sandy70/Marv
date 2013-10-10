@@ -26,7 +26,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <Grid>
+                                <mapcontrol:MapPanel>
                                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
                                             Stroke="{Binding Stroke}"
                                             StrokeEndLineCap="Round"
@@ -44,7 +44,7 @@
                                             <local:MapPoylineBehavior />
                                         </i:Interaction.Behaviors>
                                     </mapcontrol:MapPolyline>
-                                </Grid>
+                                </mapcontrol:MapPanel>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -52,9 +52,10 @@
             </mapcontrol:MapItemsControl.ItemContainerStyle>
         </mapcontrol:MapItemsControl>
 
-        <Label mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
+        <Label mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
+               Background="LightGray"
                Content="{Binding Locations.Name, ElementName=Root}"
-               Background="LightGray"/>
+               Visibility="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}"/>
 
         <Ellipse Name="Ellipse"
                 mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
