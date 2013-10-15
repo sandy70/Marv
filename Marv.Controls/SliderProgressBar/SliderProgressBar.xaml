@@ -1,7 +1,7 @@
-﻿<telerik:RadSlider x:Class="LibPipeline.SliderProgressBar"
+﻿<telerik:RadSlider x:Class="Marv.Controls.SliderProgressBar"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                   xmlns:libpipeline="clr-namespace:LibPipeline"
+                   xmlns:local="clr-namespace:Marv.Controls"
                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,7 +16,7 @@
                 <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
                                         Value="{Binding Value, ElementName=Root}">
                     <i:Interaction.Behaviors>
-                        <libpipeline:ProgressBarBehavior />
+                        <local:ProgressBarBehavior />
                     </i:Interaction.Behaviors>
                 </telerik:RadProgressBar>
 

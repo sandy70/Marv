@@ -2,7 +2,7 @@
 using Marv.Common;
 using System.Windows.Interactivity;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     internal class BnStatesControlBehavior : Behavior<BnStatesControl>
     {

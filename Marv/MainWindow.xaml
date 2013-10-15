@@ -191,7 +191,7 @@
                            Margin="10"
                            Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                    <libpipeline:BnGraphControl Name="GraphControl"
+                    <marvcontrols:BnGraphControl Name="GraphControl"
                                                 Grid.Row="0"
                                                 Background="Transparent"
                                                 ConnectionColor="#252525"
@@ -324,7 +324,7 @@
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
 
-                <libpipeline:SliderProgressBar Name="ModelProgressBar"
+                <marvcontrols:SliderProgressBar Name="ModelProgressBar"
                                                Grid.Row="0"
                                                Height="100"
                                                Margin="10"

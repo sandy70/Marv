@@ -3,7 +3,7 @@ using Marv.Common;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     internal class SliderProgressBarBehavior : Behavior<SliderProgressBar>
     {

@@ -1,8 +1,7 @@
-﻿<UserControl x:Class="LibPipeline.BnGraphControl"
+﻿<UserControl x:Class="Marv.Controls.BnGraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:libpipeline="clr-namespace:LibPipeline"
-             xmlns:local="clr-namespace:LibPipeline"
+             xmlns:local="clr-namespace:Marv.Controls"
              xmlns:primitives="clr-namespace:Telerik.Windows.Controls.Diagrams.Primitives;assembly=Telerik.Windows.Controls.Diagrams"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -117,7 +116,7 @@
                                             </Grid>
 
                                             <!-- States -->
-                                            <libpipeline:BnStatesControl Name="StatesControl"
+                                            <local:BnStatesControl Name="StatesControl"
                                                                          IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
                                                                          IsExpanded="{Binding IsExpanded}"
                                                                          Margin="10"
@@ -125,7 +124,7 @@
                                                                          SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
                                                                          States="{Binding States}"
                                                                          StatesFontSize="12">
-                                            </libpipeline:BnStatesControl>
+                                            </local:BnStatesControl>
 
                                             <!-- Units -->
                                             <StackPanel Orientation="Horizontal">
@@ -170,7 +169,7 @@
                                                     </telerik:RadButton.Template>
 
                                                     <i:Interaction.Behaviors>
-                                                        <libpipeline:GroupButtonBehavior />
+                                                        <local:GroupButtonBehavior />
                                                     </i:Interaction.Behaviors>
                                                 </telerik:RadButton>
 
@@ -184,7 +183,7 @@
                                                     </telerik:RadButton.Template>
 
                                                     <i:Interaction.Behaviors>
-                                                        <libpipeline:ExpanderButtonBehavior />
+                                                        <local:ExpanderButtonBehavior />
                                                     </i:Interaction.Behaviors>
                                                 </telerik:RadButton>
 
@@ -198,7 +197,7 @@
                                                     </telerik:RadButton.Template>
 
                                                     <i:Interaction.Behaviors>
-                                                        <libpipeline:LockButtonBehavior />
+                                                        <local:LockButtonBehavior />
                                                     </i:Interaction.Behaviors>
                                                 </telerik:RadButton>
 
@@ -212,7 +211,7 @@
                                                     </telerik:RadButton.Template>
 
                                                     <i:Interaction.Behaviors>
-                                                        <libpipeline:RetractButtonBehavior />
+                                                        <local:RetractButtonBehavior />
                                                     </i:Interaction.Behaviors>
                                                 </telerik:RadButton>
 
@@ -230,7 +229,7 @@
                                                     </ToggleButton.Template>
 
                                                     <i:Interaction.Behaviors>
-                                                        <libpipeline:SensorButtonBehavior />
+                                                        <local:SensorButtonBehavior />
                                                     </i:Interaction.Behaviors>
                                                 </ToggleButton>
                                             </StackPanel>
@@ -244,7 +243,7 @@
             </telerik:RadDiagram.ShapeStyle>
 
             <i:Interaction.Behaviors>
-                <libpipeline:DiagramPartBehavior />
+                <local:DiagramPartBehavior />
             </i:Interaction.Behaviors>
         </telerik:RadDiagram>
 

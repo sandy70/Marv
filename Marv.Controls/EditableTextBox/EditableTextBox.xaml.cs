@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public partial class EditableTextBox : UserControl
     {

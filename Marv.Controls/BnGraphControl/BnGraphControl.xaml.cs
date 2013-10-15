@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public partial class BnGraphControl : UserControl
     {
@@ -49,8 +49,6 @@ namespace LibPipeline
 
         public static readonly RoutedEvent StateDoubleClickedEvent =
         EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
-
-        private Dictionary<Graph, string> selectedGroups = new Dictionary<Graph, string>();
 
         public BnGraphControl()
         {
@@ -121,19 +119,6 @@ namespace LibPipeline
         {
             get { return (Color)GetValue(OutgoingConnectionHighlightColorProperty); }
             set { SetValue(OutgoingConnectionHighlightColorProperty, value); }
-        }
-
-        public Dictionary<Graph, string> SelectedGroups
-        {
-            get
-            {
-                return selectedGroups;
-            }
-
-            set
-            {
-                selectedGroups = value;
-            }
         }
 
         public BnVertexViewModel SelectedVertexViewModel

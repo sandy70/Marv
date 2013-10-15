@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public partial class BnStatesControl : UserControl
     {

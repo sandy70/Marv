@@ -2,7 +2,7 @@
 using System.Windows.Controls.Primitives;
 using System.Windows.Interactivity;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     internal class SensorButtonBehavior : Behavior<ToggleButton>
     {

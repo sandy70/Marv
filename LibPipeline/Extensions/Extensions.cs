@@ -45,23 +45,7 @@ namespace LibPipeline
             return graphs.SingleOrDefault(x => x.Name.Equals(name));
         }
 
-        public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
-        {
-            var point = new Point();
 
-            double left = bounds.Left - viewport.Left;
-            double right = bounds.Right - viewport.Right;
-            double top = bounds.Top - viewport.Top;
-            double bottom = bounds.Bottom - viewport.Bottom;
-
-            if (left > 0 && right > 0) point.X = right + pad;
-            else if (left < 0 && right < 0) point.X = left - pad;
-
-            if (top < 0 && bottom < 0) point.Y = top - pad;
-            else if (top > 0 && bottom > 0) point.Y = bottom + pad;
-
-            return point;
-        }
 
         public static IEnumerable<Location> Reduce(this IEnumerable<Location> locations, MapView mapView, double tolerance = 10, Dictionary<Location, Point> viewportPointCache = null, int level = 0)
         {
@@ -128,7 +112,3 @@ namespace LibPipeline
     }
 }
 
-namespace System.Windows
-{
-    public delegate void RoutedEventHandler<TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
-}

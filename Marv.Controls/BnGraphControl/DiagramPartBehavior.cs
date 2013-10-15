@@ -2,6 +2,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
@@ -10,7 +11,7 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
@@ -114,7 +115,9 @@ namespace LibPipeline
                     if (!e.Shape.Bounds.IsInBounds(this.AssociatedObject.Viewport))
                     {
                         var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, pad: 20);
-                        this.AssociatedObject.FitTo(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));
+
+                        // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+                        this.AssociatedObject.BringIntoView(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));
                     }
 
                     timer.Stop();

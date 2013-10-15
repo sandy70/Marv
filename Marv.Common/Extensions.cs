@@ -36,6 +36,24 @@ namespace Marv.Common
             }
         }
 
+        public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
+        {
+            var point = new Point();
+
+            double left = bounds.Left - viewport.Left;
+            double right = bounds.Right - viewport.Right;
+            double top = bounds.Top - viewport.Top;
+            double bottom = bounds.Bottom - viewport.Bottom;
+
+            if (left > 0 && right > 0) point.X = right + pad;
+            else if (left < 0 && right < 0) point.X = left - pad;
+
+            if (top < 0 && bottom < 0) point.Y = top - pad;
+            else if (top > 0 && bottom > 0) point.Y = bottom + pad;
+
+            return point;
+        }
+
         /// <summary>
         /// This method is an alternative to WPF's
         /// <see cref="VisualTreeHelper.GetParent"/> method, which also
@@ -77,4 +95,9 @@ namespace Marv.Common
             collection.Insert(0, item);
         }
     }
+}
+
+namespace System.Windows
+{
+    public delegate void RoutedEventHandler<TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
 }

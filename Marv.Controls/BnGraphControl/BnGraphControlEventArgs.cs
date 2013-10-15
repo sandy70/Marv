@@ -1,7 +1,7 @@
 ﻿using LibNetwork;
 using System.Windows;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public class BnGraphControlEventArgs : RoutedEventArgs
     {

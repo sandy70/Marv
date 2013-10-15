@@ -2,7 +2,7 @@
 using System.Windows.Interactivity;
 using Telerik.Windows.Controls;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     internal class ExpanderButtonBehavior : Behavior<RadButton>
     {

@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using Telerik.Windows.Controls;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public partial class SliderProgressBar : RadSlider
     {

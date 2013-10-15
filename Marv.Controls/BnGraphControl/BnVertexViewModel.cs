@@ -1,7 +1,7 @@
 ﻿﻿using LibNetwork;
 using System.ComponentModel;
 
-namespace LibPipeline
+namespace Marv.Controls
 {
     public class BnVertexViewModel : Vertex
     {
