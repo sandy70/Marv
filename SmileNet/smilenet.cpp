@@ -1428,6 +1428,7 @@ namespace Smile
 
 			DSL_Dmatrix *m = NULL;
 			int res = value->GetValue(&m);
+			
 			if (DSL_OKAY != res)
 			{
 				String *msg = String::Format(
@@ -2558,6 +2559,7 @@ namespace Smile
 		DSL_node* ValidateNodeHandle(int handle)
 		{
 			DSL_node *node = net->GetNode(handle);
+
 			if (NULL == node)
 			{
 				String *msg = String::Format("Invalid node handle: {0}", Int32(handle).ToString());
@@ -2789,6 +2791,8 @@ namespace Smile
 				parentId);
 			throw new SmileException(msg);
 		}
+
+
 
 		int& _NodeScrInfoRef(int nodeHandle, int DSL_screenInfo::*clrPtr)
 		{
