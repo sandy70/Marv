@@ -4,12 +4,43 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LibNetwork
 {
     public class GraphValue : Dictionary<string, VertexValue>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public static GraphValue ReadCsv(string fileName, Graph graph)
+        {
+            var graphValue = new GraphValue();
+
+            foreach (var line in File.ReadLines(fileName))
+            {
+                var vertexValue = new VertexValue();
+
+                string[] parts = line.Split(new char[] { ',' });
+
+                var vertexKey = parts[0];
+
+                var vertex = graph.GetVertex(vertexKey);
+
+                int nParts = parts.Count();
+
+                for (int p = 1; p < nParts; p++)
+                {
+                    // This assumes that states order is preserved
+                    var stateKey = vertex.States[p - 1].Key;
+
+                    vertexValue[stateKey] = Double.Parse(parts[p]);
+                }
+
+                graphValue[vertexKey] = vertexValue;
+            }
+
+            return graphValue;
+        }
 
         public void WriteJson(string fileName)
         {
