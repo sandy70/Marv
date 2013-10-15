@@ -84,11 +84,6 @@ namespace Marv.Controls
             }
         }
 
-        public Graph GetSubGraph()
-        {
-            return this.Parent.GetSubGraph(this.HeaderOfGroup);
-        }
-
         public void SelectState(int index)
         {
             for (int i = 0; i < this.States.Count; i++)
