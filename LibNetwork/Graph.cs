@@ -189,7 +189,6 @@ namespace LibNetwork
                 vertex.IsExpanded = structureVertex.ParseIsExpanded();
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
-                vertex.Parent = graph;
                 vertex.Position = structureVertex.ParsePosition();
                 vertex.PositionForGroup = structureVertex.ParsePositionByGroup();
                 vertex.Units = structureVertex.ParseStringProperty("units");

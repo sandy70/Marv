@@ -31,7 +31,6 @@ namespace LibNetwork
         private State mostProbableState = null;
         private string name = "";
         private double opacity = 1;
-        private Graph parent;
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
@@ -39,10 +38,6 @@ namespace LibNetwork
         private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.None;
         private string units = "";
-        
-        public event EventHandler Locked;
-
-        public event EventHandler RequestedClear;
 
         public ObservableCollection<IVertexCommand> Commands
         {
@@ -301,23 +296,6 @@ namespace LibNetwork
             }
         }
 
-        public Graph Parent
-        {
-            get
-            {
-                return this.parent;
-            }
-
-            set
-            {
-                if (value != this.parent)
-                {
-                    this.parent = value;
-                    this.RaisePropertyChanged("Parent");
-                }
-            }
-        }
-
         public Point Position
         {
             get
@@ -534,22 +512,6 @@ namespace LibNetwork
             }
 
             return stateIndex;
-        }
-
-        public void RaiseLocked()
-        {
-            if (this.Locked != null)
-            {
-                this.Locked(this, new EventArgs());
-            }
-        }
-
-        public void RaiseRequestedClear()
-        {
-            if (this.RequestedClear != null)
-            {
-                this.RequestedClear(this, new EventArgs());
-            }
         }
 
         public void SelectState(int index)

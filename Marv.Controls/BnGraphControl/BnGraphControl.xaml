@@ -60,6 +60,8 @@
                     <Setter Property="Padding" Value="0" />
                     <Setter Property="Position" Value="{Binding DisplayPosition, Mode=TwoWay}" />
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsLocked}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -152,8 +154,8 @@
 
                                         <!-- Toolbar -->
                                         <ItemsControl ItemsSource="{Binding Commands}"
-                                                        Margin="2"
-                                                        Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                      Margin="2"
+                                                      Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel HorizontalAlignment="Center"

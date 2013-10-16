@@ -1,10 +1,7 @@
-﻿using LibNetwork;
-using Marv.Common;
+﻿using Marv.Common;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -23,7 +20,6 @@ namespace Marv.Controls
             base.OnAttached();
 
             this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
-            this.AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
             this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
         }
 
@@ -41,43 +37,6 @@ namespace Marv.Controls
             };
 
             timer.Start();
-        }
-
-        private void AssociatedObject_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-
-            foreach (var item in e.RemovedItems)
-            {
-                Vertex vertexViewModel = item as Vertex;
-
-                if (vertexViewModel != null)
-                {
-                    vertexViewModel.IsSelected = false;
-                    vertexViewModel.IsSensorChecked = false;
-
-                    if (vertexViewModel.IsEvidenceEntered)
-                    {
-                        var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-                        parentGraphControl.RaiseEvent(new ValueEventArgs<Vertex>
-                        {
-                            RoutedEvent = BnGraphControl.NewEvidenceAvailableEvent,
-                            Value = vertexViewModel
-                        });
-                    }
-                }
-            }
-
-            foreach (var item in e.AddedItems)
-            {
-                Vertex vertexViewModel = item as Vertex;
-
-                if (vertexViewModel != null)
-                {
-                    vertexViewModel.IsSelected = true;
-                    graphControl.SelectedVertexViewModel = vertexViewModel;
-                }
-            }
         }
 
         private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)

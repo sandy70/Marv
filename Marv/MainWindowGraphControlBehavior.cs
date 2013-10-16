@@ -2,7 +2,6 @@
 using Marv.Common;
 using Marv.Controls;
 using NLog;
-using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
 
@@ -22,45 +21,11 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
-            window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
 
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
             VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
             VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
-        }
-
-        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<Vertex> e)
-        {
-            var graph = this.AssociatedObject.SourceGraph;
-            var vertex = e.Value;
-            graph.Value = graph.ClearEvidence(vertex.Key);
-        }
-
-        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<Vertex> e)
-        {
-            var window = this.AssociatedObject;
-
-            try
-            {
-                this.AssociatedObject.SensorListener.Start(e.Value);
-            }
-            catch (IOException exp)
-            {
-                this.AssociatedObject.SensorListener.Stop();
-
-                window.Notifications.Push(new IndeterminateNotification
-                {
-                    Name = "Serial Port Error",
-                    Description = "Unable to open serial port. Connect receiver and retry."
-                });
-            }
-        }
-
-        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<Vertex> e)
-        {
-            this.AssociatedObject.SensorListener.Stop();
         }
 
         private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)

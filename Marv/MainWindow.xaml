@@ -196,8 +196,7 @@
                                                 Background="Transparent"
                                                 ConnectionColor="#252525"
                                                 Graph="{Binding DisplayGraph, ElementName=Root}"
-                                                IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
-                                                IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
+                                                IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff" />
 
                     <!-- Graph Toolbar -->
                     <StackPanel Effect="{StaticResource ResourceKey=DropShadow}"
