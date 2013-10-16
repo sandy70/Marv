@@ -158,10 +158,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
-      <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
-      <Name>LibNetwork</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>

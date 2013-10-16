@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
+using System.Linq;
 
 namespace Marv.Common
 {
@@ -93,6 +95,61 @@ namespace Marv.Common
         public static void Push<T>(this ObservableCollection<T> collection, T item)
         {
             collection.Insert(0, item);
+        }
+
+        public static string String(this IEnumerable<string> strings)
+        {
+            var str = "";
+
+            if (strings.Count() == 0)
+            {
+                return str;
+            }
+            else if (strings.Count() == 1)
+            {
+                str += strings.First();
+                return str;
+            }
+
+            foreach (var s in strings.AllButLast())
+            {
+                str += s + ",";
+            }
+
+            str += strings.Last();
+
+            return str;
+        }
+
+        public static string String(this Dictionary<string, Point> positionsByGroup)
+        {
+            var str = "";
+
+            if (positionsByGroup.Count == 0)
+            {
+                return str;
+            }
+            else if (positionsByGroup.Count == 1)
+            {
+                var kvpFirst = positionsByGroup.First();
+                str += kvpFirst.Key + "," + kvpFirst.Value.X + "," + kvpFirst.Value.Y;
+                return str;
+            }
+
+            foreach (var kvp in positionsByGroup.AllButLast())
+            {
+                str += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
+            }
+
+            var kvpLast = positionsByGroup.Last();
+            str += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
+
+            return str;
+        }
+
+        public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
+        {
+            return untrimmed.Select(x => x.Trim());
         }
     }
 }
