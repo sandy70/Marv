@@ -63,212 +63,125 @@
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <Grid>
-                                    <!-- Vertex -->
-                                    <Border Background="#DDDDDD"
-                                            Width="250">
-                                        <Border.Resources>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Segoe UI" />
-                                                <Setter Property="Foreground" Value="Black" />
-                                                <Setter Property="Background" Value="#DDDDDD" />
-                                            </Style>
+                                <!-- Vertex -->
+                                <Border Background="#DDDDDD"
+                                        Width="250">
+                                    <Border.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontFamily" Value="Segoe UI" />
+                                            <Setter Property="Foreground" Value="Black" />
+                                            <Setter Property="Background" Value="#DDDDDD" />
+                                        </Style>
 
-                                            <Style TargetType="telerik:RadProgressBar">
-                                                <Setter Property="Foreground" Value="#20aeff" />
-                                                <Setter Property="Background" Value="#686868" />
-                                            </Style>
-                                        </Border.Resources>
+                                        <Style TargetType="telerik:RadProgressBar">
+                                            <Setter Property="Foreground" Value="#20aeff" />
+                                            <Setter Property="Background" Value="#686868" />
+                                        </Style>
+                                    </Border.Resources>
 
-                                        <Border.Effect>
-                                            <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
-                                        </Border.Effect>
+                                    <Border.Effect>
+                                        <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
+                                    </Border.Effect>
 
-                                        <!-- This is the vertex -->
-                                        <StackPanel Orientation="Vertical"
-                                                    Visibility="Visible">
+                                    <!-- This is the vertex -->
+                                    <StackPanel Orientation="Vertical"
+                                                Visibility="Visible">
 
-                                            <!-- Title -->
-                                            <local:EditableTextBox Grid.Column="0"
-                                                                   FontSize="16"
-                                                                   FontWeight="Bold"
-                                                                   Foreground="Black"
-                                                                   Margin="5"
-                                                                   Text="{Binding Name, Mode=TwoWay}"
-                                                                   VerticalAlignment="Center" />
+                                        <!-- Title -->
+                                        <local:EditableTextBox Grid.Column="0"
+                                                                FontSize="16"
+                                                                FontWeight="Bold"
+                                                                Foreground="Black"
+                                                                Margin="5"
+                                                                Text="{Binding Name, Mode=TwoWay}"
+                                                                VerticalAlignment="Center" />
 
-                                            <!-- Header Accent -->
-                                            <Border Background="{Binding IsHeader, Converter={StaticResource ResourceKey=IsHeaderToColor}}"
-                                                    Height="5"
-                                                    Margin="5,0,5,0" />
+                                        <!-- Header Accent -->
+                                        <Border Background="{Binding IsHeader, Converter={StaticResource ResourceKey=IsHeaderToColor}}"
+                                                Height="5"
+                                                Margin="5,0,5,0" />
 
-                                            <!-- Static Text "Certainty" -->
-                                            <Grid Margin="10">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition Width="100" />
-                                                </Grid.ColumnDefinitions>
+                                        <!-- Static Text "Certainty" -->
+                                        <Grid Margin="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0"
-                                                           FontSize="10"
-                                                           MinHeight="15"
-                                                           Text="" />
+                                            <TextBlock Grid.Column="0"
+                                                        FontSize="10"
+                                                        MinHeight="15"
+                                                        Text="" />
 
-                                                <TextBlock Grid.Column="1"
-                                                           FontSize="10"
-                                                           FontWeight="Bold"
-                                                           Text="Certainty" />
-                                            </Grid>
+                                            <TextBlock Grid.Column="1"
+                                                        FontSize="10"
+                                                        FontWeight="Bold"
+                                                        Text="Certainty" />
+                                        </Grid>
 
-                                            <!-- States -->
-                                            <local:BnStatesControl Name="StatesControl"
-                                                                         IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
-                                                                         IsExpanded="{Binding IsExpanded}"
-                                                                         Margin="10"
-                                                                         MostProbableState="{Binding MostProbableState}"
-                                                                         SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
-                                                                         States="{Binding States}"
-                                                                         StatesFontSize="12">
-                                            </local:BnStatesControl>
+                                        <!-- States -->
+                                        <local:BnStatesControl Name="StatesControl"
+                                                                        IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
+                                                                        IsExpanded="{Binding IsExpanded}"
+                                                                        Margin="10"
+                                                                        MostProbableState="{Binding MostProbableState}"
+                                                                        SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
+                                                                        States="{Binding States}"
+                                                                        StatesFontSize="12">
+                                        </local:BnStatesControl>
 
-                                            <!-- Units -->
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Foreground="Black"
-                                                           FontSize="14"
-                                                           Margin="10"
-                                                           Text="Units:" />
+                                        <!-- Units -->
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Foreground="Black"
+                                                        FontSize="14"
+                                                        Margin="10"
+                                                        Text="Units:" />
 
-                                                <local:EditableTextBox Foreground="Black"
-                                                                       FontSize="14"
-                                                                       Margin="10"
-                                                                       Text="{Binding Units, Mode=TwoWay}" />
-                                            </StackPanel>
-
-                                            <!-- Description -->
                                             <local:EditableTextBox Foreground="Black"
-                                                                   FontSize="14"
-                                                                   Margin="10"
-                                                                   Text="{Binding Description}"
-                                                                   Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
-
-                                            <!-- Toolbar -->
-                                            <ItemsControl ItemsSource="{Binding Commands}"
-                                                          Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Background="Red"
-                                                                    Orientation="Horizontal" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button>
-                                                            <Button.Template>
-                                                                <ControlTemplate>
-                                                                    <Label Background="{StaticResource ResourceKey=BackgroundDark}">
-                                                                        <Image Source="{Binding ImageSource}" />
-                                                                    </Label>
-                                                                </ControlTemplate>
-                                                            </Button.Template>
-                                                            
-                                                            <i:Interaction.Behaviors>
-                                                                <local:ToolbarButtonClickBehavior />
-                                                            </i:Interaction.Behaviors>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                                          
-                                            <StackPanel HorizontalAlignment="Center"
-                                                        Margin="5"
-                                                        Orientation="Horizontal"
-                                                        Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                                                <StackPanel.Resources>
-                                                    <Style TargetType="telerik:RadButton">
-                                                        <Setter Property="Margin" Value="5" />
-                                                        <Setter Property="Height" Value="40" />
-                                                        <Setter Property="Width" Value="40" />
-                                                    </Style>
-                                                </StackPanel.Resources>
-                                                <telerik:RadButton Name="GroupButton"
-                                                                   Visibility="{Binding IsHeader, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                                                    <telerik:RadButton.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="#686868">
-                                                                <Image Source="/LibPipeline;component/Resources/Icons/diagram.png" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </telerik:RadButton.Template>
-
-                                                    <i:Interaction.Behaviors>
-                                                        <local:GroupButtonBehavior />
-                                                    </i:Interaction.Behaviors>
-                                                </telerik:RadButton>
-
-                                                <telerik:RadButton Name="ExpanderButton">
-                                                    <telerik:RadButton.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="#686868">
-                                                                <Image Source="/LibPipeline;component/Resources/Icons/expand.png" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </telerik:RadButton.Template>
-
-                                                    <i:Interaction.Behaviors>
-                                                        <local:ExpanderButtonBehavior />
-                                                    </i:Interaction.Behaviors>
-                                                </telerik:RadButton>
-
-                                                <telerik:RadButton Name="LockButton">
-                                                    <telerik:RadButton.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="#686868">
-                                                                <Image Source="{Binding IsLocked, Converter={StaticResource ResourceKey=IsLockedToImageSourceConverter}}" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </telerik:RadButton.Template>
-
-                                                    <i:Interaction.Behaviors>
-                                                        <local:LockButtonBehavior />
-                                                    </i:Interaction.Behaviors>
-                                                </telerik:RadButton>
-
-                                                <telerik:RadButton Name="RetractButton">
-                                                    <telerik:RadButton.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="#686868">
-                                                                <Image Source="/LibPipeline;component/Resources/Icons/erase.png" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </telerik:RadButton.Template>
-
-                                                    <i:Interaction.Behaviors>
-                                                        <local:RetractButtonBehavior />
-                                                    </i:Interaction.Behaviors>
-                                                </telerik:RadButton>
-
-                                                <ToggleButton Name="SensorButton"
-                                                              IsChecked="{Binding IsSensorChecked}"
-                                                              Margin="5"
-                                                              Visibility="{Binding IsSensorButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
-                                                              Width="40" Height="40">
-                                                    <ToggleButton.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="#686868">
-                                                                <Image Source="{Binding IsChecked, ElementName=SensorButton, Converter={StaticResource ResourceKey=IsCheckedToImageSource}}" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </ToggleButton.Template>
-
-                                                    <i:Interaction.Behaviors>
-                                                        <local:SensorButtonBehavior />
-                                                    </i:Interaction.Behaviors>
-                                                </ToggleButton>
-                                            </StackPanel>
+                                                                    FontSize="14"
+                                                                    Margin="10"
+                                                                    Text="{Binding Units, Mode=TwoWay}" />
                                         </StackPanel>
-                                    </Border>
-                                </Grid>
+
+                                        <!-- Description -->
+                                        <local:EditableTextBox Foreground="Black"
+                                                                FontSize="14"
+                                                                Margin="10"
+                                                                Text="{Binding Description}"
+                                                                Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
+
+                                        <!-- Toolbar -->
+                                        <ItemsControl ItemsSource="{Binding Commands}"
+                                                        Margin="2"
+                                                        Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel HorizontalAlignment="Center"
+                                                                Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                                
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Height="40" Width="40"
+                                                            Margin="2">
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Background="{StaticResource ResourceKey=BackgroundDark}">
+                                                                    <Image Source="{Binding ImageSource}" />
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                            
+                                                        <i:Interaction.Behaviors>
+                                                            <local:ToolbarButtonClickBehavior />
+                                                        </i:Interaction.Behaviors>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

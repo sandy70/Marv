@@ -23,6 +23,7 @@ namespace LibNetwork
         private Network network = new Network();
 
         public Graph()
+            : base()
         {
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LibNetwork
 {
-    public class ExpandVertexCommand : VertexCommand
+    public class VertexExpandCommand : VertexCommand
     {
         public override void Execute(VertexViewModel vertexViewModel)
         {

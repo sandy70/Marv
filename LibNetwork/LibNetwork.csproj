@@ -103,7 +103,8 @@
     <Compile Include="Graph.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Vertex.cs" />
-    <Compile Include="VertexCommand\ExpandVertexCommand.cs" />
+    <Compile Include="VertexCommand\VertexExpandCommand.cs" />
+    <Compile Include="VertexCommand\VertexLockCommand.cs" />
     <Compile Include="VertexValue.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />

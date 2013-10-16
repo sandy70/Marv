@@ -9,6 +9,13 @@ namespace LibNetwork
 {
     public class Vertex : ViewModel
     {
+        private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
+        {
+            VertexCommand.VertexExpandCommand,
+            VertexCommand.VertexLockCommand,
+            VertexCommand.VertexClearCommand
+        };
+
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
@@ -28,6 +35,23 @@ namespace LibNetwork
         private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.None;
         private string units = "";
+
+        public ObservableCollection<IVertexCommand> Commands
+        {
+            get
+            {
+                return this.commands;
+            }
+
+            set
+            {
+                if (value != this.commands)
+                {
+                    this.commands = value;
+                    this.RaisePropertyChanged("Commands");
+                }
+            }
+        }
 
         public string Description
         {
@@ -142,11 +166,20 @@ namespace LibNetwork
 
         public bool IsHeader
         {
-            get { return isHeader; }
+            get 
+            { 
+                return isHeader;
+            }
+
             set
             {
                 isHeader = value;
                 RaisePropertyChanged("IsHeader");
+
+                if (this.IsHeader)
+                {
+                    this.Commands.Push(VertexCommand.VertexSubGraphCommand);
+                }
             }
         }
 

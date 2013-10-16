@@ -101,18 +101,6 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
-
-            window.Notifications.Push(new TimedNotification
-            {
-                Name = "Error",
-                Description = "Error! Error! Error!"
-            });
-
-            window.Notifications.Push(new IndeterminateNotification
-            {
-                Name = "Error",
-                Description = "Error! Error! Error!"
-            });
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

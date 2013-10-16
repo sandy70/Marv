@@ -5,13 +5,27 @@ namespace LibNetwork
 {
     public class VertexCommand : ViewModel, IVertexCommand
     {
-        public static ExpandVertexCommand ExpandVertexCommand = new ExpandVertexCommand
+        public static VertexCommand VertexClearCommand = new VertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Clear.png"
+        };
+
+        public static VertexExpandCommand VertexExpandCommand = new VertexExpandCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/Expand.png"
         };
 
+        public static VertexLockCommand VertexLockCommand = new VertexLockCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Lock.png"
+        };
+
+        public static VertexCommand VertexSubGraphCommand = new VertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
+        };
+
         private string imageSource;
-        private bool isVisible = true;
 
         public event EventHandler<VertexViewModel> Executed;
 
@@ -28,23 +42,6 @@ namespace LibNetwork
                 {
                     this.imageSource = value;
                     this.RaisePropertyChanged("ImageSource");
-                }
-            }
-        }
-
-        public bool IsVisible
-        {
-            get
-            {
-                return this.isVisible;
-            }
-
-            set
-            {
-                if (value != this.isVisible)
-                {
-                    this.isVisible = value;
-                    this.RaisePropertyChanged("IsVisible");
                 }
             }
         }

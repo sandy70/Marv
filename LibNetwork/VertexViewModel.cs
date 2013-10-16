@@ -1,36 +1,22 @@
-﻿﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿﻿using System;
+using System.Collections.ObjectModel;
 
 namespace LibNetwork
 {
     public class VertexViewModel : Vertex
     {
-        private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
-        {
-            VertexCommand.ExpandVertexCommand
-        };
+
 
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
         private double opacity = 1;
 
-        public ObservableCollection<IVertexCommand> Commands
-        {
-            get
-            {
-                return this.commands;
-            }
+        public event EventHandler Locked;
 
-            set
-            {
-                if (value != this.commands)
-                {
-                    this.commands = value;
-                    this.RaisePropertyChanged("Commands");
-                }
-            }
-        }
+        public event EventHandler RequestedClear;
+
+
 
         public bool IsLocked
         {
@@ -102,6 +88,22 @@ namespace LibNetwork
                     this.opacity = value;
                     this.RaisePropertyChanged("Opacity");
                 }
+            }
+        }
+
+        public void RaiseLocked()
+        {
+            if (this.Locked != null)
+            {
+                this.Locked(this, new EventArgs());
+            }
+        }
+
+        public void RaiseRequestedClear()
+        {
+            if (this.RequestedClear != null)
+            {
+                this.RequestedClear(this, new EventArgs());
             }
         }
 

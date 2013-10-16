@@ -1,5 +1,4 @@
 ﻿using LibNetwork;
-using LibPipeline;
 using Marv.Common;
 using Marv.Controls;
 using NLog;
@@ -23,45 +22,13 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.GroupButtonClicked += GraphControl_GroupButtonClicked;
-            window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
-            window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
             window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
             window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
-        }
 
-        private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<VertexViewModel> e)
-        {
-            var window = this.AssociatedObject;
-            var displayGraph = window.DisplayGraph;
-            var vertex = e.Value;
-            var sourceGraph = window.SourceGraph;
-
-            window.DisplayGraph = sourceGraph.GetSubGraph(vertex.HeaderOfGroup);
-            window.IsBackButtonVisible = true;
-        }
-
-        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<VertexViewModel> e)
-        {
-            var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
-            var vertex = e.Value;
-
-            try
-            {
-                graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
-            }
-            catch (InconsistentEvidenceException exception)
-            {
-                window.Notifications.Push(new TimedNotification
-                {
-                    Name = "Inconsistent Evidence",
-                    Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
-                });
-
-                graph.Value = graph.ClearEvidence(vertex.Key);
-            }
+            VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
+            VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
+            VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
         }
 
         private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<VertexViewModel> e)
@@ -128,6 +95,46 @@ namespace Marv
             {
                 graph.Value = graph.ClearEvidence(vertex.Key);
             }
+        }
+
+        private void VertexClearCommand_Executed(object sender, VertexViewModel vertex)
+        {
+            var graph = this.AssociatedObject.SourceGraph;
+            graph.Value = graph.ClearEvidence(vertex.Key);
+        }
+
+        private void VertexLockCommand_Executed(object sender, VertexViewModel vertex)
+        {
+            var window = this.AssociatedObject;
+            var graph = window.SourceGraph;
+
+            try
+            {
+                if (vertex.IsLocked)
+                {
+                    graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
+                }
+            }
+            catch (InconsistentEvidenceException exception)
+            {
+                window.Notifications.Push(new TimedNotification
+                {
+                    Name = "Inconsistent Evidence",
+                    Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                });
+
+                graph.Value = graph.ClearEvidence(vertex.Key);
+            }
+        }
+
+        private void VertexSubGraphCommand_Executed(object sender, VertexViewModel vertex)
+        {
+            var window = this.AssociatedObject;
+            var displayGraph = window.DisplayGraph;
+            var sourceGraph = window.SourceGraph;
+
+            window.DisplayGraph = sourceGraph.GetSubGraph(vertex.HeaderOfGroup);
+            window.IsBackButtonVisible = true;
         }
     }
 }
