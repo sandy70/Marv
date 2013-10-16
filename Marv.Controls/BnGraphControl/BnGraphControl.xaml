@@ -152,7 +152,7 @@
                                                                    Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                                             <!-- Toolbar -->
-                                            <ItemsControl ItemsSource="{Binding VertexCommands, ElementName=Root}"
+                                            <ItemsControl ItemsSource="{Binding Commands}"
                                                           Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -163,7 +163,7 @@
                                                 
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Button Visibility="{Binding IsVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                        <Button>
                                                             <Button.Template>
                                                                 <ControlTemplate>
                                                                     <Label Background="{StaticResource ResourceKey=BackgroundDark}">

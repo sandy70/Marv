@@ -5,6 +5,11 @@ namespace LibNetwork
 {
     public class VertexCommand : ViewModel, IVertexCommand
     {
+        public static ExpandVertexCommand ExpandVertexCommand = new ExpandVertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Expand.png"
+        };
+
         private string imageSource;
         private bool isVisible = true;
 
@@ -44,7 +49,7 @@ namespace LibNetwork
             }
         }
 
-        public void Execute(VertexViewModel vertexViewModel)
+        public virtual void Execute(VertexViewModel vertexViewModel)
         {
             if (this.Executed != null)
             {

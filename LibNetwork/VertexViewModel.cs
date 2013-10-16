@@ -1,18 +1,35 @@
-﻿﻿using System.ComponentModel;
+﻿﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace LibNetwork
 {
     public class VertexViewModel : Vertex
     {
+        private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
+        {
+            VertexCommand.ExpandVertexCommand
+        };
+
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
         private double opacity = 1;
 
-        public VertexViewModel()
-            : base()
+        public ObservableCollection<IVertexCommand> Commands
         {
-            this.PropertyChanged += BnVertexViewModel_PropertyChanged;
+            get
+            {
+                return this.commands;
+            }
+
+            set
+            {
+                if (value != this.commands)
+                {
+                    this.commands = value;
+                    this.RaisePropertyChanged("Commands");
+                }
+            }
         }
 
         public bool IsLocked
@@ -28,6 +45,11 @@ namespace LibNetwork
                 {
                     this.isLocked = value;
                     this.RaisePropertyChanged("IsLocked");
+                }
+
+                if (this.IsLocked == false)
+                {
+                    this.IsExpanded = true;
                 }
             }
         }
@@ -109,22 +131,6 @@ namespace LibNetwork
                 else
                 {
                     state.Value = 0;
-                }
-            }
-        }
-
-        private void BnVertexViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals("IsCursorVisible") && this.IsSelected == false)
-            {
-                this.IsLocked = true;
-            }
-
-            else if (e.PropertyName.Equals("IsLocked"))
-            {
-                if (this.IsLocked == false)
-                {
-                    this.IsExpanded = true;
                 }
             }
         }
