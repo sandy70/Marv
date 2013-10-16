@@ -5,8 +5,6 @@ namespace LibNetwork
 {
     public class VertexViewModel : Vertex
     {
-
-
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
@@ -15,8 +13,6 @@ namespace LibNetwork
         public event EventHandler Locked;
 
         public event EventHandler RequestedClear;
-
-
 
         public bool IsLocked
         {

@@ -101,11 +101,6 @@
     </Compile>
     <Compile Include="BnGraphControl\BnGraphControlEventArgs.cs" />
     <Compile Include="BnGraphControl\DiagramPartBehavior.cs" />
-    <Compile Include="BnGraphControl\ExpanderButtonBehavior.cs" />
-    <Compile Include="BnGraphControl\GroupButtonBehavior.cs" />
-    <Compile Include="BnGraphControl\LockButtonBehavior.cs" />
-    <Compile Include="BnGraphControl\RetractButtonBehavior.cs" />
-    <Compile Include="BnGraphControl\SensorButtonBehavior.cs" />
     <Compile Include="BnGraphControl\ToolbarButtonClickBehavior.cs" />
     <Compile Include="BnStatesControl\BnStatesControl.xaml.cs">
       <DependentUpon>BnStatesControl.xaml</DependentUpon>
