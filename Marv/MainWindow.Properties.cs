@@ -2,6 +2,7 @@
 using Marv.Common;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Linq;
 
 namespace Marv
 {
