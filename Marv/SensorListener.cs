@@ -1,4 +1,5 @@
-﻿using LibPipeline;
+﻿using LibNetwork;
+using LibPipeline;
 using Marv.Common;
 using Marv.Controls;
 using System;
@@ -12,7 +13,7 @@ namespace Marv
     {
         private SerialPort serialPort = new SerialPort();
         private DispatcherTimer timer = new DispatcherTimer();
-        private BnVertexViewModel vertexViewModel = null;
+        private VertexViewModel vertexViewModel = null;
 
         public SensorListener()
         {
@@ -27,9 +28,9 @@ namespace Marv
             this.timer.Tick += timer_Tick;
         }
 
-        public event EventHandler<ValueEventArgs<BnVertexViewModel>> NewEvidenceAvailable;
+        public event EventHandler<ValueEventArgs<VertexViewModel>> NewEvidenceAvailable;
 
-        public void Start(BnVertexViewModel aVertexViewModel)
+        public void Start(VertexViewModel aVertexViewModel)
         {
             this.vertexViewModel = aVertexViewModel;
 
@@ -68,7 +69,7 @@ namespace Marv
 
                 if (handler != null)
                 {
-                    handler(this, new ValueEventArgs<BnVertexViewModel>
+                    handler(this, new ValueEventArgs<VertexViewModel>
                     {
                         Value = this.vertexViewModel
                     });

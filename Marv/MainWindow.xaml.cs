@@ -134,7 +134,7 @@ namespace Marv
 
         public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
         {
-            var graph = Graph.Read<BnVertexViewModel>(networkFileName);
+            var graph = Graph.Read<VertexViewModel>(networkFileName);
             var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
 
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);

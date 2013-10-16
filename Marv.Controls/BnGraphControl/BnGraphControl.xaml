@@ -12,7 +12,12 @@
              Background="Black"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
@@ -147,6 +152,34 @@
                                                                    Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                                             <!-- Toolbar -->
+                                            <ItemsControl ItemsSource="{Binding VertexCommands, ElementName=Root}"
+                                                          Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Background="Red"
+                                                                    Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Visibility="{Binding IsVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                                                            <Button.Template>
+                                                                <ControlTemplate>
+                                                                    <Label Background="{StaticResource ResourceKey=BackgroundDark}">
+                                                                        <Image Source="{Binding ImageSource}" />
+                                                                    </Label>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                            
+                                                            <i:Interaction.Behaviors>
+                                                                <local:ToolbarButtonClickBehavior />
+                                                            </i:Interaction.Behaviors>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                                          
                                             <StackPanel HorizontalAlignment="Center"
                                                         Margin="5"
                                                         Orientation="Horizontal"

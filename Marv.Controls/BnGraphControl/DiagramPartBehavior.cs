@@ -1,4 +1,5 @@
-﻿using Marv.Common;
+﻿using LibNetwork;
+using Marv.Common;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Marv.Controls
 
             foreach (var item in e.RemovedItems)
             {
-                BnVertexViewModel vertexViewModel = item as BnVertexViewModel;
+                VertexViewModel vertexViewModel = item as VertexViewModel;
 
                 if (vertexViewModel != null)
                 {
@@ -58,7 +59,7 @@ namespace Marv.Controls
                     if (vertexViewModel.IsEvidenceEntered)
                     {
                         var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-                        parentGraphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+                        parentGraphControl.RaiseEvent(new ValueEventArgs<VertexViewModel>
                         {
                             RoutedEvent = BnGraphControl.NewEvidenceAvailableEvent,
                             Value = vertexViewModel
@@ -69,7 +70,7 @@ namespace Marv.Controls
 
             foreach (var item in e.AddedItems)
             {
-                BnVertexViewModel vertexViewModel = item as BnVertexViewModel;
+                VertexViewModel vertexViewModel = item as VertexViewModel;
 
                 if (vertexViewModel != null)
                 {

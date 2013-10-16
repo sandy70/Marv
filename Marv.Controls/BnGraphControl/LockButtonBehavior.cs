@@ -1,4 +1,5 @@
-﻿using Marv.Common;
+﻿using LibNetwork;
+using Marv.Common;
 using System.Windows;
 using System.Windows.Interactivity;
 using Telerik.Windows.Controls;
@@ -15,14 +16,14 @@ namespace Marv.Controls
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
+            var vertexViewModel = this.AssociatedObject.DataContext as VertexViewModel;
             vertexViewModel.IsLocked = !vertexViewModel.IsLocked;
 
             if (vertexViewModel.IsLocked && vertexViewModel.IsEvidenceEntered)
             {
                 var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
 
-                parentGraphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+                parentGraphControl.RaiseEvent(new ValueEventArgs<VertexViewModel>
                 {
                     RoutedEvent = BnGraphControl.NewEvidenceAvailableEvent,
                     Value = vertexViewModel

@@ -31,7 +31,7 @@ namespace Marv
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
         }
 
-        private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<VertexViewModel> e)
         {
             var window = this.AssociatedObject;
             var displayGraph = window.DisplayGraph;
@@ -42,7 +42,7 @@ namespace Marv
             window.IsBackButtonVisible = true;
         }
 
-        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<VertexViewModel> e)
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
@@ -64,14 +64,14 @@ namespace Marv
             }
         }
 
-        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<VertexViewModel> e)
         {
             var graph = this.AssociatedObject.SourceGraph;
             var vertex = e.Value;
             graph.Value = graph.ClearEvidence(vertex.Key);
         }
 
-        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<VertexViewModel> e)
         {
             var window = this.AssociatedObject;
 
@@ -91,7 +91,7 @@ namespace Marv
             }
         }
 
-        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<VertexViewModel> e)
         {
             this.AssociatedObject.SensorListener.Stop();
         }

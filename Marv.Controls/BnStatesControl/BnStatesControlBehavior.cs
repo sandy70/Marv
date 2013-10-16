@@ -17,7 +17,7 @@ namespace Marv.Controls
         {
             var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
             var state = e.Value;
-            var vertex = this.AssociatedObject.DataContext as BnVertexViewModel;
+            var vertex = this.AssociatedObject.DataContext as VertexViewModel;
 
             parentGraphControl.RaiseEvent(new BnGraphControlEventArgs
             {
@@ -29,7 +29,7 @@ namespace Marv.Controls
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<State> e)
         {
-            var vertexViewModel = this.AssociatedObject.DataContext as BnVertexViewModel;
+            var vertexViewModel = this.AssociatedObject.DataContext as VertexViewModel;
             vertexViewModel.IsEvidenceEntered = true;
         }
     }

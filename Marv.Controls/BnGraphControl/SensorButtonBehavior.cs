@@ -1,4 +1,5 @@
-﻿using Marv.Common;
+﻿using LibNetwork;
+using Marv.Common;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interactivity;
 
@@ -14,10 +15,10 @@ namespace Marv.Controls
                 {
                     var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
 
-                    parentGraphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+                    parentGraphControl.RaiseEvent(new ValueEventArgs<VertexViewModel>
                     {
                         RoutedEvent = BnGraphControl.SensorButtonCheckedEvent,
-                        Value = this.AssociatedObject.DataContext as BnVertexViewModel
+                        Value = this.AssociatedObject.DataContext as VertexViewModel
                     });
                 };
 
@@ -25,10 +26,10 @@ namespace Marv.Controls
                 {
                     var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
 
-                    parentGraphControl.RaiseEvent(new ValueEventArgs<BnVertexViewModel>
+                    parentGraphControl.RaiseEvent(new ValueEventArgs<VertexViewModel>
                     {
                         RoutedEvent = BnGraphControl.SensorButtonUncheckedEvent,
-                        Value = this.AssociatedObject.DataContext as BnVertexViewModel
+                        Value = this.AssociatedObject.DataContext as VertexViewModel
                     });
                 };
         }

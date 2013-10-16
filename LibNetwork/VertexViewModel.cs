@@ -1,16 +1,15 @@
-﻿﻿using LibNetwork;
-using System.ComponentModel;
+﻿﻿using System.ComponentModel;
 
-namespace Marv.Controls
+namespace LibNetwork
 {
-    public class BnVertexViewModel : Vertex
+    public class VertexViewModel : Vertex
     {
         private bool isLocked = true;
         private bool isSelected = false;
         private bool isSensorChecked = false;
         private double opacity = 1;
 
-        public BnVertexViewModel()
+        public VertexViewModel()
             : base()
         {
             this.PropertyChanged += BnVertexViewModel_PropertyChanged;
