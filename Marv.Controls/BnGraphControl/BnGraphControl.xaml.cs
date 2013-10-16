@@ -1,5 +1,4 @@
 ﻿using Marv.Common;
-using Marv.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;

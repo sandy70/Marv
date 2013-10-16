@@ -1,5 +1,4 @@
 ﻿using Marv.Common;
-using Marv.Common;
 using System.Windows.Interactivity;
 
 namespace Marv.Controls

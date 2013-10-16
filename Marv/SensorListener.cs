@@ -1,7 +1,4 @@
 ﻿using Marv.Common;
-using LibPipeline;
-using Marv.Common;
-using Marv.Controls;
 using System;
 using System.IO.Ports;
 using System.Linq;
@@ -23,7 +20,7 @@ namespace Marv
             this.serialPort.StopBits = StopBits.One;
             this.serialPort.ReadTimeout = 10;
             this.serialPort.WriteTimeout = 2000;
-            
+
             this.timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             this.timer.Tick += timer_Tick;
         }

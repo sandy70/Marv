@@ -1,5 +1,4 @@
-﻿using Marv.Common;
-using QuickGraph;
+﻿using QuickGraph;
 using QuickGraph.Algorithms.RankedShortestPath;
 using Smile;
 using System;
@@ -290,11 +289,6 @@ namespace Marv.Common
             }
 
             return graphValue;
-        }
-
-        public int GetNodeHandle(string vertexKey)
-        {
-            return this.network.GetNode(vertexKey);
         }
 
         public double GetStandardDeviation(string vertexKey, VertexValue vertexValue)

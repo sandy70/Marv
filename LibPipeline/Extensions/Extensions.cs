@@ -45,8 +45,6 @@ namespace LibPipeline
             return graphs.SingleOrDefault(x => x.Name.Equals(name));
         }
 
-
-
         public static IEnumerable<Location> Reduce(this IEnumerable<Location> locations, MapView mapView, double tolerance = 10, Dictionary<Location, Point> viewportPointCache = null, int level = 0)
         {
             if (locations.Count() <= 2)
@@ -111,4 +109,3 @@ namespace LibPipeline
         }
     }
 }
-

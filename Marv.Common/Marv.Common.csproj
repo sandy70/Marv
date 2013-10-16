@@ -91,8 +91,8 @@
     <Compile Include="Graph\VertexCommand\VertexExpandCommand.cs" />
     <Compile Include="Graph\VertexCommand\VertexLockCommand.cs" />
     <Compile Include="Graph\VertexValue.cs" />
-    <Compile Include="NetworkStructure\NetworkStructure.cs" />
-    <Compile Include="NetworkStructure\NetworkStructureVertex.cs" />
+    <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
+    <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
     <Compile Include="Notifications\INotification.cs" />
     <Compile Include="Notifications\NotificationBase.cs" />
     <Compile Include="Notifications\IndeterminateNotification.cs" />

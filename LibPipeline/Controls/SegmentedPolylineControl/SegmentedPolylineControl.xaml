@@ -55,7 +55,7 @@
         <Label mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
                Background="LightGray"
                Content="{Binding Locations.Name, ElementName=Root}"
-               Visibility="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}"/>
+               Visibility="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}" />
 
         <Ellipse Name="Ellipse"
                 mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"

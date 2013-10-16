@@ -61,7 +61,7 @@
                     <Setter Property="Position" Value="{Binding DisplayPosition, Mode=TwoWay}" />
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsLocked}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    
+
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -162,7 +162,7 @@
                                                                 Orientation="Horizontal" />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
-                                                
+
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Height="40" Width="40"
@@ -174,7 +174,7 @@
                                                                 </Border>
                                                             </ControlTemplate>
                                                         </Button.Template>
-                                                            
+
                                                         <i:Interaction.Behaviors>
                                                             <local:ToolbarButtonClickBehavior />
                                                         </i:Interaction.Behaviors>

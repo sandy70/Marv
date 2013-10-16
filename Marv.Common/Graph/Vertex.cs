@@ -1,5 +1,4 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -160,7 +159,6 @@ namespace Marv.Common
                 if (value != this.isExpanded)
                 {
                     this.isExpanded = value;
-
                     this.RaisePropertyChanged("IsExpanded");
                 }
             }
@@ -177,11 +175,6 @@ namespace Marv.Common
             {
                 isHeader = value;
                 RaisePropertyChanged("IsHeader");
-
-                if (this.IsHeader)
-                {
-                    this.Commands.Push(VertexCommand.VertexSubGraphCommand);
-                }
             }
         }
 

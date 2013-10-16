@@ -1428,7 +1428,7 @@ namespace Smile
 
 			DSL_Dmatrix *m = NULL;
 			int res = value->GetValue(&m);
-			
+
 			if (DSL_OKAY != res)
 			{
 				String *msg = String::Format(
@@ -2791,8 +2791,6 @@ namespace Smile
 				parentId);
 			throw new SmileException(msg);
 		}
-
-
 
 		int& _NodeScrInfoRef(int nodeHandle, int DSL_screenInfo::*clrPtr)
 		{
