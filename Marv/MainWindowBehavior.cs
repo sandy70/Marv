@@ -54,7 +54,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.SourceGraph = await Graph.ReadAsync<VertexViewModel>(window.NetworkFileName);
+            window.SourceGraph = await Graph.ReadAsync<Vertex>(window.NetworkFileName);
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
             window.MultiLocations = new SelectableCollection<MultiLocation>();

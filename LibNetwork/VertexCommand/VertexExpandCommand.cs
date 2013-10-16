@@ -8,10 +8,11 @@ namespace LibNetwork
 {
     public class VertexExpandCommand : VertexCommand
     {
-        public override void Execute(VertexViewModel vertexViewModel)
+        public override void RaiseExecuted(Vertex vertexViewModel)
         {
-            base.Execute(vertexViewModel);
             vertexViewModel.IsExpanded = !vertexViewModel.IsExpanded;
+
+            base.RaiseExecuted(vertexViewModel);
         }
     }
 }

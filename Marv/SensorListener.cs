@@ -13,7 +13,7 @@ namespace Marv
     {
         private SerialPort serialPort = new SerialPort();
         private DispatcherTimer timer = new DispatcherTimer();
-        private VertexViewModel vertexViewModel = null;
+        private Vertex vertexViewModel = null;
 
         public SensorListener()
         {
@@ -28,9 +28,9 @@ namespace Marv
             this.timer.Tick += timer_Tick;
         }
 
-        public event EventHandler<ValueEventArgs<VertexViewModel>> NewEvidenceAvailable;
+        public event EventHandler<ValueEventArgs<Vertex>> NewEvidenceAvailable;
 
-        public void Start(VertexViewModel aVertexViewModel)
+        public void Start(Vertex aVertexViewModel)
         {
             this.vertexViewModel = aVertexViewModel;
 
@@ -69,7 +69,7 @@ namespace Marv
 
                 if (handler != null)
                 {
-                    handler(this, new ValueEventArgs<VertexViewModel>
+                    handler(this, new ValueEventArgs<Vertex>
                     {
                         Value = this.vertexViewModel
                     });

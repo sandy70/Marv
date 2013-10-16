@@ -49,7 +49,7 @@ namespace Marv.Controls
 
             foreach (var item in e.RemovedItems)
             {
-                VertexViewModel vertexViewModel = item as VertexViewModel;
+                Vertex vertexViewModel = item as Vertex;
 
                 if (vertexViewModel != null)
                 {
@@ -59,7 +59,7 @@ namespace Marv.Controls
                     if (vertexViewModel.IsEvidenceEntered)
                     {
                         var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
-                        parentGraphControl.RaiseEvent(new ValueEventArgs<VertexViewModel>
+                        parentGraphControl.RaiseEvent(new ValueEventArgs<Vertex>
                         {
                             RoutedEvent = BnGraphControl.NewEvidenceAvailableEvent,
                             Value = vertexViewModel
@@ -70,7 +70,7 @@ namespace Marv.Controls
 
             foreach (var item in e.AddedItems)
             {
-                VertexViewModel vertexViewModel = item as VertexViewModel;
+                Vertex vertexViewModel = item as Vertex;
 
                 if (vertexViewModel != null)
                 {

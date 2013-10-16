@@ -18,7 +18,7 @@ namespace Marv.Controls
         DependencyProperty.Register("Graph", typeof(Graph), typeof(BnGraphControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent GroupButtonClickedEvent =
-        EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<VertexViewModel>>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("GroupButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Vertex>>), typeof(BnGraphControl));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -27,22 +27,22 @@ namespace Marv.Controls
         DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(BnGraphControl), new PropertyMetadata(true));
 
         public static readonly RoutedEvent NewEvidenceAvailableEvent =
-        EventManager.RegisterRoutedEvent("NewEvidenceAvailable", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<VertexViewModel>>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("NewEvidenceAvailable", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Vertex>>), typeof(BnGraphControl));
 
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
         DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.Red));
 
         public static readonly RoutedEvent RetractButtonClickedEvent =
-        EventManager.RegisterRoutedEvent("RetractButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<VertexViewModel>>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("RetractButtonClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Vertex>>), typeof(BnGraphControl));
 
         public static readonly DependencyProperty SelectedVertexViewModelProperty =
-        DependencyProperty.Register("SelectedVertexViewModel", typeof(VertexViewModel), typeof(BnGraphControl), new PropertyMetadata(null));
+        DependencyProperty.Register("SelectedVertexViewModel", typeof(Vertex), typeof(BnGraphControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent SensorButtonCheckedEvent =
-        EventManager.RegisterRoutedEvent("SensorButtonChecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<VertexViewModel>>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("SensorButtonChecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Vertex>>), typeof(BnGraphControl));
 
         public static readonly RoutedEvent SensorButtonUncheckedEvent =
-        EventManager.RegisterRoutedEvent("SensorButtonUnchecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<VertexViewModel>>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("SensorButtonUnchecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<Vertex>>), typeof(BnGraphControl));
 
         public static readonly DependencyProperty ShapeOpacityProperty =
         DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
@@ -55,31 +55,31 @@ namespace Marv.Controls
             InitializeComponent();
         }
 
-        public event RoutedEventHandler<ValueEventArgs<VertexViewModel>> GroupButtonClicked
+        public event RoutedEventHandler<ValueEventArgs<Vertex>> GroupButtonClicked
         {
             add { AddHandler(GroupButtonClickedEvent, value); }
             remove { RemoveHandler(GroupButtonClickedEvent, value); }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<VertexViewModel>> NewEvidenceAvailable
+        public event RoutedEventHandler<ValueEventArgs<Vertex>> NewEvidenceAvailable
         {
             add { AddHandler(NewEvidenceAvailableEvent, value); }
             remove { RemoveHandler(NewEvidenceAvailableEvent, value); }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<VertexViewModel>> RetractButtonClicked
+        public event RoutedEventHandler<ValueEventArgs<Vertex>> RetractButtonClicked
         {
             add { AddHandler(RetractButtonClickedEvent, value); }
             remove { RemoveHandler(RetractButtonClickedEvent, value); }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<VertexViewModel>> SensorButtonChecked
+        public event RoutedEventHandler<ValueEventArgs<Vertex>> SensorButtonChecked
         {
             add { AddHandler(SensorButtonCheckedEvent, value); }
             remove { RemoveHandler(SensorButtonCheckedEvent, value); }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<VertexViewModel>> SensorButtonUnchecked
+        public event RoutedEventHandler<ValueEventArgs<Vertex>> SensorButtonUnchecked
         {
             add { AddHandler(SensorButtonUncheckedEvent, value); }
             remove { RemoveHandler(SensorButtonUncheckedEvent, value); }
@@ -121,9 +121,9 @@ namespace Marv.Controls
             set { SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
-        public VertexViewModel SelectedVertexViewModel
+        public Vertex SelectedVertexViewModel
         {
-            get { return (VertexViewModel)GetValue(SelectedVertexViewModelProperty); }
+            get { return (Vertex)GetValue(SelectedVertexViewModelProperty); }
             set { SetValue(SelectedVertexViewModelProperty, value); }
         }
 

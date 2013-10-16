@@ -7,7 +7,7 @@ namespace Marv.Controls
     {
         private State state;
 
-        private VertexViewModel vertex;
+        private Vertex vertex;
 
         public BnGraphControlEventArgs()
             : base()
@@ -30,7 +30,7 @@ namespace Marv.Controls
             set { state = value; }
         }
 
-        public VertexViewModel Vertex
+        public Vertex Vertex
         {
             get { return vertex; }
             set { vertex = value; }

@@ -31,14 +31,14 @@ namespace Marv
             VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
         }
 
-        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<VertexViewModel> e)
+        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<Vertex> e)
         {
             var graph = this.AssociatedObject.SourceGraph;
             var vertex = e.Value;
             graph.Value = graph.ClearEvidence(vertex.Key);
         }
 
-        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<VertexViewModel> e)
+        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<Vertex> e)
         {
             var window = this.AssociatedObject;
 
@@ -58,7 +58,7 @@ namespace Marv
             }
         }
 
-        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<VertexViewModel> e)
+        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<Vertex> e)
         {
             this.AssociatedObject.SensorListener.Stop();
         }
@@ -97,13 +97,13 @@ namespace Marv
             }
         }
 
-        private void VertexClearCommand_Executed(object sender, VertexViewModel vertex)
+        private void VertexClearCommand_Executed(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.SourceGraph;
             graph.Value = graph.ClearEvidence(vertex.Key);
         }
 
-        private void VertexLockCommand_Executed(object sender, VertexViewModel vertex)
+        private void VertexLockCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
@@ -127,7 +127,7 @@ namespace Marv
             }
         }
 
-        private void VertexSubGraphCommand_Executed(object sender, VertexViewModel vertex)
+        private void VertexSubGraphCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
             var displayGraph = window.DisplayGraph;

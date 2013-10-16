@@ -8,11 +8,9 @@ namespace LibNetwork
 {
     public class VertexLockCommand : VertexCommand
     {
-        public override void Execute(VertexViewModel vertexViewModel)
+        public override void RaiseExecuted(Vertex vertexViewModel)
         {
             vertexViewModel.IsLocked = !vertexViewModel.IsLocked;
-
-            base.Execute(vertexViewModel);
 
             if (vertexViewModel.IsLocked)
             {
@@ -22,6 +20,8 @@ namespace LibNetwork
             {
                 this.ImageSource = "/Marv.Common;component/Resources/Icons/Unlock.png";
             }
+
+            base.RaiseExecuted(vertexViewModel);
         }
     }
 }

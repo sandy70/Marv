@@ -27,7 +27,7 @@ namespace LibNetwork
 
         private string imageSource;
 
-        public event EventHandler<VertexViewModel> Executed;
+        public event EventHandler<Vertex> Executed;
 
         public string ImageSource
         {
@@ -46,7 +46,7 @@ namespace LibNetwork
             }
         }
 
-        public virtual void Execute(VertexViewModel vertexViewModel)
+        public virtual void RaiseExecuted(Vertex vertexViewModel)
         {
             if (this.Executed != null)
             {

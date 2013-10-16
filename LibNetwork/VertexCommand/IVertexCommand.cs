@@ -5,10 +5,10 @@ namespace LibNetwork
 {
     public interface IVertexCommand : INotifyPropertyChanged
     {
-        event EventHandler<VertexViewModel> Executed;
+        event EventHandler<Vertex> Executed;
 
         string ImageSource { get; set; }
 
-        void Execute(VertexViewModel vertexViewModel);
+        void RaiseExecuted(Vertex vertexViewModel);
     }
 }
