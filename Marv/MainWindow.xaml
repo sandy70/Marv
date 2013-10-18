@@ -110,7 +110,13 @@
 
                 <Grid Grid.Column="0"
                       Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    
                     <libpipeline:MapView Name="MapView"
+                                         Grid.Row="0"
                                          IsManipulationEnabled="True"
                                          ManipulationMode="Scale,Translate"
                                          MaxZoomLevel="21"
@@ -142,6 +148,7 @@
 
                     <!-- Property Grid -->
                     <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                                             Grid.Row="0"
                                              AutoGeneratePropertyDefinitions="False"
                                              DescriptionPanelVisibility="Collapsed"
                                              Effect="{StaticResource ResourceKey=DropShadow}"
@@ -167,6 +174,24 @@
                                                         DisplayName="PoF" />
                         </telerik:RadPropertyGrid.PropertyDefinitions>
                     </telerik:RadPropertyGrid>
+                    
+                    <telerik:RadCartesianChart Grid.Row="1">
+                        <telerik:RadCartesianChart.HorizontalAxis>
+                            <telerik:LinearAxis />
+                        </telerik:RadCartesianChart.HorizontalAxis>
+                        
+                        <telerik:RadCartesianChart.VerticalAxis>
+                            <telerik:LinearAxis />
+                        </telerik:RadCartesianChart.VerticalAxis>
+                        
+                        <telerik:RadCartesianChart.Series>
+                            <telerik:ScatterLineSeries ItemsSource="{Binding GraphValueTimeSeries, ElementName=Root}"
+                                                       XValueBinding="Key"
+                                                       YValueBinding="Value[coatd][No]">
+                                
+                            </telerik:ScatterLineSeries>
+                        </telerik:RadCartesianChart.Series>
+                    </telerik:RadCartesianChart>
                 </Grid>
 
                 <GridSplitter Grid.Column="1"
@@ -175,7 +200,7 @@
                               Width="30"
                               Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                <!-- GraphControl -->
+                <!-- Graph Control -->
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -253,6 +278,7 @@
                     </Grid>
                 </Grid>
 
+                <!-- Notification Control -->
                 <marvcontrols:NotificationControl x:Name="NotificationControl"
                                                 Grid.Column="0" Grid.ColumnSpan="3"
                                                 Background="#DDDDDD"
