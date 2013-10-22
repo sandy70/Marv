@@ -2,6 +2,7 @@
 using Marv.Common;
 using NLog;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,7 +24,7 @@ namespace Marv
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
         }
 
-        private void AssociatedObject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void AssociatedObject_Closing(object sender, CancelEventArgs e)
         {
             this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.NetworkFileName);
             Properties.Settings.Default.Save();
