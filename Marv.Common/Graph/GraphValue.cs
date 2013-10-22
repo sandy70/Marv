@@ -26,6 +26,12 @@ namespace Marv.Common
 
                 var vertex = graph.GetVertex(vertexKey);
 
+                // Ignore if the vertex key does not exist in the given graph
+                if (vertex == null)
+                {
+                    continue;
+                }
+
                 int nParts = parts.Count();
 
                 for (int p = 1; p < nParts; p++)
