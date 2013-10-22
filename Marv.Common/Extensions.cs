@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -165,6 +167,21 @@ namespace Marv.Common
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
         {
             return untrimmed.Select(x => x.Trim());
+        }
+
+        public static void WriteJson(this object _object, string fileName)
+        {
+            var serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            serializer.Formatting = Formatting.Indented;
+
+            using (var streamWriter = new StreamWriter(fileName))
+            {
+                using (var jsonTextWriter = new JsonTextWriter(streamWriter))
+                {
+                    serializer.Serialize(jsonTextWriter, _object);
+                }
+            }
         }
     }
 }
