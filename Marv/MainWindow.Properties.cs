@@ -32,9 +32,6 @@ namespace Marv
         public static readonly DependencyProperty IsBackButtonVisibleProperty =
         DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsGroupButtonVisibleProperty =
-        DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
         public static readonly DependencyProperty IsLogoVisibleProperty =
         DependencyProperty.Register("IsLogoVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
@@ -44,14 +41,8 @@ namespace Marv
         public static readonly DependencyProperty IsMenuVisibleProperty =
         DependencyProperty.Register("IsMenuVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsProfileSelectedProperty =
-        DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
         public static readonly DependencyProperty IsPropertyGridVisibleProperty =
         DependencyProperty.Register("IsPropertyGridVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsSensorButtonVisibleProperty =
-        DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsSettingsControlVisibleProperty =
         DependencyProperty.Register("IsSettingsControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -137,12 +128,6 @@ namespace Marv
             set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
-        public bool IsGroupButtonVisible
-        {
-            get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
-            set { SetValue(IsGroupButtonVisibleProperty, value); }
-        }
-
         public bool IsLogoVisible
         {
             get { return (bool)GetValue(IsLogoVisibleProperty); }
@@ -165,12 +150,6 @@ namespace Marv
         {
             get { return (bool)GetValue(IsPropertyGridVisibleProperty); }
             set { SetValue(IsPropertyGridVisibleProperty, value); }
-        }
-
-        public bool IsSensorButtonVisible
-        {
-            get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
-            set { SetValue(IsSensorButtonVisibleProperty, value); }
         }
 
         public bool IsTallySelected
