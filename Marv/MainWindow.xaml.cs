@@ -21,6 +21,7 @@ namespace Marv
         public string selectedGroup = null;
         public SensorListener SensorListener = new SensorListener();
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private Dictionary<int, GraphValue> graphValueTimeSeries = new Dictionary<int, GraphValue>();
 
         public MainWindow()
         {
@@ -160,7 +161,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.GraphValueTimeSeries = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+                this.graphValueTimeSeries = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {
@@ -174,6 +175,19 @@ namespace Marv
                     Description = message
                 });
             }
+        }
+
+        public void ReadGraphValueTimeSeriesCnpc()
+        {
+            foreach (var fileName in Directory.GetFiles(this.InputDir, "*.vertices"))
+            {
+                var year = Int32.Parse(Path.GetFileNameWithoutExtension(fileName));
+                this.graphValueTimeSeries[year] = GraphValue.ReadCsv(fileName, this.SourceGraph);
+            }
+
+            this.ChartPoints = this.graphValueTimeSeries
+                                   .ToDictionary(kvp => kvp.Key, kvp => kvp.Value["coatd"]["YEs"])
+                                   .ToObservableCollection();
         }
 
         public void ReadMultiLocationValueTimeSeriesForMultiLocation()
@@ -194,11 +208,11 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.GraphValueTimeSeries != null)
+            if (this.graphValueTimeSeries != null)
             {
-                if (this.GraphValueTimeSeries.ContainsKey(this.SelectedYear))
+                if (this.graphValueTimeSeries.ContainsKey(this.SelectedYear))
                 {
-                    this.SourceGraph.Value = this.GraphValueTimeSeries[this.SelectedYear];
+                    this.SourceGraph.Value = this.graphValueTimeSeries[this.SelectedYear];
                 }
                 else
                 {

@@ -65,7 +65,7 @@ namespace Marv
                 window.ReadMultiLocationValueTimeSeriesForMultiLocation();
                 window.UpdateMultiLocationValues();
 
-                window.ReadGraphValueTimeSeries();
+                window.ReadGraphValueTimeSeriesCnpc();
                 window.UpdateGraphValue();
             }
             catch (IOException exp)

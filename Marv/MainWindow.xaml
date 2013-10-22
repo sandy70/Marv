@@ -185,9 +185,9 @@
                         </telerik:RadCartesianChart.VerticalAxis>
                         
                         <telerik:RadCartesianChart.Series>
-                            <telerik:ScatterLineSeries ItemsSource="{Binding GraphValueTimeSeries, ElementName=Root}"
+                            <telerik:ScatterLineSeries ItemsSource="{Binding ChartPoints, ElementName=Root}"
                                                        XValueBinding="Key"
-                                                       YValueBinding="Value[coatd][No]">
+                                                       YValueBinding="Value">
                                 
                             </telerik:ScatterLineSeries>
                         </telerik:RadCartesianChart.Series>

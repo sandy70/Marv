@@ -20,9 +20,6 @@ namespace Marv
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
-        public static readonly DependencyProperty GraphValueTimeSeriesProperty =
-        DependencyProperty.Register("GraphValueTimeSeries", typeof(GraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty InputDirProperty =
         DependencyProperty.Register("InputDir", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
 
@@ -102,12 +99,6 @@ namespace Marv
         {
             get { return (int)GetValue(EndYearProperty); }
             set { SetValue(EndYearProperty, value); }
-        }
-
-        public GraphValueTimeSeries GraphValueTimeSeries
-        {
-            get { return (GraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
-            set { SetValue(GraphValueTimeSeriesProperty, value); }
         }
 
         public string InputDir
