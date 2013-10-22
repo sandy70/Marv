@@ -147,6 +147,21 @@ namespace Marv.Common
             return str;
         }
 
+        public static ObservableCollection<ObservableKeyValuePair<TKey, TValue>> ToObservableCollection<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        {
+            return new ObservableCollection<ObservableKeyValuePair<TKey, TValue>>
+            (
+                dictionary.Select
+                (
+                    kvp => new ObservableKeyValuePair<TKey, TValue>
+                    {
+                        Key = kvp.Key,
+                        Value = kvp.Value
+                    }
+                )
+            );
+        }
+
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
         {
             return untrimmed.Select(x => x.Trim());
