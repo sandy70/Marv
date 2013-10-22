@@ -61,42 +61,6 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\Koc\\Tally.xlsx")]
-        public string TallyFileName {
-            get {
-                return ((string)(this["TallyFileName"]));
-            }
-            set {
-                this["TallyFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\BP\\BpData.xlsx")]
-        public string ProfileFileName {
-            get {
-                return ((string)(this["ProfileFileName"]));
-            }
-            set {
-                this["ProfileFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsSensorButtonVisible {
-            get {
-                return ((bool)(this["IsSensorButtonVisible"]));
-            }
-            set {
-                this["IsSensorButtonVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(".\\")]
         public string CacheDirectory {
             get {
@@ -181,7 +145,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO_08.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\CNPC\\MODEL_CNPC_10152013.net")]
         public string NetworkFileName {
             get {
                 return ((string)(this["NetworkFileName"]));

@@ -1,8 +1,8 @@
 ﻿using LibPipeline;
 using Marv.Common;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 
 namespace Marv
 {
@@ -10,6 +10,9 @@ namespace Marv
     {
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
+
+        public static readonly DependencyProperty ChartPointsProperty =
+        DependencyProperty.Register("ChartPoints", typeof(ObservableCollection<ObservableKeyValuePair<int, double>>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
@@ -87,6 +90,12 @@ namespace Marv
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
+        }
+
+        public ObservableCollection<ObservableKeyValuePair<int, double>> ChartPoints
+        {
+            get { return (ObservableCollection<ObservableKeyValuePair<int, double>>)GetValue(ChartPointsProperty); }
+            set { SetValue(ChartPointsProperty, value); }
         }
 
         public Graph DisplayGraph

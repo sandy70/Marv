@@ -193,6 +193,7 @@
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="RiskValueToBrushMap.cs" />
+    <Compile Include="ScatterPoint.cs" />
     <Compile Include="SensorListener.cs" />
     <Page Include="ResourceDictionary.xaml">
       <SubType>Designer</SubType>

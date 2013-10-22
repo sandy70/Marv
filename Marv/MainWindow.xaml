@@ -27,7 +27,6 @@
                 <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-                <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
