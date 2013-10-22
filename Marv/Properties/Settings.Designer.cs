@@ -154,5 +154,17 @@ namespace Marv.Properties {
                 this["NetworkFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\CNPC\\GraphValues")]
+        public string InputDir {
+            get {
+                return ((string)(this["InputDir"]));
+            }
+            set {
+                this["InputDir"] = value;
+            }
+        }
     }
 }

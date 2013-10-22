@@ -23,6 +23,9 @@ namespace Marv
         public static readonly DependencyProperty GraphValueTimeSeriesProperty =
         DependencyProperty.Register("GraphValueTimeSeries", typeof(GraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty InputDirProperty =
+        DependencyProperty.Register("InputDir", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
+
         public static readonly DependencyProperty InputFileNameProperty =
         DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -114,6 +117,12 @@ namespace Marv
         {
             get { return (GraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
             set { SetValue(GraphValueTimeSeriesProperty, value); }
+        }
+
+        public string InputDir
+        {
+            get { return (string)GetValue(InputDirProperty); }
+            set { SetValue(InputDirProperty, value); }
         }
 
         public string InputFileName
