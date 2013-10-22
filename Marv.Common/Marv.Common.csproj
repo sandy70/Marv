@@ -93,6 +93,7 @@
     <Compile Include="Graph\VertexValue.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
+    <Compile Include="IPoint.cs" />
     <Compile Include="Notifications\INotification.cs" />
     <Compile Include="Notifications\NotificationBase.cs" />
     <Compile Include="Notifications\IndeterminateNotification.cs" />
