@@ -177,19 +177,23 @@
                     
                     <telerik:RadCartesianChart Grid.Row="1">
                         <telerik:RadCartesianChart.HorizontalAxis>
-                            <telerik:LinearAxis />
+                            <telerik:LinearAxis Title="Year" />
                         </telerik:RadCartesianChart.HorizontalAxis>
                         
                         <telerik:RadCartesianChart.VerticalAxis>
-                            <telerik:LinearAxis />
+                            <telerik:LinearAxis Title="Prob. of Coating Disbondment" />
                         </telerik:RadCartesianChart.VerticalAxis>
                         
                         <telerik:RadCartesianChart.Series>
-                            <telerik:ScatterLineSeries ItemsSource="{Binding ChartPoints, ElementName=Root}"
-                                                       XValueBinding="Key"
-                                                       YValueBinding="Value">
-                                
-                            </telerik:ScatterLineSeries>
+                            <telerik:ScatterPointSeries ItemsSource="{Binding ChartPoints, ElementName=Root}"
+                                                        XValueBinding="Key"
+                                                        YValueBinding="Value">
+                                <telerik:ScatterPointSeries.PointTemplate>
+                                    <DataTemplate>
+                                        <Ellipse Fill="Red" Stroke="Yellow" Width="10" Height="20" />
+                                    </DataTemplate>
+                                </telerik:ScatterPointSeries.PointTemplate>
+                            </telerik:ScatterPointSeries>
                         </telerik:RadCartesianChart.Series>
                     </telerik:RadCartesianChart>
                 </Grid>

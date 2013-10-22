@@ -82,15 +82,12 @@
     <Compile Include="Graph\Evidence\IEvidence.cs" />
     <Compile Include="Graph\Evidence\SoftEvidence.cs" />
     <Compile Include="Graph\Graph.cs" />
-    <Compile Include="Graph\GraphValue.cs" />
-    <Compile Include="Graph\GraphValueTimeSeries.cs" />
     <Compile Include="Graph\InconsistentEvidenceException.cs" />
     <Compile Include="Graph\Vertex.cs" />
     <Compile Include="Graph\VertexCommand\IVertexCommand.cs" />
     <Compile Include="Graph\VertexCommand\VertexCommand.cs" />
     <Compile Include="Graph\VertexCommand\VertexExpandCommand.cs" />
     <Compile Include="Graph\VertexCommand\VertexLockCommand.cs" />
-    <Compile Include="Graph\VertexValue.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
     <Compile Include="IPoint.cs" />

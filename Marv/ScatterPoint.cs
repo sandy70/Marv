@@ -1,6 +1,7 @@
 ﻿using Marv.Common;
 using System.Collections.Generic;
 using System.Linq;
+using Telerik.Charting;
 
 namespace Marv
 {
@@ -23,7 +24,7 @@ namespace Marv
                     this.y = value;
                     this.RaisePropertyChanged("Y");
 
-                    var dict3D = new Dictionary<int, string, string>();
+                    var scatter = new ScatterDataPoint();
                 }
             }
         }

@@ -383,7 +383,7 @@ namespace Marv.Common
             }
         }
 
-        public VertexValue Value
+        public Dictionary<string, double> Value
         {
             set
             {
@@ -393,13 +393,12 @@ namespace Marv.Common
                 }
 
                 this.UpdateMostProbableState();
-                this.IsEvidenceEntered = value.IsEvidenceEntered;
 
                 this.RaisePropertyChanged("Value");
             }
         }
 
-        public double GetMean(VertexValue vertexValue)
+        public double GetMean(Dictionary<string, double> vertexValue)
         {
             double numer = 0;
             double denom = 0;
@@ -448,7 +447,7 @@ namespace Marv.Common
                 return this.States.IndexOf(selectedState);
         }
 
-        public double GetStandardDeviation(VertexValue vertexValue)
+        public double GetStandardDeviation(Dictionary<string, double> vertexValue)
         {
             // Formula for standard deviation of a pdf
             // stdev = sqrt(sum((x - mu)^2 * P(x));

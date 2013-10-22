@@ -6,10 +6,10 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
-using System.Linq;
 
 namespace Marv
 {
@@ -21,7 +21,7 @@ namespace Marv
         public string selectedGroup = null;
         public SensorListener SensorListener = new SensorListener();
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private Dictionary<int, GraphValue> graphValueTimeSeries = new Dictionary<int, GraphValue>();
+        private Dictionary<int, string, string, double> graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
         public MainWindow()
         {
@@ -75,7 +75,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+                    var modelValue = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -140,7 +140,7 @@ namespace Marv
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            Odb.Write<GraphValueTimeSeries>(fileName, graphValueTimeSeries);
+            Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
@@ -161,7 +161,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.graphValueTimeSeries = Odb.ReadValueSingle<GraphValueTimeSeries>(fileName, x => true);
+                this.graphValueTimeSeries = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
             }
             catch (OdbDataNotFoundException exp)
             {
@@ -182,7 +182,7 @@ namespace Marv
             foreach (var fileName in Directory.GetFiles(this.InputDir, "*.vertices"))
             {
                 var year = Int32.Parse(Path.GetFileNameWithoutExtension(fileName));
-                this.graphValueTimeSeries[year] = GraphValue.ReadCsv(fileName, this.SourceGraph);
+                this.graphValueTimeSeries[year] = this.SourceGraph.ReadValueCsv(fileName);
             }
 
             this.ChartPoints = this.graphValueTimeSeries

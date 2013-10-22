@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Windows.Diagrams.Core;
@@ -14,7 +15,7 @@ namespace Marv.Common
 {
     public class Graph : BidirectionalGraph<Vertex, Edge>, IGraphSource, INotifyPropertyChanged
     {
-        private GraphValue _value;
+        private Dictionary<string, string, double> _value = new Dictionary<string, string, double>();
         private string associatedGroup;
         private string defaultGroup = "all";
         private ObservableCollection<string> groups = new ObservableCollection<string>();
@@ -135,7 +136,7 @@ namespace Marv.Common
             }
         }
 
-        public GraphValue Value
+        public Dictionary<string, string, double> Value
         {
             get
             {
@@ -239,7 +240,7 @@ namespace Marv.Common
             }
         }
 
-        public GraphValue ClearEvidence()
+        public Dictionary<string, string, double> ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
             {
@@ -250,33 +251,32 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public GraphValue ClearEvidence(string vertexKey)
+        public Dictionary<string, string, double> ClearEvidence(string vertexKey)
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
         }
 
-        public double GetMean(string vertexKey, VertexValue vertexValue)
+        public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
         {
             return this.GetVertex(vertexKey).GetMean(vertexValue);
         }
 
-        public GraphValue GetNetworkValue()
+        public Dictionary<string, string, double> GetNetworkValue()
         {
             this.UpdateBeliefs();
 
-            var graphValue = new GraphValue();
+            var graphValue = new Dictionary<string, string, double>();
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new VertexValue();
+                var vertexValue = new Dictionary<string, double>();
 
                 foreach (var state in vertex.States)
                 {
                     try
                     {
                         vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
-                        vertexValue.IsEvidenceEntered = this.network.IsEvidence(vertex.Key);
                     }
                     catch (SmileException smileException)
                     {
@@ -291,7 +291,7 @@ namespace Marv.Common
             return graphValue;
         }
 
-        public double GetStandardDeviation(string vertexKey, VertexValue vertexValue)
+        public double GetStandardDeviation(string vertexKey, Dictionary<string, double> vertexValue)
         {
             return this.GetVertex(vertexKey).GetStandardDeviation(vertexValue);
         }
@@ -379,13 +379,49 @@ namespace Marv.Common
             return hasEdge;
         }
 
-        public GraphValue Run(string vertexKey, IEvidence evidence)
+        public Dictionary<string, string, double> ReadValueCsv(string fileName)
+        {
+            var graphValue = new Dictionary<string, string, double>();
+
+            foreach (var line in File.ReadLines(fileName))
+            {
+                var vertexValue = new Dictionary<string, double>();
+
+                string[] parts = line.Split(new char[] { ',' });
+
+                var vertexKey = parts[0];
+
+                var vertex = this.GetVertex(vertexKey);
+
+                // Ignore if the vertex key does not exist in the given graph
+                if (vertex == null)
+                {
+                    continue;
+                }
+
+                int nParts = parts.Count();
+
+                for (int p = 1; p < nParts; p++)
+                {
+                    // This assumes that states order is preserved
+                    var stateKey = vertex.States[p - 1].Key;
+
+                    vertexValue[stateKey] = Double.Parse(parts[p]);
+                }
+
+                graphValue[vertexKey] = vertexValue;
+            }
+
+            return graphValue;
+        }
+
+        public Dictionary<string, string, double> Run(string vertexKey, IEvidence evidence)
         {
             evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 
-        public GraphValue Run(Dictionary<string, IEvidence> graphEvidence)
+        public Dictionary<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
@@ -395,9 +431,9 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public GraphValueTimeSeries Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public Dictionary<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var graphValueTimeSeries = new GraphValueTimeSeries();
+            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -456,7 +492,7 @@ namespace Marv.Common
             }
         }
 
-        public GraphValue UpdateValue()
+        public Dictionary<string, string, double> UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }
