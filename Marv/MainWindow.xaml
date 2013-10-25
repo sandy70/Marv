@@ -238,7 +238,10 @@
                                 
                                 <Style TargetType="telerik:ScatterAreaSeries" 
                                        BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
-                                
+
+                                <Style TargetType="telerik:ScatterSplineSeries" 
+                                       BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
+
                             </telerik:RadCartesianChart.Resources>
                             
                             <telerik:RadCartesianChart.SeriesProvider>
