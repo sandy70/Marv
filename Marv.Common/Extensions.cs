@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -149,21 +150,6 @@ namespace Marv.Common
             return str;
         }
 
-        public static ObservableCollection<ObservableKeyValuePair<TKey, TValue>> ToObservableCollection<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
-        {
-            return new ObservableCollection<ObservableKeyValuePair<TKey, TValue>>
-            (
-                dictionary.Select
-                (
-                    kvp => new ObservableKeyValuePair<TKey, TValue>
-                    {
-                        Key = kvp.Key,
-                        Value = kvp.Value
-                    }
-                )
-            );
-        }
-
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
         {
             return untrimmed.Select(x => x.Trim());
@@ -182,6 +168,11 @@ namespace Marv.Common
                     serializer.Serialize(jsonTextWriter, _object);
                 }
             }
+        }
+
+        public static Color NextColor(this Random random)
+        {
+            return Color.FromScRgb(1.0f, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
         }
     }
 }
