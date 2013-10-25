@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using Telerik.Charting;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv
 {
@@ -27,6 +28,7 @@ namespace Marv
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
 
             MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
+            MainWindow.VertexChartPofCommand.Executed += VertexChartPofCommand_Executed;
             MainWindow.VertexBarChartCommand.Executed += VertexBarChartCommand_Executed;
 
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
@@ -34,10 +36,37 @@ namespace Marv
             VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
         }
 
+        private void VertexChartPofCommand_Executed(object sender, Vertex e)
+        {
+            var window = this.AssociatedObject;
+
+            var chartSeries = new ChartSeries<ScatterDataPoint>
+            {
+                Name = "Prob. of Failure",
+                Type = typeof(ScatterLineSeries)
+            };
+
+            foreach (var year in window.graphValueTimeSeries.Keys)
+            {
+                var pof = window.graphValueTimeSeries[year]["coatd"]["YEs"];
+
+                chartSeries.Add(new ScatterDataPoint
+                {
+                    XValue = year,
+                    YValue = pof
+                });
+            }
+
+            window.ChartSeries.Clear();
+            window.ChartSeries.Add(chartSeries);
+
+            ChartAxes.HorizontalLinearAxis.Title = "Time";
+            ChartAxes.VerticalLinearAxis.Title = "Probability of Failure";
+        }
+
         private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
-            window.ChartSeries.Clear();
 
             var categoryPoints = new ChartSeries<CategoricalDataPoint>
             {
@@ -56,7 +85,10 @@ namespace Marv
                 });
             }
 
+            window.ChartSeries.Clear();
             window.ChartSeries.Add(categoryPoints);
+
+            ChartAxes.VerticalCategoricalAxis.Title = "Probability";
         }
 
         private void VertexChartCommand_Executed(object sender, Vertex vertex)
@@ -78,7 +110,7 @@ namespace Marv
                 {
                     Name = year.ToString(),
                     Stroke = new SolidColorBrush(colorForYear[year]),
-                    Type = typeof(Telerik.Windows.Controls.ChartView.ScatterLineSeries),
+                    Type = typeof(ScatterSplineSeries),
                 };
 
                 foreach (var state in vertex.States)

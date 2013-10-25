@@ -88,6 +88,8 @@ namespace Marv
                 }
             }
 
+            window.SourceGraph.GetVertex("coatd").Commands.Add(MainWindow.VertexChartPofCommand);
+
             window.MultiLocations = new SelectableCollection<MultiLocation>();
 
             try

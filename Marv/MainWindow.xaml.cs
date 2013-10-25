@@ -8,19 +8,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using Telerik.Windows.Controls;
 
 namespace Marv
 {
     public partial class MainWindow : Window
     {
+        public static VertexCommand VertexBarChartCommand = new VertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
+        };
+
         public static VertexCommand VertexChartCommand = new VertexCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
         };
 
-        public static VertexCommand VertexBarChartCommand = new VertexCommand
+        public static VertexCommand VertexChartPofCommand = new VertexCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
         };
