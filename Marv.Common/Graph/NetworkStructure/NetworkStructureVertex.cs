@@ -170,7 +170,12 @@ namespace Marv.Common
                     {
                         states.Add(new State
                         {
-                            Key = stateStrings[i]
+                            Key = stateStrings[i],
+
+                            Range = new SortedSequence<double>
+                            {
+                                double.Parse(stateStrings[i])
+                            }
                         });
                     }
                 }
