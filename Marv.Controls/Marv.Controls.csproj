@@ -122,6 +122,9 @@
     <Compile Include="SliderProgressBar\SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SurfaceImageButton.xaml.cs">
+      <DependentUpon>SurfaceImageButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TransitionControl\TransitionControInner.xaml.cs">
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
@@ -151,6 +154,10 @@
     <Page Include="SliderProgressBar\SliderProgressBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SurfaceImageButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TransitionControl\TransitionControInner.xaml">
       <Generator>MSBuild:Compile</Generator>
