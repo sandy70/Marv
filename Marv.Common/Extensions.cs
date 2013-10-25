@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using MoreLinq;
+using NLog;
 
 namespace Marv.Common
 {
@@ -174,6 +176,42 @@ namespace Marv.Common
         {
             return Color.FromScRgb(1.0f, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
         }
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
+        }
+
+        public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
+        public static Graph GetGraph(this IEnumerable<Graph> graphs, string name)
+        {
+            return graphs.SingleOrDefault(x => x.Name.Equals(name));
+        }
+
+
     }
 }
 

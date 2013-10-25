@@ -1,5 +1,4 @@
 ﻿using Caching;
-using LibPipeline;
 using Marv.Common;
 using NLog;
 using OfficeOpenXml;
@@ -55,7 +54,7 @@ namespace Marv
             var vertexKey = "B08";
             var vertexName = graph.GetVertex(vertexKey).Name;
             var stateKey = "Fail";
-            var quantity = "Mean";
+            // var quantity = "Mean";
 
             var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
             var nCompleted = 0;

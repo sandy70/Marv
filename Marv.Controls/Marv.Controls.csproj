@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImageFileCache">
+      <HintPath>..\packages\XAML.MapControl.1.5.0\lib\net45\ImageFileCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF">
+      <HintPath>..\packages\XAML.MapControl.1.5.0\lib\net45\MapControl.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Surface, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Surface\Microsoft.Surface.dll</HintPath>
@@ -107,17 +113,45 @@
     </Compile>
     <Compile Include="BnStatesControl\BnStatesControlBehavior.cs" />
     <Compile Include="BnStatesControl\SliderProgressBarBehavior.cs" />
+    <Compile Include="Converters\BooleanNotConverter.cs" />
+    <Compile Include="Converters\BooleanToColorConverter.cs" />
+    <Compile Include="Converters\BooleanToStringConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DecimalPercentalConverter.cs" />
+    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
+    <Compile Include="Converters\DoubleToBrushConverter.cs" />
+    <Compile Include="Converters\DoubleToDoubleMapper.cs" />
+    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
+    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
+    <Compile Include="Converters\LocationToMapControlLocationConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IDoubleToBrushMap.cs" />
+    <Compile Include="IMapDoubleToDouble.cs" />
+    <Compile Include="MapDoubleToDouble.cs" />
+    <Compile Include="MapView\MapView.cs" />
+    <Compile Include="MapView\MapViewBehavior.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PolylineControl\PolylineControl.xaml.cs">
+      <DependentUpon>PolylineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolylineControl\PolylineControlBase.cs" />
+    <Compile Include="PolylineControl\PolylineControlBehavior.cs" />
     <Compile Include="PopupControl\PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SegmentedPolylineControl\MapPoylineBehavior.cs" />
+    <Compile Include="SegmentedPolylineControl\SegmentedPolylineControl.xaml.cs">
+      <DependentUpon>SegmentedPolylineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SegmentedPolylineControl\SegmentedPolylineControlBehavior.cs" />
     <Compile Include="SliderProgressBar\ProgressBarBehavior.cs" />
     <Compile Include="SliderProgressBar\SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
@@ -147,7 +181,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PolylineControl\PolylineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PopupControl\PopupControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SegmentedPolylineControl\SegmentedPolylineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

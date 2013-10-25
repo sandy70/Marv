@@ -9,7 +9,7 @@
              FontSize="10"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>

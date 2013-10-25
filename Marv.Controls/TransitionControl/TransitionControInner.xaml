@@ -9,7 +9,11 @@
             d:DesignHeight="300" d:DesignWidth="300"
             Name="TransitionControlRoot">
     <Grid.Resources>
-        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Grid.Resources>
 
     <Grid.RowDefinitions>

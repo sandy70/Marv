@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:local="clr-namespace:Marv.Controls"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <local:BooleanNotConverter x:Key="BooleanNotConverter" />
+    <local:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+    <local:BooleanToStringConverter x:Key="IsHeaderToColor" TrueString="#b11d01" FalseString="#20aeff" />
+    <local:BooleanToStringConverter x:Key="IsEvidenceEnteredToColor" TrueString="#78ba00" FalseString="#20aeff" />
+    <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityReversed" IsReversed="True" />
+    <local:DecimalToPercentageConverter x:Key="DecimalToPercentage" />
+    <local:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
+    <local:DoubleToBrushConverter x:Key="DoubleToBrush" />
+    <local:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
+    <local:LocationToMapControlLocationConverter x:Key="LocationToMapControlLocation" />
+    <local:NullToVisibilityConverter x:Key="NullToVisibility" />
+</ResourceDictionary>

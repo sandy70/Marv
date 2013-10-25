@@ -329,10 +329,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Marv\LibPipeline\LibPipeline.csproj">
-      <Project>{6cd9bd09-2796-4324-ba10-7dcb000ee8eb}</Project>
-      <Name>LibPipeline</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>

@@ -33,6 +33,15 @@
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="ImageFileCache">
+      <HintPath>..\packages\XAML.MapControl.1.5.0\lib\net45\ImageFileCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF">
+      <HintPath>..\packages\XAML.MapControl.1.5.0\lib\net45\MapControl.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq">
+      <HintPath>..\packages\morelinq.1.0.16006\lib\net35\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="NDatabase3">
       <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
     </Reference>
@@ -81,11 +90,25 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Charting\ChartAxes.cs" />
-    <Compile Include="Charting\ChartSeries.cs" />
-    <Compile Include="Charting\ChartSeriesDescriptorSelector.cs" />
-    <Compile Include="Dict.cs" />
-    <Compile Include="Dictionary.cs" />
+    <Compile Include="Chart\ChartAxes.cs" />
+    <Compile Include="Chart\ChartSeries.cs" />
+    <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
+    <Compile Include="Countries.cs" />
+    <Compile Include="Extensions.Locations.cs" />
+    <Compile Include="Geometry\Dynamic.cs" />
+    <Compile Include="Geometry\Location.cs" />
+    <Compile Include="Geometry\LocationRect.cs" />
+    <Compile Include="Geometry\LocationRectConverter.cs" />
+    <Compile Include="Geometry\MultiLocation.cs" />
+    <Compile Include="Geometry\MultiLocationValue.cs" />
+    <Compile Include="Geometry\MultiLocationValueTimeSeries.cs" />
+    <Compile Include="GridFloatHeader.cs" />
+    <Compile Include="GridFloatReader.cs" />
+    <Compile Include="MetaObject.cs" />
+    <Compile Include="NormalDistribution.cs" />
+    <Compile Include="TileLayers.cs" />
+    <Compile Include="Types\Dict.cs" />
+    <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Extensions.Linq.cs" />
@@ -101,22 +124,22 @@
     <Compile Include="Graph\VertexCommand\VertexLockCommand.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
-    <Compile Include="Charting\IChartSeries.cs" />
-    <Compile Include="IPoint.cs" />
-    <Compile Include="Notifications\INotification.cs" />
-    <Compile Include="Notifications\NotificationBase.cs" />
-    <Compile Include="Notifications\IndeterminateNotification.cs" />
-    <Compile Include="Notifications\TimedNotification.cs" />
+    <Compile Include="Chart\IChartSeries.cs" />
+    <Compile Include="Notification\INotification.cs" />
+    <Compile Include="Notification\NotificationBase.cs" />
+    <Compile Include="Notification\IndeterminateNotification.cs" />
+    <Compile Include="Notification\TimedNotification.cs" />
     <Compile Include="ObjectDataBase\Odb.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectableCollection.cs" />
-    <Compile Include="SortedSequence.cs" />
+    <Compile Include="Types\SelectableCollection.cs" />
+    <Compile Include="Types\SortedSequence.cs" />
     <Compile Include="Graph\State.cs" />
-    <Compile Include="ValueEventArgs.cs" />
-    <Compile Include="ValueEventHandler.cs" />
-    <Compile Include="ViewModel.cs" />
-    <Compile Include="ViewModelCollection.cs" />
+    <Compile Include="Types\ValueEventArgs.cs" />
+    <Compile Include="Types\ValueEventHandler.cs" />
+    <Compile Include="Types\ViewModel.cs" />
+    <Compile Include="Types\ViewModelCollection.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
