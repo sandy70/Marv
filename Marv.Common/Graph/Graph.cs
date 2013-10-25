@@ -482,14 +482,7 @@ namespace Marv.Common
 
         public void UpdateBeliefs()
         {
-            try
-            {
-                this.network.UpdateBeliefs();
-            }
-            catch (SmileException exception)
-            {
-                throw new InconsistentEvidenceException();
-            }
+            this.network.UpdateBeliefs();
         }
 
         public Dictionary<string, string, double> UpdateValue()
