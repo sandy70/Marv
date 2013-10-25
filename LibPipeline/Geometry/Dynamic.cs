@@ -92,7 +92,7 @@ namespace LibPipeline
                 this.GetType().GetProperty(name).SetValue(this, value);
             }
 
-            this.OnPropertyChanged(name);
+            this.RaisePropertyChanged(name);
 
             return true;
         }
@@ -100,14 +100,16 @@ namespace LibPipeline
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             dictionary[binder.Name] = value;
-            this.OnPropertyChanged(binder.Name);
+            this.RaisePropertyChanged(binder.Name);
             return true;
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

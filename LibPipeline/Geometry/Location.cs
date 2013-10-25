@@ -23,7 +23,7 @@ namespace LibPipeline
                 if (value != this.guid)
                 {
                     this.guid = value;
-                    this.OnPropertyChanged("Guid");
+                    this.RaisePropertyChanged("Guid");
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace LibPipeline
                 {
                     this.latitude = value;
 
-                    this.OnPropertyChanged("Latitude");
+                    this.RaisePropertyChanged("Latitude");
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace LibPipeline
                 {
                     this.longitude = value;
 
-                    this.OnPropertyChanged("Longitude");
+                    this.RaisePropertyChanged("Longitude");
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace LibPipeline
                 if (value != this.name)
                 {
                     this.name = value;
-                    this.OnPropertyChanged("Name");
+                    this.RaisePropertyChanged("Name");
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace LibPipeline
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Value");
+                    this.RaisePropertyChanged("Value");
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace LibPipeline
                 if (value != this.Longitude)
                 {
                     this.Longitude = value;
-                    this.OnPropertyChanged("X");
+                    this.RaisePropertyChanged("X");
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace LibPipeline
                 if (value != this.Latitude)
                 {
                     this.Latitude = value;
-                    this.OnPropertyChanged("Y");
+                    this.RaisePropertyChanged("Y");
                 }
             }
         }
