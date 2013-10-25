@@ -94,7 +94,7 @@
     <Compile Include="Chart\ChartSeries.cs" />
     <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
     <Compile Include="Countries.cs" />
-    <Compile Include="Extensions.Locations.cs" />
+    <Compile Include="Extensions\Extensions.Locations.cs" />
     <Compile Include="Geometry\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
@@ -110,8 +110,8 @@
     <Compile Include="Types\Dict.cs" />
     <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Extensions.Linq.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\Extensions.Linq.cs" />
     <Compile Include="Graph\Edge.cs" />
     <Compile Include="Graph\Evidence\HardEvidence.cs" />
     <Compile Include="Graph\Evidence\IEvidence.cs" />

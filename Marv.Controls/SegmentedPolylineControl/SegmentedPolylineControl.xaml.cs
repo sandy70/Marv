@@ -1,5 +1,6 @@
 ﻿using Marv.Common;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -55,7 +56,6 @@ namespace Marv.Controls
             get { return (Brush)GetValue(DisabledStrokeProperty); }
             set { SetValue(DisabledStrokeProperty, value); }
         }
-
         public IDoubleToBrushMap DoubleToBrushMap
         {
             get { return (IDoubleToBrushMap)GetValue(DoubleToBrushMapProperty); }
@@ -175,18 +175,20 @@ namespace Marv.Controls
             {
                 foreach (var multiLocation in this.PolylineParts)
                 {
-                    var simplifiedMultiLocation = new MultiLocation(multiLocation.Reduce((location) => mapView.LocationToViewportPoint(location.ToMapControlLocation()), this.Tolerance));
+                    var simplifiedLocationCollection = new MultiLocation(multiLocation.ToPoints(mapView)
+                                                                                      .Reduce(this.Tolerance)
+                                                                                      .ToLocations(mapView));
 
                     if (this.IsEnabled)
                     {
-                        simplifiedMultiLocation.Stroke = this.DoubleToBrushMap.Map(multiLocation[1].Value);
+                        simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(multiLocation[1].Value);
                     }
                     else
                     {
-                        simplifiedMultiLocation.Stroke = this.DisabledStroke;
+                        simplifiedLocationCollection.Stroke = this.DisabledStroke;
                     }
 
-                    multiLocations.Add(simplifiedMultiLocation);
+                    multiLocations.Add(simplifiedLocationCollection);
                 }
             }
 

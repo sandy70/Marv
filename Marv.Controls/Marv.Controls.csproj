@@ -129,6 +129,7 @@
     <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions.cs" />
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />
     <Compile Include="MapDoubleToDouble.cs" />

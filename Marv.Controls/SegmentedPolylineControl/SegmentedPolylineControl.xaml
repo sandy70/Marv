@@ -28,11 +28,11 @@
                             <ControlTemplate>
                                 <mapcontrol:MapPanel>
                                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
-                                            Stroke="{Binding Stroke}"
-                                            StrokeEndLineCap="Round"
-                                            StrokeLineJoin="Round"
-                                            StrokeStartLineCap="Round"
-                                            StrokeThickness="5">
+                                                            Stroke="{Binding Stroke}"
+                                                            StrokeEndLineCap="Round"
+                                                            StrokeLineJoin="Round"
+                                                            StrokeStartLineCap="Round"
+                                                            StrokeThickness="5">
                                     </mapcontrol:MapPolyline>
 
                                     <!-- This Bigger Dummy Polyline is Location selection -->

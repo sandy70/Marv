@@ -118,7 +118,9 @@ namespace Marv.Controls
 
             this.AssociatedObject.SimplifiedLocations = this.AssociatedObject
                                                             .Locations
-                                                            .Reduce((location) => mapView.LocationToViewportPoint(location.ToMapControlLocation()), tolerance: 5);
+                                                            .ToPoints(mapView)
+                                                            .Reduce(tolerance: 5)
+                                                            .ToLocations(mapView);
         }
 
         private void OnDown()

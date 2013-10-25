@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using MoreLinq;
+using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,13 +8,40 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using MoreLinq;
-using NLog;
 
 namespace Marv.Common
 {
     public static partial class Extensions
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
+        }
+
+        public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Finds a parent of a given item on the visual tree.
         /// </summary>
@@ -97,9 +126,57 @@ namespace Marv.Common
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static void Push<T>(this ObservableCollection<T> collection, T item)
+        public static Color NextColor(this Random random)
+        {
+            return Color.FromScRgb(1.0f, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+        }
+
+        public static void Push<T>(this Collection<T> collection, T item)
         {
             collection.Insert(0, item);
+        }
+
+        public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
+        {
+            if (points.Count() <= 2)
+            {
+                return points;
+            }
+            else
+            {
+                var nPoints = points.Count();
+
+                var first = points.First();
+                var last = points.Last();
+
+                var maxDistance = double.MinValue;
+                var maxDistancePoint = first;
+
+                foreach (var point in points)
+                {
+                    var distance = Utils.Distance(first, last, point);
+
+                    if (distance > maxDistance)
+                    {
+                        maxDistance = distance;
+                        maxDistancePoint = point;
+                    }
+                }
+
+                if (maxDistance > tolerance)
+                {
+                    return points.TakeUntil(x => x == maxDistancePoint)
+                                    .Reduce(tolerance)
+                                    .Concat(points.SkipWhile(x => x != maxDistancePoint)
+                                                     .Reduce(tolerance)
+                                                     .Skip(1));
+                }
+                else
+                {
+                    return points.Take(1)
+                                 .Concat(last);
+                }
+            }
         }
 
         public static string String(this IEnumerable<string> strings)
@@ -171,47 +248,6 @@ namespace Marv.Common
                 }
             }
         }
-
-        public static Color NextColor(this Random random)
-        {
-            return Color.FromScRgb(1.0f, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
-        }
-
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
-        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
-        {
-            if (val.CompareTo(min) < 0) return min;
-            else if (val.CompareTo(max) > 0) return max;
-            else return val;
-        }
-
-        public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
-        {
-            if (depObj != null)
-            {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T)
-                    {
-                        yield return (T)child;
-                    }
-
-                    foreach (T childOfChild in FindChildren<T>(child))
-                    {
-                        yield return childOfChild;
-                    }
-                }
-            }
-        }
-
-        public static Graph GetGraph(this IEnumerable<Graph> graphs, string name)
-        {
-            return graphs.SingleOrDefault(x => x.Name.Equals(name));
-        }
-
-
     }
 }
 

@@ -113,7 +113,7 @@ namespace Marv
                 }
                 catch (OdbDataNotFoundException exp)
                 {
-                    logger.Info("Value not found for location {0}.", location);
+                    logger.Info("Value not found for point {0}.", location);
                 }
 
                 logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
@@ -178,7 +178,7 @@ namespace Marv
             }
             catch (OdbDataNotFoundException exp)
             {
-                var message = "Value not found for location: " + location.Name + " on line: " + multiLocation.Name;
+                var message = "Value not found for point: " + location.Name + " on line: " + multiLocation.Name;
 
                 logger.Warn(message);
 
