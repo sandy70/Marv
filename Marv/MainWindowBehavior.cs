@@ -56,6 +56,38 @@ namespace Marv
             window.SourceGraph = await Graph.ReadAsync<Vertex>(window.NetworkFileName);
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
+            var vertexKeys = new List<string> 
+            {
+                "depth",
+                "length",
+                "totalyears",
+            };
+
+            // Add VertexChartCommand to header vertices
+            foreach (var vertex in window.SourceGraph.Vertices)
+            {
+                if(vertexKeys.Contains(vertex.Key))
+                {
+                    vertex.Commands.Add(MainWindow.VertexChartCommand);
+                }
+            }
+
+            vertexKeys = new List<string>
+            {
+                "current",
+                "cpon",
+                "pH"
+            };
+
+            // Add VertexChartCommand to header vertices
+            foreach (var vertex in window.SourceGraph.Vertices)
+            {
+                if (vertexKeys.Contains(vertex.Key))
+                {
+                    vertex.Commands.Add(MainWindow.VertexBarChartCommand);
+                }
+            }
+
             window.MultiLocations = new SelectableCollection<MultiLocation>();
 
             try

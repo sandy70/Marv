@@ -1,8 +1,12 @@
 ﻿using Marv.Common;
 using Marv.Controls;
 using NLog;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interactivity;
+using System.Windows.Media;
+using Telerik.Charting;
 
 namespace Marv
 {
@@ -22,9 +26,78 @@ namespace Marv
 
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
 
+            MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
+            MainWindow.VertexBarChartCommand.Executed += VertexBarChartCommand_Executed;
+
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
             VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
             VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
+        }
+
+        private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
+        {
+            var window = this.AssociatedObject;
+            window.ChartSeries.Clear();
+
+            var categoryPoints = new ChartSeries<CategoricalDataPoint>
+            {
+                Name = vertex.Name,
+                Type = typeof(Telerik.Windows.Controls.ChartView.BarSeries),
+            };
+
+            foreach (var state in vertex.States)
+            {
+                var value = window.graphValueTimeSeries[1973][vertex.Key][state.Key];
+
+                categoryPoints.Add(new CategoricalDataPoint
+                {
+                    Category = state.Key,
+                    Value = value
+                });
+            }
+
+            window.ChartSeries.Add(categoryPoints);
+        }
+
+        private void VertexChartCommand_Executed(object sender, Vertex vertex)
+        {
+            var window = this.AssociatedObject;
+            window.ChartSeries.Clear();
+
+            var colorForYear = new Dict<int, Color>
+            {
+                { 1973, Colors.Red },
+                { 1993, Colors.Green },
+                { 2004, Colors.Blue },
+                { 2011, Colors.Orange }
+            };
+
+            foreach (var year in colorForYear.Keys)
+            {
+                var chartSeries = new ChartSeries<ScatterDataPoint>
+                {
+                    Name = year.ToString(),
+                    Stroke = new SolidColorBrush(colorForYear[year]),
+                    Type = typeof(Telerik.Windows.Controls.ChartView.ScatterLineSeries),
+                };
+
+                foreach (var state in vertex.States)
+                {
+                    var x = (state.Range.Min + state.Range.Max) / 2;
+                    var y = window.graphValueTimeSeries[year][vertex.Key][state.Key];
+
+                    chartSeries.Add(new ScatterDataPoint
+                    {
+                        XValue = x,
+                        YValue = y,
+                    });
+                }
+
+                window.ChartSeries.Add(chartSeries);
+            }
+
+            ChartAxes.HorizontalLinearAxis.Title = vertex.Name;
+            ChartAxes.VerticalLinearAxis.Title = "Probability";
         }
 
         private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
@@ -44,7 +117,7 @@ namespace Marv
                 {
                     graph.Value = graph.Run(vertex.Key, evidence);
                 }
-                catch (InconsistentEvidenceException exception)
+                catch (Smile.SmileException exp)
                 {
                     window.Notifications.Push(new TimedNotification
                     {
@@ -79,7 +152,7 @@ namespace Marv
                     graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
                 }
             }
-            catch (InconsistentEvidenceException exception)
+            catch (Smile.SmileException exp)
             {
                 window.Notifications.Push(new TimedNotification
                 {

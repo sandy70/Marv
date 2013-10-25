@@ -11,8 +11,8 @@ namespace Marv
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
-        public static readonly DependencyProperty ChartPointsProperty =
-        DependencyProperty.Register("ChartPoints", typeof(ObservableCollection<ObservableKeyValuePair<int, double>>), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty ChartSeriesProperty =
+        DependencyProperty.Register("ChartSeries", typeof(ViewModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ViewModelCollection<IChartSeries>()));
 
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
@@ -83,10 +83,10 @@ namespace Marv
             set { SetValue(CacheDirectoryProperty, value); }
         }
 
-        public ObservableCollection<ObservableKeyValuePair<int, double>> ChartPoints
+        public ViewModelCollection<IChartSeries> ChartSeries
         {
-            get { return (ObservableCollection<ObservableKeyValuePair<int, double>>)GetValue(ChartPointsProperty); }
-            set { SetValue(ChartPointsProperty, value); }
+            get { return (ViewModelCollection<IChartSeries>)GetValue(ChartSeriesProperty); }
+            set { SetValue(ChartSeriesProperty, value); }
         }
 
         public Graph DisplayGraph

@@ -283,7 +283,7 @@ namespace Marv
                 }
                 else
                 {
-                    throw new InconsistentEvidenceException();
+                    throw new Smile.SmileException("");
                 }
             }
 
@@ -343,7 +343,7 @@ namespace Marv
             }
             else
             {
-                throw new InconsistentEvidenceException();
+                throw new Smile.SmileException("");
             }
             return evidence;
         }
@@ -392,7 +392,7 @@ namespace Marv
                 }
                 else
                 {
-                    throw new InconsistentEvidenceException();
+                    throw new Smile.SmileException("");
                 }
             }
             return evidence;

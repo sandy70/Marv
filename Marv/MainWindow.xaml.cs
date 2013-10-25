@@ -6,22 +6,32 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Telerik.Windows.Controls;
 
 namespace Marv
 {
     public partial class MainWindow : Window
     {
+        public static VertexCommand VertexChartCommand = new VertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
+        };
+
+        public static VertexCommand VertexBarChartCommand = new VertexCommand
+        {
+            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
+        };
+
         public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
+        public Dictionary<int, string, string, double> graphValueTimeSeries = new Dictionary<int, string, string, double>();
         public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
         public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
         public string selectedGroup = null;
         public SensorListener SensorListener = new SensorListener();
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private Dictionary<int, string, string, double> graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
         public MainWindow()
         {
@@ -184,10 +194,6 @@ namespace Marv
                 var year = Int32.Parse(Path.GetFileNameWithoutExtension(fileName));
                 this.graphValueTimeSeries[year] = this.SourceGraph.ReadValueCsv(fileName);
             }
-
-            this.ChartPoints = this.graphValueTimeSeries
-                                   .ToDictionary(kvp => kvp.Key, kvp => kvp.Value["coatd"]["YEs"])
-                                   .ToObservableCollection();
         }
 
         public void ReadMultiLocationValueTimeSeriesForMultiLocation()

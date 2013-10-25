@@ -1,9 +1,9 @@
 ﻿<Window x:Class="Marv.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:libbn="clr-namespace:Marv.Common;assembly=LibNetwork"
         xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
         xmlns:local="clr-namespace:Marv"
         xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:marvcommon="clr-namespace:Marv.Common;assembly=Marv.Common"
         xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
@@ -32,6 +32,8 @@
                 <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
                 <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             </Style>
+
+            <marvcommon:ChartSeriesDescriptorSelector x:Key="ChartSeriesDescriptorSelector" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -175,29 +177,88 @@
                         </telerik:RadPropertyGrid.PropertyDefinitions>
                     </telerik:RadPropertyGrid>
                     
-                    <telerik:RadCartesianChart Grid.Row="1">
-                        <telerik:RadCartesianChart.HorizontalAxis>
-                            <telerik:LinearAxis Title="Year" />
-                        </telerik:RadCartesianChart.HorizontalAxis>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                    
+                        <!-- ChartControl Header -->
+                        <Grid Grid.Row="0"
+                              Background="{StaticResource ResourceKey=BackgroundMedium}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Column="0"
+                                       FontSize="{StaticResource ResourceKey=FontSizeLarge}"
+                                       FontWeight="Bold"
+                                       Margin="5"
+                                       Text="{Binding ChartSeries.Name, ElementName=Root}" 
+                                       VerticalAlignment="Center" />
+                            
+                            <marvcontrols:SurfaceImageButton Grid.Column="1"
+                                                             Margin="5" />
+                        </Grid>
                         
-                        <telerik:RadCartesianChart.VerticalAxis>
-                            <telerik:LinearAxis Title="Prob. of Coating Disbondment" />
-                        </telerik:RadCartesianChart.VerticalAxis>
-                        
-                        <telerik:RadCartesianChart.Series>
-                            <telerik:ScatterPointSeries ItemsSource="{Binding ChartPoints, ElementName=Root}"
-                                                        XValueBinding="Key"
-                                                        YValueBinding="Value">
-                                <telerik:ScatterPointSeries.PointTemplate>
-                                    <DataTemplate>
-                                        <Ellipse Fill="Red" Stroke="Yellow" Width="10" Height="20" />
-                                    </DataTemplate>
-                                </telerik:ScatterPointSeries.PointTemplate>
-                            </telerik:ScatterPointSeries>
-                        </telerik:RadCartesianChart.Series>
-                    </telerik:RadCartesianChart>
+                        <!-- ChartControl Chart -->
+                        <telerik:RadCartesianChart Grid.Row="1"
+                                                   Name="ChartControl"
+                                                   Margin="5">
+                            <telerik:RadCartesianChart.Resources>
+                                <Style TargetType="telerik:BarSeries">
+                                    <Setter Property="LegendSettings">
+                                        <Setter.Value>
+                                            <telerik:SeriesLegendSettings Title="{Binding Name}" />
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+
+                                    <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
+                                </Style>
+                                
+                                <Style TargetType="telerik:ScatterPointSeries">
+                                    <Setter Property="LegendSettings">
+                                        <Setter.Value>
+                                            <telerik:SeriesLegendSettings Title="{Binding Name}" />
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+
+                                    <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
+                                </Style>
+                                
+                                <Style TargetType="telerik:ScatterLineSeries"
+                                       BasedOn="{StaticResource {x:Type telerik:ScatterPointSeries}}">
+                                    <Setter Property="Stroke" Value="{Binding Stroke}" />
+                                </Style>
+                                
+                                <Style TargetType="telerik:ScatterAreaSeries" 
+                                       BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
+                                
+                            </telerik:RadCartesianChart.Resources>
+                            
+                            <telerik:RadCartesianChart.SeriesProvider>
+                                <telerik:ChartSeriesProvider SeriesDescriptorSelector="{StaticResource ResourceKey=ChartSeriesDescriptorSelector}"
+                                                             Source="{Binding Path=ChartSeries, ElementName=Root}" />
+                            </telerik:RadCartesianChart.SeriesProvider>
+                        </telerik:RadCartesianChart>
+
+                        <!-- ChartControl Legend -->
+                        <telerik:RadLegend Grid.Row="1"
+                                           Background="White" 
+                                           BorderBrush="Black" 
+                                           BorderThickness="1" 
+                                           HorizontalAlignment="Right" VerticalAlignment="Top"
+                                           Items="{Binding LegendItems, ElementName=ChartControl}" 
+                                           Margin="5" />
+                    </Grid>
                 </Grid>
 
+                <!-- Grid Splitter -->
                 <GridSplitter Grid.Column="1"
                               ResizeBehavior="PreviousAndNext"
                               ResizeDirection="Columns"
