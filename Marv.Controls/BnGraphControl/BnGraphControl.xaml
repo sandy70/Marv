@@ -123,13 +123,13 @@
 
                                         <!-- States -->
                                         <local:BnStatesControl Name="StatesControl"
-                                                                        IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
-                                                                        IsExpanded="{Binding IsExpanded}"
-                                                                        Margin="10"
-                                                                        MostProbableState="{Binding MostProbableState}"
-                                                                        SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
-                                                                        States="{Binding States}"
-                                                                        StatesFontSize="12">
+                                                            IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
+                                                            IsExpanded="{Binding IsExpanded}"
+                                                            Margin="10"
+                                                            MostProbableState="{Binding MostProbableState}"
+                                                            SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
+                                                            States="{Binding States}"
+                                                            StatesFontSize="12">
                                         </local:BnStatesControl>
 
                                         <!-- Units -->
@@ -165,20 +165,13 @@
 
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Button Height="40" Width="40"
-                                                            Margin="2">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{StaticResource ResourceKey=BackgroundDark}">
-                                                                    <Image Source="{Binding ImageSource}" />
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-
+                                                    <local:SurfaceImageButton Height="40" Width="40"
+                                                                              Margin="2"
+                                                                              Source="{Binding ImageSource}">
                                                         <i:Interaction.Behaviors>
                                                             <local:ToolbarButtonClickBehavior />
                                                         </i:Interaction.Behaviors>
-                                                    </Button>
+                                                    </local:SurfaceImageButton>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
