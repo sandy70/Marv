@@ -123,7 +123,6 @@
     <Compile Include="Graph\VertexCommand\VertexLockCommand.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
     <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
-    <Compile Include="Chart\IChartSeries.cs" />
     <Compile Include="Notification\Notification.cs" />
     <Compile Include="Notification\NotificationIndeterminate.cs" />
     <Compile Include="Notification\NotificationTimed.cs" />

@@ -121,7 +121,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 7.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\CNPC\\Line.xlsx")]
         public string InputFileName {
             get {
                 return ((string)(this["InputFileName"]));
