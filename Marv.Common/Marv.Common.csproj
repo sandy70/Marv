@@ -171,12 +171,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ResourceDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
       <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
       <Name>SmileNet</Name>

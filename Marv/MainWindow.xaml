@@ -109,155 +109,152 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0"
-                      Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    
-                    <marvcontrols:MapView Name="MapView"
-                                         Grid.Row="0"
-                                         IsManipulationEnabled="True"
-                                         ManipulationMode="Scale,Translate"
-                                         MaxZoomLevel="21"
-                                         StartExtent="20,50,30,60">
-                        <mapcontrol:MapItemsControl Name="MapItemsControl"
-                                                    Effect="{StaticResource ResourceKey=DropShadow}"
-                                                    ItemsSource="{Binding Polylines, ElementName=Root}"
-                                                    VirtualizingPanel.IsVirtualizing="True"
-                                                    SelectedItem="{Binding Polylines.SelectedItem, ElementName=Root, Mode=TwoWay}">
-                            <mapcontrol:MapItemsControl.ItemContainerStyle>
-                                <Style TargetType="mapcontrol:MapItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate>
-                                                <marvcontrols:SegmentedPolylineControl DisabledStroke="DarkGray"
-                                                                                      DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
-                                                                                      IsCursorVisible="{Binding IsSelected}"
-                                                                                      IsEnabled="{Binding IsEnabled}"
-                                                                                      Locations="{Binding}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
+                <marvcontrols:MapView Name="MapView"
+                                        Grid.Column="0"
+                                        IsManipulationEnabled="True"
+                                        ManipulationMode="Scale,Translate"
+                                        MaxZoomLevel="21"
+                                        StartExtent="20,50,30,60">
+                    <mapcontrol:MapItemsControl Name="MapItemsControl"
+                                                Effect="{StaticResource ResourceKey=DropShadow}"
+                                                ItemsSource="{Binding Polylines, ElementName=Root}"
+                                                VirtualizingPanel.IsVirtualizing="True"
+                                                SelectedItem="{Binding Polylines.SelectedItem, ElementName=Root, Mode=TwoWay}">
+                        <mapcontrol:MapItemsControl.ItemContainerStyle>
+                            <Style TargetType="mapcontrol:MapItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <marvcontrols:SegmentedPolylineControl DisabledStroke="DarkGray"
+                                                                                    DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
+                                                                                    IsCursorVisible="{Binding IsSelected}"
+                                                                                    IsEnabled="{Binding IsEnabled}"
+                                                                                    Locations="{Binding}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                                     
-                                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                                </Style>
-                            </mapcontrol:MapItemsControl.ItemContainerStyle>
-                        </mapcontrol:MapItemsControl>
-                    </marvcontrols:MapView>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                            </Style>
+                        </mapcontrol:MapItemsControl.ItemContainerStyle>
+                    </mapcontrol:MapItemsControl>
+                </marvcontrols:MapView>
 
-                    <!-- Property Grid -->
-                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                             Grid.Row="0"
-                                             AutoGeneratePropertyDefinitions="False"
-                                             DescriptionPanelVisibility="Collapsed"
-                                             Effect="{StaticResource ResourceKey=DropShadow}"
-                                             FieldIndicatorVisibility="Collapsed"
-                                             HorizontalAlignment="Left" VerticalAlignment="Top"
-                                             IsReadOnly="True"
-                                             Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
-                                             Margin="10"
-                                             SearchBoxVisibility="Collapsed"
-                                             SortAndGroupButtonsVisibility="Collapsed"
-                                             Width="350">
-                        <telerik:RadPropertyGrid.PropertyDefinitions>
-                            <telerik:PropertyDefinition Binding="{Binding Latitude}"
-                                                        DisplayName="Latitude" />
+                <!-- Property Grid -->
+                <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                                        Grid.Column="0"
+                                        AutoGeneratePropertyDefinitions="False"
+                                        DescriptionPanelVisibility="Collapsed"
+                                        Effect="{StaticResource ResourceKey=DropShadow}"
+                                        FieldIndicatorVisibility="Collapsed"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top"
+                                        IsReadOnly="True"
+                                        Item="{Binding Polylines.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                        Margin="10"
+                                        SearchBoxVisibility="Collapsed"
+                                        SortAndGroupButtonsVisibility="Collapsed"
+                                        Width="350">
+                    <telerik:RadPropertyGrid.PropertyDefinitions>
+                        <telerik:PropertyDefinition Binding="{Binding Latitude}"
+                                                    DisplayName="Latitude" />
 
-                            <telerik:PropertyDefinition Binding="{Binding Longitude}"
-                                                        DisplayName="Longitude" />
+                        <telerik:PropertyDefinition Binding="{Binding Longitude}"
+                                                    DisplayName="Longitude" />
 
-                            <telerik:PropertyDefinition Binding="{Binding Name}"
-                                                        DisplayName="Name" />
+                        <telerik:PropertyDefinition Binding="{Binding Name}"
+                                                    DisplayName="Name" />
 
-                            <telerik:PropertyDefinition Binding="{Binding Value}"
-                                                        DisplayName="PoF" />
-                        </telerik:RadPropertyGrid.PropertyDefinitions>
-                    </telerik:RadPropertyGrid>
-                    
-                    <Grid Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="40" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                    
-                        <!-- ChartControl Header -->
-                        <Grid Grid.Row="0"
-                              Background="{StaticResource ResourceKey=BackgroundMedium}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="40" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <TextBlock Grid.Column="0"
+                        <telerik:PropertyDefinition Binding="{Binding Value}"
+                                                    DisplayName="PoF" />
+                    </telerik:RadPropertyGrid.PropertyDefinitions>
+                </telerik:RadPropertyGrid>
+
+                <Grid Grid.Column="0"
+                      Background="{StaticResource ResourceKey=BackgroundVeryLight}"
+                      Effect="{StaticResource ResourceKey=DropShadow}"
+                      Height="290"
+                      Margin="10"
+                      VerticalAlignment="Bottom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <!-- ChartControl Header -->
+                    <Grid Grid.Row="0"
+                          Background="{StaticResource ResourceKey=BackgroundMedium}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
                                        FontSize="{StaticResource ResourceKey=FontSizeLarge}"
                                        FontWeight="Bold"
                                        Margin="5"
                                        Text="{Binding ChartSeries.Name, ElementName=Root}" 
                                        VerticalAlignment="Center" />
-                            
-                            <marvcontrols:SurfaceImageButton Grid.Column="1"
+
+                        <marvcontrols:SurfaceImageButton Grid.Column="1"
                                                              Margin="5" />
-                        </Grid>
-                        
-                        <!-- ChartControl Chart -->
-                        <telerik:RadCartesianChart Grid.Row="1"
+                    </Grid>
+
+                    <!-- ChartControl Chart -->
+                    <telerik:RadCartesianChart Grid.Row="1"
                                                    Name="ChartControl"
                                                    Margin="5">
-                            <telerik:RadCartesianChart.Resources>
-                                <Style TargetType="telerik:BarSeries">
-                                    <Setter Property="LegendSettings">
-                                        <Setter.Value>
-                                            <telerik:SeriesLegendSettings Title="{Binding Name}" />
-                                        </Setter.Value>
-                                    </Setter>
+                        <telerik:RadCartesianChart.Resources>
+                            <Style TargetType="telerik:BarSeries">
+                                <Setter Property="LegendSettings">
+                                    <Setter.Value>
+                                        <telerik:SeriesLegendSettings Title="{Binding Name}" />
+                                    </Setter.Value>
+                                </Setter>
 
-                                    <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+                                <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
 
-                                    <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
-                                </Style>
-                                
-                                <Style TargetType="telerik:ScatterPointSeries">
-                                    <Setter Property="LegendSettings">
-                                        <Setter.Value>
-                                            <telerik:SeriesLegendSettings Title="{Binding Name}" />
-                                        </Setter.Value>
-                                    </Setter>
+                                <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
+                            </Style>
 
-                                    <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+                            <Style TargetType="telerik:ScatterPointSeries">
+                                <Setter Property="LegendSettings">
+                                    <Setter.Value>
+                                        <telerik:SeriesLegendSettings Title="{Binding Name}" />
+                                    </Setter.Value>
+                                </Setter>
 
-                                    <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
-                                </Style>
-                                
-                                <Style TargetType="telerik:ScatterLineSeries"
+                                <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+
+                                <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
+                            </Style>
+
+                            <Style TargetType="telerik:ScatterLineSeries"
                                        BasedOn="{StaticResource {x:Type telerik:ScatterPointSeries}}">
-                                    <Setter Property="Stroke" Value="{Binding Stroke}" />
-                                </Style>
-                                
-                                <Style TargetType="telerik:ScatterAreaSeries" 
+                                <Setter Property="Stroke" Value="{Binding Stroke}" />
+                            </Style>
+
+                            <Style TargetType="telerik:ScatterAreaSeries" 
                                        BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
 
-                                <Style TargetType="telerik:ScatterSplineSeries" 
+                            <Style TargetType="telerik:ScatterSplineSeries" 
                                        BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
 
-                            </telerik:RadCartesianChart.Resources>
-                            
-                            <telerik:RadCartesianChart.SeriesProvider>
-                                <telerik:ChartSeriesProvider SeriesDescriptorSelector="{StaticResource ResourceKey=ChartSeriesDescriptorSelector}"
+                        </telerik:RadCartesianChart.Resources>
+
+                        <telerik:RadCartesianChart.SeriesProvider>
+                            <telerik:ChartSeriesProvider SeriesDescriptorSelector="{StaticResource ResourceKey=ChartSeriesDescriptorSelector}"
                                                              Source="{Binding Path=ChartSeries, ElementName=Root}" />
-                            </telerik:RadCartesianChart.SeriesProvider>
-                        </telerik:RadCartesianChart>
+                        </telerik:RadCartesianChart.SeriesProvider>
+                    </telerik:RadCartesianChart>
 
-                        <!-- ChartControl Legend -->
-                        <telerik:RadLegend Grid.Row="1"
+                    <!-- ChartControl Legend -->
+                    <telerik:RadLegend Grid.Row="1"
                                            Background="White" 
                                            BorderBrush="Black" 
                                            BorderThickness="1" 
                                            HorizontalAlignment="Right" VerticalAlignment="Top"
                                            Items="{Binding LegendItems, ElementName=ChartControl}" 
                                            Margin="5" />
-                    </Grid>
                 </Grid>
 
                 <!-- Grid Splitter -->

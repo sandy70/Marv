@@ -6,18 +6,6 @@ namespace Marv.Common
 {
     public static partial class Extensions
     {
-        public static LocationRect Bounds(this IEnumerable<Location> locations)
-        {
-            var locationRect = new LocationRect();
-
-            locationRect.South = locations.Min(x => x.Latitude);
-            locationRect.West = locations.Min(x => x.Longitude);
-            locationRect.North = locations.Max(x => x.Latitude);
-            locationRect.East = locations.Max(x => x.Longitude);
-
-            return locationRect;
-        }
-
         public static LocationRect GetBounds(this IEnumerable<LocationCollection> locationCollections)
         {
             var bounds = locationCollections.First().Bounds;
