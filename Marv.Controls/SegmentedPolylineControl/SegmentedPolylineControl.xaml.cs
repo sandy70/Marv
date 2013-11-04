@@ -38,7 +38,7 @@ namespace Marv.Controls
         DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
 
         public static readonly DependencyProperty ValueLevelsProperty =
-        DependencyProperty.Register("ValueLevels", typeof(SortedSequence<double>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("ValueLevels", typeof(Sequence<double>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ValueMemberPathProperty =
         DependencyProperty.Register("ValueMemberPath", typeof(string), typeof(SegmentedPolylineControl), new PropertyMetadata("Value"));
@@ -48,7 +48,7 @@ namespace Marv.Controls
         public SegmentedPolylineControl()
         {
             InitializeComponent();
-            this.ValueLevels = new SortedSequence<double> { 0.00, 0.25, 0.5, 0.75, 1.00 };
+            this.ValueLevels = new Sequence<double> { 0.00, 0.25, 0.5, 0.75, 1.00 };
         }
 
         public Brush DisabledStroke
@@ -104,9 +104,9 @@ namespace Marv.Controls
             set { SetValue(ToleranceProperty, value); }
         }
 
-        public SortedSequence<double> ValueLevels
+        public Sequence<double> ValueLevels
         {
-            get { return (SortedSequence<double>)GetValue(ValueLevelsProperty); }
+            get { return (Sequence<double>)GetValue(ValueLevelsProperty); }
             set { SetValue(ValueLevelsProperty, value); }
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Marv.Common
 {
-    public class SortedSequence<T> : IEnumerable<T> where T : IComparable<T>
+    public class Sequence<T> : IEnumerable<T> where T : IComparable<T>
     {
         private List<T> list = new List<T>();
 

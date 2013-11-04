@@ -3,9 +3,9 @@
     public class State : ViewModel
     {
         private double _value;
-        private SortedSequence<double> range = new SortedSequence<double>();
+        private Sequence<double> range = new Sequence<double>();
 
-        public SortedSequence<double> Range
+        public Sequence<double> Range
         {
             get
             {

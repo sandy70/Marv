@@ -93,10 +93,10 @@ namespace Marv.Common
             return positionsByGroup;
         }
 
-        public SortedSequence<double> ParseStateRange(int stateIndex)
+        public Sequence<double> ParseStateRange(int stateIndex)
         {
             var key = "HR_State_" + stateIndex;
-            var range = new SortedSequence<double>();
+            var range = new Sequence<double>();
 
             if (this.Properties.ContainsKey(key))
             {
@@ -150,7 +150,7 @@ namespace Marv.Common
                         {
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
-                            Range = new SortedSequence<double>
+                            Range = new Sequence<double>
                             {
                                double.Parse(stateStrings[i + 1]),
                                double.Parse(stateStrings[i])
@@ -172,7 +172,7 @@ namespace Marv.Common
                         {
                             Key = stateStrings[i],
 
-                            Range = new SortedSequence<double>
+                            Range = new Sequence<double>
                             {
                                 double.Parse(stateStrings[i])
                             }

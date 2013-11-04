@@ -131,8 +131,6 @@
     <Compile Include="ObjectDataBase\Odb.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Types\IViewModel.cs" />
-    <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\SortedSequence.cs" />
     <Compile Include="Graph\State.cs" />
     <Compile Include="Types\ValueEventArgs.cs" />
