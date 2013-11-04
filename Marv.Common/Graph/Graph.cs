@@ -166,7 +166,7 @@ namespace Marv.Common
             {
                 graph.network.ReadFile(fileName);
             }
-            catch (SmileException exp)
+            catch (SmileException)
             {
                 return graph;
             }

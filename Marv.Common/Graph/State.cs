@@ -3,25 +3,7 @@
     public class State : ViewModel
     {
         private double _value;
-        private string key;
         private SortedSequence<double> range = new SortedSequence<double>();
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                if (value != this.key)
-                {
-                    this.key = value;
-                    this.RaisePropertyChanged("Key");
-                }
-            }
-        }
 
         public SortedSequence<double> Range
         {

@@ -69,7 +69,7 @@ namespace Marv
             {
                 excelPackage.Workbook.Worksheets.Add(excelWorkSheetName);
             }
-            catch (InvalidOperationException exp)
+            catch (InvalidOperationException)
             {
                 logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
             }
@@ -111,7 +111,7 @@ namespace Marv
                         excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
                     }
                 }
-                catch (OdbDataNotFoundException exp)
+                catch (OdbDataNotFoundException)
                 {
                     logger.Info("Value not found for point {0}.", location);
                 }
@@ -176,7 +176,7 @@ namespace Marv
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
                 this.graphValueTimeSeries = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
             }
-            catch (OdbDataNotFoundException exp)
+            catch (OdbDataNotFoundException)
             {
                 var message = "Value not found for point: " + location.Name + " on line: " + multiLocation.Name;
 
@@ -208,9 +208,9 @@ namespace Marv
                     var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
                     this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
                 }
-                catch (OdbDataNotFoundException exp)
+                catch (OdbDataNotFoundException)
                 {
-                    logger.Info("Value not found for line {0}.", multiLocation.Name);
+                    logger.Warn("Value not found for line {0}.", multiLocation.Name);
                 }
             }
         }
@@ -257,7 +257,7 @@ namespace Marv
                     {
                         multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
                     }
-                    catch (KeyNotFoundException exp)
+                    catch (KeyNotFoundException)
                     {
                         logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
                     }

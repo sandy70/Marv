@@ -10,7 +10,6 @@ namespace Marv.Common
         private double _value = 100;
         private string description = "";
         private bool isIndeterminate = false;
-        private string name = "";
 
         public event EventHandler Closed;
 
@@ -44,23 +43,6 @@ namespace Marv.Common
                 {
                     this.isIndeterminate = value;
                     this.RaisePropertyChanged("IsIndeterminate");
-                }
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-                    this.RaisePropertyChanged("Name");
                 }
             }
         }

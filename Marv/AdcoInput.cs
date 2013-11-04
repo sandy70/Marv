@@ -55,7 +55,6 @@ namespace Marv
                             }
 
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
-                            var a = 1 + 2;
                         }
                     }
 

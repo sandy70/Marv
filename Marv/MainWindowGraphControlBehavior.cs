@@ -149,7 +149,7 @@ namespace Marv
                 {
                     graph.Value = graph.Run(vertex.Key, evidence);
                 }
-                catch (Smile.SmileException exp)
+                catch (Smile.SmileException)
                 {
                     window.Notifications.Push(new TimedNotification
                     {
@@ -184,7 +184,7 @@ namespace Marv
                     graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
                 }
             }
-            catch (Smile.SmileException exp)
+            catch (Smile.SmileException)
             {
                 window.Notifications.Push(new TimedNotification
                 {

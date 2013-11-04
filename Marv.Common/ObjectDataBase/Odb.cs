@@ -23,7 +23,7 @@ namespace Marv.Common
                     locationValues = odb.AsQueryable<T>().Where(predicate).ToList();
                 }
             }
-            catch (OdbRuntimeException exp)
+            catch (OdbRuntimeException)
             {
                 // We are having these problems when the file is corrupt.
                 // So let's delete the file and try again

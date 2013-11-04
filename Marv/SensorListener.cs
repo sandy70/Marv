@@ -71,7 +71,7 @@ namespace Marv
                     });
                 }
             }
-            catch (TimeoutException exp)
+            catch (TimeoutException)
             {
                 // do nothing for now
             }

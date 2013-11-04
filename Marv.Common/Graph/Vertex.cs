@@ -25,9 +25,7 @@ namespace Marv.Common
         private bool isHeader = false;
         private bool isLocked = true;
         private bool isSelected = false;
-        private string key = "";
         private State mostProbableState = null;
-        private string name = "";
         private double opacity = 1;
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
@@ -217,16 +215,6 @@ namespace Marv.Common
             }
         }
 
-        public string Key
-        {
-            get { return key; }
-            set
-            {
-                key = value;
-                RaisePropertyChanged("Key");
-            }
-        }
-
         public State MostProbableState
         {
             get
@@ -241,16 +229,6 @@ namespace Marv.Common
                     this.mostProbableState = value;
                     this.RaisePropertyChanged("MostProbableState");
                 }
-            }
-        }
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-                RaisePropertyChanged("Name");
             }
         }
 
