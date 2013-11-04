@@ -220,7 +220,7 @@ namespace Marv
                 if (window.Polylines.Count > 0)
                 {
                     // Calculate start year
-                    window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
+                    // window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
                     window.SelectedYear = window.StartYear;
                 }
 

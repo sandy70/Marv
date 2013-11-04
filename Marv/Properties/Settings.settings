@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1980</Value>
+      <Value Profile="(Default)">1973</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2014</Value>
+      <Value Profile="(Default)">2011</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>

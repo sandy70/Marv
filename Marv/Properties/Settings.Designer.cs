@@ -25,7 +25,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1980")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1973")]
         public int StartYear {
             get {
                 return ((int)(this["StartYear"]));
@@ -37,7 +37,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2014")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2011")]
         public int EndYear {
             get {
                 return ((int)(this["EndYear"]));
