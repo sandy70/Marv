@@ -174,7 +174,8 @@
                       Effect="{StaticResource ResourceKey=DropShadow}"
                       Height="290"
                       Margin="10"
-                      VerticalAlignment="Bottom">
+                      VerticalAlignment="Bottom"
+                      Visibility="{Binding IsChartControlVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40" />
                         <RowDefinition />
@@ -189,20 +190,21 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0"
-                                       FontSize="{StaticResource ResourceKey=FontSizeLarge}"
-                                       FontWeight="Bold"
-                                       Margin="5"
-                                       Text="{Binding ChartSeries.Name, ElementName=Root}" 
-                                       VerticalAlignment="Center" />
+                                FontSize="{StaticResource ResourceKey=FontSizeLarge}"
+                                FontWeight="Bold"
+                                Margin="5"
+                                Text="{Binding ChartSeries.Name, ElementName=Root}" 
+                                VerticalAlignment="Center" />
 
                         <marvcontrols:SurfaceImageButton Grid.Column="1"
-                                                             Margin="5" />
+                                                         Name="ChartControlCloseButton"
+                                                         Margin="5" />
                     </Grid>
 
                     <!-- ChartControl Chart -->
                     <telerik:RadCartesianChart Grid.Row="1"
-                                                   Name="ChartControl"
-                                                   Margin="5">
+                                            Name="ChartControl"
+                                            Margin="5">
                         <telerik:RadCartesianChart.Resources>
                             <Style TargetType="telerik:BarSeries">
                                 <Setter Property="LegendSettings">

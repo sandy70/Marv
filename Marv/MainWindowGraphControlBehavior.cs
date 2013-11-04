@@ -39,6 +39,7 @@ namespace Marv
         private void VertexChartPofCommand_Executed(object sender, Vertex e)
         {
             var window = this.AssociatedObject;
+            window.IsChartControlVisible = true;
 
             var chartSeries = new ChartSeries<ScatterDataPoint>
             {
@@ -67,6 +68,7 @@ namespace Marv
         private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
+            window.IsChartControlVisible = true;
 
             var categoryPoints = new ChartSeries<CategoricalDataPoint>
             {
@@ -94,6 +96,8 @@ namespace Marv
         private void VertexChartCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
+            window.IsChartControlVisible = true;
+
             window.ChartSeries.Clear();
 
             var colorForYear = new Dict<int, Color>

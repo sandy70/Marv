@@ -129,6 +129,7 @@ namespace Marv
             window.NetworkComputeValue.Click += NetworkComputeValue_Click;
 
             window.BackButton.Click += BackButton_Click;
+            window.ChartControlCloseButton.Click += ChartControlCloseButton_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
 
             // Change map types
@@ -137,6 +138,11 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+        }
+
+        private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AssociatedObject.IsChartControlVisible = false;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

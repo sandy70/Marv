@@ -28,6 +28,9 @@ namespace Marv
         public static readonly DependencyProperty IsBackButtonVisibleProperty =
         DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsChartControlVisibleProperty =
+        DependencyProperty.Register("IsChartControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsLogoVisibleProperty =
         DependencyProperty.Register("IsLogoVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
@@ -52,9 +55,6 @@ namespace Marv
         public static readonly DependencyProperty IsYearSliderVisibleProperty =
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty PolylinesProperty =
-        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
-
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -63,6 +63,9 @@ namespace Marv
 
         public static readonly DependencyProperty NotificationsProperty =
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
+
+        public static readonly DependencyProperty PolylinesProperty =
+        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -118,6 +121,12 @@ namespace Marv
             set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
+        public bool IsChartControlVisible
+        {
+            get { return (bool)GetValue(IsChartControlVisibleProperty); }
+            set { SetValue(IsChartControlVisibleProperty, value); }
+        }
+
         public bool IsLogoVisible
         {
             get { return (bool)GetValue(IsLogoVisibleProperty); }
@@ -154,12 +163,6 @@ namespace Marv
             set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
-        public ViewModelCollection<LocationCollection> Polylines
-        {
-            get { return (ViewModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
-            set { SetValue(PolylinesProperty, value); }
-        }
-
         public MultiLocationValueTimeSeries MultiLocationValueTimeSeries
         {
             get { return (MultiLocationValueTimeSeries)GetValue(MultiLocationValueTimeSeriesProperty); }
@@ -176,6 +179,12 @@ namespace Marv
         {
             get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
             set { SetValue(NotificationsProperty, value); }
+        }
+
+        public ViewModelCollection<LocationCollection> Polylines
+        {
+            get { return (ViewModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
+            set { SetValue(PolylinesProperty, value); }
         }
 
         public RiskValueToBrushMap RiskValueToBrushMap
