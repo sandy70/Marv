@@ -151,7 +151,7 @@ namespace Marv
                 }
                 catch (Smile.SmileException)
                 {
-                    window.Notifications.Push(new TimedNotification
+                    window.Notifications.Push(new NotificationTimed
                     {
                         Name = "Inconsistent Evidence",
                         Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
@@ -186,7 +186,7 @@ namespace Marv
             }
             catch (Smile.SmileException)
             {
-                window.Notifications.Push(new TimedNotification
+                window.Notifications.Push(new NotificationTimed
                 {
                     Name = "Inconsistent Evidence",
                     Description = "Inconsistent evidence entered for vertex: " + vertex.Name,

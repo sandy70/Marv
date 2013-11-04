@@ -105,7 +105,7 @@ namespace Marv
             {
                 logger.Warn(exp.Message);
 
-                var notification = new TimedNotification
+                var notification = new NotificationTimed
                 {
                     Name = "Unable to read file.",
                     Description = exp.Message,

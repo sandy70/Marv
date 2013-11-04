@@ -3,7 +3,24 @@ using System;
 
 namespace Marv.Common
 {
-    public abstract class NotificationBase : ViewModel, INotification
+    public interface INotification
+    {
+        event EventHandler Closed;
+
+        string Description { get; set; }
+
+        bool IsIndeterminate { get; }
+
+        string Name { get; set; }
+
+        double Value { get; }
+
+        void Close();
+
+        void Open();
+    }
+
+    public abstract class Notification : ViewModel, INotification
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

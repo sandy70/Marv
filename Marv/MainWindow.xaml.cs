@@ -182,7 +182,7 @@ namespace Marv
 
                 logger.Warn(message);
 
-                this.Notifications.Push(new TimedNotification
+                this.Notifications.Push(new NotificationTimed
                 {
                     Name = "Value Not Found",
                     Description = message
@@ -227,7 +227,7 @@ namespace Marv
                 {
                     this.SourceGraph.SetValueToZero();
 
-                    this.Notifications.Push(new TimedNotification
+                    this.Notifications.Push(new NotificationTimed
                     {
                         Name = "Value Not Found",
                         Description = "Pipeline is inactive for this year."

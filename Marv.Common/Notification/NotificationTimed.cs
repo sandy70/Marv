@@ -4,7 +4,7 @@ using System.Windows.Threading;
 
 namespace Marv.Common
 {
-    public class TimedNotification : NotificationBase
+    public class NotificationTimed : Notification
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
