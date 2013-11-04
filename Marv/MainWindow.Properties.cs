@@ -52,8 +52,8 @@ namespace Marv
         public static readonly DependencyProperty IsYearSliderVisibleProperty =
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty MultiLocationsProperty =
-        DependencyProperty.Register("MultiLocations", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
+        public static readonly DependencyProperty PolylinesProperty =
+        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
@@ -154,10 +154,10 @@ namespace Marv
             set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
-        public ViewModelCollection<LocationCollection> MultiLocations
+        public ViewModelCollection<LocationCollection> Polylines
         {
-            get { return (ViewModelCollection<LocationCollection>)GetValue(MultiLocationsProperty); }
-            set { SetValue(MultiLocationsProperty, value); }
+            get { return (ViewModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
+            set { SetValue(PolylinesProperty, value); }
         }
 
         public MultiLocationValueTimeSeries MultiLocationValueTimeSeries
@@ -206,16 +206,16 @@ namespace Marv
         {
             var window = d as MainWindow;
 
-            if (window.MultiLocations != null)
+            if (window.Polylines != null)
             {
-                if (window.MultiLocations.Count > 0)
+                if (window.Polylines.Count > 0)
                 {
                     // Calculate start year
-                    window.StartYear = window.MultiLocations.Min(multiLocation => (int)multiLocation["StartYear"]);
+                    window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
                     window.SelectedYear = window.StartYear;
                 }
 
-                foreach (var multiLocation in window.MultiLocations)
+                foreach (var multiLocation in window.Polylines)
                 {
                     // Attach event so that we can load data when selection changes
                     // The -= ensures that events aren't subscribed twice

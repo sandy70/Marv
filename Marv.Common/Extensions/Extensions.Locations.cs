@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
-using System.Windows;
 
 namespace Marv.Common
 {
@@ -18,6 +16,18 @@ namespace Marv.Common
             locationRect.East = locations.Max(x => x.Longitude);
 
             return locationRect;
+        }
+
+        public static LocationRect GetBounds(this IEnumerable<LocationCollection> locationCollections)
+        {
+            var bounds = locationCollections.First().Bounds;
+
+            foreach (var locationCollection in locationCollections)
+            {
+                bounds = LocationRect.Union(bounds, locationCollection.Bounds);
+            }
+
+            return bounds;
         }
 
         public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
@@ -44,15 +54,15 @@ namespace Marv.Common
             return nearestLocation;
         }
 
+        public static MapControl.Location ToMapControlLocation(this Location location)
+        {
+            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+        }
+
         public static IEnumerable<Location> Within(this IEnumerable<Location> locations, LocationRect rect)
         {
             return locations.Where(x => x.Latitude > rect.South && x.Latitude < rect.North &&
                                         x.Longitude > rect.West && x.Longitude < rect.East);
-        }
-
-        public static MapControl.Location ToMapControlLocation(this Location location)
-        {
-            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
     }
 }

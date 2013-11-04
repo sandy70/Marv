@@ -89,11 +89,15 @@ namespace Marv
 
             window.SourceGraph.GetVertex("coatd").Commands.Add(MainWindow.VertexChartPofCommand);
 
-            window.MultiLocations = new ViewModelCollection<LocationCollection>();
+            window.Polylines = new ViewModelCollection<LocationCollection>();
 
             try
             {
-                window.MultiLocations = AdcoInput.Read(window.InputFileName);
+                var pipelineInput = new PipelineInput(window.InputFileName);
+                window.Polylines = pipelineInput.ReadPipelines();
+                window.MapView.ZoomTo(window.Polylines.GetBounds());
+
+                // window.MultiLocations = AdcoInput.Read(window.InputFileName);
 
                 window.ReadMultiLocationValueTimeSeriesForMultiLocation();
                 window.UpdateMultiLocationValues();
@@ -163,7 +167,7 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocation = window.MultiLocations.SelectedItem;
+            var multiLocation = window.Polylines.SelectedItem;
 
             var multiLocationName = multiLocation.Name;
             var locationName = multiLocation.SelectedItem.Name;
@@ -178,7 +182,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
-            var multiLocations = window.MultiLocations;
+            var multiLocations = window.Polylines;
 
             var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
 
@@ -201,7 +205,7 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocations = window.MultiLocations;
+            var multiLocations = window.Polylines;
 
             var endYear = window.EndYear;
 
@@ -232,7 +236,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
-            var multiLocation = window.MultiLocations.SelectedItem;
+            var multiLocation = window.Polylines.SelectedItem;
 
             window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);
             window.UpdateMultiLocationValues();
@@ -245,7 +249,7 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocation = window.MultiLocations.SelectedItem;
+            var multiLocation = window.Polylines.SelectedItem;
             var multiLocationName = multiLocation.Name;
 
             var startYear = (int)multiLocation["StartYear"];

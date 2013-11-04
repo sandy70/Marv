@@ -1,5 +1,4 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace Marv.Common
@@ -182,6 +181,17 @@ namespace Marv.Common
                     this.SouthWest.Longitude = this.West;
                 }
             }
+        }
+
+        public static LocationRect Union(LocationRect rect1, LocationRect rect2)
+        {
+            return new LocationRect
+            {
+                North = Math.Max(rect1.North, rect2.North),
+                East = Math.Max(rect1.East, rect2.East),
+                South = Math.Min(rect1.South, rect2.South),
+                West = Math.Min(rect1.West, rect2.West)
+            };
         }
 
         public LocationRect GetPadded(double pad)

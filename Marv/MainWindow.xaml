@@ -124,9 +124,9 @@
                                          StartExtent="20,50,30,60">
                         <mapcontrol:MapItemsControl Name="MapItemsControl"
                                                     Effect="{StaticResource ResourceKey=DropShadow}"
-                                                    ItemsSource="{Binding MultiLocations, ElementName=Root}"
+                                                    ItemsSource="{Binding Polylines, ElementName=Root}"
                                                     VirtualizingPanel.IsVirtualizing="True"
-                                                    SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
+                                                    SelectedItem="{Binding Polylines.SelectedItem, ElementName=Root, Mode=TwoWay}">
                             <mapcontrol:MapItemsControl.ItemContainerStyle>
                                 <Style TargetType="mapcontrol:MapItem">
                                     <Setter Property="Template">

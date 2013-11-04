@@ -95,6 +95,11 @@ namespace Marv.Controls
             ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
         }
 
+        public void ZoomTo(LocationRect rect)
+        {
+            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
+        }
+
         protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
             base.OnManipulationInertiaStarting(e);

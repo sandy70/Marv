@@ -168,7 +168,7 @@ namespace Marv
         {
             logger.Trace("");
 
-            var multiLocation = this.MultiLocations.SelectedItem;
+            var multiLocation = this.Polylines.SelectedItem;
             var location = multiLocation.SelectedItem;
 
             try
@@ -201,7 +201,7 @@ namespace Marv
 
         public void ReadMultiLocationValueTimeSeriesForMultiLocation()
         {
-            foreach (var multiLocation in this.MultiLocations)
+            foreach (var multiLocation in this.Polylines)
             {
                 try
                 {
@@ -238,7 +238,7 @@ namespace Marv
 
         public void UpdateMultiLocationValues()
         {
-            foreach (var multiLocation in this.MultiLocations)
+            foreach (var multiLocation in this.Polylines)
             {
                 if ((int)multiLocation["StartYear"] > this.SelectedYear)
                 {
@@ -248,9 +248,9 @@ namespace Marv
                 {
                     multiLocation.IsEnabled = true;
 
-                    if (this.MultiLocations.SelectedItem.IsEnabled == false)
+                    if (this.Polylines.SelectedItem.IsEnabled == false)
                     {
-                        this.MultiLocations.SelectedItem = multiLocation;
+                        this.Polylines.SelectedItem = multiLocation;
                     }
 
                     try
