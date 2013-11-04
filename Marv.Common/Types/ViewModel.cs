@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class ViewModel : INotifyPropertyChanged
+    public class ViewModel : IViewModel
     {
         private string key;
         private string name;

@@ -6,12 +6,30 @@ using System.Linq;
 
 namespace Marv.Common
 {
-    public class ViewModelCollection<T> : ObservableCollection<T> where T : INotifyPropertyChanged
+    public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : INotifyPropertyChanged
     {
+        private string key;
         private string name;
         private T selectedItem = default(T);
 
         public event ValueEventHandler<T> SelectionChanged;
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value != this.key)
+                {
+                    this.key = value;
+                    this.RaisePropertyChanged("Key");
+                }
+            }
+        }
 
         public string Name
         {
