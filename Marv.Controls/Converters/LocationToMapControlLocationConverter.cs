@@ -1,8 +1,8 @@
 ﻿using Marv.Common;
 using System;
 using System.Collections.Generic;
-using System.Windows.Data;
 using System.Linq;
+using System.Windows.Data;
 
 namespace Marv.Controls
 {

@@ -9,7 +9,6 @@ namespace Marv.Common
     public class ViewModelCollection<T> : ObservableCollection<T> where T : INotifyPropertyChanged
     {
         private string name;
-
         private T selectedItem = default(T);
 
         public event ValueEventHandler<T> SelectionChanged;

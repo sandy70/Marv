@@ -33,7 +33,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="NetworkFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\CNPC\MODEL_CNPC_10152013.net</Value>
+      <Value Profile="(Default)">D:\Data\CNPC\MODEL_CNPC_10302013Coalescence.net</Value>
     </Setting>
     <Setting Name="InputDir" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Data\CNPC\GraphValues</Value>

@@ -140,7 +140,7 @@
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-
+                                    
                                     <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                                 </Style>
                             </mapcontrol:MapItemsControl.ItemContainerStyle>
