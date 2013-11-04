@@ -29,10 +29,10 @@ namespace Marv.Controls
         DependencyProperty.Register("NameLongitude", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(0.0, ChangedNameLongitude));
 
         public static readonly DependencyProperty PolylinePartsProperty =
-        DependencyProperty.Register("PolylineParts", typeof(IEnumerable<MultiLocation>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("PolylineParts", typeof(IEnumerable<LocationCollection>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
-        DependencyProperty.Register("SimplifiedPolylineParts", typeof(IEnumerable<MultiLocation>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
+        DependencyProperty.Register("SimplifiedPolylineParts", typeof(IEnumerable<LocationCollection>), typeof(SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ToleranceProperty =
         DependencyProperty.Register("Tolerance", typeof(double), typeof(SegmentedPolylineControl), new PropertyMetadata(5.0));
@@ -86,15 +86,15 @@ namespace Marv.Controls
             set { SetValue(NameLongitudeProperty, value); }
         }
 
-        public IEnumerable<MultiLocation> PolylineParts
+        public IEnumerable<LocationCollection> PolylineParts
         {
-            get { return (IEnumerable<MultiLocation>)GetValue(PolylinePartsProperty); }
+            get { return (IEnumerable<LocationCollection>)GetValue(PolylinePartsProperty); }
             set { SetValue(PolylinePartsProperty, value); }
         }
 
-        public IEnumerable<MultiLocation> SimplifiedPolylineParts
+        public IEnumerable<LocationCollection> SimplifiedPolylineParts
         {
-            get { return (IEnumerable<MultiLocation>)GetValue(SimplifiedPolylinePartsProperty); }
+            get { return (IEnumerable<LocationCollection>)GetValue(SimplifiedPolylinePartsProperty); }
             set { SetValue(SimplifiedPolylinePartsProperty, value); }
         }
 
@@ -119,9 +119,9 @@ namespace Marv.Controls
         public void UpdatePolylineParts()
         {
             var oldBinIndex = -1;
-            var multiLocationParts = new List<MultiLocation>();
+            var multiLocationParts = new List<LocationCollection>();
 
-            MultiLocation multiLocation = null;
+            LocationCollection multiLocation = null;
 
             foreach (var location in this.Locations)
             {
@@ -131,7 +131,7 @@ namespace Marv.Controls
                 {
                     if (multiLocation == null)
                     {
-                        multiLocation = new MultiLocation();
+                        multiLocation = new LocationCollection();
                         multiLocation.Add(location);
                         multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
@@ -141,7 +141,7 @@ namespace Marv.Controls
 
                         multiLocation.Add(mid);
 
-                        multiLocation = new MultiLocation();
+                        multiLocation = new LocationCollection();
                         multiLocation.Add(mid);
                         multiLocation.Add(location);
                         multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
@@ -169,13 +169,13 @@ namespace Marv.Controls
         {
             var mapView = this.FindParent<MapView>();
 
-            var multiLocations = new List<MultiLocation>();
+            var multiLocations = new List<LocationCollection>();
 
             if (this.PolylineParts != null)
             {
                 foreach (var multiLocation in this.PolylineParts)
                 {
-                    var simplifiedLocationCollection = new MultiLocation(multiLocation.ToPoints(mapView)
+                    var simplifiedLocationCollection = new LocationCollection(multiLocation.ToPoints(mapView)
                                                                                       .Reduce(this.Tolerance)
                                                                                       .ToLocations(mapView));
 

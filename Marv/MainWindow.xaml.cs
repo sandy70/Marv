@@ -31,7 +31,7 @@ namespace Marv
         public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
         public Dictionary<int, string, string, double> graphValueTimeSeries = new Dictionary<int, string, string, double>();
         public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
-        public Dictionary<MultiLocation, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
+        public Dictionary<LocationCollection, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
         public string selectedGroup = null;
         public SensorListener SensorListener = new SensorListener();
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -47,7 +47,7 @@ namespace Marv
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(MultiLocation multiLocation, Graph graph = null)
+        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
         {
             logger.Info("Computing value for line {0}.", multiLocation.Name);
 
@@ -100,7 +100,7 @@ namespace Marv
 
                         if (!multiLocationValueTimeSeries.ContainsKey(year))
                         {
-                            multiLocationValueTimeSeries[year] = new MultiLocationValue();
+                            multiLocationValueTimeSeries[year] = new Dict<string, double>();
                         }
 
                         multiLocationValueTimeSeries[year][location.Name] = stateValue;
@@ -127,7 +127,7 @@ namespace Marv
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(MultiLocation multiLocation, Graph graph)
+        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
         {
             return Task.Run(() =>
                 {
@@ -140,7 +140,7 @@ namespace Marv
             return Path.Combine("ModelValues", multiLocationName, locationName + ".db");
         }
 
-        public static string GetFileNameForMultiLocationValueTimeSeries(MultiLocation multiLocation, string vertexKey, string stateKey)
+        public static string GetFileNameForMultiLocationValueTimeSeries(LocationCollection multiLocation, string vertexKey, string stateKey)
         {
             return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, vertexKey + "_" + stateKey + ".db");
         }

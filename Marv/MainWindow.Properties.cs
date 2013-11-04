@@ -53,7 +53,7 @@ namespace Marv
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty MultiLocationsProperty =
-        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
+        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
 
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
@@ -154,9 +154,9 @@ namespace Marv
             set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
-        public SelectableCollection<MultiLocation> MultiLocations
+        public SelectableCollection<LocationCollection> MultiLocations
         {
-            get { return (SelectableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
+            get { return (SelectableCollection<LocationCollection>)GetValue(MultiLocationsProperty); }
             set { SetValue(MultiLocationsProperty, value); }
         }
 

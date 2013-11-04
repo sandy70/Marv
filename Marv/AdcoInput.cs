@@ -183,11 +183,11 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static SelectableCollection<MultiLocation> Read(string fileName)
+        public static SelectableCollection<LocationCollection> Read(string fileName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var multiLocations = new SelectableCollection<MultiLocation>();
+                var multiLocations = new SelectableCollection<LocationCollection>();
                 var nHeaderRows = 3;
                 var pipelineStartRowIndices = new List<int>();
                 var rowIndex = nHeaderRows + 1;
@@ -215,7 +215,7 @@ namespace Marv
                     var pipelineStartRowIndex = pipelineStartRowIndices[pipelineIndex - 1];
                     var pipelineEndRowIndex = pipelineStartRowIndices[pipelineIndex];
 
-                    var multiLocation = new MultiLocation();
+                    var multiLocation = new LocationCollection();
                     multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "R1C1") as string;
 
                     var startYear = sheet.GetValue(pipelineStartRowIndex, "START");

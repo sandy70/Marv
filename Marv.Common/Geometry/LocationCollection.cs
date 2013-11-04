@@ -5,20 +5,20 @@ using System.Windows.Media;
 
 namespace Marv.Common
 {
-    public class MultiLocation : SelectableCollection<Location>
+    public class LocationCollection : SelectableCollection<Location>
     {
-        private MultiLocationValue _value = new MultiLocationValue();
+        private Dict<string, double> _value = new Dict<string, double>();
         private bool isEnabled = true;
         private bool isSelected = false;
         private string name = "";
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);
 
-        public MultiLocation()
+        public LocationCollection()
             : base()
         {
         }
 
-        public MultiLocation(IEnumerable<Location> locations)
+        public LocationCollection(IEnumerable<Location> locations)
             : base(locations)
         {
         }
@@ -98,7 +98,7 @@ namespace Marv.Common
             }
         }
 
-        public MultiLocationValue Value
+        public Dict<string, double> Value
         {
             get
             {

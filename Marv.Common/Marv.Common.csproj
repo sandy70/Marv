@@ -99,8 +99,7 @@
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
     <Compile Include="Geometry\LocationRectConverter.cs" />
-    <Compile Include="Geometry\MultiLocation.cs" />
-    <Compile Include="Geometry\MultiLocationValue.cs" />
+    <Compile Include="Geometry\LocationCollection.cs" />
     <Compile Include="Geometry\MultiLocationValueTimeSeries.cs" />
     <Compile Include="GridFloatHeader.cs" />
     <Compile Include="GridFloatReader.cs" />

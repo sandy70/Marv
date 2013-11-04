@@ -89,7 +89,7 @@ namespace Marv
 
             window.SourceGraph.GetVertex("coatd").Commands.Add(MainWindow.VertexChartPofCommand);
 
-            window.MultiLocations = new SelectableCollection<MultiLocation>();
+            window.MultiLocations = new SelectableCollection<LocationCollection>();
 
             try
             {
@@ -180,7 +180,7 @@ namespace Marv
             var graph = window.SourceGraph;
             var multiLocations = window.MultiLocations;
 
-            var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<MultiLocation, MultiLocationValueTimeSeries>();
+            var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
 
             await Task.Run(() =>
                 {
