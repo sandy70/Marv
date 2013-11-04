@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Marv.Common
 {
-    public class LocationCollection : SelectableCollection<Location>
+    public class LocationCollection : ViewModelCollection<Location>
     {
         private Dict<string, double> _value = new Dict<string, double>();
         private bool isEnabled = true;

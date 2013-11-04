@@ -182,11 +182,11 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static SelectableCollection<LocationCollection> Read(string fileName)
+        public static ViewModelCollection<LocationCollection> Read(string fileName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var multiLocations = new SelectableCollection<LocationCollection>();
+                var multiLocations = new ViewModelCollection<LocationCollection>();
                 var nHeaderRows = 3;
                 var pipelineStartRowIndices = new List<int>();
                 var rowIndex = nHeaderRows + 1;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -10,7 +11,18 @@ namespace Marv.Common
     {
         private string key;
         private string name;
+        private Dict<string, object> properties = new Dict<string, object>();
         private T selectedItem = default(T);
+
+        public ViewModelCollection()
+            : base()
+        {
+        }
+
+        public ViewModelCollection(IEnumerable<T> items)
+            : base(items)
+        {
+        }
 
         public event ValueEventHandler<T> SelectionChanged;
 
@@ -70,6 +82,42 @@ namespace Marv.Common
                 {
                     throw new ArgumentException("The value provided for SelectedItem does not exist in the collection.");
                 }
+            }
+        }
+
+        public object this[string name]
+        {
+            get
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    if (properties.ContainsKey(name))
+                    {
+                        return properties[name];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return this.GetType().GetProperty(name).GetValue(this);
+                }
+            }
+
+            set
+            {
+                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                {
+                    properties[name] = value;
+                }
+                else
+                {
+                    this.GetType().GetProperty(name).SetValue(this, value);
+                }
+
+                this.OnPropertyChanged(new PropertyChangedEventArgs(name));
             }
         }
 

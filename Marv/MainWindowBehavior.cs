@@ -89,7 +89,7 @@ namespace Marv
 
             window.SourceGraph.GetVertex("coatd").Commands.Add(MainWindow.VertexChartPofCommand);
 
-            window.MultiLocations = new SelectableCollection<LocationCollection>();
+            window.MultiLocations = new ViewModelCollection<LocationCollection>();
 
             try
             {
