@@ -19,7 +19,6 @@ namespace Marv.Common
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private Dictionary<string, string, double> _value = new Dictionary<string, string, double>();
-        private string associatedGroup;
         private string defaultGroup = "all";
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
@@ -44,23 +43,6 @@ namespace Marv.Common
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public string AssociatedGroup
-        {
-            get
-            {
-                return this.associatedGroup;
-            }
-
-            set
-            {
-                if (value != this.associatedGroup)
-                {
-                    this.associatedGroup = value;
-                    this.RaisePropertyChanged("AssociatedGroup");
-                }
-            }
-        }
 
         public string DefaultGroup
         {
