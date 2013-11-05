@@ -22,6 +22,11 @@ namespace Marv.Common
             else return val;
         }
 
+        public static string Enquote(this string str)
+        {
+            return "\"" + str + "\"";
+        }
+
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)

@@ -112,7 +112,7 @@ namespace Marv
             window.Notifications.Push(notification);
 
             // Read source graph
-            window.SourceGraph = await Graph.ReadAsync<Vertex>(window.NetworkFileName);
+            window.SourceGraph = await Graph.ReadAsync(window.NetworkFileName);
 
             // Add commands to source graph
             foreach (var vertexKey in vertexCommandForKey.Keys)

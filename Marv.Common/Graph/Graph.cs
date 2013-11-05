@@ -189,7 +189,7 @@ namespace Marv.Common
             }
         }
 
-        public static Graph Read<TVertex>(string fileName) where TVertex : Vertex, new()
+        public static Graph Read(string fileName)
         {
             var graph = new Graph();
 
@@ -208,7 +208,7 @@ namespace Marv.Common
             // Add all the vertices
             foreach (var structureVertex in structure.Vertices)
             {
-                var vertex = new TVertex();
+                var vertex = new Vertex();
 
                 vertex.Key = structureVertex.Key;
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
@@ -246,18 +246,18 @@ namespace Marv.Common
                 }
             }
 
-            graph.DefaultGroup = structure.ParseProperty("defaultgroup", defaultValue: "all");
-            graph.Name = structure.ParseProperty("key", defaultValue: "");
-            graph.SourceConnectorPosition = structure.ParseProperty("SourceConnectorPosition", defaultValue: "Auto");
-            graph.TargetConnectorPosition = structure.ParseProperty("TargetConnectorPosition", defaultValue: "Auto");
+            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", defaultValue: "all");
+            graph.Name = structure.ParseUserProperty("key", defaultValue: "");
+            graph.SourceConnectorPosition = structure.ParseUserProperty("SourceConnectorPosition", defaultValue: "Auto");
+            graph.TargetConnectorPosition = structure.ParseUserProperty("TargetConnectorPosition", defaultValue: "Auto");
 
             graph.UpdateValue();
             return graph;
         }
 
-        public static Task<Graph> ReadAsync<TVertex>(string fileName) where TVertex : Vertex, new()
+        public static Task<Graph> ReadAsync(string fileName)
         {
-            return Task.Run(() => Graph.Read<TVertex>(fileName));
+            return Task.Run(() => Graph.Read(fileName));
         }
 
         public void AddEdge(string srcVertexKey, string dstVertexKey)
@@ -376,7 +376,7 @@ namespace Marv.Common
             {
                 foreach (var dstVertex in subGraph.Vertices)
                 {
-                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<Vertex, Edge>(this, (edge) => { return 1; });
+                    var algorithm = new HoffmanPavleyRankedShortestPathAlgorithm<Vertex, Edge>(this, edge => 1);
                     algorithm.Compute(srcVertex, dstVertex);
 
                     foreach (var path in algorithm.ComputedShortestPaths)
@@ -559,7 +559,7 @@ namespace Marv.Common
         {
             var structure = NetworkStructure.Read(fileName);
 
-            var graphPropList = new List<string>
+            var userProperties = new List<string>
             {
                 "defaultgroup=" + this.DefaultGroup,
                 "key=" + this.Name,
@@ -567,15 +567,15 @@ namespace Marv.Common
                 "TargetConnectorPosition=" + this.TargetConnectorPosition
             };
 
-            structure.Properties["HR_Desc"] = "\"" + graphPropList.String() + "\"";
+            structure.Properties["HR_Desc"] = userProperties.String().Enquote();
 
-            foreach (var node in structure.Vertices)
+            foreach (var vertex in structure.Vertices)
             {
-                node.Properties["groups"] = "\"" + this.GetVertex(node.Key).Groups.String() + "\"";
-                node.Properties["grouppositions"] = "\"" + this.GetVertex(node.Key).PositionForGroup.String() + "\"";
-                node.Properties["isexpanded"] = "\"" + this.GetVertex(node.Key).IsExpanded + "\"";
-                node.Properties["label"] = "\"" + this.GetVertex(node.Key).Name + "\"";
-                node.Properties["units"] = "\"" + this.GetVertex(node.Key).Units + "\"";
+                vertex.Properties["groups"] = this.GetVertex(vertex.Key).Groups.String().Enquote();
+                vertex.Properties["grouppositions"] = this.GetVertex(vertex.Key).PositionForGroup.String().Enquote();
+                vertex.Properties["isexpanded"] = "\"" + this.GetVertex(vertex.Key).IsExpanded + "\"";
+                vertex.Properties["label"] = "\"" + this.GetVertex(vertex.Key).Name + "\"";
+                vertex.Properties["units"] = "\"" + this.GetVertex(vertex.Key).Units + "\"";
             }
 
             structure.Write(fileName);

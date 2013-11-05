@@ -7,7 +7,6 @@ namespace Marv.Common
 {
     public class Edge : ViewModel, IEdge<Vertex>, ILink<Vertex>
     {
-        private double _value = 1;
         private Vertex source;
         private string sourceConnectorPosition = "Auto";
         private Vertex target;
@@ -83,23 +82,6 @@ namespace Marv.Common
                 {
                     this.targetConnectorPosition = value;
                     this.RaisePropertyChanged("TargetConnectorPosition");
-                }
-            }
-        }
-
-        public double Value
-        {
-            get
-            {
-                return this._value;
-            }
-
-            set
-            {
-                if (value != this._value)
-                {
-                    this._value = value;
-                    this.RaisePropertyChanged("Values");
                 }
             }
         }

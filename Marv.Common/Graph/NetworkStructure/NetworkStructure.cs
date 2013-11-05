@@ -26,7 +26,7 @@ namespace Marv.Common
             for (int i = 0; i < nLines; i++)
             {
                 // Parse the node section
-                if (fileLines[i].StartsWith("node"))
+                if (fileLines[i].StartsWith("vertex"))
                 {
                     var parts = fileLines[i].Split(new char[] { ' ' }, 2).ToList();
 
@@ -92,7 +92,7 @@ namespace Marv.Common
             return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
         }
 
-        public string ParseProperty(string propertyName, string defaultValue)
+        public string ParseUserProperty(string userPropertyName, string defaultValue)
         {
             if (this.Properties.ContainsKey("HR_Desc"))
             {
@@ -106,7 +106,7 @@ namespace Marv.Common
 
                     if (subParts.Count() == 2)
                     {
-                        if (subParts[0].Equals(propertyName))
+                        if (subParts[0].Equals(userPropertyName))
                         {
                             return subParts[1];
                         }
@@ -134,7 +134,7 @@ namespace Marv.Common
                 foreach (var node in this.Vertices)
                 {
                     writer.WriteLine();
-                    writer.WriteLine("node {0}", node.Key);
+                    writer.WriteLine("vertex {0}", node.Key);
                     writer.WriteLine("{");
 
                     foreach (var prop in node.Properties)
