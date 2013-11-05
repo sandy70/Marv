@@ -1,15 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Media;
-using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Common
 {
-    public interface IChartSeries : INotifyPropertyChanged
+    public interface IChartSeries : IViewModel
     {
-        string Name { get; set; }
-
         Brush Stroke { get; set; }
 
         Type Type { get; set; }
@@ -17,7 +14,7 @@ namespace Marv.Common
         string XLabel { get; set; }
     }
 
-    public class ChartSeries<T> : ViewModelCollection<T>, IChartSeries where T : INotifyPropertyChanged
+    public class ChartSeries<T> : ViewModelCollection<T>, IChartSeries where T : class, IViewModel
     {
         private CartesianAxis horizontalAxis;
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);
@@ -29,12 +26,12 @@ namespace Marv.Common
         public ChartSeries()
             : base()
         {
-            if (this is ChartSeries<ScatterDataPoint>)
+            if (this is ChartSeries<ScatterPoint>)
             {
                 this.HorizontalAxis = ChartAxes.HorizontalLinearAxis;
                 this.VerticalAxis = ChartAxes.VerticalLinearAxis;
             }
-            else if (this is ChartSeries<CategoricalDataPoint>)
+            else if (this is ChartSeries<CategoricalPoint>)
             {
                 this.HorizontalAxis = ChartAxes.HorizontalCategoricalAxis;
                 this.VerticalAxis = ChartAxes.VerticalCategoricalAxis;

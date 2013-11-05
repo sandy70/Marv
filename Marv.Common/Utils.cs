@@ -104,8 +104,8 @@ namespace Marv.Common
 
                                      location.Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3));
 
-                                     location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
-                                     location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
+                                     // location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
+                                     // location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
 
                                      return location;
                                  });

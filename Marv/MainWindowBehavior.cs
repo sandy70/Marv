@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
+using Telerik.Windows.Controls.TransitionControl;
 
 namespace Marv
 {
@@ -20,6 +21,8 @@ namespace Marv
             base.OnAttached();
             this.AssociatedObject.Closing += AssociatedObject_Closing;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadNetwork;
+            this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadPolylines;
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
         }
 
@@ -48,75 +51,9 @@ namespace Marv
             }
         }
 
-        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-
-            window.SourceGraph = await Graph.ReadAsync<Vertex>(window.NetworkFileName);
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
-
-            var vertexKeys = new List<string> 
-            {
-                "depth",
-                "length",
-                "totalyears",
-            };
-
-            // Add VertexChartCommand to header vertices
-            foreach (var vertex in window.SourceGraph.Vertices)
-            {
-                if(vertexKeys.Contains(vertex.Key))
-                {
-                    vertex.Commands.Add(MainWindow.VertexChartCommand);
-                }
-            }
-
-            vertexKeys = new List<string>
-            {
-                "current",
-                "cpon",
-                "pH"
-            };
-
-            // Add VertexChartCommand to header vertices
-            foreach (var vertex in window.SourceGraph.Vertices)
-            {
-                if (vertexKeys.Contains(vertex.Key))
-                {
-                    vertex.Commands.Add(MainWindow.VertexBarChartCommand);
-                }
-            }
-
-            window.SourceGraph.GetVertex("coatd").Commands.Add(MainWindow.VertexChartPofCommand);
-
-            window.Polylines = new ViewModelCollection<LocationCollection>();
-
-            try
-            {
-                var pipelineInput = new PipelineInput(window.InputFileName);
-                window.Polylines = pipelineInput.ReadPipelines();
-                window.MapView.ZoomTo(window.Polylines.GetBounds());
-
-                // window.MultiLocations = AdcoInput.Read(window.InputFileName);
-
-                window.ReadMultiLocationValueTimeSeriesForMultiLocation();
-                window.UpdateMultiLocationValues();
-
-                window.ReadGraphValueTimeSeriesCnpc();
-                window.UpdateGraphValue();
-            }
-            catch (IOException exp)
-            {
-                logger.Warn(exp.Message);
-
-                var notification = new NotificationTimed
-                {
-                    Name = "Unable to read file.",
-                    Description = exp.Message,
-                };
-
-                window.Notifications.Push<INotification>(notification);
-            }
 
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
@@ -131,6 +68,7 @@ namespace Marv
             window.BackButton.Click += BackButton_Click;
             window.ChartControlCloseButton.Click += ChartControlCloseButton_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
+            window.TransitionControl.StatusChanged += TransitionControl_StatusChanged;
 
             // Change map types
             window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
@@ -140,9 +78,90 @@ namespace Marv
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
         }
 
-        private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
+        private void TransitionControl_StatusChanged(object sender, TransitionStatusChangedEventArgs e)
         {
-            this.AssociatedObject.IsChartControlVisible = false;
+            var window = this.AssociatedObject;
+
+            if (e.Status == TransitionStatus.Completed)
+            {
+                window.MapView.ZoomTo(window.Polylines.GetBounds());
+            }
+        }
+
+        private async void AssociatedObject_Loaded_ReadNetwork(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var vertexCommandForKey = new Dictionary<string, IVertexCommand>
+            {
+                { "depth", MainWindow.VertexChartCommand },
+                { "length", MainWindow.VertexChartCommand },
+                { "totalyears", MainWindow.VertexChartCommand },
+                { "current", MainWindow.VertexBarChartCommand },
+                { "cpon", MainWindow.VertexBarChartCommand },
+                { "pH", MainWindow.VertexBarChartCommand },
+                { "coatd", MainWindow.VertexChartPofCommand}
+            };
+
+            var notification = new NotificationIndeterminate
+            {
+                Name = "Reading Network",
+                Description = "Reading network from file " + window.NetworkFileName
+            };
+
+            window.Notifications.Push(notification);
+
+            // Read source graph
+            window.SourceGraph = await Graph.ReadAsync<Vertex>(window.NetworkFileName);
+
+            // Add commands to source graph
+            foreach (var vertexKey in vertexCommandForKey.Keys)
+            {
+                var command = vertexCommandForKey[vertexKey];
+                var vertex = window.SourceGraph.GetVertex(vertexKey);
+
+                vertex.Commands.Add(command);
+            }
+
+            // Set display graph
+            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+
+            // Close notification
+            notification.Close();
+
+            window.ReadGraphValueTimeSeriesCnpc();
+            window.UpdateGraphValue();
+        }
+
+        private void AssociatedObject_Loaded_ReadPolylines(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            window.Polylines = new ViewModelCollection<LocationCollection>();
+
+            try
+            {
+                var pipelineInput = new PipelineInput(window.InputFileName);
+                window.Polylines = pipelineInput.ReadPipelines();
+                window.MapView.ZoomTo(window.Polylines.GetBounds());
+
+                // window.MultiLocations = AdcoInput.Read(window.InputFileName);
+
+                window.ReadMultiLocationValueTimeSeriesForMultiLocation();
+                window.UpdateMultiLocationValues();
+            }
+            catch (IOException exp)
+            {
+                logger.Warn(exp.Message);
+
+                var notification = new NotificationTimed
+                {
+                    Name = "Unable to read file.",
+                    Description = exp.Message,
+                };
+
+                window.Notifications.Push<INotification>(notification);
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -152,6 +171,11 @@ namespace Marv
 
             window.DisplayGraph = sourceGraph.GetSubGraph(sourceGraph.DefaultGroup);
             window.IsBackButtonVisible = false;
+        }
+
+        private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AssociatedObject.IsChartControlVisible = false;
         }
 
         private void EditNetworkFilesMenuItem_Click(object sender, RadRoutedEventArgs e)

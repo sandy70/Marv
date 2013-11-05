@@ -11,8 +11,8 @@ namespace Marv.Common
 
     public class ViewModel : IViewModel
     {
-        private string key;
-        private string name;
+        private string key = "";
+        private string name = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
 

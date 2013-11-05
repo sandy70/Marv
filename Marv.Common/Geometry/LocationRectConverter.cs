@@ -19,22 +19,36 @@ namespace Marv.Common
             {
                 return (LocationRect)value;
             }
-
-            var locationRect = new LocationRect();
-
-            var str = value as string;
-
-            var parts = str.Split(",".ToCharArray());
-
-            if (parts.Count() == 4)
+            else if (value is string)
             {
-                locationRect.South = Double.Parse(parts[0]);
-                locationRect.West = Double.Parse(parts[1]);
-                locationRect.North = Double.Parse(parts[2]);
-                locationRect.East = Double.Parse(parts[3]);
-            }
+                var str = value as string;
 
-            return locationRect;
+                if (Countries.BoundsForKey.ContainsKey(str))
+                {
+                    return Countries.BoundsForKey[str];
+                }
+                else
+                {
+                    var locationRect = new LocationRect();
+
+
+                    var parts = str.Split(",".ToCharArray());
+
+                    if (parts.Count() == 4)
+                    {
+                        locationRect.North = Double.Parse(parts[0]);
+                        locationRect.East = Double.Parse(parts[1]);
+                        locationRect.South = Double.Parse(parts[2]);
+                        locationRect.West = Double.Parse(parts[3]);
+                    }
+
+                    return locationRect;
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

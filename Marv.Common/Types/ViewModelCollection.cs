@@ -4,15 +4,34 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq;
 
 namespace Marv.Common
 {
-    public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : INotifyPropertyChanged
+    public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : class, IViewModel
     {
-        private string key;
-        private string name;
-        private Dict<string, object> properties = new Dict<string, object>();
+        private string key = "";
+        private string name = "";
+        private Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private T selectedItem = default(T);
+        private Dynamic properties = new Dynamic();
+
+        public Dynamic Properties
+        {
+            get
+            {
+                return this.properties;
+            }
+
+            set
+            {
+                if (value != this.properties)
+                {
+                    this.properties = value;
+                    this.RaisePropertyChanged("Properties");
+                }
+            }
+        }
 
         public ViewModelCollection()
             : base()
@@ -22,6 +41,7 @@ namespace Marv.Common
         public ViewModelCollection(IEnumerable<T> items)
             : base(items)
         {
+            
         }
 
         public event ValueEventHandler<T> SelectionChanged;
@@ -85,39 +105,16 @@ namespace Marv.Common
             }
         }
 
-        public object this[string name]
+        public object this[string key]
         {
             get
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    if (properties.ContainsKey(name))
-                    {
-                        return properties[name];
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return this.GetType().GetProperty(name).GetValue(this);
-                }
+                return this.dictionary[key];
             }
 
             set
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    properties[name] = value;
-                }
-                else
-                {
-                    this.GetType().GetProperty(name).SetValue(this, value);
-                }
-
-                this.OnPropertyChanged(new PropertyChangedEventArgs(name));
+                this.dictionary[key] = value as T;
             }
         }
 
@@ -125,9 +122,17 @@ namespace Marv.Common
         {
             base.OnCollectionChanged(e);
 
-            if (e.NewItems != null && this.Count == 1)
+            if (e.NewItems != null)
             {
-                this.SelectedItem = this.First();
+                foreach (var newItem in e.NewItems)
+                {
+                    this.dictionary[(newItem as T).Key] = newItem as T;
+                }
+
+                if (this.Count == 1)
+                {
+                    this.SelectedItem = this.First();
+                }
             }
 
             else if (e.OldItems != null)
@@ -136,6 +141,8 @@ namespace Marv.Common
 
                 foreach (var item in e.OldItems)
                 {
+                    this.dictionary.Remove((item as T).Key);
+
                     if (item.Equals(this.SelectedItem))
                     {
                         selectedRemoved = true;

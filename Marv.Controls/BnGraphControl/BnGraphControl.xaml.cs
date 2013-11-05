@@ -24,8 +24,14 @@ namespace Marv.Controls
         public static readonly DependencyProperty ShapeOpacityProperty =
         DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
 
+        public static readonly DependencyProperty SourceConnectorPositionProperty =
+        DependencyProperty.Register("SourceConnectorPosition", typeof(string), typeof(BnGraphControl), new PropertyMetadata("Bottom", ChangedSourceConnectorPosition));
+
         public static readonly RoutedEvent StateDoubleClickedEvent =
         EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
+
+        public static readonly DependencyProperty TargetConnectorPositionProperty =
+        DependencyProperty.Register("TargetConnectorPosition", typeof(string), typeof(BnGraphControl), new PropertyMetadata("Top", ChangedTargetConnectorPosition));
 
         public BnGraphControl()
         {
@@ -68,6 +74,18 @@ namespace Marv.Controls
             set { SetValue(ShapeOpacityProperty, value); }
         }
 
+        public string SourceConnectorPosition
+        {
+            get { return (string)GetValue(SourceConnectorPositionProperty); }
+            set { SetValue(SourceConnectorPositionProperty, value); }
+        }
+
+        public string TargetConnectorPosition
+        {
+            get { return (string)GetValue(TargetConnectorPositionProperty); }
+            set { SetValue(TargetConnectorPositionProperty, value); }
+        }
+
         public void AutoFit()
         {
             var timer = new DispatcherTimer
@@ -82,6 +100,40 @@ namespace Marv.Controls
             };
 
             timer.Start();
+        }
+
+        private static void ChangedSourceConnectorPosition(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as BnGraphControl;
+
+            if (control.Graph != null)
+            {
+                control.Graph.SourceConnectorPosition = control.SourceConnectorPosition;
+
+                foreach (var vertex in control.Graph.Vertices)
+                {
+                    var displayPosition = vertex.DisplayPosition;
+                    displayPosition.X += 1;
+                    displayPosition.X -= 1;
+                }
+            }
+        }
+
+        private static void ChangedTargetConnectorPosition(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as BnGraphControl;
+
+            if (control.Graph != null)
+            {
+                control.Graph.TargetConnectorPosition = control.TargetConnectorPosition;
+
+                foreach (var vertex in control.Graph.Vertices)
+                {
+                    var displayPosition = vertex.DisplayPosition;
+                    displayPosition.X += 1;
+                    displayPosition.X -= 1;
+                }
+            }
         }
     }
 }

@@ -41,11 +41,11 @@
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
-                    <!--<Setter Property="SourceConnectorPosition" Value=" " />-->
+                    <Setter Property="SourceConnectorPosition" Value="{Binding SourceConnectorPosition}" />
                     <Setter Property="StrokeThickness" Value="10" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
-                    <!--<Setter Property="TargetConnectorPosition" Value="Top" />-->
+                    <Setter Property="TargetConnectorPosition" Value="{Binding TargetConnectorPosition}" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate />
@@ -122,7 +122,7 @@
                                         </Grid>
 
                                         <!-- States -->
-                                        <local:BnStatesControl Name="StatesControl"
+                                        <local:BnStatesControl x:Name="StatesControl"
                                                             IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
                                                             IsExpanded="{Binding IsExpanded}"
                                                             Margin="10"

@@ -31,6 +31,7 @@ namespace Marv.Common
                     return this.GetType().GetProperty(name).GetValue(this);
                 }
             }
+
             set
             {
                 if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)

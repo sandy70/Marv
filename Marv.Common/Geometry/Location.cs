@@ -3,13 +3,12 @@ using System.Windows;
 
 namespace Marv.Common
 {
-    public class Location : Dynamic
+    public class Location : ViewModel
     {
         private double _value;
         private Guid guid;
         private double latitude;
         private double longitude;
-        private string name;
 
         public Guid Guid
         {
@@ -60,23 +59,6 @@ namespace Marv.Common
                     this.longitude = value;
 
                     this.RaisePropertyChanged("Longitude");
-                }
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-                    this.RaisePropertyChanged("Name");
                 }
             }
         }

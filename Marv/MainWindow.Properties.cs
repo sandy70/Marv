@@ -1,6 +1,5 @@
 ﻿using Marv.Common;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 
 namespace Marv
@@ -65,7 +64,7 @@ namespace Marv
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public static readonly DependencyProperty PolylinesProperty =
-        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
+        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedPolylines));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -211,7 +210,7 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
@@ -224,12 +223,12 @@ namespace Marv
                     window.SelectedYear = window.StartYear;
                 }
 
-                foreach (var multiLocation in window.Polylines)
+                foreach (var polyline in window.Polylines)
                 {
                     // Attach event so that we can load data when selection changes
                     // The -= ensures that events aren't subscribed twice
-                    multiLocation.SelectionChanged -= window.multiLocation_SelectionChanged;
-                    multiLocation.SelectionChanged += window.multiLocation_SelectionChanged;
+                    polyline.SelectionChanged -= window.multiLocation_SelectionChanged;
+                    polyline.SelectionChanged += window.multiLocation_SelectionChanged;
                 }
             }
         }

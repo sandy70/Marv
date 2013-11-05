@@ -129,6 +129,50 @@ namespace Marv.Common
             return "all";
         }
 
+        public string ParseSourceConnectorPosition()
+        {
+            if (this.Properties.ContainsKey("HR_Desc"))
+            {
+                var descValueString = this.Properties["HR_Desc"];
+
+                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
+                {
+                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (subParts[0].Equals("SourceConnectorPosition"))
+                    {
+                        return subParts[1];
+                    }
+                }
+            }
+
+            return "Auto";
+        }
+
+        public string ParseTargetConnectorPosition()
+        {
+            if (this.Properties.ContainsKey("HR_Desc"))
+            {
+                var descValueString = this.Properties["HR_Desc"];
+
+                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
+                {
+                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (subParts[0].Equals("TargetConnectorPosition"))
+                    {
+                        return subParts[1];
+                    }
+                }
+            }
+
+            return "Auto";
+        }
+
         public string ParseName()
         {
             if (this.Properties.ContainsKey("HR_Desc"))
@@ -141,9 +185,12 @@ namespace Marv.Common
                 {
                     var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                    if (subParts[0].Equals("name"))
+                    if (subParts.Count() == 2)
                     {
-                        return subParts[1];
+                        if (subParts[0].Equals("key"))
+                        {
+                            return subParts[1];
+                        }
                     }
                 }
             }

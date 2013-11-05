@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using Telerik.Windows.Controls.TransitionControl;
 using Telerik.Windows.Controls.TransitionEffects;
 
 namespace Marv.Controls
@@ -26,6 +27,8 @@ namespace Marv.Controls
         DependencyProperty.RegisterAttached("IsHeaderVisible", typeof(bool), typeof(TransitionControl), new UIPropertyMetadata(false));
 
         private TransitionControlInner transitionControlInner = new TransitionControlInner();
+
+        public event EventHandler<TransitionStatusChangedEventArgs> StatusChanged;
 
         public ObservableCollection<FrameworkElement> Elements
         {
@@ -124,6 +127,14 @@ namespace Marv.Controls
                     if (this.ElementStack.Count > 0)
                     {
                         this.transitionControlInner.SelectedElement = this.ElementStack.Pop();
+                    }
+                };
+
+            this.transitionControlInner.RadTransitionControl.TransitionStatusChanged += (s2, e2) =>
+                {
+                    if (this.StatusChanged != null)
+                    {
+                        this.StatusChanged(this, e2);
                     }
                 };
         }

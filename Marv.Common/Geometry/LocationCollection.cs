@@ -12,7 +12,6 @@ namespace Marv.Common
         private LocationRect bounds;
         private bool isEnabled = true;
         private bool isSelected = false;
-        private string name = "";
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);
 
         public LocationCollection()
@@ -79,23 +78,6 @@ namespace Marv.Common
                 {
                     this.isSelected = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs("IsSelected"));
-                }
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("Name"));
                 }
             }
         }

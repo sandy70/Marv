@@ -1,12 +1,10 @@
-﻿using Telerik.Charting;
-
-namespace Marv.Common
+﻿namespace Marv.Common
 {
     public class ChartSeriesDescriptorSelector : Telerik.Windows.Controls.ChartView.ChartSeriesDescriptorSelector
     {
         public override Telerik.Windows.Controls.ChartView.ChartSeriesDescriptor SelectDescriptor(Telerik.Windows.Controls.ChartView.ChartSeriesProvider provider, object context)
         {
-            if (context is ChartSeries<ScatterDataPoint>)
+            if (context is ChartSeries<ScatterPoint>)
             {
                 return new Telerik.Windows.Controls.ChartView.ScatterSeriesDescriptor
                 {
@@ -15,7 +13,7 @@ namespace Marv.Common
                     TypePath = "Type",
                 };
             }
-            else if (context is ChartSeries<CategoricalDataPoint>)
+            else if (context is ChartSeries<CategoricalPoint>)
             {
                 return new Telerik.Windows.Controls.ChartView.CategoricalSeriesDescriptor
                 {

@@ -217,7 +217,7 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.graphValueTimeSeries != null)
+            if (this.graphValueTimeSeries != null && this.SourceGraph != null)
             {
                 if (this.graphValueTimeSeries.ContainsKey(this.SelectedYear))
                 {
@@ -240,28 +240,28 @@ namespace Marv
         {
             foreach (var multiLocation in this.Polylines)
             {
-                if ((int)multiLocation["StartYear"] > this.SelectedYear)
-                {
-                    multiLocation.IsEnabled = false;
-                }
-                else
-                {
-                    multiLocation.IsEnabled = true;
+                //if ((int)multiLocation.Properties["StartYear"] > this.SelectedYear)
+                //{
+                //    multiLocation.IsEnabled = false;
+                //}
+                //else
+                //{
+                //    multiLocation.IsEnabled = true;
 
-                    if (this.Polylines.SelectedItem.IsEnabled == false)
-                    {
-                        this.Polylines.SelectedItem = multiLocation;
-                    }
+                //    if (this.Polylines.SelectedItem.IsEnabled == false)
+                //    {
+                //        this.Polylines.SelectedItem = multiLocation;
+                //    }
 
-                    try
-                    {
-                        multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
-                    }
-                }
+                //    try
+                //    {
+                //        multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+                //    }
+                //    catch (KeyNotFoundException)
+                //    {
+                //        logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                //    }
+                //}
             }
         }
     }

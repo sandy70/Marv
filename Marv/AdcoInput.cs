@@ -219,7 +219,7 @@ namespace Marv
 
                     var startYear = sheet.GetValue(pipelineStartRowIndex, "START");
 
-                    multiLocation["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
+                    multiLocation.Properties["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
 
                     for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
                     {

@@ -41,7 +41,7 @@ namespace Marv
             var window = this.AssociatedObject;
             window.IsChartControlVisible = true;
 
-            var chartSeries = new ChartSeries<ScatterDataPoint>
+            var chartSeries = new ChartSeries<ScatterPoint>
             {
                 Name = "Prob. of Failure",
                 Type = typeof(ScatterLineSeries)
@@ -51,7 +51,7 @@ namespace Marv
             {
                 var pof = window.graphValueTimeSeries[year]["coatd"]["YEs"];
 
-                chartSeries.Add(new ScatterDataPoint
+                chartSeries.Add(new ScatterPoint
                 {
                     XValue = year,
                     YValue = pof
@@ -70,7 +70,7 @@ namespace Marv
             var window = this.AssociatedObject;
             window.IsChartControlVisible = true;
 
-            var categoryPoints = new ChartSeries<CategoricalDataPoint>
+            var categoryPoints = new ChartSeries<CategoricalPoint>
             {
                 Name = vertex.Name,
                 Type = typeof(Telerik.Windows.Controls.ChartView.BarSeries),
@@ -80,7 +80,7 @@ namespace Marv
             {
                 var value = window.graphValueTimeSeries[1973][vertex.Key][state.Key];
 
-                categoryPoints.Add(new CategoricalDataPoint
+                categoryPoints.Add(new CategoricalPoint
                 {
                     Category = state.Key,
                     Value = value
@@ -110,7 +110,7 @@ namespace Marv
 
             foreach (var year in colorForYear.Keys)
             {
-                var chartSeries = new ChartSeries<ScatterDataPoint>
+                var chartSeries = new ChartSeries<ScatterPoint>
                 {
                     Name = year.ToString(),
                     Stroke = new SolidColorBrush(colorForYear[year]),
@@ -122,7 +122,7 @@ namespace Marv
                     var x = (state.Range.Min + state.Range.Max) / 2;
                     var y = window.graphValueTimeSeries[year][vertex.Key][state.Key];
 
-                    chartSeries.Add(new ScatterDataPoint
+                    chartSeries.Add(new ScatterPoint
                     {
                         XValue = x,
                         YValue = y,

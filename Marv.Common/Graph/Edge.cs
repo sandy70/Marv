@@ -8,6 +8,8 @@ namespace Marv.Common
     public class Edge : QuickGraph.Edge<Vertex>, ILink<Vertex>, INotifyPropertyChanged
     {
         private double _value = 1;
+        private string sourceConnectorPosition = "Auto";
+        private string targetConnectorPosition = "Auto";
 
         public Edge(Vertex source, Vertex target)
             : base(source, target)
@@ -46,10 +48,44 @@ namespace Marv.Common
             set { }
         }
 
+        public string SourceConnectorPosition
+        {
+            get
+            {
+                return this.sourceConnectorPosition;
+            }
+
+            set
+            {
+                if (value != this.sourceConnectorPosition)
+                {
+                    this.sourceConnectorPosition = value;
+                    this.RaisePropertyChanged("SourceConnectorPosition");
+                }
+            }
+        }
+
         public new Vertex Target
         {
             get { return base.Target; }
             set { }
+        }
+
+        public string TargetConnectorPosition
+        {
+            get
+            {
+                return this.targetConnectorPosition;
+            }
+
+            set
+            {
+                if (value != this.targetConnectorPosition)
+                {
+                    this.targetConnectorPosition = value;
+                    this.RaisePropertyChanged("TargetConnectorPosition");
+                }
+            }
         }
 
         public double Value
@@ -64,12 +100,12 @@ namespace Marv.Common
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.OnPropertyChanged("Values");
+                    this.RaisePropertyChanged("Values");
                 }
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
