@@ -53,7 +53,7 @@
                     </Setter>
                 </Style>
             </telerik:RadDiagram.ConnectionStyle>
-
+            
             <telerik:RadDiagram.ShapeStyle>
                 <Style TargetType="telerik:RadDiagramShapeBase">
                     <Setter Property="Opacity" Value="{Binding Opacity}" />

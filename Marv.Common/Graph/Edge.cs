@@ -1,51 +1,39 @@
-﻿using System;
+﻿using QuickGraph;
+using System;
 using System.ComponentModel;
 using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Common
 {
-    [Serializable]
-    public class Edge : QuickGraph.Edge<Vertex>, ILink<Vertex>, INotifyPropertyChanged
+    public class Edge : ViewModel, IEdge<Vertex>, ILink<Vertex>
     {
         private double _value = 1;
+        private Vertex source;
         private string sourceConnectorPosition = "Auto";
+        private Vertex target;
         private string targetConnectorPosition = "Auto";
 
         public Edge(Vertex source, Vertex target)
-            : base(source, target)
         {
+            this.Source = source;
+            this.Target = target;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        object ILink.Source
+        public Vertex Source
         {
             get
             {
-                return this.Source;
+                return this.source;
             }
+
             set
             {
-                object temp = value;
+                if (value != this.source)
+                {
+                    this.source = value;
+                    this.RaisePropertyChanged("Source");
+                }
             }
-        }
-
-        object ILink.Target
-        {
-            get
-            {
-                return this.Target;
-            }
-            set
-            {
-                object temp = value;
-            }
-        }
-
-        public new Vertex Source
-        {
-            get { return base.Source; }
-            set { }
         }
 
         public string SourceConnectorPosition
@@ -65,10 +53,21 @@ namespace Marv.Common
             }
         }
 
-        public new Vertex Target
+        public Vertex Target
         {
-            get { return base.Target; }
-            set { }
+            get
+            {
+                return this.target;
+            }
+
+            set
+            {
+                if (value != this.target)
+                {
+                    this.target = value;
+                    this.RaisePropertyChanged("Target");
+                }
+            }
         }
 
         public string TargetConnectorPosition
@@ -105,10 +104,28 @@ namespace Marv.Common
             }
         }
 
-        protected virtual void RaisePropertyChanged(string propertyName)
+        object ILink.Source
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            get
+            {
+                return this.Source;
+            }
+            set
+            {
+                this.Source = value as Vertex;
+            }
+        }
+
+        object ILink.Target
+        {
+            get
+            {
+                return this.Target;
+            }
+            set
+            {
+                this.Target = value as Vertex;
+            }
         }
     }
 }

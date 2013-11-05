@@ -14,10 +14,10 @@ using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Common
 {
-    public class Graph : BidirectionalGraph<Vertex, Edge>, IGraphSource, INotifyPropertyChanged
+    public class Graph : BidirectionalGraph<Vertex, Edge>, IObservableGraphSource, INotifyPropertyChanged
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        
+
         private Dictionary<string, string, double> _value = new Dictionary<string, string, double>();
         private string associatedGroup;
         private string defaultGroup = "all";
@@ -264,8 +264,8 @@ namespace Marv.Common
                 }
             }
 
-            graph.DefaultGroup            = structure.ParseProperty("defaultgroup",            defaultValue: "all");
-            graph.Name                    = structure.ParseProperty("key",                     defaultValue: "");
+            graph.DefaultGroup = structure.ParseProperty("defaultgroup", defaultValue: "all");
+            graph.Name = structure.ParseProperty("key", defaultValue: "");
             graph.SourceConnectorPosition = structure.ParseProperty("SourceConnectorPosition", defaultValue: "Auto");
             graph.TargetConnectorPosition = structure.ParseProperty("TargetConnectorPosition", defaultValue: "Auto");
 
@@ -291,6 +291,16 @@ namespace Marv.Common
             }
         }
 
+        public void AddLink(ILink link)
+        {
+            this.AddEdge(link as Edge);
+        }
+
+        public void AddNode(object node)
+        {
+            this.AddVertex(node as Vertex);
+        }
+
         public Dictionary<string, string, double> ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
@@ -306,6 +316,16 @@ namespace Marv.Common
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
+        }
+
+        public ILink CreateLink(object source, object target)
+        {
+            return new Edge(source as Vertex, target as Vertex);
+        }
+
+        public object CreateNode(IShape shape)
+        {
+            return new Vertex();
         }
 
         public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
@@ -466,6 +486,16 @@ namespace Marv.Common
             }
 
             return graphValue;
+        }
+
+        public bool RemoveLink(ILink link)
+        {
+            return this.RemoveEdge(link as Edge);
+        }
+
+        public bool RemoveNode(object node)
+        {
+            return this.RemoveVertex(node as Vertex);
         }
 
         public Dictionary<string, string, double> Run(string vertexKey, IEvidence evidence)
