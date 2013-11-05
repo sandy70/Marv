@@ -4,34 +4,16 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Linq;
 
 namespace Marv.Common
 {
     public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : class, IViewModel
     {
+        private Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private string key = "";
         private string name = "";
-        private Dictionary<string, T> dictionary = new Dictionary<string, T>();
-        private T selectedItem = default(T);
         private Dynamic properties = new Dynamic();
-
-        public Dynamic Properties
-        {
-            get
-            {
-                return this.properties;
-            }
-
-            set
-            {
-                if (value != this.properties)
-                {
-                    this.properties = value;
-                    this.RaisePropertyChanged("Properties");
-                }
-            }
-        }
+        private T selectedItem = default(T);
 
         public ViewModelCollection()
             : base()
@@ -41,7 +23,6 @@ namespace Marv.Common
         public ViewModelCollection(IEnumerable<T> items)
             : base(items)
         {
-            
         }
 
         public event ValueEventHandler<T> SelectionChanged;
@@ -76,6 +57,23 @@ namespace Marv.Common
                 {
                     this.name = value;
                     this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+
+        public Dynamic Properties
+        {
+            get
+            {
+                return this.properties;
+            }
+
+            set
+            {
+                if (value != this.properties)
+                {
+                    this.properties = value;
+                    this.RaisePropertyChanged("Properties");
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Marv.Common
     public class Graph : BidirectionalGraph<Vertex, Edge>, IGraphSource, INotifyPropertyChanged
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-
+        
         private Dictionary<string, string, double> _value = new Dictionary<string, string, double>();
         private string associatedGroup;
         private string defaultGroup = "all";
@@ -264,10 +264,10 @@ namespace Marv.Common
                 }
             }
 
-            graph.DefaultGroup = structure.ParseDefaultGroup();
-            graph.Name = structure.ParseName();
-            graph.SourceConnectorPosition = structure.ParseSourceConnectorPosition();
-            graph.TargetConnectorPosition = structure.ParseTargetConnectorPosition();
+            graph.DefaultGroup            = structure.ParseProperty("defaultgroup",            defaultValue: "all");
+            graph.Name                    = structure.ParseProperty("key",                     defaultValue: "");
+            graph.SourceConnectorPosition = structure.ParseProperty("SourceConnectorPosition", defaultValue: "Auto");
+            graph.TargetConnectorPosition = structure.ParseProperty("TargetConnectorPosition", defaultValue: "Auto");
 
             graph.UpdateValue();
             return graph;

@@ -92,88 +92,7 @@ namespace Marv.Common
             return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
         }
 
-        public bool HasNode(string key)
-        {
-            bool hasNode = false;
-
-            foreach (var node in this.Vertices)
-            {
-                if (node.Key.Equals(key))
-                {
-                    hasNode = true;
-                }
-            }
-
-            return hasNode;
-        }
-
-        public string ParseDefaultGroup()
-        {
-            if (this.Properties.ContainsKey("HR_Desc"))
-            {
-                var descValueString = this.Properties["HR_Desc"];
-
-                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
-                {
-                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                    if (subParts[0].Equals("defaultgroup"))
-                    {
-                        return subParts[1];
-                    }
-                }
-            }
-
-            return "all";
-        }
-
-        public string ParseSourceConnectorPosition()
-        {
-            if (this.Properties.ContainsKey("HR_Desc"))
-            {
-                var descValueString = this.Properties["HR_Desc"];
-
-                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
-                {
-                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                    if (subParts[0].Equals("SourceConnectorPosition"))
-                    {
-                        return subParts[1];
-                    }
-                }
-            }
-
-            return "Auto";
-        }
-
-        public string ParseTargetConnectorPosition()
-        {
-            if (this.Properties.ContainsKey("HR_Desc"))
-            {
-                var descValueString = this.Properties["HR_Desc"];
-
-                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
-                {
-                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                    if (subParts[0].Equals("TargetConnectorPosition"))
-                    {
-                        return subParts[1];
-                    }
-                }
-            }
-
-            return "Auto";
-        }
-
-        public string ParseName()
+        public string ParseProperty(string propertyName, string defaultValue)
         {
             if (this.Properties.ContainsKey("HR_Desc"))
             {
@@ -187,7 +106,7 @@ namespace Marv.Common
 
                     if (subParts.Count() == 2)
                     {
-                        if (subParts[0].Equals("key"))
+                        if (subParts[0].Equals(propertyName))
                         {
                             return subParts[1];
                         }
@@ -195,7 +114,7 @@ namespace Marv.Common
                 }
             }
 
-            return "";
+            return defaultValue;
         }
 
         public void Write(string path)
