@@ -226,43 +226,6 @@ namespace Marv.Common
             return states;
         }
 
-        public void ParseStatesMinMax(ObservableCollection<State> states)
-        {
-            var subtype = "";
-
-            if (this.Properties.TryGetValue("subtype", out subtype))
-            {
-                if (subtype.Equals("interval"))
-                {
-                    var stateStrings = this.Properties["state_values"]
-                                           .Split(new char[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                                           .ToList();
-
-                    var nStatesStrings = stateStrings.Count;
-
-                    for (int i = 0; i < nStatesStrings - 1; i++)
-                    {
-                        // states[i].Min = double.Parse(stateStrings[i]);
-                        // states[i].Max = double.Parse(stateStrings[i + 1]);
-                    }
-                }
-                else if (subtype.Equals("number"))
-                {
-                    var stateStrings = this.Properties["state_values"]
-                                           .Split(new char[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                                           .ToList();
-
-                    var nStatesStrings = stateStrings.Count;
-
-                    for (int i = 0; i < nStatesStrings; i++)
-                    {
-                        // states[i].Min = double.Parse(stateStrings[i]);
-                        // states[i].Max = double.Parse(stateStrings[i]);
-                    }
-                }
-            }
-        }
-
         public string ParseStringProperty(string str)
         {
             var htmlDesc = "";
