@@ -91,7 +91,7 @@ namespace Marv
 
                 var startYear = this.GetValue(pipelineStartRowIndex, "START");
 
-                multiLocation["StartYear"] = Convert.ToInt32(this.GetValue(pipelineStartRowIndex, "START"));
+                multiLocation.Properties["StartYear"] = Convert.ToInt32(this.GetValue(pipelineStartRowIndex, "START"));
 
                 for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
                 {

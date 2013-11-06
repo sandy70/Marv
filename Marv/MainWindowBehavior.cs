@@ -202,7 +202,7 @@ namespace Marv
             var multiLocationName = multiLocation.Name;
             var locationName = multiLocation.SelectedItem.Name;
 
-            var startYear = (int)multiLocation["StartYear"];
+            var startYear = (int)multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
             await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
@@ -245,7 +245,7 @@ namespace Marv
                 {
                     var multiLocationName = multiLocation.Name;
 
-                    var startYear = (int)multiLocation["StartYear"];
+                    var startYear = (int)multiLocation.Properties["StartYear"];
 
                     var nCompleted = 0;
                     var nLocations = multiLocation.Count;
@@ -282,7 +282,7 @@ namespace Marv
             var multiLocation = window.Polylines.SelectedItem;
             var multiLocationName = multiLocation.Name;
 
-            var startYear = (int)multiLocation["StartYear"];
+            var startYear = (int)multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
             var nCompleted = 0;

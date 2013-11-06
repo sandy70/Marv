@@ -103,7 +103,7 @@ namespace Marv.Common
             }
         }
 
-        public object this[string key]
+        public T this[string key]
         {
             get
             {
@@ -112,7 +112,7 @@ namespace Marv.Common
 
             set
             {
-                this.dictionary[key] = value as T;
+                this.dictionary[key] = value;
             }
         }
 

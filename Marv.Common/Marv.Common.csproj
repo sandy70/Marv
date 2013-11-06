@@ -96,6 +96,9 @@
     <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
     <Compile Include="Countries.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
+    <Compile Include="Graph.IBidirectionalGraph.cs" />
+    <Compile Include="Graph.IObservableGraphSource.cs" />
+    <Compile Include="Graph.ViewModel.cs" />
     <Compile Include="ScatterPoint.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />

@@ -1,48 +1,25 @@
 ﻿using NLog;
-using QuickGraph;
 using QuickGraph.Algorithms.RankedShortestPath;
 using Smile;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Common
 {
-    public class Graph : BidirectionalGraph<Vertex, Edge>, IObservableGraphSource, INotifyPropertyChanged
+    public partial class Graph : ViewModel
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private Dictionary<string, string, double> _value = new Dictionary<string, string, double>();
-        private string defaultGroup = "all";
-        private ObservableCollection<string> groups = new ObservableCollection<string>();
-        private Dictionary<string, string> loops = new Dictionary<string, string>();
-        private string name;
+        private string defaultGroup;
+        private ViewModelCollection<Edge> edges = new ViewModelCollection<Edge>();
+        private Dict<string, string> loops = new Dict<string, string>();
         private Network network = new Network();
         private string sourceConnectorPosition = "Auto";
         private string targetConnectorPosition = "Auto";
-
-        public Graph()
-            : base()
-        {
-        }
-
-        public Graph(bool allowParallelEdges)
-            : base(allowParallelEdges)
-        {
-        }
-
-        public Graph(bool allowParallelEdges, int vertexCapacity)
-            : base(allowParallelEdges, vertexCapacity)
-        {
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private ViewModelCollection<Vertex> vertices = new ViewModelCollection<Vertex>();
 
         public string DefaultGroup
         {
@@ -61,34 +38,24 @@ namespace Marv.Common
             }
         }
 
-        public ObservableCollection<string> Groups
+        public ViewModelCollection<Edge> Edges
         {
             get
             {
-                return this.groups;
+                return this.edges;
             }
 
             set
             {
-                if (value != this.groups)
+                if (value != this.edges)
                 {
-                    this.groups = value;
-                    this.RaisePropertyChanged("Groups");
+                    this.edges = value;
+                    this.RaisePropertyChanged("Edges");
                 }
             }
         }
 
-        IEnumerable IGraphSource.Items
-        {
-            get { return this.Vertices; }
-        }
-
-        IEnumerable<ILink> IGraphSource.Links
-        {
-            get { return this.Edges; }
-        }
-
-        public Dictionary<string, string> Loops
+        public Dict<string, string> Loops
         {
             get
             {
@@ -101,24 +68,6 @@ namespace Marv.Common
                 {
                     this.loops = value;
                     this.RaisePropertyChanged("Loops");
-                }
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-
-                    this.RaisePropertyChanged("Name");
                 }
             }
         }
@@ -136,11 +85,6 @@ namespace Marv.Common
                 {
                     this.sourceConnectorPosition = value;
                     this.RaisePropertyChanged("SourceConnectorPosition");
-
-                    foreach (var edge in this.Edges)
-                    {
-                        edge.SourceConnectorPosition = this.SourceConnectorPosition;
-                    }
                 }
             }
         }
@@ -158,33 +102,36 @@ namespace Marv.Common
                 {
                     this.targetConnectorPosition = value;
                     this.RaisePropertyChanged("TargetConnectorPosition");
-
-                    foreach (var edge in this.Edges)
-                    {
-                        edge.TargetConnectorPosition = this.TargetConnectorPosition;
-                    }
                 }
             }
         }
 
-        public Dictionary<string, string, double> Value
+        public Dict<string, string, double> Value
+        {
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    vertex.Value = value[vertex.Key];
+                }
+
+                this.RaisePropertyChanged("Value");
+            }
+        }
+
+        public ViewModelCollection<Vertex> Vertices
         {
             get
             {
-                return this._value;
+                return this.vertices;
             }
 
             set
             {
-                if (value != this._value)
+                if (value != this.vertices)
                 {
-                    this._value = value;
-                    this.RaisePropertyChanged("Value");
-
-                    foreach (var vertex in this.Vertices)
-                    {
-                        vertex.Value = this.Value[vertex.Key];
-                    }
+                    this.vertices = value;
+                    this.RaisePropertyChanged("Vertices");
                 }
             }
         }
@@ -229,9 +176,9 @@ namespace Marv.Common
                     vertex.Units = "n/a";
                 }
 
-                graph.AddVertex(vertex);
+                graph.Vertices.Add(vertex);
 
-                if (!String.IsNullOrWhiteSpace(vertex.InputVertexKey))
+                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
                 {
                     graph.Loops[vertex.InputVertexKey] = vertex.Key;
                 }
@@ -242,7 +189,7 @@ namespace Marv.Common
             {
                 foreach (var dstNode in srcNode.Children)
                 {
-                    graph.AddEdge(srcNode.Key, dstNode.Key);
+                    graph.AddEdge(graph.Vertices[srcNode.Key], graph.Vertices[dstNode.Key]);
                 }
             }
 
@@ -260,30 +207,12 @@ namespace Marv.Common
             return Task.Run(() => Graph.Read(fileName));
         }
 
-        public void AddEdge(string srcVertexKey, string dstVertexKey)
+        public void AddEdge(Vertex source, Vertex target)
         {
-            if (srcVertexKey.Equals(dstVertexKey)) return;
-
-            Vertex srcVertex = this.GetVertex(srcVertexKey);
-            Vertex dstVertex = this.GetVertex(dstVertexKey);
-
-            if (srcVertex != null && dstVertex != null)
-            {
-                this.AddEdge(new Edge(srcVertex, dstVertex));
-            }
+            this.Edges.Add(new Edge(source, target));
         }
 
-        public void AddLink(ILink link)
-        {
-            this.AddEdge(link as Edge);
-        }
-
-        public void AddNode(object node)
-        {
-            this.AddVertex(node as Vertex);
-        }
-
-        public Dictionary<string, string, double> ClearEvidence()
+        public Dict<string, string, double> ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
             {
@@ -294,20 +223,10 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public Dictionary<string, string, double> ClearEvidence(string vertexKey)
+        public Dict<string, string, double> ClearEvidence(string vertexKey)
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
-        }
-
-        public ILink CreateLink(object source, object target)
-        {
-            return new Edge(source as Vertex, target as Vertex);
-        }
-
-        public object CreateNode(IShape shape)
-        {
-            return new Vertex();
         }
 
         public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
@@ -315,15 +234,15 @@ namespace Marv.Common
             return this.GetVertex(vertexKey).GetMean(vertexValue);
         }
 
-        public Dictionary<string, string, double> GetNetworkValue()
+        public Dict<string, string, double> GetNetworkValue()
         {
             this.UpdateBeliefs();
 
-            var graphValue = new Dictionary<string, string, double>();
+            var graphValue = new Dict<string, string, double>();
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new Dictionary<string, double>();
+                var vertexValue = new Dict<string, double>();
 
                 foreach (var state in vertex.States)
                 {
@@ -331,9 +250,9 @@ namespace Marv.Common
                     {
                         vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
                     }
-                    catch (SmileException smileException)
+                    catch (SmileException exception)
                     {
-                        Console.WriteLine(smileException.Message);
+                        logger.Warn(exception.Message);
                         vertexValue[state.Key] = 0;
                     }
                 }
@@ -359,7 +278,7 @@ namespace Marv.Common
             {
                 if (vertex.Groups.Contains(group))
                 {
-                    subGraph.AddVertex(vertex);
+                    subGraph.Vertices.Add(vertex);
 
                     if (!vertex.PositionForGroup.ContainsKey(group))
                     {
@@ -389,7 +308,7 @@ namespace Marv.Common
                             {
                                 if (!subGraph.HasEdge(src.Key, edge.Target.Key))
                                 {
-                                    subGraph.AddEdge(src.Key, edge.Target.Key);
+                                    subGraph.AddEdge(src, edge.Target);
                                 }
 
                                 src = edge.Target;
@@ -434,13 +353,13 @@ namespace Marv.Common
             return hasEdge;
         }
 
-        public Dictionary<string, string, double> ReadValueCsv(string fileName)
+        public Dict<string, string, double> ReadValueCsv(string fileName)
         {
-            var graphValue = new Dictionary<string, string, double>();
+            var graphValue = new Dict<string, string, double>();
 
             foreach (var line in File.ReadLines(fileName))
             {
-                var vertexValue = new Dictionary<string, double>();
+                var vertexValue = new Dict<string, double>();
 
                 string[] parts = line.Split(new char[] { ',' });
 
@@ -470,23 +389,13 @@ namespace Marv.Common
             return graphValue;
         }
 
-        public bool RemoveLink(ILink link)
-        {
-            return this.RemoveEdge(link as Edge);
-        }
-
-        public bool RemoveNode(object node)
-        {
-            return this.RemoveVertex(node as Vertex);
-        }
-
-        public Dictionary<string, string, double> Run(string vertexKey, IEvidence evidence)
+        public Dict<string, string, double> Run(string vertexKey, IEvidence evidence)
         {
             evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 
-        public Dictionary<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
+        public Dict<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
@@ -496,9 +405,9 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public Dictionary<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public Dict<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
+            var graphValueTimeSeries = new Dict<int, string, string, double>();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -550,7 +459,7 @@ namespace Marv.Common
             this.network.UpdateBeliefs();
         }
 
-        public Dictionary<string, string, double> UpdateValue()
+        public Dict<string, string, double> UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }
@@ -579,12 +488,6 @@ namespace Marv.Common
             }
 
             structure.Write(fileName);
-        }
-
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

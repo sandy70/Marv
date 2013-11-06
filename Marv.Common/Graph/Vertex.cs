@@ -361,7 +361,7 @@ namespace Marv.Common
             }
         }
 
-        public Dictionary<string, double> Value
+        public Dict<string, double> Value
         {
             set
             {

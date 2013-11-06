@@ -29,7 +29,7 @@ namespace Marv
         };
 
         public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
-        public Dictionary<int, string, string, double> graphValueTimeSeries = new Dictionary<int, string, string, double>();
+        public Dict<int, string, string, double> graphValueTimeSeries = new Dict<int, string, string, double>();
         public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
         public Dictionary<LocationCollection, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
         public string selectedGroup = null;
@@ -153,7 +153,7 @@ namespace Marv
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
+            Odb.Write<Dict<int, string, string, double>>(fileName, graphValueTimeSeries);
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
@@ -174,7 +174,7 @@ namespace Marv
             try
             {
                 var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.graphValueTimeSeries = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
+                this.graphValueTimeSeries = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
             }
             catch (OdbDataNotFoundException)
             {
