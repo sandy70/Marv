@@ -26,7 +26,7 @@ namespace Marv.Common
             for (int i = 0; i < nLines; i++)
             {
                 // Parse the node section
-                if (fileLines[i].StartsWith("vertex"))
+                if (fileLines[i].StartsWith("node"))
                 {
                     var parts = fileLines[i].Split(new char[] { ' ' }, 2).ToList();
 
@@ -134,7 +134,7 @@ namespace Marv.Common
                 foreach (var node in this.Vertices)
                 {
                     writer.WriteLine();
-                    writer.WriteLine("vertex {0}", node.Key);
+                    writer.WriteLine("node {0}", node.Key);
                     writer.WriteLine("{");
 
                     foreach (var prop in node.Properties)

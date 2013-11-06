@@ -64,7 +64,7 @@ namespace Smile
 		}
 
 		// 'public private' is the equivalent of C#'s 'internal' modifier
-	public private:
+	internal:
 		SmileException(String^ msg, int smileErrorCode) : Exception(MsgFromSmileErr(msg, smileErrorCode)) {}
 
 	private:
@@ -177,21 +177,7 @@ namespace Smile
 			current = -1;
 		}
 
-	private:
-		property Object^ Current
-		{
-			virtual Object^ get() new sealed = System::Collections::IEnumerator::Current::get
-			{
-				return current;
-			}
-		};
-
-		virtual void Reset() new sealed = System::Collections::IEnumerator::Reset
-		{
-			current = -1;
-		}
-
-		virtual bool MoveNext() new sealed = System::Collections::IEnumerator::MoveNext
+		virtual bool MoveNext()
 		{
 			if (current == -1)
 			{
@@ -205,6 +191,20 @@ namespace Smile
 			return current >= 0;
 		}
 
+		property Object^ Current
+		{
+			virtual Object^ get()
+			{
+				return current;
+			}
+		};
+
+		virtual void Reset()
+		{
+			current = -1;
+		}
+		
+	private:
 		DSL_network *net;
 		int current;
 	};
@@ -260,7 +260,7 @@ namespace Smile
 			net = new DSL_network();
 		}
 
-		~Network()
+		!Network()
 		{
 			delete net;
 		}
@@ -277,14 +277,14 @@ namespace Smile
 			return clone;
 		}
 
-		virtual void IDisposable::Dispose() new sealed = System::IDisposable::Dispose
+		~Network()
 		{
 			delete net;
 			net = NULL;
 			GC::SuppressFinalize(this);
 		}
 
-		virtual IEnumerator^ GetEnumerator() new sealed = System::Collections::IEnumerable::GetEnumerator
+		virtual IEnumerator^ GetEnumerator()
 		{
 			return gcnew NodeEnumerator(net);
 		}
@@ -2898,15 +2898,15 @@ namespace Smile
 			}
 
 			this->net = net;
-			voi = gcnew DSL_valueOfInformation(net->_GetDslNet());
+			voi = new DSL_valueOfInformation(net->_GetDslNet());
 		}
 
-		~ValueOfInfo()
+		!ValueOfInfo()
 		{
 			delete voi;
 		}
 
-		void Dispose()
+		~ValueOfInfo()
 		{
 			delete voi;
 			voi = NULL;
@@ -2919,32 +2919,32 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't retrieve value of information", res);
 		}
 
-		Int32 GetAllDecisions()__gc[]
+		array<Int32>^ GetAllDecisions()
 		{
 			return CopyIntArray(voi->GetDecisions());
 		}
 
-		Int32 GetAllActions()__gc[]
+		array<Int32>^ GetAllActions()
 		{
 			return CopyIntArray(voi->GetActions());
 		}
 
-		String* GetAllDecisionIds()__gc[]
+		array<String^>^ GetAllDecisionIds()
 		{
 			return net->HandlesToIds(voi->GetDecisions());
 		}
 
-		String* GetAllActionIds()__gc[]
+		array<String^>^ GetAllActionIds()
 		{
 			return net->HandlesToIds(voi->GetActions());
 		}
 
-		Int32 GetAllNodes()__gc[]
+		array<Int32>^ GetAllNodes()
 		{
 			return CopyIntArray(voi->GetNodes());
 		}
 
-		String* GetAllNodeIds()__gc[]
+		array<String^>^ GetAllNodeIds()
 		{
 			return net->HandlesToIds(voi->GetNodes());
 		}
@@ -3005,7 +3005,7 @@ namespace Smile
 			return voi->GetDecision();
 		}
 
-		String* GetDecisionId()
+		String^ GetDecisionId()
 		{
 			return gcnew String(net->net->GetNode(voi->GetDecision())->Info().Header().GetId());
 		}
@@ -3015,7 +3015,7 @@ namespace Smile
 			return voi->GetPointOfView();
 		}
 
-		String* GetPointOfViewId()
+		String^ GetPointOfViewId()
 		{
 			return gcnew String(net->net->GetNode(voi->GetPointOfView())->Info().Header().GetId());
 		}
@@ -3037,22 +3037,23 @@ namespace Smile
 			SetPointOfView(net->ValidateNodeId(nodeId));
 		}
 
-		Int32 GetIndexingNodes()__gc[]
+		array<Int32>^ GetIndexingNodes()
 		{
 			return CopyIntArray(voi->GetIndexingNodes());
 		}
 
-		String* GetIndexingNodeIds()__gc[]
+		array<String^>^ GetIndexingNodeIds()
 		{
 			return net->HandlesToIds(voi->GetIndexingNodes());
 		}
 
-		Double GetValues()__gc[]
+		array<Double>^ GetValues()
 		{
 			return CopyDoubleArray(voi->GetValues().GetItems());
 		}
 
 	private:
+
 		Network^ net;
 		DSL_valueOfInformation* voi;
 	};
@@ -3060,7 +3061,7 @@ namespace Smile
 
 	//---------------------------------------------------
 	// DiagNetwork
-	public __value struct FaultInfo : public IComparable
+	public value struct FaultInfo : public IComparable
 	{
 		int index;
 		int node;
@@ -3068,9 +3069,9 @@ namespace Smile
 		double probability;
 		bool isPursued;
 
-		int CompareTo(Object *obj)
+		virtual int CompareTo(Object^ obj)
 		{
-			FaultInfo *other = static_cast<FaultInfo __box*>(obj);
+			FaultInfo^ other = (FaultInfo)obj;
 
 			double lhs = probability;
 			double rhs = other->probability;
@@ -3094,16 +3095,16 @@ namespace Smile
 		}
 	};
 
-	public __value struct ObservationInfo : public IComparable
+	public value struct ObservationInfo : public IComparable
 	{
 		int node;
 		double entropy;
 		double cost;
 		double infoGain;
 
-		int CompareTo(Object *obj)
+		virtual int CompareTo(Object^ obj)
 		{
-			ObservationInfo *other = static_cast<ObservationInfo __box*>(obj);
+			ObservationInfo^ other = (ObservationInfo)obj;
 
 			int lhsCat = GetCompareCategory();
 			int rhsCat = other->GetCompareCategory();
@@ -3131,17 +3132,17 @@ namespace Smile
 		}
 	};
 
-	public __gc class DiagResults
+	public ref class DiagResults
 	{
 	public:
-		ObservationInfo observations __gc[];
-		FaultInfo faults __gc[];
+		array<ObservationInfo>^ observations;
+		array<FaultInfo>^ faults;
 	};
 
-	public __gc class DiagNetwork : public WrappedObject, public IDisposable
+	public ref class DiagNetwork : public WrappedObject, public IDisposable
 	{
 	public:
-		__value enum MultiFaultAlgorithmType
+		enum class MultiFaultAlgorithmType
 		{
 			IndependenceAtLeastOne = DSL_DIAG_INDEPENDENCE | DSL_DIAG_PURSUE_ATLEAST_ONE_COMB,
 			IndependenceOnlyOne = DSL_DIAG_INDEPENDENCE | DSL_DIAG_PURSUE_ONLY_ONE_COMB,
@@ -3158,17 +3159,17 @@ namespace Smile
 		static const double NotRelevant = DSL_NOT_RELEVANT;
 		static const double NotAvailable = DSL_NOT_AVAILABLE;
 
-		DiagNetwork(Network *net)
+		DiagNetwork(Network^ net)
 		{
-			if (NULL == net)
+			if (nullptr == net)
 			{
 				throw gcnew SmileException("Null network reference passed to DiagNetwork constructor");
 			}
 
-			multiFaultAlgorithm = IndependenceAtLeastOne;
+			multiFaultAlgorithm = MultiFaultAlgorithmType::IndependenceAtLeastOne;
 
 			this->net = net;
-			diagnet = gcnew DIAG_network;
+			diagnet = new DIAG_network();
 
 			diagnet->LinkToNetwork(net->_GetDslNet());
 			diagnet->CollectNetworkInfo();
@@ -3179,26 +3180,29 @@ namespace Smile
 			diagnet->SetPursuedFault(mostLikelyFault);
 		}
 
-		~DiagNetwork()
+		!DiagNetwork()
 		{
 			delete diagnet;
 		}
 
-		void Dispose()
+		~DiagNetwork()
 		{
 			delete diagnet;
 			diagnet = NULL;
 			GC::SuppressFinalize(this);
 		}
 
-		__property MultiFaultAlgorithmType get_MultiFaultAlgorithm()
+		property MultiFaultAlgorithmType MultiFaultAlgorithm
 		{
-			return multiFaultAlgorithm;
-		}
+			MultiFaultAlgorithmType get()
+			{
+				return multiFaultAlgorithm;
+			}
 
-		__property void set_MultiFaultAlgorithm(MultiFaultAlgorithmType value)
-		{
-			multiFaultAlgorithm = value;
+			void set(MultiFaultAlgorithmType value)
+			{
+				multiFaultAlgorithm = value;
+			}
 		}
 
 		/*
@@ -3213,24 +3217,30 @@ namespace Smile
 		}
 		*/
 
-		__property bool get_DSep()
+		property bool DSep
 		{
-			return diagnet->IsDSepEnabled();
+			bool get()
+			{
+				return diagnet->IsDSepEnabled();
+			}
+
+			void set(bool value)
+			{
+				diagnet->EnableDSep(value);
+			}
 		}
 
-		__property void set_DSep(bool value)
+		property double EntropyCostRatio
 		{
-			diagnet->EnableDSep(value);
-		}
+			double get()
+			{
+				return diagnet->GetEntropyCostRatio();
+			}
 
-		__property double get_EntropyCostRatio()
-		{
-			return diagnet->GetEntropyCostRatio();
-		}
-
-		__property void set_EntropyCostRatio(double value)
-		{
-			diagnet->SetEntropyCostRatio(value, 10 * value, &diagnet->GetNetwork());
+			void set(double value)
+			{
+				diagnet->SetEntropyCostRatio(value, 10 * value, &diagnet->GetNetwork());
+			}
 		}
 
 		void SetPursuedFault(int faultIndex)
@@ -3240,7 +3250,7 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't set pursued fault", res);
 		}
 
-		void SetPursuedFaults(Int32 faultIndices[])
+		void SetPursuedFaults(array<Int32>^ faultIndices)
 		{
 			DSL_intArray native;
 			for (int i = 0; i < faultIndices->Length; i ++)
@@ -3254,14 +3264,20 @@ namespace Smile
 
 		int GetPursuedFault() { return diagnet->GetPursuedFault(); }
 
-		Int32 GetPursuedFaults() __gc[]
+		array<Int32>^ GetPursuedFaults()
 		{
 			return CopyIntArray(diagnet->GetPursuedFaults());
 		}
 
 		int FindMostLikelyFault() { return diagnet->FindMostLikelyFault(); }
 
-		__property int get_FaultCount() { return diagnet->GetFaults().size(); }
+		property int FaultCount 
+		{ 
+			int get()
+			{
+				return (int)diagnet->GetFaults().size(); 
+			}
+		}
 
 		FaultInfo GetFault(int faultIndex)
 		{
@@ -3288,10 +3304,18 @@ namespace Smile
 		}
 
 		int GetFaultNode(int faultIndex) { CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].node; }
-		String* GetFaultNodeId(int faultIndex) { return net->GetNodeId(GetFaultNode(faultIndex)); }
+		
+		String^ GetFaultNodeId(int faultIndex) 
+		{ 
+			return net->GetNodeId(GetFaultNode(faultIndex)); 
+		}
 
-		int GetFaultOutcome(int faultIndex) { CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].state; }
-		String* GetFaultOutcomeId(int faultIndex)
+		int GetFaultOutcome(int faultIndex) 
+		{ 
+			CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].state; 
+		}
+		
+		String^ GetFaultOutcomeId(int faultIndex)
 		{
 			return net->GetOutcomeId(GetFaultNode(faultIndex), diagnet->GetFaults()[faultIndex].state);
 		}
@@ -3316,17 +3340,17 @@ namespace Smile
 			return GetFaultIndex(net->ValidateNodeId(nodeId), outcomeId);
 		}
 
-		DiagResults* Update()
+		DiagResults^ Update()
 		{
-			DiagResults* results = gcnew DiagResults();
+			DiagResults^ results = gcnew DiagResults();
 
 			diagnet->UpdateFaultBeliefs();
-			int retCode = diagnet->ComputeTestStrengths(multiFaultAlgorithm);
+			int retCode = diagnet->ComputeTestStrengths((int)multiFaultAlgorithm);
 			SmileException::CheckSmileStatus("Can't compute test strengths", retCode);
 
 			DSL_intArray &unperformed = diagnet->GetUnperformedTests();
 			int imax = unperformed.NumItems();
-			ObservationInfo ti[] = gcnew ObservationInfo[imax];
+			array<ObservationInfo>^ ti = gcnew array<ObservationInfo>(imax);
 
 			const vector<DIAG_testInfo> &stats = diagnet->GetTestStatistics();
 
@@ -3344,9 +3368,9 @@ namespace Smile
 			results->observations = ti;
 
 			const vector<DIAG_faultyState> &faults = diagnet->GetFaults();
-			int faultCount = faults.size();
+			int faultCount = (int)faults.size();
 
-			FaultInfo fi[] = gcnew FaultInfo[faultCount];
+			array<FaultInfo>^ fi = gcnew array<FaultInfo>(faultCount);
 			for (int i = 0; i < faultCount; i ++)
 			{
 				double p = NotRelevant;
@@ -3378,17 +3402,20 @@ namespace Smile
 			return results;
 		}
 
-		__property int get_UnperformedTestCount()
+		property int UnperformedTestCount
 		{
-			return diagnet->GetUnperformedTests().NumItems();
+			int get()
+			{
+				return diagnet->GetUnperformedTests().NumItems();
+			}
 		}
 
-		Int32 GetUnperformedObservations() __gc[]
+		array<Int32>^ GetUnperformedObservations()
 		{
 			return CopyIntArray(diagnet->GetUnperformedTests());
 		}
 
-		String* GetUnperformedObservationIds() __gc[]
+		array<String^>^ GetUnperformedObservationIds()
 		{
 			return net->HandlesToIds(diagnet->GetUnperformedTests());
 		}
@@ -3433,7 +3460,7 @@ namespace Smile
 	private:
 		void CheckFaultIndex(int faultIndex)
 		{
-			int maxIndex = diagnet->GetFaults().size();
+			int maxIndex = (int)diagnet->GetFaults().size();
 			if (faultIndex < 0 || faultIndex >= maxIndex)
 			{
 				String^ msg = String::Format("Invalid fault index {0}, must be between 0 and {1}",
@@ -3443,7 +3470,7 @@ namespace Smile
 			}
 		}
 
-		Network *net;
+		Network^ net;
 		DIAG_network *diagnet;
 		MultiFaultAlgorithmType multiFaultAlgorithm;
 	};
@@ -3452,7 +3479,7 @@ namespace Smile
 
 	namespace Learning
 	{
-		public __gc class DataMatch
+		public ref class DataMatch
 		{
 		public:
 			int column;
@@ -3460,13 +3487,20 @@ namespace Smile
 			int slice;
 		};
 
-		public __gc class DataSet : public WrappedObject, public IDisposable
+		public ref class DataSet : public WrappedObject, public IDisposable
 		{
 		public:
-			DataSet() { dsx = gcnew DSL_dataset; }
-			~DataSet() { delete dsx; }
+			DataSet() 
+			{ 
+				dsx = new DSL_dataset(); 
+			}
 
-			void Dispose()
+			!DataSet() 
+			{ 
+				delete dsx; 
+			}
+
+			~DataSet()
 			{
 				delete dsx;
 				dsx = NULL;
@@ -3478,7 +3512,7 @@ namespace Smile
 
 			void ReadFile(String^ filename)
 			{
-				ReadFile(filename, NULL);
+				ReadFile(filename, nullptr);
 			}
 
 			void ReadFile(String^ filename, String^ missingValueToken)
@@ -3489,7 +3523,7 @@ namespace Smile
 			void ReadFile(String^ filename, String^ missingValueToken, int missingInt, float missingFloat, bool columnIdsPresent)
 			{
 				DSL_datasetParseParams params;
-				if (NULL != missingValueToken && missingValueToken->Length > 0)
+				if (nullptr != missingValueToken && missingValueToken->Length > 0)
 				{
 					StringToCharPtr szToken(missingValueToken);
 					params.missingValueToken = szToken;
@@ -3506,7 +3540,7 @@ namespace Smile
 				}
 			}
 
-			DataMatch* MatchNetwork(Network *net)__gc[]
+			array<DataMatch^>^ MatchNetwork(Network^ net)
 			{
 				vector<DSL_datasetMatch> nativeMatching;
 				string errMsg;
@@ -3515,17 +3549,17 @@ namespace Smile
 					throw gcnew SmileException(String::Format("MatchNetwork failed - {0}", gcnew String(errMsg.c_str())));
 				}
 
-				int count = nativeMatching.size();
+				int count = (int)nativeMatching.size();
 				if (count == 0)
 				{
-					return NULL;
+					return nullptr;
 				}
 
-				DataMatch* ar[] = gcnew DataMatch*[count];
+				array<DataMatch^>^ ar = gcnew array<DataMatch^>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					const DSL_datasetMatch &nm = nativeMatching[i];
-					DataMatch *m = gcnew DataMatch;
+					DataMatch^ m = gcnew DataMatch();
 					m->column = nm.column;
 					m->node = nm.node;
 					m->slice = nm.slice;
@@ -3535,8 +3569,21 @@ namespace Smile
 				return ar;
 			}
 
-			__property int get_RecordCount() { return _GetDslDataSet()->GetNumberOfRecords(); }
-			__property int get_VariableCount() { return _GetDslDataSet()->GetNumberOfVariables(); }
+			property int RecordCount 
+			{ 
+				int get()
+				{
+					return _GetDslDataSet()->GetNumberOfRecords(); 
+				}
+			}
+
+			property int VariableCount 
+			{
+				int get()
+				{
+					return _GetDslDataSet()->GetNumberOfVariables(); 
+				}
+			}
 
 			int GetInt(int variable, int record)
 			{
@@ -3592,19 +3639,19 @@ namespace Smile
 				ds->AddEmptyRecord();
 			}
 
-			String* GetVariableId(int variable)
+			String^ GetVariableId(int variable)
 			{
 				return gcnew String(_GetDslDataSet()->GetId(variable).c_str());
 			}
 
-			String* GetStateNames(int variable)__gc[]
+			array<String^>^ GetStateNames(int variable)
 			{
 				ValidateVariable(variable);
 
 				const vector<string> & native = _GetDslDataSet()->GetStateNames(variable);
-				int count = native.size();
+				int count = (int)native.size();
 
-				String* ar[] = gcnew String*[count];
+				array<String^>^ ar = gcnew array<String^>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					ar[i] = gcnew String(native[i].c_str());
@@ -3612,7 +3659,7 @@ namespace Smile
 				return ar;
 			}
 
-			void SetStateNames(int variable, String* names[])
+			void SetStateNames(int variable, array<String^>^ names)
 			{
 				ValidateVariable(variable);
 
@@ -3629,7 +3676,6 @@ namespace Smile
 				SmileException::CheckSmileStatus("SetStateNames failed", res);
 			}
 
-		private public:
 			DSL_dataset* _GetDslDataSet()
 			{
 				return dsx;
@@ -3689,28 +3735,27 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __value struct BkArcInfo
+		public value struct BkArcInfo
 		{
 			int parent;
 			int child;
 		};
 
-		public __value struct BkTierInfo
+		public value struct BkTierInfo
 		{
 			int variable;
 			int tier;
 		};
 
-		public __gc class BkKnowledge
+		public ref class BkKnowledge
 		{
 		public:
 			BkKnowledge() {}
 
-			BkArcInfo forcedArcs[];
-			BkArcInfo forbiddenArcs[];
-			BkTierInfo tiers[];
+			array<BkArcInfo>^ forcedArcs;
+			array<BkArcInfo>^ forbiddenArcs;
+			array<BkTierInfo>^ tiers;
 
-		private public:
 			typedef pair<int, int> intPair;
 			typedef vector<intPair> intPairVec;
 			BkKnowledge(const intPairVec& nativeForced, const intPairVec &nativeForbidden, const intPairVec &nativeTiers)
@@ -3718,8 +3763,8 @@ namespace Smile
 				InitArcs(nativeForced, forcedArcs);
 				InitArcs(nativeForbidden, forbiddenArcs);
 
-				int count = nativeTiers.size();
-				tiers = gcnew BkTierInfo[count];
+				int count = (int)nativeTiers.size();
+				tiers = gcnew array<BkTierInfo>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					tiers[i].variable = nativeTiers[i].first;
@@ -3732,7 +3777,7 @@ namespace Smile
 				CopyArcs(nativeForced, forcedArcs);
 				CopyArcs(nativeForbidden, forbiddenArcs);
 
-				if (NULL != tiers)
+				if (nullptr != tiers)
 				{
 					int count = tiers->Length;
 					nativeTiers.resize(count);
@@ -3745,10 +3790,10 @@ namespace Smile
 			}
 
 		private:
-			static void InitArcs(const intPairVec& native, BkArcInfo arcs[])
+			static void InitArcs(const intPairVec& native, array<BkArcInfo>^ arcs)
 			{
-				int count = native.size();
-				arcs = gcnew BkArcInfo[count];
+				int count = (int)native.size();
+				arcs = gcnew array<BkArcInfo>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					arcs[i].parent = native[i].first;
@@ -3756,9 +3801,9 @@ namespace Smile
 				}
 			}
 
-			static void CopyArcs(intPairVec& native, BkArcInfo arcs[])
+			static void CopyArcs(intPairVec& native, array<BkArcInfo>^ arcs)
 			{
-				if (NULL != arcs)
+				if (nullptr != arcs)
 				{
 					int count = arcs->Length;
 					native.resize(count);
@@ -3773,20 +3818,20 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class Pattern : public WrappedObject, public IDisposable
+		public ref class Pattern : public WrappedObject, public IDisposable
 		{
 		public:
 
-			__value enum EdgeType
+			enum class EdgeType
 			{
 				None = DSL_pattern::None,
 				Undirected = DSL_pattern::Undirected,
 				Directed = DSL_pattern::Directed
 			};
 
-			Pattern() { pat = gcnew DSL_pattern; }
-			~Pattern() { delete pat; }
-			void Dispose()
+			Pattern() { pat = new DSL_pattern(); }
+			!Pattern() { delete pat; }
+			~Pattern()
 			{
 				delete pat;
 				pat = NULL;
@@ -3800,21 +3845,20 @@ namespace Smile
 			bool HasCycle() { return pat->HasCycle(); }
 			bool IsDAG() { return pat->IsDAG(); }
 
-			Network* MakeNetwork(DataSet *ds)
+			Network^ MakeNetwork(DataSet^ ds)
 			{
-				Network *net = gcnew Network();
+				Network^ net = gcnew Network();
 
 				if (!pat->ToDAG(*ds->_GetDslDataSet(), *net->_GetDslNet()))
 				{
-					net->Dispose();
-					net = NULL;
+					net->~Network();
+					net = nullptr;
 					throw gcnew SmileException("Can't convert pattern to network", -1);
 				}
 
 				return net;
 			}
 
-		private public:
 			DSL_pattern* _GetDslPattern()
 			{
 				return pat;
@@ -3824,53 +3868,84 @@ namespace Smile
 			DSL_pattern *pat;
 		};
 
-		public __gc class GreedyThickThinning : public WrappedObject, public IDisposable
+		public ref class GreedyThickThinning : public WrappedObject, public IDisposable
 		{
 		public:
-			GreedyThickThinning() { gtt = gcnew DSL_greedyThickThinning; }
-			~GreedyThickThinning() { delete gtt; }
-			void Dispose()
+			GreedyThickThinning() { gtt = new DSL_greedyThickThinning(); }
+			!GreedyThickThinning() { delete gtt; }
+			~GreedyThickThinning()
 			{
 				delete gtt;
 				gtt = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = gcnew Network();
+				Network^ net = gcnew Network();
 				int res = gtt->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
+					net->~Network();
+					net = nullptr;
 					throw gcnew SmileException("Error in GreedyThickThinning algorithm", res);
 				}
 
 				return net;
 			}
 
-			__value enum PriorsType
+			enum class PriorsType
 			{
 				K2 = DSL_greedyThickThinning::K2,
 				BDeu = DSL_greedyThickThinning::BDeu
 			};
 
-			__property PriorsType get_PriorsMethod() { return PriorsType(gtt->priors); }
-			__property void set_PriorsMethod(PriorsType value) { gtt->priors = DSL_greedyThickThinning::PriorsType(value); }
+			property PriorsType PriorsMethod
+			{ 
+				PriorsType get()
+				{
+					return PriorsType(gtt->priors); 
+				}
 
-			__property double get_NetWeight() { return gtt->netWeight; }
-			__property void set_NetWeight(double value)	{ gtt->netWeight = value; }
+				void set(PriorsType value)
+				{
+					gtt->priors = DSL_greedyThickThinning::PriorsType(value);
+				}
+			}
+			
 
-			__property int get_MaxParents() { return gtt->maxParents; }
-			__property void set_MaxParents(int value) { gtt->maxParents = value; }
+			property double NetWeight
+			{
+				double get()
+				{
+					return gtt->netWeight;
+				}
 
-			BkKnowledge* GetBkKnowledge()
+				void set(double value)
+				{
+					gtt->netWeight = value;
+				}
+			}
+
+			property int MaxParents
+			{
+				int get()
+				{
+					return gtt->maxParents; 
+				}
+
+				void set(int value)
+				{
+					gtt->maxParents = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
 			{
 				return gcnew BkKnowledge(gtt->bkk.forcedArcs, gtt->bkk.forbiddenArcs, gtt->bkk.tiers);
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(gtt->bkk.forcedArcs, gtt->bkk.forbiddenArcs, gtt->bkk.tiers);
 			}
@@ -3881,59 +3956,133 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class BS : public WrappedObject, public IDisposable
+		public ref class BS : public WrappedObject, public IDisposable
 		{
 		public:
-			BS() { bs = gcnew DSL_bs; }
-			~BS() { delete bs; }
-			void Dispose()
+			BS() { bs = new DSL_bs(); }
+			!BS() { delete bs; }
+			~BS()
 			{
 				delete bs;
 				bs = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = gcnew Network();
+				Network^ net = gcnew Network();
 				int res = bs->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
+					net->~Network();
+					net = nullptr;
 					throw gcnew SmileException("Error in Bayesian Search algorithm", res);
 				}
 
 				return net;
 			}
 
-			__property int get_MaxParents() { return bs->maxParents; }
-			__property void set_MaxParents(int value) { bs->maxParents = value; }
+			property int MaxParents
+			{
+				int get()
+				{
+					return bs->maxParents;
+				}
 
-			__property int get_MaxSearchTime() { return bs->maxSearchTime; }
-			__property void set_MaxSearchTime(int value) { bs->maxSearchTime = value; }
+				void set(int value)
+				{
+					bs->maxParents = value;
+				}
+			}
 
-			__property int get_nrIteration() { return bs->nrIteration; }
-			__property void set_nrIteration(int value) { bs->nrIteration = value; }
 
-			__property double get_linkProbability() { return bs->linkProbability; }
-			__property void set_linkProbability(double value) { bs->linkProbability = value; }
+			property int MaxSearchTime
+			{
+				int get()
+				{
+					return bs->maxSearchTime;
+				}
 
-			__property double get_priorLinkProbability() { return bs->priorLinkProbability; }
-			__property void set_priorLinkProbability(double value) { bs->priorLinkProbability = value; }
+				void set(int value)
+				{
+					bs->maxSearchTime = value;
+				}
+			}
 
-			__property int get_priorSampleSize() { return bs->priorSampleSize; }
-			__property void set_priorSampleSize(int value) { bs->priorSampleSize = value; }
+			property int nrIteration
+			{
+				int get()
+				{
+					return bs->nrIteration;
+				}
 
-			__property int get_Seed() { return bs->seed; }
-			__property void set_Seed(int value) { bs->seed = value; }
+				void set(int value)
+				{
+					bs->nrIteration = value; 
+				}
+			}
 
-			BkKnowledge* GetBkKnowledge()
+			property double linkProbability			
+			{
+				double get()
+				{
+					return bs->linkProbability;
+				}
+
+				void set(double value)
+				{
+					bs->linkProbability = value; 
+				}
+			}
+
+
+			property double priorLinkProbability
+			{
+				double get()
+				{
+					return bs->priorLinkProbability;
+				}
+
+				void set(double value)
+				{
+					bs->priorLinkProbability = value;
+				}
+			}
+
+
+			property int priorSampleSize
+			{
+				int get()
+				{
+					return bs->priorSampleSize;
+				}
+
+				void set(int value)
+				{
+					bs->priorSampleSize = value;
+				}
+			}
+
+
+			property int Seed
+			{
+				int get()
+				{
+					return bs->seed;
+				}
+
+				void set(int value)
+				{
+					 bs->seed = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
 			{
 				return gcnew BkKnowledge(bs->bkk.forcedArcs, bs->bkk.forbiddenArcs, bs->bkk.tiers);
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(bs->bkk.forcedArcs, bs->bkk.forbiddenArcs, bs->bkk.tiers);
 			}
@@ -3944,45 +4093,65 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class PC : public WrappedObject, public IDisposable
+		public ref class PC : public WrappedObject, public IDisposable
 		{
 		public:
-			PC() { pc = gcnew DSL_pc;	}
-			~PC() { delete pc; }
-			void Dispose()
+			PC() { pc = new DSL_pc();	}
+			!PC() { delete pc; }
+			~PC()
 			{
 				delete pc;
 				pc = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Pattern* Learn(DataSet *ds)
+			Pattern^ Learn(DataSet^ ds)
 			{
-				Pattern* pat = gcnew Pattern();
+				Pattern^ pat = gcnew Pattern();
 
 				int res = pc->Learn(*ds->_GetDslDataSet(), *pat->_GetDslPattern());
 				if (DSL_OKAY != res)
 				{
-					pat->Dispose();
-					pat = NULL;
+					pat->~Pattern();
+					pat = nullptr;
 					throw gcnew SmileException("Error in PC algorithm", res);
 				}
 
 				return pat;
 			}
 
-			__property int get_MaxAdjacency() { return pc->maxAdjacency; }
-			__property void set_MaxAdjacency(int value) { pc->maxAdjacency = value; }
+			property int MaxAdjacency
+			{
+				int get()
+				{
+					return pc->maxAdjacency;
+				}
 
-			__property double get_Significance() { return pc->significance; }
-			__property void set_Significance(double value) { pc->significance = value; }
+				void set(int value)
+				{
+					pc->maxAdjacency = value;
+				}
+			}
 
-			BkKnowledge* GetBkKnowledge()
+			property double Significance
+			{
+				double get()
+				{
+					return pc->significance;
+				}
+
+				void set(double value)
+				{
+					pc->significance = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
 			{
 				return gcnew BkKnowledge(pc->bkk.forcedArcs, pc->bkk.forbiddenArcs, pc->bkk.tiers);
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(pc->bkk.forcedArcs, pc->bkk.forbiddenArcs, pc->bkk.tiers);
 			}
@@ -3993,52 +4162,91 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class NaiveBayes : public WrappedObject, public IDisposable
+		public ref class NaiveBayes : public WrappedObject, public IDisposable
 		{
 		public:
-			NaiveBayes() { nb = gcnew DSL_naiveBayes; }
-			~NaiveBayes() { delete nb; }
-			void Dispose()
+			NaiveBayes() { nb = new DSL_naiveBayes(); }
+			!NaiveBayes() { delete nb; }
+			~NaiveBayes()
 			{
 				delete nb;
 				nb = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = gcnew Network();
+				Network^ net = gcnew Network();
 				int res = nb->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
+					net->~Network();
+					net = nullptr;
 					throw gcnew SmileException("Error in NaiveBayes algorithm", res);
 				}
 
 				return net;
 			}
 
-			__value enum PriorsType
+			enum class PriorsType
 			{
 				K2 = DSL_naiveBayes::K2,
 				BDeu = DSL_naiveBayes::BDeu,
 			};
 
-			__property PriorsType get_PriorsMethod() { return PriorsType(nb->priors); }
-			__property void set_PriorsMethod(PriorsType value) { nb->priors = DSL_naiveBayes::PriorsType(value); }
-
-			__property double get_NetWeight() { return nb->netWeight; }
-			__property void set_NetWeight(double value) { nb->netWeight = value; }
-
-			__property bool get_FeatureSelection() { return nb->featureSelection; }
-			__property void set_FeatureSelection(bool value) { nb->featureSelection = value; }
-
-			__property String* get_ClassVariableId() { return gcnew String(nb->classVariableId.c_str()); }
-			__property void set_ClassVariableId(String^ value)
+			property PriorsType PriorsMethod
 			{
-				StringToCharPtr c(value);
-				nb->classVariableId = c;
+				PriorsType get()
+				{
+					return PriorsType(nb->priors);
+				}
+
+				void set(PriorsType value)
+				{
+					nb->priors = DSL_naiveBayes::PriorsType(value);
+				}
+			}
+
+			property double NetWeight
+			{
+				double get()
+				{
+					return nb->netWeight; 
+				}
+
+				void set(double value)
+				{
+					nb->netWeight = value;
+				}
+			}
+
+
+			property bool FeatureSelection
+			{
+				bool get()
+				{
+					return nb->featureSelection;
+				}
+
+				void set(bool value)
+				{
+					nb->featureSelection = value;
+				}
+			}
+
+
+			property String^ ClassVariableId
+			{
+				String^ get()
+				{
+					 return gcnew String(nb->classVariableId.c_str());
+				}
+
+				void set(String^ value)
+				{
+					StringToCharPtr c(value);
+					nb->classVariableId = c;
+				}
 			}
 
 		private:
@@ -4047,21 +4255,21 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class EM : public WrappedObject, public IDisposable
+		public ref class EM : public WrappedObject, public IDisposable
 		{
 		public:
-			EM() { em = gcnew DSL_em;	}
-			~EM() { delete em; }
-			void Dispose()
+			EM() { em = new DSL_em();	}
+			!EM() { delete em; }
+			~EM()
 			{
 				delete em;
 				em = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch* matching[], Int32 fixedNodes[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching, array<Int32>^ fixedNodes)
 			{
-				if (NULL == matching || 0 == matching->Length)
+				if (nullptr == matching || 0 == matching->Length)
 				{
 					throw gcnew SmileException("No matching specified");
 				}
@@ -4077,7 +4285,7 @@ namespace Smile
 				}
 
 				vector<int> nativeFixedNodes;
-				if (NULL != fixedNodes)
+				if (nullptr != fixedNodes)
 				{
 					count = fixedNodes->Length;
 					nativeFixedNodes.resize(count);
@@ -4087,15 +4295,15 @@ namespace Smile
 				SmileException::CheckSmileStatus("Error in EM algorithm", em->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet(), nativeMatching, nativeFixedNodes));
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch* matching[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching)
 			{
-				Learn(ds, net, matching, (Int32[])NULL);
+				Learn(ds, net, matching, (array<Int32>^)nullptr);
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch *matching[], String^ fixedNodes[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching, array<String^>^ fixedNodes)
 			{
 				int count = fixedNodes->Length;
-				Int32 fixedNodeHandles[] = gcnew Int32[count];
+				array<Int32>^ fixedNodeHandles = gcnew array<Int32>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					fixedNodeHandles[i] = net->ValidateNodeId(fixedNodes[i]);
@@ -4103,20 +4311,72 @@ namespace Smile
 				Learn(ds, net, matching, fixedNodeHandles);
 			}
 
-			__property int get_EqSampleSize() { return em->GetEquivalentSampleSize(); }
-			__property void set_EqSampleSize(int value) { em->SetEquivalentSampleSize(value); }
+			property float EqSampleSize
+			{
+				float get()
+				{
+					return em->GetEquivalentSampleSize(); 
+				}
 
-			__property bool get_RandomizeParameters() { return em->GetRandomizeParameters(); }
-			__property void set_RandomizeParameters(bool value) { em->SetRandomizeParameters(value); }
+				void set(float value)
+				{
+					em->SetEquivalentSampleSize(value);
+				}
+			}
 
-			__property bool get_Relevance() { return em->GetRelevance(); }
-			__property void set_Relevance(bool value) { em->SetRelevance(value); }
+			property bool RandomizeParameters
+			{
+				bool get()
+				{
+					return em->GetRandomizeParameters(); 
+				}
 
-			__property int get_Seed() { return em->GetSeed(); }
-			__property void set_Seed(int value) { em->SetSeed(value); }
+				void set(bool value)
+				{
+					em->SetRandomizeParameters(value);
+				}
+			}
 
-			__property bool get_UniformizeParameters() { return em->GetUniformizeParameters(); }
-			__property void set_UniformizeParameters(bool value) { em->SetUniformizeParameters(value); }
+			property bool Relevance
+			{
+				bool get()
+				{
+					return em->GetRelevance();
+				}
+
+				void set(bool value)
+				{
+					em->SetRelevance(value);
+				}
+			}
+
+
+			property int Seed
+			{
+				int get()
+				{
+					return em->GetSeed(); 
+				}
+
+				void set(int value)
+				{
+					em->SetSeed(value);
+				}
+			}
+
+
+			property bool UniformizeParameters
+			{
+				bool get()
+				{
+					return em->GetUniformizeParameters();
+				}
+
+				void set(bool value)
+				{
+					em->SetUniformizeParameters(value);
+				}
+			}
 
 		private:
 			DSL_em *em;
