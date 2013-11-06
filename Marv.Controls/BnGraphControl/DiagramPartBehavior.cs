@@ -21,6 +21,12 @@ namespace Marv.Controls
 
             this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
             this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
+            this.AssociatedObject.ConnectionManipulationStarted += AssociatedObject_ConnectionManipulationStarted;
+        }
+
+        private void AssociatedObject_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
+        {
+            logger.Trace("");
         }
 
         private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)

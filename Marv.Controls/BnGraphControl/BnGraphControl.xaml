@@ -22,24 +22,25 @@
 
     <Grid>
         <telerik:RadDiagram Name="DiagramPart"
-                            ActiveTool="PanTool"
+                            ActiveTool="PointerTool"
                             GraphSource="{Binding Graph, ElementName=Root}"
                             IsBackgroundSurfaceVisible="False"
-                            IsConnectorsManipulationEnabled="False"
-                            IsEditable="False"
+                            IsConnectorsManipulationEnabled="True"
+                            IsEditable="True"
                             IsInformationAdornerVisible="False"
                             IsManipulationAdornerVisible="False"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
-                            RouteConnections="True"
-                            SelectionMode="Single">
+                            SelectionMode="Extended">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
+                    <Setter Property="IsConnectorsManipulationEnabled" Value="True" />
+                    <Setter Property="IsEditable" Value="True" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
                     <Setter Property="SourceConnectorPosition" Value="{Binding SourceConnectorPosition}" />
                     <Setter Property="StrokeThickness" Value="10" />
