@@ -90,7 +90,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoricalPoint.cs" />
+    <Compile Include="Chart\CategoricalPoint.cs" />
     <Compile Include="Chart\ChartAxes.cs" />
     <Compile Include="Chart\ChartSeries.cs" />
     <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="Graph\Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph\Graph.IObservableGraphSource.cs" />
     <Compile Include="Graph\Graph.cs" />
-    <Compile Include="ScatterPoint.cs" />
+    <Compile Include="Chart\ScatterPoint.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
