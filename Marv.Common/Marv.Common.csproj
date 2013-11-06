@@ -96,9 +96,9 @@
     <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
     <Compile Include="Countries.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
-    <Compile Include="Graph.IBidirectionalGraph.cs" />
-    <Compile Include="Graph.IObservableGraphSource.cs" />
-    <Compile Include="Graph.ViewModel.cs" />
+    <Compile Include="Graph\Graph.IBidirectionalGraph.cs" />
+    <Compile Include="Graph\Graph.IObservableGraphSource.cs" />
+    <Compile Include="Graph\Graph.cs" />
     <Compile Include="ScatterPoint.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />
@@ -112,7 +112,6 @@
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="TileLayers.cs" />
     <Compile Include="Types\Dict.cs" />
-    <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
@@ -120,7 +119,6 @@
     <Compile Include="Graph\Evidence\HardEvidence.cs" />
     <Compile Include="Graph\Evidence\IEvidence.cs" />
     <Compile Include="Graph\Evidence\SoftEvidence.cs" />
-    <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\Vertex.cs" />
     <Compile Include="Graph\VertexCommand\IVertexCommand.cs" />
     <Compile Include="Graph\VertexCommand\VertexCommand.cs" />

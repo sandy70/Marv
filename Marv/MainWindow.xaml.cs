@@ -88,7 +88,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
+                    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
