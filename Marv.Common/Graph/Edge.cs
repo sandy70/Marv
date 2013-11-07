@@ -1,4 +1,5 @@
-﻿using QuickGraph;
+﻿using NLog;
+using QuickGraph;
 using System;
 using System.ComponentModel;
 using Telerik.Windows.Diagrams.Core;
@@ -7,6 +8,8 @@ namespace Marv.Common
 {
     public class Edge : ViewModel, IEdge<Vertex>, ILink<Vertex>
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private Vertex source;
         private string sourceConnectorPosition = "Auto";
         private Vertex target;
@@ -108,6 +111,33 @@ namespace Marv.Common
             {
                 this.Target = value as Vertex;
             }
+        }
+
+        public override string ToString()
+        {
+            var str = "";
+
+            if (this.Source == null)
+            {
+                str += "null";
+            }
+            else
+            {
+                str += this.Source.Key;
+            }
+
+            str += " -> ";
+
+            if (this.Target == null)
+            {
+                str += "null";
+            }
+            else
+            {
+                str += this.Target.Key;
+            }
+
+            return base.ToString() + ": " + str;
         }
     }
 }
