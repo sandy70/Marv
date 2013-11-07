@@ -1,14 +1,20 @@
 ﻿using Marv.Common;
 using System;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Linq;
+using NLog;
+using System.Collections.Generic;
 
 namespace Marv.Controls
 {
     public partial class BnGraphControl : UserControl
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static readonly DependencyProperty ConnectionColorProperty =
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
 

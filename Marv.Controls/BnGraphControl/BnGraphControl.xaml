@@ -23,12 +23,13 @@
     <Grid>
         <telerik:RadDiagram Name="DiagramPart"
                             ActiveTool="PointerTool"
+                            AllowDelete="True"
                             GraphSource="{Binding Graph, ElementName=Root}"
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="True"
-                            IsEditable="True"
+                            IsEditable="False"
                             IsInformationAdornerVisible="False"
-                            IsManipulationAdornerVisible="False"
+                            IsManipulationAdornerVisible="True"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
@@ -39,14 +40,12 @@
                 <Style TargetType="telerik:RadDiagramConnection">
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
-                    <Setter Property="IsConnectorsManipulationEnabled" Value="True" />
-                    <Setter Property="IsEditable" Value="True" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
-                    <Setter Property="SourceConnectorPosition" Value="{Binding SourceConnectorPosition}" />
+                    <Setter Property="SourceConnectorPosition" Value="{Binding SourceConnectorPosition, Mode=TwoWay}" />
                     <Setter Property="StrokeThickness" Value="10" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
-                    <Setter Property="TargetConnectorPosition" Value="{Binding TargetConnectorPosition}" />
+                    <Setter Property="TargetConnectorPosition" Value="{Binding TargetConnectorPosition, Mode=TwoWay}" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate />
