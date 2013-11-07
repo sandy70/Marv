@@ -87,18 +87,27 @@ namespace Marv.Common
 
             set
             {
-                if (this.Contains(value))
+                if (value == null)
                 {
-                    if (!value.Equals(this.selectedItem))
-                    {
-                        this.selectedItem = value;
-                        this.RaisePropertyChanged("SelectedItem");
-                        this.RaiseSelectionChanged();
-                    }
+                    this.selectedItem = value;
+                    this.RaisePropertyChanged("SelectedItem");
+                    this.RaiseSelectionChanged();
                 }
                 else
                 {
-                    throw new ArgumentException("The value provided for SelectedItem does not exist in the collection.");
+                    if (this.Contains(value))
+                    {
+                        if (!value.Equals(this.selectedItem))
+                        {
+                            this.selectedItem = value;
+                            this.RaisePropertyChanged("SelectedItem");
+                            this.RaiseSelectionChanged();
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("The value provided for SelectedItem does not exist in the collection.");
+                    }
                 }
             }
         }
