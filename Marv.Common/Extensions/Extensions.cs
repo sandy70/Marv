@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
@@ -22,9 +23,52 @@ namespace Marv.Common
             else return val;
         }
 
+        public static string Dequote(this string str, char startChar, char endChar)
+        {
+            var nChars = str.Count();
+            var startIndex = 0;
+            var length = nChars;
+
+            if (nChars > 0)
+            {
+                if (str[0] == startChar)
+                {
+                    startIndex = 1;
+                    length -= 1;
+                }
+
+                if (str[nChars - 1] == endChar)
+                {
+                    length -= 1;
+                }
+            }
+
+            return str.Substring(startIndex, length);
+        }
+
+        public static string Dequote(this string str, char padChar)
+        {
+            return str.Dequote(padChar, padChar);
+        }
+
+        public static string Dequote(this string str)
+        {
+            return str.Dequote('"');
+        }
+
+        public static string Enquote(this string str, char startChar, char endChar)
+        {
+            return startChar + str + endChar;
+        }
+
+        public static string Enquote(this string str, char padChar)
+        {
+            return str.Enquote(padChar, padChar);
+        }
+
         public static string Enquote(this string str)
         {
-            return "\"" + str + "\"";
+            return str.Enquote('"');
         }
 
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
@@ -234,6 +278,68 @@ namespace Marv.Common
             return str;
         }
 
+        public static KeyValuePair<string, string> ParseKeyValue(this string str)
+        {
+            var key = "";
+            var value = "";
+            var readString = "";
+
+            foreach (var c in str.Trim())
+            {
+                if (c == ',')
+                {
+                    key = readString;
+                    readString = "";
+                }
+                else
+                {
+                    readString += c;
+                }
+            }
+
+            value = readString;
+
+            return new KeyValuePair<string, string>(key, value);
+        }
+
+        public static List<string> ParseBlocks(this string str)
+        {
+            var startChar = '{';
+            var endChar = '}';
+            var count = 0;
+            var readStr = "";
+            var blocks = new List<string>();
+            var isReading = false;
+
+            foreach (var c in str.Trim())
+            {
+                if (c == startChar)
+                {
+                    count++;
+                    isReading = true;
+                }
+                
+                if (c == endChar)
+                {
+                    count--;
+                }
+
+                if(isReading)
+                {
+                    readStr += c;
+                }
+
+                if (count == 0 && isReading)
+                {
+                    blocks.Add(readStr);
+                    readStr = "";
+                    isReading = false;
+                }
+            }
+
+            return blocks;
+        }
+
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
         {
             return untrimmed.Select(x => x.Trim());
@@ -252,6 +358,16 @@ namespace Marv.Common
                     serializer.Serialize(jsonTextWriter, _object);
                 }
             }
+        }
+
+        public static string ToJson(this object _object)
+        {
+            return JsonConvert.SerializeObject(_object);
+        }
+
+        public static T ParseJson<T>(this string _string)
+        {
+            return JsonConvert.DeserializeObject<T>(_string);
         }
     }
 }
