@@ -66,33 +66,6 @@ namespace Marv.Common
             return position;
         }
 
-        public Dictionary<string, Point> ParsePositionByGroup()
-        {
-            var positionsByGroup = new Dictionary<string, Point>();
-
-            if (this.Properties.ContainsKey("grouppositions"))
-            {
-                var valueString = this.Properties["grouppositions"];
-
-                string[] parts = valueString.Split(new char[] { ',', '"' }, StringSplitOptions.RemoveEmptyEntries);
-
-                int nPositions = parts.Count() / 3;
-
-                for (int i = 0; i < nPositions; i++)
-                {
-                    double x; double y;
-                    string group = parts[3 * i];
-
-                    if (double.TryParse(parts[3 * i + 1], out x) && double.TryParse(parts[3 * i + 2], out y))
-                    {
-                        positionsByGroup.Add(group, new System.Windows.Point(x, y));
-                    }
-                }
-            }
-
-            return positionsByGroup;
-        }
-
         public Sequence<double> ParseStateRange(int stateIndex)
         {
             var key = "HR_State_" + stateIndex;

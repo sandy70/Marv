@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Marv.Common
 {
@@ -166,7 +167,7 @@ namespace Marv.Common
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionForGroup = structureVertex.ParsePositionByGroup();
+                vertex.PositionForGroup = structureVertex.Properties["PositionForGroup"].ParseJson<Dictionary<string, Point>>();
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
@@ -283,6 +284,22 @@ namespace Marv.Common
                     if (!vertex.PositionForGroup.ContainsKey(group))
                     {
                         vertex.PositionForGroup[group] = vertex.Position;
+                    }
+
+
+                    if (group == this.DefaultGroup)
+                    {
+                        if(!vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        {
+                            vertex.Commands.Push(VertexCommand.VertexSubGraphCommand);
+                        }
+                    }
+                    else
+                    {
+                        if(vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        {
+                            vertex.Commands.Remove(VertexCommand.VertexSubGraphCommand);
+                        }
                     }
 
                     vertex.SelectedGroup = group;
@@ -478,13 +495,15 @@ namespace Marv.Common
 
             structure.Properties["HR_Desc"] = userProperties.String().Enquote();
 
-            foreach (var vertex in structure.Vertices)
+            foreach (var networkStructureVertex in structure.Vertices)
             {
-                vertex.Properties["groups"] = this.GetVertex(vertex.Key).Groups.String().Enquote();
-                vertex.Properties["grouppositions"] = this.GetVertex(vertex.Key).PositionForGroup.String().Enquote();
-                vertex.Properties["isexpanded"] = "\"" + this.GetVertex(vertex.Key).IsExpanded + "\"";
-                vertex.Properties["label"] = "\"" + this.GetVertex(vertex.Key).Name + "\"";
-                vertex.Properties["units"] = "\"" + this.GetVertex(vertex.Key).Units + "\"";
+                var vertex = this.Vertices[networkStructureVertex.Key];
+
+                networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
+                networkStructureVertex.Properties["isexpanded"] = "\"" + vertex.IsExpanded + "\"";
+                networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
+                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson();
+                networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
             }
 
             structure.Write(fileName);
