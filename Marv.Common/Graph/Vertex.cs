@@ -15,6 +15,7 @@ namespace Marv.Common
             VertexCommand.VertexClearCommand
         };
 
+        private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
         private ObservableCollection<String> groups = new ObservableCollection<String>();
@@ -48,6 +49,23 @@ namespace Marv.Common
                 {
                     this.commands = value;
                     this.RaisePropertyChanged("Commands");
+                }
+            }
+        }
+
+        public Dict<string, string, EdgeConnectorPositions> ConnectorPositions
+        {
+            get
+            {
+                return this.connectorPositions;
+            }
+
+            set
+            {
+                if (value != this.connectorPositions)
+                {
+                    this.connectorPositions = value;
+                    this.RaisePropertyChanged("ConnectorPositions");
                 }
             }
         }
