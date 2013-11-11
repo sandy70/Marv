@@ -9,11 +9,48 @@ using System.Windows.Threading;
 
 namespace Marv.Common
 {
-    public class Dict<T1, T2, TValue> : Dict<T1, Dict<T2, TValue>> { }
+    public class Dict<T1, T2, TValue> : Dict<T1, Dict<T2, TValue>> where TValue : new()
+    {
+        public TValue this[T1 key1, T2 key2]
+        {
+            get
+            {
+                if (this.ContainsKey(key1))
+                {
+                    if (this[key1].ContainsKey(key2))
+                    {
+                        return this[key1][key2];
+                    }
+                    else
+                    {
+                        return this[key1][key2] = new TValue();
+                    }
+                }
+                else
+                {
+                    this[key1] = new Dict<T2, TValue>();
+                    return this[key1][key2] = new TValue();
+                }
+            }
 
-    public class Dict<T1, T2, T3, TValue> : Dict<T1, Dict<T2, T3, TValue>> { }
+            set
+            {
+                if (this.ContainsKey(key1))
+                {
+                    this[key1][key2] = value;
+                }
+                else
+                {
+                    this[key1] = new Dict<T2, TValue>();
+                    this[key1][key2] = value;
+                }
+            }
+        }
+    }
 
-    public class Dict<T1, T2, T3, T4, TValue> : Dict<T1, Dict<T2, T3, T4, TValue>> { }
+    public class Dict<T1, T2, T3, TValue> : Dict<T1, Dict<T2, T3, TValue>> where TValue: new() { }
+
+    public class Dict<T1, T2, T3, T4, TValue> : Dict<T1, Dict<T2, T3, T4, TValue>> where TValue : new() { }
 
     public class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
     {
