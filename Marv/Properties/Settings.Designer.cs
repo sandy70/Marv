@@ -145,7 +145,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\CNPC\\MODEL_CNPC_10302013Coalescence.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\CNPC\\MODEL_CNPC_11072013Coalescence.net")]
         public string NetworkFileName {
             get {
                 return ((string)(this["NetworkFileName"]));
