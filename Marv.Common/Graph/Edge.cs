@@ -1,7 +1,5 @@
 ﻿using NLog;
 using QuickGraph;
-using System;
-using System.ComponentModel;
 using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Common
@@ -10,10 +8,9 @@ namespace Marv.Common
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+        private EdgeConnectorPositions connectorPositions = new EdgeConnectorPositions();
         private Vertex source;
-        private string sourceConnectorPosition = "Auto";
         private Vertex target;
-        private string targetConnectorPosition = "Auto";
 
         public Edge(Vertex source, Vertex target)
         {
@@ -21,70 +18,19 @@ namespace Marv.Common
             this.Target = target;
         }
 
-        public Vertex Source
+        public EdgeConnectorPositions ConnectorPositions
         {
             get
             {
-                return this.source;
+                return this.connectorPositions;
             }
 
             set
             {
-                if (value != this.source)
+                if (value != this.connectorPositions)
                 {
-                    this.source = value;
-                    this.RaisePropertyChanged("Source");
-                }
-            }
-        }
-
-        public string SourceConnectorPosition
-        {
-            get
-            {
-                return this.sourceConnectorPosition;
-            }
-
-            set
-            {
-                if (value != this.sourceConnectorPosition)
-                {
-                    this.sourceConnectorPosition = value;
-                    this.RaisePropertyChanged("SourceConnectorPosition");
-                }
-            }
-        }
-
-        public Vertex Target
-        {
-            get
-            {
-                return this.target;
-            }
-
-            set
-            {
-                if (value != this.target)
-                {
-                    this.target = value;
-                    this.RaisePropertyChanged("Target");
-                }
-            }
-        }
-
-        public string TargetConnectorPosition
-        {
-            get
-            {
-                return this.targetConnectorPosition;
-            }
-
-            set
-            {
-                if (value != this.targetConnectorPosition)
-                {
-                    this.targetConnectorPosition = value;
-                    this.RaisePropertyChanged("TargetConnectorPosition");
+                    this.connectorPositions = value;
+                    this.RaisePropertyChanged("ConnectorPositions");
                 }
             }
         }
@@ -110,6 +56,40 @@ namespace Marv.Common
             set
             {
                 this.Target = value as Vertex;
+            }
+        }
+
+        public Vertex Source
+        {
+            get
+            {
+                return this.source;
+            }
+
+            set
+            {
+                if (value != this.source)
+                {
+                    this.source = value;
+                    this.RaisePropertyChanged("Source");
+                }
+            }
+        }
+
+        public Vertex Target
+        {
+            get
+            {
+                return this.target;
+            }
+
+            set
+            {
+                if (value != this.target)
+                {
+                    this.target = value;
+                    this.RaisePropertyChanged("Target");
+                }
             }
         }
 
