@@ -11,6 +11,7 @@ namespace Marv.Common
     {
         private Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private string key = "";
+        private IEnumerable<string> keys;
         private string name = "";
         private Dynamic properties = new Dynamic();
         private T selectedItem = default(T);
@@ -41,6 +42,14 @@ namespace Marv.Common
                     this.key = value;
                     this.RaisePropertyChanged("Key");
                 }
+            }
+        }
+
+        public IEnumerable<string> Keys
+        {
+            get
+            {
+                return this.dictionary.Keys;
             }
         }
 
@@ -123,6 +132,11 @@ namespace Marv.Common
             {
                 this.dictionary[key] = value;
             }
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return this.dictionary.ContainsKey(key);
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
