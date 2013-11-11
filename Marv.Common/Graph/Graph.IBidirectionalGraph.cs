@@ -86,15 +86,7 @@ namespace Marv.Common
 
         public bool ContainsEdge(Vertex source, Vertex target)
         {
-            foreach (var edge in this.Edges)
-            {
-                if (edge.Source == source && edge.Target == target)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return this.Edges.Contains(source, target);
         }
 
         public bool ContainsEdge(Edge edge)
