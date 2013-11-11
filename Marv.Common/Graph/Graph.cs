@@ -15,11 +15,9 @@ namespace Marv.Common
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string defaultGroup;
-        private ViewModelCollection<Edge> edges = new ViewModelCollection<Edge>();
+        private EdgeCollection edges = new EdgeCollection();
         private Dict<string, string> loops = new Dict<string, string>();
         private Network network = new Network();
-        private string sourceConnectorPosition = "Auto";
-        private string targetConnectorPosition = "Auto";
         private ViewModelCollection<Vertex> vertices = new ViewModelCollection<Vertex>();
 
         public string DefaultGroup
@@ -39,7 +37,7 @@ namespace Marv.Common
             }
         }
 
-        public ViewModelCollection<Edge> Edges
+        public EdgeCollection Edges
         {
             get
             {
@@ -69,40 +67,6 @@ namespace Marv.Common
                 {
                     this.loops = value;
                     this.RaisePropertyChanged("Loops");
-                }
-            }
-        }
-
-        public string SourceConnectorPosition
-        {
-            get
-            {
-                return this.sourceConnectorPosition;
-            }
-
-            set
-            {
-                if (value != this.sourceConnectorPosition)
-                {
-                    this.sourceConnectorPosition = value;
-                    this.RaisePropertyChanged("SourceConnectorPosition");
-                }
-            }
-        }
-
-        public string TargetConnectorPosition
-        {
-            get
-            {
-                return this.targetConnectorPosition;
-            }
-
-            set
-            {
-                if (value != this.targetConnectorPosition)
-                {
-                    this.targetConnectorPosition = value;
-                    this.RaisePropertyChanged("TargetConnectorPosition");
                 }
             }
         }
@@ -159,6 +123,7 @@ namespace Marv.Common
                 var vertex = new Vertex();
 
                 vertex.Key = structureVertex.Key;
+                vertex.ConnectorPositions = structureVertex.Properties["ConnectorPositions"].Dequote().ParseJson<Dict<string, string, EdgeConnectorPositions>>();
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
@@ -167,7 +132,7 @@ namespace Marv.Common
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionForGroup = structureVertex.Properties["PositionForGroup"].ParseJson<Dictionary<string, Point>>();
+                vertex.PositionForGroup = structureVertex.Properties["PositionForGroup"].Dequote().ParseJson<Dictionary<string, Point>>();
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
@@ -196,8 +161,6 @@ namespace Marv.Common
 
             graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", defaultValue: "all");
             graph.Name = structure.ParseUserProperty("key", defaultValue: "");
-            graph.SourceConnectorPosition = structure.ParseUserProperty("SourceConnectorPosition", defaultValue: "Auto");
-            graph.TargetConnectorPosition = structure.ParseUserProperty("TargetConnectorPosition", defaultValue: "Auto");
 
             graph.UpdateValue();
             return graph;
@@ -286,17 +249,16 @@ namespace Marv.Common
                         vertex.PositionForGroup[group] = vertex.Position;
                     }
 
-
                     if (group == this.DefaultGroup)
                     {
-                        if(!vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        if (!vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
                         {
                             vertex.Commands.Push(VertexCommand.VertexSubGraphCommand);
                         }
                     }
                     else
                     {
-                        if(vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        if (vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
                         {
                             vertex.Commands.Remove(VertexCommand.VertexSubGraphCommand);
                         }
@@ -323,10 +285,8 @@ namespace Marv.Common
                         {
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
-                                if (!subGraph.HasEdge(src.Key, edge.Target.Key))
-                                {
-                                    subGraph.AddEdge(src, edge.Target);
-                                }
+                                var connectorPostions = srcVertex.ConnectorPositions[group, dstVertex.Key];
+                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
 
                                 src = edge.Target;
                             }
@@ -336,8 +296,6 @@ namespace Marv.Common
             }
 
             subGraph.DefaultGroup = group;
-            subGraph.SourceConnectorPosition = this.SourceConnectorPosition;
-            subGraph.TargetConnectorPosition = this.TargetConnectorPosition;
 
             return subGraph;
         }
@@ -489,8 +447,6 @@ namespace Marv.Common
             {
                 "defaultgroup=" + this.DefaultGroup,
                 "key=" + this.Name,
-                "SourceConnectorPosition=" + this.SourceConnectorPosition,
-                "TargetConnectorPosition=" + this.TargetConnectorPosition
             };
 
             structure.Properties["HR_Desc"] = userProperties.String().Enquote();
@@ -499,14 +455,24 @@ namespace Marv.Common
             {
                 var vertex = this.Vertices[networkStructureVertex.Key];
 
+                networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
                 networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
-                networkStructureVertex.Properties["isexpanded"] = "\"" + vertex.IsExpanded + "\"";
+                networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
                 networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
-                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson();
+                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
                 networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
+
+                // Remove legacy properties
+                networkStructureVertex.Properties.Remove("grouppositions");
+                networkStructureVertex.Properties.Remove("isheaderofgroup");
             }
 
             structure.Write(fileName);
+        }
+
+        private IEnumerable<Vertex> GetChildren(Vertex vertex)
+        {
+            return this.Edges.Where(edge => edge.Source == vertex).Select(edge => edge.Target);
         }
     }
 }
