@@ -22,14 +22,14 @@
 
     <Grid>
         <telerik:RadDiagram Name="DiagramPart"
-                            ActiveTool="PointerTool"
+                            ActiveTool="PanTool"
                             AllowDelete="True"
                             GraphSource="{Binding Graph, ElementName=Root}"
                             IsBackgroundSurfaceVisible="False"
-                            IsConnectorsManipulationEnabled="True"
+                            IsConnectorsManipulationEnabled="False"
                             IsEditable="False"
                             IsInformationAdornerVisible="False"
-                            IsManipulationAdornerVisible="True"
+                            IsManipulationAdornerVisible="False"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"

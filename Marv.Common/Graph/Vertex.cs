@@ -11,8 +11,8 @@ namespace Marv.Common
         private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
         {
             VertexCommand.VertexExpandCommand,
-            VertexCommand.VertexLockCommand,
-            VertexCommand.VertexClearCommand
+            // VertexCommand.VertexLockCommand,
+            // VertexCommand.VertexClearCommand
         };
 
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
