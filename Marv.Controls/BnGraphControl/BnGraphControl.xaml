@@ -41,11 +41,11 @@
                     <Setter Property="ConnectionType" Value="Bezier" />
                     <Setter Property="BezierTension" Value="3" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
-                    <Setter Property="SourceConnectorPosition" Value="{Binding SourceConnectorPosition, Mode=TwoWay}" />
+                    <Setter Property="SourceConnectorPosition" Value="{Binding ConnectorPositions.SourcePosition, Mode=TwoWay}" />
                     <Setter Property="StrokeThickness" Value="10" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
-                    <Setter Property="TargetConnectorPosition" Value="{Binding TargetConnectorPosition, Mode=TwoWay}" />
+                    <Setter Property="TargetConnectorPosition" Value="{Binding ConnectorPositions.TargetPosition, Mode=TwoWay}" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate />
@@ -147,10 +147,10 @@
 
                                         <!-- Description -->
                                         <local:EditableTextBox Foreground="Black"
-                                                                FontSize="14"
-                                                                Margin="10"
-                                                                Text="{Binding Description}"
-                                                                Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
+                                                            FontSize="14"
+                                                            Margin="10"
+                                                            Text="{Binding Description}"
+                                                            Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
 
                                         <!-- Toolbar -->
                                         <ItemsControl ItemsSource="{Binding Commands}"
