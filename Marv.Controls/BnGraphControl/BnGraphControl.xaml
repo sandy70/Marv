@@ -46,6 +46,7 @@
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
                     <Setter Property="TargetCapSize" Value="20,20" />
                     <Setter Property="TargetConnectorPosition" Value="{Binding ConnectorPositions.TargetPosition, Mode=TwoWay}" />
+                    
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate />
@@ -61,7 +62,7 @@
                     <Setter Property="Position" Value="{Binding DisplayPosition, Mode=TwoWay}" />
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsLocked}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-
+                    
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
