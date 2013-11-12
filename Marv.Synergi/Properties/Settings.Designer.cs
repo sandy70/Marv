@@ -8,22 +8,49 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Marv.Synergi.Properties
-{
-
-
+namespace Marv.Synergi.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.as" +
+            "mx")]
+        public string Marv_Synergi_LineAndSectionOverviewService_LineAndSectionOverviewService {
+            get {
+                return ((string)(this["Marv_Synergi_LineAndSectionOverviewService_LineAndSectionOverviewService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx")]
+        public string Marv_Synergi_LoginService_BRIXLoginService {
+            get {
+                return ((string)(this["Marv_Synergi_LoginService_BRIXLoginService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/ProfileService/SegmentationService.asmx")]
+        public string Marv_Synergi_SegmentationService_SegmentationService {
+            get {
+                return ((string)(this["Marv_Synergi_SegmentationService_SegmentationService"]));
             }
         }
     }

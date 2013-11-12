@@ -29,6 +29,6 @@
     <system:Double x:Key="FontSizeLarger">16</system:Double>
     <system:Double x:Key="FontSizeLargest">18</system:Double>
     
-    <system:Double x:Key="MarginSmall">5</system:Double>
-    <system:Double x:Key="MarginMedium">10</system:Double>
+    <system:String x:Key="MarginSmall">5</system:String>
+    <system:String x:Key="MarginMedium">10</system:String>
 </ResourceDictionary>

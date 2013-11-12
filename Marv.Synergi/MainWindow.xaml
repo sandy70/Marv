@@ -1,8 +1,101 @@
 ﻿<Window x:Class="Marv.Synergi.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:local="clr-namespace:Marv.Synergi"
+        xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
+        xmlns:surface="http://schemas.microsoft.com/surface/2008"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Background="DarkGray"
+        Title="MainWindow" Height="350" Width="600"
+        Name="Root">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <!-- Login Panel -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal">
+            <telerik:RadMaskedTextInput Name="UserNameInput"
+                                        EmptyContent="User Name"
+                                        Margin="5"
+                                        Mask=""
+                                        TextMode="PlainText"
+                                        Value="{Binding UserName, ElementName=Root, Mode=TwoWay}"
+                                        Width="200" />
+
+            <marvcontrols:PasswordInput Name="PasswordInput"
+                                        Margin="5"
+                                        Password="{Binding Password, ElementName=Root, Mode=TwoWay}"
+                                        Width="200" />
+
+            <telerik:RadButton Name="LoginButton"
+                               Content="Login"
+                               Margin="5" 
+                               Width="100" />
+        </StackPanel>
+        
+        <!-- Line Info -->
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    Orientation="Horizontal">
+            <StackPanel>
+                <Label Content="Lines"
+                       Margin="5"/>
+
+                <surface:SurfaceListBox Name="LinesListBox"
+                                    HorizontalContentAlignment="Stretch"
+                                    ItemsSource="{Binding Lines, ElementName=Root}"
+                                    Margin="5"
+                                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    SelectedItem="{Binding SelectedLine, ElementName=Root, Mode=TwoWay}"
+                                    SelectionMode="Single"
+                                    Width="200">
+                    <surface:SurfaceListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name}" />
+                        </DataTemplate>
+                    </surface:SurfaceListBox.ItemTemplate>
+                </surface:SurfaceListBox>
+            </StackPanel>
+
+            <StackPanel>
+                <Label Content="Sections"
+                       Margin="5"/>
+
+                <surface:SurfaceListBox Name="SectionsListBox"
+                                        HorizontalContentAlignment="Stretch"
+                                        ItemsSource="{Binding Sections, ElementName=Root}"
+                                        Margin="5"
+                                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                        SelectedItem="{Binding SelectedSection, ElementName=Root, Mode=TwoWay}"
+                                        SelectionMode="Single"
+                                        Width="200">
+                    <surface:SurfaceListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name}" />
+                        </DataTemplate>
+                    </surface:SurfaceListBox.ItemTemplate>
+                </surface:SurfaceListBox>
+            </StackPanel>
+
+            <StackPanel>
+                <Label Content="Properties"
+                       Margin="5"/>
+
+                <DataGrid AutoGenerateColumns="False"
+                          ItemsSource="{Binding SegmentData, ElementName=Root}"
+                          Margin="5" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
+                        <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </StackPanel>
         
     </Grid>
 </Window>

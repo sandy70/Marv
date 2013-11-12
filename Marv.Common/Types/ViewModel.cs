@@ -9,7 +9,7 @@ namespace Marv.Common
         string Name { get; set; }
     }
 
-    public class ViewModel : IViewModel
+    public class ViewModel : Dynamic, IViewModel
     {
         private string key = "";
         private string name = "";
