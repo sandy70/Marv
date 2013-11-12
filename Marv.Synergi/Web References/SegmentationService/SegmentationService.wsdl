@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://synergi.dnv.com/pipeline" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s1="http://www.dnv.com/WebServices/BRIXSecurity/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://synergi.dnv.com/pipeline" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://synergi.dnv.com/pipeline">
+      <s:element name="GetSegments">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="scopeOid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="profiledefinitions" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="distanceunit" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cultureName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetSegmentsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSegmentsResult" type="tns:SegmentsViewModel" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SegmentsViewModel">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Headers" type="tns:ArrayOfHeader" />
+          <s:element minOccurs="0" maxOccurs="1" name="Segments" type="tns:ArrayOfSegmentViewModel" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfHeader">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Header" nillable="true" type="tns:Header" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Header">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Unit" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSegmentViewModel">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SegmentViewModel" nillable="true" type="tns:SegmentViewModel" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SegmentViewModel">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="tns:ArrayOfString" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.dnv.com/WebServices/BRIXSecurity/">
+      <s:element name="BRIXAuthenticationHeader" type="s1:BRIXAuthenticationHeader" />
+      <s:complexType name="BRIXAuthenticationHeader">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="authenticated" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="issueDate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="expiration" type="s:dateTime" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSegmentsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSegments" />
+  </wsdl:message>
+  <wsdl:message name="GetSegmentsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSegmentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSegmentsBRIXAuthenticationHeader">
+    <wsdl:part name="BRIXAuthenticationHeader" element="s1:BRIXAuthenticationHeader" />
+  </wsdl:message>
+  <wsdl:portType name="SegmentationServiceSoap">
+    <wsdl:operation name="GetSegments">
+      <wsdl:input message="tns:GetSegmentsSoapIn" />
+      <wsdl:output message="tns:GetSegmentsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SegmentationServiceSoap" type="tns:SegmentationServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetSegments">
+      <soap:operation soapAction="http://synergi.dnv.com/pipeline/GetSegments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetSegmentsBRIXAuthenticationHeader" part="BRIXAuthenticationHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetSegmentsBRIXAuthenticationHeader" part="BRIXAuthenticationHeader" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SegmentationServiceSoap12" type="tns:SegmentationServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetSegments">
+      <soap12:operation soapAction="http://synergi.dnv.com/pipeline/GetSegments" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetSegmentsBRIXAuthenticationHeader" part="BRIXAuthenticationHeader" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetSegmentsBRIXAuthenticationHeader" part="BRIXAuthenticationHeader" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SegmentationService">
+    <wsdl:port name="SegmentationServiceSoap" binding="tns:SegmentationServiceSoap">
+      <soap:address location="http://localhost/webservices/ProfileService/SegmentationService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SegmentationServiceSoap12" binding="tns:SegmentationServiceSoap12">
+      <soap12:address location="http://localhost/webservices/ProfileService/SegmentationService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
