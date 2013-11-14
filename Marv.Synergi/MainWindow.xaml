@@ -6,7 +6,7 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="DarkGray"
-        Title="MainWindow" Height="350" Width="600"
+        Title="MainWindow" Height="350" Width="742"
         Name="Root">
     <Grid>
         <Grid.RowDefinitions>
@@ -88,7 +88,8 @@
 
                 <DataGrid AutoGenerateColumns="False"
                           ItemsSource="{Binding SegmentData, ElementName=Root}"
-                          Margin="5" >
+                          Margin="5"
+                          Width="300" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
                         <DataGridTextColumn Binding="{Binding Value}" Header="Value" />

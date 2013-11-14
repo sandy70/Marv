@@ -52,7 +52,7 @@ namespace Marv.Common
 
     public class Dict<T1, T2, T3, T4, TValue> : Dict<T1, Dict<T2, T3, T4, TValue>> where TValue : new() { }
 
-    public class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+    public partial class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         private readonly IDictionary<TKey, TValue> dictionary;
 
