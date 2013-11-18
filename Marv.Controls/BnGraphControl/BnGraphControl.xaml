@@ -12,12 +12,7 @@
              Background="Black"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
-                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <Grid>
