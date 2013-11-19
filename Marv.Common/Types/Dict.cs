@@ -52,7 +52,7 @@ namespace Marv.Common
 
     public class Dict<T1, T2, T3, T4, TValue> : Dict<T1, Dict<T2, T3, T4, TValue>> where TValue : new() { }
 
-    public partial class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+    public class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         private readonly IDictionary<TKey, TValue> dictionary;
 
@@ -104,8 +104,8 @@ namespace Marv.Common
         public TValue this[TKey key]
         {
             get 
-            { 
-                return dictionary[key]; 
+            {
+                return dictionary[key];
             }
 
             set
