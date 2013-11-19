@@ -243,7 +243,7 @@ namespace Marv.Controls
             control.NameLocation = new Location { Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude };
         }
 
-        private void Locations_ValueChanged(object sender, ValueEventArgs<double> e)
+        private void Locations_ValueChanged(object sender, EventArgs e)
         {
             logger.Trace("");
 

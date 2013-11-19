@@ -25,7 +25,7 @@ namespace Marv
             this.timer.Tick += timer_Tick;
         }
 
-        public event EventHandler<ValueEventArgs<Vertex>> NewEvidenceAvailable;
+        public event EventHandler<Vertex> NewEvidenceAvailable;
 
         public void Start(Vertex aVertexViewModel)
         {
@@ -65,10 +65,7 @@ namespace Marv
 
                 if (handler != null)
                 {
-                    handler(this, new ValueEventArgs<Vertex>
-                    {
-                        Value = this.vertexViewModel
-                    });
+                    handler(this, this.vertexViewModel);
                 }
             }
             catch (TimeoutException)
