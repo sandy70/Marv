@@ -11,7 +11,13 @@ namespace Marv.Controls
         EventManager.RegisterRoutedEvent("FileNameChanged", RoutingStrategy.Bubble, typeof(ValueEventHandler<string>), typeof(FileBrowseControl));
 
         public static readonly DependencyProperty FileNameProperty =
-        DependencyProperty.Register("FileName", typeof(string), typeof(FileBrowseControl), new PropertyMetadata(""));
+        DependencyProperty.Register("FileName", typeof(string), typeof(FileBrowseControl), new PropertyMetadata("", ChangedFileName));
+
+        private static void ChangedFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as FileBrowseControl;
+            control.RaiseEvent(new ValueEventArgs<string> { Value = control.FileName });
+        }
 
         public FileBrowseControl()
         {
