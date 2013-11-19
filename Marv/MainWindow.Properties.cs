@@ -240,7 +240,7 @@ namespace Marv
             window.UpdateMultiLocationValues();
         }
 
-        private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
+        private void multiLocation_SelectionChanged(object sender, Location location)
         {
             logger.Trace("");
 

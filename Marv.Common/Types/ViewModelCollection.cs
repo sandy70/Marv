@@ -26,7 +26,7 @@ namespace Marv.Common
         {
         }
 
-        public event ValueEventHandler<T> SelectionChanged;
+        public event EventHandler<T> SelectionChanged;
 
         public string Key
         {
@@ -190,7 +190,7 @@ namespace Marv.Common
         {
             if (this.SelectionChanged != null)
             {
-                this.SelectionChanged(this, new ValueEventArgs<T> { Value = this.SelectedItem });
+                this.SelectionChanged(this, this.SelectedItem);
             }
         }
     }
