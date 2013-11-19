@@ -134,6 +134,9 @@
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="FileBrowseControl\FileBrowseControl.xaml.cs">
+      <DependentUpon>FileBrowseControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />
     <Compile Include="MapDoubleToDouble.cs" />
@@ -171,6 +174,8 @@
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
+    <Compile Include="ValueEventArgs.cs" />
+    <Compile Include="ValueEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="BnGraphControl\BnGraphControl.xaml">
@@ -184,6 +189,10 @@
     <Page Include="EditableTextBox\EditableTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileBrowseControl\FileBrowseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NotificationControl\NotificationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
