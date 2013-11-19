@@ -24,7 +24,7 @@ namespace Marv.Common
         {
         }
 
-        public event ValueEventHandler<double> ValueChanged;
+        public event EventHandler ValueChanged;
 
         public LocationRect Bounds
         {
@@ -120,7 +120,7 @@ namespace Marv.Common
 
                     if (this.ValueChanged != null)
                     {
-                        this.ValueChanged(this, new ValueEventArgs<double> { Value = 0 });
+                        this.ValueChanged(this, new EventArgs());
                     }
                 }
             }
