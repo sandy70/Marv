@@ -4,6 +4,8 @@
     {
         public double[] Evidence { get; set; }
 
+        public string EvidenceString { get; set; }
+
         public void Set(Graph graph, string vertexKey)
         {
             graph.SetEvidence(vertexKey, this.Evidence);
