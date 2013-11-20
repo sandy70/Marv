@@ -281,7 +281,7 @@
                            Margin="10"
                            Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                    <marvcontrols:BnGraphControl Name="GraphControl"
+                    <marvcontrols:GraphControl Name="GraphControl"
                                                  Grid.Row="0"
                                                  Background="Transparent"
                                                  ConnectionColor="#252525"

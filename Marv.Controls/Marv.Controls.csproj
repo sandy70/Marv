@@ -106,12 +106,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BnGraphControl\BnGraphControl.xaml.cs">
-      <DependentUpon>BnGraphControl.xaml</DependentUpon>
+    <Compile Include="GraphControl\GraphControl.xaml.cs">
+      <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BnGraphControl\BnGraphControlEventArgs.cs" />
-    <Compile Include="BnGraphControl\DiagramPartBehavior.cs" />
-    <Compile Include="BnGraphControl\ToolbarButtonClickBehavior.cs" />
+    <Compile Include="GraphControl\BnGraphControlEventArgs.cs" />
+    <Compile Include="GraphControl\DiagramPartBehavior.cs" />
+    <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
     <Compile Include="BnStatesControl\BnStatesControl.xaml.cs">
       <DependentUpon>BnStatesControl.xaml</DependentUpon>
     </Compile>
@@ -178,7 +178,7 @@
     <Compile Include="ValueEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="BnGraphControl\BnGraphControl.xaml">
+    <Page Include="GraphControl\GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

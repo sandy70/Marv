@@ -137,7 +137,7 @@ namespace Marv.Controls
             shapeList.Add(e.Shape);
 
             // Change color of connections
-            BnGraphControl graphControl = this.AssociatedObject.FindParent<BnGraphControl>();
+            GraphControl graphControl = this.AssociatedObject.FindParent<GraphControl>();
 
             foreach (var conn in this.AssociatedObject.Connections)
             {

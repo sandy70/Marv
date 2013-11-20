@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Marv.Controls.BnGraphControl"
+﻿<UserControl x:Class="Marv.Controls.GraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:Marv.Controls"

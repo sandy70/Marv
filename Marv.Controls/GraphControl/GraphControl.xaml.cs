@@ -8,29 +8,29 @@ using System.Windows.Threading;
 
 namespace Marv.Controls
 {
-    public partial class BnGraphControl : UserControl
+    public partial class GraphControl : UserControl
     {
         public static readonly DependencyProperty ConnectionColorProperty =
-        DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.LightSlateGray));
+        DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-        DependencyProperty.Register("Graph", typeof(Graph), typeof(BnGraphControl), new PropertyMetadata(null));
+        DependencyProperty.Register("Graph", typeof(Graph), typeof(GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
-        DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.SkyBlue));
+        DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
-        DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof(Color), typeof(BnGraphControl), new PropertyMetadata(Colors.Red));
+        DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof(Color), typeof(GraphControl), new PropertyMetadata(Colors.Red));
 
         public static readonly DependencyProperty ShapeOpacityProperty =
-        DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(BnGraphControl), new PropertyMetadata(1.0));
+        DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(GraphControl), new PropertyMetadata(1.0));
 
         public static readonly RoutedEvent StateDoubleClickedEvent =
-        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(BnGraphControl));
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(GraphControl));
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public BnGraphControl()
+        public GraphControl()
         {
             InitializeComponent();
         }

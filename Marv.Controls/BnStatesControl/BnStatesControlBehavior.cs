@@ -14,13 +14,13 @@ namespace Marv.Controls
 
         private void AssociatedObject_StateDoubleClicked(object sender, ValueEventArgs<State> e)
         {
-            var parentGraphControl = this.AssociatedObject.FindParent<BnGraphControl>();
+            var parentGraphControl = this.AssociatedObject.FindParent<GraphControl>();
             var state = e.Value;
             var vertex = this.AssociatedObject.DataContext as Vertex;
 
             parentGraphControl.RaiseEvent(new BnGraphControlEventArgs
             {
-                RoutedEvent = BnGraphControl.StateDoubleClickedEvent,
+                RoutedEvent = GraphControl.StateDoubleClickedEvent,
                 State = state,
                 Vertex = vertex
             });
