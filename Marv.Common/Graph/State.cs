@@ -1,4 +1,6 @@
-﻿namespace Marv.Common
+﻿using System.Linq;
+
+namespace Marv.Common
 {
     public class State : ViewModel
     {
@@ -29,6 +31,22 @@
             {
                 this._value = value;
                 this.RaisePropertyChanged("Value");
+            }
+        }
+
+        public string ValueString
+        {
+            get
+            {
+                if(this.Range != null && this.Range.Count > 0)
+                {
+                    // This will work because Range is of type <double>
+                    return this.Range.Average().ToString();
+                }
+                else
+                {
+                    return this.Key;
+                }
             }
         }
     }
