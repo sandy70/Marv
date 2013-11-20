@@ -17,11 +17,11 @@ namespace Marv.Temp
 
             var pipelineInput = new PipelineInput(inputFileName);
             var line = pipelineInput.ReadPipelines()["BU-498"];
-            // var graph = Graph.Read(networkFileName);
+            var graph = Graph.Read(networkFileName);
 
             foreach(var location in line)
             {
-                // var graphEvidence = pipelineInput.GetGraphEvidence(graph);
+                var graphEvidence = pipelineInput.GetGraphEvidence(graph, line.Name, location.Name);
             }
 
             Console.ReadKey();
