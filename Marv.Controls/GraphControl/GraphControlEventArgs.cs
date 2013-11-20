@@ -3,23 +3,23 @@ using System.Windows;
 
 namespace Marv.Controls
 {
-    public class BnGraphControlEventArgs : RoutedEventArgs
+    public class GraphControlEventArgs : RoutedEventArgs
     {
         private State state;
 
         private Vertex vertex;
 
-        public BnGraphControlEventArgs()
+        public GraphControlEventArgs()
             : base()
         {
         }
 
-        public BnGraphControlEventArgs(RoutedEvent routedEvent)
+        public GraphControlEventArgs(RoutedEvent routedEvent)
             : base(routedEvent)
         {
         }
 
-        public BnGraphControlEventArgs(RoutedEvent routedEvent, object source)
+        public GraphControlEventArgs(RoutedEvent routedEvent, object source)
             : base(routedEvent, source)
         {
         }

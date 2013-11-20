@@ -18,7 +18,7 @@ namespace Marv.Controls
             var state = e.Value;
             var vertex = this.AssociatedObject.DataContext as Vertex;
 
-            parentGraphControl.RaiseEvent(new BnGraphControlEventArgs
+            parentGraphControl.RaiseEvent(new GraphControlEventArgs
             {
                 RoutedEvent = GraphControl.StateDoubleClickedEvent,
                 State = state,

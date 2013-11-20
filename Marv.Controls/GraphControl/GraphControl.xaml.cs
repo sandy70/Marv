@@ -26,7 +26,7 @@ namespace Marv.Controls
         DependencyProperty.Register("ShapeOpacity", typeof(double), typeof(GraphControl), new PropertyMetadata(1.0));
 
         public static readonly RoutedEvent StateDoubleClickedEvent =
-        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<BnGraphControlEventArgs>), typeof(GraphControl));
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<GraphControlEventArgs>), typeof(GraphControl));
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -35,7 +35,7 @@ namespace Marv.Controls
             InitializeComponent();
         }
 
-        public event RoutedEventHandler<BnGraphControlEventArgs> StateDoubleClicked
+        public event RoutedEventHandler<GraphControlEventArgs> StateDoubleClicked
         {
             add { AddHandler(StateDoubleClickedEvent, value); }
             remove { RemoveHandler(StateDoubleClickedEvent, value); }
