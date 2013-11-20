@@ -4,6 +4,8 @@
     {
         string String { get; set; }
 
-        void Set(Graph bnGraph, string vertexKey);
+        string GetValue(Graph graph, string vertexKey);
+
+        void Set(Graph graph, string vertexKey);
     }
 }
