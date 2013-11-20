@@ -1,6 +1,7 @@
 ﻿using Marv.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,10 +19,16 @@ namespace Marv.Temp
             var pipelineInput = new PipelineInput(inputFileName);
             var line = pipelineInput.ReadPipelines()["BU-498"];
             var graph = Graph.Read(networkFileName);
+            var marvToSynergi = Utils.ReadJson<Dict<string, string>>(@"D:\Data\ADCO02\MarvToSynergiMap.json");
 
-            foreach(var location in line)
+            foreach (var location in line)
             {
                 var graphEvidence = pipelineInput.GetGraphEvidence(graph, line.Name, location.Name);
+
+                foreach (var vertexKey in marvToSynergi.Keys)
+                {
+                    Console.WriteLine(graphEvidence[vertexKey].GetValue(graph, vertexKey));
+                }
             }
 
             Console.ReadKey();
