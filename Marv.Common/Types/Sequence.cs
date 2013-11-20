@@ -9,6 +9,14 @@ namespace Marv.Common
     {
         private List<T> list = new List<T>();
 
+        public int Count
+        {
+            get
+            {
+                return this.list.Count;
+            }
+        }
+
         public T Max
         {
             get
