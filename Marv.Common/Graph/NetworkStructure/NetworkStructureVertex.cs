@@ -228,5 +228,17 @@ namespace Marv.Common
                 return VertexType.None;
             }
         }
+
+        public T ParseJson<T>(string propertyName) where T : new()
+        {
+            if (this.Properties.ContainsKey(propertyName))
+            {
+                return this.Properties[propertyName].Dequote().ParseJson<T>();
+            }
+            else
+            {
+                return new T();
+            }
+        }
     }
 }

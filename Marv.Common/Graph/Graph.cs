@@ -123,7 +123,7 @@ namespace Marv.Common
                 var vertex = new Vertex();
 
                 vertex.Key = structureVertex.Key;
-                vertex.ConnectorPositions = structureVertex.Properties["ConnectorPositions"].Dequote().ParseJson<Dict<string, string, EdgeConnectorPositions>>();
+                vertex.ConnectorPositions = structureVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions");
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
@@ -132,7 +132,7 @@ namespace Marv.Common
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
                 vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionForGroup = structureVertex.Properties["PositionForGroup"].Dequote().ParseJson<Dictionary<string, Point>>();
+                vertex.PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup");
                 vertex.Units = structureVertex.ParseStringProperty("units");
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
