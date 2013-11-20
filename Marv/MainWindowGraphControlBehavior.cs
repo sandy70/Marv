@@ -136,7 +136,7 @@ namespace Marv
             ChartAxes.VerticalLinearAxis.Title = "Probability";
         }
 
-        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
+        private void GraphControl_StateDoubleClicked(object sender, GraphControlEventArgs e)
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;

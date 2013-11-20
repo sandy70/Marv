@@ -109,7 +109,7 @@
     <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GraphControl\BnGraphControlEventArgs.cs" />
+    <Compile Include="GraphControl\GraphControlEventArgs.cs" />
     <Compile Include="GraphControl\DiagramPartBehavior.cs" />
     <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
     <Compile Include="BnStatesControl\BnStatesControl.xaml.cs">

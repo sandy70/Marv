@@ -102,6 +102,7 @@
     <Compile Include="Graph\Graph.IObservableGraphSource.cs" />
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
+    <Compile Include="PipelineInput.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />

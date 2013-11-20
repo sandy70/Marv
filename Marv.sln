@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmileNet", "SmileNet\smileNet_public.vcxproj", "{3719AEB6-8932-4255-8F96-3F32D5894976}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv", "Marv\Marv.csproj", "{8F3727CE-D0A7-4F58-A9BF-F0D2A130F912}"
@@ -13,10 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls", "Marv.Contr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Synergi", "Marv.Synergi\Marv.Synergi.csproj", "{86E0501D-E37E-4E5C-82DA-CA0E791FE0DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Temp", "Marv.Temp\Marv.Temp.csproj", "{01C201F1-FF94-45ED-943D-183DE470F677}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = MarvInterface.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CD_ROM|Any CPU = CD_ROM|Any CPU
 		CD_ROM|Mixed Platforms = CD_ROM|Mixed Platforms
@@ -610,8 +611,95 @@ Global
 		{86E0501D-E37E-4E5C-82DA-CA0E791FE0DA}.WebDeployment|Win32.ActiveCfg = Release|Any CPU
 		{86E0501D-E37E-4E5C-82DA-CA0E791FE0DA}.WebDeployment|x64.ActiveCfg = Release|Any CPU
 		{86E0501D-E37E-4E5C-82DA-CA0E791FE0DA}.WebDeployment|x86.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|Mixed Platforms.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|Win32.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|x64.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|Any CPU.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|Any CPU.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|Mixed Platforms.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|Win32.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|x64.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Custom|x86.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutPlugins|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DebugWithoutSetup|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-10|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-18|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|Any CPU.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|Win32.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|x64.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.DVD-9|x86.ActiveCfg = Debug|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|Win32.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|x64.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.Release|x86.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|Mixed Platforms.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|Win32.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|x64.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.SingleImage|x86.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|Any CPU.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|Any CPU.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|Mixed Platforms.Build.0 = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|Win32.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|x64.ActiveCfg = Release|Any CPU
+		{01C201F1-FF94-45ED-943D-183DE470F677}.WebDeployment|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = MarvInterface.vsmdi
 	EndGlobalSection
 EndGlobal
