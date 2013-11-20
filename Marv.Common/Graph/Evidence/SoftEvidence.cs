@@ -4,7 +4,7 @@
     {
         public double[] Evidence { get; set; }
 
-        public string EvidenceString { get; set; }
+        public string String { get; set; }
 
         public void Set(Graph graph, string vertexKey)
         {

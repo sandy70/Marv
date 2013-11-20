@@ -2,7 +2,7 @@
 {
     public class HardEvidence : IEvidence
     {
-        public string EvidenceString { get; set; }
+        public string String { get; set; }
 
         public int StateIndex { get; set; }
 

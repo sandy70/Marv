@@ -2,7 +2,7 @@
 {
     public interface IEvidence
     {
-        string EvidenceString { get; set; }
+        string String { get; set; }
 
         void Set(Graph bnGraph, string vertexKey);
     }
