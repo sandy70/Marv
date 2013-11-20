@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -109,6 +111,21 @@ namespace Marv.Common
 
                                      return location;
                                  });
+        }
+
+        public static T ReadJson<T>(string fileName)
+        {
+            var serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            serializer.Formatting = Formatting.Indented;
+
+            using (var streamWriter = new StreamReader(fileName))
+            {
+                using (var jsonTextWriter = new JsonTextReader(streamWriter))
+                {
+                    return serializer.Deserialize<T>(jsonTextWriter);
+                }
+            }
         }
 
         public static Guid ToGuid(this long n)
