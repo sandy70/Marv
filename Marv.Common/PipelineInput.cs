@@ -70,32 +70,20 @@ namespace Marv.Common
                             currentPipeName = this.GetValue(++rowIndex, "R1C1");
                         }
 
-                        IEvidence evidence = null;
                         var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
+
+                        if (evidenceString == null)
+                        {
+                            evidenceString = "0";
+                        }
+
                         var vertexKey = sheet.GetValue<string>(1, colIndex);
+                        var vertex = graph.Vertices[vertexKey];
 
-                        var vertex = graph.GetVertex(vertexKey);
-
-                        if (evidenceString.Contains('?'))
-                        {
-                            // do nothing
-                        }
-                        else if (evidenceString.Contains(';'))
-                        {
-                            evidence = this.ParseDistribution(evidenceString, vertex);
-                        }
-                        else if (evidenceString.Contains(':'))
-                        {
-                            evidence = this.ParseRange(evidenceString, vertex);
-                        }
-                        else
-                        {
-                            evidence = this.ParseState(evidenceString, vertex);
-                        }
+                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex);
 
                         if (evidence != null)
                         {
-                            evidence.String = evidenceString;
                             graphEvidence[vertexKey] = evidence;
                         }
                     }
@@ -111,37 +99,20 @@ namespace Marv.Common
                             currentLocationName = this.GetValue<string>(rowIndex, "section inlet");
                         }
 
-                        IEvidence evidence = null;
                         var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
-                        var vertexKey = sheet.GetValue<string>(1, colIndex);
-
-                        var vertex = graph.GetVertex(vertexKey);
 
                         if (evidenceString == null)
                         {
                             evidenceString = "0";
                         }
 
-                        if (evidenceString.Contains('?'))
-                        {
-                            // do nothing
-                        }
-                        else if (evidenceString.Contains(';'))
-                        {
-                            evidence = this.ParseDistribution(evidenceString, vertex);
-                        }
-                        else if (evidenceString.Contains(':'))
-                        {
-                            evidence = this.ParseRange(evidenceString, vertex);
-                        }
-                        else
-                        {
-                            evidence = this.ParseState(evidenceString, vertex);
-                        }
+                        var vertexKey = sheet.GetValue<string>(1, colIndex);
+                        var vertex = graph.Vertices[vertexKey];
+
+                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex);
 
                         if (evidence != null)
                         {
-                            evidence.String = evidenceString;
                             graphEvidence[vertexKey] = evidence;
                         }
                     }

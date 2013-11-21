@@ -115,7 +115,6 @@ namespace Marv
 
                             if (evidence != null)
                             {
-                                evidence.String = evidenceString;
                                 graphEvidence[vertexKey] = evidence;
                             }
                         }

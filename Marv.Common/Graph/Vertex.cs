@@ -399,26 +399,28 @@ namespace Marv.Common
             double numer = 0;
             double denom = 0;
 
-            if (this.Type == VertexType.Number)
+            foreach (var state in this.States)
             {
-                foreach (var state in this.States)
-                {
-                    numer += state.Range.Min * vertexValue[state.Key];
-                    denom += vertexValue[state.Key];
-                }
-            }
-            else if (this.Type == VertexType.Interval)
-            {
-                foreach (var state in this.States)
-                {
-                    double mid = (state.Range.Min + state.Range.Max) / 2;
+                double mid = (state.Range.Min + state.Range.Max) / 2;
 
-                    numer += mid * vertexValue[state.Key];
-                    denom += vertexValue[state.Key];
-                }
+                numer += mid * vertexValue[state.Key];
+                denom += vertexValue[state.Key];
             }
 
             return numer / denom;
+        }
+
+        public double GetMean(double[] evidence)
+        {
+            var vertexValue = new Dictionary<string, double>();
+
+            foreach (var state in this.States)
+            {
+                var stateIndex = this.States.IndexOf(state);
+                vertexValue[state.Key] = evidence[stateIndex];
+            }
+
+            return this.GetMean(vertexValue);
         }
 
         public int GetSelectedStateIndex()

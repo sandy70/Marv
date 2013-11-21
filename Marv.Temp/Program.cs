@@ -27,7 +27,7 @@ namespace Marv.Temp
 
                 foreach (var vertexKey in marvToSynergi.Keys)
                 {
-                    Console.WriteLine(graphEvidence[vertexKey].GetValue(graph, vertexKey));
+                    Console.WriteLine(graphEvidence[vertexKey].SynergiString);
                 }
             }
 
