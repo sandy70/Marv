@@ -52,7 +52,7 @@ namespace Marv
             logger.Info("Computing value for line {0}.", multiLocation.Name);
 
             var vertexKey = "B08";
-            var vertexName = graph.GetVertex(vertexKey).Name;
+            var vertexName = graph.Vertices[vertexKey].Name;
             var stateKey = "Fail";
             // var quantity = "Mean";
 

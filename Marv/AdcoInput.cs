@@ -94,7 +94,7 @@ namespace Marv
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
-                            var vertex = graph.GetVertex(vertexKey);
+                            var vertex = graph.Vertices[vertexKey];
 
                             if (evidenceString.Contains('?'))
                             {
@@ -134,7 +134,7 @@ namespace Marv
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
-                            var vertex = graph.GetVertex(vertexKey);
+                            var vertex = graph.Vertices[vertexKey];
 
                             if (evidenceString == null)
                             {

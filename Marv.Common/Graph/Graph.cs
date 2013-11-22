@@ -195,7 +195,7 @@ namespace Marv.Common
 
         public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
         {
-            return this.GetVertex(vertexKey).GetMean(vertexValue);
+            return this.Vertices[vertexKey].GetMean(vertexValue);
         }
 
         public Dict<string, string, double> GetNetworkValue()
@@ -229,7 +229,7 @@ namespace Marv.Common
 
         public double GetStandardDeviation(string vertexKey, Dictionary<string, double> vertexValue)
         {
-            return this.GetVertex(vertexKey).GetStandardDeviation(vertexValue);
+            return this.Vertices[vertexKey].GetStandardDeviation(vertexValue);
         }
 
         public Graph GetSubGraph(string group)
@@ -300,19 +300,6 @@ namespace Marv.Common
             return subGraph;
         }
 
-        public Vertex GetVertex(string key)
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                if (vertex.Key.Equals(key))
-                {
-                    return vertex;
-                }
-            }
-
-            return null;
-        }
-
         public bool HasEdge(string srcKey, string dstKey)
         {
             bool hasEdge = false;
@@ -340,7 +327,7 @@ namespace Marv.Common
 
                 var vertexKey = parts[0];
 
-                var vertex = this.GetVertex(vertexKey);
+                var vertex = this.Vertices[vertexKey];
 
                 // Ignore if the vertex key does not exist in the given graph
                 if (vertex == null)

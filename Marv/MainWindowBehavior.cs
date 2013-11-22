@@ -118,7 +118,7 @@ namespace Marv
             foreach (var vertexKey in vertexCommandForKey.Keys)
             {
                 var command = vertexCommandForKey[vertexKey];
-                var vertex = window.SourceGraph.GetVertex(vertexKey);
+                var vertex = window.SourceGraph.Vertices[vertexKey];
 
                 vertex.Commands.Add(command);
             }
