@@ -175,6 +175,7 @@ namespace Marv.Common
                 {
                     multiLocation.Add(new Location
                     {
+                        Key = this.GetValue(rowIndex, "section inlet").ToString(),
                         Latitude = (double)this.GetValue(rowIndex, "Latitude"),
                         Longitude = (double)this.GetValue(rowIndex, "Longitude"),
                         Name = this.GetValue(rowIndex, "section inlet").ToString()

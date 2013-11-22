@@ -1,4 +1,5 @@
-﻿using Marv.Common;
+﻿using CsvHelper;
+using Marv.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,14 +22,12 @@ namespace Marv.Temp
             var graph = Graph.Read(networkFileName);
             var marvToSynergi = Utils.ReadJson<Dict<string, string>>(@"D:\Data\ADCO02\MarvToSynergiMap.json");
 
-            foreach (var location in line)
-            {
-                var graphEvidence = pipelineInput.GetGraphEvidence(graph, line.Name, location.Name);
+            var location = line["BU-498"];
+            var graphEvidence = pipelineInput.GetGraphEvidence(graph, line.Name, location.Name);
 
-                foreach (var vertexKey in marvToSynergi.Keys)
-                {
-                    Console.WriteLine(graphEvidence[vertexKey].SynergiString);
-                }
+            foreach (var vertexKey in marvToSynergi.Keys)
+            {
+                 Console.WriteLine("{0} {1}", marvToSynergi[vertexKey], graphEvidence[vertexKey].SynergiString);
             }
 
             Console.ReadKey();
