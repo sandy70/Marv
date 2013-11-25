@@ -94,7 +94,6 @@
     <Compile Include="Chart\ChartAxes.cs" />
     <Compile Include="Chart\ChartSeries.cs" />
     <Compile Include="Chart\ChartSeriesDescriptorSelector.cs" />
-    <Compile Include="Command.cs" />
     <Compile Include="Countries.cs" />
     <Compile Include="Graph\EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="EdgeCollection.cs" />
