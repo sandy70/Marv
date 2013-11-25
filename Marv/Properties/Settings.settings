@@ -38,5 +38,14 @@
     <Setting Name="InputDir" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Data\CNPC\GraphValues</Value>
     </Setting>
+    <Setting Name="Marv_LineAndSectionOverviewService_LineAndSectionOverviewService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.asmx</Value>
+    </Setting>
+    <Setting Name="Marv_LoginService_BRIXLoginService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx</Value>
+    </Setting>
+    <Setting Name="Marv_SegmentationService_SegmentationService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/ProfileService/SegmentationService.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

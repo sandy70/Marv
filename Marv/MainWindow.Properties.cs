@@ -78,6 +78,9 @@ namespace Marv
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
 
+        public static readonly DependencyProperty SynergiViewModelProperty =
+        DependencyProperty.Register("SynergiViewModel", typeof(SynergiViewModel), typeof(MainWindow), new PropertyMetadata(new SynergiViewModel()));
+
         public string CacheDirectory
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
@@ -208,6 +211,12 @@ namespace Marv
         {
             get { return (int)GetValue(StartYearProperty); }
             set { SetValue(StartYearProperty, value); }
+        }
+
+        public SynergiViewModel SynergiViewModel
+        {
+            get { return (SynergiViewModel)GetValue(SynergiViewModelProperty); }
+            set { SetValue(SynergiViewModelProperty, value); }
         }
 
         private static void ChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)
