@@ -120,21 +120,38 @@ namespace Marv.Synergi
             {
                 var dataTable = new DataTable();
 
+                // The order here is taken from MarvToSynergiMap.xlsx
                 var data = new[]
-                           {
-                               "MAOP.MAOP"
-                               , "DesignPressure.DesignPressure"
-                               , "DesignTemperature.MinDesignTemp"
-                               , "Segment.NominalWallThickness"
-                               , "Segment.MaterialGrade"
-                               , "Segment.SMYS"
-                               , "Segment.SMTS"
-                               , "NormalOperation.MinOperationTemp"
-                               , "TestPressure.TestPressure"
-                               , "DesignFactor.DesignFactor"
-                               , "DesignFactor.Name"
-                               , "GeoProfileUTM.TopOfPipe"
-                           };
+                {
+                    "MAOP.MAOP",
+                    "Chemistry.ChloridesPresent",
+                    "Segment.CleaningPigRunsPerYear",
+                    "Chemistry.CO2",
+                    "Chemistry.CorrosionInhibition",
+                    "ExternalCorrosion.CoveredPercent",
+                    "ExternalCorrosion.DistanceFromTheSea",
+                    "Chemistry.Fe",
+                    "FlowParameters.GasDensity",
+                    "FlowParameters.Gas_Velocity",
+                    "Chemistry.Hydrocarbon",
+                    "Segment.NominalOuterDiameter",
+                    "PipeBook.Latitude",
+                    "PipeBook.Longitude",
+                    "DesignPressure.DesignPressure",
+                    "FlowParameters.LiquidVelocity",
+                    "ExternalCorrosion.ExternalSandMoistureContent",
+                    "Chemistry.O2",
+                    "FlowParameters.OilDensity",
+                    "NormalOperation.NormalOperationPressure",
+                    "Chemistry.pH",
+                    "FlowParameters.PipeInclination",
+                    "Segment.NominalWallThickness",
+                    "FlowParameters.SandPresent",
+                    "Segment.SMYS",
+                    "ExternalCorrosion.SoilResistivity",
+                    "Chemistry.Sulphides",
+                    "Chemistry.WaterCut"
+                };
 
                 SegmentationService.SegmentationService segmentationService = new SegmentationService.SegmentationService();
                 segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader { value = ticket };
