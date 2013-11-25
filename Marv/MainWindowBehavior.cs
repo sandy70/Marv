@@ -62,6 +62,8 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
+            window.SelectedYearChanged += window_SelectedYearChanged;
+
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
 
@@ -86,6 +88,13 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+        }
+
+        private void window_SelectedYearChanged(object sender, double e)
+        {
+            var window = this.AssociatedObject as MainWindow;
+            window.UpdateGraphValue();
+            window.UpdateMultiLocationValues();
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
