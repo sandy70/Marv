@@ -1,4 +1,5 @@
 ﻿using Marv.Common;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -70,7 +71,7 @@ namespace Marv
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
 
         public static readonly DependencyProperty SelectedYearProperty =
-        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
+        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, OnSelectedYearChanged));
 
         public static readonly DependencyProperty SourceGraphProperty =
         DependencyProperty.Register("SourceGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
@@ -80,6 +81,8 @@ namespace Marv
 
         public static readonly DependencyProperty SynergiViewModelProperty =
         DependencyProperty.Register("SynergiViewModel", typeof(SynergiViewModel), typeof(MainWindow), new PropertyMetadata(new SynergiViewModel()));
+
+        public event EventHandler<double> SelectedYearChanged;
 
         public string CacheDirectory
         {
@@ -242,11 +245,14 @@ namespace Marv
             }
         }
 
-        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedYearChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-            window.UpdateGraphValue();
-            window.UpdateMultiLocationValues();
+            
+            if(window.SelectedYearChanged != null)
+            {
+                window.SelectedYearChanged(window, window.SelectedYear);
+            }
         }
 
         private void multiLocation_SelectionChanged(object sender, Location location)
