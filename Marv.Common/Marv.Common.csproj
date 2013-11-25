@@ -108,6 +108,7 @@
     <Compile Include="PipelineInput.cs" />
     <Compile Include="Graph\EvidenceString\RangeEvidenceString.cs" />
     <Compile Include="Graph\EvidenceString\StateEvidenceString.cs" />
+    <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="Geometry\Location.cs" />
     <Compile Include="Geometry\LocationRect.cs" />
