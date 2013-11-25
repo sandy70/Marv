@@ -212,17 +212,6 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            var vertexCommandForKey = new Dictionary<string, IVertexCommand>
-            {
-                { "depth", MainWindow.VertexChartCommand },
-                { "length", MainWindow.VertexChartCommand },
-                { "totalyears", MainWindow.VertexChartCommand },
-                { "current", MainWindow.VertexBarChartCommand },
-                { "cpon", MainWindow.VertexBarChartCommand },
-                { "pH", MainWindow.VertexBarChartCommand },
-                { "coatd", MainWindow.VertexChartPofCommand}
-            };
-
             var notification = new NotificationIndeterminate
             {
                 Name = "Reading Network",
@@ -234,23 +223,14 @@ namespace Marv
             // Read source graph
             window.SourceGraph = await Graph.ReadAsync(window.NetworkFileName);
 
-            // Add commands to source graph
-            foreach (var vertexKey in vertexCommandForKey.Keys)
-            {
-                var command = vertexCommandForKey[vertexKey];
-                var vertex = window.SourceGraph.Vertices[vertexKey];
-
-                vertex.Commands.Add(command);
-            }
-
             // Set display graph
             window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
 
             // Close notification
             notification.Close();
 
-            window.ReadGraphValueTimeSeriesCnpc();
-            window.UpdateGraphValue();
+            // window.ReadGraphValueTimeSeriesCnpc();
+            // window.UpdateGraphValue();
         }
 
         private void AssociatedObject_Loaded_ReadPolylines(object sender, RoutedEventArgs e)
@@ -262,10 +242,10 @@ namespace Marv
             try
             {
                 var pipelineInput = new PipelineInput(window.InputFileName);
-                window.Polylines = pipelineInput.ReadPipelines();
-                window.MapView.ZoomTo(window.Polylines.GetBounds());
+                var polylines = pipelineInput.ReadPipelines();
 
-                // window.MultiLocations = AdcoInput.Read(window.InputFileName);
+                window.Polylines.Add(polylines["BU-498"]);
+                window.MapView.ZoomTo(window.Polylines.GetBounds());
 
                 window.ReadMultiLocationValueTimeSeriesForMultiLocation();
                 window.UpdateMultiLocationValues();
