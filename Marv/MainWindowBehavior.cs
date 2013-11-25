@@ -2,19 +2,19 @@
 using Marv.LineAndSectionOverviewService;
 using Marv.LoginService;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
 using Telerik.Windows.Controls.TransitionControl;
-using System.Linq;
-using System;
 
 namespace Marv
 {
@@ -31,18 +31,6 @@ namespace Marv
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadNetwork;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadPolylines;
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
-        }
-
-        private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject as MainWindow;
-
-            LoginService.BRIXLoginService loginService = new BRIXLoginService();
-            window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
-
-            LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-            lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
-            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines());
         }
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
@@ -100,112 +88,16 @@ namespace Marv
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
         }
 
-        private void SectionsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
         {
-            var window = this.AssociatedObject;
-            var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
-            var ticket = window.SynergiViewModel.Ticket;
+            var window = this.AssociatedObject as MainWindow;
 
-            if (selectedSection != null)
-            {
-                var dataTable = new DataTable();
+            LoginService.BRIXLoginService loginService = new BRIXLoginService();
+            window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
 
-                // The order here is taken from MarvToSynergiMap.xlsx
-                var data = new[]
-                {
-                    "MAOP.MAOP",
-                    "Chemistry.ChloridesPresent",
-                    "Segment.CleaningPigRunsPerYear",
-                    "Chemistry.CO2",
-                    "Chemistry.CorrosionInhibition",
-                    "ExternalCorrosion.CoveredPercent",
-                    "ExternalCorrosion.DistanceFromTheSea",
-                    "Chemistry.Fe",
-                    "FlowParameters.GasDensity",
-                    "FlowParameters.Gas_Velocity",
-                    "Chemistry.Hydrocarbon",
-                    "Segment.NominalOuterDiameter",
-                    "PipeBook.Latitude",
-                    "PipeBook.Longitude",
-                    "DesignPressure.DesignPressure",
-                    "FlowParameters.LiquidVelocity",
-                    "ExternalCorrosion.ExternalSandMoistureContent",
-                    "Chemistry.O2",
-                    "FlowParameters.OilDensity",
-                    "NormalOperation.NormalOperationPressure",
-                    "Chemistry.pH",
-                    "FlowParameters.PipeInclination",
-                    "Segment.NominalWallThickness",
-                    "FlowParameters.SandPresent",
-                    "Segment.SMYS",
-                    "ExternalCorrosion.SoilResistivity",
-                    "Chemistry.Sulphides",
-                    "Chemistry.WaterCut"
-                };
-
-                SegmentationService.SegmentationService segmentationService = new SegmentationService.SegmentationService();
-                segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader { value = ticket };
-
-                try
-                {
-                    var segments = segmentationService.GetSegments(selectedSection.SectionOid.ToString(), data, "m", CultureInfo.CurrentCulture.Name);
-                    var nHeaders = segments.Headers.Count();
-                    var nSegments = segments.Segments.Count();
-
-                    logger.Info("nSegments" + nSegments);
-
-                    var segmentData = new Dict<string, string>();
-                    var properties = new Dynamic();
-
-                    for (int s = 0; s < nSegments - 1; s++)
-                    {
-                        var segmentVm = segments.Segments[s];
-
-                        for (int h = 0; h < nHeaders; h++)
-                        {
-                            var header = segments.Headers[h];
-                            var propertyName = string.IsNullOrEmpty(header.Unit) ? header.Name : string.Format("{0} [{1}]", header.Name, header.Unit);
-                            var propertyValue = segmentVm.Data[h];
-
-                            segmentData[propertyName] = propertyValue;
-                        }
-                    }
-
-                    window.SynergiViewModel.SegmentData = segmentData;
-                }
-                catch (Exception exception)
-                {
-                    logger.Warn(exception.Message);
-                }
-
-                //dgSegment.AutoGenerateColumns = true;
-                //dgSegment.DataSource = dataTable;
-            }
-        }
-
-        private void LinesListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            var selectedLine = window.SynergiViewModel.Lines.SelectedItem;
-            var ticket = window.SynergiViewModel.Ticket;
-
-            if (selectedLine != null)
-            {
-                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = ticket };
-
-                window.SynergiViewModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
-            }
-        }
-
-        private void TransitionControl_StatusChanged(object sender, TransitionStatusChangedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            if (e.Status == TransitionStatus.Completed)
-            {
-                window.MapView.ZoomTo(window.Polylines.GetBounds());
-            }
+            LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+            lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
+            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines());
         }
 
         private async void AssociatedObject_Loaded_ReadNetwork(object sender, RoutedEventArgs e)
@@ -229,8 +121,8 @@ namespace Marv
             // Close notification
             notification.Close();
 
-            // window.ReadGraphValueTimeSeriesCnpc();
-            // window.UpdateGraphValue();
+            //window.ReadGraphValueTimeSeries();
+            //window.UpdateGraphValue();
         }
 
         private void AssociatedObject_Loaded_ReadPolylines(object sender, RoutedEventArgs e)
@@ -288,6 +180,21 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             window.TransitionControl.SelectElement("SettingsControl");
+        }
+
+        private void LinesListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var selectedLine = window.SynergiViewModel.Lines.SelectedItem;
+            var ticket = window.SynergiViewModel.Ticket;
+
+            if (selectedLine != null)
+            {
+                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = ticket };
+
+                window.SynergiViewModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
+            }
         }
 
         private async void LocationRunModelMenuItem_Click(object sender, RadRoutedEventArgs e)
@@ -405,6 +312,99 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             window.SourceGraph.Value = window.SourceGraph.ClearEvidence();
+        }
+
+        private void SectionsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
+            var ticket = window.SynergiViewModel.Ticket;
+
+            if (selectedSection != null)
+            {
+                var dataTable = new DataTable();
+
+                // The order here is taken from MarvToSynergiMap.xlsx
+                var data = new[]
+                {
+                    "MAOP.MAOP",
+                    "Chemistry.ChloridesPresent",
+                    "Segment.CleaningPigRunsPerYear",
+                    "Chemistry.CO2",
+                    "Chemistry.CorrosionInhibition",
+                    "ExternalCorrosion.CoveredPercent",
+                    "ExternalCorrosion.DistanceFromTheSea",
+                    "Chemistry.Fe",
+                    "FlowParameters.GasDensity",
+                    "FlowParameters.Gas_Velocity",
+                    "Chemistry.Hydrocarbon",
+                    "Segment.NominalOuterDiameter",
+                    "PipeBook.Latitude",
+                    "PipeBook.Longitude",
+                    "DesignPressure.DesignPressure",
+                    "FlowParameters.LiquidVelocity",
+                    "ExternalCorrosion.ExternalSandMoistureContent",
+                    "Chemistry.O2",
+                    "FlowParameters.OilDensity",
+                    "NormalOperation.NormalOperationPressure",
+                    "Chemistry.pH",
+                    "FlowParameters.PipeInclination",
+                    "Segment.NominalWallThickness",
+                    "FlowParameters.SandPresent",
+                    "Segment.SMYS",
+                    "ExternalCorrosion.SoilResistivity",
+                    "Chemistry.Sulphides",
+                    "Chemistry.WaterCut"
+                };
+
+                SegmentationService.SegmentationService segmentationService = new SegmentationService.SegmentationService();
+                segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader { value = ticket };
+
+                try
+                {
+                    var segments = segmentationService.GetSegments(selectedSection.SectionOid.ToString(), data, "m", CultureInfo.CurrentCulture.Name);
+                    var nHeaders = segments.Headers.Count();
+                    var nSegments = segments.Segments.Count();
+
+                    logger.Info("nSegments" + nSegments);
+
+                    var segmentData = new Dict<string, string>();
+                    var properties = new Dynamic();
+
+                    for (int s = 0; s < nSegments - 1; s++)
+                    {
+                        var segmentVm = segments.Segments[s];
+
+                        for (int h = 0; h < nHeaders; h++)
+                        {
+                            var header = segments.Headers[h];
+                            var propertyName = string.IsNullOrEmpty(header.Unit) ? header.Name : string.Format("{0} [{1}]", header.Name, header.Unit);
+                            var propertyValue = segmentVm.Data[h];
+
+                            segmentData[propertyName] = propertyValue;
+                        }
+                    }
+
+                    window.SynergiViewModel.SegmentData = segmentData;
+                }
+                catch (Exception exception)
+                {
+                    logger.Warn(exception.Message);
+                }
+
+                //dgSegment.AutoGenerateColumns = true;
+                //dgSegment.DataSource = dataTable;
+            }
+        }
+
+        private void TransitionControl_StatusChanged(object sender, TransitionStatusChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            if (e.Status == TransitionStatus.Completed)
+            {
+                window.MapView.ZoomTo(window.Polylines.GetBounds());
+            }
         }
     }
 }
