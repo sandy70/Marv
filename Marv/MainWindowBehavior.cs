@@ -4,6 +4,8 @@ using Marv.LoginService;
 using NLog;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
 using Telerik.Windows.Controls.TransitionControl;
+using System.Linq;
+using System;
 
 namespace Marv
 {
@@ -85,12 +89,113 @@ namespace Marv
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.TransitionControl.StatusChanged += TransitionControl_StatusChanged;
 
+            window.LinesListBox.SelectionChanged += LinesListBox_SelectionChanged;
+            window.SectionsListBox.SelectionChanged += SectionsListBox_SelectionChanged;
+
             // Change map types
             window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
             window.BingMapsRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsRoads;
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+        }
+
+        private void SectionsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
+            var ticket = window.SynergiViewModel.Ticket;
+
+            if (selectedSection != null)
+            {
+                var dataTable = new DataTable();
+
+                // The order here is taken from MarvToSynergiMap.xlsx
+                var data = new[]
+                {
+                    "MAOP.MAOP",
+                    "Chemistry.ChloridesPresent",
+                    "Segment.CleaningPigRunsPerYear",
+                    "Chemistry.CO2",
+                    "Chemistry.CorrosionInhibition",
+                    "ExternalCorrosion.CoveredPercent",
+                    "ExternalCorrosion.DistanceFromTheSea",
+                    "Chemistry.Fe",
+                    "FlowParameters.GasDensity",
+                    "FlowParameters.Gas_Velocity",
+                    "Chemistry.Hydrocarbon",
+                    "Segment.NominalOuterDiameter",
+                    "PipeBook.Latitude",
+                    "PipeBook.Longitude",
+                    "DesignPressure.DesignPressure",
+                    "FlowParameters.LiquidVelocity",
+                    "ExternalCorrosion.ExternalSandMoistureContent",
+                    "Chemistry.O2",
+                    "FlowParameters.OilDensity",
+                    "NormalOperation.NormalOperationPressure",
+                    "Chemistry.pH",
+                    "FlowParameters.PipeInclination",
+                    "Segment.NominalWallThickness",
+                    "FlowParameters.SandPresent",
+                    "Segment.SMYS",
+                    "ExternalCorrosion.SoilResistivity",
+                    "Chemistry.Sulphides",
+                    "Chemistry.WaterCut"
+                };
+
+                SegmentationService.SegmentationService segmentationService = new SegmentationService.SegmentationService();
+                segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader { value = ticket };
+
+                try
+                {
+                    var segments = segmentationService.GetSegments(selectedSection.SectionOid.ToString(), data, "m", CultureInfo.CurrentCulture.Name);
+                    var nHeaders = segments.Headers.Count();
+                    var nSegments = segments.Segments.Count();
+
+                    logger.Info("nSegments" + nSegments);
+
+                    var segmentData = new Dict<string, string>();
+                    var properties = new Dynamic();
+
+                    for (int s = 0; s < nSegments - 1; s++)
+                    {
+                        var segmentVm = segments.Segments[s];
+
+                        for (int h = 0; h < nHeaders; h++)
+                        {
+                            var header = segments.Headers[h];
+                            var propertyName = string.IsNullOrEmpty(header.Unit) ? header.Name : string.Format("{0} [{1}]", header.Name, header.Unit);
+                            var propertyValue = segmentVm.Data[h];
+
+                            segmentData[propertyName] = propertyValue;
+                        }
+                    }
+
+                    window.SynergiViewModel.SegmentData = segmentData;
+                }
+                catch (Exception exception)
+                {
+                    logger.Warn(exception.Message);
+                }
+
+                //dgSegment.AutoGenerateColumns = true;
+                //dgSegment.DataSource = dataTable;
+            }
+        }
+
+        private void LinesListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+            var selectedLine = window.SynergiViewModel.Lines.SelectedItem;
+            var ticket = window.SynergiViewModel.Ticket;
+
+            if (selectedLine != null)
+            {
+                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = ticket };
+
+                window.SynergiViewModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
+            }
         }
 
         private void TransitionControl_StatusChanged(object sender, TransitionStatusChangedEventArgs e)

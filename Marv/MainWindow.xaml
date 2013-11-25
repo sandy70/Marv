@@ -168,19 +168,20 @@
                     </telerik:RadPropertyGrid.PropertyDefinitions>
                 </telerik:RadPropertyGrid>
 
+                <!-- Pipeline Info Control -->
                 <Grid Grid.Column="0"
-                      Background="{StaticResource ResourceKey=BackgroundVeryLight}"
+                      Background="{StaticResource ResourceKey=BackgroundLight}"
                       Effect="{StaticResource ResourceKey=DropShadow}"
                       Height="290"
                       Margin="10"
                       VerticalAlignment="Bottom"
-                      Visibility="{Binding IsChartControlVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                      Visibility="Visible">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <!-- ChartControl Header -->
+                    <!-- Pipeline Info Control Header -->
                     <Grid Grid.Row="0"
                           Background="{StaticResource ResourceKey=BackgroundMedium}">
                         <Grid.ColumnDefinitions>
@@ -192,7 +193,7 @@
                                 FontSize="{StaticResource ResourceKey=FontSizeLarge}"
                                 FontWeight="Bold"
                                 Margin="5"
-                                Text="{Binding ChartSeries.Name, ElementName=Root}" 
+                                Text="Synergi Data" 
                                 VerticalAlignment="Center" />
 
                         <marvcontrols:SurfaceImageButton Grid.Column="1"
@@ -200,53 +201,71 @@
                                                          Margin="5" />
                     </Grid>
 
-                    <!-- ChartControl Chart -->
-                    <telerik:RadCartesianChart Grid.Row="1"
-                                            Name="ChartControl"
-                                            Margin="5">
-                        <telerik:RadCartesianChart.Resources>
-                            <Style TargetType="telerik:BarSeries">
-                                <Setter Property="LegendSettings">
-                                    <Setter.Value>
-                                        <telerik:SeriesLegendSettings Title="{Binding Name}" />
-                                    </Setter.Value>
-                                </Setter>
+                    <!-- Pipeline Info Control Inner -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Content="Lines"
+                               Margin="5"/>
+                        
+                        <surface:SurfaceListBox Grid.Row="1" Grid.Column="0"
+                                                Name="LinesListBox"
+                                                HorizontalContentAlignment="Stretch"
+                                                ItemsSource="{Binding SynergiViewModel.Lines, ElementName=Root}"
+                                                Margin="5"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                SelectedItem="{Binding SynergiViewModel.Lines.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectionMode="Single">
+                            <surface:SurfaceListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}" />
+                                </DataTemplate>
+                            </surface:SurfaceListBox.ItemTemplate>
+                        </surface:SurfaceListBox>
 
-                                <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
+                        <Label Grid.Row="0" Grid.Column="1"
+                               Content="Sections"
+                               Margin="5"/>
 
-                                <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
-                            </Style>
+                        <surface:SurfaceListBox Grid.Row="1" Grid.Column="1"
+                                                Name="SectionsListBox"
+                                                HorizontalContentAlignment="Stretch"
+                                                ItemsSource="{Binding SynergiViewModel.Sections, ElementName=Root}"
+                                                Margin="5"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                SelectedItem="{Binding SynergiViewModel.Sections.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectionMode="Single">
+                            <surface:SurfaceListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}" />
+                                </DataTemplate>
+                            </surface:SurfaceListBox.ItemTemplate>
+                        </surface:SurfaceListBox>
 
-                            <Style TargetType="telerik:ScatterPointSeries">
-                                <Setter Property="LegendSettings">
-                                    <Setter.Value>
-                                        <telerik:SeriesLegendSettings Title="{Binding Name}" />
-                                    </Setter.Value>
-                                </Setter>
+                        <Label Grid.Row="0" Grid.Column="2"
+                               Content="Properties"
+                               Margin="5"/>
 
-                                <Setter Property="HorizontalAxis" Value="{Binding HorizontalAxis}" />
-
-                                <Setter Property="VerticalAxis" Value="{Binding VerticalAxis}" />
-                            </Style>
-
-                            <Style TargetType="telerik:ScatterLineSeries"
-                                       BasedOn="{StaticResource {x:Type telerik:ScatterPointSeries}}">
-                                <Setter Property="Stroke" Value="{Binding Stroke}" />
-                            </Style>
-
-                            <Style TargetType="telerik:ScatterAreaSeries" 
-                                       BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
-
-                            <Style TargetType="telerik:ScatterSplineSeries" 
-                                       BasedOn="{StaticResource {x:Type telerik:ScatterLineSeries}}" />
-
-                        </telerik:RadCartesianChart.Resources>
-
-                        <telerik:RadCartesianChart.SeriesProvider>
-                            <telerik:ChartSeriesProvider SeriesDescriptorSelector="{StaticResource ResourceKey=ChartSeriesDescriptorSelector}"
-                                                             Source="{Binding Path=ChartSeries, ElementName=Root}" />
-                        </telerik:RadCartesianChart.SeriesProvider>
-                    </telerik:RadCartesianChart>
+                        <DataGrid Grid.Row="1" Grid.Column="2"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding SynergiViewModel.SegmentData, ElementName=Root}"
+                                  Margin="5"> 
+                            <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
+                                    <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
 
                     <!-- ChartControl Legend -->
                     <telerik:RadLegend Grid.Row="1"
