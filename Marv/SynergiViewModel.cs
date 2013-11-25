@@ -9,6 +9,7 @@ namespace Marv
         private string password = "Password01";
         private SelectableCollection<SectionSummaryDTO> sections;
         private Dict<string, string> segmentData;
+        private string ticket;
         private string username = "LAML";
 
         public SelectableCollection<LineSummaryDTO> Lines
@@ -75,6 +76,23 @@ namespace Marv
                 {
                     this.segmentData = value;
                     this.RaisePropertyChanged("SegmentData");
+                }
+            }
+        }
+
+        public string Ticket
+        {
+            get
+            {
+                return this.ticket;
+            }
+
+            set
+            {
+                if (value != this.ticket)
+                {
+                    this.ticket = value;
+                    this.RaisePropertyChanged("Ticket");
                 }
             }
         }

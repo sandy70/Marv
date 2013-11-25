@@ -1,4 +1,6 @@
 ﻿using Marv.Common;
+using Marv.LineAndSectionOverviewService;
+using Marv.LoginService;
 using NLog;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,9 +23,22 @@ namespace Marv
             base.OnAttached();
             this.AssociatedObject.Closing += AssociatedObject_Closing;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.Loaded += AssociatedObject_Loaded_LoginSynergi;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadNetwork;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadPolylines;
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
+        }
+
+        private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject as MainWindow;
+
+            LoginService.BRIXLoginService loginService = new BRIXLoginService();
+            window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
+
+            LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+            lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
+            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines());
         }
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
