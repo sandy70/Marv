@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1973</Value>
+      <Value Profile="(Default)">2001</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2011</Value>
+      <Value Profile="(Default)">2014</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
@@ -27,7 +27,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="InputFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\ADCO02\ADCO 7.xlsx</Value>
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO Synergi.xlsx</Value>
     </Setting>
     <Setting Name="IsPropertyGridVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

@@ -25,7 +25,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1973")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2001")]
         public int StartYear {
             get {
                 return ((int)(this["StartYear"]));
@@ -37,7 +37,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2011")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2014")]
         public int EndYear {
             get {
                 return ((int)(this["EndYear"]));
@@ -121,7 +121,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 7.xlsx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO Synergi.xlsx")]
         public string InputFileName {
             get {
                 return ((string)(this["InputFileName"]));

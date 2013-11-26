@@ -9,7 +9,6 @@ namespace Marv.Common
     {
         protected Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private string key = "";
-        private IEnumerable<string> keys;
         private string name = "";
         private Dynamic properties = new Dynamic();
         private T selectedItem = default(T);

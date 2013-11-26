@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace Marv.Common
 {
@@ -48,86 +47,66 @@ namespace Marv.Common
         }
     }
 
-    public class Dict<T1, T2, T3, TValue> : Dict<T1, Dict<T2, T3, TValue>> where TValue: new() { }
+    public class Dict<T1, T2, T3, TValue> : Dict<T1, Dict<T2, T3, TValue>> where TValue : new() { }
 
     public class Dict<T1, T2, T3, T4, TValue> : Dict<T1, Dict<T2, T3, T4, TValue>> where TValue : new() { }
 
-    public class Dict<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
-    {
-        private readonly IDictionary<TKey, TValue> dictionary;
+    public class Dict<TKey, TValue> : Dictionary<TKey, TValue> { }
 
+    public class Dict1<TKey, TValue> : Dictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+    {
         private Dispatcher dispatcher;
 
         #region Constructor
 
-        public Dict(Dispatcher dispatcher = null)
+        public Dict1(Dispatcher dispatcher = null)
+            : base()
         {
-            dictionary = new Dictionary<TKey, TValue>();
             this.dispatcher = dispatcher ??
                               (Application.Current != null
                                    ? Application.Current.Dispatcher
                                    : Dispatcher.CurrentDispatcher);
         }
 
-        public Dict(IDictionary<TKey, TValue> dictionary)
+        public Dict1(IDictionary<TKey, TValue> dictionary)
+            : base(dictionary)
         {
-            this.dictionary = new Dictionary<TKey, TValue>(dictionary);
         }
 
-        public Dict(int capacity)
+        public Dict1(int capacity)
+            : base(capacity)
         {
-            dictionary = new Dictionary<TKey, TValue>(capacity);
         }
 
         #endregion Constructor
 
-        public int Count
+        public new TValue this[TKey key]
         {
-            get { return dictionary.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return dictionary.IsReadOnly; }
-        }
-
-        public ICollection<TKey> Keys
-        {
-            get { return dictionary.Keys; }
-        }
-
-        public ICollection<TValue> Values
-        {
-            get { return dictionary.Values; }
-        }
-
-        public TValue this[TKey key]
-        {
-            get 
+            get
             {
-                return dictionary[key];
+                return base[key];
             }
 
             set
             {
-                if (this.dictionary.ContainsKey(key))
+                if (this.ContainsKey(key))
                 {
-                    var oldKvp = this.dictionary.Single(kvp => kvp.Key.Equals(key));
+                    var oldKvp = this.Single(kvp => kvp.Key.Equals(key));
 
-                    this.RemoveNotifyEvents(this.dictionary[key]);
-                    this.dictionary[key] = value;
-                    this.AddNotifyEvents(this.dictionary[key]);
+                    this.RemoveNotifyEvents(this[key]);
+                    base[key] = value;
+                    this.AddNotifyEvents(this[key]);
 
-                    var newKvp = this.dictionary.Single(kvp => kvp.Key.Equals(key));
+                    var newKvp = this.Single(kvp => kvp.Key.Equals(key));
 
                     this.OnCollectionChanged(NotifyCollectionChangedAction.Replace, newKvp, oldKvp);
                 }
                 else
                 {
-                    this.dictionary[key] = value;
-                    this.AddNotifyEvents(this.dictionary[key]);
+                    base[key] = value;
+                    this.AddNotifyEvents(this[key]);
 
-                    var pair = this.dictionary.Single(kvp => kvp.Key.Equals(key));
+                    var pair = this.Single(kvp => kvp.Key.Equals(key));
                     this.OnCollectionChanged(NotifyCollectionChangedAction.Add, pair);
                 }
 
@@ -151,27 +130,12 @@ namespace Marv.Common
             }
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
-            if (dispatcher.CheckAccess())
-            {
-                dictionary.Add(item);
-
-                OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
-                AddNotifyEvents(item.Value);
-            }
-            else
-            {
-                dispatcher.Invoke(new Action(() => Add(item)));
-            }
-        }
-
-        public void Add(TKey key, TValue value)
+        public new void Add(TKey key, TValue value)
         {
             if (dispatcher.CheckAccess())
             {
                 var kvp = new KeyValuePair<TKey, TValue>(key, value);
-                dictionary.Add(kvp);
+                base.Add(key, value);
                 OnCollectionChanged(NotifyCollectionChangedAction.Add, kvp);
                 AddNotifyEvents(value);
             }
@@ -181,7 +145,7 @@ namespace Marv.Common
             }
         }
 
-        public void Clear()
+        public new void Clear()
         {
             if (dispatcher.CheckAccess())
             {
@@ -190,7 +154,7 @@ namespace Marv.Common
                     RemoveNotifyEvents(value);
                 }
 
-                dictionary.Clear();
+                base.Clear();
                 OnCollectionChanged(NotifyCollectionChangedAction.Reset);
             }
             else
@@ -199,49 +163,15 @@ namespace Marv.Common
             }
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
-            return dictionary.Contains(item);
-        }
-
-        public bool ContainsKey(TKey key)
-        {
-            return dictionary.ContainsKey(key);
-        }
-
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
-            dictionary.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        public new bool Remove(TKey key)
         {
             if (dispatcher.CheckAccess())
             {
-                bool result = dictionary.Remove(item);
-                if (result)
+                if (this.ContainsKey(key))
                 {
-                    RemoveNotifyEvents(item.Value);
-                    OnCollectionChanged(NotifyCollectionChangedAction.Remove, item);
-                }
-
-                return result;
-            }
-            else
-            {
-                return (bool)dispatcher.Invoke(() => Remove(item));
-            }
-        }
-
-        public bool Remove(TKey key)
-        {
-            if (dispatcher.CheckAccess())
-            {
-                if (dictionary.ContainsKey(key))
-                {
-                    var pair = dictionary.Single(kvp => kvp.Key.Equals(key));
-                    TValue value = dictionary[key];
-                    dictionary.Remove(key);
+                    var pair = this.Single(kvp => kvp.Key.Equals(key));
+                    TValue value = this[key];
+                    this.Remove(key);
                     RemoveNotifyEvents(value);
                     OnCollectionChanged(NotifyCollectionChangedAction.Remove, pair);
 
@@ -255,25 +185,6 @@ namespace Marv.Common
                 return (bool)dispatcher.Invoke(() => Remove(key));
             }
         }
-
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            return dictionary.TryGetValue(key, out value);
-        }
-
-        #region Enumerator
-
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            return dictionary.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        #endregion Enumerator
 
         #region Notify
 
