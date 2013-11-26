@@ -1,7 +1,6 @@
 ﻿using Marv.Common;
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Windows;
 
 namespace Marv
@@ -66,7 +65,7 @@ namespace Marv
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public static readonly DependencyProperty PolylinesProperty =
-        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, ChangedPolylines));
+        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -82,6 +81,8 @@ namespace Marv
 
         public static readonly DependencyProperty SynergiViewModelProperty =
         DependencyProperty.Register("SynergiViewModel", typeof(SynergiViewModel), typeof(MainWindow), new PropertyMetadata(new SynergiViewModel()));
+
+        public event EventHandler<ViewModelCollection<LocationCollection>> PolylinesChanged;
 
         public event EventHandler<double> SelectedYearChanged;
 
@@ -223,57 +224,24 @@ namespace Marv
             set { SetValue(SynergiViewModelProperty, value); }
         }
 
-        private static void ChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
-            if (window.Polylines != null)
+            if (window.PolylinesChanged != null)
             {
-                window.Polylines.CollectionChanged += window.Polylines_CollectionChanged;
-                window.PolylineAttachHandlers(window.Polylines);
-
-                if (window.Polylines.Count > 0)
-                {
-                    // Calculate start year
-                    // window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
-                    window.SelectedYear = window.StartYear;
-                }
-            }
-        }
-
-        private void Polylines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var polylines = sender as ViewModelCollection<LocationCollection>;
-            this.PolylineAttachHandlers(polylines);
-        }
-
-        private void PolylineAttachHandlers(ViewModelCollection<LocationCollection> polylines)
-        {
-            foreach (var polyline in polylines)
-            {
-                // Attach event so that we can load data when selection changes
-                // The -= ensures that events aren't subscribed twice
-                polyline.SelectionChanged -= this.multiLocation_SelectionChanged;
-                polyline.SelectionChanged += this.multiLocation_SelectionChanged;
+                window.PolylinesChanged(window, window.Polylines);
             }
         }
 
         private static void OnSelectedYearChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-            
-            if(window.SelectedYearChanged != null)
+
+            if (window.SelectedYearChanged != null)
             {
                 window.SelectedYearChanged(window, window.SelectedYear);
             }
-        }
-
-        private void multiLocation_SelectionChanged(object sender, Location location)
-        {
-            logger.Trace("");
-
-            this.ReadGraphValues();
-            this.UpdateGraphValue();
         }
     }
 }

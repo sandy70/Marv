@@ -29,7 +29,6 @@ namespace Marv
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_LoginSynergi;
             this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadNetwork;
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadPolylines;
             this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
         }
 
@@ -135,37 +134,6 @@ namespace Marv
 
             //window.ReadGraphValueTimeSeries();
             //window.UpdateGraphValue();
-        }
-
-        private void AssociatedObject_Loaded_ReadPolylines(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            window.Polylines = new ViewModelCollection<LocationCollection>();
-
-            try
-            {
-                var pipelineInput = new PipelineInput(window.InputFileName);
-                var polylines = pipelineInput.ReadPipelines();
-
-                window.Polylines.Add(polylines["BU-498"]);
-                window.MapView.ZoomTo(window.Polylines.GetBounds());
-
-                window.ReadMultiLocationValueTimeSeriesForMultiLocation();
-                window.UpdateMultiLocationValues();
-            }
-            catch (IOException exp)
-            {
-                logger.Warn(exp.Message);
-
-                var notification = new NotificationTimed
-                {
-                    Name = "Unable to read file.",
-                    Description = exp.Message,
-                };
-
-                window.Notifications.Push<INotification>(notification);
-            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

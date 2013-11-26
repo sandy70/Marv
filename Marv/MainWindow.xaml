@@ -37,6 +37,7 @@
 
     <i:Interaction.Behaviors>
         <local:MainWindowBehavior />
+        <local:MainWindowBehaviorPolylines />
         <local:MainWindowGraphControlBehavior />
     </i:Interaction.Behaviors>
 
