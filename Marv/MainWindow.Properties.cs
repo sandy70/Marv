@@ -1,6 +1,7 @@
 ﻿using Marv.Common;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 
 namespace Marv
@@ -228,20 +229,32 @@ namespace Marv
 
             if (window.Polylines != null)
             {
+                window.Polylines.CollectionChanged += window.Polylines_CollectionChanged;
+                window.PolylineAttachHandlers(window.Polylines);
+
                 if (window.Polylines.Count > 0)
                 {
                     // Calculate start year
                     // window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
                     window.SelectedYear = window.StartYear;
                 }
+            }
+        }
 
-                foreach (var polyline in window.Polylines)
-                {
-                    // Attach event so that we can load data when selection changes
-                    // The -= ensures that events aren't subscribed twice
-                    polyline.SelectionChanged -= window.multiLocation_SelectionChanged;
-                    polyline.SelectionChanged += window.multiLocation_SelectionChanged;
-                }
+        private void Polylines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var polylines = sender as ViewModelCollection<LocationCollection>;
+            this.PolylineAttachHandlers(polylines);
+        }
+
+        private void PolylineAttachHandlers(ViewModelCollection<LocationCollection> polylines)
+        {
+            foreach (var polyline in polylines)
+            {
+                // Attach event so that we can load data when selection changes
+                // The -= ensures that events aren't subscribed twice
+                polyline.SelectionChanged -= this.multiLocation_SelectionChanged;
+                polyline.SelectionChanged += this.multiLocation_SelectionChanged;
             }
         }
 

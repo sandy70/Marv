@@ -28,14 +28,10 @@ namespace Marv
             ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
         };
 
-        public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
-        public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
         public Dictionary<LocationCollection, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
-        public string selectedGroup = null;
-        public SensorListener SensorListener = new SensorListener();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        
+
         private IGraphValueReader graphValueReader;
         private Dict<int, string, string, double> graphValues;
 
