@@ -47,9 +47,9 @@ namespace Marv
                 Type = typeof(ScatterLineSeries)
             };
 
-            foreach (var year in window.graphValueTimeSeries.Keys)
+            foreach (var year in window.GraphValues.Keys)
             {
-                var pof = window.graphValueTimeSeries[year]["coatd"]["YEs"];
+                var pof = window.GraphValues[year]["coatd"]["YEs"];
 
                 chartSeries.Add(new ScatterPoint
                 {
@@ -78,7 +78,7 @@ namespace Marv
 
             foreach (var state in vertex.States)
             {
-                var value = window.graphValueTimeSeries[1973][vertex.Key][state.Key];
+                var value = window.GraphValues[1973][vertex.Key][state.Key];
 
                 categoryPoints.Add(new CategoricalPoint
                 {
@@ -120,7 +120,7 @@ namespace Marv
                 foreach (var state in vertex.States)
                 {
                     var x = (state.Range.Min + state.Range.Max) / 2;
-                    var y = window.graphValueTimeSeries[year][vertex.Key][state.Key];
+                    var y = window.GraphValues[year][vertex.Key][state.Key];
 
                     chartSeries.Add(new ScatterPoint
                     {

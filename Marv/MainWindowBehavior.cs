@@ -62,6 +62,9 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
+            // Change this line when switching between ADCO and CNPC and any future readers.
+            window.GraphValueReader = new GraphValueReaderAdco();
+
             window.SelectedYearChanged += window_SelectedYearChanged;
 
             window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;

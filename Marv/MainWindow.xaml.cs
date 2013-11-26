@@ -29,12 +29,15 @@ namespace Marv
         };
 
         public Dictionary<string, Point> graphPositionForGroup = new Dictionary<string, Point>();
-        public Dict<int, string, string, double> graphValueTimeSeries = new Dict<int, string, string, double>();
         public Dictionary<string, double> graphZoomForGroup = new Dictionary<string, double>();
         public Dictionary<LocationCollection, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
         public string selectedGroup = null;
         public SensorListener SensorListener = new SensorListener();
+
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        
+        private IGraphValueReader graphValueReader;
+        private Dict<int, string, string, double> graphValues;
 
         public MainWindow()
         {
@@ -45,6 +48,18 @@ namespace Marv
             MapControl.TileImageLoader.Cache = new ImageFileCache(MapControl.TileImageLoader.DefaultCacheName, cacheDirectory);
 
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
+        }
+
+        public IGraphValueReader GraphValueReader
+        {
+            get { return graphValueReader; }
+            set { graphValueReader = value; }
+        }
+
+        public Dict<int, string, string, double> GraphValues
+        {
+            get { return graphValues; }
+            set { graphValues = value; }
         }
 
         public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
@@ -164,38 +179,24 @@ namespace Marv
                 });
         }
 
-        public void ReadGraphValueTimeSeries()
+        public void ReadGraphValues()
         {
-            logger.Trace("");
-
             var multiLocation = this.Polylines.SelectedItem;
             var location = multiLocation.SelectedItem;
 
             try
             {
-                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
-                this.graphValueTimeSeries = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
+                this.GraphValues = this.GraphValueReader.Read(multiLocation.Name, location.Name);
             }
-            catch (OdbDataNotFoundException)
+            catch (GraphValueNotFoundException exception)
             {
-                var message = "Value not found for point: " + location.Name + " on line: " + multiLocation.Name;
-
-                logger.Warn(message);
+                logger.Warn(exception.Message);
 
                 this.Notifications.Push(new NotificationTimed
                 {
                     Name = "Value Not Found",
-                    Description = message
+                    Description = exception.Message
                 });
-            }
-        }
-
-        public void ReadGraphValueTimeSeriesCnpc()
-        {
-            foreach (var fileName in Directory.GetFiles(this.InputDir, "*.vertices"))
-            {
-                var year = Int32.Parse(Path.GetFileNameWithoutExtension(fileName));
-                this.graphValueTimeSeries[year] = this.SourceGraph.ReadValueCsv(fileName);
             }
         }
 
@@ -217,11 +218,11 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.graphValueTimeSeries != null && this.SourceGraph != null)
+            if (this.GraphValues != null && this.SourceGraph != null)
             {
-                if (this.graphValueTimeSeries.ContainsKey(this.SelectedYear))
+                if (this.GraphValues.ContainsKey(this.SelectedYear))
                 {
-                    this.SourceGraph.Value = this.graphValueTimeSeries[this.SelectedYear];
+                    this.SourceGraph.Value = this.GraphValues[this.SelectedYear];
                 }
                 else
                 {

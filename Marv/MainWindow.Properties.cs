@@ -259,7 +259,7 @@ namespace Marv
         {
             logger.Trace("");
 
-            this.ReadGraphValueTimeSeries();
+            this.ReadGraphValues();
             this.UpdateGraphValue();
         }
     }

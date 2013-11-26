@@ -192,6 +192,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdcoInput.cs" />
+    <Compile Include="GraphValueNotFoundException.cs" />
+    <Compile Include="GraphValueReaderAdco.cs" />
+    <Compile Include="GraphValueReaderCnpc.cs" />
+    <Compile Include="IGraphValueReader.cs" />
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
     <Compile Include="RiskValueToBrushMap.cs" />
