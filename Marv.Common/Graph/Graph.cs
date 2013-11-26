@@ -16,7 +16,7 @@ namespace Marv.Common
 
         private string defaultGroup;
         private EdgeCollection edges = new EdgeCollection();
-        private Dict<string, string> loops = new Dict<string, string>();
+        private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
         private ViewModelCollection<Vertex> vertices = new ViewModelCollection<Vertex>();
 
@@ -54,7 +54,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, string> Loops
+        public Dictionary<string, string> Loops
         {
             get
             {
@@ -71,7 +71,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, string, double> Value
+        public Dictionary<string, string, double> Value
         {
             set
             {
@@ -123,7 +123,7 @@ namespace Marv.Common
                 var vertex = new Vertex();
 
                 vertex.Key = structureVertex.Key;
-                vertex.ConnectorPositions = structureVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions");
+                vertex.ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions");
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
@@ -176,7 +176,7 @@ namespace Marv.Common
             this.Edges.Add(new Edge(source, target));
         }
 
-        public Dict<string, string, double> ClearEvidence()
+        public Dictionary<string, string, double> ClearEvidence()
         {
             foreach (var vertex in this.Vertices)
             {
@@ -187,7 +187,7 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public Dict<string, string, double> ClearEvidence(string vertexKey)
+        public Dictionary<string, string, double> ClearEvidence(string vertexKey)
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
@@ -198,15 +198,15 @@ namespace Marv.Common
             return this.Vertices[vertexKey].GetMean(vertexValue);
         }
 
-        public Dict<string, string, double> GetNetworkValue()
+        public Dictionary<string, string, double> GetNetworkValue()
         {
             this.UpdateBeliefs();
 
-            var graphValue = new Dict<string, string, double>();
+            var graphValue = new Dictionary<string, string, double>();
 
             foreach (var vertex in this.Vertices)
             {
-                var vertexValue = new Dict<string, double>();
+                var vertexValue = new Dictionary<string, double>();
 
                 foreach (var state in vertex.States)
                 {
@@ -315,13 +315,13 @@ namespace Marv.Common
             return hasEdge;
         }
 
-        public Dict<string, string, double> ReadValueCsv(string fileName)
+        public Dictionary<string, string, double> ReadValueCsv(string fileName)
         {
-            var graphValue = new Dict<string, string, double>();
+            var graphValue = new Dictionary<string, string, double>();
 
             foreach (var line in File.ReadLines(fileName))
             {
-                var vertexValue = new Dict<string, double>();
+                var vertexValue = new Dictionary<string, double>();
 
                 string[] parts = line.Split(new char[] { ',' });
 
@@ -351,13 +351,13 @@ namespace Marv.Common
             return graphValue;
         }
 
-        public Dict<string, string, double> Run(string vertexKey, IEvidence evidence)
+        public Dictionary<string, string, double> Run(string vertexKey, IEvidence evidence)
         {
             evidence.Set(this, vertexKey);
             return this.GetNetworkValue();
         }
 
-        public Dict<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
+        public Dictionary<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
@@ -367,9 +367,9 @@ namespace Marv.Common
             return this.GetNetworkValue();
         }
 
-        public Dict<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public Dictionary<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
         {
-            var graphValueTimeSeries = new Dict<int, string, string, double>();
+            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -421,7 +421,7 @@ namespace Marv.Common
             this.network.UpdateBeliefs();
         }
 
-        public Dict<string, string, double> UpdateValue()
+        public Dictionary<string, string, double> UpdateValue()
         {
             return this.Value = this.GetNetworkValue();
         }

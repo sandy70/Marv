@@ -8,7 +8,7 @@ namespace Marv.Common
 {
     public class LocationCollection : ViewModelCollection<Location>
     {
-        private Dict<string, double> _value = new Dict<string, double>();
+        private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
         private bool isEnabled = true;
         private bool isSelected = false;
@@ -99,7 +99,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, double> Value
+        public Dictionary<string, double> Value
         {
             get
             {

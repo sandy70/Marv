@@ -1,4 +1,6 @@
-﻿namespace Marv.Common
+﻿using System.Collections.Generic;
+
+namespace Marv.Common
 {
     public static class Countries
     {
@@ -6,7 +8,7 @@
         public static LocationRect UAE = new LocationRect { North = 30, East = 60, West = 50, South = 20 };
         public static LocationRect USA = new LocationRect { South = 25, West = -124, North = 50, East = -66 };
 
-        public static Dict<string, LocationRect> BoundsForKey = new Dict<string, LocationRect>
+        public static Dictionary<string, LocationRect> BoundsForKey = new Dictionary<string, LocationRect>
         {
             { "China", Countries.China },
             { "UAE", Countries.UAE },

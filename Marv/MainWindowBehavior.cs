@@ -348,7 +348,7 @@ namespace Marv
 
                     logger.Info("nSegments" + nSegments);
 
-                    var segmentData = new Dict<string, string>();
+                    var segmentData = new Dictionary<string, string>();
                     var properties = new Dynamic();
 
                     for (int s = 0; s < nSegments - 1; s++)

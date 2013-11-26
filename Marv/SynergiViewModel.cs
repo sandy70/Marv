@@ -1,5 +1,6 @@
 ﻿using Marv.Common;
 using Marv.LineAndSectionOverviewService;
+using System.Collections.Generic;
 
 namespace Marv
 {
@@ -8,7 +9,7 @@ namespace Marv
         private SelectableCollection<LineSummaryDTO> lines;
         private string password = "Password01";
         private SelectableCollection<SectionSummaryDTO> sections;
-        private Dict<string, string> segmentData;
+        private Dictionary<string, string> segmentData;
         private string ticket;
         private string username = "LAML";
 
@@ -63,7 +64,7 @@ namespace Marv
             }
         }
 
-        public Dict<string, string> SegmentData
+        public Dictionary<string, string> SegmentData
         {
             get
             {

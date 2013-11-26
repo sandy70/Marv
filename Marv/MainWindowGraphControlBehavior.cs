@@ -100,7 +100,7 @@ namespace Marv
 
             window.ChartSeries.Clear();
 
-            var colorForYear = new Dict<int, Color>
+            var colorForYear = new Dictionary<int, Color>
             {
                 { 1973, Colors.Red },
                 { 1993, Colors.Green },

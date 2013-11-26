@@ -4,6 +4,6 @@ namespace Marv
 {
     public interface IGraphValueReader
     {
-        Dict<int, string, string, double> Read(string lineKey, string locationKey);
+        Dictionary<int, string, string, double> Read(string lineKey, string locationKey);
     }
 }

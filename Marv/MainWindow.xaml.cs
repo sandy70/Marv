@@ -33,7 +33,7 @@ namespace Marv
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private IGraphValueReader graphValueReader;
-        private Dict<int, string, string, double> graphValues;
+        private Dictionary<int, string, string, double> graphValues;
 
         public MainWindow()
         {
@@ -52,7 +52,7 @@ namespace Marv
             set { graphValueReader = value; }
         }
 
-        public Dict<int, string, string, double> GraphValues
+        public Dictionary<int, string, string, double> GraphValues
         {
             get { return graphValues; }
             set { graphValues = value; }
@@ -99,7 +99,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
+                    var modelValue = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -111,7 +111,7 @@ namespace Marv
 
                         if (!multiLocationValueTimeSeries.ContainsKey(year))
                         {
-                            multiLocationValueTimeSeries[year] = new Dict<string, double>();
+                            multiLocationValueTimeSeries[year] = new Dictionary<string, double>();
                         }
 
                         multiLocationValueTimeSeries[year][location.Name] = stateValue;
@@ -164,7 +164,7 @@ namespace Marv
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            Odb.Write<Dict<int, string, string, double>>(fileName, graphValueTimeSeries);
+            Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)

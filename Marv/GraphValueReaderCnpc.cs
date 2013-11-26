@@ -6,17 +6,17 @@ namespace Marv
 {
     public class GraphValueReaderCnpc : IGraphValueReader
     {
-        private Dict<int, string, string, double> graphValues = null;
+        private Dictionary<int, string, string, double> graphValues = null;
 
         public string InputDir { get; set; }
 
         public Graph SourceGraph { get; set; }
 
-        public Dict<int, string, string, double> Read(string lineKey, string locationKey)
+        public Dictionary<int, string, string, double> Read(string lineKey, string locationKey)
         {
             if (this.graphValues == null)
             {
-                this.graphValues = new Dict<int, string, string, double>();
+                this.graphValues = new Dictionary<int, string, string, double>();
 
                 foreach (var fileName in Directory.GetFiles(this.InputDir, "*.vertices"))
                 {

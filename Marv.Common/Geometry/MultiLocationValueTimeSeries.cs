@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class MultiLocationValueTimeSeries : Dict<int, string, double>
+    public class MultiLocationValueTimeSeries : Dictionary<int, string, double>
     {
     }
 }

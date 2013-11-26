@@ -8,7 +8,7 @@ namespace Marv.Common
 {
     public class PipelineInput
     {
-        private Dict<string, int> columnIndices = new Dict<string, int>();
+        private Dictionary<string, int> columnIndices = new Dictionary<string, int>();
         private ExcelWorksheet sheet = null;
 
         public PipelineInput(string fileName)

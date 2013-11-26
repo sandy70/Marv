@@ -10,12 +10,12 @@ namespace Marv
 {
     public class GraphValueReaderAdco : IGraphValueReader
     {
-        public Dict<int, string, string, double> Read(string lineKey, string locationKey)
+        public Dictionary<int, string, string, double> Read(string lineKey, string locationKey)
         {
             try
             {
                 var fileName = this.GetFileNameForModelValue(lineKey, locationKey);
-                return Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
+                return Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
             }
             catch(OdbDataNotFoundException exception)
             {
