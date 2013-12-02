@@ -5,6 +5,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
 
+using System.Linq;
+
 namespace Marv
 {
     public class MainWindowBehaviorPolylines : Behavior<MainWindow>
@@ -28,8 +30,12 @@ namespace Marv
             {
                 var pipelineInput = new PipelineInput(window.InputFileName);
                 var polylines = pipelineInput.ReadPipelines();
-
+                
                 window.Polylines.Add(polylines["BU-498"]);
+
+                window.Polylines.Select("BU-498");
+                window.Polylines["BU-498"].Select("50");
+                
                 window.MapView.ZoomTo(window.Polylines.GetBounds());
 
                 window.ReadMultiLocationValueTimeSeriesForMultiLocation();
@@ -62,7 +68,7 @@ namespace Marv
                 if (window.Polylines.Count > 0)
                 {
                     // Calculate start year
-                    // window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation["StartYear"]);
+                    window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation.Properties["StartYear"]);
                     window.SelectedYear = window.StartYear;
                 }
             }
@@ -74,6 +80,11 @@ namespace Marv
 
             window.ReadGraphValues();
             window.UpdateGraphValue();
+
+            if(window.SynergiViewModel.Sections != null)
+            {
+                window.SynergiViewModel.Sections.SelectedItem = window.SynergiViewModel.Sections.FirstOrDefault(x => x.Name == e.Key);
+            }
         }
 
         private void Polylines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

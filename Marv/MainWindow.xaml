@@ -110,11 +110,11 @@
                 </Grid.ColumnDefinitions>
 
                 <marvcontrols:MapView Name="MapView"
-                                        Grid.Column="0"
-                                        IsManipulationEnabled="True"
-                                        ManipulationMode="Scale,Translate"
-                                        MaxZoomLevel="21"
-                                        StartExtent="China">
+                                      Grid.Column="0"
+                                      IsManipulationEnabled="True"
+                                      ManipulationMode="Scale,Translate"
+                                      MaxZoomLevel="21"
+                                      StartExtent="China">
                     <mapcontrol:MapItemsControl Name="MapItemsControl"
                                                 Effect="{StaticResource ResourceKey=DropShadow}"
                                                 ItemsSource="{Binding Polylines, ElementName=Root}"
@@ -126,15 +126,16 @@
                                     <Setter.Value>
                                         <ControlTemplate>
                                             <marvcontrols:SegmentedPolylineControl DisabledStroke="DarkGray"
-                                                                                    DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
-                                                                                    IsCursorVisible="{Binding IsSelected}"
-                                                                                    IsEnabled="{Binding IsEnabled}"
-                                                                                    Locations="{Binding}" />
+                                                                                   DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
+                                                                                   IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
+                                                                                   IsEnabled="{Binding IsEnabled}"
+                                                                                   Locations="{Binding}"
+                                                                                   SelectedLocation="{Binding SelectedItem, Mode=TwoWay}"/>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
                                     
-                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             </Style>
                         </mapcontrol:MapItemsControl.ItemContainerStyle>
                     </mapcontrol:MapItemsControl>
@@ -187,7 +188,7 @@
                           Background="{StaticResource ResourceKey=BackgroundMedium}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0"
@@ -196,10 +197,12 @@
                                 Margin="5"
                                 Text="Synergi Data" 
                                 VerticalAlignment="Center" />
-
-                        <marvcontrols:SurfaceImageButton Grid.Column="1"
-                                                         Name="ChartControlCloseButton"
-                                                         Margin="5" />
+                        
+                        <surface:SurfaceButton Grid.Column="1"
+                                               Content="Run Selected"
+                                               HorizontalContentAlignment="Center"
+                                               Name="SynergiRunButton"
+                                               Margin="5" />
                     </Grid>
 
                     <!-- Pipeline Info Control Inner -->
@@ -241,6 +244,7 @@
                         <surface:SurfaceListBox Grid.Row="1" Grid.Column="1"
                                                 Name="SectionsListBox"
                                                 HorizontalContentAlignment="Stretch"
+                                                IsSynchronizedWithCurrentItem="True"
                                                 ItemsSource="{Binding SynergiViewModel.Sections, ElementName=Root}"
                                                 Margin="5"
                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"

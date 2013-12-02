@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 
 namespace Marv.Common
@@ -30,6 +27,11 @@ namespace Marv.Common
             {
                 this.dictionary[key] = value;
             }
+        }
+
+        public void Select(string key)
+        {
+            this.SelectedItem = this[key];
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

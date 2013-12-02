@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Telerik.Windows;
@@ -21,6 +22,8 @@ namespace Marv
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        private object _lock = new object();
 
         protected override void OnAttached()
         {
@@ -77,12 +80,13 @@ namespace Marv
             window.NetworkComputeValue.Click += NetworkComputeValue_Click;
 
             window.BackButton.Click += BackButton_Click;
-            window.ChartControlCloseButton.Click += ChartControlCloseButton_Click;
             window.RetractAllButton.Click += RetractAllButton_Click;
             window.TransitionControl.StatusChanged += TransitionControl_StatusChanged;
 
             window.LinesListBox.SelectionChanged += LinesListBox_SelectionChanged;
             window.SectionsListBox.SelectionChanged += SectionsListBox_SelectionChanged;
+
+            window.SynergiRunButton.Click += SynergiRunButton_Click;
 
             // Change map types
             window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
@@ -90,6 +94,37 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+        }
+
+        private async void SynergiRunButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var networkFileName = window.NetworkFileName;
+            var inputFileName = window.InputFileName;
+
+            var multiLocation = window.Polylines.SelectedItem;
+
+            var multiLocationName = multiLocation.Name;
+            var locationName = multiLocation.SelectedItem.Name;
+
+            var startYear = (int)multiLocation.Properties["StartYear"];
+            var endYear = window.EndYear;
+
+            var notification = new NotificationIndeterminate
+            {
+                Name = "Running Model",
+                Description = "Running model for location: " + locationName
+            };
+
+            window.Notifications.Push(notification);
+
+            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+
+            notification.Close();
+
+            window.ReadGraphValues();
+            window.UpdateGraphValue();
         }
 
         private void window_SelectedYearChanged(object sender, double e)
@@ -108,7 +143,7 @@ namespace Marv
 
             LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
             lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
-            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines());
+            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
         }
 
         private async void AssociatedObject_Loaded_ReadNetwork(object sender, RoutedEventArgs e)
@@ -294,11 +329,16 @@ namespace Marv
             window.SourceGraph.Value = window.SourceGraph.ClearEvidence();
         }
 
-        private void SectionsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void SectionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
             var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
             var ticket = window.SynergiViewModel.Ticket;
+
+            if(selectedSection != null)
+            {
+                window.Polylines["BU-498"].Select(selectedSection.Name);
+            }
 
             if (selectedSection != null)
             {

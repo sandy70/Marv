@@ -8,7 +8,7 @@ namespace Marv.Common
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private TimeSpan duration = TimeSpan.FromSeconds(5);
+        private TimeSpan duration = TimeSpan.FromSeconds(3);
 
         public TimeSpan Duration
         {

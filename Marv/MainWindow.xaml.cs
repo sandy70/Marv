@@ -164,7 +164,15 @@ namespace Marv
             var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-            Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
+
+            try
+            {
+                Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
+            }
+            catch(IOException exp)
+            {
+                logger.Warn(exp.Message);
+            }
         }
 
         public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
@@ -193,6 +201,8 @@ namespace Marv
                     Name = "Value Not Found",
                     Description = exception.Message
                 });
+
+                this.GraphValues = null;
             }
         }
 
@@ -214,21 +224,22 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.GraphValues != null && this.SourceGraph != null)
+            if (this.SourceGraph != null)
             {
-                if (this.GraphValues.ContainsKey(this.SelectedYear))
+                if (this.GraphValues != null)
                 {
-                    this.SourceGraph.Value = this.GraphValues[this.SelectedYear];
+                    if (this.GraphValues.ContainsKey(this.SelectedYear))
+                    {
+                        this.SourceGraph.Value = this.GraphValues[this.SelectedYear];
+                    }
+                    else
+                    {
+                        this.SourceGraph.SetValueToZero();
+                    }
                 }
                 else
                 {
                     this.SourceGraph.SetValueToZero();
-
-                    this.Notifications.Push(new NotificationTimed
-                    {
-                        Name = "Value Not Found",
-                        Description = "Pipeline is inactive for this year."
-                    });
                 }
             }
         }

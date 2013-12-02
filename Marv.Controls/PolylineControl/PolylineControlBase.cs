@@ -1,4 +1,5 @@
 ﻿using Marv.Common;
+using NLog;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,6 +8,8 @@ namespace Marv.Controls
 {
     public class PolylineControlBase : UserControl
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static readonly DependencyProperty CursorFillProperty =
         DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControlBase), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
@@ -23,7 +26,16 @@ namespace Marv.Controls
         DependencyProperty.Register("Locations", typeof(LocationCollection), typeof(PolylineControlBase), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PolylineControlBase), new PropertyMetadata(null));
+        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(PolylineControlBase), new PropertyMetadata(null, OnSelectedLocationChanged));
+
+        private static void OnSelectedLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            logger.Trace("");
+
+            var control = d as SegmentedPolylineControl;
+            control.CursorLocation = control.SelectedLocation;
+            control.IsCursorVisible = true;
+        }
 
         public static readonly DependencyProperty StrokeProperty =
         DependencyProperty.Register("Stroke", typeof(Brush), typeof(PolylineControlBase), new PropertyMetadata(new SolidColorBrush(Colors.Red)));

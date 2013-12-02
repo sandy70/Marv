@@ -28,7 +28,7 @@ namespace Marv.Controls
         {
             this.SimplifiedLocations = this.Locations;
             this.SelectedLocation = this.Locations.FirstOrDefault();
-            this.CursorLocation = this.SelectedLocation;
+            // this.CursorLocation = this.SelectedLocation;
         }
     }
 }
