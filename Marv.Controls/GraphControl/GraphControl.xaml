@@ -184,10 +184,10 @@
             </i:Interaction.Behaviors>
         </telerik:RadDiagram>
 
-        <telerik:RadDiagramNavigationPane Name="NavigationPart"
+        <!--<telerik:RadDiagramNavigationPane Name="NavigationPart"
                                           Diagram="{Binding ElementName=DiagramPart}"
                                           Margin="10"
                                           HorizontalAlignment="Right"
-                                          VerticalAlignment="Bottom" />
+                                          VerticalAlignment="Bottom" />-->
     </Grid>
 </UserControl>

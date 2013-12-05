@@ -46,7 +46,7 @@
                                     TextTrimming="WordEllipsis"
                                     TextWrapping="WrapWithOverflow" />
 
-                        <surface:SurfaceButton Name="NotificationCloseButton"
+                        <Button Name="NotificationCloseButton"
                                                Grid.Column="1"
                                                Background="{StaticResource ResourceKey=BackgroundDark}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -57,7 +57,7 @@
                             <i:Interaction.Behaviors>
                                 <local:NotificationCloseButtonBehavior />
                             </i:Interaction.Behaviors>
-                        </surface:SurfaceButton>
+                        </Button>
                     </Grid>
 
                     <!-- Notification Description -->
