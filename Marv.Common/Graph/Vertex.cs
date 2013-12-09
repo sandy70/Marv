@@ -11,8 +11,7 @@ namespace Marv.Common
         private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
         {
             VertexCommand.VertexExpandCommand,
-            // VertexCommand.VertexLockCommand,
-            // VertexCommand.VertexClearCommand
+            // VertexCommand.VertexLockCommand, VertexCommand.VertexClearCommand
         };
 
         private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
@@ -32,7 +31,7 @@ namespace Marv.Common
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
         private State selectedState;
-        private ObservableCollection<State> states = new ObservableCollection<State>();
+        private ViewModelCollection<State> states = new ViewModelCollection<State>();
         private VertexType type = VertexType.None;
         private string units = "";
 
@@ -335,7 +334,7 @@ namespace Marv.Common
             }
         }
 
-        public ObservableCollection<State> States
+        public ViewModelCollection<State> States
         {
             get { return states; }
             set
@@ -447,8 +446,7 @@ namespace Marv.Common
 
         public double GetStandardDeviation(Dictionary<string, double> vertexValue)
         {
-            // Formula for standard deviation of a pdf
-            // stdev = sqrt(sum((x - mu)^2 * P(x));
+            // Formula for standard deviation of a pdf stdev = sqrt(sum((x - mu)^2 * P(x));
 
             var mu = this.GetMean(vertexValue);
             var stdev = 0.0;

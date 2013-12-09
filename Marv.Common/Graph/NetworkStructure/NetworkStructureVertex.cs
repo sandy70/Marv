@@ -102,9 +102,9 @@ namespace Marv.Common
             return range;
         }
 
-        public ObservableCollection<State> ParseStates()
+        public ViewModelCollection<State> ParseStates()
         {
-            var states = new ObservableCollection<State>();
+            var states = new ViewModelCollection<State>();
             var subtype = "";
 
             if (this.Properties.TryGetValue("subtype", out subtype))
