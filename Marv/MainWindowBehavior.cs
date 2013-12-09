@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -94,44 +93,6 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
-        }
-
-        private async void SynergiRunButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-
-            var networkFileName = window.NetworkFileName;
-            var inputFileName = window.InputFileName;
-
-            var multiLocation = window.Polylines.SelectedItem;
-
-            var multiLocationName = multiLocation.Name;
-            var locationName = multiLocation.SelectedItem.Name;
-
-            var startYear = (int)multiLocation.Properties["StartYear"];
-            var endYear = window.EndYear;
-
-            var notification = new NotificationIndeterminate
-            {
-                Name = "Running Model",
-                Description = "Running model for location: " + locationName
-            };
-
-            window.Notifications.Push(notification);
-
-            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
-
-            notification.Close();
-
-            window.ReadGraphValues();
-            window.UpdateGraphValue();
-        }
-
-        private void window_SelectedYearChanged(object sender, double e)
-        {
-            var window = this.AssociatedObject as MainWindow;
-            window.UpdateGraphValue();
-            window.UpdateMultiLocationValues();
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
@@ -335,7 +296,7 @@ namespace Marv
             var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
             var ticket = window.SynergiViewModel.Ticket;
 
-            if(selectedSection != null)
+            if (selectedSection != null)
             {
                 window.Polylines["BU-498"].Select(selectedSection.Name);
             }
@@ -417,6 +378,37 @@ namespace Marv
             }
         }
 
+        private async void SynergiRunButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = this.AssociatedObject;
+
+            var networkFileName = window.NetworkFileName;
+            var inputFileName = window.InputFileName;
+
+            var multiLocation = window.Polylines.SelectedItem;
+
+            var multiLocationName = multiLocation.Name;
+            var locationName = multiLocation.SelectedItem.Name;
+
+            var startYear = (int)multiLocation.Properties["StartYear"];
+            var endYear = window.EndYear;
+
+            var notification = new NotificationIndeterminate
+            {
+                Name = "Running Model",
+                Description = "Running model for location: " + locationName
+            };
+
+            window.Notifications.Push(notification);
+
+            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+
+            notification.Close();
+
+            window.ReadGraphValues();
+            window.UpdateGraphValue();
+        }
+
         private void TransitionControl_StatusChanged(object sender, TransitionStatusChangedEventArgs e)
         {
             var window = this.AssociatedObject;
@@ -425,6 +417,13 @@ namespace Marv
             {
                 window.MapView.ZoomTo(window.Polylines.GetBounds());
             }
+        }
+
+        private void window_SelectedYearChanged(object sender, double e)
+        {
+            var window = this.AssociatedObject as MainWindow;
+            window.UpdateGraphValue();
+            window.UpdateMultiLocationValues();
         }
     }
 }

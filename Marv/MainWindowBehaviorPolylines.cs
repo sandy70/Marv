@@ -2,10 +2,9 @@
 using NLog;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interactivity;
-
-using System.Linq;
 
 namespace Marv
 {
@@ -30,12 +29,12 @@ namespace Marv
             {
                 var pipelineInput = new PipelineInput(window.InputFileName);
                 var polylines = pipelineInput.ReadPipelines();
-                
+
                 window.Polylines.Add(polylines["BU-498"]);
 
                 window.Polylines.Select("BU-498");
                 window.Polylines["BU-498"].Select("50");
-                
+
                 window.MapView.ZoomTo(window.Polylines.GetBounds());
 
                 window.ReadMultiLocationValueTimeSeriesForMultiLocation();
@@ -81,7 +80,7 @@ namespace Marv
             window.ReadGraphValues();
             window.UpdateGraphValue();
 
-            if(window.SynergiViewModel.Sections != null)
+            if (window.SynergiViewModel.Sections != null)
             {
                 window.SynergiViewModel.Sections.SelectedItem = window.SynergiViewModel.Sections.FirstOrDefault(x => x.Name == e.Key);
             }
@@ -97,8 +96,8 @@ namespace Marv
         {
             foreach (var polyline in polylines)
             {
-                // Attach event so that we can load data when selection changes
-                // The -= ensures that events aren't subscribed twice
+                // Attach event so that we can load data when selection changes The -= ensures that
+                // events aren't subscribed twice
                 polyline.SelectionChanged -= polyline_SelectionChanged;
                 polyline.SelectionChanged += polyline_SelectionChanged;
             }
