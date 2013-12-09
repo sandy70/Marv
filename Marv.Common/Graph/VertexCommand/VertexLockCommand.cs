@@ -2,11 +2,11 @@
 {
     public class VertexLockCommand : VertexCommand
     {
-        public override void RaiseExecuted(Vertex vertexViewModel)
+        public override void RaiseExecuted(Vertex vertex)
         {
-            vertexViewModel.IsLocked = !vertexViewModel.IsLocked;
+            vertex.IsLocked = !vertex.IsLocked;
 
-            if (vertexViewModel.IsLocked)
+            if (vertex.IsLocked)
             {
                 this.ImageSource = "/Marv.Common;component/Resources/Icons/Lock.png";
             }
@@ -15,7 +15,7 @@
                 this.ImageSource = "/Marv.Common;component/Resources/Icons/Unlock.png";
             }
 
-            base.RaiseExecuted(vertexViewModel);
+            base.RaiseExecuted(vertex);
         }
     }
 }
