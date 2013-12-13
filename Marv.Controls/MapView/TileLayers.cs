@@ -1,6 +1,6 @@
 ﻿using MapControl;
 
-namespace Marv.Common
+namespace Marv.Controls
 {
     public static class TileLayers
     {

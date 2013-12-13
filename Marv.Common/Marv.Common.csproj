@@ -125,7 +125,6 @@
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="MetaObject.cs" />
     <Compile Include="NormalDistribution.cs" />
-    <Compile Include="TileLayers.cs" />
     <Compile Include="Types\Dict.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\Extensions.cs" />

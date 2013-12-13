@@ -156,6 +156,7 @@
     <Compile Include="MapDoubleToDouble.cs" />
     <Compile Include="MapView\MapView.cs" />
     <Compile Include="MapView\MapViewBehavior.cs" />
+    <Compile Include="MapView\TileLayers.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
