@@ -3,7 +3,7 @@ using System.Windows.Interactivity;
 
 namespace Marv.Controls
 {
-    internal class BnStatesControlBehavior : Behavior<BnStatesControl>
+    internal class StatesControlBehavior : Behavior<StatesControl>
     {
         protected override void OnAttached()
         {

@@ -118,7 +118,7 @@
                                         </Grid>
 
                                         <!-- States -->
-                                        <local:BnStatesControl x:Name="StatesControl"
+                                        <local:StatesControl x:Name="StatesControl"
                                                             IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
                                                             IsExpanded="{Binding IsExpanded}"
                                                             Margin="10"
@@ -126,7 +126,7 @@
                                                             SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
                                                             States="{Binding States}"
                                                             StatesFontSize="12">
-                                        </local:BnStatesControl>
+                                        </local:StatesControl>
 
                                         <!-- Units -->
                                         <StackPanel Orientation="Horizontal">

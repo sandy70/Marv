@@ -6,33 +6,33 @@ using System.Windows.Media;
 
 namespace Marv.Controls
 {
-    public partial class BnStatesControl : UserControl
+    public partial class StatesControl : UserControl
     {
         public static readonly DependencyProperty IsEditableProperty =
-        DependencyProperty.Register("IsEditable", typeof(bool), typeof(BnStatesControl), new PropertyMetadata(false));
+        DependencyProperty.Register("IsEditable", typeof(bool), typeof(StatesControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsExpandedProperty =
-        DependencyProperty.Register("IsExpanded", typeof(bool), typeof(BnStatesControl), new PropertyMetadata(true));
+        DependencyProperty.Register("IsExpanded", typeof(bool), typeof(StatesControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty MostProbableStateProperty =
-        DependencyProperty.Register("MostProbableState", typeof(State), typeof(BnStatesControl), new PropertyMetadata(null));
+        DependencyProperty.Register("MostProbableState", typeof(State), typeof(StatesControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SliderForegroundProperty =
-        DependencyProperty.Register("SliderForeground", typeof(Brush), typeof(BnStatesControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
+        DependencyProperty.Register("SliderForeground", typeof(Brush), typeof(StatesControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
         public static readonly RoutedEvent StateDoubleClickedEvent =
-        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(BnStatesControl));
+        EventManager.RegisterRoutedEvent("StateDoubleClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(StatesControl));
 
         public static readonly DependencyProperty StatesFontSizeProperty =
-        DependencyProperty.Register("StatesFontSize", typeof(double), typeof(BnStatesControl), new PropertyMetadata(10.0));
+        DependencyProperty.Register("StatesFontSize", typeof(double), typeof(StatesControl), new PropertyMetadata(10.0));
 
         public static readonly DependencyProperty StatesProperty =
-        DependencyProperty.Register("States", typeof(IEnumerable<State>), typeof(BnStatesControl), new PropertyMetadata(null));
+        DependencyProperty.Register("States", typeof(IEnumerable<State>), typeof(StatesControl), new PropertyMetadata(null));
 
         public static readonly RoutedEvent ValueEnteredEvent =
-        EventManager.RegisterRoutedEvent("ValueEntered", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(BnStatesControl));
+        EventManager.RegisterRoutedEvent("ValueEntered", RoutingStrategy.Bubble, typeof(RoutedEventHandler<ValueEventArgs<State>>), typeof(StatesControl));
 
-        public BnStatesControl()
+        public StatesControl()
         {
             InitializeComponent();
         }
@@ -87,7 +87,7 @@ namespace Marv.Controls
 
         private static void SelectedStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var statesControl = d as BnStatesControl;
+            var statesControl = d as StatesControl;
             var selectedState = e.NewValue as State;
 
             foreach (var state in statesControl.States)

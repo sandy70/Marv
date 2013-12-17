@@ -126,11 +126,11 @@
     <Compile Include="GraphControl\GraphControlEventArgs.cs" />
     <Compile Include="GraphControl\DiagramPartBehavior.cs" />
     <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
-    <Compile Include="BnStatesControl\BnStatesControl.xaml.cs">
-      <DependentUpon>BnStatesControl.xaml</DependentUpon>
+    <Compile Include="StatesControl\StatesControl.xaml.cs">
+      <DependentUpon>StatesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BnStatesControl\BnStatesControlBehavior.cs" />
-    <Compile Include="BnStatesControl\SliderProgressBarBehavior.cs" />
+    <Compile Include="StatesControl\StatesControlBehavior.cs" />
+    <Compile Include="StatesControl\SliderProgressBarBehavior.cs" />
     <Compile Include="Converters\BooleanNotConverter.cs" />
     <Compile Include="Converters\BooleanToColorConverter.cs" />
     <Compile Include="Converters\BooleanToStringConverter.cs" />
@@ -197,7 +197,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BnStatesControl\BnStatesControl.xaml">
+    <Page Include="StatesControl\StatesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

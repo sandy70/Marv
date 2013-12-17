@@ -15,23 +15,23 @@ namespace Marv.Controls
 
         private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
+            var statesControl = this.AssociatedObject.FindParent<StatesControl>();
 
             statesControl.RaiseEvent(new ValueEventArgs<State>
             {
-                RoutedEvent = BnStatesControl.StateDoubleClickedEvent,
+                RoutedEvent = StatesControl.StateDoubleClickedEvent,
                 Value = this.AssociatedObject.DataContext as State
             });
         }
 
         private void AssociatedObject_ValueEntered(object sender, ValueEventArgs<double> e)
         {
-            var statesControl = this.AssociatedObject.FindParent<BnStatesControl>();
+            var statesControl = this.AssociatedObject.FindParent<StatesControl>();
             var selectedState = this.AssociatedObject.DataContext as State;
 
             statesControl.RaiseEvent(new ValueEventArgs<State>
             {
-                RoutedEvent = BnStatesControl.ValueEnteredEvent,
+                RoutedEvent = StatesControl.ValueEnteredEvent,
                 Value = selectedState
             });
         }
