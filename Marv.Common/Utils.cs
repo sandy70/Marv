@@ -95,7 +95,7 @@ namespace Marv.Common
         {
             var webClient = new WebClient();
 
-            var stream = await webClient.OpenReadTaskAsync(new Uri("http://earthquake.usgs.gov/earthquakes/feed/srcVertex.0/summary/all_week.atom"));
+            var stream = await webClient.OpenReadTaskAsync(new Uri("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.atom"));
 
             var xDocument = XDocument.Load(stream);
 
