@@ -134,7 +134,7 @@ namespace Marv.Common
 
         public static Location Parse(string locationString)
         {
-            var parts = locationString.Split(" ".ToCharArray());
+            var parts = locationString.Split(" ,".ToCharArray());
 
             return new Location
             {
