@@ -120,12 +120,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EllipseControl.xaml.cs">
+      <DependentUpon>EllipseControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GraphControl\GraphControlEventArgs.cs" />
     <Compile Include="GraphControl\DiagramPartBehavior.cs" />
     <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
+    <Compile Include="LocationEllipse.cs" />
     <Compile Include="StatesControl\StatesControl.xaml.cs">
       <DependentUpon>StatesControl.xaml</DependentUpon>
     </Compile>
@@ -193,6 +197,10 @@
     <Compile Include="ValueEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="EllipseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GraphControl\GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
