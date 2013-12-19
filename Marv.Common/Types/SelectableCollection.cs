@@ -93,16 +93,33 @@ namespace Marv.Common
 
             set
             {
-                if (value == null || !value.Equals(this.selectedItem))
+                if (value == null)
                 {
                     this.selectedItem = value;
                     this.RaisePropertyChanged("SelectedItem");
                     this.RaiseSelectionChanged();
                 }
-
-                if (!this.Contains(value))
+                else
                 {
-                    this.Add(value);
+                    if (value.Equals(this.SelectedItem))
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        if (this.Contains(value))
+                        {
+                            // do nothing
+                        }
+                        else
+                        {
+                            this.Add(value);
+                        }
+
+                        this.selectedItem = value;
+                        this.RaisePropertyChanged("SelectedItem");
+                        this.RaiseSelectionChanged();
+                    }
                 }
             }
         }
