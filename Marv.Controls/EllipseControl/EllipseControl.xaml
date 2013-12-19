@@ -13,6 +13,10 @@
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </mapcontrol:MapPanel.Resources>
     
+    <i:Interaction.Behaviors>
+        <local:EllipseControlBehavior />
+    </i:Interaction.Behaviors>
+    
     <mapcontrol:MapItemsControl Name="MapItemsControl"
                                 ItemsSource="{Binding LocationEllipses, ElementName=Root}"
                                 SelectedItem="{Binding SelectedLocationEllipse, ElementName=Root}"

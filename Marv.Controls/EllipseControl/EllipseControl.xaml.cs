@@ -26,8 +26,6 @@ namespace Marv.Controls
         public EllipseControl()
         {
             InitializeComponent();
-
-            this.Loaded += EllipseControl_Loaded;
         }
 
         public IEnumerable<LocationEllipse> LocationEllipses
@@ -69,7 +67,7 @@ namespace Marv.Controls
         private static void OnScalingFuncChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as EllipseControl;
-            UpdateLocationEllipses(control);
+            UpdateLocationEllipsesRadius(control);
         }
 
         private static void OnSelectedLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -111,14 +109,29 @@ namespace Marv.Controls
             }
         }
 
-        private void EllipseControl_Loaded(object sender, RoutedEventArgs e)
+        private static void UpdateLocationEllipsesRadius(EllipseControl control)
         {
-            (this.ParentMap as MapView).PreviewMouseDown += ParentMap_MouseDown;
-        }
-
-        private void ParentMap_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            this.SelectedLocationEllipse = null;
+            if (control.LocationEllipses == null)
+            {
+                UpdateLocationEllipses(control);
+            }
+            else
+            {
+                if (control.ScalingFunc == null)
+                {
+                    foreach (var locationEllipse in control.LocationEllipses)
+                    {
+                        locationEllipse.Radius = locationEllipse.Center.Value;
+                    }
+                }
+                else
+                {
+                    foreach (var locationEllipse in control.LocationEllipses)
+                    {
+                        locationEllipse.Radius = control.ScalingFunc(locationEllipse.Center.Value);
+                    }
+                }
+            }
         }
     }
 }
