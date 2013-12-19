@@ -113,6 +113,14 @@ namespace Marv.Common
                                  });
         }
 
+        public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
+        {
+            if (value.CompareTo(minValue) < 0) value = minValue;
+            if (value.CompareTo(maxValue) > 0) value = maxValue;
+
+            return value;
+        }
+
         public static T ReadJson<T>(string fileName)
         {
             var serializer = new JsonSerializer();
