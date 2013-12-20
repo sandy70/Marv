@@ -60,7 +60,7 @@ namespace Marv
             }
         }
 
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
@@ -94,6 +94,10 @@ namespace Marv
             window.MapBoxAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxAerial;
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
+
+            window.EarthquakeControl.ScalingFunc = x => Utils.Clamp(Math.Pow(x, 1.2) * 10, 1, 150);
+
+            window.Earthquakes = new ViewModelCollection<Location>(await Utils.ReadEarthquakesAsync(new Progress<double>()));
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)

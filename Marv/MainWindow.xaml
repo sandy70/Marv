@@ -130,15 +130,27 @@
                                                                                    IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
                                                                                    IsEnabled="{Binding IsEnabled}"
                                                                                    Locations="{Binding}"
-                                                                                   SelectedLocation="{Binding SelectedItem, Mode=TwoWay}"/>
+                                                                                   SelectedLocation="{Binding SelectedItem, Mode=TwoWay}" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-                                    
+
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             </Style>
                         </mapcontrol:MapItemsControl.ItemContainerStyle>
                     </mapcontrol:MapItemsControl>
+
+                    <marvcontrols:EllipseControl Name="EarthquakeControl"
+                                                 Effect="{StaticResource DropShadow}"
+                                                 Locations="{Binding Earthquakes, ElementName=Root}" 
+                                                 Opacity="0.8" />
+
+                    <Label mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Mode=TwoWay, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                           Background="Gray"
+                           Content="{Binding Earthquakes.SelectedItem.Value, ElementName=Root}"
+                           Height="30" Width="100"
+                           Visibility="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}"/>
+                    
                 </marvcontrols:MapView>
 
                 <!-- Property Grid -->
@@ -195,9 +207,9 @@
                                 FontSize="{StaticResource ResourceKey=FontSizeLarge}"
                                 FontWeight="Bold"
                                 Margin="5"
-                                Text="Synergi Data" 
+                                Text="Synergi Data"
                                 VerticalAlignment="Center" />
-                        
+
                         <surface:SurfaceButton Grid.Column="1"
                                                Content="Run Selected"
                                                HorizontalContentAlignment="Center"
@@ -211,17 +223,17 @@
                             <RowDefinition Height="40" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <Label Grid.Row="0" Grid.Column="0"
                                Content="Lines"
-                               Margin="5"/>
-                        
+                               Margin="5" />
+
                         <surface:SurfaceListBox Grid.Row="1" Grid.Column="0"
                                                 Name="LinesListBox"
                                                 HorizontalContentAlignment="Stretch"
@@ -239,7 +251,7 @@
 
                         <Label Grid.Row="0" Grid.Column="1"
                                Content="Sections"
-                               Margin="5"/>
+                               Margin="5" />
 
                         <surface:SurfaceListBox Grid.Row="1" Grid.Column="1"
                                                 Name="SectionsListBox"
@@ -259,26 +271,26 @@
 
                         <Label Grid.Row="0" Grid.Column="2"
                                Content="Properties"
-                               Margin="5"/>
+                               Margin="5" />
 
                         <DataGrid Grid.Row="1" Grid.Column="2"
                                   AutoGenerateColumns="False"
                                   ItemsSource="{Binding SynergiViewModel.SegmentData, ElementName=Root}"
-                                  Margin="5"> 
+                                  Margin="5">
                             <DataGrid.Columns>
-                                    <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
-                                    <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
+                                <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
+                                <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
 
                     <!-- ChartControl Legend -->
                     <telerik:RadLegend Grid.Row="1"
-                                           Background="White" 
-                                           BorderBrush="Black" 
-                                           BorderThickness="1" 
+                                           Background="White"
+                                           BorderBrush="Black"
+                                           BorderThickness="1"
                                            HorizontalAlignment="Right" VerticalAlignment="Top"
-                                           Items="{Binding LegendItems, ElementName=ChartControl}" 
+                                           Items="{Binding LegendItems, ElementName=ChartControl}"
                                            Margin="5" />
                 </Grid>
 
@@ -322,7 +334,7 @@
                                                          Height="50" Width="50"
                                                          Margin="5"
                                                          Source="/Marv.Common;component/Resources/Icons/Close.png" />
-                        
+
                         <!-- Back Button -->
                         <marvcontrols:SurfaceImageButton Grid.Row="0"
                                                          Name="BackButton"
@@ -330,7 +342,6 @@
                                                          Margin="5"
                                                          Source="/Marv.Common;component/Resources/Icons/Back.png"
                                                          Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
-
                     </StackPanel>
 
                     <!-- Year Label and Year Slider -->

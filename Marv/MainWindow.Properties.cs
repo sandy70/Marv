@@ -16,6 +16,9 @@ namespace Marv
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty EarthquakesProperty =
+        DependencyProperty.Register("Earthquakes", typeof(ViewModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
@@ -102,6 +105,12 @@ namespace Marv
         {
             get { return (Graph)GetValue(DisplayGraphProperty); }
             set { SetValue(DisplayGraphProperty, value); }
+        }
+
+        public ViewModelCollection<Location> Earthquakes
+        {
+            get { return (ViewModelCollection<Location>)GetValue(EarthquakesProperty); }
+            set { SetValue(EarthquakesProperty, value); }
         }
 
         public int EndYear
