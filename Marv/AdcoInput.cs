@@ -1,6 +1,4 @@
-﻿using LibNetwork;
-using LibPipeline;
-using Marv.Common;
+﻿using Marv.Common;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -57,7 +55,6 @@ namespace Marv
                             }
 
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
-                            var a = 1 + 2;
                         }
                     }
 
@@ -97,7 +94,7 @@ namespace Marv
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
-                            var vertex = graph.GetVertex(vertexKey);
+                            var vertex = graph.Vertices[vertexKey];
 
                             if (evidenceString.Contains('?'))
                             {
@@ -137,7 +134,7 @@ namespace Marv
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
-                            var vertex = graph.GetVertex(vertexKey);
+                            var vertex = graph.Vertices[vertexKey];
 
                             if (evidenceString == null)
                             {
@@ -185,11 +182,11 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static SelectableCollection<MultiLocation> Read(string fileName)
+        public static ViewModelCollection<LocationCollection> Read(string fileName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var multiLocations = new SelectableCollection<MultiLocation>();
+                var multiLocations = new ViewModelCollection<LocationCollection>();
                 var nHeaderRows = 3;
                 var pipelineStartRowIndices = new List<int>();
                 var rowIndex = nHeaderRows + 1;
@@ -217,12 +214,12 @@ namespace Marv
                     var pipelineStartRowIndex = pipelineStartRowIndices[pipelineIndex - 1];
                     var pipelineEndRowIndex = pipelineStartRowIndices[pipelineIndex];
 
-                    var multiLocation = new MultiLocation();
+                    var multiLocation = new LocationCollection();
                     multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "R1C1") as string;
 
                     var startYear = sheet.GetValue(pipelineStartRowIndex, "START");
 
-                    multiLocation["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
+                    multiLocation.Properties["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
 
                     for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
                     {
@@ -263,10 +260,9 @@ namespace Marv
 
                     if (Double.TryParse(partsOfPart[0], out value))
                     {
-
                         foreach (var state in vertex.States)
                         {
-                            if (state.Range.ContainsValue(value))
+                            if (state.Range.Bounds(value))
                             {
                                 evidenceArray[vertex.States.IndexOf(state)] += probability;
                             }
@@ -285,7 +281,7 @@ namespace Marv
                 }
                 else
                 {
-                    throw new InconsistentEvidenceException();
+                    throw new Smile.SmileException("");
                 }
             }
 
@@ -345,7 +341,7 @@ namespace Marv
             }
             else
             {
-                throw new InconsistentEvidenceException();
+                throw new Smile.SmileException("");
             }
             return evidence;
         }
@@ -381,7 +377,7 @@ namespace Marv
 
                     foreach (var state in vertex.States)
                     {
-                        if (state.Range.ContainsValue(value))
+                        if (state.Range.Bounds(value))
                         {
                             evidenceArray[vertex.States.IndexOf(state)] = 1;
                         }
@@ -394,7 +390,7 @@ namespace Marv
                 }
                 else
                 {
-                    throw new InconsistentEvidenceException();
+                    throw new Smile.SmileException("");
                 }
             }
             return evidence;

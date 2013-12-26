@@ -1,7 +1,6 @@
-﻿using LibNetwork;
-using LibPipeline;
-using Marv.Common;
-using System.Linq;
+﻿using Marv.Common;
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace Marv
@@ -11,14 +10,20 @@ namespace Marv
         public static readonly DependencyProperty CacheDirectoryProperty =
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
+        public static readonly DependencyProperty ChartSeriesProperty =
+        DependencyProperty.Register("ChartSeries", typeof(ViewModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ViewModelCollection<IChartSeries>()));
+
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty EarthquakesProperty =
+        DependencyProperty.Register("Earthquakes", typeof(ViewModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
 
-        public static readonly DependencyProperty GraphValueTimeSeriesProperty =
-        DependencyProperty.Register("GraphValueTimeSeries", typeof(GraphValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty InputDirProperty =
+        DependencyProperty.Register("InputDir", typeof(string), typeof(MainWindow), new PropertyMetadata(""));
 
         public static readonly DependencyProperty InputFileNameProperty =
         DependencyProperty.Register("InputFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
@@ -26,8 +31,8 @@ namespace Marv
         public static readonly DependencyProperty IsBackButtonVisibleProperty =
         DependencyProperty.Register("IsBackButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsGroupButtonVisibleProperty =
-        DependencyProperty.Register("IsGroupButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsChartControlVisibleProperty =
+        DependencyProperty.Register("IsChartControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsLogoVisibleProperty =
         DependencyProperty.Register("IsLogoVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -38,14 +43,8 @@ namespace Marv
         public static readonly DependencyProperty IsMenuVisibleProperty =
         DependencyProperty.Register("IsMenuVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsProfileSelectedProperty =
-        DependencyProperty.Register("IsProfileSelected", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
-
         public static readonly DependencyProperty IsPropertyGridVisibleProperty =
         DependencyProperty.Register("IsPropertyGridVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsSensorButtonVisibleProperty =
-        DependencyProperty.Register("IsSensorButtonVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsSettingsControlVisibleProperty =
         DependencyProperty.Register("IsSettingsControlVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
@@ -59,31 +58,47 @@ namespace Marv
         public static readonly DependencyProperty IsYearSliderVisibleProperty =
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty MultiLocationsProperty =
-        DependencyProperty.Register("MultiLocations", typeof(SelectableCollection<MultiLocation>), typeof(MainWindow), new PropertyMetadata(null, ChangedMultiLocations));
-
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
         DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(MultiLocationValueTimeSeries), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty NetworkFileNameProperty =
         DependencyProperty.Register("NetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty NotificationsProperty =
+        DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
+
+        public static readonly DependencyProperty PolylinesProperty =
+        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
+
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
 
         public static readonly DependencyProperty SelectedYearProperty =
-        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedSelectedYear));
+        DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001, OnSelectedYearChanged));
 
         public static readonly DependencyProperty SourceGraphProperty =
         DependencyProperty.Register("SourceGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
-        DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000));
+        DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001));
+
+        public static readonly DependencyProperty SynergiViewModelProperty =
+        DependencyProperty.Register("SynergiViewModel", typeof(SynergiViewModel), typeof(MainWindow), new PropertyMetadata(new SynergiViewModel()));
+
+        public event EventHandler<ViewModelCollection<LocationCollection>> PolylinesChanged;
+
+        public event EventHandler<double> SelectedYearChanged;
 
         public string CacheDirectory
         {
             get { return (string)GetValue(CacheDirectoryProperty); }
             set { SetValue(CacheDirectoryProperty, value); }
+        }
+
+        public ViewModelCollection<IChartSeries> ChartSeries
+        {
+            get { return (ViewModelCollection<IChartSeries>)GetValue(ChartSeriesProperty); }
+            set { SetValue(ChartSeriesProperty, value); }
         }
 
         public Graph DisplayGraph
@@ -92,16 +107,22 @@ namespace Marv
             set { SetValue(DisplayGraphProperty, value); }
         }
 
+        public ViewModelCollection<Location> Earthquakes
+        {
+            get { return (ViewModelCollection<Location>)GetValue(EarthquakesProperty); }
+            set { SetValue(EarthquakesProperty, value); }
+        }
+
         public int EndYear
         {
             get { return (int)GetValue(EndYearProperty); }
             set { SetValue(EndYearProperty, value); }
         }
 
-        public GraphValueTimeSeries GraphValueTimeSeries
+        public string InputDir
         {
-            get { return (GraphValueTimeSeries)GetValue(GraphValueTimeSeriesProperty); }
-            set { SetValue(GraphValueTimeSeriesProperty, value); }
+            get { return (string)GetValue(InputDirProperty); }
+            set { SetValue(InputDirProperty, value); }
         }
 
         public string InputFileName
@@ -116,10 +137,10 @@ namespace Marv
             set { SetValue(IsBackButtonVisibleProperty, value); }
         }
 
-        public bool IsGroupButtonVisible
+        public bool IsChartControlVisible
         {
-            get { return (bool)GetValue(IsGroupButtonVisibleProperty); }
-            set { SetValue(IsGroupButtonVisibleProperty, value); }
+            get { return (bool)GetValue(IsChartControlVisibleProperty); }
+            set { SetValue(IsChartControlVisibleProperty, value); }
         }
 
         public bool IsLogoVisible
@@ -146,12 +167,6 @@ namespace Marv
             set { SetValue(IsPropertyGridVisibleProperty, value); }
         }
 
-        public bool IsSensorButtonVisible
-        {
-            get { return (bool)GetValue(IsSensorButtonVisibleProperty); }
-            set { SetValue(IsSensorButtonVisibleProperty, value); }
-        }
-
         public bool IsTallySelected
         {
             get { return (bool)GetValue(IsTallySelectedProperty); }
@@ -164,12 +179,6 @@ namespace Marv
             set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
-        public SelectableCollection<MultiLocation> MultiLocations
-        {
-            get { return (SelectableCollection<MultiLocation>)GetValue(MultiLocationsProperty); }
-            set { SetValue(MultiLocationsProperty, value); }
-        }
-
         public MultiLocationValueTimeSeries MultiLocationValueTimeSeries
         {
             get { return (MultiLocationValueTimeSeries)GetValue(MultiLocationValueTimeSeriesProperty); }
@@ -180,6 +189,18 @@ namespace Marv
         {
             get { return (string)GetValue(NetworkFileNameProperty); }
             set { SetValue(NetworkFileNameProperty, value); }
+        }
+
+        public ObservableCollection<INotification> Notifications
+        {
+            get { return (ObservableCollection<INotification>)GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
+        }
+
+        public ViewModelCollection<LocationCollection> Polylines
+        {
+            get { return (ViewModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
+            set { SetValue(PolylinesProperty, value); }
         }
 
         public RiskValueToBrushMap RiskValueToBrushMap
@@ -206,42 +227,30 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        private static void ChangedMultiLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public SynergiViewModel SynergiViewModel
+        {
+            get { return (SynergiViewModel)GetValue(SynergiViewModelProperty); }
+            set { SetValue(SynergiViewModelProperty, value); }
+        }
+
+        private static void OnChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
 
-            if (window.MultiLocations != null)
+            if (window.PolylinesChanged != null)
             {
-                if (window.MultiLocations.Count > 0)
-                {
-                    // Calculate start year
-                    window.StartYear = window.MultiLocations.Min(multiLocation => (int)multiLocation["StartYear"]);
-                    window.SelectedYear = window.StartYear;
-                }
-
-                foreach (var multiLocation in window.MultiLocations)
-                {
-                    // Attach event so that we can load data when selection changes
-                    // The -= ensures that events aren't subscribed twice
-                    multiLocation.SelectionChanged -= window.multiLocation_SelectionChanged;
-                    multiLocation.SelectionChanged += window.multiLocation_SelectionChanged;
-                }
+                window.PolylinesChanged(window, window.Polylines);
             }
         }
 
-        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedYearChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var window = d as MainWindow;
-            window.UpdateGraphValue();
-            window.UpdateMultiLocationValues();
-        }
 
-        private void multiLocation_SelectionChanged(object sender, ValueEventArgs<Location> e)
-        {
-            Logger.Trace("");
-
-            this.ReadGraphValueTimeSeries();
-            this.UpdateGraphValue();
+            if (window.SelectedYearChanged != null)
+            {
+                window.SelectedYearChanged(window, window.SelectedYear);
+            }
         }
     }
 }

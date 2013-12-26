@@ -1,17 +1,20 @@
-﻿using LibNetwork;
-using LibPipeline;
-using Marv.Common;
+﻿using Marv.Common;
+using Marv.Controls;
+using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows;
 using System.Windows.Interactivity;
-using System.Windows.Media.Animation;
+using System.Windows.Media;
+using Telerik.Charting;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv
 {
     internal class MainWindowGraphControlBehavior : Behavior<MainWindow>
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -22,34 +25,118 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.BackButtonClicked += GraphControl_BackButtonClicked;
-            window.GraphControl.GroupButtonClicked += GraphControl_GroupButtonClicked;
-            window.GraphControl.NewEvidenceAvailable += GraphControl_NewEvidenceAvailable;
-            window.GraphControl.RetractButtonClicked += GraphControl_RetractButtonClicked;
-            window.GraphControl.SensorButtonChecked += GraphControl_SensorButtonChecked;
-            window.GraphControl.SensorButtonUnchecked += GraphControl_SensorButtonUnchecked;
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
+
+            MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
+            MainWindow.VertexChartPofCommand.Executed += VertexChartPofCommand_Executed;
+            MainWindow.VertexBarChartCommand.Executed += VertexBarChartCommand_Executed;
+
+            VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
+            VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
+            VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
         }
 
-        private void GraphControl_BackButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void VertexChartPofCommand_Executed(object sender, Vertex e)
         {
             var window = this.AssociatedObject;
-            var vertex = e.Value;
+            window.IsChartControlVisible = true;
 
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
-            window.IsBackButtonVisible = false;
+            var chartSeries = new ChartSeries<ScatterPoint>
+            {
+                Name = "Prob. of Failure",
+                Type = typeof(ScatterLineSeries)
+            };
+
+            foreach (var year in window.GraphValues.Keys)
+            {
+                var pof = window.GraphValues[year]["coatd"]["YEs"];
+
+                chartSeries.Add(new ScatterPoint
+                {
+                    XValue = year,
+                    YValue = pof
+                });
+            }
+
+            window.ChartSeries.Clear();
+            window.ChartSeries.Add(chartSeries);
+
+            ChartAxes.HorizontalLinearAxis.Title = "Time";
+            ChartAxes.VerticalLinearAxis.Title = "Probability of Failure";
         }
 
-        private void GraphControl_GroupButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
-            var vertex = e.Value;
+            window.IsChartControlVisible = true;
 
-            window.DisplayGraph = vertex.GetSubGraph();
-            window.IsBackButtonVisible = true;
+            var categoryPoints = new ChartSeries<CategoricalPoint>
+            {
+                Name = vertex.Name,
+                Type = typeof(Telerik.Windows.Controls.ChartView.BarSeries),
+            };
+
+            foreach (var state in vertex.States)
+            {
+                var value = window.GraphValues[1973][vertex.Key][state.Key];
+
+                categoryPoints.Add(new CategoricalPoint
+                {
+                    Category = state.Key,
+                    Value = value
+                });
+            }
+
+            window.ChartSeries.Clear();
+            window.ChartSeries.Add(categoryPoints);
+
+            ChartAxes.VerticalCategoricalAxis.Title = "Probability";
         }
 
-        private void GraphControl_StateDoubleClicked(object sender, BnGraphControlEventArgs e)
+        private void VertexChartCommand_Executed(object sender, Vertex vertex)
+        {
+            var window = this.AssociatedObject;
+            window.IsChartControlVisible = true;
+
+            window.ChartSeries.Clear();
+
+            var colorForYear = new Dictionary<int, Color>
+            {
+                { 1973, Colors.Red },
+                { 1993, Colors.Green },
+                { 2004, Colors.Blue },
+                { 2011, Colors.Orange }
+            };
+
+            foreach (var year in colorForYear.Keys)
+            {
+                var chartSeries = new ChartSeries<ScatterPoint>
+                {
+                    Name = year.ToString(),
+                    Stroke = new SolidColorBrush(colorForYear[year]),
+                    Type = typeof(ScatterSplineSeries),
+                };
+
+                foreach (var state in vertex.States)
+                {
+                    var x = (state.Range.Min + state.Range.Max) / 2;
+                    var y = window.GraphValues[year][vertex.Key][state.Key];
+
+                    chartSeries.Add(new ScatterPoint
+                    {
+                        XValue = x,
+                        YValue = y,
+                    });
+                }
+
+                window.ChartSeries.Add(chartSeries);
+            }
+
+            ChartAxes.HorizontalLinearAxis.Title = vertex.Name;
+            ChartAxes.VerticalLinearAxis.Title = "Probability";
+        }
+
+        private void GraphControl_StateDoubleClicked(object sender, GraphControlEventArgs e)
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
@@ -66,9 +153,14 @@ namespace Marv
                 {
                     graph.Value = graph.Run(vertex.Key, evidence);
                 }
-                catch (InconsistentEvidenceException exception)
+                catch (Smile.SmileException)
                 {
-                    window.PopupControl.ShowText("Inconsistent evidence entered.");
+                    window.Notifications.Push(new NotificationTimed
+                    {
+                        Name = "Inconsistent Evidence",
+                        Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                    });
+
                     graph.Value = graph.ClearEvidence(vertex.Key);
                 }
             }
@@ -78,46 +170,44 @@ namespace Marv
             }
         }
 
-        private void GraphControl_NewEvidenceAvailable(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void VertexClearCommand_Executed(object sender, Vertex vertex)
+        {
+            var graph = this.AssociatedObject.SourceGraph;
+            graph.Value = graph.ClearEvidence(vertex.Key);
+        }
+
+        private void VertexLockCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
             var graph = window.SourceGraph;
-            var vertex = e.Value;
 
             try
             {
-                graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
+                if (vertex.IsLocked)
+                {
+                    graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
+                }
             }
-            catch(InconsistentEvidenceException exception)
+            catch (Smile.SmileException)
             {
-                window.PopupControl.ShowText("Inconsistent evidence entered.");
+                window.Notifications.Push(new NotificationTimed
+                {
+                    Name = "Inconsistent Evidence",
+                    Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                });
+
                 graph.Value = graph.ClearEvidence(vertex.Key);
             }
         }
 
-        private void GraphControl_RetractButtonClicked(object sender, ValueEventArgs<BnVertexViewModel> e)
+        private void VertexSubGraphCommand_Executed(object sender, Vertex vertex)
         {
-            var graph = this.AssociatedObject.SourceGraph;
-            var vertex = e.Value;
-            graph.Value = graph.ClearEvidence(vertex.Key);
-        }
+            var window = this.AssociatedObject;
+            var displayGraph = window.DisplayGraph;
+            var sourceGraph = window.SourceGraph;
 
-        private void GraphControl_SensorButtonChecked(object sender, ValueEventArgs<BnVertexViewModel> e)
-        {
-            try
-            {
-                this.AssociatedObject.SensorListener.Start(e.Value);
-            }
-            catch (IOException exp)
-            {
-                this.AssociatedObject.SensorListener.Stop();
-                this.AssociatedObject.PopupControl.ShowText("Unable to open serial port. Connect receiver.");
-            }
-        }
-
-        private void GraphControl_SensorButtonUnchecked(object sender, ValueEventArgs<BnVertexViewModel> e)
-        {
-            this.AssociatedObject.SensorListener.Stop();
+            window.DisplayGraph = sourceGraph.GetSubGraph(vertex.HeaderOfGroup);
+            window.IsBackButtonVisible = true;
         }
     }
 }

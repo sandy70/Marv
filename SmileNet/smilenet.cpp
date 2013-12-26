@@ -19,17 +19,17 @@ namespace Smile
 	class StringToCharPtr
 	{
 	public:
-		StringToCharPtr(String *str) { pStr = static_cast<char *>(Marshal::StringToHGlobalAnsi(str).ToPointer()); }
-		operator char*() const { return pStr; }
+		StringToCharPtr(String ^str) { pStr = Marshal::StringToHGlobalAnsi(str); }
+		operator char*() { return (char *)pStr.ToPointer(); }
 		~StringToCharPtr() { Marshal::FreeHGlobal(pStr); }
 	private:
-		char *pStr;
+		IntPtr pStr;
 	};
 
-	Int32 CopyIntArray(const DSL_intArray& native)__gc[]
+	array<Int32>^ CopyIntArray(const DSL_intArray& native)
 	{
 		int imax = native.NumItems();
-		Int32 ar[] = new Int32[imax];
+		array<Int32>^ ar = gcnew array<Int32>(imax);
 		for (int i = 0; i < imax; i ++)
 		{
 			ar[i] = native[i];
@@ -37,10 +37,10 @@ namespace Smile
 		return ar;
 	}
 
-	Double CopyDoubleArray(DSL_doubleArray &native)__gc[]
+	array<Double>^ CopyDoubleArray(DSL_doubleArray &native)
 	{
 		int imax = native.GetSize();
-		Double ar[] = new Double[imax];
+		array<Double>^ ar = gcnew array<Double>(imax);
 		for (int i = 0; i < imax; i ++)
 		{
 			ar[i] = native[i];
@@ -50,59 +50,60 @@ namespace Smile
 
 	//---------------------------------------------------
 	// SmileException
-	public __gc class SmileException : public Exception
+	public ref class SmileException : public Exception
 	{
 	public:
-		SmileException(String *message) : Exception(message) {}
+		SmileException(String^ message) : Exception(message) {}
 
-		static void CheckSmileStatus(String *msg, int smileErrorCode)
+		static void CheckSmileStatus(String ^msg, int smileErrorCode)
 		{
 			if (DSL_OKAY != smileErrorCode)
 			{
-				throw new SmileException(msg, smileErrorCode);
+				throw gcnew SmileException(msg, smileErrorCode);
 			}
 		}
 
 		// 'public private' is the equivalent of C#'s 'internal' modifier
-	public private:
-		SmileException(String *msg, int smileErrorCode) : Exception(MsgFromSmileErr(msg, smileErrorCode)) {}
+	internal:
+		SmileException(String^ msg, int smileErrorCode) : Exception(MsgFromSmileErr(msg, smileErrorCode)) {}
 
 	private:
-		static String* MsgFromSmileErr(String *msg, int smileErrorCode)
+		static String^ MsgFromSmileErr(String^ msg, int smileErrorCode)
 		{
-			String *completeMsg = String::Format("{0}, SMILE error code {1}", msg, smileErrorCode.ToString());
+			String^ completeMsg = String::Format("{0}, SMILE error code {1}", msg, smileErrorCode.ToString());
 			return completeMsg;
 		}
 	};
 
 	//---------------------------------------------------
 
-	public __value struct DocItemInfo
+	public value struct DocItemInfo
 	{
-		String *title;
-		String *path;
+		String^ title;
+		String^ path;
 	};
 
-	public __value struct UserProperty
+	public value struct UserProperty
 	{
-		String *name;
-		String *value;
+		String^ name;
+		String^ value;
 	};
 
-	UserProperty ConvertUserProps(DSL_userProperties &up)__gc[]
+	array<UserProperty>^ ConvertUserProps(DSL_userProperties &up)
 	{
 		int imax = up.GetNumberOfProperties();
-		UserProperty ar[] = new UserProperty[imax];
+		array<UserProperty>^ ar = gcnew array<UserProperty>(imax);
+
 		for (int i = 0; i < imax; i ++)
 		{
-			ar[i].name = up.GetPropertyName(i);
-			ar[i].value = up.GetPropertyValue(i);
+			ar[i].name = gcnew String(up.GetPropertyName(i));
+			ar[i].value = gcnew String(up.GetPropertyValue(i));
 		}
 
 		return ar;
 	}
 
-	void ConvertUserProps(UserProperty ar[], DSL_userProperties &up)
+	void ConvertUserProps(array<UserProperty>^ ar, DSL_userProperties &up)
 	{
 		// potential problem with compiler/linker.
 		// when p is local stack allocated object
@@ -120,16 +121,16 @@ namespace Smile
 			if (p->FindProperty(szName) >= 0)
 			{
 				delete p;
-				String *msg = String::Format("Duplicate property name: {0}", ar[i].name);
-				throw new SmileException(msg);
+				String^ msg = String::Format("Duplicate property name: {0}", ar[i].name);
+				throw gcnew SmileException(msg);
 			}
 
 			int res = p->AddProperty(szName, szValue);
 			if (DSL_OKAY != res)
 			{
 				delete p;
-				String *msg = String::Format("Can't add property: {0}={1}", ar[i].name, ar[i].value);
-				throw new SmileException(msg, res);
+				String^ msg = String::Format("Can't add property: {0}={1}", ar[i].name, ar[i].value);
+				throw gcnew SmileException(msg, res);
 				break;
 			}
 		}
@@ -138,20 +139,20 @@ namespace Smile
 		delete p;
 	}
 
-	DocItemInfo ConvertDocumentation(DSL_documentation &docs)__gc[]
+	array<DocItemInfo>^ ConvertDocumentation(DSL_documentation &docs)
 	{
 		int imax = docs.GetNumberOfDocuments();
-		DocItemInfo ar[] = new DocItemInfo[imax];
+		array<DocItemInfo>^ ar = gcnew array<DocItemInfo>(imax);
 		for (int i = 0; i < imax; i ++)
 		{
-			ar[i].title = docs.GetDocumentTitle(i);
-			ar[i].path = docs.GetDocumentPath(i);
+			ar[i].title = gcnew String(docs.GetDocumentTitle(i));
+			ar[i].path = gcnew String(docs.GetDocumentPath(i));
 		}
 
 		return ar;
 	}
 
-	void ConvertDocumentation(DocItemInfo ar[], DSL_documentation &docs)
+	void ConvertDocumentation(array<DocItemInfo>^ ar, DSL_documentation &docs)
 	{
 		docs.DeleteAllDocuments();
 
@@ -167,7 +168,7 @@ namespace Smile
 
 	//---------------------------------------------------
 	// NodeEnumerator
-	private __gc class NodeEnumerator : public IEnumerator
+	private ref class NodeEnumerator : public IEnumerator
 	{
 	public:
 		NodeEnumerator(DSL_network *net)
@@ -176,11 +177,7 @@ namespace Smile
 			current = -1;
 		}
 
-	private:
-		Object * IEnumerator::get_Current() { return __box(current); }
-		void IEnumerator::Reset() { current = -1; }
-
-		bool IEnumerator::MoveNext()
+		virtual bool MoveNext()
 		{
 			if (current == -1)
 			{
@@ -194,21 +191,35 @@ namespace Smile
 			return current >= 0;
 		}
 
+		property Object^ Current
+		{
+			virtual Object^ get()
+			{
+				return current;
+			}
+		};
+
+		virtual void Reset()
+		{
+			current = -1;
+		}
+		
+	private:
 		DSL_network *net;
 		int current;
 	};
 
 	//---------------------------------------------------
 
-	public __gc class AnnealedMapResults
+	public ref class AnnealedMapResults
 	{
 	public:
 		double probM1E;
 		double probE;
-		int mapStates __gc[];
+		array<int>^ mapStates;
 	};
 
-	public __gc class AnnealedMapTuning
+	public ref class AnnealedMapTuning
 	{
 	public:
 		double speed;		// Annealing speed
@@ -225,7 +236,7 @@ namespace Smile
 
 	//---------------------------------------------------
 
-	private __gc class WrappedObject
+	public ref class WrappedObject
 	{
 	protected:
 		WrappedObject()
@@ -241,43 +252,44 @@ namespace Smile
 	};
 
 	[DefaultMember("Node")]
-	public __gc class Network : public WrappedObject, public IEnumerable, public IDisposable, public ICloneable
+	public ref class Network : public WrappedObject, public IEnumerable, public IDisposable, public ICloneable
 	{
 	public:
 		Network()
 		{
-			net = new DSL_network;
+			net = new DSL_network();
 		}
 
-		~Network()
+		!Network()
 		{
 			delete net;
 		}
 
-		System::Object __gc * Clone()
+		virtual System::Object^ Clone()
 		{
-			Network *clone = new Network;
+			Network^ clone = gcnew Network();
+
 			if (NULL != net)
 			{
-				*clone->net = *net;
+				clone->net = net;
 			}
 
 			return clone;
 		}
 
-		void Dispose()
+		~Network()
 		{
 			delete net;
 			net = NULL;
 			GC::SuppressFinalize(this);
 		}
 
-		IEnumerator * GetEnumerator()
+		virtual IEnumerator^ GetEnumerator()
 		{
-			return new NodeEnumerator(net);
+			return gcnew NodeEnumerator(net);
 		}
 
-		__value enum BayesianAlgorithmType
+		enum class BayesianAlgorithmType
 		{
 			Lauritzen = DSL_ALG_BN_LAURITZEN,
 			Henrion = DSL_ALG_BN_HENRION,
@@ -289,13 +301,13 @@ namespace Smile
 			EpisSampling = DSL_ALG_BN_EPISSAMPLING
 		};
 
-		__value enum InfluenceDiagramAlgorithmType
+		enum class InfluenceDiagramAlgorithmType
 		{
 			PolicyEvaluation = DSL_ALG_ID_COOPERSOLVING,
 			FindBestPolicy = DSL_ALG_ID_SHACHTER,
 		};
 
-		__value enum NodeType
+		enum class NodeType
 		{
 			Cpt = DSL_CPT,
 			NoisyMax = DSL_NOISY_MAX,
@@ -307,20 +319,20 @@ namespace Smile
 			DeMorgan = DSL_DEMORGAN
 		};
 
-		__value enum NodeDiagType
+		enum class NodeDiagType
 		{
 			Fault = DSL_extraDefinition::target,
 			Observation = DSL_extraDefinition::observation,
 			Auxiliary = DSL_extraDefinition::auxiliary
 		};
 
-		__value enum NoisyAdderFunction
+		enum class NoisyAdderFunction
 		{
 			Average = DSL_noisyAdder::Function::fun_average,
 			SingleFault = DSL_noisyAdder::Function::fun_single_fault
 		};
 
-		__value enum DeMorganParentType
+		enum class DeMorganParentType
 		{
 			Inhibitor = DSL_DEMORGAN_INHIBITOR,
 			Requirement = DSL_DEMORGAN_REQUIREMENT,
@@ -328,104 +340,118 @@ namespace Smile
 			Barrier = DSL_DEMORGAN_BARRIER,
 		};
 
-		void ReadFile(String *filename)
+		void ReadFile(String^ filename)
 		{
 			StringToCharPtr szFile(filename);
 			int res = net->ReadFile(szFile);
 			SmileException::CheckSmileStatus("ReadFile failed", res);
 		}
 
-		void WriteFile(String *filename)
+		void WriteFile(String^ filename)
 		{
 			StringToCharPtr szFile(filename);
 			int res = net->WriteFile(szFile);
 			SmileException::CheckSmileStatus("WriteFile failed", res);
 		}
 
-		__property BayesianAlgorithmType get_BayesianAlgorithm()
+		property BayesianAlgorithmType BayesianAlgorithm
 		{
-			return static_cast<BayesianAlgorithmType>(net->GetDefaultBNAlgorithm());
+			BayesianAlgorithmType get()
+			{
+				return static_cast<BayesianAlgorithmType>(net->GetDefaultBNAlgorithm());
+			}
+
+			void set(BayesianAlgorithmType value)
+			{
+				net->SetDefaultBNAlgorithm((int)value);
+			}
 		}
 
-		__property void set_BayesianAlgorithm(BayesianAlgorithmType value)
+		property InfluenceDiagramAlgorithmType InfluenceDiagramAlgorithm
 		{
-			net->SetDefaultBNAlgorithm(value);
+			InfluenceDiagramAlgorithmType get()
+			{
+				return static_cast<InfluenceDiagramAlgorithmType>(net->GetDefaultIDAlgorithm());
+			}
+
+			void set(InfluenceDiagramAlgorithmType value)
+			{
+				net->SetDefaultIDAlgorithm((int)value);
+			}
 		}
 
-		__property InfluenceDiagramAlgorithmType get_InfluenceDiagramAlgorithm()
+		property String^ Id
 		{
-			return static_cast<InfluenceDiagramAlgorithmType>(net->GetDefaultIDAlgorithm());
+			String^ get()
+			{
+				return gcnew String(net->Header().GetId());
+			}
+
+			void set(String^ value)
+			{
+				ValidateId(value);
+				StringToCharPtr szId(value);
+				net->Header().SetId(szId);
+			}
 		}
 
-		__property void set_InfluenceDiagramAlgorithm(InfluenceDiagramAlgorithmType value)
+		property String^ Name
 		{
-			net->SetDefaultIDAlgorithm(value);
+			String^ get()
+			{
+				return gcnew String(net->Header().GetName());
+			}
+
+			void set(String^ value)
+			{
+				StringToCharPtr szName(value);
+				net->Header().SetName(szName);
+			}
 		}
 
-		__property String* get_Id()
+		property String^ Description
 		{
-			return new String(net->Header().GetId());
+			String^ get()
+			{
+				return gcnew String(net->Header().GetComment());
+			}
+
+			void set(String^ value)
+			{
+				StringToCharPtr szComment(value);
+				net->Header().SetComment(szComment);
+			}
 		}
 
-		__property void set_Id(String *value)
+		property int NodeCount
 		{
-			ValidateId(value);
-			StringToCharPtr szId(value);
-			net->Header().SetId(szId);
+			int get()
+			{
+				return net->GetNumberOfNodes();
+			}
 		}
 
-		__property String* get_Name()
+		property int SampleCount
 		{
-			return new String(net->Header().GetName());
+			void set(int value)
+			{
+				int res = net->SetNumberOfSamples(value);
+				SmileException::CheckSmileStatus("Invalid sample count", res);
+			}
 		}
 
-		__property void set_Name(String *value)
+		property int SliceCount
 		{
-			StringToCharPtr szName(value);
-			net->Header().SetName(szName);
-		}
+			int get()
+			{
+				return net->GetNumberOfSlices();
+			}
 
-		__property String* get_Description()
-		{
-			return new String(net->Header().GetComment());
-		}
-
-		__property void set_Description(String *value)
-		{
-			StringToCharPtr szComment(value);
-			net->Header().SetComment(szComment);
-		}
-
-		__property int get_NodeCount()
-		{
-			return net->GetNumberOfNodes();
-		}
-
-		__property int get_SampleCount()
-		{
-			return net->GetNumberOfSamples();
-		}
-
-		__property void set_SampleCount(int value)
-		{
-			int res = net->SetNumberOfSamples(value);
-			SmileException::CheckSmileStatus("Invalid sample count", res);
-		}
-
-		__property int get_SliceCount()
-		{
-			return net->GetNumberOfSlices();
-		}
-
-		__property void set_SliceCount(int value)
-		{
-			int res = net->SetNumberOfSlices(value);
-			SmileException::CheckSmileStatus("Invalid slice count", res);
-		}
-
-		__property String* get_Node(int handle)
-		{
-			return GetNodeId(handle);
+			void set(int value)
+			{
+				int res = net->SetNumberOfSlices(value);
+				SmileException::CheckSmileStatus("Invalid slice count", res);
+			}
 		}
 
 		void UpdateBeliefs()
@@ -439,17 +465,17 @@ namespace Smile
 			double pe = 0;
 			if (!net->CalcProbEvidence(pe))
 			{
-				throw new SmileException("CalcProbEvidence failed");
+				throw gcnew SmileException("CalcProbEvidence failed");
 			}
 
 			return pe;
 		}
 
-		AnnealedMapResults* AnnealedMap(Int32 mapNodes[], AnnealedMapTuning *tuning)
+		AnnealedMapResults^ AnnealedMap(array<Int32>^ mapNodes, AnnealedMapTuning^ tuning)
 		{
 			int seed = 0;
 
-			if (NULL != tuning)
+			if (tuning != nullptr)
 			{
 				DSL_AnnealedMAPParams p;
 				p.speed = tuning->speed;
@@ -470,7 +496,8 @@ namespace Smile
 			ev.reserve(32);
 			for (int h = net->GetFirstNode(); h >= 0; h = net->GetNextNode(h))
 			{
-				DSL_nodeValue *v = net->GetNode(h)->Value();
+				DSL_nodeValue * v = net->GetNode(h)->Value();
+
 				if (v->IsEvidence())
 				{
 					ev.push_back(make_pair(h, v->GetEvidence()));
@@ -486,19 +513,19 @@ namespace Smile
 			int res = net->AnnealedMAP(ev, nativeMapNodes, nativeMapStates, probM1E, probE, seed);
 			SmileException::CheckSmileStatus("AnnealedMap failed", res);
 
-			AnnealedMapResults *am = new AnnealedMapResults;
+			AnnealedMapResults^ am = gcnew AnnealedMapResults();
 			am->probM1E = probM1E;
 			am->probE = probE;
-			am->mapStates = new Int32[mapNodeCount];
+			am->mapStates = gcnew array<int>(mapNodeCount);
 			for (int i = 0; i < mapNodeCount; i ++) am->mapStates[i] = nativeMapStates[i];
 
 			return am;
 		}
 
-		AnnealedMapResults* AnnealedMap(String* mapNodes[], AnnealedMapTuning *tuning)
+		AnnealedMapResults^ AnnealedMap(array<String^>^ mapNodes, AnnealedMapTuning^ tuning)
 		{
 			int count = mapNodes->Length;
-			Int32 handles[] = new Int32[count];
+			array<Int32>^ handles = gcnew array<Int32>(count);
 			for (int i = 0; i < count; i ++)
 			{
 				handles[i] = ValidateNodeId(mapNodes[i]);
@@ -506,12 +533,12 @@ namespace Smile
 			return AnnealedMap(handles, tuning);
 		}
 
-		UserProperty GetUserProperties()__gc[]
+		array<UserProperty>^ GetUserProperties()
 		{
 			return ConvertUserProps(net->UserProperties());
 		}
 
-		void SetUserProperties(UserProperty props[])
+		void SetUserProperties(array<UserProperty>^ props)
 		{
 			ConvertUserProps(props, net->UserProperties());
 		}
@@ -526,19 +553,19 @@ namespace Smile
 			return net->GetNextNode(nodeHandle);
 		}
 
-		int GetNode(String *nodeId)
+		int GetNode(String^ nodeId)
 		{
 			return ValidateNodeId(nodeId);
 		}
 
-		Int32 GetAllNodes()__gc[]
+		array<Int32>^ GetAllNodes()
 		{
 			DSL_intArray allNodes;
 			net->GetAllNodes(allNodes);
 			return CopyIntArray(allNodes);
 		}
 
-		String* GetAllNodeIds()__gc[]
+		array<String^>^ GetAllNodeIds()
 		{
 			DSL_intArray allNodes;
 			net->GetAllNodes(allNodes);
@@ -547,37 +574,37 @@ namespace Smile
 
 		NodeType GetNodeType(int nodeHandle)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
 			return static_cast<NodeType>(node->Definition()->GetType());
 		}
 
-		NodeType GetNodeType(String *nodeId)
+		NodeType GetNodeType(String^ nodeId)
 		{
 			return GetNodeType(ValidateNodeId(nodeId));
 		}
 
 		void SetNodeType(int nodeHandle, NodeType type)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
-			int res = node->ChangeType(type);
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
+			int res = node->ChangeType((int)type);
 			SmileException::CheckSmileStatus("Can't change node type", res);
 		}
 
-		void SetNodeType(String *nodeId, NodeType type)
+		void SetNodeType(String^ nodeId, NodeType type)
 		{
 			SetNodeType(ValidateNodeId(nodeId), type);
 		}
 
 		int AddNode(NodeType nodeType)
 		{
-			return AddNodeHelper(nodeType, NULL);
+			return AddNodeHelper((int)nodeType, NULL);
 		}
 
-		int AddNode(NodeType nodeType, String *nodeId)
+		int AddNode(NodeType nodeType, String^ nodeId)
 		{
 			ValidateId(nodeId);
 			StringToCharPtr szId(nodeId);
-			return AddNodeHelper(nodeType, szId);
+			return AddNodeHelper((int)nodeType, szId);
 		}
 
 		void AddArc(int parentHandle, int childHandle)
@@ -585,17 +612,17 @@ namespace Smile
 			AddArcHelper(parentHandle, childHandle, dsl_normalArc);
 		}
 
-		void AddArc(String *parentId, String *childId)
+		void AddArc(String^ parentId, String^ childId)
 		{
 			AddArc(ValidateNodeId(parentId), ValidateNodeId(childId));
 		}
 
-		void AddOutcome(String *nodeId, String *outcomeId)
+		void AddOutcome(String^ nodeId, String^ outcomeId)
 		{
 			AddOutcome(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		void AddOutcome(int nodeHandle, String *outcomeId)
+		void AddOutcome(int nodeHandle, String^ outcomeId)
 		{
 			ValidateId(outcomeId);
 			ValidateNodeHandle(nodeHandle);
@@ -603,20 +630,20 @@ namespace Smile
 			int res = net->GetNode(nodeHandle)->Definition()->AddOutcome(szId);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't add outcome {0} to node {1}",
 					outcomeId,
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void InsertOutcome(String *nodeId, int position, String *outcomeId)
+		void InsertOutcome(String^ nodeId, int position, String^ outcomeId)
 		{
 			InsertOutcome(ValidateNodeId(nodeId), position, outcomeId);
 		}
 
-		void InsertOutcome(int nodeHandle, int position, String *outcomeId)
+		void InsertOutcome(int nodeHandle, int position, String^ outcomeId)
 		{
 			ValidateId(outcomeId);
 			ValidateNodeHandle(nodeHandle);
@@ -624,16 +651,16 @@ namespace Smile
 			int res = net->GetNode(nodeHandle)->Definition()->InsertOutcome(position, szId);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't insert outcome {0} in node {1} at position {2}",
 					outcomeId,
 					position.ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void DeleteOutcome(String *nodeId, int outcomeIndex)
+		void DeleteOutcome(String^ nodeId, int outcomeIndex)
 		{
 			DeleteOutcome(ValidateNodeId(nodeId), outcomeIndex);
 		}
@@ -644,25 +671,25 @@ namespace Smile
 			int res = net->GetNode(nodeHandle)->Definition()->RemoveOutcome(outcomeIndex);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't delete outcome {0} from node {1}",
 					outcomeIndex.ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void DeleteOutcome(int nodeHandle, String *outcomeId)
+		void DeleteOutcome(int nodeHandle, String^ outcomeId)
 		{
 			DeleteOutcome(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void DeleteOutcome(String *nodeId, String *outcomeId)
+		void DeleteOutcome(String^ nodeId, String^ outcomeId)
 		{
 			DeleteOutcome(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		void DeleteNode(String *nodeId)
+		void DeleteNode(String^ nodeId)
 		{
 			DeleteNode(ValidateNodeId(nodeId));
 		}
@@ -673,7 +700,7 @@ namespace Smile
 			net->DeleteNode(nodeHandle);
 		}
 
-		void DeleteArc(String *parentId, String *childId)
+		void DeleteArc(String^ parentId, String^ childId)
 		{
 			DeleteArc(ValidateNodeId(parentId), ValidateNodeId(childId));
 		}
@@ -683,208 +710,208 @@ namespace Smile
 			DeleteArcHelper(parentHandle, childHandle, dsl_normalArc);
 		}
 
-		Int32 GetParents(String *nodeId)__gc[]
+		array<Int32>^ GetParents(String^ nodeId)
 		{
 			return GetParents(ValidateNodeId(nodeId));
 		}
 
-		Int32 GetParents(int nodeHandle)__gc[]
+		array<Int32>^ GetParents(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return CopyIntArray(net->GetParents(nodeHandle));
 		}
 
-		String* GetParentIds(String *nodeId)__gc[]
+		array<String^>^ GetParentIds(String^ nodeId)
 		{
 			return GetParentIds(ValidateNodeId(nodeId));
 		}
 
-		String* GetParentIds(int nodeHandle)__gc[]
+		array<String^>^ GetParentIds(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return HandlesToIds(net->GetParents(nodeHandle));
 		}
 
-		Int32 GetChildren(String *nodeId)__gc[]
+		array<Int32>^ GetChildren(String^ nodeId)
 		{
 			return GetChildren(ValidateNodeId(nodeId));
 		}
 
-		Int32 GetChildren(int nodeHandle)__gc[]
+		array<Int32>^ GetChildren(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return CopyIntArray(net->GetChildren(nodeHandle));
 		}
 
-		String* GetChildIds(String *nodeId)__gc[]
+		array<String^>^ GetChildIds(String^ nodeId)
 		{
 			return GetChildIds(ValidateNodeId(nodeId));
 		}
 
-		String* GetChildIds(int nodeHandle)__gc[]
+		array<String^>^ GetChildIds(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return HandlesToIds(net->GetChildren(nodeHandle));
 		}
 
-		int GetNodeHandle(String * nodeId)
+		int GetNodeHandle(String^ nodeId)
 		{
 			return ValidateNodeId(nodeId);
 		}
 
-		String* GetNodeId(int nodeHandle)
+		String^ GetNodeId(int nodeHandle)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
-			return new String(node->Info().Header().GetId());
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
+			return gcnew String(node->Info().Header().GetId());
 		}
 
-		String* GetNodeName(String *nodeId)
+		String^ GetNodeName(String^ nodeId)
 		{
 			return GetNodeName(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeId(String *oldId, String *newId)
+		void SetNodeId(String^ oldId, String^ newId)
 		{
 			SetNodeId(ValidateNodeId(oldId), newId);
 		}
 
-		void SetNodeId(int nodeHandle, String *id)
+		void SetNodeId(int nodeHandle, String^ id)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
 			StringToCharPtr szId(id);
 			int res = node->Info().Header().SetId(szId);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
-					"Can't set new id for node {0}",
+				String^ msg = String::Format(
+					"Can't set gcnew id for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		String* GetNodeName(int nodeHandle)
+		String^ GetNodeName(int nodeHandle)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
-			return new String(node->Info().Header().GetName());
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
+			return gcnew String(node->Info().Header().GetName());
 		}
 
-		void SetNodeName(String *nodeId, String *name)
+		void SetNodeName(String^ nodeId, String^ name)
 		{
 			SetNodeName(ValidateNodeId(nodeId), name);
 		}
 
-		void SetNodeName(int nodeHandle, String *name)
+		void SetNodeName(int nodeHandle, String^ name)
 		{
-			DSL_node *node = ValidateNodeHandle(nodeHandle);
+			DSL_node* node = ValidateNodeHandle(nodeHandle);
 			StringToCharPtr szName(name);
 			int res = node->Info().Header().SetName(szName);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
-					"Can't set new name for node {0}",
+				String^ msg = String::Format(
+					"Can't set gcnew name for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		UserProperty GetNodeUserProperties(int handle)__gc[]
+		array<UserProperty>^ GetNodeUserProperties(int handle)
 		{
 			return ConvertUserProps(
 				ValidateNodeHandle(handle)->Info().UserProperties());
 		}
 
-		UserProperty GetNodeUserProperties(String *nodeId)__gc[]
+		array<UserProperty>^ GetNodeUserProperties(String^ nodeId)
 		{
 			return GetNodeUserProperties(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeUserProperties(int handle, UserProperty props[])
+		void SetNodeUserProperties(int handle, array<UserProperty>^ props)
 		{
 			ConvertUserProps(props,
 				ValidateNodeHandle(handle)->Info().UserProperties());
 		}
 
-		void SetNodeUserProperties(String *nodeId, UserProperty props[])
+		void SetNodeUserProperties(String^ nodeId, array<UserProperty>^ props)
 		{
 			SetNodeUserProperties(ValidateNodeId(nodeId), props);
 		}
 
-		String* GetNodeDescription(int nodeHandle)
+		String^ GetNodeDescription(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
-			return new String(node->Info().Header().GetComment());
+			return gcnew String(node->Info().Header().GetComment());
 		}
 
-		String* GetNodeDescription(String *nodeId)
+		String^ GetNodeDescription(String^ nodeId)
 		{
 			return GetNodeDescription(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeDescription(int nodeHandle, String *description)
+		void SetNodeDescription(int nodeHandle, String^ description)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			StringToCharPtr szDesc(description);
 			node->Info().Header().SetComment(szDesc);
 		}
 
-		void SetNodeDescription(String *nodeId, String *description)
+		void SetNodeDescription(String^ nodeId, String^ description)
 		{
 			SetNodeDescription(ValidateNodeId(nodeId), description);
 		}
 
-		DocItemInfo GetNodeDocumentation(int nodeHandle)__gc[]
+		array<DocItemInfo>^ GetNodeDocumentation(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			return ConvertDocumentation(node->Info().Documentation());
 		}
 
-		DocItemInfo GetNodeDocumentation(String *nodeId)__gc[]
+		array<DocItemInfo>^ GetNodeDocumentation(String^ nodeId)
 		{
 			return GetNodeDocumentation(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeDocumentation(int nodeHandle, DocItemInfo documentation[])
+		void SetNodeDocumentation(int nodeHandle, array<DocItemInfo>^ documentation)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			ConvertDocumentation(documentation, node->Info().Documentation());
 		}
 
-		void SetNodeDocumentation(String *nodeId, DocItemInfo documentation[])
+		void SetNodeDocumentation(String^ nodeId, array<DocItemInfo>^ documentation)
 		{
 			SetNodeDocumentation(ValidateNodeId(nodeId), documentation);
 		}
 
-		Double GetNodeDefinition(String *nodeId)__gc []
+		array<Double>^ GetNodeDefinition(String^ nodeId)
 		{
 			return GetNodeDefinition(ValidateNodeId(nodeId));
 		}
 
-		Double GetNodeDefinition(int nodeHandle)__gc []
+		array<Double>^ GetNodeDefinition(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_doubleArray *pArray = GetDefinitionArray(node);
 			if (NULL == pArray)
 			{
 				DSL_nodeDefinition *nodeDef = node->Definition();
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get node definition {0} in node {1} as array of doubles",
-					new String(nodeDef->GetTypeName()),
+					gcnew String(nodeDef->GetTypeName()),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return CopyDoubleArray(*pArray);
 		}
 
-		double GetNodeTable(int nodeHandle)__gc [,]
+		array<double, 2>^ GetNodeTable(int nodeHandle)
 		{
-			Double defVector __gc[] = GetNodeDefinition(nodeHandle);
+			array<Double>^ defVector = GetNodeDefinition(nodeHandle);
 			int nRows = GetOutcomeCount(nodeHandle);
-			int nCols = defVector.Length / nRows;
+			int nCols = defVector->Length / nRows;
 
-			double def __gc[,] = new double __gc[nRows, nCols];
+			array<double, 2>^ def = gcnew array<double,2>(nRows, nCols);
 
-			for(int i = 0;i < defVector.Length;i++)
+			for(int i = 0;i < defVector->Length;i++)
 			{
 				int row = i % nRows;
 				int col = i / nRows;
@@ -895,28 +922,29 @@ namespace Smile
 			return def;
 		}
 
-		double GetNodeTable(String * nodeId)__gc [,]
+		array<double, 2>^ GetNodeTable(String^ nodeId)
 		{
 			return GetNodeTable(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeDefinition(String *nodeId, Double definition[])
+		void SetNodeDefinition(String^ nodeId, array<Double>^ definition)
 		{
 			SetNodeDefinition(ValidateNodeId(nodeId), definition);
 		}
 
-		void SetNodeDefinition(int nodeHandle, Double definition[])
+		void SetNodeDefinition(int nodeHandle, array<Double>^ definition)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_nodeDefinition *nodeDef = node->Definition();
 			DSL_doubleArray *pArray = GetDefinitionArray(node);
+
 			if (NULL == pArray)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't set node definition {0} in node {1} as array of doubles",
-					new String(nodeDef->GetTypeName()),
+					gcnew String(nodeDef->GetTypeName()),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			int nativeType = nodeDef->GetType();
@@ -926,7 +954,7 @@ namespace Smile
 			int imax = pArray->GetSize();
 			if (imax != definition->Length)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid definition array size for node {0}. Expected {1} and got {2}",
 					GetNodeId(nodeHandle),
 					Int32(imax).ToString(),
@@ -940,7 +968,7 @@ namespace Smile
 						msg);
 				}
 
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			DSL_nodeValue *pVal = node->Value();
@@ -959,11 +987,11 @@ namespace Smile
 			}
 		}
 
-		void SetNodeTable(int nodeHandle, Double def [,])
+		void SetNodeTable(int nodeHandle, array<Double, 2>^ def)
 		{
-			int nRows = def.GetLength(0);
-			int nCols = def.GetLength(1);
-			Double definition[] = new Double[nRows * nCols];
+			int nRows = def->GetLength(0);
+			int nCols = def->GetLength(1);
+			array<Double>^ definition = gcnew array<Double>(nRows * nCols);
 
 			for(int col = 0;col < nCols;col++)
 			{
@@ -976,33 +1004,33 @@ namespace Smile
 			SetNodeDefinition(nodeHandle, definition);
 		}
 
-		void SetNodeTable(String * nodeId, Double def [,])
+		void SetNodeTable(String^ nodeId, array<Double, 2>^ def)
 		{
 			SetNodeTable(ValidateNodeId(nodeId), def);
 		}
 
-		Int32 GetNoisyParentStrengths(int nodeHandle, int parentIndex)__gc []
+		array<Int32>^ GetNoisyParentStrengths(int nodeHandle, int parentIndex)
 		{
 			DSL_noisyMAX* noisyMaxDef = GetNoisyMaxDef(nodeHandle);
 			return CopyIntArray(noisyMaxDef->GetParentOutcomeStrengths(parentIndex));
 		}
 
-		Int32 GetNoisyParentStrengths(String *nodeId, int parentIndex)__gc []
+		array<Int32>^ GetNoisyParentStrengths(String^ nodeId, int parentIndex)
 		{
 			return GetNoisyParentStrengths(ValidateNodeId(nodeId), parentIndex);
 		}
 
-		Int32 GetNoisyParentStrengths(int nodeHandle, String *parentId)__gc []
+		array<Int32>^ GetNoisyParentStrengths(int nodeHandle, String^ parentId)
 		{
 			return GetNoisyParentStrengths(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		Int32 GetNoisyParentStrengths(String *nodeId, String *parentId)__gc []
+		array<Int32>^ GetNoisyParentStrengths(String^ nodeId, String^ parentId)
 		{
 			return GetNoisyParentStrengths(ValidateNodeId(nodeId), parentId);
 		}
 
-		void SetNoisyParentStrengths(int nodeHandle, int parentIndex, Int32 strengths[])
+		void SetNoisyParentStrengths(int nodeHandle, int parentIndex, array<Int32>^ strengths)
 		{
 			DSL_noisyMAX* noisyMaxDef = GetNoisyMaxDef(nodeHandle);
 			ValidateParentIndex(nodeHandle, parentIndex);
@@ -1010,13 +1038,13 @@ namespace Smile
 			int imax = noisyMaxDef->GetNumOfParentOutcomes(parentIndex);
 			if (imax != strengths->Length)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid parent strength array size for node {0}. Expected {1} and got {2}",
 					GetNodeId(nodeHandle),
 					Int32(imax).ToString(),
 					strengths->Length.ToString());
 
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			DSL_intArray& nativeStrengths = noisyMaxDef->GetParentOutcomeStrengths(parentIndex);
@@ -1028,17 +1056,17 @@ namespace Smile
 			noisyMaxDef->CiToCpt();
 		}
 
-		void SetNoisyParentStrengths(String* nodeId, int parentIndex, Int32 strengths[])
+		void SetNoisyParentStrengths(String^ nodeId, int parentIndex, array<Int32>^ strengths)
 		{
 			SetNoisyParentStrengths(ValidateNodeId(nodeId), parentIndex, strengths);
 		}
 
-		void SetNoisyParentStrengths(int nodeHandle, String *parentId, Int32 strengths[])
+		void SetNoisyParentStrengths(int nodeHandle, String^ parentId, array<int>^ strengths)
 		{
 			SetNoisyParentStrengths(nodeHandle, ValidateParentId(nodeHandle, parentId), strengths);
 		}
 
-		void SetNoisyParentStrengths(String* nodeId, String *parentId, Int32 strengths[])
+		void SetNoisyParentStrengths(String^ nodeId, String^ parentId, array<int>^ strengths)
 		{
 			SetNoisyParentStrengths(ValidateNodeId(nodeId), parentId, strengths);
 		}
@@ -1049,7 +1077,7 @@ namespace Smile
 			return static_cast<NoisyAdderFunction>(noisyAdderDef->GetFunction());
 		}
 
-		NoisyAdderFunction GetNoisyAdderFunction(String *nodeId)
+		NoisyAdderFunction GetNoisyAdderFunction(String^ nodeId)
 		{
 			return GetNoisyAdderFunction(ValidateNodeId(nodeId));
 		}
@@ -1065,7 +1093,7 @@ namespace Smile
 			}
 		}
 
-		void SetNoisyAdderFunction(String *nodeId, NoisyAdderFunction function)
+		void SetNoisyAdderFunction(String^ nodeId, NoisyAdderFunction function)
 		{
 			SetNoisyAdderFunction(ValidateNodeId(nodeId), function);
 		}
@@ -1076,17 +1104,17 @@ namespace Smile
 			return noisyAdderDef->GetDistinguishedState();
 		}
 
-		int GetNoisyDistinguishedOutcome(String *nodeId)
+		int GetNoisyDistinguishedOutcome(String^ nodeId)
 		{
 			return GetNoisyDistinguishedOutcome(ValidateNodeId(nodeId));
 		}
 
-		String* GetNoisyDistinguishedOutcomeId(int nodeHandle)
+		String^ GetNoisyDistinguishedOutcomeId(int nodeHandle)
 		{
 			return GetOutcomeId(nodeHandle, GetNoisyDistinguishedOutcome(nodeHandle));
 		}
 
-		String* GetNoisyDistinguishedOutcomeId(String *nodeId)
+		String^ GetNoisyDistinguishedOutcomeId(String^ nodeId)
 		{
 			return GetNoisyDistinguishedOutcomeId(ValidateNodeId(nodeId));
 		}
@@ -1104,17 +1132,17 @@ namespace Smile
 			}
 		}
 
-		void SetNoisyDistinguishedOutcome(int nodeHandle, String *outcomeId)
+		void SetNoisyDistinguishedOutcome(int nodeHandle, String^ outcomeId)
 		{
 			SetNoisyDistinguishedOutcome(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void SetNoisyDistinguishedOutcome(String *nodeId, int outcomeIndex)
+		void SetNoisyDistinguishedOutcome(String^ nodeId, int outcomeIndex)
 		{
 			SetNoisyDistinguishedOutcome(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		void SetNoisyDistinguishedOutcome(String *nodeId, String *outcomeId)
+		void SetNoisyDistinguishedOutcome(String^ nodeId, String^ outcomeId)
 		{
 			SetNoisyDistinguishedOutcome(ValidateNodeId(nodeId), outcomeId);
 		}
@@ -1126,39 +1154,39 @@ namespace Smile
 			return noisyAdderDef->GetParentDistinguishedState(parentIndex);
 		}
 
-		int GetNoisyParentDistinguishedOutcome(int nodeHandle, String *parentId)
+		int GetNoisyParentDistinguishedOutcome(int nodeHandle, String^ parentId)
 		{
 			return GetNoisyParentDistinguishedOutcome(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		int GetNoisyParentDistinguishedOutcome(String *nodeId, String *parentId)
+		int GetNoisyParentDistinguishedOutcome(String^ nodeId, String^ parentId)
 		{
 			return GetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeId), parentId);
 		}
 
-		int GetNoisyParentDistinguishedOutcome(String *nodeId, int parentIndex)
+		int GetNoisyParentDistinguishedOutcome(String^ nodeId, int parentIndex)
 		{
 			return GetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeId), parentIndex);
 		}
 
-		String* GetNoisyParentDistinguishedOutcomeId(int nodeHandle, int parentIndex)
+		String^ GetNoisyParentDistinguishedOutcomeId(int nodeHandle, int parentIndex)
 		{
 			DSL_noisyAdder *noisyAdderDef = GetNoisyAdderDef(nodeHandle);
 			ValidateParentIndex(nodeHandle, parentIndex);
 			return GetOutcomeId(nodeHandle, noisyAdderDef->GetParentDistinguishedState(parentIndex));
 		}
 
-		String* GetNoisyParentDistinguishedOutcomeId(int nodeHandle, String *parentId)
+		String^ GetNoisyParentDistinguishedOutcomeId(int nodeHandle, String^ parentId)
 		{
 			return GetNoisyParentDistinguishedOutcomeId(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		String* GetNoisyParentDistinguishedOutcomeId(String *nodeId, String *parentId)
+		String^ GetNoisyParentDistinguishedOutcomeId(String^ nodeId, String^ parentId)
 		{
 			return GetNoisyParentDistinguishedOutcomeId(ValidateNodeId(nodeId), parentId);
 		}
 
-		String* GetNoisyParentDistinguishedOutcomeId(String *nodeId, int parentIndex)
+		String^ GetNoisyParentDistinguishedOutcomeId(String^ nodeId, int parentIndex)
 		{
 			return GetNoisyParentDistinguishedOutcomeId(ValidateNodeId(nodeId), parentIndex);
 		}
@@ -1176,17 +1204,17 @@ namespace Smile
 			}
 		}
 
-		void SetNoisyParentDistinguishedOutcome(String* nodeHandle, int parentIndex, int parentOutcomeIndex)
+		void SetNoisyParentDistinguishedOutcome(String^ nodeHandle, int parentIndex, int parentOutcomeIndex)
 		{
 			SetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeHandle), parentIndex, parentOutcomeIndex);
 		}
 
-		void SetNoisyParentDistinguishedOutcome(int nodeHandle, String *parentId, int parentOutcomeIndex)
+		void SetNoisyParentDistinguishedOutcome(int nodeHandle, String^ parentId, int parentOutcomeIndex)
 		{
 			SetNoisyParentDistinguishedOutcome(nodeHandle, ValidateParentId(nodeHandle, parentId), parentOutcomeIndex);
 		}
 
-		void SetNoisyParentDistinguishedOutcome(int nodeHandle, int parentIndex, String *parentOutcomeId)
+		void SetNoisyParentDistinguishedOutcome(int nodeHandle, int parentIndex, String^ parentOutcomeId)
 		{
 			SetNoisyParentDistinguishedOutcome(
 				nodeHandle,
@@ -1194,22 +1222,22 @@ namespace Smile
 				ValidateOutcomeId(ValidateParentIndex(nodeHandle, parentIndex), parentOutcomeId));
 		}
 
-		void SetNoisyParentDistinguishedOutcome(String *nodeId, String *parentId, int parentOutcomeIndex)
+		void SetNoisyParentDistinguishedOutcome(String^ nodeId, String^ parentId, int parentOutcomeIndex)
 		{
 			SetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeId), parentId, parentOutcomeIndex);
 		}
 
-		void SetNoisyParentDistinguishedOutcome(int nodeHandle, String *parentId, String *parentOutcomeId)
+		void SetNoisyParentDistinguishedOutcome(int nodeHandle, String^ parentId, String^ parentOutcomeId)
 		{
 			SetNoisyParentDistinguishedOutcome(nodeHandle, ValidateParentId(nodeHandle, parentId), parentOutcomeId);
 		}
 
-		void SetNoisyParentDistinguishedOutcome(String *nodeId, int parentIndex, String *parentOutcomeId)
+		void SetNoisyParentDistinguishedOutcome(String^ nodeId, int parentIndex, String^ parentOutcomeId)
 		{
 			SetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeId), parentIndex, parentOutcomeId);
 		}
 
-		void SetNoisyParentDistinguishedOutcome(String *nodeId, String *parentId, String *parentOutcomeId)
+		void SetNoisyParentDistinguishedOutcome(String^ nodeId, String^ parentId, String^ parentOutcomeId)
 		{
 			SetNoisyParentDistinguishedOutcome(ValidateNodeId(nodeId), parentId, parentOutcomeId);
 		}
@@ -1221,17 +1249,17 @@ namespace Smile
 			return noisyAdderDef->GetParentWeight(parentIndex);
 		}
 
-		double GetNoisyParentWeight(String *nodeId, int parentIndex)
+		double GetNoisyParentWeight(String^ nodeId, int parentIndex)
 		{
 			return GetNoisyParentWeight(ValidateNodeId(nodeId), parentIndex);
 		}
 
-		double GetNoisyParentWeight(int nodeHandle, String *parentId)
+		double GetNoisyParentWeight(int nodeHandle, String^ parentId)
 		{
 			return GetNoisyParentWeight(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		double GetNoisyParentWeight(String *nodeId, String *parentId)
+		double GetNoisyParentWeight(String^ nodeId, String^ parentId)
 		{
 			return GetNoisyParentWeight(ValidateNodeId(nodeId), parentId);
 		}
@@ -1248,17 +1276,17 @@ namespace Smile
 			}
 		}
 
-		void SetNoisyParentWeight(String *nodeId, int parentIndex, double weight)
+		void SetNoisyParentWeight(String^ nodeId, int parentIndex, double weight)
 		{
 			SetNoisyParentWeight(ValidateNodeId(nodeId), parentIndex, weight);
 		}
 
-		void SetNoisyParentWeight(int nodeHandle, String *parentId, double weight)
+		void SetNoisyParentWeight(int nodeHandle, String^ parentId, double weight)
 		{
 			SetNoisyParentWeight(nodeHandle, ValidateParentId(nodeHandle, parentId), weight);
 		}
 
-		void SetNoisyParentWeight(String *nodeId, String *parentId, double weight)
+		void SetNoisyParentWeight(String^ nodeId, String^ parentId, double weight)
 		{
 			SetNoisyParentWeight(ValidateNodeId(nodeId), parentId, weight);
 		}
@@ -1269,7 +1297,7 @@ namespace Smile
 			dm->SetPriorBelief(belief);
 		}
 
-		void SetDeMorganPriorBelief(String *nodeId, double belief)
+		void SetDeMorganPriorBelief(String^ nodeId, double belief)
 		{
 			SetDeMorganPriorBelief(ValidateNodeId(nodeId), belief);
 		}
@@ -1280,7 +1308,7 @@ namespace Smile
 			return dm->GetPriorBelief();
 		}
 
-		double GetDeMorganPriorBelief(String *nodeId)
+		double GetDeMorganPriorBelief(String^ nodeId)
 		{
 			return GetDeMorganPriorBelief(ValidateNodeId(nodeId));
 		}
@@ -1289,21 +1317,21 @@ namespace Smile
 		{
 			DSL_demorgan *dm = GetDeMorganDef(nodeHandle);
 			ValidateParentIndex(nodeHandle, parentIndex);
-			int res = dm->SetParentType(parentIndex, type);
+			int res = dm->SetParentType(parentIndex, (int)type);
 			SmileException::CheckSmileStatus("Can't set parent type", res);
 		}
 
-		void SetDeMorganParentType(String *nodeId, int parentIndex, DeMorganParentType type)
+		void SetDeMorganParentType(String^ nodeId, int parentIndex, DeMorganParentType type)
 		{
 			SetDeMorganParentType(ValidateNodeId(nodeId), parentIndex, type);
 		}
 
-		void SetDeMorganParentType(int nodeHandle, String *parentId, DeMorganParentType type)
+		void SetDeMorganParentType(int nodeHandle, String^ parentId, DeMorganParentType type)
 		{
 			SetDeMorganParentType(nodeHandle, ValidateParentId(nodeHandle, parentId), type);
 		}
 
-		void SetDeMorganParentType(String *nodeId, String *parentId, DeMorganParentType type)
+		void SetDeMorganParentType(String^ nodeId, String^ parentId, DeMorganParentType type)
 		{
 			SetDeMorganParentType(ValidateNodeId(nodeId), parentId, type);
 		}
@@ -1315,17 +1343,17 @@ namespace Smile
 			return static_cast<DeMorganParentType>(dm->GetParentType(parentIndex));
 		}
 
-		DeMorganParentType GetDeMorganParentType(String *nodeId, int parentIndex)
+		DeMorganParentType GetDeMorganParentType(String^ nodeId, int parentIndex)
 		{
 			return GetDeMorganParentType(ValidateNodeId(nodeId), parentIndex);
 		}
 
-		DeMorganParentType GetDeMorganParentType(int nodeHandle, String *parentId)
+		DeMorganParentType GetDeMorganParentType(int nodeHandle, String^ parentId)
 		{
 			return GetDeMorganParentType(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		DeMorganParentType GetDeMorganParentType(String *nodeId, String *parentId)
+		DeMorganParentType GetDeMorganParentType(String^ nodeId, String^ parentId)
 		{
 			return GetDeMorganParentType(ValidateNodeId(nodeId), parentId);
 		}
@@ -1338,17 +1366,17 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't set parent weight", res);
 		}
 
-		void SetDeMorganParentWeight(String *nodeId, int parentIndex, double weight)
+		void SetDeMorganParentWeight(String^ nodeId, int parentIndex, double weight)
 		{
 			SetDeMorganParentWeight(ValidateNodeId(nodeId), parentIndex, weight);
 		}
 
-		void SetDeMorganParentWeight(int nodeHandle, String *parentId, double weight)
+		void SetDeMorganParentWeight(int nodeHandle, String^ parentId, double weight)
 		{
 			SetDeMorganParentWeight(nodeHandle, ValidateParentId(nodeHandle, parentId), weight);
 		}
 
-		void SetDeMorganParentWeight(String *nodeId, String *parentId, double weight)
+		void SetDeMorganParentWeight(String^ nodeId, String^ parentId, double weight)
 		{
 			SetDeMorganParentWeight(ValidateNodeId(nodeId), parentId, weight);
 		}
@@ -1360,22 +1388,22 @@ namespace Smile
 			return dm->GetParentWeight(parentIndex);
 		}
 
-		double GetDeMorganParentWeight(String *nodeId, int parentIndex)
+		double GetDeMorganParentWeight(String^ nodeId, int parentIndex)
 		{
 			return GetDeMorganParentWeight(ValidateNodeId(nodeId), parentIndex);
 		}
 
-		double GetDeMorganParentWeight(int nodeHandle, String *parentId)
+		double GetDeMorganParentWeight(int nodeHandle, String^ parentId)
 		{
 			return GetDeMorganParentWeight(nodeHandle, ValidateParentId(nodeHandle, parentId));
 		}
 
-		double GetDeMorganParentWeight(String *nodeId, String *parentId)
+		double GetDeMorganParentWeight(String^ nodeId, String^ parentId)
 		{
 			return GetDeMorganParentWeight(ValidateNodeId(nodeId), parentId);
 		}
 
-		bool IsValueValid(String *nodeId)
+		bool IsValueValid(String^ nodeId)
 		{
 			return IsValueValid(ValidateNodeId(nodeId));
 		}
@@ -1385,56 +1413,57 @@ namespace Smile
 			return 0 != ValidateNodeHandle(nodeHandle)->Value()->IsValueValid();
 		}
 
-		Int32 GetValueIndexingParents(int nodeHandle)__gc[]
+		array<Int32>^ GetValueIndexingParents(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_nodeValue *value = node->Value();
 			return CopyIntArray(value->GetIndexingParents());
 		}
 
-		Int32 GetValueIndexingParents(String *nodeId)__gc[]
+		array<Int32>^ GetValueIndexingParents(String^ nodeId)
 		{
 			return GetValueIndexingParents(ValidateNodeId(nodeId));
 		}
 
-		String* GetValueIndexingParentIds(int nodeHandle)__gc[]
+		array<String^>^ GetValueIndexingParentIds(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_nodeValue *value = node->Value();
 			return HandlesToIds(value->GetIndexingParents());
 		}
 
-		String* GetValueIndexingParentIds(String *nodeId)__gc[]
+		array<String^>^ GetValueIndexingParentIds(String^ nodeId)
 		{
 			return GetValueIndexingParentIds(ValidateNodeId(nodeId));
 		}
 
-		Double GetNodeValue(String *nodeId)__gc []
+		array<Double>^ GetNodeValue(String^ nodeId)
 		{
 			return GetNodeValue(ValidateNodeId(nodeId));
 		}
 
-		Double GetNodeValue(int nodeHandle)__gc []
+		array<Double>^ GetNodeValue(int nodeHandle)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_nodeValue *value = node->Value();
 
 			if (!value->IsValueValid())
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Value not valid, node {0}", GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			DSL_Dmatrix *m = NULL;
 			int res = value->GetValue(&m);
+
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get node value {0} in node {1} as array of doubles",
 					value->GetType().ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 
 			return CopyDoubleArray(m->GetItems());
@@ -1460,14 +1489,14 @@ namespace Smile
 
 			if (res != DSL_OKAY)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't change target status for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void SetTarget(String *nodeId, bool target)
+		void SetTarget(String^ nodeId, bool target)
 		{
 			SetTarget(ValidateNodeId(nodeId), target);
 		}
@@ -1478,7 +1507,7 @@ namespace Smile
 			return 0 != net->IsTarget(nodeHandle);
 		}
 
-		bool IsTarget(String *nodeId)
+		bool IsTarget(String^ nodeId)
 		{
 			return IsTarget(ValidateNodeId(nodeId));
 		}
@@ -1488,7 +1517,7 @@ namespace Smile
 			net->ClearAllEvidence();
 		}
 
-		void ClearEvidence(String *nodeId)
+		void ClearEvidence(String^ nodeId)
 		{
 			return ClearEvidence(ValidateNodeId(nodeId));
 		}
@@ -1499,14 +1528,14 @@ namespace Smile
 			int res = node->Value()->ClearEvidence();
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't clear evidence for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		bool IsEvidence(String *nodeId)
+		bool IsEvidence(String^ nodeId)
 		{
 			return IsEvidence(ValidateNodeId(nodeId));
 		}
@@ -1516,7 +1545,7 @@ namespace Smile
 			return 0 != ValidateNodeHandle(nodeHandle)->Value()->IsEvidence();
 		}
 
-		bool IsRealEvidence(String *nodeId)
+		bool IsRealEvidence(String^ nodeId)
 		{
 			return IsRealEvidence(ValidateNodeId(nodeId));
 		}
@@ -1526,7 +1555,7 @@ namespace Smile
 			return 0 != ValidateNodeHandle(nodeHandle)->Value()->IsRealEvidence();
 		}
 
-		bool IsPropagatedEvidence(String *nodeId)
+		bool IsPropagatedEvidence(String^ nodeId)
 		{
 			return IsPropagatedEvidence(ValidateNodeId(nodeId));
 		}
@@ -1543,35 +1572,35 @@ namespace Smile
 
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't set evidence to outcome {0} for node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void SetEvidence(String *nodeId, int outcomeIndex)
+		void SetEvidence(String^ nodeId, int outcomeIndex)
 		{
 			SetEvidence(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		void SetEvidence(int nodeHandle, String *outcomeId)
+		void SetEvidence(int nodeHandle, String^ outcomeId)
 		{
 			SetEvidence(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void SetEvidence(String *nodeId, String *outcomeId)
+		void SetEvidence(String^ nodeId, String^ outcomeId)
 		{
 			SetEvidence(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		void SetSoftEvidence(String * nodeId, double aEvidence __gc[])
+		void SetSoftEvidence(String^ nodeId, array<double>^ aEvidence)
 		{
 			SetSoftEvidence(ValidateNodeId(nodeId), aEvidence);
 		}
 
-		void SetSoftEvidence(int nodeHandle, double aEvidence __gc[])
+		void SetSoftEvidence(int nodeHandle, array<double>^ aEvidence)
 		{
 			// From: http://genie.sis.pitt.edu/forum/viewtopic.php?f=2&t=893&p=2643&hilit=soft+evidence#p2643
 			//int GetSoftEvidence(std::vector<double> &evidence) const;
@@ -1584,7 +1613,7 @@ namespace Smile
 
 			if(aEvidence->Length != nOutcomes)
 			{
-				throw new SmileException("Size of evidence array must be the same as number of states.");
+				throw gcnew SmileException("Size of evidence array must be the same as number of states.");
 			}
 
 			std::vector<double> evidence (nOutcomes, 1);
@@ -1598,11 +1627,11 @@ namespace Smile
 
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't set evidence for node {0}",
 					GetNodeId(nodeHandle));
 
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
@@ -1611,40 +1640,40 @@ namespace Smile
 			DSL_nodeValue *value = ValidateNodeHandle(nodeHandle)->Value();
 			if (!value->IsEvidence())
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} has no evidence set",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			int result = value->GetEvidence();
 			if (result < 0)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get evidence of node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return result;
 		}
 
-		int GetEvidence(String *nodeId)
+		int GetEvidence(String^ nodeId)
 		{
 			return GetEvidence(ValidateNodeId(nodeId));
 		}
 
-		String* GetEvidenceId(String *nodeId)
+		String^ GetEvidenceId(String^ nodeId)
 		{
 			return GetOutcomeId(nodeId, GetEvidence(nodeId));
 		}
 
-		String* GetEvidenceId(int nodeHandle)
+		String^ GetEvidenceId(int nodeHandle)
 		{
 			return GetOutcomeId(nodeHandle, GetEvidence(nodeHandle));
 		}
 
-		bool IsTemporalEvidence(String *nodeId, int slice)
+		bool IsTemporalEvidence(String^ nodeId, int slice)
 		{
 			return IsTemporalEvidence(ValidateNodeId(nodeId), slice);
 		}
@@ -1659,25 +1688,25 @@ namespace Smile
 			DSL_nodeValue *value = ValidateNodeHandle(nodeHandle)->Value();
 			if (!value->IsTemporalEvidence(slice))
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} has no evidence in slice {1}",
 					GetNodeId(nodeHandle), Int32(slice).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 			return value->GetTemporalEvidence(slice);
 		}
 
-		int GetTemporalEvidence(String *nodeId, int slice)
+		int GetTemporalEvidence(String^ nodeId, int slice)
 		{
 			return GetTemporalEvidence(ValidateNodeId(nodeId), slice);
 		}
 
-		String* GetTemporalEvidenceId(int nodeHandle, int slice)
+		String^ GetTemporalEvidenceId(int nodeHandle, int slice)
 		{
 			return GetOutcomeId(nodeHandle, GetTemporalEvidence(nodeHandle, slice));
 		}
 
-		String* GetTemporalEvidenceId(String *nodeId, int slice)
+		String^ GetTemporalEvidenceId(String^ nodeId, int slice)
 		{
 			return GetTemporalEvidenceId(ValidateNodeId(nodeId), slice);
 		}
@@ -1688,26 +1717,26 @@ namespace Smile
 			int res = value->SetTemporalEvidence(slice, outcomeIndex);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't set temporal evidence to outcome {0} in slice {1} for node {2}",
 					Int32(outcomeIndex).ToString(),
 					Int32(slice).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void SetTemporalEvidence(int nodeHandle, int slice, String* outcomeId)
+		void SetTemporalEvidence(int nodeHandle, int slice, String^ outcomeId)
 		{
 			SetTemporalEvidence(nodeHandle, slice, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void SetTemporalEvidence(String *nodeId, int slice, int outcomeIndex)
+		void SetTemporalEvidence(String^ nodeId, int slice, int outcomeIndex)
 		{
 			SetTemporalEvidence(ValidateNodeId(nodeId), slice, outcomeIndex);
 		}
 
-		void SetTemporalEvidence(String *nodeId, int slice, String* outcomeId)
+		void SetTemporalEvidence(String^ nodeId, int slice, String^ outcomeId)
 		{
 			SetTemporalEvidence(ValidateNodeId(nodeId), slice, outcomeId);
 		}
@@ -1719,25 +1748,25 @@ namespace Smile
 
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't control value to outcome {0} for node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		void ControlValue(String *nodeId, int outcomeIndex)
+		void ControlValue(String^ nodeId, int outcomeIndex)
 		{
 			ControlValue(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		void ControlValue(int nodeHandle, String *outcomeId)
+		void ControlValue(int nodeHandle, String^ outcomeId)
 		{
 			ControlValue(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void ControlValue(String *nodeId, String *outcomeId)
+		void ControlValue(String^ nodeId, String^ outcomeId)
 		{
 			ControlValue(ValidateNodeId(nodeId), outcomeId);
 		}
@@ -1747,40 +1776,40 @@ namespace Smile
 			DSL_beliefVector *bv = ValidateBeliefVector(nodeHandle);
 			if (!bv->IsControlled())
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} is not controlled",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			int result = bv->GetControlledValue();
 			if (result < 0)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get controlledValue of node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return result;
 		}
 
-		int GetControlledValue(String *nodeId)
+		int GetControlledValue(String^ nodeId)
 		{
 			return GetControlledValue(ValidateNodeId(nodeId));
 		}
 
-		String* GetControlledValueId(String *nodeId)
+		String^ GetControlledValueId(String^ nodeId)
 		{
 			return GetOutcomeId(nodeId, GetControlledValue(nodeId));
 		}
 
-		String* GetControlledValueId(int nodeHandle)
+		String^ GetControlledValueId(int nodeHandle)
 		{
 			return GetOutcomeId(nodeHandle, GetControlledValue(nodeHandle));
 		}
 
-		bool IsControlled(String *nodeId)
+		bool IsControlled(String^ nodeId)
 		{
 			return IsControlled(ValidateNodeId(nodeId));
 		}
@@ -1790,7 +1819,7 @@ namespace Smile
 			return 0 != ValidateBeliefVector(nodeHandle)->IsControlled();
 		}
 
-		bool IsControllable(String *nodeId)
+		bool IsControllable(String^ nodeId)
 		{
 			return IsControllable(ValidateNodeId(nodeId));
 		}
@@ -1800,7 +1829,7 @@ namespace Smile
 			return 0 != ValidateBeliefVector(nodeHandle)->IsControllable();
 		}
 
-		void ClearControlledValue(String *nodeId)
+		void ClearControlledValue(String^ nodeId)
 		{
 			return ClearControlledValue(ValidateNodeId(nodeId));
 		}
@@ -1811,84 +1840,84 @@ namespace Smile
 			int res = bv->ClearControlledValue();
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't clear controlled value for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		String* GetOutcomeId(String *nodeId, int outcomeIndex)
+		String^ GetOutcomeId(String^ nodeId, int outcomeIndex)
 		{
 			return GetOutcomeId(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		String* GetOutcomeId(int nodeHandle, int outcomeIndex)
+		String^ GetOutcomeId(int nodeHandle, int outcomeIndex)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_idArray * outcomeNames = node->Definition()->GetOutcomesNames();
 			const char* id = outcomeNames->Subscript(outcomeIndex);
 			if (NULL == id)
 			{
-				String *msg = String::Format("Outcome index {0} out of range for node {1}",
+				String^ msg = String::Format("Outcome index {0} out of range for node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
-			return new String(id);
+			return gcnew String(id);
 		}
 
-		void SetOutcomeId(String *nodeId, int outcomeIndex, String *id)
+		void SetOutcomeId(String^ nodeId, int outcomeIndex, String^ id)
 		{
 			SetOutcomeId(ValidateNodeId(nodeId), outcomeIndex, id);
 		}
 
-		void SetOutcomeId(int nodeHandle, int outcomeIndex, String *id)
+		void SetOutcomeId(int nodeHandle, int outcomeIndex, String^ id)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_idArray * outcomeNames = node->Definition()->GetOutcomesNames();
 			if (NULL == outcomeNames->Subscript(outcomeIndex))
 			{
-				String *msg = String::Format("Outcome index {0} out of range for node {1}",
+				String^ msg = String::Format("Outcome index {0} out of range for node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			StringToCharPtr szId(id);
 			int res = node->Definition()->RenameOutcome(outcomeIndex, szId);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format("Can't set ID for outcome {0} in node {1}",
+				String^ msg = String::Format("Can't set ID for outcome {0} in node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
-		String* GetOutcomeIds(int nodeHandle)__gc[]
+		array<String^>^ GetOutcomeIds(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 
 			DSL_idArray *arrId = net->GetNode(nodeHandle)->Definition()->GetOutcomesNames();
 			if (NULL == arrId)
 			{
-				String *msg = String::Format("Node {0} does not have outcomes",
+				String^ msg = String::Format("Node {0} does not have outcomes",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			int imax = arrId->NumItems();
-			String* ar[] = new String*[imax];
+			array<String^>^ ar = gcnew array<String^>(imax);
 			for (int i = 0; i < imax; i ++)
 			{
-				ar[i] = new String(arrId->Subscript(i));
+				ar[i] = gcnew String(arrId->Subscript(i));
 			}
 			return ar;
 		}
 
-		String* GetOutcomeIds(String *nodeId)__gc[]
+		array<String^>^ GetOutcomeIds(String^ nodeId)
 		{
 			return GetOutcomeIds(ValidateNodeId(nodeId));
 		}
@@ -1899,7 +1928,7 @@ namespace Smile
 			return node->Definition()->GetNumberOfOutcomes();
 		}
 
-		int GetOutcomeCount(String *nodeId)
+		int GetOutcomeCount(String^ nodeId)
 		{
 			return GetOutcomeCount(ValidateNodeId(nodeId));
 		}
@@ -1920,7 +1949,7 @@ namespace Smile
 			return System::Drawing::Rectangle(x, y, width, height);
 		}
 
-		System::Drawing::Rectangle GetNodePosition(String *nodeId) {
+		System::Drawing::Rectangle GetNodePosition(String^ nodeId) {
 			return GetNodePosition(ValidateNodeId(nodeId));
 		}
 
@@ -1935,7 +1964,7 @@ namespace Smile
 			pos.center_Y = y + (height / 2);
 		}
 
-		void SetNodePosition(String *nodeId, int x, int y, int width, int height)
+		void SetNodePosition(String^ nodeId, int x, int y, int width, int height)
 		{
 			SetNodePosition(ValidateNodeId(nodeId), x, y, width, height);
 		}
@@ -1945,7 +1974,7 @@ namespace Smile
 			SetNodePosition(nodeHandle, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		void SetNodePosition(char *nodeId, System::Drawing::Rectangle rect)
+		void SetNodePosition(String^ nodeId, System::Drawing::Rectangle rect)
 		{
 			SetNodePosition(ValidateNodeId(nodeId), rect.X, rect.Y, rect.Width, rect.Height);
 		}
@@ -1955,7 +1984,7 @@ namespace Smile
 			return _GetScrInfoColor(nodeHandle, &DSL_screenInfo::color);
 		}
 
-		Color GetNodeBgColor(String *nodeId)
+		Color GetNodeBgColor(String^ nodeId)
 		{
 			return GetNodeBgColor(ValidateNodeId(nodeId));
 		}
@@ -1965,7 +1994,7 @@ namespace Smile
 			return _GetScrInfoColor(nodeHandle, &DSL_screenInfo::fontColor);
 		}
 
-		Color GetNodeTextColor(String *nodeId)
+		Color GetNodeTextColor(String^ nodeId)
 		{
 			return GetNodeTextColor(ValidateNodeId(nodeId));
 		}
@@ -1975,7 +2004,7 @@ namespace Smile
 			return _GetScrInfoColor(nodeHandle, &DSL_screenInfo::borderColor);
 		}
 
-		Color GetNodeBorderColor(String *nodeId)
+		Color GetNodeBorderColor(String^ nodeId)
 		{
 			return GetNodeBorderColor(ValidateNodeId(nodeId));
 		}
@@ -1985,7 +2014,7 @@ namespace Smile
 			return _NodeScrInfoRef(nodeHandle, &DSL_screenInfo::borderThickness);
 		}
 
-		int GetNodeBorderWidth(String *nodeId)
+		int GetNodeBorderWidth(String^ nodeId)
 		{
 			return GetNodeBorderWidth(ValidateNodeId(nodeId));
 		}
@@ -1995,7 +2024,7 @@ namespace Smile
 			_SetScrInfoColor(nodeHandle, &DSL_screenInfo::color, color);
 		}
 
-		void SetNodeBgColor(String *nodeId, Color color)
+		void SetNodeBgColor(String^ nodeId, Color color)
 		{
 			SetNodeBgColor(ValidateNodeId(nodeId), color);
 		}
@@ -2005,7 +2034,7 @@ namespace Smile
 			_SetScrInfoColor(nodeHandle, &DSL_screenInfo::fontColor, color);
 		}
 
-		void SetNodeTextColor(String *nodeId, Color color)
+		void SetNodeTextColor(String^ nodeId, Color color)
 		{
 			SetNodeTextColor(ValidateNodeId(nodeId), color);
 		}
@@ -2015,7 +2044,7 @@ namespace Smile
 			_SetScrInfoColor(nodeHandle, &DSL_screenInfo::borderColor, color);
 		}
 
-		void SetNodeBorderColor(String *nodeId, Color color)
+		void SetNodeBorderColor(String^ nodeId, Color color)
 		{
 			SetNodeBorderColor(ValidateNodeId(nodeId), color);
 		}
@@ -2025,7 +2054,7 @@ namespace Smile
 			_NodeScrInfoRef(nodeHandle, &DSL_screenInfo::borderThickness) = width;
 		}
 
-		void SetNodeBorderWidth(String *nodeId, int width)
+		void SetNodeBorderWidth(String^ nodeId, int width)
 		{
 			SetNodeBorderWidth(ValidateNodeId(nodeId), width);
 		}
@@ -2046,12 +2075,12 @@ namespace Smile
 			node->ExtraDefinition()->SetType(static_cast<DSL_extraDefinition::troubleType>(diagType));
 		}
 
-		void SetNodeDiagType(String *nodeId, NodeDiagType diagType)
+		void SetNodeDiagType(String^ nodeId, NodeDiagType diagType)
 		{
 			SetNodeDiagType(ValidateNodeId(nodeId), diagType);
 		}
 
-		NodeDiagType GetNodeDiagType(String *nodeId)
+		NodeDiagType GetNodeDiagType(String^ nodeId)
 		{
 			return GetNodeDiagType(ValidateNodeId(nodeId));
 		}
@@ -2062,7 +2091,7 @@ namespace Smile
 			return extraDef->IsRanked();
 		}
 
-		bool IsRanked(String *nodeId)
+		bool IsRanked(String^ nodeId)
 		{
 			return IsRanked(ValidateNodeId(nodeId));
 		}
@@ -2073,7 +2102,7 @@ namespace Smile
 			extraDef->SetFlags(ranked, extraDef->IsMandatory(), extraDef->IsSetToDefault());
 		}
 
-		void SetRanked(String *nodeId, bool ranked)
+		void SetRanked(String^ nodeId, bool ranked)
 		{
 			SetRanked(ValidateNodeId(nodeId), ranked);
 		}
@@ -2084,7 +2113,7 @@ namespace Smile
 			return extraDef->IsMandatory();
 		}
 
-		bool IsMandatory(String *nodeId)
+		bool IsMandatory(String^ nodeId)
 		{
 			return IsMandatory(ValidateNodeId(nodeId));
 		}
@@ -2095,7 +2124,7 @@ namespace Smile
 			extraDef->SetFlags(extraDef->IsRanked(), mandatory, extraDef->IsSetToDefault());
 		}
 
-		void SetMandatory(String *nodeId, bool mandatory)
+		void SetMandatory(String^ nodeId, bool mandatory)
 		{
 			SetMandatory(ValidateNodeId(nodeId), mandatory);
 		}
@@ -2105,7 +2134,7 @@ namespace Smile
 			AddArcHelper(parentHandle, childHandle, dsl_costObserve);
 		}
 
-		void AddCostArc(String *parentId, String *childId)
+		void AddCostArc(String^ parentId, String^ childId)
 		{
 			AddCostArc(ValidateNodeId(parentId), ValidateNodeId(childId));
 		}
@@ -2115,106 +2144,106 @@ namespace Smile
 			DeleteArcHelper(parentHandle, childHandle, dsl_costObserve);
 		}
 
-		void DeleteCostArc(String *parentId, String *childId)
+		void DeleteCostArc(String^ parentId, String^ childId)
 		{
 			DeleteCostArc(ValidateNodeId(parentId), ValidateNodeId(childId));
 		}
 
-		Int32 GetCostParents(String *nodeId)__gc[]
+		array<Int32>^ GetCostParents(String^ nodeId)
 		{
 			return GetCostParents(ValidateNodeId(nodeId));
 		}
 
-		Int32 GetCostParents(int nodeHandle)__gc[]
+		array<Int32>^ GetCostParents(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return CopyIntArray(net->GetParents(nodeHandle, dsl_costObserve));
 		}
 
-		String* GetCostParentIds(String *nodeId)__gc[]
+		array<String^>^ GetCostParentIds(String^ nodeId)
 		{
 			return GetCostParentIds(ValidateNodeId(nodeId));
 		}
 
-		String* GetCostParentIds(int nodeHandle)__gc[]
+		array<String^>^ GetCostParentIds(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return HandlesToIds(net->GetParents(nodeHandle, dsl_costObserve));
 		}
 
-		Int32 GetCostChildren(String *nodeId)__gc[]
+		array<Int32>^ GetCostChildren(String^ nodeId)
 		{
 			return GetCostChildren(ValidateNodeId(nodeId));
 		}
 
-		Int32 GetCostChildren(int nodeHandle)__gc[]
+		array<Int32>^ GetCostChildren(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return CopyIntArray(net->GetChildren(nodeHandle, dsl_costObserve));
 		}
 
-		String* GetCostChildIds(String *nodeId)__gc[]
+		array<String^>^ GetCostChildIds(String^ nodeId)
 		{
 			return GetCostChildIds(ValidateNodeId(nodeId));
 		}
 
-		String* GetCostChildIds(int nodeHandle)__gc[]
+		array<String^>^ GetCostChildIds(int nodeHandle)
 		{
 			ValidateNodeHandle(nodeHandle);
 			return HandlesToIds(net->GetChildren(nodeHandle, dsl_costObserve));
 		}
 
-		String* GetNodeQuestion(int nodeHandle)
+		String^ GetNodeQuestion(int nodeHandle)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
-			return new String(extraDef->GetQuestion().c_str());
+			return gcnew String(extraDef->GetQuestion().c_str());
 		}
 
-		Double GetNodeCost(String *nodeId)__gc []
+		array<Double>^ GetNodeCost(String^ nodeId)
 		{
 			return GetNodeCost(ValidateNodeId(nodeId));
 		}
 
-		Double GetNodeCost(int nodeHandle)__gc []
+		array<Double>^ GetNodeCost(int nodeHandle)
 		{
 			DSL_nodeCost *cost = GetCost(nodeHandle);
 			if (NULL == cost)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get node cost for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return CopyDoubleArray(cost->GetCosts().GetItems());
 		}
 
-		void SetNodeCost(String *nodeId, Double cost[])
+		void SetNodeCost(String^ nodeId, array<Double>^ cost)
 		{
 			SetNodeCost(ValidateNodeId(nodeId), cost);
 		}
 
-		void SetNodeCost(int nodeHandle, Double cost[])
+		void SetNodeCost(int nodeHandle, array<Double>^ cost)
 		{
 			DSL_nodeCost *pCost = GetCost(nodeHandle);
 			if (NULL == pCost)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't get node cost for node {0}",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			DSL_Dmatrix &mtx = pCost->GetCosts();
 			int imax = mtx.GetSize();
 			if (imax != cost->Length)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid cost array size for node {0}. Expected {1} and got {2}",
 					GetNodeId(nodeHandle),
 					Int32(imax).ToString(),
 					cost->Length.ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			for (int i = 0; i < imax; i ++)
@@ -2223,46 +2252,46 @@ namespace Smile
 			}
 		}
 
-		String* GetNodeQuestion(String *nodeId)
+		String^ GetNodeQuestion(String^ nodeId)
 		{
 			return GetNodeQuestion(ValidateNodeId(nodeId));
 		}
 
-		void SetNodeQuestion(int nodeHandle, String *question)
+		void SetNodeQuestion(int nodeHandle, String^ question)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			StringToCharPtr szQuestion(question);
 			extraDef->GetQuestion() = szQuestion;
 		}
 
-		void SetNodeQuestion(String *nodeId, String *question)
+		void SetNodeQuestion(String^ nodeId, String^ question)
 		{
 			SetNodeQuestion(ValidateNodeId(nodeId), question);
 		}
 
-		DocItemInfo GetOutcomeDocumentation(int nodeHandle, int outcomeIndex)__gc[]
+		array<DocItemInfo>^ GetOutcomeDocumentation(int nodeHandle, int outcomeIndex)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
 			return ConvertDocumentation(extraDef->GetDocumentation(outcomeIndex));
 		}
 
-		DocItemInfo GetOutcomeDocumentation(String* nodeId, int outcomeIndex)__gc[]
+		array<DocItemInfo>^ GetOutcomeDocumentation(String^ nodeId, int outcomeIndex)
 		{
 			return GetOutcomeDocumentation(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		DocItemInfo GetOutcomeDocumentation(String* nodeId, String *outcomeId)__gc[]
+		array<DocItemInfo>^ GetOutcomeDocumentation(String^ nodeId, String^ outcomeId)
 		{
 			return GetOutcomeDocumentation(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		DocItemInfo GetOutcomeDocumentation(int nodeHandle, String* outcomeId)__gc[]
+		array<DocItemInfo>^ GetOutcomeDocumentation(int nodeHandle, String^ outcomeId)
 		{
 			return GetOutcomeDocumentation(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void SetOutcomeDocumentation(int nodeHandle, int outcomeIndex, DocItemInfo documentation[])
+		void SetOutcomeDocumentation(int nodeHandle, int outcomeIndex, array<DocItemInfo>^ documentation)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
@@ -2270,44 +2299,44 @@ namespace Smile
 			ConvertDocumentation(documentation, extraDef->GetDocumentation(outcomeIndex));
 		}
 
-		void SetOutcomeDocumentation(int nodeHandle, String *outcomeId, DocItemInfo documentation[])
+		void SetOutcomeDocumentation(int nodeHandle, String^ outcomeId, array<DocItemInfo>^ documentation)
 		{
 			SetOutcomeDocumentation(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId), documentation);
 		}
 
-		void SetOutcomeDocumentation(String *nodeId, String *outcomeId, DocItemInfo documentation[])
+		void SetOutcomeDocumentation(String^ nodeId, String^ outcomeId, array<DocItemInfo>^ documentation)
 		{
 			SetOutcomeDocumentation(ValidateNodeId(nodeId), outcomeId, documentation);
 		}
 
-		void SetOutcomeDocumentation(String *nodeId, int outcomeIndex, DocItemInfo documentation[])
+		void SetOutcomeDocumentation(String^ nodeId, int outcomeIndex, array<DocItemInfo>^ documentation)
 		{
 			SetOutcomeDocumentation(ValidateNodeId(nodeId), outcomeIndex, documentation);
 		}
 
-		String* GetOutcomeFix(int nodeHandle, int outcomeIndex)
+		String^ GetOutcomeFix(int nodeHandle, int outcomeIndex)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
-			return extraDef->GetStateRepairInfo(outcomeIndex);
+			return gcnew String(extraDef->GetStateRepairInfo(outcomeIndex));
 		}
 
-		String* GetOutcomeFix(String *nodeId, int outcomeIndex)
+		String^ GetOutcomeFix(String^ nodeId, int outcomeIndex)
 		{
 			return GetOutcomeFix(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		String* GetOutcomeFix(int nodeHandle, String *outcomeId)
+		String^ GetOutcomeFix(int nodeHandle, String^ outcomeId)
 		{
 			return GetOutcomeFix(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		String* GetOutcomeFix(String* nodeId, String* outcomeId)
+		String^ GetOutcomeFix(String^ nodeId, String^ outcomeId)
 		{
 			return GetOutcomeFix(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		void SetOutcomeFix(int nodeHandle, int outcomeIndex, String* treatment)
+		void SetOutcomeFix(int nodeHandle, int outcomeIndex, String^ treatment)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
@@ -2315,44 +2344,44 @@ namespace Smile
 			extraDef->SetStateRepairInfo(outcomeIndex, szTreatment);
 		}
 
-		void SetOutcomeFix(String *nodeId, int outcomeIndex, String* treatment)
+		void SetOutcomeFix(String^ nodeId, int outcomeIndex, String^ treatment)
 		{
 			SetOutcomeFix(ValidateNodeId(nodeId), outcomeIndex, treatment);
 		}
 
-		void SetOutcomeFix(int nodeHandle, String *outcomeId, String* treatment)
+		void SetOutcomeFix(int nodeHandle, String^ outcomeId, String^ treatment)
 		{
 			SetOutcomeFix(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId), treatment);
 		}
 
-		void SetOutcomeFix(String* nodeId, String* outcomeId, String* treatment)
+		void SetOutcomeFix(String^ nodeId, String^ outcomeId, String^ treatment)
 		{
 			SetOutcomeFix(ValidateNodeId(nodeId), outcomeId, treatment);
 		}
 
-		String* GetOutcomeDescription(int nodeHandle, int outcomeIndex)
+		String^ GetOutcomeDescription(int nodeHandle, int outcomeIndex)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
-			return new String(extraDef->GetStateDescription(outcomeIndex));
+			return gcnew String(extraDef->GetStateDescription(outcomeIndex));
 		}
 
-		String* GetOutcomeDescription(String *nodeId, int outcomeIndex)
+		String^ GetOutcomeDescription(String^ nodeId, int outcomeIndex)
 		{
 			return GetOutcomeDescription(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		String* GetOutcomeDescription(int nodeHandle, String *outcomeId)
+		String^ GetOutcomeDescription(int nodeHandle, String^ outcomeId)
 		{
 			return GetOutcomeDescription(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		String* GetOutcomeDescription(String* nodeId, String* outcomeId)
+		String^ GetOutcomeDescription(String^ nodeId, String^ outcomeId)
 		{
 			return GetOutcomeDescription(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		void SetOutcomeDescription(int nodeHandle, int outcomeIndex, String* description)
+		void SetOutcomeDescription(int nodeHandle, int outcomeIndex, String^ description)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
@@ -2360,44 +2389,44 @@ namespace Smile
 			extraDef->SetStateDescription(outcomeIndex, szDescription);
 		}
 
-		void SetOutcomeDescription(String *nodeId, int outcomeIndex, String* description)
+		void SetOutcomeDescription(String^ nodeId, int outcomeIndex, String^ description)
 		{
 			SetOutcomeDescription(ValidateNodeId(nodeId), outcomeIndex, description);
 		}
 
-		void SetOutcomeDescription(int nodeHandle, String *outcomeId, String* description)
+		void SetOutcomeDescription(int nodeHandle, String^ outcomeId, String^ description)
 		{
 			SetOutcomeDescription(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId), description);
 		}
 
-		void SetOutcomeDescription(String* nodeId, String* outcomeId, String* description)
+		void SetOutcomeDescription(String^ nodeId, String^ outcomeId, String^ description)
 		{
 			SetOutcomeDescription(ValidateNodeId(nodeId), outcomeId, description);
 		}
 
-		String* GetOutcomeLabel(int nodeHandle, int outcomeIndex)
+		String^ GetOutcomeLabel(int nodeHandle, int outcomeIndex)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
-			return new String(extraDef->GetFaultLabels().Subscript(outcomeIndex));
+			return gcnew String(extraDef->GetFaultLabels().Subscript(outcomeIndex));
 		}
 
-		String* GetOutcomeLabel(String *nodeId, int outcomeIndex)
+		String^ GetOutcomeLabel(String^ nodeId, int outcomeIndex)
 		{
 			return GetOutcomeLabel(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		String* GetOutcomeLabel(int nodeHandle, String *outcomeId)
+		String^ GetOutcomeLabel(int nodeHandle, String^ outcomeId)
 		{
 			return GetOutcomeLabel(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		String* GetOutcomeLabel(String* nodeId, String* outcomeId)
+		String^ GetOutcomeLabel(String^ nodeId, String^ outcomeId)
 		{
 			return GetOutcomeLabel(ValidateNodeId(nodeId), outcomeId);
 		}
 
-		bool SetOutcomeLabel(int nodeHandle, int outcomeIndex, String* label)
+		bool SetOutcomeLabel(int nodeHandle, int outcomeIndex, String^ label)
 		{
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
 			ValidateOutcomeIndex(nodeHandle, outcomeIndex);
@@ -2405,17 +2434,17 @@ namespace Smile
 			return 0 != extraDef->SetLabel(outcomeIndex, szLabel);
 		}
 
-		bool SetOutcomeLabel(String *nodeId, int outcomeIndex, String* label)
+		bool SetOutcomeLabel(String^ nodeId, int outcomeIndex, String^ label)
 		{
 			return SetOutcomeLabel(ValidateNodeId(nodeId), outcomeIndex, label);
 		}
 
-		bool SetOutcomeLabel(int nodeHandle, String *outcomeId, String* label)
+		bool SetOutcomeLabel(int nodeHandle, String^ outcomeId, String^ label)
 		{
 			return SetOutcomeLabel(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId), label);
 		}
 
-		bool SetOutcomeLabel(String* nodeId, String* outcomeId, String* label)
+		bool SetOutcomeLabel(String^ nodeId, String^ outcomeId, String^ label)
 		{
 			return SetOutcomeLabel(ValidateNodeId(nodeId), outcomeId, label);
 		}
@@ -2427,17 +2456,17 @@ namespace Smile
 			return 0 != extraDef->IsFaultState(outcomeIndex);
 		}
 
-		bool IsFaultOutcome(String *nodeId, int outcomeIndex)
+		bool IsFaultOutcome(String^ nodeId, int outcomeIndex)
 		{
 			return IsFaultOutcome(ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		bool IsFaultOutcome(int nodeHandle, String *outcomeId)
+		bool IsFaultOutcome(int nodeHandle, String^ outcomeId)
 		{
 			return IsFaultOutcome(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		bool IsFaultOutcome(String* nodeId, String* outcomeId)
+		bool IsFaultOutcome(String^ nodeId, String^ outcomeId)
 		{
 			return IsFaultOutcome(ValidateNodeId(nodeId), outcomeId);
 		}
@@ -2449,17 +2478,17 @@ namespace Smile
 			extraDef->SetFaultState(outcomeIndex, fault ? DSL_TRUE : DSL_FALSE);
 		}
 
-		void SetFaultOutcome(String *nodeId, int outcomeIndex, bool fault)
+		void SetFaultOutcome(String^ nodeId, int outcomeIndex, bool fault)
 		{
 			SetFaultOutcome(ValidateNodeId(nodeId), outcomeIndex, fault);
 		}
 
-		void SetFaultOutcome(int nodeHandle, String *outcomeId, bool fault)
+		void SetFaultOutcome(int nodeHandle, String^ outcomeId, bool fault)
 		{
 			SetFaultOutcome(nodeHandle, ValidateOutcomeId(nodeHandle, outcomeId), fault);
 		}
 
-		void SetFaultOutcome(String* nodeId, String* outcomeId, bool fault)
+		void SetFaultOutcome(String^ nodeId, String^ outcomeId, bool fault)
 		{
 			SetFaultOutcome(ValidateNodeId(nodeId), outcomeId, fault);
 		}
@@ -2477,12 +2506,12 @@ namespace Smile
 			}
 		}
 
-		int GetDefaultOutcome(String* nodeId)
+		int GetDefaultOutcome(String^ nodeId)
 		{
 			return GetDefaultOutcome(ValidateNodeId(nodeId));
 		}
 
-		String* GetDefaultOutcomeId(int nodeHandle)
+		String^ GetDefaultOutcomeId(int nodeHandle)
 		{
 			int defOutcome = GetDefaultOutcome(nodeHandle);
 			if (defOutcome >= 0)
@@ -2491,11 +2520,11 @@ namespace Smile
 			}
 			else
 			{
-				return NULL;
+				return nullptr;
 			}
 		}
 
-		String* GetDefaultOutcomeId(String *nodeId)
+		String^ GetDefaultOutcomeId(String^ nodeId)
 		{
 			return GetDefaultOutcomeId(ValidateNodeId(nodeId));
 		}
@@ -2506,11 +2535,11 @@ namespace Smile
 			DSL_nodeDefinition *def = node->Definition();
 			if (defOutcome > def->GetNumberOfOutcomes())
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid outcome index for node {0} in SetDefaultOutcome: {1}",
 					GetNodeId(nodeHandle),
 					Int32(defOutcome).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			DSL_extraDefinition *extraDef = GetExtraDef(nodeHandle);
@@ -2526,15 +2555,15 @@ namespace Smile
 			extraDef->SetFlags(ranked, mandatory, setToDefault);
 		}
 
-		void SetDefaultOutcome(String *nodeId, int defOutcome)
+		void SetDefaultOutcome(String^ nodeId, int defOutcome)
 		{
 			SetDefaultOutcome(ValidateNodeId(nodeId), defOutcome);
 		}
 
-		void SetDefaultOutcome(int nodeHandle, String* defOutcomeId)
+		void SetDefaultOutcome(int nodeHandle, String^ defOutcomeId)
 		{
 			int outcomeIndex = -1;
-			if (NULL != defOutcomeId)
+			if (nullptr != defOutcomeId)
 			{
 				outcomeIndex = ValidateOutcomeId(nodeHandle, defOutcomeId);
 			}
@@ -2542,14 +2571,14 @@ namespace Smile
 			SetDefaultOutcome(nodeHandle, outcomeIndex);
 		}
 
-		void SetDefaultOutcome(String *nodeId, String* defOutcomeId)
+		void SetDefaultOutcome(String^ nodeId, String^ defOutcomeId)
 		{
 			SetDefaultOutcome(ValidateNodeId(nodeId), defOutcomeId);
 		}
 
 		// ------------------------------
 
-	private public:
+	public:
 		DSL_network* _GetDslNet()
 		{
 			return net;
@@ -2558,27 +2587,28 @@ namespace Smile
 		DSL_node* ValidateNodeHandle(int handle)
 		{
 			DSL_node *node = net->GetNode(handle);
+
 			if (NULL == node)
 			{
-				String *msg = String::Format("Invalid node handle: {0}", Int32(handle).ToString());
-				throw new SmileException(msg);
+				String^ msg = String::Format("Invalid node handle: {0}", Int32(handle).ToString());
+				throw gcnew SmileException(msg);
 			}
 			return node;
 		}
 
-		int ValidateNodeId(String *nodeId)
+		int ValidateNodeId(String^ nodeId)
 		{
 			StringToCharPtr szId(nodeId);
 			int handle = net->FindNode(szId);
 			if (handle < 0)
 			{
-				String *msg = String::Format("Invalid node identifier: {0}", nodeId);
-				throw new SmileException(msg);
+				String^ msg = String::Format("Invalid node identifier: {0}", nodeId);
+				throw gcnew SmileException(msg);
 			}
 			return handle;
 		}
 
-		int ValidateOutcomeId(int nodeHandle, String *outcomeId)
+		int ValidateOutcomeId(int nodeHandle, String^ outcomeId)
 		{
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			DSL_idArray * outcomeNames = node->Definition()->GetOutcomesNames();
@@ -2587,11 +2617,11 @@ namespace Smile
 			int outcomeIndex = outcomeNames->FindPosition(szOutcome);
 			if (outcomeIndex < 0)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid outcome identifier {0} for node {1}",
 					outcomeId,
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return outcomeIndex;
@@ -2602,11 +2632,11 @@ namespace Smile
 			DSL_node *node = ValidateNodeHandle(nodeHandle);
 			if (outcomeIndex < 0 || outcomeIndex >= node->Definition()->GetNumberOfOutcomes())
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid outcome index {0} for node {1}",
 					Int32(outcomeIndex).ToString(),
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
@@ -2617,12 +2647,12 @@ namespace Smile
 			int valType = val->GetType();
 			if (DSL_BELIEFVECTOR != valType)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid node value type for node {0} - was {1}, expected {2} (DSL_BELIEFVECTOR)",
 					GetNodeId(nodeHandle),
 					Int32(valType).ToString(),
 					Int32(DSL_BELIEFVECTOR).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return static_cast<DSL_beliefVector*>(val);
@@ -2633,16 +2663,16 @@ namespace Smile
 			int newNode = net->AddNode(nodeType, nodeId);
 			if (newNode < 0)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't add node, SMILE error code {0}",
 					Int32(newNode).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return newNode;
 		}
 
-		void ValidateId(String *id)
+		void ValidateId(String^ id)
 		{
 			bool valid = true;
 			int len = id->Length;
@@ -2656,7 +2686,7 @@ namespace Smile
 				{
 					if (!Char::IsLetterOrDigit(id, i))
 					{
-						if (id->Chars[i] != '_')
+						if (id[i] != '_')
 						{
 							valid = false;
 							break;
@@ -2667,20 +2697,20 @@ namespace Smile
 
 			if (!valid)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Identifier '{0}' is invalid: should start with a letter and contain letters, digits and underscores",
 					id);
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		String* HandlesToIds(DSL_intArray& native)__gc[]
+		array<String^>^ HandlesToIds(DSL_intArray& native)
 		{
 			int imax = native.NumItems();
-			String* ar[] = new String*[imax];
+			array<String^>^ ar = gcnew array<String^>(imax);
 			for (int i = 0; i < imax; i ++)
 			{
-				ar[i] = new String(net->GetNode(native[i])->Info().Header().GetId());
+				ar[i] = gcnew String(net->GetNode(native[i])->Info().Header().GetId());
 			}
 			return ar;
 		}
@@ -2710,10 +2740,10 @@ namespace Smile
 			DSL_nodeDefinition *nodeDef = node->Definition();
 			if (nodeDef->GetType() != DSL_NOISY_MAX)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} is not NoisyMax",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return static_cast<DSL_noisyMAX *>(nodeDef);
@@ -2725,10 +2755,10 @@ namespace Smile
 			DSL_nodeDefinition *nodeDef = node->Definition();
 			if (nodeDef->GetType() != DSL_NOISY_ADDER)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} is not NoisyAdder",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return static_cast<DSL_noisyAdder *>(nodeDef);
@@ -2740,10 +2770,10 @@ namespace Smile
 			DSL_nodeDefinition *nodeDef = node->Definition();
 			if (nodeDef->GetType() != DSL_DEMORGAN)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Node {0} is not DeMorgan",
 					GetNodeId(nodeHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return static_cast<DSL_demorgan *>(nodeDef);
@@ -2756,18 +2786,18 @@ namespace Smile
 			if (parentIndex >= parentCount ||
 				parentIndex < 0)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Invalid parent index {0}: Node {1} has {2} parent(s)",
 					parentIndex.ToString(),
 					GetNodeId(nodeHandle),
 					parentCount.ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 
 			return parents[parentIndex];
 		}
 
-		int ValidateParentId(int nodeHandle, String *parentId)
+		int ValidateParentId(int nodeHandle, String^ parentId)
 		{
 			ValidateNodeHandle(nodeHandle);
 			DSL_intArray& parents = net->GetParents(nodeHandle);
@@ -2783,11 +2813,11 @@ namespace Smile
 				}
 			}
 
-			String *msg = String::Format(
+			String^ msg = String::Format(
 				"Node {0} is not a child of {1}",
 				GetNodeId(nodeHandle),
 				parentId);
-			throw new SmileException(msg);
+			throw gcnew SmileException(msg);
 		}
 
 		int& _NodeScrInfoRef(int nodeHandle, int DSL_screenInfo::*clrPtr)
@@ -2829,11 +2859,11 @@ namespace Smile
 			int res = net->AddArc(parentHandle, childHandle, layer);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't add arc from {0} to {1}",
 					GetNodeId(parentHandle),
 					GetNodeId(childHandle));
-				throw new SmileException(msg, res);
+				throw gcnew SmileException(msg, res);
 			}
 		}
 
@@ -2843,40 +2873,40 @@ namespace Smile
 			ValidateNodeHandle(childHandle);
 			if (net->RemoveArc(parentHandle, childHandle, layer))
 			{
-				String *msg = String::Format(
+				String^ msg = String::Format(
 					"Can't remove arc from {0} to {1}",
 					GetNodeId(parentHandle),
 					GetNodeId(childHandle));
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		DSL_network *net;
+		DSL_network* net;
 	};
 	//---------------------------------------------------
 
 	//---------------------------------------------------
 	// ValueOfInfo
-	public __gc class ValueOfInfo : public WrappedObject, public IDisposable
+	public ref class ValueOfInfo : public WrappedObject, public IDisposable
 	{
 	public:
-		ValueOfInfo(Network *net)
+		ValueOfInfo(Network^ net)
 		{
-			if (NULL == net)
+			if (nullptr == net)
 			{
-				throw new SmileException("Null network reference passed to ValueOfInfo constructor");
+				throw gcnew SmileException("Null network reference passed to ValueOfInfo constructor");
 			}
 
 			this->net = net;
 			voi = new DSL_valueOfInformation(net->_GetDslNet());
 		}
 
-		~ValueOfInfo()
+		!ValueOfInfo()
 		{
 			delete voi;
 		}
 
-		void Dispose()
+		~ValueOfInfo()
 		{
 			delete voi;
 			voi = NULL;
@@ -2889,32 +2919,32 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't retrieve value of information", res);
 		}
 
-		Int32 GetAllDecisions()__gc[]
+		array<Int32>^ GetAllDecisions()
 		{
 			return CopyIntArray(voi->GetDecisions());
 		}
 
-		Int32 GetAllActions()__gc[]
+		array<Int32>^ GetAllActions()
 		{
 			return CopyIntArray(voi->GetActions());
 		}
 
-		String* GetAllDecisionIds()__gc[]
+		array<String^>^ GetAllDecisionIds()
 		{
 			return net->HandlesToIds(voi->GetDecisions());
 		}
 
-		String* GetAllActionIds()__gc[]
+		array<String^>^ GetAllActionIds()
 		{
 			return net->HandlesToIds(voi->GetActions());
 		}
 
-		Int32 GetAllNodes()__gc[]
+		array<Int32>^ GetAllNodes()
 		{
 			return CopyIntArray(voi->GetNodes());
 		}
 
-		String* GetAllNodeIds()__gc[]
+		array<String^>^ GetAllNodeIds()
 		{
 			return net->HandlesToIds(voi->GetNodes());
 		}
@@ -2925,13 +2955,13 @@ namespace Smile
 			int res = voi->AddNode(nodeHandle);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format("Can't add node to ValueOfInfo object, SMILE error code {0}",
+				String^ msg = String::Format("Can't add node to ValueOfInfo object, SMILE error code {0}",
 					Int32(res).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		void AddNode(String *nodeId)
+		void AddNode(String^ nodeId)
 		{
 			AddNode(net->ValidateNodeId(nodeId));
 		}
@@ -2942,13 +2972,13 @@ namespace Smile
 			int res = voi->RemoveNode(nodeHandle);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format("Can't remove node from ValueOfInfo object, SMILE error code {0}",
+				String^ msg = String::Format("Can't remove node from ValueOfInfo object, SMILE error code {0}",
 					Int32(res).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		void RemoveNode(String *nodeId)
+		void RemoveNode(String^ nodeId)
 		{
 			RemoveNode(net->ValidateNodeId(nodeId));
 		}
@@ -2959,13 +2989,13 @@ namespace Smile
 			int res = voi->SetDecision(nodeHandle);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format("Can't set decision on ValueOfInfo object, SMILE error code {0}",
+				String^ msg = String::Format("Can't set decision on ValueOfInfo object, SMILE error code {0}",
 					Int32(res).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		void SetDecision(String *nodeId)
+		void SetDecision(String^ nodeId)
 		{
 			SetDecision(net->ValidateNodeId(nodeId));
 		}
@@ -2975,9 +3005,9 @@ namespace Smile
 			return voi->GetDecision();
 		}
 
-		String* GetDecisionId()
+		String^ GetDecisionId()
 		{
-			return new String(net->net->GetNode(voi->GetDecision())->Info().Header().GetId());
+			return gcnew String(net->net->GetNode(voi->GetDecision())->Info().Header().GetId());
 		}
 
 		int GetPointOfView()
@@ -2985,9 +3015,9 @@ namespace Smile
 			return voi->GetPointOfView();
 		}
 
-		String* GetPointOfViewId()
+		String^ GetPointOfViewId()
 		{
-			return new String(net->net->GetNode(voi->GetPointOfView())->Info().Header().GetId());
+			return gcnew String(net->net->GetNode(voi->GetPointOfView())->Info().Header().GetId());
 		}
 
 		void SetPointOfView(int nodeHandle)
@@ -2996,41 +3026,42 @@ namespace Smile
 			int res = voi->SetPointOfView(nodeHandle);
 			if (DSL_OKAY != res)
 			{
-				String *msg = String::Format("Can't set point of view on ValueOfInfo object, SMILE error code {0}",
+				String^ msg = String::Format("Can't set point of view on ValueOfInfo object, SMILE error code {0}",
 					Int32(res).ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		void SetPointOfView(String *nodeId)
+		void SetPointOfView(String^ nodeId)
 		{
 			SetPointOfView(net->ValidateNodeId(nodeId));
 		}
 
-		Int32 GetIndexingNodes()__gc[]
+		array<Int32>^ GetIndexingNodes()
 		{
 			return CopyIntArray(voi->GetIndexingNodes());
 		}
 
-		String* GetIndexingNodeIds()__gc[]
+		array<String^>^ GetIndexingNodeIds()
 		{
 			return net->HandlesToIds(voi->GetIndexingNodes());
 		}
 
-		Double GetValues()__gc[]
+		array<Double>^ GetValues()
 		{
 			return CopyDoubleArray(voi->GetValues().GetItems());
 		}
 
 	private:
-		Network *net;
+
+		Network^ net;
 		DSL_valueOfInformation* voi;
 	};
 	//---------------------------------------------------
 
 	//---------------------------------------------------
 	// DiagNetwork
-	public __value struct FaultInfo : public IComparable
+	public value struct FaultInfo : public IComparable
 	{
 		int index;
 		int node;
@@ -3038,9 +3069,9 @@ namespace Smile
 		double probability;
 		bool isPursued;
 
-		int CompareTo(Object *obj)
+		virtual int CompareTo(Object^ obj)
 		{
-			FaultInfo *other = static_cast<FaultInfo __box*>(obj);
+			FaultInfo^ other = (FaultInfo)obj;
 
 			double lhs = probability;
 			double rhs = other->probability;
@@ -3064,16 +3095,16 @@ namespace Smile
 		}
 	};
 
-	public __value struct ObservationInfo : public IComparable
+	public value struct ObservationInfo : public IComparable
 	{
 		int node;
 		double entropy;
 		double cost;
 		double infoGain;
 
-		int CompareTo(Object *obj)
+		virtual int CompareTo(Object^ obj)
 		{
-			ObservationInfo *other = static_cast<ObservationInfo __box*>(obj);
+			ObservationInfo^ other = (ObservationInfo)obj;
 
 			int lhsCat = GetCompareCategory();
 			int rhsCat = other->GetCompareCategory();
@@ -3101,17 +3132,17 @@ namespace Smile
 		}
 	};
 
-	public __gc class DiagResults
+	public ref class DiagResults
 	{
 	public:
-		ObservationInfo observations __gc[];
-		FaultInfo faults __gc[];
+		array<ObservationInfo>^ observations;
+		array<FaultInfo>^ faults;
 	};
 
-	public __gc class DiagNetwork : public WrappedObject, public IDisposable
+	public ref class DiagNetwork : public WrappedObject, public IDisposable
 	{
 	public:
-		__value enum MultiFaultAlgorithmType
+		enum class MultiFaultAlgorithmType
 		{
 			IndependenceAtLeastOne = DSL_DIAG_INDEPENDENCE | DSL_DIAG_PURSUE_ATLEAST_ONE_COMB,
 			IndependenceOnlyOne = DSL_DIAG_INDEPENDENCE | DSL_DIAG_PURSUE_ONLY_ONE_COMB,
@@ -3128,17 +3159,17 @@ namespace Smile
 		static const double NotRelevant = DSL_NOT_RELEVANT;
 		static const double NotAvailable = DSL_NOT_AVAILABLE;
 
-		DiagNetwork(Network *net)
+		DiagNetwork(Network^ net)
 		{
-			if (NULL == net)
+			if (nullptr == net)
 			{
-				throw new SmileException("Null network reference passed to DiagNetwork constructor");
+				throw gcnew SmileException("Null network reference passed to DiagNetwork constructor");
 			}
 
-			multiFaultAlgorithm = IndependenceAtLeastOne;
+			multiFaultAlgorithm = MultiFaultAlgorithmType::IndependenceAtLeastOne;
 
 			this->net = net;
-			diagnet = new DIAG_network;
+			diagnet = new DIAG_network();
 
 			diagnet->LinkToNetwork(net->_GetDslNet());
 			diagnet->CollectNetworkInfo();
@@ -3149,26 +3180,29 @@ namespace Smile
 			diagnet->SetPursuedFault(mostLikelyFault);
 		}
 
-		~DiagNetwork()
+		!DiagNetwork()
 		{
 			delete diagnet;
 		}
 
-		void Dispose()
+		~DiagNetwork()
 		{
 			delete diagnet;
 			diagnet = NULL;
 			GC::SuppressFinalize(this);
 		}
 
-		__property MultiFaultAlgorithmType get_MultiFaultAlgorithm()
+		property MultiFaultAlgorithmType MultiFaultAlgorithm
 		{
-			return multiFaultAlgorithm;
-		}
+			MultiFaultAlgorithmType get()
+			{
+				return multiFaultAlgorithm;
+			}
 
-		__property void set_MultiFaultAlgorithm(MultiFaultAlgorithmType value)
-		{
-			multiFaultAlgorithm = value;
+			void set(MultiFaultAlgorithmType value)
+			{
+				multiFaultAlgorithm = value;
+			}
 		}
 
 		/*
@@ -3183,24 +3217,30 @@ namespace Smile
 		}
 		*/
 
-		__property bool get_DSep()
+		property bool DSep
 		{
-			return diagnet->IsDSepEnabled();
+			bool get()
+			{
+				return diagnet->IsDSepEnabled();
+			}
+
+			void set(bool value)
+			{
+				diagnet->EnableDSep(value);
+			}
 		}
 
-		__property void set_DSep(bool value)
+		property double EntropyCostRatio
 		{
-			diagnet->EnableDSep(value);
-		}
+			double get()
+			{
+				return diagnet->GetEntropyCostRatio();
+			}
 
-		__property double get_EntropyCostRatio()
-		{
-			return diagnet->GetEntropyCostRatio();
-		}
-
-		__property void set_EntropyCostRatio(double value)
-		{
-			diagnet->SetEntropyCostRatio(value, 10 * value, &diagnet->GetNetwork());
+			void set(double value)
+			{
+				diagnet->SetEntropyCostRatio(value, 10 * value, &diagnet->GetNetwork());
+			}
 		}
 
 		void SetPursuedFault(int faultIndex)
@@ -3210,7 +3250,7 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't set pursued fault", res);
 		}
 
-		void SetPursuedFaults(Int32 faultIndices[])
+		void SetPursuedFaults(array<Int32>^ faultIndices)
 		{
 			DSL_intArray native;
 			for (int i = 0; i < faultIndices->Length; i ++)
@@ -3224,14 +3264,20 @@ namespace Smile
 
 		int GetPursuedFault() { return diagnet->GetPursuedFault(); }
 
-		Int32 GetPursuedFaults() __gc[]
+		array<Int32>^ GetPursuedFaults()
 		{
 			return CopyIntArray(diagnet->GetPursuedFaults());
 		}
 
 		int FindMostLikelyFault() { return diagnet->FindMostLikelyFault(); }
 
-		__property int get_FaultCount() { return diagnet->GetFaults().size(); }
+		property int FaultCount 
+		{ 
+			int get()
+			{
+				return (int)diagnet->GetFaults().size(); 
+			}
+		}
 
 		FaultInfo GetFault(int faultIndex)
 		{
@@ -3258,10 +3304,18 @@ namespace Smile
 		}
 
 		int GetFaultNode(int faultIndex) { CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].node; }
-		String* GetFaultNodeId(int faultIndex) { return net->GetNodeId(GetFaultNode(faultIndex)); }
+		
+		String^ GetFaultNodeId(int faultIndex) 
+		{ 
+			return net->GetNodeId(GetFaultNode(faultIndex)); 
+		}
 
-		int GetFaultOutcome(int faultIndex) { CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].state; }
-		String* GetFaultOutcomeId(int faultIndex)
+		int GetFaultOutcome(int faultIndex) 
+		{ 
+			CheckFaultIndex(faultIndex); return diagnet->GetFaults()[faultIndex].state; 
+		}
+		
+		String^ GetFaultOutcomeId(int faultIndex)
 		{
 			return net->GetOutcomeId(GetFaultNode(faultIndex), diagnet->GetFaults()[faultIndex].state);
 		}
@@ -3271,32 +3325,32 @@ namespace Smile
 			return diagnet->FindFault(nodeHandle, outcomeIndex);
 		}
 
-		int GetFaultIndex(String *nodeId, int outcomeIndex)
+		int GetFaultIndex(String^ nodeId, int outcomeIndex)
 		{
 			return GetFaultIndex(net->ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		int GetFaultIndex(int nodeHandle, String *outcomeId)
+		int GetFaultIndex(int nodeHandle, String^ outcomeId)
 		{
 			return GetFaultIndex(nodeHandle, net->ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		int GetFaultIndex(String *nodeId, String *outcomeId)
+		int GetFaultIndex(String^ nodeId, String^ outcomeId)
 		{
 			return GetFaultIndex(net->ValidateNodeId(nodeId), outcomeId);
 		}
 
-		DiagResults* Update()
+		DiagResults^ Update()
 		{
-			DiagResults* results = new DiagResults();
+			DiagResults^ results = gcnew DiagResults();
 
 			diagnet->UpdateFaultBeliefs();
-			int retCode = diagnet->ComputeTestStrengths(multiFaultAlgorithm);
+			int retCode = diagnet->ComputeTestStrengths((int)multiFaultAlgorithm);
 			SmileException::CheckSmileStatus("Can't compute test strengths", retCode);
 
 			DSL_intArray &unperformed = diagnet->GetUnperformedTests();
 			int imax = unperformed.NumItems();
-			ObservationInfo ti[] = new ObservationInfo[imax];
+			array<ObservationInfo>^ ti = gcnew array<ObservationInfo>(imax);
 
 			const vector<DIAG_testInfo> &stats = diagnet->GetTestStatistics();
 
@@ -3314,9 +3368,9 @@ namespace Smile
 			results->observations = ti;
 
 			const vector<DIAG_faultyState> &faults = diagnet->GetFaults();
-			int faultCount = faults.size();
+			int faultCount = (int)faults.size();
 
-			FaultInfo fi[] = new FaultInfo[faultCount];
+			array<FaultInfo>^ fi = gcnew array<FaultInfo>(faultCount);
 			for (int i = 0; i < faultCount; i ++)
 			{
 				double p = NotRelevant;
@@ -3348,17 +3402,20 @@ namespace Smile
 			return results;
 		}
 
-		__property int get_UnperformedTestCount()
+		property int UnperformedTestCount
 		{
-			return diagnet->GetUnperformedTests().NumItems();
+			int get()
+			{
+				return diagnet->GetUnperformedTests().NumItems();
+			}
 		}
 
-		Int32 GetUnperformedObservations() __gc[]
+		array<Int32>^ GetUnperformedObservations()
 		{
 			return CopyIntArray(diagnet->GetUnperformedTests());
 		}
 
-		String* GetUnperformedObservationIds() __gc[]
+		array<String^>^ GetUnperformedObservationIds()
 		{
 			return net->HandlesToIds(diagnet->GetUnperformedTests());
 		}
@@ -3373,17 +3430,17 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't instantiate observation", res);
 		}
 
-		void InstantiateObservation(String *nodeId, int outcomeIndex)
+		void InstantiateObservation(String^ nodeId, int outcomeIndex)
 		{
 			InstantiateObservation(net->ValidateNodeId(nodeId), outcomeIndex);
 		}
 
-		void InstantiateObservation(int nodeHandle, String *outcomeId)
+		void InstantiateObservation(int nodeHandle, String^ outcomeId)
 		{
 			InstantiateObservation(nodeHandle, net->ValidateOutcomeId(nodeHandle, outcomeId));
 		}
 
-		void InstantiateObservation(String *nodeId, String *outcomeId)
+		void InstantiateObservation(String^ nodeId, String^ outcomeId)
 		{
 			InstantiateObservation(net->ValidateNodeId(nodeId), outcomeId);
 		}
@@ -3395,7 +3452,7 @@ namespace Smile
 			SmileException::CheckSmileStatus("Can't release observation", res);
 		}
 
-		void ReleaseObservation(String *nodeId)
+		void ReleaseObservation(String^ nodeId)
 		{
 			ReleaseObservation(net->ValidateNodeId(nodeId));
 		}
@@ -3403,17 +3460,17 @@ namespace Smile
 	private:
 		void CheckFaultIndex(int faultIndex)
 		{
-			int maxIndex = diagnet->GetFaults().size();
+			int maxIndex = (int)diagnet->GetFaults().size();
 			if (faultIndex < 0 || faultIndex >= maxIndex)
 			{
-				String *msg = String::Format("Invalid fault index {0}, must be between 0 and {1}",
+				String^ msg = String::Format("Invalid fault index {0}, must be between 0 and {1}",
 					faultIndex.ToString(),
 					maxIndex.ToString());
-				throw new SmileException(msg);
+				throw gcnew SmileException(msg);
 			}
 		}
 
-		Network *net;
+		Network^ net;
 		DIAG_network *diagnet;
 		MultiFaultAlgorithmType multiFaultAlgorithm;
 	};
@@ -3422,7 +3479,7 @@ namespace Smile
 
 	namespace Learning
 	{
-		public __gc class DataMatch
+		public ref class DataMatch
 		{
 		public:
 			int column;
@@ -3430,13 +3487,20 @@ namespace Smile
 			int slice;
 		};
 
-		public __gc class DataSet : public WrappedObject, public IDisposable
+		public ref class DataSet : public WrappedObject, public IDisposable
 		{
 		public:
-			DataSet() { dsx = new DSL_dataset; }
-			~DataSet() { delete dsx; }
+			DataSet() 
+			{ 
+				dsx = new DSL_dataset(); 
+			}
 
-			void Dispose()
+			!DataSet() 
+			{ 
+				delete dsx; 
+			}
+
+			~DataSet()
 			{
 				delete dsx;
 				dsx = NULL;
@@ -3446,20 +3510,20 @@ namespace Smile
 			static const int DefaultMissingInt = DSL_MISSING_INT;
 			static const float DefaultMissingFloat = DSL_MISSING_FLOAT;
 
-			void ReadFile(String *filename)
+			void ReadFile(String^ filename)
 			{
-				ReadFile(filename, NULL);
+				ReadFile(filename, nullptr);
 			}
 
-			void ReadFile(String *filename, String *missingValueToken)
+			void ReadFile(String^ filename, String^ missingValueToken)
 			{
 				ReadFile(filename, missingValueToken, DefaultMissingInt, DefaultMissingFloat, true);
 			}
 
-			void ReadFile(String *filename, String *missingValueToken, int missingInt, float missingFloat, bool columnIdsPresent)
+			void ReadFile(String^ filename, String^ missingValueToken, int missingInt, float missingFloat, bool columnIdsPresent)
 			{
 				DSL_datasetParseParams params;
-				if (NULL != missingValueToken && missingValueToken->Length > 0)
+				if (nullptr != missingValueToken && missingValueToken->Length > 0)
 				{
 					StringToCharPtr szToken(missingValueToken);
 					params.missingValueToken = szToken;
@@ -3472,30 +3536,30 @@ namespace Smile
 				std::string parseError;
 				if (DSL_OKAY != dsx->ReadFile(std::string(szFile), &params, &parseError))
 				{
-					throw new SmileException(String::Format("ReadFile failed - {0}", new String(parseError.c_str())));
+					throw gcnew SmileException(String::Format("ReadFile failed - {0}", gcnew String(parseError.c_str())));
 				}
 			}
 
-			DataMatch* MatchNetwork(Network *net)__gc[]
+			array<DataMatch^>^ MatchNetwork(Network^ net)
 			{
 				vector<DSL_datasetMatch> nativeMatching;
 				string errMsg;
 				if (DSL_OKAY != dsx->MatchNetwork(*net->_GetDslNet(), nativeMatching, errMsg))
 				{
-					throw new SmileException(String::Format("MatchNetwork failed - {0}", new String(errMsg.c_str())));
+					throw gcnew SmileException(String::Format("MatchNetwork failed - {0}", gcnew String(errMsg.c_str())));
 				}
 
-				int count = nativeMatching.size();
+				int count = (int)nativeMatching.size();
 				if (count == 0)
 				{
-					return NULL;
+					return nullptr;
 				}
 
-				DataMatch* ar[] = new DataMatch*[count];
+				array<DataMatch^>^ ar = gcnew array<DataMatch^>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					const DSL_datasetMatch &nm = nativeMatching[i];
-					DataMatch *m = new DataMatch;
+					DataMatch^ m = gcnew DataMatch();
 					m->column = nm.column;
 					m->node = nm.node;
 					m->slice = nm.slice;
@@ -3505,8 +3569,21 @@ namespace Smile
 				return ar;
 			}
 
-			__property int get_RecordCount() { return _GetDslDataSet()->GetNumberOfRecords(); }
-			__property int get_VariableCount() { return _GetDslDataSet()->GetNumberOfVariables(); }
+			property int RecordCount 
+			{ 
+				int get()
+				{
+					return _GetDslDataSet()->GetNumberOfRecords(); 
+				}
+			}
+
+			property int VariableCount 
+			{
+				int get()
+				{
+					return _GetDslDataSet()->GetNumberOfVariables(); 
+				}
+			}
 
 			int GetInt(int variable, int record)
 			{
@@ -3532,24 +3609,24 @@ namespace Smile
 				_GetDslDataSet()->SetFloat(variable, record, value);
 			}
 
-			void AddIntVariable(String *id)
+			void AddIntVariable(String^ id)
 			{
 				AddIntVariable(id, DefaultMissingInt);
 			}
 
-			void AddIntVariable(String *id, int missingValue)
+			void AddIntVariable(String^ id, int missingValue)
 			{
 				StringToCharPtr szId(id);
 				int res = _GetDslDataSet()->AddIntVar(string(szId), missingValue);
 				SmileException::CheckSmileStatus("AddIntVariable failed", res);
 			}
 
-			void AddFloatVariable(String *id)
+			void AddFloatVariable(String^ id)
 			{
 				AddFloatVariable(id, DefaultMissingFloat);
 			}
 
-			void AddFloatVariable(String *id, float missingValue)
+			void AddFloatVariable(String^ id, float missingValue)
 			{
 				StringToCharPtr szId(id);
 				int res = _GetDslDataSet()->AddFloatVar(string(szId), missingValue);
@@ -3562,27 +3639,27 @@ namespace Smile
 				ds->AddEmptyRecord();
 			}
 
-			String* GetVariableId(int variable)
+			String^ GetVariableId(int variable)
 			{
-				return new String(_GetDslDataSet()->GetId(variable).c_str());
+				return gcnew String(_GetDslDataSet()->GetId(variable).c_str());
 			}
 
-			String* GetStateNames(int variable)__gc[]
+			array<String^>^ GetStateNames(int variable)
 			{
 				ValidateVariable(variable);
 
 				const vector<string> & native = _GetDslDataSet()->GetStateNames(variable);
-				int count = native.size();
+				int count = (int)native.size();
 
-				String* ar[] = new String*[count];
+				array<String^>^ ar = gcnew array<String^>(count);
 				for (int i = 0; i < count; i ++)
 				{
-					ar[i] = new String(native[i].c_str());
+					ar[i] = gcnew String(native[i].c_str());
 				}
 				return ar;
 			}
 
-			void SetStateNames(int variable, String* names[])
+			void SetStateNames(int variable, array<String^>^ names)
 			{
 				ValidateVariable(variable);
 
@@ -3599,7 +3676,6 @@ namespace Smile
 				SmileException::CheckSmileStatus("SetStateNames failed", res);
 			}
 
-		private public:
 			DSL_dataset* _GetDslDataSet()
 			{
 				return dsx;
@@ -3610,7 +3686,7 @@ namespace Smile
 			{
 				if (variable < 0)
 				{
-					throw new SmileException("Negative variable index");
+					throw gcnew SmileException("Negative variable index");
 				}
 
 				int varCount = _GetDslDataSet()->GetNumberOfVariables();
@@ -3618,13 +3694,13 @@ namespace Smile
 				{
 					if (0 == varCount)
 					{
-						throw new SmileException("DataSet object has no variables");
+						throw gcnew SmileException("DataSet object has no variables");
 					}
 					else
 					{
-						String *msg = String::Format("Invalid variable index {0}, valid range is 0..{1}",
+						String^ msg = String::Format("Invalid variable index {0}, valid range is 0..{1}",
 							variable.ToString(), int(varCount - 1).ToString());
-						throw new SmileException(msg);
+						throw gcnew SmileException(msg);
 					}
 				}
 			}
@@ -3635,7 +3711,7 @@ namespace Smile
 
 				if (record < 0)
 				{
-					throw new SmileException("Negative record index");
+					throw gcnew SmileException("Negative record index");
 				}
 
 				int recCount = _GetDslDataSet()->GetNumberOfRecords();
@@ -3643,13 +3719,13 @@ namespace Smile
 				{
 					if (0 == recCount)
 					{
-						throw new SmileException("DataSet object has no records");
+						throw gcnew SmileException("DataSet object has no records");
 					}
 					else
 					{
-						String *msg = String::Format("Invalid record index {0}, valid range is 0..{1}",
+						String^ msg = String::Format("Invalid record index {0}, valid range is 0..{1}",
 							record.ToString(), int(recCount - 1).ToString());
-						throw new SmileException(msg);
+						throw gcnew SmileException(msg);
 					}
 				}
 			}
@@ -3659,28 +3735,27 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __value struct BkArcInfo
+		public value struct BkArcInfo
 		{
 			int parent;
 			int child;
 		};
 
-		public __value struct BkTierInfo
+		public value struct BkTierInfo
 		{
 			int variable;
 			int tier;
 		};
 
-		public __gc class BkKnowledge
+		public ref class BkKnowledge
 		{
 		public:
 			BkKnowledge() {}
 
-			BkArcInfo forcedArcs[];
-			BkArcInfo forbiddenArcs[];
-			BkTierInfo tiers[];
+			array<BkArcInfo>^ forcedArcs;
+			array<BkArcInfo>^ forbiddenArcs;
+			array<BkTierInfo>^ tiers;
 
-		private public:
 			typedef pair<int, int> intPair;
 			typedef vector<intPair> intPairVec;
 			BkKnowledge(const intPairVec& nativeForced, const intPairVec &nativeForbidden, const intPairVec &nativeTiers)
@@ -3688,8 +3763,8 @@ namespace Smile
 				InitArcs(nativeForced, forcedArcs);
 				InitArcs(nativeForbidden, forbiddenArcs);
 
-				int count = nativeTiers.size();
-				tiers = new BkTierInfo[count];
+				int count = (int)nativeTiers.size();
+				tiers = gcnew array<BkTierInfo>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					tiers[i].variable = nativeTiers[i].first;
@@ -3702,7 +3777,7 @@ namespace Smile
 				CopyArcs(nativeForced, forcedArcs);
 				CopyArcs(nativeForbidden, forbiddenArcs);
 
-				if (NULL != tiers)
+				if (nullptr != tiers)
 				{
 					int count = tiers->Length;
 					nativeTiers.resize(count);
@@ -3715,10 +3790,10 @@ namespace Smile
 			}
 
 		private:
-			static void InitArcs(const intPairVec& native, BkArcInfo arcs[])
+			static void InitArcs(const intPairVec& native, array<BkArcInfo>^ arcs)
 			{
-				int count = native.size();
-				arcs = new BkArcInfo[count];
+				int count = (int)native.size();
+				arcs = gcnew array<BkArcInfo>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					arcs[i].parent = native[i].first;
@@ -3726,9 +3801,9 @@ namespace Smile
 				}
 			}
 
-			static void CopyArcs(intPairVec& native, BkArcInfo arcs[])
+			static void CopyArcs(intPairVec& native, array<BkArcInfo>^ arcs)
 			{
-				if (NULL != arcs)
+				if (nullptr != arcs)
 				{
 					int count = arcs->Length;
 					native.resize(count);
@@ -3743,20 +3818,20 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class Pattern : public WrappedObject, public IDisposable
+		public ref class Pattern : public WrappedObject, public IDisposable
 		{
 		public:
 
-			__value enum EdgeType
+			enum class EdgeType
 			{
 				None = DSL_pattern::None,
 				Undirected = DSL_pattern::Undirected,
 				Directed = DSL_pattern::Directed
 			};
 
-			Pattern() { pat = new DSL_pattern; }
-			~Pattern() { delete pat; }
-			void Dispose()
+			Pattern() { pat = new DSL_pattern(); }
+			!Pattern() { delete pat; }
+			~Pattern()
 			{
 				delete pat;
 				pat = NULL;
@@ -3770,21 +3845,20 @@ namespace Smile
 			bool HasCycle() { return pat->HasCycle(); }
 			bool IsDAG() { return pat->IsDAG(); }
 
-			Network* MakeNetwork(DataSet *ds)
+			Network^ MakeNetwork(DataSet^ ds)
 			{
-				Network *net = new Network();
+				Network^ net = gcnew Network();
 
 				if (!pat->ToDAG(*ds->_GetDslDataSet(), *net->_GetDslNet()))
 				{
-					net->Dispose();
-					net = NULL;
-					throw new SmileException("Can't convert pattern to network", -1);
+					net->~Network();
+					net = nullptr;
+					throw gcnew SmileException("Can't convert pattern to network", -1);
 				}
 
 				return net;
 			}
 
-		private public:
 			DSL_pattern* _GetDslPattern()
 			{
 				return pat;
@@ -3794,53 +3868,84 @@ namespace Smile
 			DSL_pattern *pat;
 		};
 
-		public __gc class GreedyThickThinning : public WrappedObject, public IDisposable
+		public ref class GreedyThickThinning : public WrappedObject, public IDisposable
 		{
 		public:
-			GreedyThickThinning() { gtt = new DSL_greedyThickThinning; }
-			~GreedyThickThinning() { delete gtt; }
-			void Dispose()
+			GreedyThickThinning() { gtt = new DSL_greedyThickThinning(); }
+			!GreedyThickThinning() { delete gtt; }
+			~GreedyThickThinning()
 			{
 				delete gtt;
 				gtt = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = new Network();
+				Network^ net = gcnew Network();
 				int res = gtt->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
-					throw new SmileException("Error in GreedyThickThinning algorithm", res);
+					net->~Network();
+					net = nullptr;
+					throw gcnew SmileException("Error in GreedyThickThinning algorithm", res);
 				}
 
 				return net;
 			}
 
-			__value enum PriorsType
+			enum class PriorsType
 			{
 				K2 = DSL_greedyThickThinning::K2,
 				BDeu = DSL_greedyThickThinning::BDeu
 			};
 
-			__property PriorsType get_PriorsMethod() { return PriorsType(gtt->priors); }
-			__property void set_PriorsMethod(PriorsType value) { gtt->priors = DSL_greedyThickThinning::PriorsType(value); }
+			property PriorsType PriorsMethod
+			{ 
+				PriorsType get()
+				{
+					return PriorsType(gtt->priors); 
+				}
 
-			__property double get_NetWeight() { return gtt->netWeight; }
-			__property void set_NetWeight(double value)	{ gtt->netWeight = value; }
+				void set(PriorsType value)
+				{
+					gtt->priors = DSL_greedyThickThinning::PriorsType(value);
+				}
+			}
+			
 
-			__property int get_MaxParents() { return gtt->maxParents; }
-			__property void set_MaxParents(int value) { gtt->maxParents = value; }
-
-			BkKnowledge* GetBkKnowledge()
+			property double NetWeight
 			{
-				return new BkKnowledge(gtt->bkk.forcedArcs, gtt->bkk.forbiddenArcs, gtt->bkk.tiers);
+				double get()
+				{
+					return gtt->netWeight;
+				}
+
+				void set(double value)
+				{
+					gtt->netWeight = value;
+				}
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+			property int MaxParents
+			{
+				int get()
+				{
+					return gtt->maxParents; 
+				}
+
+				void set(int value)
+				{
+					gtt->maxParents = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
+			{
+				return gcnew BkKnowledge(gtt->bkk.forcedArcs, gtt->bkk.forbiddenArcs, gtt->bkk.tiers);
+			}
+
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(gtt->bkk.forcedArcs, gtt->bkk.forbiddenArcs, gtt->bkk.tiers);
 			}
@@ -3851,59 +3956,133 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class BS : public WrappedObject, public IDisposable
+		public ref class BS : public WrappedObject, public IDisposable
 		{
 		public:
-			BS() { bs = new DSL_bs; }
-			~BS() { delete bs; }
-			void Dispose()
+			BS() { bs = new DSL_bs(); }
+			!BS() { delete bs; }
+			~BS()
 			{
 				delete bs;
 				bs = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = new Network();
+				Network^ net = gcnew Network();
 				int res = bs->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
-					throw new SmileException("Error in Bayesian Search algorithm", res);
+					net->~Network();
+					net = nullptr;
+					throw gcnew SmileException("Error in Bayesian Search algorithm", res);
 				}
 
 				return net;
 			}
 
-			__property int get_MaxParents() { return bs->maxParents; }
-			__property void set_MaxParents(int value) { bs->maxParents = value; }
-
-			__property int get_MaxSearchTime() { return bs->maxSearchTime; }
-			__property void set_MaxSearchTime(int value) { bs->maxSearchTime = value; }
-
-			__property int get_nrIteration() { return bs->nrIteration; }
-			__property void set_nrIteration(int value) { bs->nrIteration = value; }
-
-			__property double get_linkProbability() { return bs->linkProbability; }
-			__property void set_linkProbability(double value) { bs->linkProbability = value; }
-
-			__property double get_priorLinkProbability() { return bs->priorLinkProbability; }
-			__property void set_priorLinkProbability(double value) { bs->priorLinkProbability = value; }
-
-			__property int get_priorSampleSize() { return bs->priorSampleSize; }
-			__property void set_priorSampleSize(int value) { bs->priorSampleSize = value; }
-
-			__property int get_Seed() { return bs->seed; }
-			__property void set_Seed(int value) { bs->seed = value; }
-
-			BkKnowledge* GetBkKnowledge()
+			property int MaxParents
 			{
-				return new BkKnowledge(bs->bkk.forcedArcs, bs->bkk.forbiddenArcs, bs->bkk.tiers);
+				int get()
+				{
+					return bs->maxParents;
+				}
+
+				void set(int value)
+				{
+					bs->maxParents = value;
+				}
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+
+			property int MaxSearchTime
+			{
+				int get()
+				{
+					return bs->maxSearchTime;
+				}
+
+				void set(int value)
+				{
+					bs->maxSearchTime = value;
+				}
+			}
+
+			property int nrIteration
+			{
+				int get()
+				{
+					return bs->nrIteration;
+				}
+
+				void set(int value)
+				{
+					bs->nrIteration = value; 
+				}
+			}
+
+			property double linkProbability			
+			{
+				double get()
+				{
+					return bs->linkProbability;
+				}
+
+				void set(double value)
+				{
+					bs->linkProbability = value; 
+				}
+			}
+
+
+			property double priorLinkProbability
+			{
+				double get()
+				{
+					return bs->priorLinkProbability;
+				}
+
+				void set(double value)
+				{
+					bs->priorLinkProbability = value;
+				}
+			}
+
+
+			property int priorSampleSize
+			{
+				int get()
+				{
+					return bs->priorSampleSize;
+				}
+
+				void set(int value)
+				{
+					bs->priorSampleSize = value;
+				}
+			}
+
+
+			property int Seed
+			{
+				int get()
+				{
+					return bs->seed;
+				}
+
+				void set(int value)
+				{
+					 bs->seed = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
+			{
+				return gcnew BkKnowledge(bs->bkk.forcedArcs, bs->bkk.forbiddenArcs, bs->bkk.tiers);
+			}
+
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(bs->bkk.forcedArcs, bs->bkk.forbiddenArcs, bs->bkk.tiers);
 			}
@@ -3914,45 +4093,65 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class PC : public WrappedObject, public IDisposable
+		public ref class PC : public WrappedObject, public IDisposable
 		{
 		public:
-			PC() { pc = new DSL_pc;	}
-			~PC() { delete pc; }
-			void Dispose()
+			PC() { pc = new DSL_pc();	}
+			!PC() { delete pc; }
+			~PC()
 			{
 				delete pc;
 				pc = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Pattern* Learn(DataSet *ds)
+			Pattern^ Learn(DataSet^ ds)
 			{
-				Pattern* pat = new Pattern();
+				Pattern^ pat = gcnew Pattern();
 
 				int res = pc->Learn(*ds->_GetDslDataSet(), *pat->_GetDslPattern());
 				if (DSL_OKAY != res)
 				{
-					pat->Dispose();
-					pat = NULL;
-					throw new SmileException("Error in PC algorithm", res);
+					pat->~Pattern();
+					pat = nullptr;
+					throw gcnew SmileException("Error in PC algorithm", res);
 				}
 
 				return pat;
 			}
 
-			__property int get_MaxAdjacency() { return pc->maxAdjacency; }
-			__property void set_MaxAdjacency(int value) { pc->maxAdjacency = value; }
-
-			__property double get_Significance() { return pc->significance; }
-			__property void set_Significance(double value) { pc->significance = value; }
-
-			BkKnowledge* GetBkKnowledge()
+			property int MaxAdjacency
 			{
-				return new BkKnowledge(pc->bkk.forcedArcs, pc->bkk.forbiddenArcs, pc->bkk.tiers);
+				int get()
+				{
+					return pc->maxAdjacency;
+				}
+
+				void set(int value)
+				{
+					pc->maxAdjacency = value;
+				}
 			}
 
-			void SetBkKnowledge(BkKnowledge *bkk)
+			property double Significance
+			{
+				double get()
+				{
+					return pc->significance;
+				}
+
+				void set(double value)
+				{
+					pc->significance = value;
+				}
+			}
+
+			BkKnowledge^ GetBkKnowledge()
+			{
+				return gcnew BkKnowledge(pc->bkk.forcedArcs, pc->bkk.forbiddenArcs, pc->bkk.tiers);
+			}
+
+			void SetBkKnowledge(BkKnowledge^ bkk)
 			{
 				bkk->Copy(pc->bkk.forcedArcs, pc->bkk.forbiddenArcs, pc->bkk.tiers);
 			}
@@ -3963,52 +4162,91 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class NaiveBayes : public WrappedObject, public IDisposable
+		public ref class NaiveBayes : public WrappedObject, public IDisposable
 		{
 		public:
-			NaiveBayes() { nb = new DSL_naiveBayes; }
-			~NaiveBayes() { delete nb; }
-			void Dispose()
+			NaiveBayes() { nb = new DSL_naiveBayes(); }
+			!NaiveBayes() { delete nb; }
+			~NaiveBayes()
 			{
 				delete nb;
 				nb = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			Network* Learn(DataSet *ds)
+			Network^ Learn(DataSet^ ds)
 			{
-				Network* net = new Network();
+				Network^ net = gcnew Network();
 				int res = nb->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet());
 				if (DSL_OKAY != res)
 				{
-					net->Dispose();
-					net = NULL;
-					throw new SmileException("Error in NaiveBayes algorithm", res);
+					net->~Network();
+					net = nullptr;
+					throw gcnew SmileException("Error in NaiveBayes algorithm", res);
 				}
 
 				return net;
 			}
 
-			__value enum PriorsType
+			enum class PriorsType
 			{
 				K2 = DSL_naiveBayes::K2,
 				BDeu = DSL_naiveBayes::BDeu,
 			};
 
-			__property PriorsType get_PriorsMethod() { return PriorsType(nb->priors); }
-			__property void set_PriorsMethod(PriorsType value) { nb->priors = DSL_naiveBayes::PriorsType(value); }
-
-			__property double get_NetWeight() { return nb->netWeight; }
-			__property void set_NetWeight(double value) { nb->netWeight = value; }
-
-			__property bool get_FeatureSelection() { return nb->featureSelection; }
-			__property void set_FeatureSelection(bool value) { nb->featureSelection = value; }
-
-			__property String* get_ClassVariableId() { return new String(nb->classVariableId.c_str()); }
-			__property void set_ClassVariableId(String *value)
+			property PriorsType PriorsMethod
 			{
-				StringToCharPtr c(value);
-				nb->classVariableId = c;
+				PriorsType get()
+				{
+					return PriorsType(nb->priors);
+				}
+
+				void set(PriorsType value)
+				{
+					nb->priors = DSL_naiveBayes::PriorsType(value);
+				}
+			}
+
+			property double NetWeight
+			{
+				double get()
+				{
+					return nb->netWeight; 
+				}
+
+				void set(double value)
+				{
+					nb->netWeight = value;
+				}
+			}
+
+
+			property bool FeatureSelection
+			{
+				bool get()
+				{
+					return nb->featureSelection;
+				}
+
+				void set(bool value)
+				{
+					nb->featureSelection = value;
+				}
+			}
+
+
+			property String^ ClassVariableId
+			{
+				String^ get()
+				{
+					 return gcnew String(nb->classVariableId.c_str());
+				}
+
+				void set(String^ value)
+				{
+					StringToCharPtr c(value);
+					nb->classVariableId = c;
+				}
 			}
 
 		private:
@@ -4017,23 +4255,23 @@ namespace Smile
 
 		//---------------------------------------------------
 
-		public __gc class EM : public WrappedObject, public IDisposable
+		public ref class EM : public WrappedObject, public IDisposable
 		{
 		public:
-			EM() { em = new DSL_em;	}
-			~EM() { delete em; }
-			void Dispose()
+			EM() { em = new DSL_em();	}
+			!EM() { delete em; }
+			~EM()
 			{
 				delete em;
 				em = NULL;
 				GC::SuppressFinalize(this);
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch* matching[], Int32 fixedNodes[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching, array<Int32>^ fixedNodes)
 			{
-				if (NULL == matching || 0 == matching->Length)
+				if (nullptr == matching || 0 == matching->Length)
 				{
-					throw new SmileException("No matching specified");
+					throw gcnew SmileException("No matching specified");
 				}
 
 				int count = matching->Length;
@@ -4047,7 +4285,7 @@ namespace Smile
 				}
 
 				vector<int> nativeFixedNodes;
-				if (NULL != fixedNodes)
+				if (nullptr != fixedNodes)
 				{
 					count = fixedNodes->Length;
 					nativeFixedNodes.resize(count);
@@ -4057,15 +4295,15 @@ namespace Smile
 				SmileException::CheckSmileStatus("Error in EM algorithm", em->Learn(*ds->_GetDslDataSet(), *net->_GetDslNet(), nativeMatching, nativeFixedNodes));
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch* matching[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching)
 			{
-				Learn(ds, net, matching, (Int32[])NULL);
+				Learn(ds, net, matching, (array<Int32>^)nullptr);
 			}
 
-			void Learn(DataSet *ds, Network *net, DataMatch *matching[], String *fixedNodes[])
+			void Learn(DataSet^ ds, Network^ net, array<DataMatch^>^ matching, array<String^>^ fixedNodes)
 			{
 				int count = fixedNodes->Length;
-				Int32 fixedNodeHandles[] = new Int32[count];
+				array<Int32>^ fixedNodeHandles = gcnew array<Int32>(count);
 				for (int i = 0; i < count; i ++)
 				{
 					fixedNodeHandles[i] = net->ValidateNodeId(fixedNodes[i]);
@@ -4073,20 +4311,72 @@ namespace Smile
 				Learn(ds, net, matching, fixedNodeHandles);
 			}
 
-			__property int get_EqSampleSize() { return em->GetEquivalentSampleSize(); }
-			__property void set_EqSampleSize(int value) { em->SetEquivalentSampleSize(value); }
+			property float EqSampleSize
+			{
+				float get()
+				{
+					return em->GetEquivalentSampleSize(); 
+				}
 
-			__property bool get_RandomizeParameters() { return em->GetRandomizeParameters(); }
-			__property void set_RandomizeParameters(bool value) { em->SetRandomizeParameters(value); }
+				void set(float value)
+				{
+					em->SetEquivalentSampleSize(value);
+				}
+			}
 
-			__property bool get_Relevance() { return em->GetRelevance(); }
-			__property void set_Relevance(bool value) { em->SetRelevance(value); }
+			property bool RandomizeParameters
+			{
+				bool get()
+				{
+					return em->GetRandomizeParameters(); 
+				}
 
-			__property int get_Seed() { return em->GetSeed(); }
-			__property void set_Seed(int value) { em->SetSeed(value); }
+				void set(bool value)
+				{
+					em->SetRandomizeParameters(value);
+				}
+			}
 
-			__property bool get_UniformizeParameters() { return em->GetUniformizeParameters(); }
-			__property void set_UniformizeParameters(bool value) { em->SetUniformizeParameters(value); }
+			property bool Relevance
+			{
+				bool get()
+				{
+					return em->GetRelevance();
+				}
+
+				void set(bool value)
+				{
+					em->SetRelevance(value);
+				}
+			}
+
+
+			property int Seed
+			{
+				int get()
+				{
+					return em->GetSeed(); 
+				}
+
+				void set(int value)
+				{
+					em->SetSeed(value);
+				}
+			}
+
+
+			property bool UniformizeParameters
+			{
+				bool get()
+				{
+					return em->GetUniformizeParameters();
+				}
+
+				void set(bool value)
+				{
+					em->SetUniformizeParameters(value);
+				}
+			}
 
 		private:
 			DSL_em *em;

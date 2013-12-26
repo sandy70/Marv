@@ -3,22 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="StartYear" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1980</Value>
+      <Value Profile="(Default)">2001</Value>
     </Setting>
     <Setting Name="EndYear" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2014</Value>
     </Setting>
     <Setting Name="FitToPad" Type="System.Double" Scope="User">
       <Value Profile="(Default)">20</Value>
-    </Setting>
-    <Setting Name="TallyFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\Koc\Tally.xlsx</Value>
-    </Setting>
-    <Setting Name="ProfileFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\BP\BpData.xlsx</Value>
-    </Setting>
-    <Setting Name="IsSensorButtonVisible" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="CacheDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.\</Value>
@@ -36,13 +27,25 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="InputFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\ADCO02\ADCO 7.xlsx</Value>
+      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO Synergi.xlsx</Value>
     </Setting>
     <Setting Name="IsPropertyGridVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="NetworkFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Data\ADCO02\ADCO_08.net</Value>
+      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO_08.net</Value>
+    </Setting>
+    <Setting Name="InputDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\vkha\Data\CNPC\GraphValues</Value>
+    </Setting>
+    <Setting Name="Marv_LineAndSectionOverviewService_LineAndSectionOverviewService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.asmx</Value>
+    </Setting>
+    <Setting Name="Marv_LoginService_BRIXLoginService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx</Value>
+    </Setting>
+    <Setting Name="Marv_SegmentationService_SegmentationService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/webservices/ProfileService/SegmentationService.asmx</Value>
     </Setting>
   </Settings>
 </SettingsFile>

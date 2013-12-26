@@ -1,9 +1,9 @@
 ﻿<Window x:Class="Marv.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:libbn="clr-namespace:LibNetwork;assembly=LibNetwork"
-        xmlns:libpipeline="clr-namespace:LibPipeline;assembly=LibPipeline"
         xmlns:local="clr-namespace:Marv"
         xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:marvcommon="clr-namespace:Marv.Common;assembly=Marv.Common"
+        xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,23 +12,32 @@
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized">
     <Window.Resources>
-        <Style TargetType="local:MainWindow">
-            <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="InputFileName" Value="{Binding Default.InputFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsSensorButtonVisible" Value="{Binding Default.IsSensorButtonVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-            <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="local:MainWindow">
+                <Setter Property="CacheDirectory" Value="{Binding Default.CacheDirectory, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="EndYear" Value="{Binding Default.EndYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="InputDir" Value="{Binding Default.InputDir, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="InputFileName" Value="{Binding Default.InputFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsLogoVisible" Value="{Binding Default.IsLogoVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsMapVisible" Value="{Binding Default.IsMapVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsMenuVisible" Value="{Binding Default.IsMenuVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsPropertyGridVisible" Value="{Binding Default.IsPropertyGridVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="IsYearSliderVisible" Value="{Binding Default.IsYearSliderVisible, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="NetworkFileName" Value="{Binding Default.NetworkFileName, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+                <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
+            </Style>
+
+            <marvcommon:ChartSeriesDescriptorSelector x:Key="ChartSeriesDescriptorSelector" />
+        </ResourceDictionary>
     </Window.Resources>
 
     <i:Interaction.Behaviors>
         <local:MainWindowBehavior />
+        <local:MainWindowBehaviorPolylines />
         <local:MainWindowGraphControlBehavior />
     </i:Interaction.Behaviors>
 
@@ -37,7 +46,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        
+
         <!-- Menu -->
         <telerik:RadMenu Grid.Row="0"
                          Visibility="{Binding IsMenuVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
@@ -48,12 +57,12 @@
 
                 <telerik:RadMenuItem Name="EditSettingsMenuItem"
                                      Header="Settings" />
-                
+
                 <telerik:RadMenuItem Header="Location">
                     <telerik:RadMenuItem Name="LocationRunModelMenuItem"
                                          Header="Run Model" />
                 </telerik:RadMenuItem>
-                
+
                 <telerik:RadMenuItem Header="Pipeline">
                     <telerik:RadMenuItem Name="PipelineRunModelMenuItem"
                                          Header="Run Model" />
@@ -61,39 +70,37 @@
                     <telerik:RadMenuItem Name="PipelineComputeValueMenuItem"
                                          Header="Compute Value" />
                 </telerik:RadMenuItem>
-                                     
-                
+
                 <telerik:RadMenuItem Header="Network">
                     <telerik:RadMenuItem Name="NetworkRunModelMenuItem"
                                          Header="Run Model" />
-                    
+
                     <telerik:RadMenuItem Name="NetworkComputeValue"
                                          Header="Compute Value" />
                 </telerik:RadMenuItem>
-                
+
                 <telerik:RadMenuItem Header="Map">
                     <telerik:RadMenuItem Name="BingMapsAerialMenuItem"
-                                         Header="Bing Maps Aerial"  />
-                    
+                                         Header="Bing Maps Aerial" />
+
                     <telerik:RadMenuItem Name="BingMapsRoadsMenuItem"
                                          Header="Bing Maps Roads" />
 
                     <telerik:RadMenuItem Name="MapBoxAerialMenuItem"
                                          Header="Map Box Aerial" />
-                    
+
                     <telerik:RadMenuItem Name="MapBoxRoadsMenuItem"
                                          Header="Map Box Roads" />
-                    
+
                     <telerik:RadMenuItem Name="MapBoxTerrainMenuItem"
                                          Header="Map Box Terrain" />
                 </telerik:RadMenuItem>
-                                     
             </telerik:RadMenuItem>
         </telerik:RadMenu>
-        
-        <libpipeline:TransitionControl Name="TransitionControl"
+
+        <marvcontrols:TransitionControl Name="TransitionControl"
                                        Grid.Row="1">
-            
+
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
                 <Grid.ColumnDefinitions>
@@ -102,74 +109,199 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
+                <marvcontrols:MapView Name="MapView"
+                                      Grid.Column="0"
+                                      IsManipulationEnabled="True"
+                                      ManipulationMode="Scale,Translate"
+                                      MaxZoomLevel="21"
+                                      StartExtent="China">
+                    <mapcontrol:MapItemsControl Name="MapItemsControl"
+                                                Effect="{StaticResource ResourceKey=DropShadow}"
+                                                ItemsSource="{Binding Polylines, ElementName=Root}"
+                                                VirtualizingPanel.IsVirtualizing="True"
+                                                SelectedItem="{Binding Polylines.SelectedItem, ElementName=Root, Mode=TwoWay}">
+                        <mapcontrol:MapItemsControl.ItemContainerStyle>
+                            <Style TargetType="mapcontrol:MapItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <marvcontrols:SegmentedPolylineControl DisabledStroke="DarkGray"
+                                                                                   DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
+                                                                                   IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
+                                                                                   IsEnabled="{Binding IsEnabled}"
+                                                                                   Locations="{Binding}"
+                                                                                   SelectedLocation="{Binding SelectedItem, Mode=TwoWay}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            </Style>
+                        </mapcontrol:MapItemsControl.ItemContainerStyle>
+                    </mapcontrol:MapItemsControl>
+
+                    <marvcontrols:EllipseControl Name="EarthquakeControl"
+                                                 Effect="{StaticResource DropShadow}"
+                                                 Locations="{Binding Earthquakes, ElementName=Root}" 
+                                                 Opacity="0.8" />
+
+                    <Label mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Mode=TwoWay, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                           Background="Gray"
+                           Content="{Binding Earthquakes.SelectedItem.Value, ElementName=Root}"
+                           Height="30" Width="100"
+                           Visibility="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}"/>
+                    
+                </marvcontrols:MapView>
+
+                <!-- Property Grid -->
+                <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
+                                        Grid.Column="0"
+                                        AutoGeneratePropertyDefinitions="False"
+                                        DescriptionPanelVisibility="Collapsed"
+                                        Effect="{StaticResource ResourceKey=DropShadow}"
+                                        FieldIndicatorVisibility="Collapsed"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top"
+                                        IsReadOnly="True"
+                                        Item="{Binding Polylines.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                        Margin="10"
+                                        SearchBoxVisibility="Collapsed"
+                                        SortAndGroupButtonsVisibility="Collapsed"
+                                        Width="350">
+                    <telerik:RadPropertyGrid.PropertyDefinitions>
+                        <telerik:PropertyDefinition Binding="{Binding Latitude}"
+                                                    DisplayName="Latitude" />
+
+                        <telerik:PropertyDefinition Binding="{Binding Longitude}"
+                                                    DisplayName="Longitude" />
+
+                        <telerik:PropertyDefinition Binding="{Binding Name}"
+                                                    DisplayName="Name" />
+
+                        <telerik:PropertyDefinition Binding="{Binding Value}"
+                                                    DisplayName="PoF" />
+                    </telerik:RadPropertyGrid.PropertyDefinitions>
+                </telerik:RadPropertyGrid>
+
+                <!-- Pipeline Info Control -->
                 <Grid Grid.Column="0"
-                      Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                    <libpipeline:MapView Name="MapView"
-                                         IsManipulationEnabled="True"
-                                         ManipulationMode="Scale,Translate"
-                                         MaxZoomLevel="21"
-                                         StartExtent="20,50,30,60">
-                        <mapcontrol:MapItemsControl Name="MapItemsControl"
-                                                    Effect="{StaticResource ResourceKey=DropShadow}"
-                                                    ItemsSource="{Binding MultiLocations, ElementName=Root}"
-                                                    VirtualizingPanel.IsVirtualizing="True"
-                                                    SelectedItem="{Binding MultiLocations.SelectedItem, ElementName=Root, Mode=TwoWay}">
-                            <mapcontrol:MapItemsControl.ItemContainerStyle>
-                                <Style TargetType="mapcontrol:MapItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate>
-                                                <libpipeline:SegmentedPolylineControl DisabledStroke="DarkGray"
-                                                                                      DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
-                                                                                      IsCursorVisible="{Binding IsSelected}"
-                                                                                      IsEnabled="{Binding IsEnabled}"
-                                                                                      Locations="{Binding}"/>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    
-                                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                                </Style>
-                            </mapcontrol:MapItemsControl.ItemContainerStyle>
-                        </mapcontrol:MapItemsControl>
-                    </libpipeline:MapView>
+                      Background="{StaticResource ResourceKey=BackgroundLight}"
+                      Effect="{StaticResource ResourceKey=DropShadow}"
+                      Height="290"
+                      Margin="10"
+                      VerticalAlignment="Bottom"
+                      Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-                    <!-- Property Grid -->
-                    <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                             AutoGeneratePropertyDefinitions="False"
-                                             DescriptionPanelVisibility="Collapsed"
-                                             Effect="{StaticResource ResourceKey=DropShadow}"
-                                             FieldIndicatorVisibility="Collapsed"
-                                             HorizontalAlignment="Left" VerticalAlignment="Top"
-                                             IsReadOnly="True"
-                                             Item="{Binding MultiLocations.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
-                                             Margin="10"
-                                             SearchBoxVisibility="Collapsed"
-                                             SortAndGroupButtonsVisibility="Collapsed"
-                                             Width="350">
-                        <telerik:RadPropertyGrid.PropertyDefinitions>
-                            <telerik:PropertyDefinition Binding="{Binding Latitude}"
-                                                        DisplayName="Latitude" />
+                    <!-- Pipeline Info Control Header -->
+                    <Grid Grid.Row="0"
+                          Background="{StaticResource ResourceKey=BackgroundMedium}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
 
-                            <telerik:PropertyDefinition Binding="{Binding Longitude}"
-                                                        DisplayName="Longitude" />
+                        <TextBlock Grid.Column="0"
+                                FontSize="{StaticResource ResourceKey=FontSizeLarge}"
+                                FontWeight="Bold"
+                                Margin="5"
+                                Text="Synergi Data"
+                                VerticalAlignment="Center" />
 
-                            <telerik:PropertyDefinition Binding="{Binding Name}"
-                                                        DisplayName="Name" />
-                        
-                            <telerik:PropertyDefinition Binding="{Binding Value}"
-                                                        DisplayName="PoF" />
-                        </telerik:RadPropertyGrid.PropertyDefinitions>
-                    </telerik:RadPropertyGrid>
+                        <surface:SurfaceButton Grid.Column="1"
+                                               Content="Run Selected"
+                                               HorizontalContentAlignment="Center"
+                                               Name="SynergiRunButton"
+                                               Margin="5" />
+                    </Grid>
+
+                    <!-- Pipeline Info Control Inner -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Content="Lines"
+                               Margin="5" />
+
+                        <surface:SurfaceListBox Grid.Row="1" Grid.Column="0"
+                                                Name="LinesListBox"
+                                                HorizontalContentAlignment="Stretch"
+                                                ItemsSource="{Binding SynergiViewModel.Lines, ElementName=Root}"
+                                                Margin="5"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                SelectedItem="{Binding SynergiViewModel.Lines.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectionMode="Single">
+                            <surface:SurfaceListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}" />
+                                </DataTemplate>
+                            </surface:SurfaceListBox.ItemTemplate>
+                        </surface:SurfaceListBox>
+
+                        <Label Grid.Row="0" Grid.Column="1"
+                               Content="Sections"
+                               Margin="5" />
+
+                        <surface:SurfaceListBox Grid.Row="1" Grid.Column="1"
+                                                Name="SectionsListBox"
+                                                HorizontalContentAlignment="Stretch"
+                                                IsSynchronizedWithCurrentItem="True"
+                                                ItemsSource="{Binding SynergiViewModel.Sections, ElementName=Root}"
+                                                Margin="5"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                SelectedItem="{Binding SynergiViewModel.Sections.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectionMode="Single">
+                            <surface:SurfaceListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}" />
+                                </DataTemplate>
+                            </surface:SurfaceListBox.ItemTemplate>
+                        </surface:SurfaceListBox>
+
+                        <Label Grid.Row="0" Grid.Column="2"
+                               Content="Properties"
+                               Margin="5" />
+
+                        <DataGrid Grid.Row="1" Grid.Column="2"
+                                  AutoGenerateColumns="False"
+                                  ItemsSource="{Binding SynergiViewModel.SegmentData, ElementName=Root}"
+                                  Margin="5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Key}" Header="Property" />
+                                <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+
+                    <!-- ChartControl Legend -->
+                    <telerik:RadLegend Grid.Row="1"
+                                           Background="White"
+                                           BorderBrush="Black"
+                                           BorderThickness="1"
+                                           HorizontalAlignment="Right" VerticalAlignment="Top"
+                                           Items="{Binding LegendItems, ElementName=ChartControl}"
+                                           Margin="5" />
                 </Grid>
 
+                <!-- Grid Splitter -->
                 <GridSplitter Grid.Column="1"
                               ResizeBehavior="PreviousAndNext"
-                              ResizeDirection="Columns" 
+                              ResizeDirection="Columns"
                               Width="30"
-                              Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                              Visibility="{Binding IsMapVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                <!-- GraphControl -->
+                <!-- Graph Control -->
                 <Grid Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -183,25 +315,34 @@
                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
                            IsHitTestVisible="False"
                            Margin="10"
-                           Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}"/>
+                           Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                    <libpipeline:BnGraphControl Name="GraphControl"
-                                                Grid.Row="0"
-                                                Background="Transparent"
-                                                ConnectionColor="#252525"
-                                                Graph="{Binding DisplayGraph, ElementName=Root}"
-                                                IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff"
-                                                IsBackButtonVisible="{Binding IsBackButtonVisible, ElementName=Root}"
-                                                IsSensorButtonVisible="{Binding IsSensorButtonVisible, ElementName=Root}" />
+                    <marvcontrols:GraphControl Name="GraphControl"
+                                                 Grid.Row="0"
+                                                 Background="Transparent"
+                                                 ConnectionColor="#252525"
+                                                 Graph="{Binding DisplayGraph, ElementName=Root}"
+                                                 IncomingConnectionHighlightColor="#b11d01" OutgoingConnectionHighlightColor="#20aeff" />
 
-                    <telerik:RadButton Name="RetractAllButton"
-                                       Grid.Row="0"
-                                       HorizontalAlignment="Right" VerticalAlignment="Top"
-                                       Margin="0,70,10,0"
-                                       Visibility="Visible"
-                                       Width="50" Height="50">
-                        <Image Source="Resources/Icons/erase.png" />
-                    </telerik:RadButton>
+                    <!-- Graph Toolbar -->
+                    <StackPanel Effect="{StaticResource ResourceKey=DropShadow}"
+                                HorizontalAlignment="Left" VerticalAlignment="Top"
+                                Orientation="Vertical">
+                        <!-- Retract All Button -->
+                        <marvcontrols:SurfaceImageButton Grid.Row="0"
+                                                         Name="RetractAllButton"
+                                                         Height="50" Width="50"
+                                                         Margin="5"
+                                                         Source="/Marv.Common;component/Resources/Icons/Close.png" />
+
+                        <!-- Back Button -->
+                        <marvcontrols:SurfaceImageButton Grid.Row="0"
+                                                         Name="BackButton"
+                                                         Height="50" Width="50"
+                                                         Margin="5"
+                                                         Source="/Marv.Common;component/Resources/Icons/Back.png"
+                                                         Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+                    </StackPanel>
 
                     <!-- Year Label and Year Slider -->
                     <Grid Grid.Row="1"
@@ -211,7 +352,7 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- Year Label -->
                         <Label Grid.Column="0"
                                Content="{Binding SelectedYear, ElementName=Root}"
@@ -220,16 +361,6 @@
                                FontSize="24" FontWeight="Bold"
                                HorizontalContentAlignment="Center" />
 
-                        <!-- Year Slider -->
-                        <!--<telerik:RadSlider Grid.Column="1"
-                                           Background="Black"
-                                           IsSnapToTickEnabled="True"
-                                           Maximum="{Binding EndYear, ElementName=Root}"
-                                           Minimum="{Binding StartYear, ElementName=Root}"
-                                           TickPlacement="BottomRight"
-                                           Value="{Binding SelectedYear, ElementName=Root}">
-                        </telerik:RadSlider>-->
-                        
                         <surface:SurfaceSlider Grid.Column="1"
                                                Background="DarkGray"
                                                IsSnapToTickEnabled="True"
@@ -240,26 +371,30 @@
                     </Grid>
                 </Grid>
 
-                <local:PopupControl x:Name="PopupControl"
-                                    Grid.Column="0" Grid.ColumnSpan="3"
-                                    Background="#DDDDDD"
-                                    Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                    Margin="10"
-                                    VerticalAlignment="Top" HorizontalAlignment="Left"
-                                    Visibility="Collapsed" />
+                <!-- Notification Control -->
+                <marvcontrols:NotificationControl x:Name="NotificationControl"
+                                                Grid.Column="0" Grid.ColumnSpan="3"
+                                                Background="#DDDDDD"
+                                                Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                Margin="10"
+                                                MaxHeight="400"
+                                                Notifications="{Binding Notifications, ElementName=Root}"
+                                                Visibility="Collapsed"
+                                                Width="300" />
             </Grid>
 
             <!-- Settings Control -->
             <telerik:RadPropertyGrid Name="SettingsControl"
-                                     libpipeline:TransitionControl.DisplayName="Settings"
-                                     libpipeline:TransitionControl.IsHeaderVisible="True"
+                                     marvcontrols:TransitionControl.DisplayName="Settings"
+                                     marvcontrols:TransitionControl.IsHeaderVisible="True"
                                      HorizontalAlignment="Left"
                                      Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}" />
 
             <!-- Edit Network File Control -->
             <Grid Name="EditNetworkFilesControl"
-                  libpipeline:TransitionControl.DisplayName="Network Files"
-                  libpipeline:TransitionControl.IsHeaderVisible="True">
+                  marvcontrols:TransitionControl.DisplayName="Network Files"
+                  marvcontrols:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
@@ -274,7 +409,7 @@
                             <Border Background="LightGray"
                                 Margin="5">
                                 <TextBlock Text="{Binding Path=.}"
-                                           FontSize="24" 
+                                           FontSize="24"
                                            Margin="5" />
                             </Border>
                         </DataTemplate>
@@ -297,28 +432,28 @@
                                        Margin="5" />
                 </StackPanel>
             </Grid>
-            
+
             <!-- Run Model Control -->
             <Grid Name="RunModelControl"
-                  libpipeline:TransitionControl.DisplayName="RunModel"
-                  libpipeline:TransitionControl.IsHeaderVisible="True">
+                  marvcontrols:TransitionControl.DisplayName="RunModel"
+                  marvcontrols:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-                
-                <libpipeline:SliderProgressBar Name="ModelProgressBar"
+
+                <marvcontrols:SliderProgressBar Name="ModelProgressBar"
                                                Grid.Row="0"
                                                Height="100"
                                                Margin="10"
                                                SliderForeground="Blue"
                                                Value="0"
                                                VerticalAlignment="Top" />
-                
+
                 <telerik:RadButton Name="RunModelButton"
                                    Grid.Row="1"
                                    Content="Run Model" />
             </Grid>
-        </libpipeline:TransitionControl>
+        </marvcontrols:TransitionControl>
     </Grid>
 </Window>

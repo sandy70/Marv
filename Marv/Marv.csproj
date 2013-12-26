@@ -87,45 +87,55 @@
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip.Reduced">
-      <HintPath>..\..\Libraries\SharpKml\Ionic.Zip.Reduced.dll</HintPath>
+    <Reference Include="ImageFileCache, Version=1.11.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAML.MapControl.1.11.0\lib\net45\ImageFileCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF, Version=1.11.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAML.MapControl.1.11.0\lib\net45\MapControl.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Surface, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Surface\Microsoft.Surface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Surface.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Surface\Microsoft.Surface.Core.dll</HintPath>
+      <HintPath>..\packages\Surface\Microsoft.Surface.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Surface.Presentation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Surface\Microsoft.Surface.Presentation.dll</HintPath>
+      <HintPath>..\packages\Surface\Microsoft.Surface.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
+    <Reference Include="Microsoft.Surface.Presentation.Generic, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Surface\Microsoft.Surface.Presentation.Generic.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Data">
+    <Reference Include="QuickGraph.Data, Version=3.6.61114.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Data.Contracts">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\CodeContracts\QuickGraph.Data.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Graphviz">
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Graphviz.Contracts">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\CodeContracts\QuickGraph.Graphviz.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Serialization">
+    <Reference Include="QuickGraph.Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Serialization.Contracts">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\CodeContracts\QuickGraph.Serialization.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Input.Manipulations" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -136,40 +146,40 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Chart, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Chart.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Chart, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Chart.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Data, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Data.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Data, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Diagrams, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Diagrams.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Diagrams, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Diagrams.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Diagrams.Extensions, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Diagrams.Extensions.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Diagrams.Extensions, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Diagrams.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Input, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Input.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Controls.Navigation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Data, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Data.dll</HintPath>
+    <Reference Include="Telerik.Windows.Data, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2013.2.724.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Telerik\RadControls for WPF Q2 2013\Binaries\WPF45\Telerik.Windows.Diagrams.Core.dll</HintPath>
+    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2013.3.1204.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
@@ -182,18 +192,32 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdcoInput.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="GraphValueNotFoundException.cs" />
+    <Compile Include="GraphValueReaderAdco.cs" />
+    <Compile Include="GraphValueReaderCnpc.cs" />
+    <Compile Include="IGraphValueReader.cs" />
     <Compile Include="MainWindow.Properties.cs" />
+    <Compile Include="MainWindowBehaviorPolylines.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
-    <Compile Include="PopupControl.xaml.cs">
-      <DependentUpon>PopupControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
-    <Compile Include="Config.cs" />
-    <Page Include="PopupControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="SynergiViewModel.cs" />
+    <Compile Include="Web References\LineAndSectionOverviewService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\LoginService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\SegmentationService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Page Include="ResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -212,9 +236,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindowBehavior.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <Compile Include="MainWindowBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -228,6 +250,22 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Web References\SegmentationService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SegmentationService\SegmentationService.disco" />
+    <None Include="Web References\LoginService\BRIXLoginService.disco" />
+    <None Include="Web References\LineAndSectionOverviewService\ComponentSummaryDto.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\EventSummaryDto.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\HotspotSummaryDto.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\LineAndSectionOverviewService.disco" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -309,6 +347,29 @@
     <None Include="Resources\Outputs\Output2012.vertices">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Web References\LineAndSectionOverviewService\LineAndSectionOverviewService.wsdl" />
+    <None Include="Web References\LineAndSectionOverviewService\LineSummaryDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\SectionSummaryDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LineAndSectionOverviewService\ThreatDto.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\LoginService\BRIXLoginService.wsdl" />
+    <None Include="Web References\LoginService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SegmentationService\SegmentationService.wsdl" />
+    <None Include="Web References\SegmentationService\SegmentsViewModel.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -331,25 +392,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Marv\LibPipeline\LibPipeline.csproj">
-      <Project>{6cd9bd09-2796-4324-ba10-7dcb000ee8eb}</Project>
-      <Name>LibPipeline</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LibNetwork\LibNetwork.csproj">
-      <Project>{087fc54e-3111-48ca-8f13-20296cdb7c71}</Project>
-      <Name>LibNetwork</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapControl\Caching\ImageFileCache\ImageFileCache.csproj">
-      <Project>{86470440-fee2-4120-af5a-3762fb9c536f}</Project>
-      <Name>ImageFileCache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapControl\MapControl\MapControl.WPF.csproj">
-      <Project>{226f3575-b683-446d-a2f0-181291dc8787}</Project>
-      <Name>MapControl.WPF</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
+      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
+      <Name>Marv.Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
       <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
@@ -373,6 +422,44 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\LoginService\</RelPath>
+      <UpdateFromURL>http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Marv_LoginService_BRIXLoginService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\LineAndSectionOverviewService\</RelPath>
+      <UpdateFromURL>http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Marv_LineAndSectionOverviewService_LineAndSectionOverviewService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost/webservices/ProfileService/SegmentationService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SegmentationService\</RelPath>
+      <UpdateFromURL>http://localhost/webservices/ProfileService/SegmentationService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Marv_SegmentationService_SegmentationService</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

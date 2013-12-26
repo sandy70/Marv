@@ -1,9 +1,4 @@
-﻿using LibPipeline;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Marv.Controls;
 using System.Windows.Media;
 
 namespace Marv
@@ -12,15 +7,15 @@ namespace Marv
     {
         public Brush Map(double d)
         {
-            if (d > 0.95)
+            if (d > 0.75)
             {
                 return new SolidColorBrush(Colors.Red);
             }
-            else if (d > 0.80)
+            else if (d > 0.50)
             {
                 return new SolidColorBrush(Colors.Orange);
             }
-            else if (d > 0.50)
+            else if (d > 0.25)
             {
                 return new SolidColorBrush(Colors.Yellow);
             }
