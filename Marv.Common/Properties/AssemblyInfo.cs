@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Marv.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
+[assembly: AssemblyCompany("DNV GL")]
 [assembly: AssemblyProduct("Marv.Common")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2013")]
+[assembly: AssemblyCopyright("Copyright © DNV GL 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
