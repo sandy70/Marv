@@ -365,6 +365,11 @@ namespace Marv.Common
             return JsonConvert.SerializeObject(_object);
         }
 
+        public static TValue[] ToArray<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        {
+            return dictionary.Values.ToArray<TValue>();
+        }
+
         public static T ParseJson<T>(this string _string)
         {
             return JsonConvert.DeserializeObject<T>(_string);

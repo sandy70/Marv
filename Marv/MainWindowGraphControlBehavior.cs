@@ -158,7 +158,7 @@ namespace Marv
                     window.Notifications.Push(new NotificationTimed
                     {
                         Name = "Inconsistent Evidence",
-                        Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                        Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
                     });
 
                     graph.Value = graph.ClearEvidence(vertex.Key);
@@ -193,7 +193,7 @@ namespace Marv
                 window.Notifications.Push(new NotificationTimed
                 {
                     Name = "Inconsistent Evidence",
-                    Description = "Inconsistent evidence entered for vertex: " + vertex.Name,
+                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
                 });
 
                 graph.Value = graph.ClearEvidence(vertex.Key);

@@ -61,7 +61,7 @@ namespace Marv
 
         public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
         {
-            logger.Info("Computing value for line {0}.", multiLocation.Name);
+            logger.Info("Computing belief for line {0}.", multiLocation.Name);
 
             var vertexKey = "B08";
             var vertexName = graph.Vertices[vertexKey].Name;

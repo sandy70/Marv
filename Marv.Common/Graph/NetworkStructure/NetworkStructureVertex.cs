@@ -217,7 +217,7 @@ namespace Marv.Common
 
             if (typeString.Equals("number"))
             {
-                return VertexType.Number;
+                return VertexType.Numbered;
             }
             else if (typeString.Equals("interval"))
             {
@@ -225,7 +225,7 @@ namespace Marv.Common
             }
             else
             {
-                return VertexType.None;
+                return VertexType.Labelled;
             }
         }
 

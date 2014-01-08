@@ -29,6 +29,11 @@ namespace Marv.Common
             }
         }
 
+        public int IndexOf(string key)
+        {
+            return this.IndexOf(this[key]);
+        }
+
         public void Select(string key)
         {
             this.SelectedItem = this[key];

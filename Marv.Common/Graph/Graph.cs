@@ -20,6 +20,19 @@ namespace Marv.Common
         private Network network = new Network();
         private ViewModelCollection<Vertex> vertices = new ViewModelCollection<Vertex>();
 
+        public Dictionary<string, string, double> Belief
+        {
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    vertex.Belief = value[vertex.Key];
+                }
+
+                this.RaisePropertyChanged("Belief");
+            }
+        }
+
         public string DefaultGroup
         {
             get
@@ -137,6 +150,10 @@ namespace Marv.Common
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
 
+                // If all states have ranges, then it is an interval vertex. This is a hack. Remove
+                // this once the team starts using Hugin node types consistently.
+                if (vertex.States.Select(state => state.Range != null).Count() == vertex.States.Count()) vertex.Type = VertexType.Interval;
+
                 if (string.IsNullOrWhiteSpace(vertex.Units))
                 {
                     vertex.Units = "n/a";
@@ -200,7 +217,7 @@ namespace Marv.Common
 
         public Dictionary<string, string, double> GetNetworkValue()
         {
-            this.UpdateBeliefs();
+            this.UpdateNetworkBeliefs();
 
             var graphValue = new Dictionary<string, string, double>();
 
@@ -212,7 +229,7 @@ namespace Marv.Common
                 {
                     try
                     {
-                        vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.GetStateIndex(state.Key)];
+                        vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.States.IndexOf(state.Key)];
                     }
                     catch (SmileException exception)
                     {
@@ -225,6 +242,38 @@ namespace Marv.Common
             }
 
             return graphValue;
+        }
+
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer)
+        {
+            var targetVertex = this.Vertices[targetVertexKey];
+
+            // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
+            var value = new Dictionary<string, string, double>();
+
+            foreach (var sourceVertex in this.Vertices.Except(targetVertex))
+            {
+                foreach (var sourceState in sourceVertex.States)
+                {
+                    this.ClearEvidence();
+
+                    try
+                    {
+                        this.SetEvidence(sourceVertex.Key, sourceState.Key);
+                    }
+                    catch (SmileException exception)
+                    {
+                        continue;
+                    }
+
+                    var graphValue = this.GetNetworkValue();
+                    var targetVertexValue = graphValue[targetVertex.Key];
+
+                    value[sourceVertex.Key, sourceState.Key] = vertexValueComputer.Compute(targetVertex, targetVertexValue);
+                }
+            }
+
+            return value;
         }
 
         public double GetStandardDeviation(string vertexKey, Dictionary<string, double> vertexValue)
@@ -373,8 +422,7 @@ namespace Marv.Common
 
             for (int year = startYear; year <= endYear; year++)
             {
-                // If this is not the start year,
-                // then add the looped evidences
+                // If this is not the start year, then add the looped evidences
                 if (year > startYear)
                 {
                     foreach (var srcVertexKey in this.Loops.Keys)
@@ -398,6 +446,12 @@ namespace Marv.Common
             return graphValueTimeSeries;
         }
 
+        public void SetEvidence(string vertexKey, string stateKey)
+        {
+            var stateIndex = this.Vertices[vertexKey].GetStateIndex(stateKey);
+            this.SetEvidence(vertexKey, stateIndex);
+        }
+
         public void SetEvidence(string vertexKey, int stateIndex)
         {
             this.network.SetEvidence(vertexKey, stateIndex);
@@ -416,14 +470,16 @@ namespace Marv.Common
             }
         }
 
-        public void UpdateBeliefs()
+        public void UpdateNetworkBeliefs()
         {
             this.network.UpdateBeliefs();
         }
 
         public Dictionary<string, string, double> UpdateValue()
         {
-            return this.Value = this.GetNetworkValue();
+            var graphValue = this.GetNetworkValue();
+            this.Belief = graphValue;
+            return this.Value = graphValue;
         }
 
         public void Write(string fileName)
