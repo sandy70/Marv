@@ -258,7 +258,7 @@ namespace Marv.Common
             var verticesToIgnore = new List<Vertex>();
             verticesToIgnore.Add(targetVertex);
 
-            if(graphEvidence != null)
+            if (graphEvidence != null)
             {
                 // Set the given evidence
                 this.SetEvidence(graphEvidence);
@@ -366,6 +366,11 @@ namespace Marv.Common
             subGraph.DefaultGroup = group;
 
             return subGraph;
+        }
+
+        public double[,] GetTable(string vertexKey)
+        {
+            return this.network.GetNodeTable(vertexKey);
         }
 
         public bool HasEdge(string srcKey, string dstKey)
@@ -483,6 +488,11 @@ namespace Marv.Common
             {
                 graphEvidence[vertexKey].Set(this, vertexKey);
             }
+        }
+
+        public void SetTable(string vertexKey, double[,] table)
+        {
+            this.network.SetNodeTable(vertexKey, table);
         }
 
         public void SetValueToZero()
