@@ -244,25 +244,40 @@ namespace Marv.Common
             return graphValue;
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer)
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer, Dictionary<string, IEvidence> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
             // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
             var value = new Dictionary<string, string, double>();
 
-            foreach (var sourceVertex in this.Vertices.Except(targetVertex))
+            // Clear all evidence to begin with
+            this.ClearEvidence();
+
+            // Collect vertices to ignore
+            var verticesToIgnore = new List<Vertex>();
+            verticesToIgnore.Add(targetVertex);
+
+            if(graphEvidence != null)
+            {
+                // Set the given evidence
+                this.SetEvidence(graphEvidence);
+
+                // Collect more vertices to ignore
+                verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
+            }
+
+            foreach (var sourceVertex in this.Vertices.Except(verticesToIgnore))
             {
                 foreach (var sourceState in sourceVertex.States)
                 {
-                    this.ClearEvidence();
-
                     try
                     {
                         this.SetEvidence(sourceVertex.Key, sourceState.Key);
                     }
                     catch (SmileException exception)
                     {
+                        value[sourceVertex.Key, sourceState.Key] = double.NaN;
                         continue;
                     }
 
@@ -270,6 +285,8 @@ namespace Marv.Common
                     var targetVertexValue = graphValue[targetVertex.Key];
 
                     value[sourceVertex.Key, sourceState.Key] = vertexValueComputer.Compute(targetVertex, targetVertexValue);
+
+                    this.ClearEvidence(sourceVertex.Key);
                 }
             }
 
@@ -408,11 +425,7 @@ namespace Marv.Common
 
         public Dictionary<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
         {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                graphEvidence[vertexKey].Set(this, vertexKey);
-            }
-
+            this.SetEvidence(graphEvidence);
             return this.GetNetworkValue();
         }
 
@@ -460,6 +473,14 @@ namespace Marv.Common
         public void SetEvidence(string vertexKey, double[] evidence)
         {
             this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetEvidence(Dictionary<string, IEvidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                graphEvidence[vertexKey].Set(this, vertexKey);
+            }
         }
 
         public void SetValueToZero()
