@@ -143,6 +143,10 @@ namespace Marv
 
             //window.ReadGraphValueTimeSeries();
             //window.UpdateGraphValue();
+
+            var pipelineInput = new PipelineInput(@"C:\Users\vkha\Data\ADCO02\ADCO 7.xlsx");
+            var graphEvidence = pipelineInput.GetGraphEvidence(window.SourceGraph, "BB-425", "1");
+            window.SourceGraph.GetSensitivity("CR", new VertexEntropyDifferenceComputer(), graphEvidence);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

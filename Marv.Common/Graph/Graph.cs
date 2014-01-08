@@ -274,19 +274,21 @@ namespace Marv.Common
                     try
                     {
                         this.SetEvidence(sourceVertex.Key, sourceState.Key);
+
+                        var graphValue = this.GetNetworkValue();
+                        var targetVertexValue = graphValue[targetVertex.Key];
+
+                        value[sourceVertex.Key, sourceState.Key] = vertexValueComputer.Compute(targetVertex, targetVertexValue);
+
+                        this.ClearEvidence(sourceVertex.Key);
                     }
                     catch (SmileException exception)
                     {
+                        logger.Error(exception.Message);
+
                         value[sourceVertex.Key, sourceState.Key] = double.NaN;
                         continue;
                     }
-
-                    var graphValue = this.GetNetworkValue();
-                    var targetVertexValue = graphValue[targetVertex.Key];
-
-                    value[sourceVertex.Key, sourceState.Key] = vertexValueComputer.Compute(targetVertex, targetVertexValue);
-
-                    this.ClearEvidence(sourceVertex.Key);
                 }
             }
 

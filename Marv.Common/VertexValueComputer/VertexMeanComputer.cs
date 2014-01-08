@@ -1,10 +1,13 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 
 namespace Marv.Common
 {
     public class VertexMeanComputer : IVertexValueComputer
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public double Compute(Vertex vertex, Dictionary<string, double> vertexValue)
         {
             var mean = 0.0;
@@ -19,6 +22,9 @@ namespace Marv.Common
             else
             {
                 var message = String.Format("Mean is undefined for non-interval type sourceVertex: {0}.", vertex);
+                
+                logger.Error(message);
+                
                 throw new VertexValueUndefindedException(message);
             }
 
