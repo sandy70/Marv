@@ -111,6 +111,8 @@
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
     <Compile Include="Graph\EvidenceString\EvidenceString.cs" />
+    <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
+    <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
     <Compile Include="PipelineInput.cs" />
     <Compile Include="Graph\EvidenceString\RangeEvidenceString.cs" />
     <Compile Include="Graph\EvidenceString\StateEvidenceString.cs" />
@@ -151,6 +153,11 @@
     <Compile Include="Types\ViewModel.cs" />
     <Compile Include="Types\ViewModelCollection.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexMeanComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexStandardDeviationComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexValueUndefinedException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">

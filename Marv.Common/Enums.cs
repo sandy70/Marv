@@ -2,8 +2,9 @@
 {
     public enum VertexType
     {
+        Boolean,
         Interval,
-        None,
-        Number
+        Labelled,
+        Numbered
     }
 }

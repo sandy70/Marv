@@ -105,11 +105,19 @@ namespace Marv
             var window = this.AssociatedObject as MainWindow;
 
             LoginService.BRIXLoginService loginService = new BRIXLoginService();
-            window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
 
-            LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-            lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
-            window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
+            try
+            {
+                window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
+
+                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
+                window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
+            }
+            catch(Exception)
+            {
+                logger.Error("Unable to log in to Synergi Pipeline");
+            }
         }
 
         private async void AssociatedObject_Loaded_ReadNetwork(object sender, RoutedEventArgs e)
@@ -135,6 +143,10 @@ namespace Marv
 
             //window.ReadGraphValueTimeSeries();
             //window.UpdateGraphValue();
+
+            var pipelineInput = new PipelineInput(@"C:\Users\vkha\Data\ADCO02\ADCO 7.xlsx");
+            var graphEvidence = pipelineInput.GetGraphEvidence(window.SourceGraph, "BB-425", "1");
+            window.SourceGraph.GetSensitivity("CR", new VertexEntropyDifferenceComputer(), graphEvidence);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

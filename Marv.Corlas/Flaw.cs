@@ -1,5 +1,6 @@
 ﻿namespace Marv.Corlas
 {
+    // Just a test comment.
     public class Flaw
     {
         private double _depth;

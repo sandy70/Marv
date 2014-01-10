@@ -29,6 +29,19 @@ namespace Marv.Common
             }
         }
 
+        public IEnumerable<T> this[IEnumerable<string> keys]
+        {
+            get
+            {
+                return keys.Select(key => this.dictionary[key]);
+            }
+        }
+
+        public int IndexOf(string key)
+        {
+            return this.IndexOf(this[key]);
+        }
+
         public void Select(string key)
         {
             this.SelectedItem = this[key];

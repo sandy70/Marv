@@ -5,7 +5,25 @@ namespace Marv.Common
     public class State : ViewModel
     {
         private double _value;
+        private double belief;
         private Sequence<double> range = new Sequence<double>();
+
+        public double Belief
+        {
+            get
+            {
+                return this.belief;
+            }
+
+            set
+            {
+                if (value != this.belief)
+                {
+                    this.belief = value;
+                    this.RaisePropertyChanged("Belief");
+                }
+            }
+        }
 
         public Sequence<double> Range
         {
@@ -38,7 +56,7 @@ namespace Marv.Common
         {
             get
             {
-                if(this.Range != null && this.Range.Count > 0)
+                if (this.Range != null && this.Range.Count > 0)
                 {
                     // This will work because Range is of type <double>
                     return this.Range.Average().ToString();

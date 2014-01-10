@@ -32,8 +32,34 @@ namespace Marv.Common
         private string selectedGroup;
         private State selectedState;
         private ViewModelCollection<State> states = new ViewModelCollection<State>();
-        private VertexType type = VertexType.None;
+        private Dictionary<string, double> statistics = new Dictionary<string, double>();
+        private VertexType type = VertexType.Labelled;
         private string units = "";
+
+        public Dictionary<string, double> Belief
+        {
+            get
+            {
+                var belief = new Dictionary<string, double>();
+
+                foreach (var state in this.States)
+                {
+                    belief[state.Key] = state.Belief;
+                }
+
+                return belief;
+            }
+
+            set
+            {
+                foreach (var state in this.States)
+                {
+                    state.Belief = value[state.Key];
+                }
+
+                this.RaisePropertyChanged("Belief");
+            }
+        }
 
         public ObservableCollection<IVertexCommand> Commands
         {
@@ -344,6 +370,23 @@ namespace Marv.Common
             }
         }
 
+        public Dictionary<string, double> Statistics
+        {
+            get
+            {
+                return this.statistics;
+            }
+
+            set
+            {
+                if (value != this.statistics)
+                {
+                    this.statistics = value;
+                    this.RaisePropertyChanged("Statistics");
+                }
+            }
+        }
+
         public VertexType Type
         {
             get
@@ -380,6 +423,18 @@ namespace Marv.Common
 
         public Dictionary<string, double> Value
         {
+            get
+            {
+                var value = new Dictionary<string, double>();
+
+                foreach (var state in this.States)
+                {
+                    value[state.Key] = state.Value;
+                }
+
+                return value;
+            }
+
             set
             {
                 foreach (var state in this.States)
@@ -446,7 +501,8 @@ namespace Marv.Common
 
         public double GetStandardDeviation(Dictionary<string, double> vertexValue)
         {
-            // Formula for standard deviation of a pdf stdev = sqrt(sum((x - mu)^2 * P(x));
+            // Formula for standard deviation of a pdf stdev = sqrt(sum((x - mu)^2 * P(x)); From
+            // here: http://www.wyzant.com/resources/lessons/math/statistics_and_probability/expected_value/variance
 
             var mu = this.GetMean(vertexValue);
             var stdev = 0.0;
@@ -545,6 +601,11 @@ namespace Marv.Common
             return evidence;
         }
 
+        public override string ToString()
+        {
+            return String.Format("[{0}:{1}]", this.Key, this.Name);
+        }
+
         public void UpdateMostProbableState()
         {
             State mostProbableState = new State { Value = double.MinValue, Key = "" };
@@ -558,6 +619,16 @@ namespace Marv.Common
             }
 
             this.MostProbableState = mostProbableState;
+        }
+
+        public double GetStatistics(string statisticsKey, IVertexValueComputer vertexValueComputer)
+        {
+            if (!this.Statistics.ContainsKey(statisticsKey))
+            {
+                this.Statistics[statisticsKey] = vertexValueComputer.Compute(this, this.Belief);
+            }
+
+            return this.Statistics[statisticsKey];
         }
     }
 }

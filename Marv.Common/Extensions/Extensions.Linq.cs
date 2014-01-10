@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Marv.Common
 {
@@ -57,6 +58,16 @@ namespace Marv.Common
                 index++;
             }
             return maxIndex;
+        }
+
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
+        {
+            return source.Except(item.Yield<T>());
+        }
+
+        public static IEnumerable<T> Yield<T>(this T item)
+        {
+            yield return item;
         }
     }
 }
