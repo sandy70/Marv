@@ -192,7 +192,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdcoInput.cs" />
-    <Compile Include="Command.cs" />
     <Compile Include="GraphValueNotFoundException.cs" />
     <Compile Include="GraphValueReaderAdco.cs" />
     <Compile Include="GraphValueReaderCnpc.cs" />

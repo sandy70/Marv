@@ -16,8 +16,8 @@ namespace Marv.Controls
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var vertexCommand = this.AssociatedObject.DataContext as IVertexCommand;
-            var vertexViewModel = this.AssociatedObject.FindParent<ItemsControl>().DataContext as Vertex;
-            vertexCommand.RaiseExecuted(vertexViewModel);
+            var vertex = this.AssociatedObject.FindParent<ItemsControl>().DataContext as Vertex;
+            vertexCommand.RaiseExecuted(vertex);
         }
     }
 }
