@@ -17,7 +17,12 @@ namespace Marv.Excel
         private void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
         {
             var dialog = new OpenFileDialog();
-            dialog.ShowDialog();
+            var result = dialog.ShowDialog();
+
+            if(result != null)
+            {
+                // var graph = Graph.Read(dialog.FileName);
+            }
         }
     }
 }
