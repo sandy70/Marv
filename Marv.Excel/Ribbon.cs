@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Office.Tools.Ribbon;
-using System.Windows.Forms;
+using Microsoft.Office.Interop.Excel;
 
 namespace Marv.Excel
 {
@@ -16,12 +16,14 @@ namespace Marv.Excel
 
         private void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
         {
-            var dialog = new OpenFileDialog();
+            var dialog = new System.Windows.Forms.OpenFileDialog();
             var result = dialog.ShowDialog();
 
-            if(result != null)
+            if (result != null)
             {
-                // var graph = Graph.Read(dialog.FileName);
+                var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
+                Range range = worksheet.get_Range("A1");
+                range.Value2 = dialog.FileName;
             }
         }
     }

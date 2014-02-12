@@ -42,7 +42,6 @@
             // 
             // MarvTab
             // 
-            this.MarvTab.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.MarvTab.Groups.Add(this.FileGroup);
             this.MarvTab.Label = "MARV";
             this.MarvTab.Name = "MarvTab";
@@ -55,7 +54,7 @@
             // 
             // OpenFileButton
             // 
-            this.OpenFileButton.Label = "Open File";
+            this.OpenFileButton.Label = "Open";
             this.OpenFileButton.Name = "OpenFileButton";
             // 
             // Ribbon
