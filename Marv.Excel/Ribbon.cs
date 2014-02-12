@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Office.Tools.Ribbon;
 using Microsoft.Office.Interop.Excel;
+using Smile;
 
 namespace Marv.Excel
 {
@@ -19,11 +20,18 @@ namespace Marv.Excel
             var dialog = new System.Windows.Forms.OpenFileDialog();
             var result = dialog.ShowDialog();
 
-            if (result != null)
+            var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
+
+            var network = new Network();
+            network.ReadFile(dialog.FileName);
+
+            var nodeIds = network.GetAllNodeIds();
+            var rowIndex = 1;
+
+            foreach(var nodeId in nodeIds)
             {
-                var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
-                Range range = worksheet.get_Range("A1");
-                range.Value2 = dialog.FileName;
+                Range range = worksheet.Cells.get_Item(rowIndex++, 1);
+                range.Value2 = nodeId;
             }
         }
     }
