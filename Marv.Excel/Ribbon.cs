@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Office.Tools.Ribbon;
 using Microsoft.Office.Interop.Excel;
 using Smile;
+using Marv.Common;
 
 namespace Marv.Excel
 {
@@ -22,16 +23,16 @@ namespace Marv.Excel
 
             var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
 
-            var network = new Network();
-            network.ReadFile(dialog.FileName);
+            var graph = Graph.Read(dialog.FileName);
 
-            var nodeIds = network.GetAllNodeIds();
             var rowIndex = 1;
 
-            foreach(var nodeId in nodeIds)
+            foreach(var vertex in graph.Vertices)
             {
-                Range range = worksheet.Cells.get_Item(rowIndex++, 1);
-                range.Value2 = nodeId;
+                Range range = worksheet.Cells.get_Item(rowIndex, 1);
+                range.Value2 = vertex.Name;
+                worksheet.Cells.get_Item(rowIndex, 2).Value2 = vertex.Key;
+                worksheet.Cells.get_Item(rowIndex++, 3).Value2 = vertex.Units;
             }
         }
     }

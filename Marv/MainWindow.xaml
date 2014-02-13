@@ -31,7 +31,7 @@
                 <Setter Property="StartYear" Value="{Binding Default.StartYear, Mode=TwoWay, Source={StaticResource ResourceKey=Settings}}" />
             </Style>
 
-            <marvcommon:ChartSeriesDescriptorSelector x:Key="ChartSeriesDescriptorSelector" />
+            <marvcontrols:ChartSeriesDescriptorSelector x:Key="ChartSeriesDescriptorSelector" />
         </ResourceDictionary>
     </Window.Resources>
 
