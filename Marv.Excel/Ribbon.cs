@@ -23,17 +23,38 @@ namespace Marv.Excel
 
             var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
 
+            // Generate the static part
+            Ribbon.SetCellValue(worksheet, 1, 1, "Name");
+            Ribbon.SetCellValue(worksheet, 2, 1, "Units");
+            Ribbon.SetCellValue(worksheet, 3, 1, "Description");
+            Ribbon.SetCellValue(worksheet, 4, 1, "Value");
+
             var graph = Graph.Read(dialog.FileName);
 
-            var rowIndex = 1;
+            var colIndex = 4;
 
             foreach(var vertex in graph.Vertices)
             {
-                Range range = worksheet.Cells.get_Item(rowIndex, 1);
-                range.Value2 = vertex.Name;
-                worksheet.Cells.get_Item(rowIndex, 2).Value2 = vertex.Key;
-                worksheet.Cells.get_Item(rowIndex++, 3).Value2 = vertex.Units;
+                // Set the header cells for this vertex
+                worksheet.SetCellValue(1, colIndex, vertex.Key);
+                worksheet.SetCellValue(2, colIndex, vertex.Units);
+                worksheet.SetCellValue(3, colIndex, vertex.Description);
+
+                var rowIndex = 5;
+                // Set the state cells for this vertex
+                foreach(var state in vertex.States)
+                {
+                    worksheet.SetCellValue(rowIndex++, colIndex - 1, state.Key);
+                }
+
+                colIndex += 2;
             }
+        }
+
+        private static void SetCellValue(Worksheet worksheet, int rowIndex, int colIndex, string value)
+        {
+            var range = (Range)worksheet.Cells.get_Item(rowIndex, colIndex);
+            range.Value2 = value;
         }
     }
 }

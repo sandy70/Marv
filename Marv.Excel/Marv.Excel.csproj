@@ -137,6 +137,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\RCWPF\2013.3.1204.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Office.Tools.v4.0.Framework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -174,6 +175,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

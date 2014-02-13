@@ -34,6 +34,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon));
             this.MarvTab = this.Factory.CreateRibbonTab();
             this.FileGroup = this.Factory.CreateRibbonGroup();
             this.OpenFileButton = this.Factory.CreateRibbonButton();
@@ -54,8 +55,10 @@
             // 
             // OpenFileButton
             // 
+            this.OpenFileButton.Image = ((System.Drawing.Image)(resources.GetObject("OpenFileButton.Image")));
             this.OpenFileButton.Label = "Open";
             this.OpenFileButton.Name = "OpenFileButton";
+            this.OpenFileButton.ShowImage = true;
             // 
             // Ribbon
             // 
