@@ -1,11 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Marv.Common
 {
-    public class ViewModelCollection<T> : SelectableCollection<T> where T : class, IViewModel
+    public enum SelectionMode
     {
+        Single,
+        Multiple
+    }
+
+    public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : class, IViewModel
+    {
+        private bool isSelected = false;
+        private string key;
+        private string name;
+        private Dictionary<string, object> properties = new Dictionary<string, object>();
+
         public ViewModelCollection()
             : base()
         {
@@ -16,16 +29,97 @@ namespace Marv.Common
         {
         }
 
-        public T this[string key]
+        public event EventHandler<T> SelectionChanged;
+
+        public bool IsSelected
         {
             get
             {
-                return this.dictionary[key];
+                return this.isSelected;
             }
 
             set
             {
-                this.dictionary[key] = value;
+                if (value != this.isSelected)
+                {
+                    this.isSelected = value;
+                    this.RaisePropertyChanged("IsSelected");
+                }
+            }
+        }
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value != this.key)
+                {
+                    this.key = value;
+                    this.RaisePropertyChanged("Key");
+                }
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value != this.name)
+                {
+                    this.name = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
+        }
+
+        public Dictionary<string, object> Properties
+        {
+            get
+            {
+                return this.properties;
+            }
+
+            set
+            {
+                if (value != this.properties)
+                {
+                    this.properties = value;
+                    this.RaisePropertyChanged("Properties");
+                }
+            }
+        }
+
+        public T SelectedItem
+        {
+            get
+            {
+                return this.Where(item => item.IsSelected).FirstOrDefault();
+            }
+        }
+
+        public IEnumerable<T> SelectedItems
+        {
+            get
+            {
+                return this.Where(item => item.IsSelected);
+            }
+        }
+
+        public T this[string key]
+        {
+            get
+            {
+                return this.Where(item => item.Key == key).First();
             }
         }
 
@@ -33,8 +127,14 @@ namespace Marv.Common
         {
             get
             {
-                return keys.Select(key => this.dictionary[key]);
+                return keys.Select(key => this[key]);
             }
+        }
+
+        public bool Contains(string key)
+        {
+            if (this.Where(item => item.Key == key).Count() > 0) return true;
+            else return false;
         }
 
         public int IndexOf(string key)
@@ -44,48 +144,50 @@ namespace Marv.Common
 
         public void Select(string key)
         {
-            this.SelectedItem = this[key];
+            if (this.Contains(key))
+            {
+                this.UnselectAll();
+                this[key].IsSelected = true;
+                this.RaisePropertyChanged("SelectedItem");
+            }
+            else
+            {
+                throw new ItemNotFoundException("Given item not found in this collection.");
+            }
         }
 
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        public void Select(T item)
         {
-            base.OnCollectionChanged(e);
-
-            if (e.NewItems != null)
+            if (this.Contains(item))
             {
-                foreach (var newItem in e.NewItems)
-                {
-                    this.dictionary[(newItem as T).Key] = newItem as T;
-                }
-
-                if (this.Count == 1)
-                {
-                    this.SelectedItem = this.First();
-                }
+                this.UnselectAll();
+                item.IsSelected = true;
+                this.RaisePropertyChanged("SelectedItem");
             }
-
-            else if (e.OldItems != null)
+            else
             {
-                bool selectedRemoved = false;
+                throw new ItemNotFoundException("Given item not found in this collection.");
+            }
+        }
 
-                foreach (var item in e.OldItems)
-                {
-                    this.dictionary.Remove((item as T).Key);
+        public void UnselectAll()
+        {
+            foreach (var item in this.SelectedItems)
+            {
+                item.IsSelected = false;
+            }
+        }
 
-                    if (item.Equals(this.SelectedItem))
-                    {
-                        selectedRemoved = true;
-                    }
-                }
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            base.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
 
-                if (this.Count > 0 && selectedRemoved == true)
-                {
-                    this.SelectedItem = this.First();
-                }
-                else
-                {
-                    this.SelectedItem = default(T);
-                }
+        private void RaiseSelectionChanged(T item)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, item);
             }
         }
     }

@@ -156,7 +156,7 @@ namespace Marv.Controls
         {
             if (this.locationStack.Count > 0)
             {
-                this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
+                // this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
                 this.locationStack.Clear();
                 timer.Stop();
             }

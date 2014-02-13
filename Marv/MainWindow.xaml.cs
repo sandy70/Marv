@@ -259,7 +259,7 @@ namespace Marv
 
                     if (this.Polylines.SelectedItem.IsEnabled == false)
                     {
-                        this.Polylines.SelectedItem = multiLocation;
+                        // this.Polylines.Select(multiLocation);
                     }
 
                     try

@@ -99,6 +99,7 @@
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
     <Compile Include="Graph\EvidenceString\EvidenceString.cs" />
+    <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
     <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
     <Compile Include="PipelineInput.cs" />

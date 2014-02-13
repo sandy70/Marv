@@ -118,8 +118,7 @@
                     <mapcontrol:MapItemsControl Name="MapItemsControl"
                                                 Effect="{StaticResource ResourceKey=DropShadow}"
                                                 ItemsSource="{Binding Polylines, ElementName=Root}"
-                                                VirtualizingPanel.IsVirtualizing="True"
-                                                SelectedItem="{Binding Polylines.SelectedItem, ElementName=Root, Mode=TwoWay}">
+                                                VirtualizingPanel.IsVirtualizing="True">
                         <mapcontrol:MapItemsControl.ItemContainerStyle>
                             <Style TargetType="mapcontrol:MapItem">
                                 <Setter Property="Template">
@@ -129,8 +128,7 @@
                                                                                    DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
                                                                                    IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
                                                                                    IsEnabled="{Binding IsEnabled}"
-                                                                                   Locations="{Binding}"
-                                                                                   SelectedLocation="{Binding SelectedItem, Mode=TwoWay}" />
+                                                                                   Locations="{Binding}" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -145,7 +143,7 @@
                                                  Locations="{Binding Earthquakes, ElementName=Root}" 
                                                  Opacity="0.8" />
 
-                    <Label mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Mode=TwoWay, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                    <Label mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
                            Background="Gray"
                            Content="{Binding Earthquakes.SelectedItem.Value, ElementName=Root}"
                            Height="30" Width="100"
@@ -162,7 +160,7 @@
                                         FieldIndicatorVisibility="Collapsed"
                                         HorizontalAlignment="Left" VerticalAlignment="Top"
                                         IsReadOnly="True"
-                                        Item="{Binding Polylines.SelectedItem.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                        Item="{Binding Polylines.SelectedItem.SelectedItem, ElementName=Root}"
                                         Margin="10"
                                         SearchBoxVisibility="Collapsed"
                                         SortAndGroupButtonsVisibility="Collapsed"
