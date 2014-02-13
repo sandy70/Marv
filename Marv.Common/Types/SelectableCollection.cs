@@ -8,6 +8,7 @@ namespace Marv.Common
     public class SelectableCollection<T> : ObservableCollection<T>, IViewModel where T : class
     {
         protected Dictionary<string, T> dictionary = new Dictionary<string, T>();
+        private bool isSelected;
         private string key = "";
         private string name = "";
         private Dynamic properties = new Dynamic();
@@ -24,6 +25,23 @@ namespace Marv.Common
         }
 
         public event EventHandler<T> SelectionChanged;
+
+        public bool IsSelected
+        {
+            get
+            {
+                return this.isSelected;
+            }
+
+            set
+            {
+                if (value != this.isSelected)
+                {
+                    this.isSelected = value;
+                    this.RaisePropertyChanged("IsSelected");
+                }
+            }
+        }
 
         public string Key
         {
