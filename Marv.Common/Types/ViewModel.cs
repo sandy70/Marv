@@ -4,6 +4,8 @@ namespace Marv.Common
 {
     public interface IViewModel : INotifyPropertyChanged
     {
+        bool IsEnabled { get; set; }
+
         bool IsSelected { get; set; }
 
         string Key { get; set; }
@@ -13,11 +15,29 @@ namespace Marv.Common
 
     public class ViewModel : IViewModel
     {
+        private bool isEnabled;
         private bool isSelected;
         private string key = "";
         private string name = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.isEnabled;
+            }
+
+            set
+            {
+                if (value != this.isEnabled)
+                {
+                    this.isEnabled = value;
+                    this.RaisePropertyChanged("IsEnabled");
+                }
+            }
+        }
 
         public bool IsSelected
         {

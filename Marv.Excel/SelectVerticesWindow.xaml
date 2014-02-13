@@ -28,9 +28,6 @@
             
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <DataTemplate.Resources>
-                       
-                    </DataTemplate.Resources>
                     <Label Background="LightGray"
                            Margin="10">
                         <StackPanel Orientation="Vertical">

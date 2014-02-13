@@ -6,14 +6,9 @@ using System.Linq;
 
 namespace Marv.Common
 {
-    public enum SelectionMode
-    {
-        Single,
-        Multiple
-    }
-
     public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : class, IViewModel
     {
+        private bool isEnabled;
         private bool isSelected = false;
         private string key;
         private string name;
@@ -30,6 +25,23 @@ namespace Marv.Common
         }
 
         public event EventHandler<T> SelectionChanged;
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.isEnabled;
+            }
+
+            set
+            {
+                if (value != this.isEnabled)
+                {
+                    this.isEnabled = value;
+                    this.RaisePropertyChanged("IsEnabled");
+                }
+            }
+        }
 
         public bool IsSelected
         {
