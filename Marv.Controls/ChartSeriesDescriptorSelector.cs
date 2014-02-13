@@ -1,4 +1,6 @@
-﻿namespace Marv.Common
+﻿using Marv.Common;
+
+namespace Marv.Controls
 {
     public class ChartSeriesDescriptorSelector : Telerik.Windows.Controls.ChartView.ChartSeriesDescriptorSelector
     {

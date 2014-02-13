@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telerik.Windows.Controls.ChartView;
+﻿using Telerik.Windows.Controls.ChartView;
 
-namespace Marv.Common
+namespace Marv.Controls
 {
     public static class ChartAxes
     {

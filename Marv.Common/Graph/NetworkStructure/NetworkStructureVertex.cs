@@ -123,10 +123,11 @@ namespace Marv.Common
                         {
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
+                            // we use ParseDouble to take care of infinities
                             Range = new Sequence<double>
                             {
-                               double.Parse(stateStrings[i + 1]),
-                               double.Parse(stateStrings[i])
+                               stateStrings[i + 1].ParseDouble(),
+                               stateStrings[i].ParseDouble()
                             }
                         });
                     }

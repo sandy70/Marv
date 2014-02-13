@@ -150,5 +150,12 @@ namespace Marv.Common
         {
             return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
+
+        public static double ParseDouble(this string str)
+        {
+            if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
+            else if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
+            else return double.Parse(str);
+        }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
+﻿using Marv.Common;
+using System;
 using System.Windows.Media;
 using Telerik.Windows.Controls.ChartView;
 
-namespace Marv.Common
+namespace Marv.Controls
 {
     public interface IChartSeries : IViewModel
     {
