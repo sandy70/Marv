@@ -241,23 +241,6 @@ namespace Marv.Common
             }
         }
 
-        public bool IsSelected
-        {
-            get
-            {
-                return this.isSelected;
-            }
-
-            set
-            {
-                if (value != this.isSelected)
-                {
-                    this.isSelected = value;
-                    this.RaisePropertyChanged("IsSelected");
-                }
-            }
-        }
-
         public State MostProbableState
         {
             get

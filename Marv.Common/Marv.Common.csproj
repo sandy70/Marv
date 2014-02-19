@@ -22,6 +22,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>
+    </DocumentationFile>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -90,7 +93,7 @@
     <Compile Include="Chart\CategoricalPoint.cs" />
     <Compile Include="Countries.cs" />
     <Compile Include="Graph\EvidenceString\DistributionEvidenceString.cs" />
-    <Compile Include="EdgeCollection.cs" />
+    <Compile Include="Graph\EdgeCollection.cs" />
     <Compile Include="Graph\EvidenceString\EvidenceStringFactory.cs" />
     <Compile Include="Graph\EdgeConnectorPositions.cs" />
     <Compile Include="Extensions\Extensions.Locations.cs" />
