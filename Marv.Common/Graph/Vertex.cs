@@ -24,7 +24,6 @@ namespace Marv.Common
         private bool isExpanded;
         private bool isHeader = false;
         private bool isLocked = true;
-        private bool isSelected = false;
         private State mostProbableState = null;
         private double opacity = 1;
         private Point position;
