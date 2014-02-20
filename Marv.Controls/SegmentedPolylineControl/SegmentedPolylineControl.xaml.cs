@@ -234,7 +234,7 @@ namespace Marv.Controls
         private static void ChangedNameLocationPoint(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
-            control.NameLocation = control.NameLocationPoint;
+            // control.NameLocation = control.NameLocationPoint;
         }
 
         private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)

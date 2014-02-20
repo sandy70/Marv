@@ -6,33 +6,12 @@ namespace Marv.Common
     public class Location : ViewModel
     {
         private double _value;
-        private Guid guid;
         private double latitude;
         private double longitude;
 
-        public Guid Guid
-        {
-            get
-            {
-                return this.guid;
-            }
-
-            set
-            {
-                if (value != this.guid)
-                {
-                    this.guid = value;
-                    this.RaisePropertyChanged("Guid");
-                }
-            }
-        }
-
         public double Latitude
         {
-            get
-            {
-                return this.latitude;
-            }
+            get { return this.latitude; }
 
             set
             {
@@ -47,10 +26,7 @@ namespace Marv.Common
 
         public double Longitude
         {
-            get
-            {
-                return this.longitude;
-            }
+            get { return this.longitude; }
 
             set
             {
@@ -65,10 +41,7 @@ namespace Marv.Common
 
         public double Value
         {
-            get
-            {
-                return this._value;
-            }
+            get { return this._value; }
 
             set
             {
@@ -76,40 +49,6 @@ namespace Marv.Common
                 {
                     this._value = value;
                     this.RaisePropertyChanged("Value");
-                }
-            }
-        }
-
-        public double X
-        {
-            get
-            {
-                return this.Longitude;
-            }
-
-            set
-            {
-                if (value != this.Longitude)
-                {
-                    this.Longitude = value;
-                    this.RaisePropertyChanged("X");
-                }
-            }
-        }
-
-        public double Y
-        {
-            get
-            {
-                return this.Latitude;
-            }
-
-            set
-            {
-                if (value != this.Latitude)
-                {
-                    this.Latitude = value;
-                    this.RaisePropertyChanged("Y");
                 }
             }
         }
@@ -123,18 +62,9 @@ namespace Marv.Common
             };
         }
 
-        public static implicit operator Location(Point point)
-        {
-            return new Location
-            {
-                X = point.X,
-                Y = point.Y
-            };
-        }
-
         public static Location Parse(string locationString)
         {
-            var parts = locationString.Split(" ,".ToCharArray());
+            string[] parts = locationString.Split(" ,".ToCharArray());
 
             return new Location
             {
@@ -146,11 +76,6 @@ namespace Marv.Common
         public bool IsWithin(LocationRect rect)
         {
             return this.Latitude > rect.South && this.Latitude < rect.North && this.Longitude > rect.West && this.Longitude < rect.East;
-        }
-
-        public Point ToPoint()
-        {
-            return new Point { X = this.X, Y = this.Y };
         }
 
         public override string ToString()

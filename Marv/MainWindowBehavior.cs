@@ -14,7 +14,6 @@ using Marv.Controls;
 using Marv.LineAndSectionOverviewService;
 using Marv.LoginService;
 using Marv.Properties;
-using Marv.SegmentationService;
 using NLog;
 using Telerik.Windows;
 using Telerik.Windows.Controls.TransitionControl;

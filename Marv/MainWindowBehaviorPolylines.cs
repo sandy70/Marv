@@ -50,7 +50,7 @@ namespace Marv
                     Description = exp.Message,
                 };
 
-                window.Notifications.Push<INotification>(notification);
+                window.Notifications.Push(notification);
             }
         }
 
