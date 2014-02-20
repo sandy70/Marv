@@ -117,7 +117,7 @@ namespace Marv.Common
 
                     var nStatesStrings = stateStrings.Count;
 
-                    for (int i = 0; i < nStatesStrings - 1; i++)
+                    for (var i = 0; i < nStatesStrings - 1; i++)
                     {
                         states.Add(new State
                         {
@@ -140,7 +140,7 @@ namespace Marv.Common
 
                     var nStatesStrings = stateStrings.Count;
 
-                    for (int i = 0; i < nStatesStrings; i++)
+                    for (var i = 0; i < nStatesStrings; i++)
                     {
                         states.Add(new State
                         {
@@ -162,7 +162,7 @@ namespace Marv.Common
 
                 if (this.Properties.TryGetValue("states", out statesString))
                 {
-                    bool isReading = false;
+                    var isReading = false;
                     foreach (var c in statesString.ToCharArray())
                     {
                         if (c == '"')

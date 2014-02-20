@@ -133,11 +133,11 @@ namespace Marv.Controls
         private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
-            List<IDiagramItem> shapeList = new List<IDiagramItem>();
+            var shapeList = new List<IDiagramItem>();
             shapeList.Add(e.Shape);
 
             // Change color of connections
-            GraphControl graphControl = this.AssociatedObject.FindParent<GraphControl>();
+            var graphControl = this.AssociatedObject.FindParent<GraphControl>();
 
             foreach (var conn in this.AssociatedObject.Connections)
             {

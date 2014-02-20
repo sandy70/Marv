@@ -11,7 +11,7 @@ namespace Marv.Controls
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double original = (double)value;
+            var original = (double)value;
 
             if (original < 0.4)
             {

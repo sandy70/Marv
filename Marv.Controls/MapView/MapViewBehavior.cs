@@ -32,7 +32,7 @@ namespace Marv.Controls
         {
             var mapView = this.AssociatedObject;
 
-            int zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
+            var zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
 
             if (zl != this.discreteZoomLevel)
             {

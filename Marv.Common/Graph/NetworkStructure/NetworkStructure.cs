@@ -23,7 +23,7 @@ namespace Marv.Common
 
             var nLines = fileLines.Count;
 
-            for (int i = 0; i < nLines; i++)
+            for (var i = 0; i < nLines; i++)
             {
                 // Parse the node section
                 if (fileLines[i].StartsWith("node"))

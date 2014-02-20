@@ -154,7 +154,7 @@ namespace Marv.Common
             {
                 if (value <= 0.0)
                 {
-                    string msg = string.Format("Expected variance > 0 in NormalDistribution. Found variance = {0}", value);
+                    var msg = string.Format("Expected variance > 0 in NormalDistribution. Found variance = {0}", value);
                     throw new Exception(msg);
                 }
                 sigma_ = Math.Sqrt(value);
@@ -182,7 +182,7 @@ namespace Marv.Common
             int i;
             double del, temp, z, xden, xnum, y, xsq, min;
             double result, ccum;
-            double arg = (x - mean_) / sigma_;
+            var arg = (x - mean_) / sigma_;
 
             min = Double.Epsilon;
             z = arg;
@@ -276,8 +276,8 @@ namespace Marv.Common
         /// <returns>The probability density function evaluated at <c>x</c>.</returns>
         public double PDF(double x)
         {
-            double y = (x - mean_);
-            double xMinusMuSqr = y * y;
+            var y = (x - mean_);
+            var xMinusMuSqr = y * y;
 
             // c_ is a constant equal to one over sigma times one over square root of 2 PI
             return c_ * Math.Exp(-0.5 * xMinusMuSqr * oneOverSigmaSqr_);

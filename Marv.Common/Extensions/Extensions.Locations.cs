@@ -25,12 +25,12 @@ namespace Marv.Common
                 return null;
             }
 
-            double nearestDistance = Double.MaxValue;
+            var nearestDistance = Double.MaxValue;
             var nearestLocation = locations.FirstOrDefault();
 
             foreach (var location in locations)
             {
-                double distance = Utils.Distance(location, queryLocation);
+                var distance = Utils.Distance(location, queryLocation);
 
                 if (distance < nearestDistance)
                 {

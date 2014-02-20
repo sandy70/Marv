@@ -25,7 +25,7 @@ namespace Marv.Common
 
             if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
             {
-                double[] evidenceArray = new double[vertex.States.Count];
+                var evidenceArray = new double[vertex.States.Count];
 
                 foreach (var state in vertex.States)
                 {

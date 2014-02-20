@@ -12,9 +12,9 @@ namespace Marv.Controls
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double original = (double)value;
+            var original = (double)value;
 
-            GradientStopCollection gradientStopCollection = new GradientStopCollection();
+            var gradientStopCollection = new GradientStopCollection();
 
             if (original == 1)
             {
@@ -29,14 +29,14 @@ namespace Marv.Controls
                 }
             }
 
-            LinearGradientBrush brush = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 0) };
+            var brush = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 0) };
             brush.GradientStops = gradientStopCollection;
             return brush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Color original = (Color)value;
+            var original = (Color)value;
             return (double)original.R;
         }
     }

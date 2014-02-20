@@ -1,9 +1,4 @@
-﻿using Marv.Common;
-using Marv.Controls;
-using Marv.LineAndSectionOverviewService;
-using Marv.LoginService;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,31 +9,39 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using Marv.Common;
+using Marv.Controls;
+using Marv.LineAndSectionOverviewService;
+using Marv.LoginService;
+using Marv.Properties;
+using Marv.SegmentationService;
+using NLog;
 using Telerik.Windows;
 using Telerik.Windows.Controls.TransitionControl;
+using BRIXAuthenticationHeader = Marv.LineAndSectionOverviewService.BRIXAuthenticationHeader;
 
 namespace Marv
 {
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private object _lock = new object();
 
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Closing += AssociatedObject_Closing;
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded;
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded_LoginSynergi;
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded_ReadNetwork;
-            this.AssociatedObject.KeyDown += AssociatedObject_KeyDown;
+            this.AssociatedObject.Closing += this.AssociatedObject_Closing;
+            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded;
+            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded_LoginSynergi;
+            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded_ReadNetwork;
+            this.AssociatedObject.KeyDown += this.AssociatedObject_KeyDown;
         }
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
         {
             this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.NetworkFileName);
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
@@ -46,16 +49,16 @@ namespace Marv
             var window = this.AssociatedObject;
 
             if (e.KeyboardDevice.IsKeyDown(Key.R) &&
-                   (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+                (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.M) &&
-               (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+                     (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
                 window.IsMenuVisible = !window.IsMenuVisible;
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.O) &&
-                   (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
+                     (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl)))
             {
             }
         }
@@ -67,26 +70,26 @@ namespace Marv
             // Change this line when switching between ADCO and CNPC and any future readers.
             window.GraphValueReader = new GraphValueReaderAdco();
 
-            window.SelectedYearChanged += window_SelectedYearChanged;
+            window.SelectedYearChanged += this.window_SelectedYearChanged;
 
-            window.EditNetworkFilesMenuItem.Click += EditNetworkFilesMenuItem_Click;
-            window.EditSettingsMenuItem.Click += EditSettingsMenuItem_Click;
+            window.EditNetworkFilesMenuItem.Click += this.EditNetworkFilesMenuItem_Click;
+            window.EditSettingsMenuItem.Click += this.EditSettingsMenuItem_Click;
 
-            window.LocationRunModelMenuItem.Click += LocationRunModelMenuItem_Click;
-            window.PipelineRunModelMenuItem.Click += PipelineRunModelMenuItem_Click;
-            window.NetworkRunModelMenuItem.Click += NetworkRunModelMenuItem_Click;
+            window.LocationRunModelMenuItem.Click += this.LocationRunModelMenuItem_Click;
+            window.PipelineRunModelMenuItem.Click += this.PipelineRunModelMenuItem_Click;
+            window.NetworkRunModelMenuItem.Click += this.NetworkRunModelMenuItem_Click;
 
-            window.PipelineComputeValueMenuItem.Click += PipelineComputeValueMenuItem_Click;
-            window.NetworkComputeValue.Click += NetworkComputeValue_Click;
+            window.PipelineComputeValueMenuItem.Click += this.PipelineComputeValueMenuItem_Click;
+            window.NetworkComputeValue.Click += this.NetworkComputeValue_Click;
 
-            window.BackButton.Click += BackButton_Click;
-            window.RetractAllButton.Click += RetractAllButton_Click;
-            window.TransitionControl.StatusChanged += TransitionControl_StatusChanged;
+            window.BackButton.Click += this.BackButton_Click;
+            window.RetractAllButton.Click += this.RetractAllButton_Click;
+            window.TransitionControl.StatusChanged += this.TransitionControl_StatusChanged;
 
-            window.LinesListBox.SelectionChanged += LinesListBox_SelectionChanged;
-            window.SectionsListBox.SelectionChanged += SectionsListBox_SelectionChanged;
+            window.LinesListBox.SelectionChanged += this.LinesListBox_SelectionChanged;
+            window.SectionsListBox.SelectionChanged += this.SectionsListBox_SelectionChanged;
 
-            window.SynergiRunButton.Click += SynergiRunButton_Click;
+            window.SynergiRunButton.Click += this.SynergiRunButton_Click;
 
             // Change map types
             window.BingMapsAerialMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.BingMapsAerial;
@@ -95,26 +98,26 @@ namespace Marv
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
 
-            window.EarthquakeControl.ScalingFunc = x => Utils.Clamp(Math.Pow(x, 1.2) * 10, 1, 150);
+            window.EarthquakeControl.ScalingFunc = x => Utils.Clamp(Math.Pow(x, 1.2)*10, 1, 150);
 
             window.Earthquakes = new ViewModelCollection<Location>(await Utils.ReadEarthquakesAsync(new Progress<double>()));
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
         {
-            var window = this.AssociatedObject as MainWindow;
+            var window = this.AssociatedObject;
 
-            LoginService.BRIXLoginService loginService = new BRIXLoginService();
+            var loginService = new BRIXLoginService();
 
             try
             {
                 window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
 
-                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = window.SynergiViewModel.Ticket };
+                var lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new BRIXAuthenticationHeader {value = window.SynergiViewModel.Ticket};
                 window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
             }
-            catch(Exception)
+            catch (Exception)
             {
                 logger.Error("Unable to log in to Synergi Pipeline");
             }
@@ -175,7 +178,7 @@ namespace Marv
             window.TransitionControl.SelectElement("SettingsControl");
         }
 
-        private void LinesListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void LinesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
             var selectedLine = window.SynergiViewModel.Lines.SelectedItem;
@@ -183,8 +186,8 @@ namespace Marv
 
             if (selectedLine != null)
             {
-                LineAndSectionOverviewService.LineAndSectionOverviewService lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new LineAndSectionOverviewService.BRIXAuthenticationHeader { value = ticket };
+                var lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new BRIXAuthenticationHeader {value = ticket};
 
                 window.SynergiViewModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
             }
@@ -202,7 +205,7 @@ namespace Marv
             var multiLocationName = multiLocation.Name;
             var locationName = multiLocation.SelectedItem.Name;
 
-            var startYear = (int)multiLocation.Properties["StartYear"];
+            var startYear = (int) multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
             await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
@@ -217,12 +220,12 @@ namespace Marv
             var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
 
             await Task.Run(() =>
+            {
+                foreach (var multiLocation in multiLocations)
                 {
-                    foreach (var multiLocation in multiLocations)
-                    {
-                        multiLocationValueTimeSeriesForMultiLocation[multiLocation] = MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
-                    }
-                });
+                    multiLocationValueTimeSeriesForMultiLocation[multiLocation] = MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
+                }
+            });
 
             window.MultiLocationValueTimeSeriesForMultiLocation = multiLocationValueTimeSeriesForMultiLocation;
             window.UpdateMultiLocationValues();
@@ -245,7 +248,7 @@ namespace Marv
                 {
                     var multiLocationName = multiLocation.Name;
 
-                    var startYear = (int)multiLocation.Properties["StartYear"];
+                    var startYear = (int) multiLocation.Properties["StartYear"];
 
                     var nCompleted = 0;
                     var nLocations = multiLocation.Count;
@@ -282,23 +285,23 @@ namespace Marv
             var multiLocation = window.Polylines.SelectedItem;
             var multiLocationName = multiLocation.Name;
 
-            var startYear = (int)multiLocation.Properties["StartYear"];
+            var startYear = (int) multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
             var nCompleted = 0;
             var nLocations = multiLocation.Count;
 
             await Task.Run(() =>
+            {
+                foreach (var location in multiLocation)
                 {
-                    foreach (var location in multiLocation)
-                    {
-                        var locationName = location.Name;
+                    var locationName = location.Name;
 
-                        MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+                    MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                        logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
-                    }
-                });
+                    logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                }
+            });
         }
 
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
@@ -355,8 +358,8 @@ namespace Marv
                     "Chemistry.WaterCut"
                 };
 
-                SegmentationService.SegmentationService segmentationService = new SegmentationService.SegmentationService();
-                segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader { value = ticket };
+                var segmentationService = new SegmentationService.SegmentationService();
+                segmentationService.BRIXAuthenticationHeaderValue = new SegmentationService.BRIXAuthenticationHeader {value = ticket};
 
                 try
                 {
@@ -369,11 +372,11 @@ namespace Marv
                     var segmentData = new Dictionary<string, string>();
                     var properties = new Dynamic();
 
-                    for (int s = 0; s < nSegments - 1; s++)
+                    for (var s = 0; s < nSegments - 1; s++)
                     {
                         var segmentVm = segments.Segments[s];
 
-                        for (int h = 0; h < nHeaders; h++)
+                        for (var h = 0; h < nHeaders; h++)
                         {
                             var header = segments.Headers[h];
                             var propertyName = string.IsNullOrEmpty(header.Unit) ? header.Name : string.Format("{0} [{1}]", header.Name, header.Unit);
@@ -407,7 +410,7 @@ namespace Marv
             var multiLocationName = multiLocation.Name;
             var locationName = multiLocation.SelectedItem.Name;
 
-            var startYear = (int)multiLocation.Properties["StartYear"];
+            var startYear = (int) multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
             var notification = new NotificationIndeterminate
@@ -438,7 +441,7 @@ namespace Marv
 
         private void window_SelectedYearChanged(object sender, double e)
         {
-            var window = this.AssociatedObject as MainWindow;
+            var window = this.AssociatedObject;
             window.UpdateGraphValue();
             window.UpdateMultiLocationValues();
         }

@@ -16,7 +16,7 @@ namespace Marv.Common
                             .Trim()
                             .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            double[] evidenceArray = new double[vertex.States.Count];
+            var evidenceArray = new double[vertex.States.Count];
 
             foreach (var part in parts)
             {

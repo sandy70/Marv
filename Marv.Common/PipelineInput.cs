@@ -195,7 +195,7 @@ namespace Marv.Common
             var parts = evidenceString.Trim()
                                       .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            double[] evidenceArray = new double[vertex.States.Count];
+            var evidenceArray = new double[vertex.States.Count];
 
             foreach (var part in parts)
             {
@@ -253,7 +253,7 @@ namespace Marv.Common
 
             if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
             {
-                double[] evidenceArray = new double[vertex.States.Count];
+                var evidenceArray = new double[vertex.States.Count];
 
                 foreach (var state in vertex.States)
                 {
@@ -300,7 +300,7 @@ namespace Marv.Common
         {
             IEvidence evidence = null;
 
-            int stateIndex = -1;
+            var stateIndex = -1;
 
             foreach (var state in vertex.States)
             {
@@ -323,7 +323,7 @@ namespace Marv.Common
 
                 if (Double.TryParse(evidenceString, out value))
                 {
-                    double[] evidenceArray = new double[vertex.States.Count];
+                    var evidenceArray = new double[vertex.States.Count];
 
                     foreach (var state in vertex.States)
                     {

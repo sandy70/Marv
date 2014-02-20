@@ -52,7 +52,7 @@ namespace Marv.Common
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            string name = (string)indexes[0];
+            var name = (string)indexes[0];
 
             if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
             {
@@ -76,13 +76,13 @@ namespace Marv.Common
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            string name = binder.Name;
+            var name = binder.Name;
             return dictionary.TryGetValue(name, out result);
         }
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            string name = (string)indexes[0];
+            var name = (string)indexes[0];
 
             if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
             {

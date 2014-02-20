@@ -75,15 +75,15 @@ namespace Marv.Common
         {
             if (depObj != null)
             {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
                 {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    var child = VisualTreeHelper.GetChild(depObj, i);
                     if (child != null && child is T)
                     {
                         yield return (T)child;
                     }
 
-                    foreach (T childOfChild in FindChildren<T>(child))
+                    foreach (var childOfChild in FindChildren<T>(child))
                     {
                         yield return childOfChild;
                     }
@@ -103,13 +103,13 @@ namespace Marv.Common
         public static T FindParent<T>(this DependencyObject child) where T : DependencyObject
         {
             //get parent item
-            DependencyObject parentObject = GetParentObject(child);
+            var parentObject = GetParentObject(child);
 
             //we've reached the end of the tree
             if (parentObject == null) return null;
 
             //check if the parent matches the type we're looking for
-            T parent = parentObject as T;
+            var parent = parentObject as T;
             if (parent != null)
             {
                 return parent;
@@ -125,10 +125,10 @@ namespace Marv.Common
         {
             var point = new Point();
 
-            double left = bounds.Left - viewport.Left;
-            double right = bounds.Right - viewport.Right;
-            double top = bounds.Top - viewport.Top;
-            double bottom = bounds.Bottom - viewport.Bottom;
+            var left = bounds.Left - viewport.Left;
+            var right = bounds.Right - viewport.Right;
+            var top = bounds.Top - viewport.Top;
+            var bottom = bounds.Bottom - viewport.Bottom;
 
             if (left > 0 && right > 0) point.X = right + pad;
             else if (left < 0 && right < 0) point.X = left - pad;
@@ -153,21 +153,21 @@ namespace Marv.Common
             if (child == null) return null;
 
             // handle content elements separately
-            ContentElement contentElement = child as ContentElement;
+            var contentElement = child as ContentElement;
             if (contentElement != null)
             {
-                DependencyObject parent = ContentOperations.GetParent(contentElement);
+                var parent = ContentOperations.GetParent(contentElement);
                 if (parent != null) return parent;
 
-                FrameworkContentElement fce = contentElement as FrameworkContentElement;
+                var fce = contentElement as FrameworkContentElement;
                 return fce != null ? fce.Parent : null;
             }
 
             // also try searching for parent in framework elements (such as DockPanel, etc)
-            FrameworkElement frameworkElement = child as FrameworkElement;
+            var frameworkElement = child as FrameworkElement;
             if (frameworkElement != null)
             {
-                DependencyObject parent = frameworkElement.Parent;
+                var parent = frameworkElement.Parent;
                 if (parent != null) return parent;
             }
 

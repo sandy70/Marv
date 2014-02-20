@@ -80,7 +80,7 @@ namespace Marv
 
                     if (evidenceType != null)
                     {
-                        if (evidenceType.ToString() == "Simple")
+                        if (evidenceType == "Simple")
                         {
                             var rowIndex = nHeaderRows + 1;
                             var currentPipeName = sheet.GetValue(rowIndex, "R1C1");
@@ -245,7 +245,7 @@ namespace Marv
             var parts = evidenceString.Trim()
                                       .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            double[] evidenceArray = new double[vertex.States.Count];
+            var evidenceArray = new double[vertex.States.Count];
 
             foreach (var part in parts)
             {
@@ -293,7 +293,7 @@ namespace Marv
 
         private static IEvidence ParseRange(string evidenceString, Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             var parts = evidenceString.Trim()
                                       .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -303,7 +303,7 @@ namespace Marv
 
             if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
             {
-                double[] evidenceArray = new double[vertex.States.Count];
+                var evidenceArray = new double[vertex.States.Count];
 
                 foreach (var state in vertex.States)
                 {
@@ -348,9 +348,9 @@ namespace Marv
 
         private static IEvidence ParseState(string evidenceString, Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
-            int stateIndex = -1;
+            var stateIndex = -1;
 
             foreach (var state in vertex.States)
             {
@@ -373,7 +373,7 @@ namespace Marv
 
                 if (Double.TryParse(evidenceString, out value))
                 {
-                    double[] evidenceArray = new double[vertex.States.Count];
+                    var evidenceArray = new double[vertex.States.Count];
 
                     foreach (var state in vertex.States)
                     {

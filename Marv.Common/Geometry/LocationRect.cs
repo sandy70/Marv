@@ -207,7 +207,7 @@ namespace Marv.Common
 
         public override string ToString()
         {
-            string str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
+            var str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
             return base.ToString() + ": " + str;
         }
     }

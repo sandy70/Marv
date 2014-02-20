@@ -32,7 +32,7 @@ namespace Marv.Controls
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    RadProgressBar progressBar = sender as RadProgressBar;
+                    var progressBar = sender as RadProgressBar;
                     this.AssociatedObject.Value = (e.GetPosition(progressBar).X - 1) / (progressBar.ActualWidth - 2) * 100;
                     e.Handled = true;
 

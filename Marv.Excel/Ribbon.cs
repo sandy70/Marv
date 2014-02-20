@@ -14,7 +14,7 @@ namespace Marv.Excel
         private void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
-            var result = dialog.ShowDialog();
+            dialog.ShowDialog();
 
             var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
 
@@ -28,6 +28,7 @@ namespace Marv.Excel
 
             var selectVerticesWindow = new SelectVerticesWindow();
             selectVerticesWindow.Vertices = graph.Vertices;
+
             selectVerticesWindow.ShowDialog();
 
             var selectedItems = selectVerticesWindow.VerticesListBox.SelectedItems;

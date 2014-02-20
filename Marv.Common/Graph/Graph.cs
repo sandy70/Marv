@@ -303,7 +303,7 @@ namespace Marv.Common
         public Graph GetSubGraph(string group)
         {
             // Extract the header vertices
-            Graph subGraph = new Graph();
+            var subGraph = new Graph();
 
             // Add the vertices
             foreach (var vertex in this.Vertices)
@@ -347,7 +347,7 @@ namespace Marv.Common
 
                     foreach (var path in algorithm.ComputedShortestPaths)
                     {
-                        Vertex src = path.First().Source;
+                        var src = path.First().Source;
 
                         foreach (var edge in path)
                         {
@@ -375,7 +375,7 @@ namespace Marv.Common
 
         public bool HasEdge(string srcKey, string dstKey)
         {
-            bool hasEdge = false;
+            var hasEdge = false;
 
             foreach (var edge in this.Edges)
             {
@@ -396,7 +396,7 @@ namespace Marv.Common
             {
                 var vertexValue = new Dictionary<string, double>();
 
-                string[] parts = line.Split(new char[] { ',' });
+                var parts = line.Split(new char[] { ',' });
 
                 var vertexKey = parts[0];
 
@@ -408,9 +408,9 @@ namespace Marv.Common
                     continue;
                 }
 
-                int nParts = parts.Count();
+                var nParts = parts.Count();
 
-                for (int p = 1; p < nParts; p++)
+                for (var p = 1; p < nParts; p++)
                 {
                     // This assumes that states order is preserved
                     var stateKey = vertex.States[p - 1].Key;
@@ -440,7 +440,7 @@ namespace Marv.Common
         {
             var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
-            for (int year = startYear; year <= endYear; year++)
+            for (var year = startYear; year <= endYear; year++)
             {
                 // If this is not the start year, then add the looped evidences
                 if (year > startYear)

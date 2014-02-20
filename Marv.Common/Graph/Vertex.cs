@@ -437,7 +437,7 @@ namespace Marv.Common
 
             foreach (var state in this.States)
             {
-                double mid = (state.Range.Min + state.Range.Max) / 2;
+                var mid = (state.Range.Min + state.Range.Max) / 2;
 
                 numer += mid * vertexValue[state.Key];
                 denom += vertexValue[state.Key];
@@ -462,7 +462,7 @@ namespace Marv.Common
         public int GetSelectedStateIndex()
         {
             State selectedState = null;
-            int oneCount = 0;
+            var oneCount = 0;
 
             foreach (var state in this.States)
             {
@@ -509,7 +509,7 @@ namespace Marv.Common
 
         public int GetStateIndex(string stateKey)
         {
-            int stateIndex = -1;
+            var stateIndex = -1;
 
             foreach (var state in this.States)
             {
@@ -524,7 +524,7 @@ namespace Marv.Common
 
         public void SelectState(int index)
         {
-            for (int i = 0; i < this.States.Count; i++)
+            for (var i = 0; i < this.States.Count; i++)
             {
                 if (i == index)
                 {
@@ -562,7 +562,7 @@ namespace Marv.Common
 
         public IEvidence ToEvidence()
         {
-            int selectedStateIndex = this.GetSelectedStateIndex();
+            var selectedStateIndex = this.GetSelectedStateIndex();
             IEvidence evidence = null;
 
             if (selectedStateIndex >= 0)
@@ -590,7 +590,7 @@ namespace Marv.Common
 
         public void UpdateMostProbableState()
         {
-            State mostProbableState = new State { Value = double.MinValue, Key = "" };
+            var mostProbableState = new State { Value = double.MinValue, Key = "" };
 
             foreach (var state in this.States)
             {

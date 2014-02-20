@@ -12,7 +12,7 @@ namespace Marv.Common
         {
             IEvidence evidence = null;
 
-            int stateIndex = -1;
+            var stateIndex = -1;
 
             foreach (var state in vertex.States)
             {
@@ -36,7 +36,7 @@ namespace Marv.Common
 
                 if (Double.TryParse(this._string, out value))
                 {
-                    double[] evidenceArray = new double[vertex.States.Count];
+                    var evidenceArray = new double[vertex.States.Count];
 
                     foreach (var state in vertex.States)
                     {

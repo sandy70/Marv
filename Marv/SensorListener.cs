@@ -52,11 +52,11 @@ namespace Marv
         {
             try
             {
-                int value = this.serialPort.ReadByte();
+                var value = this.serialPort.ReadByte();
 
-                int nStates = this.vertexViewModel.States.Count;
+                var nStates = this.vertexViewModel.States.Count;
 
-                int stateIndex = value * (nStates - 1) / 255;
+                var stateIndex = value * (nStates - 1) / 255;
 
                 this.vertexViewModel.SelectState(stateIndex);
                 this.vertexViewModel.IsEvidenceEntered = true;

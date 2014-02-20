@@ -30,7 +30,7 @@ namespace Marv.Corlas
                 BindingList<Flaw> flaws, double maxLength, double maxDepth, double od, double wt, double yFactor, string jFract, string location, double MOP,
                 double tMod, double eMod, double hExp, double fTough, int alloyGrp)
         {
-            EffectiveFlawData ftmax = new EffectiveFlawData();
+            var ftmax = new EffectiveFlawData();
 
             double qfactor, qfactor1;
             double xx, xx1;
@@ -53,20 +53,20 @@ namespace Marv.Corlas
 
             if (profile == 1)
             {
-                double[] delarea = new double[flaws.Count - 1];
-                for (int i = 0; i < delarea.Length; i++)
+                var delarea = new double[flaws.Count - 1];
+                for (var i = 0; i < delarea.Length; i++)
                 {
                     delarea[i] = 0.5 * (flaws[i + 1].Length - flaws[i].Length) * (flaws[i + 1].Depth + flaws[i].Depth);
                 }
 
-                for (int nstart = 0; nstart < flaws.Count - 1; nstart++)
+                for (var nstart = 0; nstart < flaws.Count - 1; nstart++)
                 {
-                    double areatot = 0.0;
+                    var areatot = 0.0;
 
-                    for (int i = nstart; i < flaws.Count - 1; i++)
+                    for (var i = nstart; i < flaws.Count - 1; i++)
                     {
                         areatot += delarea[i];
-                        EffectiveFlawData efd = new EffectiveFlawData();
+                        var efd = new EffectiveFlawData();
                         efd.Area = areatot;
                         efd.Length = flaws[i + 1].Length - flaws[nstart].Length;
                         efd.CrackStart = flaws[nstart].Length;
@@ -74,8 +74,8 @@ namespace Marv.Corlas
                         foliasm = foliasFact(L2divDt);
                         efd.FlowStrStress = flowstr * (1.0 - efd.Area / (wt * efd.Length)) / (1.0 - efd.Area / (wt * efd.Length * foliasm));
 
-                        double aspect = aspectRatio(efd.Length, efd.Area, profile);
-                        double effDepth = effectiveDepth(efd.Length, efd.Area, profile);
+                        var aspect = aspectRatio(efd.Length, efd.Area, profile);
+                        var effDepth = effectiveDepth(efd.Length, efd.Area, profile);
 
                         if (aspect >= 1.0)
                         {
@@ -112,8 +112,8 @@ namespace Marv.Corlas
                 ftmax.FlowStrStress = flowstr * (1.0 - ftmax.Area / (wt * ftmax.Length)) / (1.0 - ftmax.Area / (wt * ftmax.Length * foliasm));
             }
 
-            double taspect = aspectRatio(ftmax.Length, ftmax.Area, profile);
-            double teffDepth = effectiveDepth(ftmax.Length, ftmax.Area, profile);
+            var taspect = aspectRatio(ftmax.Length, ftmax.Area, profile);
+            var teffDepth = effectiveDepth(ftmax.Length, ftmax.Area, profile);
             if (taspect < 1.0)
             {
                 taspect = 1.0;
@@ -144,14 +144,14 @@ namespace Marv.Corlas
             double L2divDt;
             double foliasm;
 
-            EffectiveFlawData fsmax = new EffectiveFlawData();
+            var fsmax = new EffectiveFlawData();
             fsmax.FlowStrStress = 999999.0;
 
             if (profile == 1)
             {
                 double mD = 0;
                 double mL = 0;
-                for (int i = 0; i < flaws.Count; i++)
+                for (var i = 0; i < flaws.Count; i++)
                 {
                     if (flaws[i].Depth > mD)
                     {
@@ -160,20 +160,20 @@ namespace Marv.Corlas
                 }
                 mL = flaws[flaws.Count - 1].Length - flaws[0].Length;
 
-                double[] delarea = new double[flaws.Count - 1];
-                for (int i = 0; i < delarea.Length; i++)
+                var delarea = new double[flaws.Count - 1];
+                for (var i = 0; i < delarea.Length; i++)
                 {
                     delarea[i] = 0.5 * (flaws[i + 1].Length - flaws[i].Length) * (flaws[i + 1].Depth + flaws[i].Depth);
                 }
 
-                for (int nstart = 0; nstart < flaws.Count - 1; nstart++)
+                for (var nstart = 0; nstart < flaws.Count - 1; nstart++)
                 {
-                    double areatot = 0.0;
+                    var areatot = 0.0;
 
-                    for (int i = nstart; i < flaws.Count - 1; i++)
+                    for (var i = nstart; i < flaws.Count - 1; i++)
                     {
                         areatot += delarea[i];
-                        EffectiveFlawData efd = new EffectiveFlawData();
+                        var efd = new EffectiveFlawData();
                         efd.Area = areatot;
                         efd.Length = flaws[i + 1].Length - flaws[nstart].Length;
                         efd.CrackStart = flaws[nstart].Length;
@@ -256,25 +256,25 @@ namespace Marv.Corlas
                 double strainHardeningExponent, double alloyYieldStrength, int alloyGroup, double MOP, double elasticModulus,
                 double aspect, double effDepth, double fslb, double qf, double qf1, double od, double wt, double yFactor)
         {
-            double rad = 0.5 * od - wt * yFactor;
-            double shexpn = 1.0 / strainHardeningExponent; // nexpnt(ialloy);
-            double yslb = 0.001 * alloyYieldStrength; // ysaa(ialloy);
+            var rad = 0.5 * od - wt * yFactor;
+            var shexpn = 1.0 / strainHardeningExponent; // nexpnt(ialloy);
+            var yslb = 0.001 * alloyYieldStrength; // ysaa(ialloy);
 
             double prmax;
             double prges, princ;
 
             //double prcr = 0;
-            double critResults = 0.0;
-            double jvalResults = 0.0;
+            var critResults = 0.0;
+            var jvalResults = 0.0;
 
-            double f3n = (3.85 * Math.Sqrt(shexpn) * (1.0 - 1.0 / shexpn) + 3.14159 / shexpn) * (1.0 + 1.0 / shexpn);
+            var f3n = (3.85 * Math.Sqrt(shexpn) * (1.0 - 1.0 / shexpn) + 3.14159 / shexpn) * (1.0 + 1.0 / shexpn);
 
             // compute folias factors
-            double efflng = 2.0 * aspect * effDepth;
-            double folias = efflng * efflng / (2.0 * rad * wt);
-            double tm = foliasFact(folias);
-            double pm = foliasSurface(effDepth, wt, tm, profile);
-            double pm1 = foliasSurface(effDepth - 0.001, wt, tm, profile);
+            var efflng = 2.0 * aspect * effDepth;
+            var folias = efflng * efflng / (2.0 * rad * wt);
+            var tm = foliasFact(folias);
+            var pm = foliasSurface(effDepth, wt, tm, profile);
+            var pm1 = foliasSurface(effDepth - 0.001, wt, tm, profile);
 
             // compute maximum pressure at flow strength
             if (location.Equals("Inside") && profile <= 2)
@@ -306,15 +306,15 @@ namespace Marv.Corlas
                 princ = MOP;
             }
 
-            int i = 1;
-            bool done = false;
+            var i = 1;
+            var done = false;
             while (!done && i <= 50)
             {
-                double strs = 0.001 * prges * (0.5 * od / wt - yFactor);
+                var strs = 0.001 * prges * (0.5 * od / wt - yFactor);
 
                 // compute local stress value
-                double st = stressLocal(effDepth, prges, wt, strs, pm, location, profile);
-                double st1 = stressLocal(effDepth - 0.001, prges, wt, strs, pm1, location, profile);
+                var st = stressLocal(effDepth, prges, wt, strs, pm, location, profile);
+                var st1 = stressLocal(effDepth - 0.001, prges, wt, strs, pm1, location, profile);
                 st = Math.Min(st, 0.001 * fslb);
                 st1 = Math.Min(st1, 0.001 * fslb);
 
@@ -332,14 +332,14 @@ namespace Marv.Corlas
                 }
 
                 // compute back-face correction factor
-                double fsfact = fsFactor(effDepth, wt, efflng);
-                double fsfact1 = fsFactor(effDepth - 0.001, wt, efflng);
+                var fsfact = fsFactor(effDepth, wt, efflng);
+                var fsfact1 = fsFactor(effDepth - 0.001, wt, efflng);
 
                 // compute value of J integral
-                double jval = 1000.0 * effDepth * qf * fsfact * (3.14159 * st * st / elasticModulus + f3n * st * ep);
-                double valj1 = 1000.0 * (effDepth - 0.001) * qf1 * fsfact1 * (3.14159 * st1 * st1 / elasticModulus + f3n * st1 * ep1);
-                double djda = (jval - valj1) / 0.001;
-                double valtap = 1000.0 * elasticModulus * djda / (fslb * fslb);
+                var jval = 1000.0 * effDepth * qf * fsfact * (3.14159 * st * st / elasticModulus + f3n * st * ep);
+                var valj1 = 1000.0 * (effDepth - 0.001) * qf1 * fsfact1 * (3.14159 * st1 * st1 / elasticModulus + f3n * st1 * ep1);
+                var djda = (jval - valj1) / 0.001;
+                var valtap = 1000.0 * elasticModulus * djda / (fslb * fslb);
 
                 // ********************************************************************72
                 // check jval against jmin and exit loop or make new guess and continue

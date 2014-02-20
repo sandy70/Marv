@@ -28,7 +28,7 @@ namespace Marv.Controls
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool original = (bool)value;
+            var original = (bool)value;
 
             if (original == true)
             {

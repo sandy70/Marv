@@ -43,7 +43,7 @@ namespace Marv.Controls
         {
             get
             {
-                LocationRect rect = new LocationRect();
+                var rect = new LocationRect();
 
                 rect.NorthWest = this.ViewportPointToLocation(new Point { X = 0, Y = 0 });
                 rect.SouthEast = this.ViewportPointToLocation(new Point { X = this.RenderSize.Width, Y = this.RenderSize.Height });
@@ -75,9 +75,9 @@ namespace Marv.Controls
         /// <param name="west"></param>
         public void ZoomToExtent(double north, double east, double south, double west)
         {
-            double zoom = GetBoundsZoomLevel(north, east, south, west);
-            double cx = west + (east - west) / 2;
-            double cy = south + (north - south) / 2;
+            var zoom = GetBoundsZoomLevel(north, east, south, west);
+            var cx = west + (east - west) / 2;
+            var cy = south + (north - south) / 2;
 
             zoom = Math.Floor(zoom) - 1;
 

@@ -15,13 +15,13 @@ namespace Marv.Controls
 
             if (values != null)
             {
-                string str = "";
+                var str = "";
 
-                int nValues = values.Count();
+                var nValues = values.Count();
 
                 if (nValues > 0)
                 {
-                    for (int i = 0; i < nValues - 1; i++)
+                    for (var i = 0; i < nValues - 1; i++)
                     {
                         str = str + values.ElementAt(i) + ", ";
                     }
@@ -44,7 +44,7 @@ namespace Marv.Controls
 
             if (str != null)
             {
-                string[] parts = str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = str.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var part in parts)
                 {

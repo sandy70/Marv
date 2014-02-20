@@ -1,10 +1,5 @@
-﻿using Marv.Common;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using Marv.Common;
 
 namespace Marv
 {
@@ -17,9 +12,10 @@ namespace Marv
                 var fileName = this.GetFileNameForModelValue(lineKey, locationKey);
                 return Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
             }
-            catch(OdbDataNotFoundException exception)
+            catch (OdbDataNotFoundException exception)
             {
-                throw new GraphValueNotFoundException("Value not found for location: " + locationKey + " on line: " + lineKey, exception);
+                throw new GraphValueNotFoundException(
+                    "Value not found for location: " + locationKey + " on line: " + lineKey, exception);
             }
         }
 
