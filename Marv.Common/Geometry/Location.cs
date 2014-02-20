@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-
-namespace Marv.Common
+﻿namespace Marv.Common
 {
     public class Location : ViewModel
     {
@@ -11,45 +8,44 @@ namespace Marv.Common
 
         public double Latitude
         {
-            get { return this.latitude; }
+            get
+            {
+                return this.latitude;
+            }
 
             set
             {
-                if (value != this.latitude)
-                {
-                    this.latitude = value;
+                this.latitude = value;
 
-                    this.RaisePropertyChanged("Latitude");
-                }
+                this.RaisePropertyChanged("Latitude");
             }
         }
 
         public double Longitude
         {
-            get { return this.longitude; }
+            get
+            {
+                return this.longitude;
+            }
 
             set
             {
-                if (value != this.longitude)
-                {
-                    this.longitude = value;
-
-                    this.RaisePropertyChanged("Longitude");
-                }
+                this.longitude = value;
+                this.RaisePropertyChanged("Longitude");
             }
         }
 
         public double Value
         {
-            get { return this._value; }
+            get
+            {
+                return this._value;
+            }
 
             set
             {
-                if (value != this._value)
-                {
-                    this._value = value;
-                    this.RaisePropertyChanged("Value");
-                }
+                this._value = value;
+                this.RaisePropertyChanged("Value");
             }
         }
 
