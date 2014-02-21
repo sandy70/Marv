@@ -1,14 +1,11 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Windows;
+using Marv.Common.Map;
 
 namespace Marv.Demo.Map
 {
     public partial class MainWindow : Window
     {
-        public static readonly DependencyProperty LocationsProperty =
-        DependencyProperty.Register("Locations", typeof(ViewModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
-
         public MainWindow()
         {
             InitializeComponent();
@@ -23,12 +20,6 @@ namespace Marv.Demo.Map
             this.PolylineControl.DataContext = locations;
 
             this.PolylineControl.SelectionChanged += PolylineControl_SelectionChanged;
-        }
-
-        public ViewModelCollection<Location> Locations
-        {
-            get { return (ViewModelCollection<Location>)GetValue(LocationsProperty); }
-            set { SetValue(LocationsProperty, value); }
         }
 
         private void PolylineControl_SelectionChanged(object sender, Controls.ValueEventArgs<Location> e)

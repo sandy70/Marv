@@ -1,4 +1,5 @@
 ﻿using Marv.Common;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
@@ -33,11 +34,8 @@ namespace Marv.Controls
 
             set
             {
-                if (value != this.radius)
-                {
-                    this.radius = value;
-                    this.RaisePropertyChanged("Radius");
-                }
+                this.radius = value;
+                this.RaisePropertyChanged("Radius");
             }
         }
     }

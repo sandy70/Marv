@@ -1,8 +1,8 @@
-﻿using Marv.Common;
-using NLog;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Marv.Common.Map;
+using NLog;
 
 namespace Marv.Controls
 {
@@ -33,8 +33,12 @@ namespace Marv.Controls
             logger.Trace("");
 
             var control = d as PolylineControlBase;
-            control.CursorLocation = control.SelectedLocation;
-            control.IsCursorVisible = true;
+
+            if (control != null)
+            {
+                control.CursorLocation = control.SelectedLocation;
+                control.IsCursorVisible = true;
+            }
         }
 
         public static readonly DependencyProperty StrokeProperty =
@@ -91,7 +95,11 @@ namespace Marv.Controls
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as PolylineControlBase;
-            control.OnChangedLocations();
+
+            if (control != null)
+            {
+                control.OnChangedLocations();
+            }
         }
     }
 }

@@ -1,15 +1,15 @@
-﻿using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OfficeOpenXml;
 
-namespace Marv.Common
+namespace Marv.Common.Map
 {
     public class PipelineInput
     {
         private Dictionary<string, int> columnIndices = new Dictionary<string, int>();
-        private ExcelWorksheet sheet = null;
+        private ExcelWorksheet sheet;
 
         public PipelineInput(string fileName)
         {
@@ -25,25 +25,23 @@ namespace Marv.Common
             {
                 return this.columnIndices[columnName];
             }
-            else
+            
+            // Column indices are 1 based.
+            var columnIndex = 1;
+            var value = this.sheet.GetValue(1, columnIndex);
+
+            while (value != null)
             {
-                // Column indices are 1 based.
-                var columnIndex = 1;
-                var value = this.sheet.GetValue(1, columnIndex);
-
-                while (value != null)
+                if (value.Equals(columnName))
                 {
-                    if (value.Equals(columnName))
-                    {
-                        this.columnIndices[columnName] = columnIndex;
-                        return columnIndex;
-                    }
-
-                    value = this.sheet.GetValue(1, ++columnIndex);
+                    this.columnIndices[columnName] = columnIndex;
+                    return columnIndex;
                 }
 
-                return -1;
+                value = this.sheet.GetValue(1, ++columnIndex);
             }
+
+            return -1;
         }
 
         public Dictionary<string, IEvidence> GetGraphEvidence(Graph graph, string pipeName, string locationName)
@@ -52,15 +50,15 @@ namespace Marv.Common
             var nHeaderRows = 3;
 
             var colIndex = 1;
-            var colName = sheet.GetValue(1, colIndex);
+            var colName = this.sheet.GetValue(1, colIndex);
 
             while (colName != null)
             {
-                var evidenceType = sheet.GetValue<string>(2, colIndex);
+                var evidenceType = this.sheet.GetValue<string>(2, colIndex);
 
                 if (evidenceType != null)
                 {
-                    if (evidenceType.ToString() == "Simple")
+                    if (evidenceType == "Simple")
                     {
                         var rowIndex = nHeaderRows + 1;
                         var currentPipeName = this.GetValue(rowIndex, "R1C1");
@@ -70,14 +68,14 @@ namespace Marv.Common
                             currentPipeName = this.GetValue(++rowIndex, "R1C1");
                         }
 
-                        var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
+                        var evidenceString = this.sheet.GetValue<string>(rowIndex, colIndex);
 
                         if (evidenceString == null)
                         {
                             evidenceString = "0";
                         }
 
-                        var vertexKey = sheet.GetValue<string>(1, colIndex);
+                        var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
                         var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex);
@@ -99,14 +97,14 @@ namespace Marv.Common
                             currentLocationName = this.GetValue<string>(rowIndex, "section inlet");
                         }
 
-                        var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
+                        var evidenceString = this.sheet.GetValue<string>(rowIndex, colIndex);
 
                         if (evidenceString == null)
                         {
                             evidenceString = "0";
                         }
 
-                        var vertexKey = sheet.GetValue<string>(1, colIndex);
+                        var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
                         var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex);
@@ -118,7 +116,7 @@ namespace Marv.Common
                     }
                 }
 
-                colName = sheet.GetValue(1, ++colIndex);
+                colName = this.sheet.GetValue(1, ++colIndex);
             }
 
             return graphEvidence;
@@ -166,8 +164,6 @@ namespace Marv.Common
                 var multiLocation = new LocationCollection();
                 multiLocation.Name = this.GetValue(pipelineStartRowIndex, pipelineNameColumn) as string;
                 multiLocation.Key = multiLocation.Name;
-
-                var startYear = this.GetValue(pipelineStartRowIndex, "START");
 
                 multiLocation.Properties["StartYear"] = Convert.ToInt32(this.GetValue(pipelineStartRowIndex, "START"));
 
@@ -243,7 +239,7 @@ namespace Marv.Common
 
         private IEvidence ParseRange(string evidenceString, Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             var parts = evidenceString.Trim()
                                       .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -298,7 +294,7 @@ namespace Marv.Common
 
         private IEvidence ParseState(string evidenceString, Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             var stateIndex = -1;
 

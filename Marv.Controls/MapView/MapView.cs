@@ -2,13 +2,11 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
-using MapControl;
-using Marv.Common;
-using Location = Marv.Common.Location;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
-    public class MapView : Map
+    public class MapView : MapControl.Map
     {
         public static readonly DependencyProperty ExtentProperty =
             DependencyProperty.Register("Extent", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
@@ -135,10 +133,8 @@ namespace Marv.Controls
         }
 
         /// <summary>
-        ///     calculates a suitable zoom level given a boundary
+        ///     Calculates a suitable zoom level given a boundary.
         /// </summary>
-        /// <param name="bounds"></param>
-        /// <returns></returns>
         private double GetBoundsZoomLevel(double north, double east, double south, double west)
         {
             var GLOBE_HEIGHT = 256; // Height of a map that displays the entire world when zoomed all the way out

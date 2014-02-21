@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows.Media;
 
-namespace Marv.Common
+namespace Marv.Common.Map
 {
     public class LocationCollection : ViewModelCollection<Location>
     {
+        // ReSharper disable once InconsistentNaming
         private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);

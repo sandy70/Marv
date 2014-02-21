@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Marv.Common
+namespace Marv.Common.Map
 {
     [TypeConverter(typeof(LocationRectConverter))]
     public class LocationRect : ViewModel

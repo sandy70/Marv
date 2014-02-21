@@ -1,12 +1,13 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using Marv.Common;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
-    public partial class EllipseControl : MapControl.MapPanel
+    public partial class EllipseControl
     {
         public static readonly DependencyProperty LocationEllipsesProperty =
         DependencyProperty.Register("LocationEllipses", typeof(IEnumerable<LocationEllipse>), typeof(EllipseControl), new PropertyMetadata(null));
@@ -74,7 +75,7 @@ namespace Marv.Controls
         {
             var control = d as EllipseControl;
 
-            if (control.Locations is SelectableCollection<Location>)
+            if (control != null && control.Locations is SelectableCollection<Location>)
             {
                 (control.Locations as SelectableCollection<Location>).SelectedItem = control.SelectedLocation;
             }
@@ -84,13 +85,9 @@ namespace Marv.Controls
         {
             var control = d as EllipseControl;
 
-            if (control.SelectedLocationEllipse == null)
+            if (control != null)
             {
-                control.SelectedLocation = null;
-            }
-            else
-            {
-                control.SelectedLocation = control.SelectedLocationEllipse.Center;
+                control.SelectedLocation = control.SelectedLocationEllipse == null ? null : control.SelectedLocationEllipse.Center;
             }
         }
 

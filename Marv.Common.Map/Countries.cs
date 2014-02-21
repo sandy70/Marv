@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Marv.Common
+namespace Marv.Common.Map
 {
     public static class Countries
     {

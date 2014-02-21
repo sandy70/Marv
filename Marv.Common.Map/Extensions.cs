@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common
+namespace Marv.Common.Map
 {
-    public static partial class Extensions
+    public static class Extensions
     {
         public static LocationRect GetBounds(this IEnumerable<LocationCollection> locationCollections)
         {

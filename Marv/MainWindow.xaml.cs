@@ -1,13 +1,14 @@
-﻿using Caching;
-using Marv.Common;
-using Marv.Controls;
-using NLog;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Caching;
+using Marv.Common;
+using Marv.Common.Map;
+using Marv.Controls;
+using NLog;
+using OfficeOpenXml;
 using Telerik.Windows.Controls;
 
 namespace Marv
@@ -134,7 +135,7 @@ namespace Marv
             excelPackage.Save();
 
             var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            Odb.Write<Dictionary<int, string, double>>(fName, multiLocationValueTimeSeries);
+            Odb.Write(fName, multiLocationValueTimeSeries);
 
             return multiLocationValueTimeSeries;
         }
@@ -168,7 +169,7 @@ namespace Marv
 
             try
             {
-                Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
+                Odb.Write(fileName, graphValueTimeSeries);
             }
             catch(IOException exp)
             {

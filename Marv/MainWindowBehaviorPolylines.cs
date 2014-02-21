@@ -1,10 +1,11 @@
-﻿using Marv.Common;
-using NLog;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Interactivity;
+using Marv.Common;
+using Marv.Common.Map;
+using NLog;
 
 namespace Marv
 {

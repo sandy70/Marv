@@ -76,12 +76,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chart\CategoricalPoint.cs" />
-    <Compile Include="Countries.cs" />
     <Compile Include="Graph\EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="Graph\EdgeCollection.cs" />
     <Compile Include="Graph\EvidenceString\EvidenceStringFactory.cs" />
     <Compile Include="Graph\EdgeConnectorPositions.cs" />
-    <Compile Include="Extensions\Extensions.Locations.cs" />
     <Compile Include="Graph\Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph\Graph.IObservableGraphSource.cs" />
     <Compile Include="Graph\Graph.cs" />
@@ -90,15 +88,10 @@
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
     <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
-    <Compile Include="PipelineInput.cs" />
     <Compile Include="Graph\EvidenceString\RangeEvidenceString.cs" />
     <Compile Include="Graph\EvidenceString\StateEvidenceString.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
-    <Compile Include="Geometry\Location.cs" />
-    <Compile Include="Geometry\LocationRect.cs" />
-    <Compile Include="Geometry\LocationRectConverter.cs" />
-    <Compile Include="Geometry\LocationCollection.cs" />
     <Compile Include="GridFloatHeader.cs" />
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="MetaObject.cs" />
@@ -175,6 +168,7 @@
       <Name>SmileNet</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,8 +1,9 @@
-﻿using Marv.Common;
-using Marv.Controls;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Marv.Common;
+using Marv.Common.Map;
+using Marv.Controls;
 
 namespace Marv
 {

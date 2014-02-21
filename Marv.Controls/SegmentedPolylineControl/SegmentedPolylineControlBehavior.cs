@@ -1,16 +1,17 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
+using Marv.Common;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
     public class SegmentedPolylineControlBehavior : Behavior<SegmentedPolylineControl>
     {
-        private bool isDragging = false;
+        private bool isDragging;
         private Stack<Location> locationStack = new Stack<Location>();
         private DispatcherTimer timer = new DispatcherTimer();
 

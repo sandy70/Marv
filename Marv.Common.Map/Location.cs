@@ -1,4 +1,4 @@
-﻿namespace Marv.Common
+﻿namespace Marv.Common.Map
 {
     public class Location : ViewModel
     {

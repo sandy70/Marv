@@ -2,6 +2,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Marv"
         xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:marv="http://dnvgl.com/marv"
         xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"

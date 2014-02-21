@@ -1,8 +1,8 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Data;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
@@ -17,15 +17,12 @@ namespace Marv.Controls
                 var location = value as Location;
                 return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
             }
-            else if (value is IEnumerable<Location>)
+            if (value is IEnumerable<Location>)
             {
                 var locations = value as IEnumerable<Location>;
-                return locations.Select<Location, MapControl.Location>(x => x.ToMapControlLocation());
+                return locations.Select(x => x.ToMapControlLocation());
             }
-            else
-            {
-                return Binding.DoNothing;
-            }
+            return Binding.DoNothing;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -35,15 +32,12 @@ namespace Marv.Controls
                 var location = value as MapControl.Location;
                 return new Location { Latitude = location.Latitude, Longitude = location.Longitude };
             }
-            else if (value is IEnumerable<MapControl.Location>)
+            if (value is IEnumerable<MapControl.Location>)
             {
                 var locations = value as IEnumerable<MapControl.Location>;
                 return locations.Select<MapControl.Location, Location>(x => x);
             }
-            else
-            {
-                return Binding.DoNothing;
-            }
+            return Binding.DoNothing;
         }
     }
 }

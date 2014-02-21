@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Marv.Common;
+using Marv.Common.Map;
 
 namespace Marv.Controls
 {
-    public partial class PolylineControl : PolylineControlBase
+    public partial class PolylineControl
     {
         public event RoutedEventHandler<ValueEventArgs<Location>> SelectionChanged
 		{
-			add { AddHandler(SelectionChangedEvent, value); }
-			remove { RemoveHandler(SelectionChangedEvent, value); }
+			add { this.AddHandler(SelectionChangedEvent, value); }
+			remove { this.RemoveHandler(SelectionChangedEvent, value); }
 		}
 
 		public static readonly RoutedEvent SelectionChangedEvent =
@@ -21,7 +21,7 @@ namespace Marv.Controls
 
         public PolylineControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -36,8 +36,8 @@ namespace Marv.Controls
 
         public IEnumerable<Location> SimplifiedLocations
         {
-            get { return (IEnumerable<Location>)GetValue(SimplifiedLocationsProperty); }
-            set { SetValue(SimplifiedLocationsProperty, value); }
+            get { return (IEnumerable<Location>)this.GetValue(SimplifiedLocationsProperty); }
+            set { this.SetValue(SimplifiedLocationsProperty, value); }
         }
 
         protected override void OnChangedLocations()

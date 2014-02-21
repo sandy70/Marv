@@ -1,49 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace Marv.Common
 {
     public static class Utils
     {
-        public static double Distance(Location l1, Location l2)
-        {
-            double distance = 0;
-
-            var dLat = (l2.Latitude - l1.Latitude) / 180 * Math.PI;
-            var dLong = (l2.Longitude - l1.Longitude) / 180 * Math.PI;
-
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2)
-                        + Math.Cos(l1.Latitude / 180 * Math.PI) * Math.Cos(l2.Latitude / 180 * Math.PI) * Math.Sin(dLong / 2) * Math.Sin(dLong / 2);
-
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-            //Calculate radius of earth
-            // For this you can assume any of the two points.
-            double radiusE = 6378135; // Equatorial radius, in metres
-            double radiusP = 6356750; // Polar Radius
-
-            //Numerator part of function
-            var nr = Math.Pow(radiusE * radiusP * Math.Cos(l1.Latitude / 180 * Math.PI), 2);
-
-            //Denominator part of the function
-            var dr = Math.Pow(radiusE * Math.Cos(l1.Latitude / 180 * Math.PI), 2)
-                            + Math.Pow(radiusP * Math.Sin(l1.Latitude / 180 * Math.PI), 2);
-
-            var radius = Math.Sqrt(nr / dr);
-
-            //Calaculate distance in metres.
-            distance = radius * c;
-            return distance;
-        }
-
         public static double Distance(Point p1, Point p2, Point p)
         {
             var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
@@ -74,44 +38,7 @@ namespace Marv.Common
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        public static Location Mid(Location l1, Location l2)
-        {
-            if (l1 == null || l2 == null)
-            {
-                return null;
-            }
-            else
-            {
-                // This is technically not correct but should be okay for small distances
-                return new Location
-                {
-                    Latitude = (l1.Latitude + l2.Latitude) / 2,
-                    Longitude = (l1.Longitude + l2.Longitude) / 2,
-                };
-            }
-        }
-
-        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync(IProgress<double> progress)
-        {
-            var webClient = new WebClient();
-
-            var stream = await webClient.OpenReadTaskAsync(new Uri("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.atom"));
-
-            var xDocument = XDocument.Load(stream);
-
-            return xDocument.Root.Elements("{http://www.w3.org/2005/Atom}entry")
-                                 .Select(entry =>
-                                 {
-                                     var location = Location.Parse(entry.Element("{http://www.georss.org/georss}point").Value);
-
-                                     location.Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3));
-
-                                     // location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
-                                     // location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
-
-                                     return location;
-                                 });
-        }
+        
 
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
@@ -154,8 +81,8 @@ namespace Marv.Common
         public static double ParseDouble(this string str)
         {
             if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
-            else if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
-            else return double.Parse(str);
+            if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
+            return double.Parse(str);
         }
     }
 }
