@@ -163,7 +163,7 @@
     <Compile Include="PipelineInput.cs" />
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
-    <Compile Include="SynergiViewModel.cs" />
+    <Compile Include="SynergiModel.cs" />
     <Compile Include="Web References\LineAndSectionOverviewService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

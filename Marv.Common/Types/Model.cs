@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public interface IViewModel : INotifyPropertyChanged
+    public interface IModel : INotifyPropertyChanged
     {
         bool IsEnabled { get; set; }
 
@@ -13,7 +13,7 @@ namespace Marv.Common
         string Name { get; set; }
     }
 
-    public class ViewModel : IViewModel
+    public class Model : IModel
     {
         private bool isEnabled;
         private bool isSelected;

@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class State : ViewModel
+    public class State : Model
     {
         private double _value;
         private double belief;

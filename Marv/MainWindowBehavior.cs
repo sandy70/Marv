@@ -100,7 +100,7 @@ namespace Marv
 
             window.EarthquakeControl.ScalingFunc = x => Marv.Common.Utils.Clamp(Math.Pow(x, 1.2)*10, 1, 150);
 
-            window.Earthquakes = new ViewModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
+            window.Earthquakes = new ModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
@@ -111,11 +111,11 @@ namespace Marv
 
             try
             {
-                window.SynergiViewModel.Ticket = loginService.LogIn(window.SynergiViewModel.UserName, window.SynergiViewModel.Password);
+                window.SynergiModel.Ticket = loginService.LogIn(window.SynergiModel.UserName, window.SynergiModel.Password);
 
                 var lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
-                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new BRIXAuthenticationHeader {value = window.SynergiViewModel.Ticket};
-                window.SynergiViewModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
+                lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new BRIXAuthenticationHeader {value = window.SynergiModel.Ticket};
+                window.SynergiModel.Lines = new SelectableCollection<LineSummaryDTO>(lineAndSectionOverviewService.GetLines().Where(x => x.Name == "BU-498"));
             }
             catch (Exception)
             {
@@ -174,15 +174,15 @@ namespace Marv
         private void LinesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var selectedLine = window.SynergiViewModel.Lines.SelectedItem;
-            var ticket = window.SynergiViewModel.Ticket;
+            var selectedLine = window.SynergiModel.Lines.SelectedItem;
+            var ticket = window.SynergiModel.Ticket;
 
             if (selectedLine != null)
             {
                 var lineAndSectionOverviewService = new LineAndSectionOverviewService.LineAndSectionOverviewService();
                 lineAndSectionOverviewService.BRIXAuthenticationHeaderValue = new BRIXAuthenticationHeader {value = ticket};
 
-                window.SynergiViewModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
+                window.SynergiModel.Sections = new SelectableCollection<SectionSummaryDTO>(lineAndSectionOverviewService.GetSections(selectedLine.LineOid));
             }
         }
 
@@ -306,8 +306,8 @@ namespace Marv
         private void SectionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var selectedSection = window.SynergiViewModel.Sections.SelectedItem;
-            var ticket = window.SynergiViewModel.Ticket;
+            var selectedSection = window.SynergiModel.Sections.SelectedItem;
+            var ticket = window.SynergiModel.Ticket;
 
             if (selectedSection != null)
             {
@@ -379,7 +379,7 @@ namespace Marv
                         }
                     }
 
-                    window.SynergiViewModel.SegmentData = segmentData;
+                    window.SynergiModel.SegmentData = segmentData;
                 }
                 catch (Exception exception)
                 {

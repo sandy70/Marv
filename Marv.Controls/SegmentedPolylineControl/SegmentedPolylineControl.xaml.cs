@@ -145,7 +145,6 @@ namespace Marv.Controls
                     {
                         locationCollection = new LocationCollection();
                         locationCollection.Add(location);
-                        locationCollection.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
                     else
                     {
@@ -156,7 +155,6 @@ namespace Marv.Controls
                         locationCollection = new LocationCollection();
                         locationCollection.Add(mid);
                         locationCollection.Add(location);
-                        locationCollection.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
 
                     multiLocationParts.Add(locationCollection);
@@ -174,35 +172,31 @@ namespace Marv.Controls
 
         public void UpdateSimplifiedPolylineParts()
         {
-            var brushes = new Dictionary<LocationCollection, Brush>();
             var mapView = this.FindParent<MapView>();
-            var locationCollections = new List<LocationCollection>();
+            var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
 
             if (this.PolylineParts != null)
             {
                 foreach (var locationCollection in this.PolylineParts)
                 {
-                    var simplifiedLocationCollection = new LocationCollection(locationCollection.ToPoints(mapView)
+                    var simplifiedLocationCollection = new LocationCollectionViewModel(locationCollection.ToPoints(mapView)
                                                                                       .Reduce(this.Tolerance)
                                                                                       .ToLocations(mapView));
 
                     if (this.IsEnabled)
                     {
                         simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(locationCollection[1].Value);
-                        brushes[simplifiedLocationCollection] = this.DoubleToBrushMap.Map(locationCollection[1].Value);
                     }
                     else
                     {
                         simplifiedLocationCollection.Stroke = this.DisabledStroke;
-                        brushes[simplifiedLocationCollection] = this.DisabledStroke;
                     }
 
-                    locationCollections.Add(simplifiedLocationCollection);
+                    simplifiedLocationCollections.Add(simplifiedLocationCollection);
                 }
             }
 
-            this.Brushes = brushes;
-            this.SimplifiedPolylineParts = locationCollections;
+            this.SimplifiedPolylineParts = simplifiedLocationCollections;
         }
 
         public void UpdateVisual()

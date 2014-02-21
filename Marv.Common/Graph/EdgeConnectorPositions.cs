@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common
 {
-    public class EdgeConnectorPositions : ViewModel
+    public class EdgeConnectorPositions : Model
     {
         private string sourcePosition = "Auto";
         private string targetPosition = "Auto";

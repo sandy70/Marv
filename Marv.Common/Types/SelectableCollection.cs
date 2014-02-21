@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Marv.Common
 {
-    public class SelectableCollection<T> : ObservableCollection<T>, IViewModel where T : class
+    public class SelectableCollection<T> : ObservableCollection<T>, IModel where T : class
     {
         protected Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private bool isEnabled;

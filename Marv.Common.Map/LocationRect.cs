@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace Marv.Common.Map
 {
     [TypeConverter(typeof(LocationRectConverter))]
-    public class LocationRect : ViewModel
+    public class LocationRect : Model
     {
         private double east;
         private double north;

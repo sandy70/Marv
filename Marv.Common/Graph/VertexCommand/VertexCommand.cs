@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class VertexCommand : ViewModel, IVertexCommand
+    public class VertexCommand : Model, IVertexCommand
     {
         public static VertexCommand VertexClearCommand = new VertexCommand
         {

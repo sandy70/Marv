@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Marv.Common
 {
-    public class ScatterPoint : ViewModel
+    public class ScatterPoint : Model
     {
         private double xValue;
 

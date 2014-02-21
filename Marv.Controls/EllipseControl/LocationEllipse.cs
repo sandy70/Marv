@@ -3,7 +3,7 @@ using Marv.Common.Map;
 
 namespace Marv.Controls
 {
-    public class LocationEllipse : ViewModel
+    public class LocationEllipse : Model
     {
         private Location center;
         private double radius;

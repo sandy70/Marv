@@ -15,9 +15,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-            
-            <local:LocationCollectionToBrushConverter x:Key="LocationCollectionToBrush"
-                                                      Brushes="{Binding Path=Brushes, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SegmentedPolylineControl}}}"/>
         </ResourceDictionary>
     </local:PolylineControlBase.Resources>
 
@@ -42,7 +39,7 @@
                             <ControlTemplate>
                                 <mapcontrol:MapPanel>
                                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
-                                                            Stroke="{Binding Path=., Converter={StaticResource ResourceKey=LocationCollectionToBrush}}"
+                                                            Stroke="{Binding Stroke}"
                                                             StrokeEndLineCap="Round"
                                                             StrokeLineJoin="Round"
                                                             StrokeStartLineCap="Round"

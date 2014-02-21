@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Marv.Common
 {
-    public class Vertex : ViewModel
+    public class Vertex : Model
     {
         private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
         {
@@ -30,7 +30,7 @@ namespace Marv.Common
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
         private State selectedState;
-        private ViewModelCollection<State> states = new ViewModelCollection<State>();
+        private ModelCollection<State> states = new ModelCollection<State>();
         private Dictionary<string, double> statistics = new Dictionary<string, double>();
         private VertexType type = VertexType.Labelled;
         private string units = "";
@@ -342,7 +342,7 @@ namespace Marv.Common
             }
         }
 
-        public ViewModelCollection<State> States
+        public ModelCollection<State> States
         {
             get { return states; }
             set

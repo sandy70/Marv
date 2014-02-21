@@ -5,7 +5,7 @@ using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Controls
 {
-    public interface IChartSeries : IViewModel
+    public interface IChartSeries : IModel
     {
         Brush Stroke { get; set; }
 
@@ -14,7 +14,7 @@ namespace Marv.Controls
         string XLabel { get; set; }
     }
 
-    public class ChartSeries<T> : ViewModelCollection<T>, IChartSeries where T : class, IViewModel
+    public class ChartSeries<T> : ModelCollection<T>, IChartSeries where T : class, IModel
     {
         private CartesianAxis horizontalAxis;
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);

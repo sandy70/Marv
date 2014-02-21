@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common.Map
 {
-    public class Location : ViewModel
+    public class Location : Model
     {
         private double _value;
         private double latitude;

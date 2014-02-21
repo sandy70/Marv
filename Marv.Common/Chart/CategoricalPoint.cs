@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common
 {
-    public class CategoricalPoint : ViewModel
+    public class CategoricalPoint : Model
     {
         private double? _value;
         private object category;

@@ -134,9 +134,9 @@ namespace Marv
             return this.sheet.GetValue<TResult>(rowIndex, this.GetColumnIndex(columnName));
         }
 
-        public ViewModelCollection<LocationCollection> ReadPipelines()
+        public ModelCollection<LocationCollection> ReadPipelines()
         {
-            var multiLocations = new ViewModelCollection<LocationCollection>();
+            var multiLocations = new ModelCollection<LocationCollection>();
             var nHeaderRows = 3;
             var pipelineStartRowIndices = new List<int>();
             var rowIndex = nHeaderRows + 1;

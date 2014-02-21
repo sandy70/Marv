@@ -111,8 +111,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\Sequence.cs" />
     <Compile Include="Graph\State.cs" />
-    <Compile Include="Types\ViewModel.cs" />
-    <Compile Include="Types\ViewModelCollection.cs" />
+    <Compile Include="Types\Model.cs" />
+    <Compile Include="Types\ModelCollection.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
     <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />

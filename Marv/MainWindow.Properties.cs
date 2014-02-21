@@ -13,13 +13,13 @@ namespace Marv
         DependencyProperty.Register("CacheDirectory", typeof(string), typeof(MainWindow), new PropertyMetadata(".\\"));
 
         public static readonly DependencyProperty ChartSeriesProperty =
-        DependencyProperty.Register("ChartSeries", typeof(ViewModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ViewModelCollection<IChartSeries>()));
+        DependencyProperty.Register("ChartSeries", typeof(ModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ModelCollection<IChartSeries>()));
 
         public static readonly DependencyProperty DisplayGraphProperty =
         DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty EarthquakesProperty =
-        DependencyProperty.Register("Earthquakes", typeof(ViewModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("Earthquakes", typeof(ModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
@@ -70,7 +70,7 @@ namespace Marv
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public static readonly DependencyProperty PolylinesProperty =
-        DependencyProperty.Register("Polylines", typeof(ViewModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
+        DependencyProperty.Register("Polylines", typeof(ModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -84,10 +84,10 @@ namespace Marv
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001));
 
-        public static readonly DependencyProperty SynergiViewModelProperty =
-        DependencyProperty.Register("SynergiViewModel", typeof(SynergiViewModel), typeof(MainWindow), new PropertyMetadata(new SynergiViewModel()));
+        public static readonly DependencyProperty SynergiModelProperty =
+        DependencyProperty.Register("SynergiModel", typeof(SynergiModel), typeof(MainWindow), new PropertyMetadata(new SynergiModel()));
 
-        public event EventHandler<ViewModelCollection<LocationCollection>> PolylinesChanged;
+        public event EventHandler<ModelCollection<LocationCollection>> PolylinesChanged;
 
         public event EventHandler<double> SelectedYearChanged;
 
@@ -97,9 +97,9 @@ namespace Marv
             set { SetValue(CacheDirectoryProperty, value); }
         }
 
-        public ViewModelCollection<IChartSeries> ChartSeries
+        public ModelCollection<IChartSeries> ChartSeries
         {
-            get { return (ViewModelCollection<IChartSeries>)GetValue(ChartSeriesProperty); }
+            get { return (ModelCollection<IChartSeries>)GetValue(ChartSeriesProperty); }
             set { SetValue(ChartSeriesProperty, value); }
         }
 
@@ -109,9 +109,9 @@ namespace Marv
             set { SetValue(DisplayGraphProperty, value); }
         }
 
-        public ViewModelCollection<Location> Earthquakes
+        public ModelCollection<Location> Earthquakes
         {
-            get { return (ViewModelCollection<Location>)GetValue(EarthquakesProperty); }
+            get { return (ModelCollection<Location>)GetValue(EarthquakesProperty); }
             set { SetValue(EarthquakesProperty, value); }
         }
 
@@ -199,9 +199,9 @@ namespace Marv
             set { SetValue(NotificationsProperty, value); }
         }
 
-        public ViewModelCollection<LocationCollection> Polylines
+        public ModelCollection<LocationCollection> Polylines
         {
-            get { return (ViewModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
+            get { return (ModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
             set { SetValue(PolylinesProperty, value); }
         }
 
@@ -229,10 +229,10 @@ namespace Marv
             set { SetValue(StartYearProperty, value); }
         }
 
-        public SynergiViewModel SynergiViewModel
+        public SynergiModel SynergiModel
         {
-            get { return (SynergiViewModel)GetValue(SynergiViewModelProperty); }
-            set { SetValue(SynergiViewModelProperty, value); }
+            get { return (SynergiModel)GetValue(SynergiModelProperty); }
+            set { SetValue(SynergiModelProperty, value); }
         }
 
         private static void OnChangedPolylines(DependencyObject d, DependencyPropertyChangedEventArgs e)

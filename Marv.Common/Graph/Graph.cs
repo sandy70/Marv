@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace Marv.Common
 {
-    public partial class Graph : ViewModel
+    public partial class Graph : Model
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -18,7 +18,7 @@ namespace Marv.Common
         private EdgeCollection edges = new EdgeCollection();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
-        private ViewModelCollection<Vertex> vertices = new ViewModelCollection<Vertex>();
+        private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
         public Dictionary<string, string, double> Belief
         {
@@ -97,7 +97,7 @@ namespace Marv.Common
             }
         }
 
-        public ViewModelCollection<Vertex> Vertices
+        public ModelCollection<Vertex> Vertices
         {
             get
             {

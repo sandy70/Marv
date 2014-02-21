@@ -24,7 +24,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.Polylines = new ViewModelCollection<LocationCollection>();
+            window.Polylines = new ModelCollection<LocationCollection>();
 
             try
             {
@@ -55,7 +55,7 @@ namespace Marv
             }
         }
 
-        private void AssociatedObject_PolylinesChanged(object sender, ViewModelCollection<LocationCollection> e)
+        private void AssociatedObject_PolylinesChanged(object sender, ModelCollection<LocationCollection> e)
         {
             var window = this.AssociatedObject;
 
@@ -81,19 +81,19 @@ namespace Marv
             window.ReadGraphValues();
             window.UpdateGraphValue();
 
-            if (window.SynergiViewModel.Sections != null)
+            if (window.SynergiModel.Sections != null)
             {
-                window.SynergiViewModel.Sections.SelectedItem = window.SynergiViewModel.Sections.FirstOrDefault(x => x.Name == e.Key);
+                window.SynergiModel.Sections.SelectedItem = window.SynergiModel.Sections.FirstOrDefault(x => x.Name == e.Key);
             }
         }
 
         private void Polylines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var polylines = sender as ViewModelCollection<LocationCollection>;
+            var polylines = sender as ModelCollection<LocationCollection>;
             this.PolylinesAttachHandlers(polylines);
         }
 
-        private void PolylinesAttachHandlers(ViewModelCollection<LocationCollection> polylines)
+        private void PolylinesAttachHandlers(ModelCollection<LocationCollection> polylines)
         {
             foreach (var polyline in polylines)
             {

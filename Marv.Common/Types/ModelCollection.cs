@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Marv.Common
 {
-    public class ViewModelCollection<T> : ObservableCollection<T>, IViewModel where T : class, IViewModel
+    public class ModelCollection<T> : ObservableCollection<T>, IModel where T : class, IModel
     {
         private bool isEnabled;
         private bool isSelected = false;
@@ -14,12 +14,12 @@ namespace Marv.Common
         private string name;
         private Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        public ViewModelCollection()
+        public ModelCollection()
             : base()
         {
         }
 
-        public ViewModelCollection(IEnumerable<T> items)
+        public ModelCollection(IEnumerable<T> items)
             : base(items)
         {
         }

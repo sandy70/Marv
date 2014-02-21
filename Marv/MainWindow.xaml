@@ -245,10 +245,10 @@
                         <surface:SurfaceListBox Grid.Row="1" Grid.Column="0"
                                                 Name="LinesListBox"
                                                 HorizontalContentAlignment="Stretch"
-                                                ItemsSource="{Binding SynergiViewModel.Lines, ElementName=Root}"
+                                                ItemsSource="{Binding SynergiModel.Lines, ElementName=Root}"
                                                 Margin="5"
                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                SelectedItem="{Binding SynergiViewModel.Lines.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectedItem="{Binding SynergiModel.Lines.SelectedItem, ElementName=Root, Mode=TwoWay}"
                                                 SelectionMode="Single">
                             <surface:SurfaceListBox.ItemTemplate>
                                 <DataTemplate>
@@ -265,10 +265,10 @@
                                                 Name="SectionsListBox"
                                                 HorizontalContentAlignment="Stretch"
                                                 IsSynchronizedWithCurrentItem="True"
-                                                ItemsSource="{Binding SynergiViewModel.Sections, ElementName=Root}"
+                                                ItemsSource="{Binding SynergiModel.Sections, ElementName=Root}"
                                                 Margin="5"
                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                SelectedItem="{Binding SynergiViewModel.Sections.SelectedItem, ElementName=Root, Mode=TwoWay}"
+                                                SelectedItem="{Binding SynergiModel.Sections.SelectedItem, ElementName=Root, Mode=TwoWay}"
                                                 SelectionMode="Single">
                             <surface:SurfaceListBox.ItemTemplate>
                                 <DataTemplate>
@@ -283,7 +283,7 @@
 
                         <DataGrid Grid.Row="1" Grid.Column="2"
                                   AutoGenerateColumns="False"
-                                  ItemsSource="{Binding SynergiViewModel.SegmentData, ElementName=Root}"
+                                  ItemsSource="{Binding SynergiModel.SegmentData, ElementName=Root}"
                                   Margin="5">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Key}" Header="Property" />

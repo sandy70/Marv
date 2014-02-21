@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Marv
 {
-    public class SynergiViewModel : ViewModel
+    public class SynergiModel : Model
     {
         private SelectableCollection<LineSummaryDTO> lines;
         private string password = "Password01";

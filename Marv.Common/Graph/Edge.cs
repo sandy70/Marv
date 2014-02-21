@@ -4,7 +4,7 @@ using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Common
 {
-    public class Edge : ViewModel, IEdge<Vertex>, ILink<Vertex>
+    public class Edge : Model, IEdge<Vertex>, ILink<Vertex>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

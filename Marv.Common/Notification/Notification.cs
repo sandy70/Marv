@@ -20,7 +20,7 @@ namespace Marv.Common
         void Open();
     }
 
-    public abstract class Notification : ViewModel, INotification
+    public abstract class Notification : Model, INotification
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

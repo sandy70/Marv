@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Marv.Common
 {
-    public class EdgeCollection : ViewModelCollection<Edge>
+    public class EdgeCollection : ModelCollection<Edge>
     {
         public void Add(Vertex source, Vertex target)
         {

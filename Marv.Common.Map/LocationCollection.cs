@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Windows.Media;
 
 namespace Marv.Common.Map
 {
-    public class LocationCollection : ViewModelCollection<Location>
+    public class LocationCollection : ModelCollection<Location>
     {
         // ReSharper disable once InconsistentNaming
         private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
-        private Brush stroke = new SolidColorBrush(Colors.LightBlue);
 
         public LocationCollection()
         {
@@ -37,23 +35,6 @@ namespace Marv.Common.Map
                 {
                     this.bounds = value;
                     this.RaisePropertyChanged("GetBounds");
-                }
-            }
-        }
-
-        public Brush Stroke
-        {
-            get
-            {
-                return this.stroke;
-            }
-
-            set
-            {
-                if (value != this.stroke)
-                {
-                    this.stroke = value;
-                    this.RaisePropertyChanged("Stroke");
                 }
             }
         }
