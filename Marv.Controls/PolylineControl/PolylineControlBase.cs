@@ -32,7 +32,7 @@ namespace Marv.Controls
         {
             logger.Trace("");
 
-            var control = d as SegmentedPolylineControl;
+            var control = d as PolylineControlBase;
             control.CursorLocation = control.SelectedLocation;
             control.IsCursorVisible = true;
         }

@@ -119,7 +119,7 @@ namespace Marv.Controls
             this.AssociatedObject.SimplifiedLocations = this.AssociatedObject
                                                             .Locations
                                                             .ToPoints(mapView)
-                                                            .Reduce(tolerance: 5)
+                                                            .Reduce(5)
                                                             .ToLocations(mapView);
         }
 
@@ -156,7 +156,13 @@ namespace Marv.Controls
         {
             if (this.locationStack.Count > 0)
             {
-                // this.AssociatedObject.Locations.SelectedItem = this.locationStack.Pop();
+                var location = this.locationStack.Pop();
+
+                if (this.AssociatedObject.SelectedLocation != location)
+                {
+                    this.AssociatedObject.SelectedLocation = location;
+                }
+
                 this.locationStack.Clear();
                 timer.Stop();
             }
