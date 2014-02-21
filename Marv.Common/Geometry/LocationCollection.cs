@@ -86,6 +86,7 @@ namespace Marv.Common
 
         public event EventHandler ValueChanged;
 
+        // Everytime the collection is changed, the bounds are updated.
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);

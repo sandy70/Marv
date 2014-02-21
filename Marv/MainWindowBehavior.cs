@@ -216,7 +216,7 @@ namespace Marv
             var graph = window.SourceGraph;
             var multiLocations = window.Polylines;
 
-            var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
+            var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dictionary<int, string, double>>();
 
             await Task.Run(() =>
             {
