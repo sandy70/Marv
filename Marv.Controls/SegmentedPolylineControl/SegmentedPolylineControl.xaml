@@ -3,6 +3,7 @@
                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                            xmlns:local="clr-namespace:Marv.Controls"
+                           xmlns:marv="http://dnvgl.com/marv"
                            xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,7 +11,14 @@
                            d:DesignHeight="300" d:DesignWidth="300"
                            x:Name="Root">
     <local:PolylineControlBase.Resources>
-        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <local:LocationCollectionToBrushConverter x:Key="LocationCollectionToBrush"
+                                                      Brushes="{Binding Path=Brushes, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SegmentedPolylineControl}}}"/>
+        </ResourceDictionary>
     </local:PolylineControlBase.Resources>
 
     <i:Interaction.Behaviors>
@@ -18,6 +26,12 @@
     </i:Interaction.Behaviors>
 
     <mapcontrol:MapPanel>
+        <mapcontrol:MapPanel.Resources>
+            
+        </mapcontrol:MapPanel.Resources>
+        
+        
+        
         <mapcontrol:MapItemsControl Name="MapPolyline"
                                     ItemsSource="{Binding SimplifiedPolylineParts, ElementName=Root}"
                                     VirtualizingPanel.IsVirtualizing="True">
@@ -28,7 +42,7 @@
                             <ControlTemplate>
                                 <mapcontrol:MapPanel>
                                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
-                                                            Stroke="{Binding Stroke}"
+                                                            Stroke="{Binding Path=., Converter={StaticResource ResourceKey=LocationCollectionToBrush}}"
                                                             StrokeEndLineCap="Round"
                                                             StrokeLineJoin="Round"
                                                             StrokeStartLineCap="Round"

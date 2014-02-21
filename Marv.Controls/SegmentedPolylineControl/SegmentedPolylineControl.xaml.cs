@@ -12,6 +12,15 @@ namespace Marv.Controls
 {
     public partial class SegmentedPolylineControl
     {
+        public Dictionary<LocationCollection, Brush> Brushes
+        {
+            get { return (Dictionary<LocationCollection, Brush>)GetValue(BrushesProperty); }
+            set { SetValue(BrushesProperty, value); }
+        }
+
+        public static readonly DependencyProperty BrushesProperty =
+        DependencyProperty.Register("Brushes", typeof(Dictionary<LocationCollection, Brush>), typeof(SegmentedPolylineControl), new PropertyMetadata(new Dictionary<LocationCollection, Brush>()));
+
         public static readonly DependencyProperty DisabledStrokeProperty =
         DependencyProperty.Register("DisabledStroke", typeof(Brush), typeof(SegmentedPolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
@@ -120,10 +129,11 @@ namespace Marv.Controls
 
         public void UpdatePolylineParts()
         {
+            
             var oldBinIndex = -1;
             var multiLocationParts = new List<LocationCollection>();
 
-            LocationCollection multiLocation = null;
+            LocationCollection locationCollection = null;
 
             foreach (var location in this.Locations)
             {
@@ -131,37 +141,32 @@ namespace Marv.Controls
 
                 if (newBinIndex != oldBinIndex)
                 {
-                    if (multiLocation == null)
+                    if (locationCollection == null)
                     {
-                        multiLocation = new LocationCollection();
-                        multiLocation.Add(location);
-                        multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
+                        locationCollection = new LocationCollection();
+                        locationCollection.Add(location);
+                        locationCollection.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
                     else
                     {
-                        var mid = Utils.Mid(multiLocation.Last(), location);
+                        var mid = Utils.Mid(locationCollection.Last(), location);
 
-                        multiLocation.Add(mid);
+                        locationCollection.Add(mid);
 
-                        multiLocation = new LocationCollection();
-                        multiLocation.Add(mid);
-                        multiLocation.Add(location);
-                        multiLocation.Stroke = this.DoubleToBrushMap.Map(location.Value);
+                        locationCollection = new LocationCollection();
+                        locationCollection.Add(mid);
+                        locationCollection.Add(location);
+                        locationCollection.Stroke = this.DoubleToBrushMap.Map(location.Value);
                     }
 
-                    multiLocationParts.Add(multiLocation);
+                    multiLocationParts.Add(locationCollection);
                 }
                 else
                 {
-                    multiLocation.Add(location);
+                    locationCollection.Add(location);
                 }
 
                 oldBinIndex = newBinIndex;
-            }
-
-            if (this.Locations.Name == "BU-384")
-            {
-                logger.Debug("We will break here.");
             }
 
             this.PolylineParts = multiLocationParts;
@@ -169,32 +174,35 @@ namespace Marv.Controls
 
         public void UpdateSimplifiedPolylineParts()
         {
+            var brushes = new Dictionary<LocationCollection, Brush>();
             var mapView = this.FindParent<MapView>();
-
-            var multiLocations = new List<LocationCollection>();
+            var locationCollections = new List<LocationCollection>();
 
             if (this.PolylineParts != null)
             {
-                foreach (var multiLocation in this.PolylineParts)
+                foreach (var locationCollection in this.PolylineParts)
                 {
-                    var simplifiedLocationCollection = new LocationCollection(multiLocation.ToPoints(mapView)
+                    var simplifiedLocationCollection = new LocationCollection(locationCollection.ToPoints(mapView)
                                                                                       .Reduce(this.Tolerance)
                                                                                       .ToLocations(mapView));
 
                     if (this.IsEnabled)
                     {
-                        simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(multiLocation[1].Value);
+                        simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(locationCollection[1].Value);
+                        brushes[simplifiedLocationCollection] = this.DoubleToBrushMap.Map(locationCollection[1].Value);
                     }
                     else
                     {
                         simplifiedLocationCollection.Stroke = this.DisabledStroke;
+                        brushes[simplifiedLocationCollection] = this.DisabledStroke;
                     }
 
-                    multiLocations.Add(simplifiedLocationCollection);
+                    locationCollections.Add(simplifiedLocationCollection);
                 }
             }
 
-            this.SimplifiedPolylineParts = multiLocations;
+            this.Brushes = brushes;
+            this.SimplifiedPolylineParts = locationCollections;
         }
 
         public void UpdateVisual()

@@ -91,6 +91,7 @@
     <Compile Include="GraphControl\DiagramPartBehavior.cs" />
     <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
     <Compile Include="EllipseControl\LocationEllipse.cs" />
+    <Compile Include="LocationCollectionToBrush.cs" />
     <Compile Include="StatesControl\StatesControl.xaml.cs">
       <DependentUpon>StatesControl.xaml</DependentUpon>
     </Compile>
