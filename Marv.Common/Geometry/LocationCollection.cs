@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Windows.Media;
 
 namespace Marv.Common
@@ -10,12 +9,9 @@ namespace Marv.Common
     {
         private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
-        private bool isEnabled = true;
-        private bool isSelected = false;
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);
 
         public LocationCollection()
-            : base()
         {
         }
 
@@ -24,8 +20,9 @@ namespace Marv.Common
         {
         }
 
-        public event EventHandler ValueChanged;
-
+        /// <summary>
+        ///     The geographics bounds of this collection of Locations. Bounds is updated everytime the collection changes.
+        /// </summary>
         public LocationRect Bounds
         {
             get
@@ -39,45 +36,6 @@ namespace Marv.Common
                 {
                     this.bounds = value;
                     this.RaisePropertyChanged("GetBounds");
-                }
-            }
-        }
-
-        public bool IsEnabled
-        {
-            get
-            {
-                return this.isEnabled;
-            }
-
-            set
-            {
-                if (value != this.isEnabled)
-                {
-                    this.isEnabled = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("IsEnabled"));
-
-                    if (!this.IsEnabled)
-                    {
-                        this.IsSelected = false;
-                    }
-                }
-            }
-        }
-
-        public bool IsSelected
-        {
-            get
-            {
-                return this.isSelected;
-            }
-
-            set
-            {
-                if (this.IsEnabled)
-                {
-                    this.isSelected = value;
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("IsSelected"));
                 }
             }
         }
@@ -125,6 +83,8 @@ namespace Marv.Common
                 }
             }
         }
+
+        public event EventHandler ValueChanged;
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {

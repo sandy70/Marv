@@ -60,7 +60,7 @@
 
         public static Location Parse(string locationString)
         {
-            string[] parts = locationString.Split(" ,".ToCharArray());
+            var parts = locationString.Split(" ,".ToCharArray());
 
             return new Location
             {
