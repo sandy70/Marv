@@ -8,7 +8,7 @@ namespace Marv.Controls
     internal class MapViewBehavior : Behavior<MapView>
     {
         private int discreteZoomLevel = 100;
-        private Location previousCenter = null;
+        private Location previousCenter;
 
         protected override void OnAttached()
         {
