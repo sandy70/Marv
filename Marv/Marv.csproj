@@ -160,6 +160,7 @@
     <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="MainWindowBehaviorPolylines.cs" />
     <Compile Include="MainWindowGraphControlBehavior.cs" />
+    <Compile Include="PipelineInput.cs" />
     <Compile Include="RiskValueToBrushMap.cs" />
     <Compile Include="SensorListener.cs" />
     <Compile Include="SynergiViewModel.cs" />
