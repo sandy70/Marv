@@ -205,6 +205,11 @@ namespace Marv.Common
             };
         }
 
+        public bool Contains(Location location)
+        {
+            return location.Latitude > this.South && location.Latitude < this.North && location.Longitude > this.West && location.Longitude < this.East;
+        }
+
         public override string ToString()
         {
             var str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);

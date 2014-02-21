@@ -69,11 +69,6 @@
             };
         }
 
-        public bool IsWithin(LocationRect rect)
-        {
-            return this.Latitude > rect.South && this.Latitude < rect.North && this.Longitude > rect.West && this.Longitude < rect.East;
-        }
-
         public override string ToString()
         {
             return this.Latitude + ", " + this.Longitude;

@@ -128,7 +128,7 @@ namespace Marv.Common
             }
             else
             {
-                if (location.IsWithin(this.Bounds))
+                if (this.Bounds.Contains(location))
                 {
                     // There is nothing to be done
                 }

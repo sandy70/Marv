@@ -56,7 +56,7 @@ namespace Marv.Controls
                 this.previousCenter = mapView.Center;
             }
 
-            if (!this.previousCenter.IsWithin(rect))
+            if (!rect.Contains(this.previousCenter))
             {
                 this.previousCenter = mapView.Center;
 
