@@ -10,7 +10,7 @@
                         d:DesignHeight="300" d:DesignWidth="300"
                         x:Name="Root">
     <local:PolylineControlBase.Resources>
-        <ResourceDictionary Source="/LibPipeline;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </local:PolylineControlBase.Resources>
 
     <i:Interaction.Behaviors>
@@ -19,17 +19,16 @@
 
     <Grid>
         <mapcontrol:MapPolyline Name="MapPolyline"
-                                Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=IEnumerableILocationToIEnumerableLocation}}"
+                                Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
                                 Stroke="{Binding Stroke, ElementName=Root}"
                                 StrokeEndLineCap="Round"
                                 StrokeLineJoin="Round"
                                 StrokeStartLineCap="Round"
                                 StrokeThickness="10" />
 
-        <mapcontrol:MapPanel Name="MapPanel"
-                             Visibility="{Binding SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}">
+        <mapcontrol:MapPanel Visibility="{Binding SelectedLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}"> 
             <Ellipse Name="Ellipse"
-                     mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=ILocationToLocation}}"
+                     mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
                      Fill="{Binding CursorFill, ElementName=Root}"
                      Height="50" Width="50"
                      HorizontalAlignment="Center" VerticalAlignment="Center"
