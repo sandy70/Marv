@@ -3,7 +3,6 @@
         xmlns:local="clr-namespace:Marv"
         xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:marv="http://dnvgl.com/marv"
-        xmlns:marvcontrols="clr-namespace:Marv.Controls;assembly=Marv.Controls"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -107,7 +106,7 @@
             </telerik:RadMenuItem>
         </telerik:RadMenu>
 
-        <marvcontrols:TransitionControl Name="TransitionControl"
+        <marv:TransitionControl Name="TransitionControl"
                                         Grid.Row="1">
 
             <!-- Map and GraphControl -->
@@ -118,7 +117,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <marvcontrols:MapView Name="MapView"
+                <marv:MapView Name="MapView"
                                       Grid.Column="0"
                                       IsManipulationEnabled="True"
                                       ManipulationMode="Scale,Translate"
@@ -133,7 +132,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
-                                            <marvcontrols:SegmentedPolylineControl DisabledStroke="DarkGray"
+                                            <marv:SegmentedPolylineControl DisabledStroke="DarkGray"
                                                                                    DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
                                                                                    IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
                                                                                    IsEnabled="{Binding IsEnabled}"
@@ -147,7 +146,7 @@
                         </mapcontrol:MapItemsControl.ItemContainerStyle>
                     </mapcontrol:MapItemsControl>
 
-                    <marvcontrols:EllipseControl Name="EarthquakeControl"
+                    <marv:EllipseControl Name="EarthquakeControl"
                                                  Effect="{StaticResource DropShadow}"
                                                  Locations="{Binding Earthquakes, ElementName=Root}"
                                                  Opacity="0.8" />
@@ -159,7 +158,7 @@
                         Height="30" Width="100"
                         Visibility="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}" />
 
-                </marvcontrols:MapView>
+                </marv:MapView>
 
                 <!-- Property Grid -->
                 <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
@@ -325,7 +324,7 @@
                            Margin="10"
                            Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
-                    <marvcontrols:GraphControl Name="GraphControl"
+                    <marv:GraphControl Name="GraphControl"
                                                Grid.Row="0"
                                                Background="Transparent"
                                                ConnectionColor="#252525"
@@ -334,17 +333,18 @@
                                                OutgoingConnectionHighlightColor="#20aeff" />
 
                     <!-- Graph Toolbar -->
-                    <StackPanel Effect="{StaticResource ResourceKey=DropShadow}"
+                    <StackPanel Grid.Row="0"
+                                Effect="{StaticResource ResourceKey=DropShadow}"
                                 HorizontalAlignment="Left" VerticalAlignment="Top"
                                 Orientation="Vertical">
                         <!-- Retract All Button -->
-                        <marvcontrols:SurfaceImageButton Name="RetractAllButton"
+                        <marv:SurfaceImageButton Name="RetractAllButton"
                                                          Height="50" Width="50"
                                                          Margin="5"
                                                          Source="/Marv.Common;component/Resources/Icons/Close.png" />
 
                         <!-- Back Button -->
-                        <marvcontrols:SurfaceImageButton Name="BackButton"
+                        <marv:SurfaceImageButton Name="BackButton"
                                                          Height="50" Width="50"
                                                          Margin="5"
                                                          Source="/Marv.Common;component/Resources/Icons/Back.png"
@@ -379,7 +379,7 @@
                 </Grid>
 
                 <!-- Notification Control -->
-                <marvcontrols:NotificationControl x:Name="NotificationControl"
+                <marv:NotificationControl x:Name="NotificationControl"
                                                   Grid.Column="0" Grid.ColumnSpan="3"
                                                   Background="#DDDDDD"
                                                   Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
@@ -393,15 +393,15 @@
 
             <!-- Settings Control -->
             <telerik:RadPropertyGrid Name="SettingsControl"
-                                     marvcontrols:TransitionControl.DisplayName="Settings"
-                                     marvcontrols:TransitionControl.IsHeaderVisible="True"
+                                     marv:TransitionControl.DisplayName="Settings"
+                                     marv:TransitionControl.IsHeaderVisible="True"
                                      HorizontalAlignment="Left"
                                      Item="{Binding Default, Source={StaticResource ResourceKey=Settings}}" />
 
             <!-- Edit Network File Control -->
             <Grid Name="EditNetworkFilesControl"
-                  marvcontrols:TransitionControl.DisplayName="Network Files"
-                  marvcontrols:TransitionControl.IsHeaderVisible="True">
+                  marv:TransitionControl.DisplayName="Network Files"
+                  marv:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
@@ -442,14 +442,14 @@
 
             <!-- Run Model Control -->
             <Grid Name="RunModelControl"
-                  marvcontrols:TransitionControl.DisplayName="RunModel"
-                  marvcontrols:TransitionControl.IsHeaderVisible="True">
+                  marv:TransitionControl.DisplayName="RunModel"
+                  marv:TransitionControl.IsHeaderVisible="True">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
 
-                <marvcontrols:SliderProgressBar Name="ModelProgressBar"
+                <marv:SliderProgressBar Name="ModelProgressBar"
                                                 Grid.Row="0"
                                                 Height="100"
                                                 Margin="10"
@@ -461,6 +461,6 @@
                                    Grid.Row="1"
                                    Content="Run Model" />
             </Grid>
-        </marvcontrols:TransitionControl>
+        </marv:TransitionControl>
     </Grid>
 </Window>

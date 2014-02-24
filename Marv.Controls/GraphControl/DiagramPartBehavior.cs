@@ -1,38 +1,35 @@
-﻿using Marv.Common;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Telerik.Windows.Controls;
-using Telerik.Windows.Controls.Diagrams;
+using Marv.Common;
+using Marv.Common.Graph;
+using NLog;
 using Telerik.Windows.Diagrams.Core;
-using System.Linq;
 
 namespace Marv.Controls
 {
-    internal class DiagramPartBehavior : Behavior<RadDiagram>
+    internal class DiagramPartBehavior : Behavior<Telerik.Windows.Controls.RadDiagram>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private Edge oldEdge = null;
-        private Vertex oldVertex = null;
-        private Edge newEdge = null;
-        private Vertex newVertex = null;
+        private Edge oldEdge;
+        private Vertex oldVertex;
+        private Edge newEdge;
+        private Vertex newVertex;
 
         protected override void OnAttached()
         {
             base.OnAttached();
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
-            // this.AssociatedObject.ItemsChanged += AssociatedObject_ItemsChanged;
             this.AssociatedObject.ConnectionManipulationCompleted += AssociatedObject_ConnectionManipulationCompleted;
             this.AssociatedObject.ConnectionManipulationStarted += AssociatedObject_ConnectionManipulationStarted;
             this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
             this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
         }
 
-        private void AssociatedObject_CommandExecuted(object sender, CommandRoutedEventArgs e)
+        private void AssociatedObject_CommandExecuted(object sender, Telerik.Windows.Controls.Diagrams.CommandRoutedEventArgs e)
         {
             if (e.Command.Name == "Add Connection")
             {
@@ -47,21 +44,11 @@ namespace Marv.Controls
             }
         }
 
-        private void AssociatedObject_ItemsChanged(object sender, DiagramItemsChangedEventArgs e)
-        {
-            logger.Trace("");
-
-            foreach (var command in this.AssociatedObject.UndoRedoService.UndoStack)
-            {
-                logger.Info(command.Name);
-            }
-        }
-
-        private void AssociatedObject_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
+        private void AssociatedObject_ConnectionManipulationStarted(object sender, Telerik.Windows.Controls.Diagrams.ManipulationRoutedEventArgs e)
         {
             if (e.Connection != null)
             {
-                oldEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
+                oldEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
                 logger.Info(oldEdge);
             }
             else
@@ -71,7 +58,7 @@ namespace Marv.Controls
 
             if (e.Shape != null)
             {
-                oldVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
+                oldVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
                 logger.Info(oldVertex.Key);
             }
             else
@@ -80,13 +67,13 @@ namespace Marv.Controls
             }
         }
 
-        private void AssociatedObject_ConnectionManipulationCompleted(object sender, ManipulationRoutedEventArgs e)
+        private void AssociatedObject_ConnectionManipulationCompleted(object sender, Telerik.Windows.Controls.Diagrams.ManipulationRoutedEventArgs e)
         {
             var diagram = this.AssociatedObject;
 
             if (e.Connection != null)
             {
-                newEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
+                newEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
                 logger.Info(newEdge);
             }
             else
@@ -96,7 +83,7 @@ namespace Marv.Controls
 
             if (e.Shape != null)
             {
-                newVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
+                newVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
                 logger.Info(newVertex.Key);
             }
             else
@@ -130,10 +117,10 @@ namespace Marv.Controls
             timer.Start();
         }
 
-        private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
+        private void AssociatedObject_ShapeClicked(object sender, Telerik.Windows.Controls.Diagrams.ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
-            var shapeList = new List<IDiagramItem>();
+            var shapeList = new List<Telerik.Windows.Diagrams.Core.IDiagramItem>();
             shapeList.Add(e.Shape);
 
             // Change color of connections
@@ -141,17 +128,17 @@ namespace Marv.Controls
 
             foreach (var conn in this.AssociatedObject.Connections)
             {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
+                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
             }
 
             foreach (var conn in e.Shape.IncomingLinks)
             {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
+                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
             }
 
             foreach (var conn in e.Shape.OutgoingLinks)
             {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
+                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
             }
 
             this.AssociatedObject.BringToFront(shapeList);
@@ -165,7 +152,7 @@ namespace Marv.Controls
                 {
                     if (!e.Shape.Bounds.IsInBounds(this.AssociatedObject.Viewport))
                     {
-                        var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, pad: 20);
+                        var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, 20);
 
                         // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
                         this.AssociatedObject.BringIntoView(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));

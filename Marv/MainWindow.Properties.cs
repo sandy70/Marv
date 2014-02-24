@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Graph;
 using Marv.Common.Map;
 using Marv.Controls;
 

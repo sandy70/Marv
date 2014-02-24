@@ -1,6 +1,7 @@
-﻿using Marv.Common;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Interactivity;
+using Marv.Common;
+using Marv.Common.Graph;
 
 namespace Marv.Controls
 {

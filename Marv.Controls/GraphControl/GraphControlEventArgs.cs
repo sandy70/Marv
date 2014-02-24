@@ -1,5 +1,5 @@
-﻿using Marv.Common;
-using System.Windows;
+﻿using System.Windows;
+using Marv.Common.Graph;
 
 namespace Marv.Controls
 {
@@ -10,7 +10,6 @@ namespace Marv.Controls
         private Vertex vertex;
 
         public GraphControlEventArgs()
-            : base()
         {
         }
 

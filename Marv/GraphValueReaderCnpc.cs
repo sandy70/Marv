@@ -1,12 +1,13 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.IO;
+using Marv.Common;
+using Marv.Common.Graph;
 
 namespace Marv
 {
     public class GraphValueReaderCnpc : IGraphValueReader
     {
-        private Dictionary<int, string, string, double> graphValues = null;
+        private Dictionary<int, string, string, double> graphValues;
 
         public string InputDir { get; set; }
 

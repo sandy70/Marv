@@ -1,8 +1,8 @@
-﻿using Marv.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Marv.Common.Graph;
 
 namespace Marv.Controls
 {

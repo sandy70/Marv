@@ -1,10 +1,10 @@
-﻿using Marv.Common;
-using NLog;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Marv.Common.Graph;
+using NLog;
 
 namespace Marv.Controls
 {

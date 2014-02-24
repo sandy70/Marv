@@ -1,10 +1,11 @@
-﻿using Marv.Common;
-using Marv.Controls;
-using NLog;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interactivity;
 using System.Windows.Media;
+using Marv.Common;
+using Marv.Common.Graph;
+using Marv.Controls;
+using NLog;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv

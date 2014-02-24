@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Caching;
 using Marv.Common;
+using Marv.Common.Graph;
 using Marv.Common.Map;
 using Marv.Controls;
 using NLog;

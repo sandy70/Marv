@@ -68,20 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chart\CategoricalPoint.cs" />
-    <Compile Include="Extensions\Extensions.Edge.cs" />
-    <Compile Include="Graph\EvidenceString\DistributionEvidenceString.cs" />
-    <Compile Include="Graph\EvidenceString\EvidenceStringFactory.cs" />
-    <Compile Include="Graph\EdgeConnectorPositions.cs" />
-    <Compile Include="Graph\Graph.IBidirectionalGraph.cs" />
-    <Compile Include="Graph\Graph.IObservableGraphSource.cs" />
-    <Compile Include="Graph\Graph.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
-    <Compile Include="Graph\EvidenceString\EvidenceString.cs" />
     <Compile Include="ItemNotFoundException.cs" />
-    <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
-    <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
-    <Compile Include="Graph\EvidenceString\RangeEvidenceString.cs" />
-    <Compile Include="Graph\EvidenceString\StateEvidenceString.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />
@@ -92,17 +80,6 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
-    <Compile Include="Graph\Edge.cs" />
-    <Compile Include="Graph\Evidence\HardEvidence.cs" />
-    <Compile Include="Graph\Evidence\IEvidence.cs" />
-    <Compile Include="Graph\Evidence\SoftEvidence.cs" />
-    <Compile Include="Graph\Vertex.cs" />
-    <Compile Include="Graph\VertexCommand\IVertexCommand.cs" />
-    <Compile Include="Graph\VertexCommand\VertexCommand.cs" />
-    <Compile Include="Graph\VertexCommand\VertexExpandCommand.cs" />
-    <Compile Include="Graph\VertexCommand\VertexLockCommand.cs" />
-    <Compile Include="Graph\NetworkStructure\NetworkStructure.cs" />
-    <Compile Include="Graph\NetworkStructure\NetworkStructureVertex.cs" />
     <Compile Include="Notification\Notification.cs" />
     <Compile Include="Notification\NotificationIndeterminate.cs" />
     <Compile Include="Notification\NotificationTimed.cs" />
@@ -110,15 +87,9 @@
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\Sequence.cs" />
-    <Compile Include="Graph\State.cs" />
     <Compile Include="Types\Model.cs" />
     <Compile Include="Types\ModelCollection.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexMeanComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexStandardDeviationComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexValueUndefinedException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
@@ -160,7 +131,13 @@
       <Name>SmileNet</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Graph\EvidenceString\" />
+    <Folder Include="Graph\Evidence\" />
+    <Folder Include="Graph\NetworkStructure\" />
+    <Folder Include="Graph\VertexCommand\" />
+    <Folder Include="VertexValueComputer\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

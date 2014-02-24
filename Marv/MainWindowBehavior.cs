@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Marv.Common;
+using Marv.Common.Graph;
 using Marv.Common.Map;
 using Marv.Controls;
 using Marv.LineAndSectionOverviewService;

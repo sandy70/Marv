@@ -1,8 +1,8 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.IO.Ports;
 using System.Linq;
 using System.Windows.Threading;
+using Marv.Common.Graph;
 
 namespace Marv
 {
@@ -10,7 +10,7 @@ namespace Marv
     {
         private SerialPort serialPort = new SerialPort();
         private DispatcherTimer timer = new DispatcherTimer();
-        private Vertex vertexViewModel = null;
+        private Vertex vertexViewModel;
 
         public SensorListener()
         {

@@ -30,6 +30,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -37,9 +52,56 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2013.3.1316.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\RCWPF\2013.3.1316.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DistributionEvidenceString.cs" />
+    <Compile Include="Edge.cs" />
+    <Compile Include="EdgeConnectorPositions.cs" />
+    <Compile Include="EvidenceString.cs" />
+    <Compile Include="EvidenceStringFactory.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Graph.IBidirectionalGraph.cs" />
+    <Compile Include="Graph.IObservableGraphSource.cs" />
+    <Compile Include="HardEvidence.cs" />
+    <Compile Include="IEvidence.cs" />
+    <Compile Include="IVertexCommand.cs" />
+    <Compile Include="IVertexValueComputer.cs" />
+    <Compile Include="NetworkStructure.cs" />
+    <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RangeEvidenceString.cs" />
+    <Compile Include="SoftEvidence.cs" />
+    <Compile Include="State.cs" />
+    <Compile Include="StateEvidenceString.cs" />
+    <Compile Include="Vertex.cs" />
+    <Compile Include="VertexCommand.cs" />
+    <Compile Include="VertexEntropyComputer.cs" />
+    <Compile Include="VertexEntropyDifferenceComputer.cs" />
+    <Compile Include="VertexExpandCommand.cs" />
+    <Compile Include="VertexLockCommand.cs" />
+    <Compile Include="VertexMeanComputer.cs" />
+    <Compile Include="VertexMeanDifferenceComputer.cs" />
+    <Compile Include="VertexStandardDeviationComputer.cs" />
+    <Compile Include="VertexValueUndefinedException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
+      <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
+      <Name>Marv.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
+      <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
+      <Name>SmileNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

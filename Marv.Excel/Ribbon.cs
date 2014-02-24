@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Marv.Common;
+using Marv.Common.Graph;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Ribbon;
-using System.Linq;
-using System;
 
 namespace Marv.Excel
 {
@@ -65,7 +65,7 @@ namespace Marv.Excel
 
         private void WriteGraphValue(Dictionary<string, string, double> graphValue, string worksheetName)
         {
-            var workbook = (Workbook) Globals.ThisAddIn.Application.ActiveWorkbook;
+            var workbook = Globals.ThisAddIn.Application.ActiveWorkbook;
             Worksheet worksheet;
 
             try
