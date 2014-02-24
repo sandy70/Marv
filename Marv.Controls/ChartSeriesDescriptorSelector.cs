@@ -15,7 +15,8 @@ namespace Marv.Controls
                     TypePath = "Type",
                 };
             }
-            else if (context is ChartSeries<CategoricalPoint>)
+
+            if (context is ChartSeries<CategoricalPoint>)
             {
                 return new Telerik.Windows.Controls.ChartView.CategoricalSeriesDescriptor
                 {
@@ -24,10 +25,8 @@ namespace Marv.Controls
                     TypePath = "Type"
                 };
             }
-            else
-            {
-                return base.SelectDescriptor(provider, context);
-            }
+
+            return base.SelectDescriptor(provider, context);
         }
     }
 }

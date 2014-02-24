@@ -38,6 +38,7 @@
             this.MarvTab = this.Factory.CreateRibbonTab();
             this.FileGroup = this.Factory.CreateRibbonGroup();
             this.OpenFileButton = this.Factory.CreateRibbonButton();
+            this.RunButton = this.Factory.CreateRibbonButton();
             this.MarvTab.SuspendLayout();
             this.FileGroup.SuspendLayout();
             // 
@@ -50,6 +51,7 @@
             // FileGroup
             // 
             this.FileGroup.Items.Add(this.OpenFileButton);
+            this.FileGroup.Items.Add(this.RunButton);
             this.FileGroup.Label = "File";
             this.FileGroup.Name = "FileGroup";
             // 
@@ -59,6 +61,13 @@
             this.OpenFileButton.Label = "Open";
             this.OpenFileButton.Name = "OpenFileButton";
             this.OpenFileButton.ShowImage = true;
+            // 
+            // RunButton
+            // 
+            this.RunButton.Image = ((System.Drawing.Image)(resources.GetObject("RunButton.Image")));
+            this.RunButton.Label = "Run";
+            this.RunButton.Name = "RunButton";
+            this.RunButton.ShowImage = true;
             // 
             // Ribbon
             // 
@@ -78,6 +87,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonTab MarvTab;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup FileGroup;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton OpenFileButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton RunButton;
     }
 
     partial class ThisRibbonCollection
