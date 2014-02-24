@@ -469,7 +469,7 @@ namespace Marv.Common.Graph
 
         public void SetEvidence(string vertexKey, string stateKey)
         {
-            var stateIndex = this.Vertices[vertexKey].GetStateIndex(stateKey);
+            var stateIndex = this.Vertices[vertexKey].States.IndexOf(stateKey);
             this.SetEvidence(vertexKey, stateIndex);
         }
 
@@ -509,11 +509,11 @@ namespace Marv.Common.Graph
             this.network.UpdateBeliefs();
         }
 
-        public Dictionary<string, string, double> UpdateValue()
+        public void UpdateValue()
         {
             var graphValue = this.GetNetworkValue();
             this.Belief = graphValue;
-            return this.Value = graphValue;
+            this.Value = graphValue;
         }
 
         public void Write(string fileName)

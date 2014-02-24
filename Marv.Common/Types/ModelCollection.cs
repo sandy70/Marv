@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -9,13 +8,12 @@ namespace Marv.Common
     public class ModelCollection<T> : ObservableCollection<T>, IModel where T : class, IModel
     {
         private bool isEnabled;
-        private bool isSelected = false;
+        private bool isSelected;
         private string key;
         private string name;
         private Dictionary<string, object> properties = new Dictionary<string, object>();
 
         public ModelCollection()
-            : base()
         {
         }
 
@@ -23,8 +21,6 @@ namespace Marv.Common
             : base(items)
         {
         }
-
-        public event EventHandler<T> SelectionChanged;
 
         public bool IsEnabled
         {
@@ -115,7 +111,7 @@ namespace Marv.Common
         {
             get
             {
-                return this.Where(item => item.IsSelected).FirstOrDefault();
+                return this.FirstOrDefault(item => item.IsSelected);
             }
         }
 
@@ -127,11 +123,11 @@ namespace Marv.Common
             }
         }
 
-        public T this[string key]
+        public T this[string aKey]
         {
             get
             {
-                return this.Where(item => item.Key == key).First();
+                return this.First(item => item.Key == aKey);
             }
         }
 
@@ -139,27 +135,26 @@ namespace Marv.Common
         {
             get
             {
-                return keys.Select(key => this[key]);
+                return keys.Select(aKey => this[aKey]);
             }
         }
 
-        public bool Contains(string key)
+        public bool Contains(string aKey)
         {
-            if (this.Where(item => item.Key == key).Count() > 0) return true;
-            else return false;
+            return this.Count(item => item.Key == aKey) > 0;
         }
 
-        public int IndexOf(string key)
+        public int IndexOf(string aKey)
         {
-            return this.IndexOf(this[key]);
+            return this.IndexOf(this[aKey]);
         }
 
-        public void Select(string key)
+        public void Select(string theKey)
         {
-            if (this.Contains(key))
+            if (this.Contains(theKey))
             {
                 this.UnselectAll();
-                this[key].IsSelected = true;
+                this[theKey].IsSelected = true;
                 this.RaisePropertyChanged("SelectedItem");
             }
             else
@@ -193,14 +188,6 @@ namespace Marv.Common
         protected void RaisePropertyChanged(string propertyName)
         {
             base.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void RaiseSelectionChanged(T item)
-        {
-            if (this.SelectionChanged != null)
-            {
-                this.SelectionChanged(this, item);
-            }
         }
     }
 }

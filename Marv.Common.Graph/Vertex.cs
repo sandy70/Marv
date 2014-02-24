@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using MoreLinq;
 
 namespace Marv.Common.Graph
 {
@@ -488,21 +489,6 @@ namespace Marv.Common.Graph
             return stdev;
         }
 
-        public int GetStateIndex(string stateKey)
-        {
-            const int stateIndex = -1;
-
-            foreach (var state in this.States)
-            {
-                if (state.Key.Equals(stateKey))
-                {
-                    return this.states.IndexOf(state);
-                }
-            }
-
-            return stateIndex;
-        }
-
         public void SelectState(int index)
         {
             for (var i = 0; i < this.States.Count; i++)
@@ -522,7 +508,7 @@ namespace Marv.Common.Graph
         public IEvidence ToEvidence()
         {
             var selectedStateIndex = this.GetSelectedStateIndex();
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             if (selectedStateIndex >= 0)
             {
@@ -549,17 +535,7 @@ namespace Marv.Common.Graph
 
         public void UpdateMostProbableState()
         {
-            var mostProbableState = new State { Value = double.MinValue, Key = "" };
-
-            foreach (var state in this.States)
-            {
-                if (state.Value > mostProbableState.Value)
-                {
-                    mostProbableState = state;
-                }
-            }
-
-            this.MostProbableState = mostProbableState;
+            this.MostProbableState = this.States.MaxBy(state => state.Value);
         }
 
         public double GetStatistics(string statisticsKey, IVertexValueComputer vertexValueComputer)
