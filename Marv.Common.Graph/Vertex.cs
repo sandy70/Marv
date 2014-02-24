@@ -25,7 +25,6 @@ namespace Marv.Common.Graph
         private bool isHeader;
         private bool isLocked = true;
         private State mostProbableState;
-        private double opacity = 1;
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
@@ -253,23 +252,6 @@ namespace Marv.Common.Graph
                 {
                     this.mostProbableState = value;
                     this.RaisePropertyChanged("MostProbableState");
-                }
-            }
-        }
-
-        public double Opacity
-        {
-            get
-            {
-                return this.opacity;
-            }
-
-            set
-            {
-                if (value != this.opacity)
-                {
-                    this.opacity = value;
-                    this.RaisePropertyChanged("Opacity");
                 }
             }
         }
@@ -508,7 +490,7 @@ namespace Marv.Common.Graph
 
         public int GetStateIndex(string stateKey)
         {
-            var stateIndex = -1;
+            const int stateIndex = -1;
 
             foreach (var state in this.States)
             {
@@ -525,29 +507,7 @@ namespace Marv.Common.Graph
         {
             for (var i = 0; i < this.States.Count; i++)
             {
-                if (i == index)
-                {
-                    this.States[i].Value = 1;
-                }
-                else
-                {
-                    this.States[i].Value = 0;
-                }
-            }
-        }
-
-        public void SelectState(State selectedState)
-        {
-            foreach (var state in this.States)
-            {
-                if (state == selectedState)
-                {
-                    state.Value = 1;
-                }
-                else
-                {
-                    state.Value = 0;
-                }
+                this.States[i].Value = i == index ? 1 : 0;
             }
         }
 
