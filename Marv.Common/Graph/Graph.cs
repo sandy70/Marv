@@ -15,7 +15,7 @@ namespace Marv.Common
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string defaultGroup;
-        private EdgeCollection edges = new EdgeCollection();
+        private ModelCollection<Edge> edges = new ModelCollection<Edge>();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
@@ -50,7 +50,7 @@ namespace Marv.Common
             }
         }
 
-        public EdgeCollection Edges
+        public ModelCollection<Edge> Edges
         {
             get
             {
@@ -354,7 +354,7 @@ namespace Marv.Common
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
                                 var connectorPostions = srcVertex.ConnectorPositions[group, dstVertex.Key];
-                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
+                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions: connectorPostions);
 
                                 src = edge.Target;
                             }

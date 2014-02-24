@@ -68,8 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chart\CategoricalPoint.cs" />
+    <Compile Include="Extensions\Extensions.Edge.cs" />
     <Compile Include="Graph\EvidenceString\DistributionEvidenceString.cs" />
-    <Compile Include="Graph\EdgeCollection.cs" />
     <Compile Include="Graph\EvidenceString\EvidenceStringFactory.cs" />
     <Compile Include="Graph\EdgeConnectorPositions.cs" />
     <Compile Include="Graph\Graph.IBidirectionalGraph.cs" />
