@@ -3,6 +3,8 @@ using Marv.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Tools.Ribbon;
+using System.Linq;
+using System;
 
 namespace Marv.Excel
 {
@@ -63,8 +65,20 @@ namespace Marv.Excel
 
         private void WriteGraphValue(Dictionary<string, string, double> graphValue, string worksheetName)
         {
-            var worksheet = (Worksheet) Globals.ThisAddIn.Application.ActiveWorkbook.Worksheets.Add();
-            worksheet.Name = worksheetName;
+            var workbook = (Workbook) Globals.ThisAddIn.Application.ActiveWorkbook;
+            Worksheet worksheet;
+
+            try
+            {
+                worksheet = workbook.Sheets[worksheetName];
+            }
+            catch (Exception)
+            {
+                worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveWorkbook.Worksheets.Add();
+                worksheet.Name = worksheetName;
+            }
+
+            worksheet.Select();
 
             var colIndex = 1;
 
@@ -73,11 +87,13 @@ namespace Marv.Excel
                 var rowIndex = 1;
                 var vertexValue = graphValue[vertexKey];
 
-                worksheet.Cells[rowIndex++, colIndex] = vertexKey;
+                worksheet.Cells[rowIndex++, colIndex + 1] = vertexKey;
 
                 foreach (var stateKey in vertexValue.Keys)
                 {
+                    worksheet.Cells[rowIndex, colIndex].NumberFormat = "@";
                     worksheet.Cells[rowIndex, colIndex] = stateKey;
+                    worksheet.Cells[rowIndex, colIndex + 1].NumberFormat = "@";
                     worksheet.Cells[rowIndex++, colIndex + 1] = vertexValue[stateKey];
                 }
 
@@ -85,7 +101,7 @@ namespace Marv.Excel
             }
         }
 
-        private void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
+        private static void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
             dialog.ShowDialog();
@@ -133,6 +149,7 @@ namespace Marv.Excel
                 foreach (var state in vertex.States)
                 {
                     // Prefixing with ' makes sure the value is formatted as text
+                    worksheet.Cells[rowIndex, colIndex - 1].NumberFormat = "@";
                     worksheet.Cells[rowIndex++, colIndex - 1] = "'" + state.Key;
                 }
 
