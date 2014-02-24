@@ -1,12 +1,12 @@
-﻿using NLog;
-using QuickGraph.Algorithms.RankedShortestPath;
-using Smile;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using NLog;
+using QuickGraph.Algorithms.RankedShortestPath;
+using Smile;
 
 namespace Marv.Common
 {
@@ -176,8 +176,8 @@ namespace Marv.Common
                 }
             }
 
-            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", defaultValue: "all");
-            graph.Name = structure.ParseUserProperty("key", defaultValue: "");
+            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = structure.ParseUserProperty("key", "");
 
             graph.UpdateValue();
             return graph;
@@ -287,7 +287,6 @@ namespace Marv.Common
                         logger.Error(exception.Message);
 
                         value[sourceVertex.Key, sourceState.Key] = double.NaN;
-                        continue;
                     }
                 }
             }
@@ -354,7 +353,7 @@ namespace Marv.Common
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
                                 var connectorPostions = srcVertex.ConnectorPositions[group, dstVertex.Key];
-                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions: connectorPostions);
+                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
 
                                 src = edge.Target;
                             }
@@ -396,7 +395,7 @@ namespace Marv.Common
             {
                 var vertexValue = new Dictionary<string, double>();
 
-                var parts = line.Split(new char[] { ',' });
+                var parts = line.Split(new[] { ',' });
 
                 var vertexKey = parts[0];
 
