@@ -346,9 +346,11 @@ namespace Marv.Common.Graph
 
                     foreach (var path in algorithm.ComputedShortestPaths)
                     {
-                        var src = path.First().Source;
+                        // Convert to list to avoid multiple enumerations.
+                        var pathList = path as IList<Edge> ?? path.ToList();
+                        var src = pathList.First().Source;
 
-                        foreach (var edge in path)
+                        foreach (var edge in pathList)
                         {
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
@@ -543,11 +545,6 @@ namespace Marv.Common.Graph
             }
 
             structure.Write(fileName);
-        }
-
-        private IEnumerable<Vertex> GetChildren(Vertex vertex)
-        {
-            return this.Edges.Where(edge => edge.Source == vertex).Select(edge => edge.Target);
         }
     }
 }
