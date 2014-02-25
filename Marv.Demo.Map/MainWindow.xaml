@@ -2,16 +2,19 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <marv:MapView TileLayer="{Binding Source={x:Static marv:TileLayers.BingMapsRoads}}"
-                      StartExtent="USA">
-            <marv:PolylineControl Name="PolylineControl"
-                                  Locations="{Binding}"
-                                  Stroke="Brown">
-                
-            </marv:PolylineControl>
-            
-        </marv:MapView>
-    </Grid>
+        Title="MainWindow" Height="350" Width="525"
+        Name="Root">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+    </Window.Resources>
+
+    <marv:MapView TileLayer="{Binding Source={x:Static marv:TileLayers.BingMapsRoads}}"
+                  StartExtent="USA">
+
+        <marv:PolylineControl Name="PolylineControl"
+                              Locations="{Binding ElementName=Root, Path=Locations}"
+                              Stroke="DarkRed" />
+
+    </marv:MapView>
 </Window>

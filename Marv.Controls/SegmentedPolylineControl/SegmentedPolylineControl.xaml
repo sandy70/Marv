@@ -27,8 +27,6 @@
             
         </mapcontrol:MapPanel.Resources>
         
-        
-        
         <mapcontrol:MapItemsControl Name="MapPolyline"
                                     ItemsSource="{Binding SimplifiedPolylineParts, ElementName=Root}"
                                     VirtualizingPanel.IsVirtualizing="True">

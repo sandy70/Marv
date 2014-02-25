@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -13,19 +12,12 @@ namespace Marv.Common
         private string key = "";
         private string name = "";
         private Dynamic properties = new Dynamic();
-        private T selectedItem = default(T);
-
-        public SelectableCollection()
-            : base()
-        {
-        }
+        private T selectedItem;
 
         public SelectableCollection(IEnumerable<T> items)
             : base(items)
         {
         }
-
-        public event EventHandler<T> SelectionChanged;
 
         public bool IsEnabled
         {
@@ -133,7 +125,6 @@ namespace Marv.Common
                 {
                     this.selectedItem = value;
                     this.RaisePropertyChanged("SelectedItem");
-                    this.RaiseSelectionChanged();
                 }
                 else
                 {
@@ -154,7 +145,6 @@ namespace Marv.Common
 
                         this.selectedItem = value;
                         this.RaisePropertyChanged("SelectedItem");
-                        this.RaiseSelectionChanged();
                     }
                 }
             }
@@ -168,14 +158,6 @@ namespace Marv.Common
         protected void RaisePropertyChanged(string propertyName)
         {
             base.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected void RaiseSelectionChanged()
-        {
-            if (this.SelectionChanged != null)
-            {
-                this.SelectionChanged(this, this.SelectedItem);
-            }
         }
     }
 }

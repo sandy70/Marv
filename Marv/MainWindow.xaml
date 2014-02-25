@@ -133,10 +133,10 @@
                                     <Setter.Value>
                                         <ControlTemplate>
                                             <marv:SegmentedPolylineControl DisabledStroke="DarkGray"
-                                                                                   DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
-                                                                                   IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
-                                                                                   IsEnabled="{Binding IsEnabled}"
-                                                                                   Locations="{Binding}" />
+                                                                           DoubleToBrushMap="{StaticResource ResourceKey=RiskValueToBrushMap}"
+                                                                           IsCursorVisible="{Binding IsSelected, Mode=TwoWay}"
+                                                                           IsEnabled="{Binding IsEnabled}"
+                                                                           Locations="{Binding}" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
