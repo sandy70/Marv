@@ -6,7 +6,6 @@ namespace Marv.Common.Map
 {
     public class LocationCollection : ModelCollection<Location>
     {
-        // ReSharper disable once InconsistentNaming
         private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
 
@@ -20,7 +19,7 @@ namespace Marv.Common.Map
         }
 
         /// <summary>
-        ///     The geographics bounds of this collection of Locations. Bounds is updated everytime the collection changes.
+        ///     The geographic bounds of this collection of Locations. Bounds is updated everytime the collection changes.
         /// </summary>
         public LocationRect Bounds
         {
@@ -65,8 +64,6 @@ namespace Marv.Common.Map
                 }
             }
         }
-
-        public event EventHandler ValueChanged;
 
         // Everytime the collection is changed, the bounds are updated.
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -124,5 +121,7 @@ namespace Marv.Common.Map
                 }
             }
         }
+
+        public event EventHandler ValueChanged;
     }
 }

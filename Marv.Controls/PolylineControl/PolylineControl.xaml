@@ -17,14 +17,22 @@
         <local:PolylineControlBehavior />
     </i:Interaction.Behaviors>
 
-    <mapcontrol:MapPolyline Name="MapPolyline"
-                            Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+    <!-- This is the polyling that the viewer sees -->
+    <mapcontrol:MapPolyline Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
                             Stroke="{Binding ElementName=Root, Path=Stroke}"
                             StrokeEndLineCap="Round"
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
                             StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
 
+    <!-- This is the dummy polyline that is used to broaden selection area -->
+    <mapcontrol:MapPolyline Name="MapPolyline"
+                            Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                            Opacity="0.0"
+                            Stroke="Black"
+                            StrokeThickness="30" />
+
+    <!-- Cursor -->
     <Ellipse Name="Ellipse"
              mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
              Fill="{Binding CursorFill, ElementName=Root}"

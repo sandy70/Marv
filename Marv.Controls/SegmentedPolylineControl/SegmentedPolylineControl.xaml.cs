@@ -39,9 +39,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty ValueLevelsProperty =
             DependencyProperty.Register("ValueLevels", typeof (Sequence<double>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty ValueMemberPathProperty =
-            DependencyProperty.Register("ValueMemberPath", typeof (string), typeof (SegmentedPolylineControl), new PropertyMetadata("Value"));
-
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public SegmentedPolylineControl()
@@ -158,6 +155,54 @@ namespace Marv.Controls
             }
         }
 
+        private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+
+            control.NameLocation = new Location
+            {
+                Latitude = control.NameLatitude,
+                Longitude = control.NameLocation.Longitude
+            };
+        }
+
+        private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+            control.NameLocation = new Location {Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude};
+        }
+
+        private void Locations_ValueChanged(object sender, EventArgs e)
+        {
+            logger.Trace("");
+            this.UpdatePolylineParts();
+            this.UpdateSimplifiedPolylineParts();
+        }
+
+        protected override void OnChangedLocations()
+        {
+            base.OnChangedLocations();
+
+            if (this.Locations != null)
+            {
+                this.CursorLocation = this.Locations.First();
+                this.Locations.ValueChanged += this.Locations_ValueChanged;
+                this.UpdatePolylineParts();
+            }
+
+            this.UpdateSimplifiedPolylineParts();
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property.Name == "IsEnabled")
+            {
+                this.UpdateSimplifiedPolylineParts();
+            }
+        }
+
         public void UpdatePolylineParts()
         {
             var oldBinIndex = -1;
@@ -221,54 +266,6 @@ namespace Marv.Controls
         {
             // this.MapPanel.InvalidateVisual();
             // this.MapPanel.UpdateLayout();
-        }
-
-        protected override void OnChangedLocations()
-        {
-            base.OnChangedLocations();
-
-            if (this.Locations != null)
-            {
-                this.CursorLocation = this.Locations.First();
-                this.Locations.ValueChanged += this.Locations_ValueChanged;
-                this.UpdatePolylineParts();
-            }
-            
-            this.UpdateSimplifiedPolylineParts();
-        }
-
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property.Name == "IsEnabled")
-            {
-                this.UpdateSimplifiedPolylineParts();
-            }
-        }
-
-        private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as SegmentedPolylineControl;
-
-            control.NameLocation = new Location
-            {
-                Latitude = control.NameLatitude, 
-                Longitude = control.NameLocation.Longitude
-            };
-        }
-
-        private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as SegmentedPolylineControl;
-            control.NameLocation = new Location {Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude};
-        }
-
-        private void Locations_ValueChanged(object sender, EventArgs e)
-        {
-            logger.Trace("");
-            this.UpdatePolylineParts();
-            this.UpdateSimplifiedPolylineParts();
         }
     }
 }

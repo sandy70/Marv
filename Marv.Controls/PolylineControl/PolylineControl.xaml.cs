@@ -22,7 +22,7 @@ namespace Marv.Controls
             DependencyProperty.Register("IsCursorVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LocationsProperty =
-            DependencyProperty.Register("Locations", typeof (LocationCollection), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
+            DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
@@ -92,7 +92,7 @@ namespace Marv.Controls
             }
         }
 
-        public LocationCollection Locations
+        public IEnumerable<Location> Locations
         {
             get
             {

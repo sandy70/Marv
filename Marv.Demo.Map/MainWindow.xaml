@@ -14,6 +14,7 @@
 
         <marv:PolylineControl Name="PolylineControl"
                               Locations="{Binding ElementName=Root, Path=Locations}"
+                              SelectedLocation="{Binding ElementName=Root, Path=Locations.SelectedItem}"
                               Stroke="DarkRed" />
 
     </marv:MapView>
