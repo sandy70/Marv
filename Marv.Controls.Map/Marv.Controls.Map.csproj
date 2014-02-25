@@ -59,12 +59,14 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="EllipseControl\EllipseControl.xaml.cs">
       <DependentUpon>EllipseControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="EllipseControl\EllipseControlBehavior.cs" />
     <Compile Include="EllipseControl\LocationEllipse.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="LocationToMapControlLocationConverter.cs" />
     <Compile Include="MapView\MapView.cs" />
     <Compile Include="MapView\MapViewBehavior.cs" />
@@ -112,10 +114,6 @@
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
-      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
-      <Name>Marv.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Marv.Common;
 using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph

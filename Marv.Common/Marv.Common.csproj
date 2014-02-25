@@ -83,6 +83,7 @@
     <Compile Include="Types\Model.cs" />
     <Compile Include="Types\ModelCollection.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ValueEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">

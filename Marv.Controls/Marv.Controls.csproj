@@ -75,14 +75,12 @@
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileBrowseControl\FileBrowseControl.xaml.cs">
       <DependentUpon>FileBrowseControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="IMapDoubleToDouble.cs" />
     <Compile Include="MapDoubleToDouble.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
@@ -107,8 +105,6 @@
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
-    <Compile Include="ValueEventArgs.cs" />
-    <Compile Include="ValueEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox\EditableTextBox.xaml">

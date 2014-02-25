@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Controls.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="local:MainWindow">
@@ -107,7 +108,7 @@
         </telerik:RadMenu>
 
         <marv:TransitionControl Name="TransitionControl"
-                                        Grid.Row="1">
+                                Grid.Row="1">
 
             <!-- Map and GraphControl -->
             <Grid Name="MainControl">
@@ -118,11 +119,11 @@
                 </Grid.ColumnDefinitions>
 
                 <marv:MapView Name="MapView"
-                                      Grid.Column="0"
-                                      IsManipulationEnabled="True"
-                                      ManipulationMode="Scale,Translate"
-                                      MaxZoomLevel="21"
-                                      StartExtent="China">
+                              Grid.Column="0"
+                              IsManipulationEnabled="True"
+                              ManipulationMode="Scale,Translate"
+                              MaxZoomLevel="21"
+                              StartExtent="China">
                     <mapcontrol:MapItemsControl Name="MapItemsControl"
                                                 Effect="{StaticResource ResourceKey=DropShadow}"
                                                 ItemsSource="{Binding Polylines, ElementName=Root}"
@@ -147,9 +148,9 @@
                     </mapcontrol:MapItemsControl>
 
                     <marv:EllipseControl Name="EarthquakeControl"
-                                                 Effect="{StaticResource DropShadow}"
-                                                 Locations="{Binding Earthquakes, ElementName=Root}"
-                                                 Opacity="0.8" />
+                                         Effect="{StaticResource DropShadow}"
+                                         Locations="{Binding Earthquakes, ElementName=Root}"
+                                         Opacity="0.8" />
 
                     <Label
                         mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
@@ -161,8 +162,7 @@
                 </marv:MapView>
 
                 <!-- Property Grid -->
-                <telerik:RadPropertyGrid Name="PipelineProfilePropertyGrid"
-                                         Grid.Column="0"
+                <telerik:RadPropertyGrid Grid.Column="0"
                                          AutoGeneratePropertyDefinitions="False"
                                          DescriptionPanelVisibility="Collapsed"
                                          Effect="{StaticResource ResourceKey=DropShadow}"
@@ -174,6 +174,7 @@
                                          SearchBoxVisibility="Collapsed"
                                          SortAndGroupButtonsVisibility="Collapsed"
                                          Width="350">
+                    
                     <telerik:RadPropertyGrid.PropertyDefinitions>
                         <telerik:PropertyDefinition Binding="{Binding Latitude}"
                                                     DisplayName="Latitude" />
@@ -187,6 +188,7 @@
                         <telerik:PropertyDefinition Binding="{Binding Value}"
                                                     DisplayName="PoF" />
                     </telerik:RadPropertyGrid.PropertyDefinitions>
+                    
                 </telerik:RadPropertyGrid>
 
                 <!-- Pipeline Info Control -->
@@ -325,12 +327,12 @@
                            Visibility="{Binding IsLogoVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
                     <marv:GraphControl Name="GraphControl"
-                                               Grid.Row="0"
-                                               Background="Transparent"
-                                               ConnectionColor="#252525"
-                                               Graph="{Binding DisplayGraph, ElementName=Root}"
-                                               IncomingConnectionHighlightColor="#b11d01"
-                                               OutgoingConnectionHighlightColor="#20aeff" />
+                                       Grid.Row="0"
+                                       Background="Transparent"
+                                       ConnectionColor="#252525"
+                                       Graph="{Binding DisplayGraph, ElementName=Root}"
+                                       IncomingConnectionHighlightColor="#b11d01"
+                                       OutgoingConnectionHighlightColor="#20aeff" />
 
                     <!-- Graph Toolbar -->
                     <StackPanel Grid.Row="0"
@@ -339,16 +341,16 @@
                                 Orientation="Vertical">
                         <!-- Retract All Button -->
                         <marv:SurfaceImageButton Name="RetractAllButton"
-                                                         Height="50" Width="50"
-                                                         Margin="5"
-                                                         Source="/Marv.Common;component/Resources/Icons/Close.png" />
+                                                 Height="50" Width="50"
+                                                 Margin="5"
+                                                 Source="/Marv.Common;component/Resources/Icons/Close.png" />
 
                         <!-- Back Button -->
                         <marv:SurfaceImageButton Name="BackButton"
-                                                         Height="50" Width="50"
-                                                         Margin="5"
-                                                         Source="/Marv.Common;component/Resources/Icons/Back.png"
-                                                         Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+                                                 Height="50" Width="50"
+                                                 Margin="5"
+                                                 Source="/Marv.Common;component/Resources/Icons/Back.png"
+                                                 Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                     </StackPanel>
 
                     <!-- Year Label and Year Slider -->
@@ -380,15 +382,15 @@
 
                 <!-- Notification Control -->
                 <marv:NotificationControl x:Name="NotificationControl"
-                                                  Grid.Column="0" Grid.ColumnSpan="3"
-                                                  Background="#DDDDDD"
-                                                  Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
-                                                  HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                  Margin="10"
-                                                  MaxHeight="400"
-                                                  Notifications="{Binding Notifications, ElementName=Root}"
-                                                  Visibility="Collapsed"
-                                                  Width="300" />
+                                          Grid.Column="0" Grid.ColumnSpan="3"
+                                          Background="#DDDDDD"
+                                          Effect="{Binding Source={StaticResource ResourceKey=DropShadowDeeper}}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Top"
+                                          Margin="10"
+                                          MaxHeight="400"
+                                          Notifications="{Binding Notifications, ElementName=Root}"
+                                          Visibility="Collapsed"
+                                          Width="300" />
             </Grid>
 
             <!-- Settings Control -->
@@ -406,22 +408,6 @@
                     <RowDefinition />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-
-                <ListView Grid.Row="0"
-                          ItemsSource="{Binding NetworkFileNames, ElementName=Root, Mode=TwoWay}"
-                          SelectedItem="{Binding NetworkFileNames.SelectedItem, ElementName=Root, Mode=TwoWay}"
-                          SelectionMode="Single">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="LightGray"
-                                    Margin="5">
-                                <TextBlock Text="{Binding Path=.}"
-                                           FontSize="24"
-                                           Margin="5" />
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
 
                 <!-- Buttons -->
                 <StackPanel Grid.Row="1"
@@ -450,12 +436,12 @@
                 </Grid.RowDefinitions>
 
                 <marv:SliderProgressBar Name="ModelProgressBar"
-                                                Grid.Row="0"
-                                                Height="100"
-                                                Margin="10"
-                                                SliderForeground="Blue"
-                                                Value="0"
-                                                VerticalAlignment="Top" />
+                                        Grid.Row="0"
+                                        Height="100"
+                                        Margin="10"
+                                        SliderForeground="Blue"
+                                        Value="0"
+                                        VerticalAlignment="Top" />
 
                 <telerik:RadButton Name="RunModelButton"
                                    Grid.Row="1"
