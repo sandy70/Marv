@@ -2,15 +2,15 @@
 using Marv.Common;
 using Marv.Common.Graph;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     internal class StatesControlBehavior : Behavior<StatesControl>
     {
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.StateDoubleClicked += AssociatedObject_StateDoubleClicked;
-            this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
+            this.AssociatedObject.StateDoubleClicked += this.AssociatedObject_StateDoubleClicked;
+            this.AssociatedObject.ValueEntered += this.AssociatedObject_ValueEntered;
         }
 
         private void AssociatedObject_StateDoubleClicked(object sender, ValueEventArgs<State> e)

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Marv.Common.Graph;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     public partial class StatesControl : UserControl
     {
@@ -39,50 +39,50 @@ namespace Marv.Controls
 
         public event RoutedEventHandler<ValueEventArgs<State>> StateDoubleClicked
         {
-            add { AddHandler(StateDoubleClickedEvent, value); }
-            remove { RemoveHandler(StateDoubleClickedEvent, value); }
+            add { this.AddHandler(StateDoubleClickedEvent, value); }
+            remove { this.RemoveHandler(StateDoubleClickedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<State>> ValueEntered
         {
-            add { AddHandler(ValueEnteredEvent, value); }
-            remove { RemoveHandler(ValueEnteredEvent, value); }
+            add { this.AddHandler(ValueEnteredEvent, value); }
+            remove { this.RemoveHandler(ValueEnteredEvent, value); }
         }
 
         public bool IsEditable
         {
-            get { return (bool)GetValue(IsEditableProperty); }
-            set { SetValue(IsEditableProperty, value); }
+            get { return (bool)this.GetValue(IsEditableProperty); }
+            set { this.SetValue(IsEditableProperty, value); }
         }
 
         public bool IsExpanded
         {
-            get { return (bool)GetValue(IsExpandedProperty); }
-            set { SetValue(IsExpandedProperty, value); }
+            get { return (bool)this.GetValue(IsExpandedProperty); }
+            set { this.SetValue(IsExpandedProperty, value); }
         }
 
         public State MostProbableState
         {
-            get { return (State)GetValue(MostProbableStateProperty); }
-            set { SetValue(MostProbableStateProperty, value); }
+            get { return (State)this.GetValue(MostProbableStateProperty); }
+            set { this.SetValue(MostProbableStateProperty, value); }
         }
 
         public Brush SliderForeground
         {
-            get { return (Brush)GetValue(SliderForegroundProperty); }
-            set { SetValue(SliderForegroundProperty, value); }
+            get { return (Brush)this.GetValue(SliderForegroundProperty); }
+            set { this.SetValue(SliderForegroundProperty, value); }
         }
 
         public IEnumerable<State> States
         {
-            get { return (IEnumerable<State>)GetValue(StatesProperty); }
-            set { SetValue(StatesProperty, value); }
+            get { return (IEnumerable<State>)this.GetValue(StatesProperty); }
+            set { this.SetValue(StatesProperty, value); }
         }
 
         public double StatesFontSize
         {
-            get { return (double)GetValue(StatesFontSizeProperty); }
-            set { SetValue(StatesFontSizeProperty, value); }
+            get { return (double)this.GetValue(StatesFontSizeProperty); }
+            set { this.SetValue(StatesFontSizeProperty, value); }
         }
 
         private static void SelectedStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

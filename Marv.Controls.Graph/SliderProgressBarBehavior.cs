@@ -3,15 +3,15 @@ using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     internal class SliderProgressBarBehavior : Behavior<SliderProgressBar>
     {
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
-            this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
+            this.AssociatedObject.MouseDoubleClick += this.AssociatedObject_MouseDoubleClick;
+            this.AssociatedObject.ValueEntered += this.AssociatedObject_ValueEntered;
         }
 
         private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)

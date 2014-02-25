@@ -5,6 +5,7 @@ using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls;
+using Marv.Controls.Graph;
 using NLog;
 using Telerik.Windows.Controls.ChartView;
 
@@ -12,8 +13,6 @@ namespace Marv
 {
     internal class MainWindowGraphControlBehavior : Behavior<MainWindow>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         protected override void OnAttached()
         {
             base.OnAttached();

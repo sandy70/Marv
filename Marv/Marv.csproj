@@ -365,6 +365,10 @@
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls.Graph\Marv.Controls.Graph.csproj">
+      <Project>{ffd3a3af-d0ad-4f26-9d60-14839cc62616}</Project>
+      <Name>Marv.Controls.Graph</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Marv.Controls.Map\Marv.Controls.Map.csproj">
       <Project>{7467493d-c8de-47a4-93c6-8f84762360ca}</Project>
       <Name>Marv.Controls.Map</Name>

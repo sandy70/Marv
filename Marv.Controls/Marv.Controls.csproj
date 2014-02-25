@@ -41,10 +41,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -58,16 +54,8 @@
       <HintPath>..\lib\RCWPF\2013.3.1316.45\Telerik.Windows.Controls.Chart.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Diagrams, Version=2013.3.1316.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2013.3.1316.45\Telerik.Windows.Controls.Diagrams.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Telerik.Windows.Controls.Input, Version=2013.3.1316.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <HintPath>..\lib\RCWPF\2013.3.1316.45\Telerik.Windows.Controls.Input.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2013.3.1316.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2013.3.1316.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
@@ -76,17 +64,6 @@
     <Compile Include="ChartAxes.cs" />
     <Compile Include="ChartSeries.cs" />
     <Compile Include="ChartSeriesDescriptorSelector.cs" />
-    <Compile Include="GraphControl\GraphControl.xaml.cs">
-      <DependentUpon>GraphControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GraphControl\GraphControlEventArgs.cs" />
-    <Compile Include="GraphControl\DiagramPartBehavior.cs" />
-    <Compile Include="GraphControl\ToolbarButtonClickBehavior.cs" />
-    <Compile Include="StatesControl\StatesControl.xaml.cs">
-      <DependentUpon>StatesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StatesControl\StatesControlBehavior.cs" />
-    <Compile Include="StatesControl\SliderProgressBarBehavior.cs" />
     <Compile Include="Converters\BooleanNotConverter.cs" />
     <Compile Include="Converters\BooleanToColorConverter.cs" />
     <Compile Include="Converters\BooleanToStringConverter.cs" />
@@ -134,14 +111,6 @@
     <Compile Include="ValueEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="GraphControl\GraphControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="StatesControl\StatesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="EditableTextBox\EditableTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -180,10 +149,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marv.Common.Graph\Marv.Common.Graph.csproj">
-      <Project>{5ec15f8c-655c-4a46-a4cf-7af1eac94376}</Project>
-      <Name>Marv.Common.Graph</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
@@ -198,7 +163,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="StatesControl\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

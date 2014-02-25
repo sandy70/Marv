@@ -4,14 +4,14 @@ using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     public class ToolbarButtonClickBehavior : Behavior<Button>
     {
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Click += AssociatedObject_Click;
+            this.AssociatedObject.Click += this.AssociatedObject_Click;
         }
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)

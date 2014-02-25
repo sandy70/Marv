@@ -3,10 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Marv.Common.Graph;
 using NLog;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     public partial class GraphControl : UserControl
     {
@@ -14,7 +13,7 @@ namespace Marv.Controls
         DependencyProperty.Register("ConnectionColor", typeof(Color), typeof(GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-        DependencyProperty.Register("Graph", typeof(Graph), typeof(GraphControl), new PropertyMetadata(null));
+        DependencyProperty.Register("Graph", typeof(Common.Graph.Graph), typeof(GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
         DependencyProperty.Register("IncomingConnectionHighlightColor", typeof(Color), typeof(GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -37,38 +36,38 @@ namespace Marv.Controls
 
         public event RoutedEventHandler<GraphControlEventArgs> StateDoubleClicked
         {
-            add { AddHandler(StateDoubleClickedEvent, value); }
-            remove { RemoveHandler(StateDoubleClickedEvent, value); }
+            add { this.AddHandler(StateDoubleClickedEvent, value); }
+            remove { this.RemoveHandler(StateDoubleClickedEvent, value); }
         }
 
         public Color ConnectionColor
         {
-            get { return (Color)GetValue(ConnectionColorProperty); }
-            set { SetValue(ConnectionColorProperty, value); }
+            get { return (Color)this.GetValue(ConnectionColorProperty); }
+            set { this.SetValue(ConnectionColorProperty, value); }
         }
 
-        public Graph Graph
+        public Common.Graph.Graph Graph
         {
-            get { return (Graph)GetValue(GraphProperty); }
-            set { SetValue(GraphProperty, value); }
+            get { return (Common.Graph.Graph)this.GetValue(GraphProperty); }
+            set { this.SetValue(GraphProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
         {
-            get { return (Color)GetValue(IncomingConnectionHighlightColorProperty); }
-            set { SetValue(IncomingConnectionHighlightColorProperty, value); }
+            get { return (Color)this.GetValue(IncomingConnectionHighlightColorProperty); }
+            set { this.SetValue(IncomingConnectionHighlightColorProperty, value); }
         }
 
         public Color OutgoingConnectionHighlightColor
         {
-            get { return (Color)GetValue(OutgoingConnectionHighlightColorProperty); }
-            set { SetValue(OutgoingConnectionHighlightColorProperty, value); }
+            get { return (Color)this.GetValue(OutgoingConnectionHighlightColorProperty); }
+            set { this.SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
         public double ShapeOpacity
         {
-            get { return (double)GetValue(ShapeOpacityProperty); }
-            set { SetValue(ShapeOpacityProperty, value); }
+            get { return (double)this.GetValue(ShapeOpacityProperty); }
+            set { this.SetValue(ShapeOpacityProperty, value); }
         }
 
         public void AutoFit()

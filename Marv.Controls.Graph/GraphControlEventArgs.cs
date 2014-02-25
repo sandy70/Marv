@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Marv.Common.Graph;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     public class GraphControlEventArgs : RoutedEventArgs
     {
@@ -25,14 +25,14 @@ namespace Marv.Controls
 
         public State State
         {
-            get { return state; }
-            set { state = value; }
+            get { return this.state; }
+            set { this.state = value; }
         }
 
         public Vertex Vertex
         {
-            get { return vertex; }
-            set { vertex = value; }
+            get { return this.vertex; }
+            set { this.vertex = value; }
         }
     }
 }

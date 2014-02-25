@@ -8,7 +8,7 @@ using Marv.Common.Graph;
 using NLog;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Controls
+namespace Marv.Controls.Graph
 {
     internal class DiagramPartBehavior : Behavior<Telerik.Windows.Controls.RadDiagram>
     {
@@ -22,11 +22,11 @@ namespace Marv.Controls
         {
             base.OnAttached();
 
-            this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
-            this.AssociatedObject.ConnectionManipulationCompleted += AssociatedObject_ConnectionManipulationCompleted;
-            this.AssociatedObject.ConnectionManipulationStarted += AssociatedObject_ConnectionManipulationStarted;
-            this.AssociatedObject.GraphSourceChanged += AssociatedObject_GraphSourceChanged;
-            this.AssociatedObject.ShapeClicked += AssociatedObject_ShapeClicked;
+            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
+            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
+            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
+            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
+            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
         }
 
         private void AssociatedObject_CommandExecuted(object sender, Telerik.Windows.Controls.Diagrams.CommandRoutedEventArgs e)
@@ -37,7 +37,7 @@ namespace Marv.Controls
             }
             else if (e.Command.Name == "Change Target")
             {
-                if (oldVertex.Key != newVertex.Key)
+                if (this.oldVertex.Key != this.newVertex.Key)
                 {
                     this.AssociatedObject.Undo();
                 }
@@ -48,22 +48,22 @@ namespace Marv.Controls
         {
             if (e.Connection != null)
             {
-                oldEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
-                logger.Info(oldEdge);
+                this.oldEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
+                logger.Info(this.oldEdge);
             }
             else
             {
-                oldEdge = null;
+                this.oldEdge = null;
             }
 
             if (e.Shape != null)
             {
-                oldVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
-                logger.Info(oldVertex.Key);
+                this.oldVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
+                logger.Info(this.oldVertex.Key);
             }
             else
             {
-                oldVertex = null;
+                this.oldVertex = null;
             }
         }
 
@@ -73,22 +73,22 @@ namespace Marv.Controls
 
             if (e.Connection != null)
             {
-                newEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
-                logger.Info(newEdge);
+                this.newEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
+                logger.Info(this.newEdge);
             }
             else
             {
-                newEdge = null;
+                this.newEdge = null;
             }
 
             if (e.Shape != null)
             {
-                newVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
-                logger.Info(newVertex.Key);
+                this.newVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
+                logger.Info(this.newVertex.Key);
             }
             else
             {
-                newVertex = null;
+                this.newVertex = null;
             }
 
             foreach (var command in this.AssociatedObject.UndoRedoService.UndoStack)
