@@ -7,14 +7,14 @@ using Caching;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Common.Map;
-using Marv.Controls;
+using Marv.Controls.Map;
 using NLog;
 using OfficeOpenXml;
 using Telerik.Windows.Controls;
 
 namespace Marv
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public static VertexCommand VertexBarChartCommand = new VertexCommand
         {

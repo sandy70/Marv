@@ -1,17 +1,17 @@
-﻿using MapControl;
-using Marv.Common;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Interactivity;
+using MapControl;
+using Marv.Common;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     internal class MapPoylineBehavior : Behavior<MapPolyline>
     {
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.MouseDown += AssociatedObject_MouseDown;
-            this.AssociatedObject.TouchDown += AssociatedObject_TouchDown;
+            this.AssociatedObject.MouseDown += this.AssociatedObject_MouseDown;
+            this.AssociatedObject.TouchDown += this.AssociatedObject_TouchDown;
         }
 
         private void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)

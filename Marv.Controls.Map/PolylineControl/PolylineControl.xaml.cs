@@ -5,7 +5,7 @@ using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public partial class PolylineControl
     {
@@ -48,11 +48,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (Brush) GetValue(CursorFillProperty);
+                return (Brush) this.GetValue(CursorFillProperty);
             }
             set
             {
-                SetValue(CursorFillProperty, value);
+                this.SetValue(CursorFillProperty, value);
             }
         }
 
@@ -60,11 +60,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (Location) GetValue(CursorLocationProperty);
+                return (Location) this.GetValue(CursorLocationProperty);
             }
             set
             {
-                SetValue(CursorLocationProperty, value);
+                this.SetValue(CursorLocationProperty, value);
             }
         }
 
@@ -72,11 +72,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (Brush) GetValue(CursorStrokeProperty);
+                return (Brush) this.GetValue(CursorStrokeProperty);
             }
             set
             {
-                SetValue(CursorStrokeProperty, value);
+                this.SetValue(CursorStrokeProperty, value);
             }
         }
 
@@ -84,11 +84,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (bool) GetValue(IsCursorVisibleProperty);
+                return (bool) this.GetValue(IsCursorVisibleProperty);
             }
             set
             {
-                SetValue(IsCursorVisibleProperty, value);
+                this.SetValue(IsCursorVisibleProperty, value);
             }
         }
 
@@ -96,11 +96,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (LocationCollection) GetValue(LocationsProperty);
+                return (LocationCollection) this.GetValue(LocationsProperty);
             }
             set
             {
-                SetValue(LocationsProperty, value);
+                this.SetValue(LocationsProperty, value);
             }
         }
 
@@ -108,11 +108,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (Location) GetValue(SelectedLocationProperty);
+                return (Location) this.GetValue(SelectedLocationProperty);
             }
             set
             {
-                SetValue(SelectedLocationProperty, value);
+                this.SetValue(SelectedLocationProperty, value);
             }
         }
 
@@ -132,11 +132,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (Brush) GetValue(StrokeProperty);
+                return (Brush) this.GetValue(StrokeProperty);
             }
             set
             {
-                SetValue(StrokeProperty, value);
+                this.SetValue(StrokeProperty, value);
             }
         }
 
@@ -144,11 +144,11 @@ namespace Marv.Controls
         {
             get
             {
-                return (double) GetValue(StrokeThicknessProperty);
+                return (double) this.GetValue(StrokeThicknessProperty);
             }
             set
             {
-                SetValue(StrokeThicknessProperty, value);
+                this.SetValue(StrokeThicknessProperty, value);
             }
         }
 
@@ -209,11 +209,11 @@ namespace Marv.Controls
         {
             add
             {
-                AddHandler(SelectionChangedEvent, value);
+                this.AddHandler(SelectionChangedEvent, value);
             }
             remove
             {
-                RemoveHandler(SelectionChangedEvent, value);
+                this.RemoveHandler(SelectionChangedEvent, value);
             }
         }
     }

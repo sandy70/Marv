@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Interactivity;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     internal class MapViewBehavior : Behavior<MapView>
     {
@@ -13,8 +13,8 @@ namespace Marv.Controls
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded;
-            this.AssociatedObject.ViewportChanged += AssociatedObject_ViewportChanged;
+            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded;
+            this.AssociatedObject.ViewportChanged += this.AssociatedObject_ViewportChanged;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)

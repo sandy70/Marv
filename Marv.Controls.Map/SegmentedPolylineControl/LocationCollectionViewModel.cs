@@ -1,8 +1,8 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.Windows.Media;
 using Marv.Common.Map;
-using System.Collections.Generic;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public class LocationCollectionViewModel : LocationCollection
     {

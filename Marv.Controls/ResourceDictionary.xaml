@@ -22,7 +22,6 @@
     <local:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
     <local:DoubleToBrushConverter x:Key="DoubleToBrush" />
     <local:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
-    <local:LocationToMapControlLocationConverter x:Key="LocationToMapControlLocation" />
     <local:NullToVisibilityConverter x:Key="NullToVisibility" />
 
     <system:Double x:Key="FontSizeLarge">14</system:Double>

@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     internal class PolylineControlBehavior : Behavior<PolylineControl>
     {
@@ -18,29 +18,29 @@ namespace Marv.Controls
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded;
 
-            timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += timer_Tick;
+            this.timer.Interval = TimeSpan.FromMilliseconds(200);
+            this.timer.Tick += this.timer_Tick;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AssociatedObject.MapPolyline.MouseDown += MapPolyline_MouseDown;
-            this.AssociatedObject.MapPolyline.MouseUp += MapPolyline_MouseUp;
-            this.AssociatedObject.MapPolyline.TouchDown += MapPolyline_TouchDown;
-            this.AssociatedObject.Ellipse.MouseDown += Ellipse_MouseDown;
-            this.AssociatedObject.Ellipse.MouseUp += Ellipse_MouseUp;
-            this.AssociatedObject.Ellipse.MouseMove += Ellipse_MouseMove;
-            this.AssociatedObject.Ellipse.TouchDown += Ellipse_TouchDown;
-            this.AssociatedObject.Ellipse.TouchMove += Ellipse_TouchMove;
-            this.AssociatedObject.Ellipse.TouchUp += Ellipse_TouchUp;
+            this.AssociatedObject.MapPolyline.MouseDown += this.MapPolyline_MouseDown;
+            this.AssociatedObject.MapPolyline.MouseUp += this.MapPolyline_MouseUp;
+            this.AssociatedObject.MapPolyline.TouchDown += this.MapPolyline_TouchDown;
+            this.AssociatedObject.Ellipse.MouseDown += this.Ellipse_MouseDown;
+            this.AssociatedObject.Ellipse.MouseUp += this.Ellipse_MouseUp;
+            this.AssociatedObject.Ellipse.MouseMove += this.Ellipse_MouseMove;
+            this.AssociatedObject.Ellipse.TouchDown += this.Ellipse_TouchDown;
+            this.AssociatedObject.Ellipse.TouchMove += this.Ellipse_TouchMove;
+            this.AssociatedObject.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
             var mapView = this.AssociatedObject.FindParent<MapView>();
 
             if (mapView != null)
             {
-                mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+                mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
             }
         }
 
@@ -147,9 +147,9 @@ namespace Marv.Controls
 
             this.locationStack.Push(nearestLocation);
 
-            if (!timer.IsEnabled)
+            if (!this.timer.IsEnabled)
             {
-                timer.Start();
+                this.timer.Start();
             }
         }
 
@@ -165,7 +165,7 @@ namespace Marv.Controls
                 }
 
                 this.locationStack.Clear();
-                timer.Stop();
+                this.timer.Stop();
             }
         }
     }

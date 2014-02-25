@@ -12,7 +12,7 @@ using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Common.Map;
-using Marv.Controls;
+using Marv.Controls.Map;
 using Marv.LineAndSectionOverviewService;
 using Marv.LoginService;
 using Marv.Properties;

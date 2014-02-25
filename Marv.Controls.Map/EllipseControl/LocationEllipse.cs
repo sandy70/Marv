@@ -1,7 +1,7 @@
 ﻿using Marv.Common;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public class LocationEllipse : Model
     {

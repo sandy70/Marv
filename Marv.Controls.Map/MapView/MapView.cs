@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public class MapView : MapControl.Map
     {

@@ -8,7 +8,7 @@ using Marv.Common.Map;
 using NLog;
 using Utils = Marv.Common.Map.Utils;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public partial class SegmentedPolylineControl
     {
@@ -196,7 +196,7 @@ namespace Marv.Controls
 
             if (this.Locations != null)
             {
-                this.CursorLocation = this.Locations.First();
+                this.CursorLocation = Enumerable.First<Location>(this.Locations);
                 this.Locations.ValueChanged += this.Locations_ValueChanged;
                 this.UpdatePolylineParts();
             }
@@ -250,7 +250,7 @@ namespace Marv.Controls
 
         public void UpdateSimplifiedPolylineParts()
         {
-            var mapView = this.FindParent<MapView>();
+            var mapView = Common.Extensions.FindParent<MapView>(this);
             var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
             if (this.PolylineParts != null)
             {

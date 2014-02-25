@@ -5,7 +5,7 @@ using System.Windows;
 using Marv.Common;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public partial class EllipseControl
     {
@@ -31,32 +31,32 @@ namespace Marv.Controls
 
         public IEnumerable<LocationEllipse> LocationEllipses
         {
-            get { return (IEnumerable<LocationEllipse>)GetValue(LocationEllipsesProperty); }
-            set { SetValue(LocationEllipsesProperty, value); }
+            get { return (IEnumerable<LocationEllipse>)this.GetValue(LocationEllipsesProperty); }
+            set { this.SetValue(LocationEllipsesProperty, value); }
         }
 
         public IEnumerable<Location> Locations
         {
-            get { return (IEnumerable<Location>)GetValue(LocationsProperty); }
-            set { SetValue(LocationsProperty, value); }
+            get { return (IEnumerable<Location>)this.GetValue(LocationsProperty); }
+            set { this.SetValue(LocationsProperty, value); }
         }
 
         public Func<double, double> ScalingFunc
         {
-            get { return (Func<double, double>)GetValue(ScalingFuncProperty); }
-            set { SetValue(ScalingFuncProperty, value); }
+            get { return (Func<double, double>)this.GetValue(ScalingFuncProperty); }
+            set { this.SetValue(ScalingFuncProperty, value); }
         }
 
         public Location SelectedLocation
         {
-            get { return (Location)GetValue(SelectedLocationProperty); }
-            set { SetValue(SelectedLocationProperty, value); }
+            get { return (Location)this.GetValue(SelectedLocationProperty); }
+            set { this.SetValue(SelectedLocationProperty, value); }
         }
 
         public LocationEllipse SelectedLocationEllipse
         {
-            get { return (LocationEllipse)GetValue(SelectedLocationEllipseProperty); }
-            set { SetValue(SelectedLocationEllipseProperty, value); }
+            get { return (LocationEllipse)this.GetValue(SelectedLocationEllipseProperty); }
+            set { this.SetValue(SelectedLocationEllipseProperty, value); }
         }
 
         private static void OnLocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

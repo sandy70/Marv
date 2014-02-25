@@ -43,8 +43,13 @@
     <Reference Include="MapControl.WPF">
       <HintPath>..\packages\XAML.MapControl.1.11.3\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,6 +63,22 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EllipseControl\EllipseControl.xaml.cs">
+      <DependentUpon>EllipseControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EllipseControl\EllipseControlBehavior.cs" />
+    <Compile Include="EllipseControl\LocationEllipse.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="LocationToMapControlLocationConverter.cs" />
+    <Compile Include="MapView\MapView.cs" />
+    <Compile Include="MapView\MapViewBehavior.cs" />
+    <Compile Include="PolylineControl\PolylineControl.xaml.cs">
+      <DependentUpon>PolylineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolylineControl\PolylineControlBehavior.cs" />
+    <Compile Include="SegmentedPolylineControl\LocationCollectionViewModel.cs" />
+    <Compile Include="SegmentedPolylineControl\MapPoylineBehavior.cs" />
+    <Compile Include="SegmentedPolylineControl\PolylineControlBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -71,6 +92,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SegmentedPolylineControl\SegmentedPolylineControl.xaml.cs">
+      <DependentUpon>SegmentedPolylineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SegmentedPolylineControl\SegmentedPolylineControlBehavior.cs" />
+    <Compile Include="MapView\TileLayers.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -91,6 +117,28 @@
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
+      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
+      <Name>Marv.Controls</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="EllipseControl\EllipseControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PolylineControl\PolylineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SegmentedPolylineControl\SegmentedPolylineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,7 +4,7 @@ using System.Windows.Media;
 using Marv.Common.Map;
 using NLog;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public class PolylineControlBase : UserControl
     {
@@ -46,44 +46,44 @@ namespace Marv.Controls
 
         public Brush CursorFill
         {
-            get { return (Brush)GetValue(CursorFillProperty); }
-            set { SetValue(CursorFillProperty, value); }
+            get { return (Brush)this.GetValue(CursorFillProperty); }
+            set { this.SetValue(CursorFillProperty, value); }
         }
 
         public Location CursorLocation
         {
-            get { return (Location)GetValue(CursorLocationProperty); }
-            set { SetValue(CursorLocationProperty, value); }
+            get { return (Location)this.GetValue(CursorLocationProperty); }
+            set { this.SetValue(CursorLocationProperty, value); }
         }
 
         public Brush CursorStroke
         {
-            get { return (Brush)GetValue(CursorStrokeProperty); }
-            set { SetValue(CursorStrokeProperty, value); }
+            get { return (Brush)this.GetValue(CursorStrokeProperty); }
+            set { this.SetValue(CursorStrokeProperty, value); }
         }
 
         public bool IsCursorVisible
         {
-            get { return (bool)GetValue(IsCursorVisibleProperty); }
-            set { SetValue(IsCursorVisibleProperty, value); }
+            get { return (bool)this.GetValue(IsCursorVisibleProperty); }
+            set { this.SetValue(IsCursorVisibleProperty, value); }
         }
 
         public LocationCollection Locations
         {
-            get { return (LocationCollection)GetValue(LocationsProperty); }
-            set { SetValue(LocationsProperty, value); }
+            get { return (LocationCollection)this.GetValue(LocationsProperty); }
+            set { this.SetValue(LocationsProperty, value); }
         }
 
         public Location SelectedLocation
         {
-            get { return (Location)GetValue(SelectedLocationProperty); }
-            set { SetValue(SelectedLocationProperty, value); }
+            get { return (Location)this.GetValue(SelectedLocationProperty); }
+            set { this.SetValue(SelectedLocationProperty, value); }
         }
 
         public Brush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
+            get { return (Brush)this.GetValue(StrokeProperty); }
+            set { this.SetValue(StrokeProperty, value); }
         }
 
         // Virtual function will be overridden in derived classes

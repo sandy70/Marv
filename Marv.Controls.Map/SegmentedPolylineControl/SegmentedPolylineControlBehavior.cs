@@ -4,10 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using Marv.Common;
 using Marv.Common.Map;
 
-namespace Marv.Controls
+namespace Marv.Controls.Map
 {
     public class SegmentedPolylineControlBehavior : Behavior<SegmentedPolylineControl>
     {
@@ -20,37 +19,37 @@ namespace Marv.Controls
             base.OnAttached();
             this.AssociatedObject.Loaded += AssociatedObject_Loaded;
 
-            timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += timer_Tick;
+            this.timer.Interval = TimeSpan.FromMilliseconds(200);
+            this.timer.Tick += this.timer_Tick;
         }
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             this.AssociatedObject.TouchDown += AssociatedObject_TouchDown;
 
-            this.AssociatedObject.MapPolyline.MouseDown += MapPolyline_MouseDown;
-            this.AssociatedObject.MapPolyline.MouseUp += MapPolyline_MouseUp;
-            this.AssociatedObject.MapPolyline.TouchDown += MapPolyline_TouchDown;
+            this.AssociatedObject.MapPolyline.MouseDown += this.MapPolyline_MouseDown;
+            this.AssociatedObject.MapPolyline.MouseUp += this.MapPolyline_MouseUp;
+            this.AssociatedObject.MapPolyline.TouchDown += this.MapPolyline_TouchDown;
 
-            this.AssociatedObject.Ellipse.MouseDown += Ellipse_MouseDown;
-            this.AssociatedObject.Ellipse.MouseUp += Ellipse_MouseUp;
-            this.AssociatedObject.Ellipse.MouseMove += Ellipse_MouseMove;
-            this.AssociatedObject.Ellipse.TouchDown += Ellipse_TouchDown;
-            this.AssociatedObject.Ellipse.TouchMove += Ellipse_TouchMove;
-            this.AssociatedObject.Ellipse.TouchUp += Ellipse_TouchUp;
+            this.AssociatedObject.Ellipse.MouseDown += this.Ellipse_MouseDown;
+            this.AssociatedObject.Ellipse.MouseUp += this.Ellipse_MouseUp;
+            this.AssociatedObject.Ellipse.MouseMove += this.Ellipse_MouseMove;
+            this.AssociatedObject.Ellipse.TouchDown += this.Ellipse_TouchDown;
+            this.AssociatedObject.Ellipse.TouchMove += this.Ellipse_TouchMove;
+            this.AssociatedObject.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
-            var mapView = this.AssociatedObject.FindParent<MapView>();
+            var mapView = Common.Extensions.FindParent<MapView>(this.AssociatedObject);
 
             if (mapView != null)
             {
-                mapView.ViewportMoved += mapView_ViewportMoved;
-                mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+                mapView.ViewportMoved += this.mapView_ViewportMoved;
+                mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
             }
         }
 
         private void AssociatedObject_TouchDown(object sender, TouchEventArgs e)
         {
-            var mapItemsControl = this.AssociatedObject.FindParent<MapControl.MapItemsControl>();
+            var mapItemsControl = Common.Extensions.FindParent<MapControl.MapItemsControl>(this.AssociatedObject);
 
             if (mapItemsControl != null)
             {
@@ -142,18 +141,18 @@ namespace Marv.Controls
 
         private void SelectLocation(Point position)
         {
-            var map = this.AssociatedObject.FindParent<MapControl.Map>();
+            var map = Common.Extensions.FindParent<MapControl.Map>(this.AssociatedObject);
             var mLocation = map.ViewportPointToLocation(position);
             var location = new Location { Latitude = mLocation.Latitude, Longitude = mLocation.Longitude };
-            var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
+            var nearestLocation = Common.Map.Extensions.NearestTo(this.AssociatedObject.Locations, location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
 
             this.locationStack.Push(nearestLocation);
 
-            if (!timer.IsEnabled)
+            if (!this.timer.IsEnabled)
             {
-                timer.Start();
+                this.timer.Start();
             }
         }
 
@@ -163,7 +162,7 @@ namespace Marv.Controls
             {
                 this.AssociatedObject.Locations.Select(this.locationStack.Pop());
                 this.locationStack.Clear();
-                timer.Stop();
+                this.timer.Stop();
             }
         }
     }
