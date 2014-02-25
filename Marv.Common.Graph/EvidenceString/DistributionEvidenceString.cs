@@ -56,12 +56,9 @@ namespace Marv.Common.Graph
                 }
             }
 
-            var maxStateIndex = evidenceArray.MaxIndex();
-
             return new SoftEvidence
             {
                 Evidence = evidenceArray,
-                SynergiString = vertex.States[maxStateIndex].ValueString + this._string.Enquote('{', '}')
             };
         }
     }

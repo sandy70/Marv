@@ -90,7 +90,7 @@ namespace Marv.Common
             }
         }
 
-        protected virtual void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
             {

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Marv.Common.Graph
+﻿namespace Marv.Common.Graph
 {
     public class State : Model
     {
@@ -18,11 +15,8 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value != this.belief)
-                {
-                    this.belief = value;
-                    this.RaisePropertyChanged("Belief");
-                }
+                this.belief = value;
+                this.RaisePropertyChanged("Belief");
             }
         }
 
@@ -50,22 +44,6 @@ namespace Marv.Common.Graph
             {
                 this._value = value;
                 this.RaisePropertyChanged("Value");
-            }
-        }
-
-        public string ValueString
-        {
-            get
-            {
-                if (this.Range != null && this.Range.Count > 0)
-                {
-                    // This will work because Range is of type <double>
-                    return Enumerable.Average((IEnumerable<double>) this.Range).ToString();
-                }
-                else
-                {
-                    return this.Key;
-                }
             }
         }
     }

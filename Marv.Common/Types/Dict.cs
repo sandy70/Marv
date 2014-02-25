@@ -22,16 +22,13 @@ namespace Marv.Common
                     {
                         return this[key1][key2];
                     }
-                    else
-                    {
-                        return this[key1][key2] = new TValue();
-                    }
-                }
-                else
-                {
-                    this[key1] = new Dictionary<T2, TValue>();
+                    
                     return this[key1][key2] = new TValue();
                 }
+
+                this[key1] = new Dictionary<T2, TValue>();
+                
+                return this[key1][key2] = new TValue();
             }
 
             set
@@ -61,16 +58,13 @@ namespace Marv.Common
                     {
                         return this[key1][key2];
                     }
-                    else
-                    {
-                        return this[key1][key2] = new Dictionary<T3, TValue>();
-                    }
-                }
-                else
-                {
-                    this[key1] = new Dictionary<T2, T3, TValue>();
+
                     return this[key1][key2] = new Dictionary<T3, TValue>();
                 }
+
+                this[key1] = new Dictionary<T2, T3, TValue>();
+                
+                return this[key1][key2] = new Dictionary<T3, TValue>();
             }
 
             set
@@ -87,6 +81,4 @@ namespace Marv.Common
             }
         }
     }
-
-    public class Dictionary<T1, T2, T3, T4, TValue> : Dictionary<T1, Dictionary<T2, T3, T4, TValue>> where TValue : new() { }
 }

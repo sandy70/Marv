@@ -102,7 +102,7 @@ namespace Marv.Common.Graph
         public ModelCollection<State> ParseStates()
         {
             var states = new ModelCollection<State>();
-            var subtype = "";
+            string subtype;
 
             if (this.Properties.TryGetValue("subtype", out subtype))
             {
@@ -153,7 +153,7 @@ namespace Marv.Common.Graph
             }
             else
             {
-                var statesString = "";
+                string statesString;
                 var stateString = "";
                 var stateIndex = 0;
 

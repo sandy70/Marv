@@ -11,7 +11,7 @@ namespace Marv.Common.Graph
 
         public override IEvidence Parse(Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             var stateIndex = -1;
 
@@ -28,7 +28,6 @@ namespace Marv.Common.Graph
                 evidence = new HardEvidence
                 {
                     StateIndex = stateIndex,
-                    SynergiString = vertex.States[stateIndex].ValueString
                 };
             }
             else
@@ -50,7 +49,6 @@ namespace Marv.Common.Graph
                     evidence = new SoftEvidence
                     {
                         Evidence = evidenceArray,
-                        SynergiString = this._string
                     };
                 }
                 else

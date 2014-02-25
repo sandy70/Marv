@@ -14,7 +14,7 @@ namespace Marv.Common
 
             var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
 
-            var height = 0.0;
+            double height;
 
             if (bottom == 0.0)
             {

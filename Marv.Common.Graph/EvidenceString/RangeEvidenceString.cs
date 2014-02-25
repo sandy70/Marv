@@ -11,7 +11,7 @@ namespace Marv.Common.Graph
 
         public override IEvidence Parse(Vertex vertex)
         {
-            IEvidence evidence = null;
+            IEvidence evidence;
 
             var parts = this._string
                             .Trim()
@@ -53,12 +53,9 @@ namespace Marv.Common.Graph
                     }
                 }
 
-                var maxStateIndex = evidenceArray.MaxIndex();
-
                 evidence = new SoftEvidence
                 {
                     Evidence = evidenceArray,
-                    SynergiString = vertex.GetMean(evidenceArray) + this._string.Enquote('{', '}')
                 };
             }
             else
