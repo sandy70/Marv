@@ -26,8 +26,6 @@ namespace Marv.Controls
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AssociatedObject.UpdateVisual();
-
             this.AssociatedObject.TouchDown += AssociatedObject_TouchDown;
 
             this.AssociatedObject.MapPolyline.MouseDown += MapPolyline_MouseDown;

@@ -172,6 +172,7 @@ namespace Marv.Controls
         private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
+
             if (control != null)
             {
                 control.NameLocation = new Location
@@ -270,12 +271,6 @@ namespace Marv.Controls
                 }
             }
             this.SimplifiedPolylineParts = simplifiedLocationCollections;
-        }
-
-        public void UpdateVisual()
-        {
-            // this.MapPanel.InvalidateVisual();
-            // this.MapPanel.UpdateLayout();
         }
     }
 }
