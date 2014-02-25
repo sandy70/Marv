@@ -159,17 +159,27 @@ namespace Marv.Controls
         {
             var control = d as SegmentedPolylineControl;
 
-            control.NameLocation = new Location
+            if (control != null)
             {
-                Latitude = control.NameLatitude,
-                Longitude = control.NameLocation.Longitude
-            };
+                control.NameLocation = new Location
+                {
+                    Latitude = control.NameLatitude,
+                    Longitude = control.NameLocation.Longitude
+                };
+            }
         }
 
         private static void ChangedNameLongitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
-            control.NameLocation = new Location {Latitude = control.NameLocation.Latitude, Longitude = control.NameLongitude};
+            if (control != null)
+            {
+                control.NameLocation = new Location
+                {
+                    Latitude = control.NameLocation.Latitude,
+                    Longitude = control.NameLongitude
+                };
+            }
         }
 
         private void Locations_ValueChanged(object sender, EventArgs e)
@@ -230,7 +240,7 @@ namespace Marv.Controls
                 }
                 else
                 {
-                    locationCollection.Add(location);
+                    if (locationCollection != null) locationCollection.Add(location);
                 }
                 oldBinIndex = newBinIndex;
             }
