@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BooleanToVisibilityConverter : DependencyObject, IValueConverter
@@ -13,8 +13,8 @@ namespace Marv.Controls
 
         public bool IsReversed
         {
-            get { return (bool)GetValue(IsReversedProperty); }
-            set { SetValue(IsReversedProperty, value); }
+            get { return (bool)this.GetValue(IsReversedProperty); }
+            set { this.SetValue(IsReversedProperty, value); }
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

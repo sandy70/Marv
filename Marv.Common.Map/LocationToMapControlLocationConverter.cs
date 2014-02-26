@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Data;
-using Marv.Common.Map;
 
-namespace Marv.Controls.Map
+namespace Marv.Common.Map
 {
     [ValueConversion(typeof(Location), typeof(MapControl.Location))]
     [ValueConversion(typeof(IEnumerable<Location>), typeof(IEnumerable<MapControl.Location>))]

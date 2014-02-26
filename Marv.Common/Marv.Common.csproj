@@ -60,9 +60,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BooleanNotConverter.cs" />
+    <Compile Include="Converters\BooleanToColorConverter.cs" />
+    <Compile Include="Converters\BooleanToStringConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Chart\CategoricalPoint.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
+    <Compile Include="Converters\DecimalPercentalConverter.cs" />
+    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
+    <Compile Include="Converters\DoubleToBrushConverter.cs" />
+    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
+    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="ItemNotFoundException.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />

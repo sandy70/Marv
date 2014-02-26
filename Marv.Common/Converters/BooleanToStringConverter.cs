@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     [ValueConversion(typeof(bool), typeof(string))]
     public class BooleanToStringConverter : DependencyObject, IValueConverter
@@ -16,14 +16,14 @@ namespace Marv.Controls
 
         public string FalseString
         {
-            get { return (string)GetValue(FalseStringProperty); }
-            set { SetValue(FalseStringProperty, value); }
+            get { return (string)this.GetValue(FalseStringProperty); }
+            set { this.SetValue(FalseStringProperty, value); }
         }
 
         public string TrueString
         {
-            get { return (string)GetValue(TrueStringProperty); }
-            set { SetValue(TrueStringProperty, value); }
+            get { return (string)this.GetValue(TrueStringProperty); }
+            set { this.SetValue(TrueStringProperty, value); }
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

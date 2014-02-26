@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     [ValueConversion(typeof(bool), typeof(Brush))]
     public class BooleanToColorConverter : DependencyObject, IValueConverter
@@ -17,14 +17,14 @@ namespace Marv.Controls
 
         public Color FalseColor
         {
-            get { return (Color)GetValue(FalseColorProperty); }
-            set { SetValue(FalseColorProperty, value); }
+            get { return (Color)this.GetValue(FalseColorProperty); }
+            set { this.SetValue(FalseColorProperty, value); }
         }
 
         public Color TrueColor
         {
             get { return (Color)this.GetValue(TrueColorProperty); }
-            set { SetValue(TrueColorProperty, value); }
+            set { this.SetValue(TrueColorProperty, value); }
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

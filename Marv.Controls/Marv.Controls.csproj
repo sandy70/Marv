@@ -64,25 +64,12 @@
     <Compile Include="ChartAxes.cs" />
     <Compile Include="ChartSeries.cs" />
     <Compile Include="ChartSeriesDescriptorSelector.cs" />
-    <Compile Include="Converters\BooleanNotConverter.cs" />
-    <Compile Include="Converters\BooleanToColorConverter.cs" />
-    <Compile Include="Converters\BooleanToStringConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DecimalPercentalConverter.cs" />
-    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
-    <Compile Include="Converters\DoubleToBrushConverter.cs" />
-    <Compile Include="Converters\DoubleToDoubleMapper.cs" />
-    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
-    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
-    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileBrowseControl\FileBrowseControl.xaml.cs">
       <DependentUpon>FileBrowseControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IMapDoubleToDouble.cs" />
-    <Compile Include="MapDoubleToDouble.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>

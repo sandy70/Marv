@@ -1,11 +1,10 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Marv.Controls
+namespace Marv.Common
 {
     [ValueConversion(typeof(double), typeof(LinearGradientBrush))]
     public class DoubleToJetGradientConverter : IValueConverter
