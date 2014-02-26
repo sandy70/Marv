@@ -6,7 +6,7 @@
         Name="Root">
 
     <Window.Resources>
-        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </Window.Resources>
 
     <marv:MapView TileLayer="{Binding Source={x:Static marv:TileLayers.BingMapsRoads}}"

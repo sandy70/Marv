@@ -12,8 +12,8 @@
     <mapcontrol:MapPanel.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
-                <ResourceDictionary Source="/Marv.Controls.Map;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary> 
     </mapcontrol:MapPanel.Resources>

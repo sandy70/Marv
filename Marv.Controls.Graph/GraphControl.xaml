@@ -12,7 +12,7 @@
              Background="Black"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <Grid>
