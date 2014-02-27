@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Marv.Common;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using Marv.Common.Graph;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Office.Interop.Excel;
@@ -10,6 +9,34 @@ namespace Marv.Excel
 {
     public partial class Ribbon
     {
+        private void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.ShowDialog();
+
+            var worksheet = (Worksheet) Globals.ThisAddIn.Application.ActiveSheet;
+
+            var graph = Graph.Read(dialog.FileName);
+
+            var selectVerticesWindow = new SelectVerticesWindow
+            {
+                Vertices = graph.Vertices
+            };
+
+            selectVerticesWindow.ShowDialog();
+
+            var selectedVertices = new List<Vertex>();
+
+            foreach (var item in selectVerticesWindow.VerticesListBox.SelectedItems)
+            {
+                selectedVertices.Add(item as Vertex);
+            }
+
+            var fileName = dialog.FileName;
+
+            worksheet.WriteVertexValues(selectedVertices, graph.Belief, fileName, false);
+        }
+
         private void Ribbon_Load(object sender, RibbonUIEventArgs e)
         {
             this.OpenFileButton.Click += OpenFileButton_Click;
@@ -20,9 +47,10 @@ namespace Marv.Excel
         {
             var colIndex = 4;
             var graphEvidence = new Dictionary<string, IEvidence>();
-            var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
+            var workbook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            var worksheet = (Worksheet) Globals.ThisAddIn.Application.ActiveSheet;
 
-            var fileName = (string)worksheet.Cells[1, 2].Value2;
+            var fileName = (string) worksheet.Cells[1, 2].Value2;
             var graph = Graph.Read(fileName);
 
             var cell = worksheet.Cells[2, colIndex];
@@ -60,101 +88,10 @@ namespace Marv.Excel
             }
 
             var graphValue = graph.Run(graphEvidence);
-            this.WriteGraphValue(graphValue, "Output");
-        }
 
-        private void WriteGraphValue(Dictionary<string, string, double> graphValue, string worksheetName)
-        {
-            var workbook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            Worksheet worksheet;
-
-            try
-            {
-                worksheet = workbook.Sheets[worksheetName];
-            }
-            catch (Exception)
-            {
-                worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveWorkbook.Worksheets.Add();
-                worksheet.Name = worksheetName;
-            }
-
-            worksheet.Select();
-
-            var colIndex = 1;
-
-            foreach (var vertexKey in graphValue.Keys)
-            {
-                var rowIndex = 1;
-                var vertexValue = graphValue[vertexKey];
-
-                worksheet.Cells[rowIndex++, colIndex + 1] = vertexKey;
-
-                foreach (var stateKey in vertexValue.Keys)
-                {
-                    worksheet.Cells[rowIndex, colIndex].NumberFormat = "@";
-                    worksheet.Cells[rowIndex, colIndex] = stateKey;
-                    worksheet.Cells[rowIndex, colIndex + 1].NumberFormat = "@";
-                    worksheet.Cells[rowIndex++, colIndex + 1] = vertexValue[stateKey];
-                }
-
-                colIndex += 2;
-            }
-        }
-
-        private static void OpenFileButton_Click(object sender, RibbonControlEventArgs e)
-        {
-            var dialog = new System.Windows.Forms.OpenFileDialog();
-            dialog.ShowDialog();
-
-            var worksheet = (Worksheet)Globals.ThisAddIn.Application.ActiveSheet;
-
-            var rowIndex = 1;
-
-            // Generate the static part
-            worksheet.Cells[rowIndex, 1] = "File Name";
-            worksheet.Cells[rowIndex++, 2] = dialog.FileName;
-
-            worksheet.Cells[rowIndex++, 1] = "Name";
-            worksheet.Cells[rowIndex++, 1] = "Units";
-            worksheet.Cells[rowIndex++, 1] = "Description";
-            worksheet.Cells[rowIndex++, 1] = "Value";
-
-            var evidenceStartRowIndex = rowIndex;
-
-            var graph = Graph.Read(dialog.FileName);
-
-            var selectVerticesWindow = new SelectVerticesWindow
-            {
-                Vertices = graph.Vertices
-            };
-
-            selectVerticesWindow.ShowDialog();
-
-            var selectedItems = selectVerticesWindow.VerticesListBox.SelectedItems;
-
-            var colIndex = 4;
-
-            foreach (var item in selectedItems)
-            {
-                var vertex = item as Vertex;
-
-                // Set the header cells for this vertex
-                worksheet.Cells[2, colIndex] = vertex.Key;
-                worksheet.Cells[3, colIndex] = vertex.Units;
-                worksheet.Cells[4, colIndex] = vertex.Description;
-
-                rowIndex = evidenceStartRowIndex;
-
-                // Set the state cells for this vertex
-                foreach (var state in vertex.States)
-                {
-                    // Prefixing with ' makes sure the value is formatted as text
-                    worksheet.Cells[rowIndex, colIndex - 1].NumberFormat = "@";
-                    worksheet.Cells[rowIndex++, colIndex - 1] = "'" + state.Key;
-                }
-
-                colIndex += 2;
-            }
+            var outputWorksheet = workbook.GetWorksheetOrNew("Output");
+            outputWorksheet.WriteVertexValues(graph.Vertices, graphValue, fileName);
+            outputWorksheet.Select();
         }
     }
 }
