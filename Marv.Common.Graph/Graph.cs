@@ -22,6 +22,11 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, string, double> Belief
         {
+            get
+            {
+                return new Dictionary<string,string,double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.Belief));
+            }
+
             set
             {
                 foreach (var vertex in this.Vertices)

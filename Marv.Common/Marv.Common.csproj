@@ -79,7 +79,7 @@
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="MetaObject.cs" />
     <Compile Include="NormalDistribution.cs" />
-    <Compile Include="Types\Dict.cs" />
+    <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
