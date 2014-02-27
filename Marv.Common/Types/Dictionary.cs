@@ -4,11 +4,16 @@ namespace Marv.Common
 {
     public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>> where TValue : new()
     {
-        public new List<T1> Keys
+        public Dictionary()
         {
-            get
+            
+        }
+
+        public Dictionary(Dictionary<T1, Dictionary<T2, TValue>> dict)
+        {
+            foreach (var key in dict.Keys)
             {
-                return new List<T1>(base.Keys);
+                this[key] = dict[key];
             }
         }
 
@@ -22,12 +27,12 @@ namespace Marv.Common
                     {
                         return this[key1][key2];
                     }
-                    
+
                     return this[key1][key2] = new TValue();
                 }
 
                 this[key1] = new Dictionary<T2, TValue>();
-                
+
                 return this[key1][key2] = new TValue();
             }
 
@@ -44,17 +49,25 @@ namespace Marv.Common
                 }
             }
         }
+
+        public new List<T1> Keys
+        {
+            get
+            {
+                return new List<T1>(base.Keys);
+            }
+        }
     }
 
-    public class Dictionary<T1, T2, T3, TValue> : Dictionary<T1, Dictionary<T2, T3, TValue>> where TValue : new() 
+    public class Dictionary<T1, T2, T3, TValue> : Dictionary<T1, Dictionary<T2, T3, TValue>> where TValue : new()
     {
         public Dictionary<T3, TValue> this[T1 key1, T2 key2]
         {
             get
             {
-                if(this.ContainsKey(key1))
+                if (this.ContainsKey(key1))
                 {
-                    if(this[key1].ContainsKey(key2))
+                    if (this[key1].ContainsKey(key2))
                     {
                         return this[key1][key2];
                     }
@@ -63,7 +76,7 @@ namespace Marv.Common
                 }
 
                 this[key1] = new Dictionary<T2, T3, TValue>();
-                
+
                 return this[key1][key2] = new Dictionary<T3, TValue>();
             }
 
