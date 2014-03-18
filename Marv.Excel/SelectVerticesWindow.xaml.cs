@@ -6,14 +6,11 @@ namespace Marv.Excel
 {
     public partial class SelectVerticesWindow
     {
-        public IEnumerable<Vertex> Vertices
-        {
-            get { return (IEnumerable<Vertex>)GetValue(VerticesProperty); }
-            set { SetValue(VerticesProperty, value); }
-        }
-
         public static readonly DependencyProperty VerticesProperty =
-        DependencyProperty.Register("Vertices", typeof(IEnumerable<Vertex>), typeof(SelectVerticesWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("Vertices", typeof (IEnumerable<Vertex>), typeof (SelectVerticesWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty nYearsProperty =
+            DependencyProperty.Register("nYears", typeof (int), typeof (SelectVerticesWindow), new PropertyMetadata(1));
 
         public SelectVerticesWindow()
         {
@@ -22,16 +19,38 @@ namespace Marv.Excel
             this.Loaded += SelectVerticesWindow_Loaded;
         }
 
-        private void SelectVerticesWindow_Loaded(object sender, RoutedEventArgs e)
+        public IEnumerable<Vertex> Vertices
         {
-            this.SelectAllButton.Click += SelectAllButton_Click;
-            this.SelectNoneButton.Click += SelectNoneButton_Click;
-            this.DoneButton.Click += DoneButton_Click;
+            get
+            {
+                return (IEnumerable<Vertex>) GetValue(VerticesProperty);
+            }
+            set
+            {
+                SetValue(VerticesProperty, value);
+            }
         }
-        
+
+        public int nYears
+        {
+            get
+            {
+                return (int) GetValue(nYearsProperty);
+            }
+            set
+            {
+                SetValue(nYearsProperty, value);
+            }
+        }
+
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.VerticesListBox.SelectAll();
         }
 
         private void SelectNoneButton_Click(object sender, RoutedEventArgs e)
@@ -39,9 +58,11 @@ namespace Marv.Excel
             this.VerticesListBox.UnselectAll();
         }
 
-        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        private void SelectVerticesWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.VerticesListBox.SelectAll();
+            this.SelectAllButton.Click += SelectAllButton_Click;
+            this.SelectNoneButton.Click += SelectNoneButton_Click;
+            this.DoneButton.Click += DoneButton_Click;
         }
     }
 }
