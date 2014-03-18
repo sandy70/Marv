@@ -4,7 +4,7 @@ using Marv.Common.Graph;
 
 namespace Marv.Excel
 {
-    public partial class SelectVerticesWindow : Window
+    public partial class SelectVerticesWindow
     {
         public IEnumerable<Vertex> Vertices
         {
@@ -28,7 +28,7 @@ namespace Marv.Excel
             this.SelectNoneButton.Click += SelectNoneButton_Click;
             this.DoneButton.Click += DoneButton_Click;
         }
-
+        
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

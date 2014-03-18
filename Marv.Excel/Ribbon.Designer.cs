@@ -48,7 +48,7 @@
             this.MarvTab.Label = "MARV";
             this.MarvTab.Name = "MarvTab";
             // 
-            // FileGroup
+            // FileGroup    
             // 
             this.FileGroup.Items.Add(this.OpenFileButton);
             this.FileGroup.Items.Add(this.RunButton);

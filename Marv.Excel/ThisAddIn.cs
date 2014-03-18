@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
-using Microsoft.Office.Tools.Excel;
 
 namespace Marv.Excel
 {
     public partial class ThisAddIn
     {
-        private void ThisAddIn_Startup(object sender, System.EventArgs e)
+        private void ThisAddIn_Shutdown(object sender, EventArgs e)
         {
         }
 
-        private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+        private void ThisAddIn_Startup(object sender, EventArgs e)
         {
         }
 
@@ -25,10 +21,10 @@ namespace Marv.Excel
         /// </summary>
         private void InternalStartup()
         {
-            this.Startup += new System.EventHandler(ThisAddIn_Startup);
-            this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+            this.Startup += this.ThisAddIn_Startup;
+            this.Shutdown += this.ThisAddIn_Shutdown;
         }
-        
+
         #endregion
     }
 }

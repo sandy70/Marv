@@ -31,7 +31,7 @@ namespace Marv.Controls.Map
         {
             get
             {
-                var rect = new LocationRect
+                return new LocationRect
                 {
                     NorthWest = this.ViewportPointToLocation(new Point
                     {
@@ -44,16 +44,17 @@ namespace Marv.Controls.Map
                         Y = this.RenderSize.Height
                     })
                 };
-
-                return rect;
             }
 
             set
             {
-                this.ZoomToExtent(south: value.South,
-                    west: value.West,
-                    north: value.North,
-                    east: value.East);
+                this.ZoomToExtent
+                    (
+                        south: value.South,
+                        west: value.West,
+                        north: value.North,
+                        east: value.East
+                    );
             }
         }
 
@@ -69,28 +70,37 @@ namespace Marv.Controls.Map
             }
         }
 
-        public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
+        /// <summary>
+        ///     Calculates a suitable zoom level given a boundary.
+        /// </summary>
+        private double GetBoundsZoomLevel(double north, double east, double south, double west)
         {
-            add
+            const int GLOBE_HEIGHT = 256; // Height of a map that displays the entire world when zoomed all the way out
+            const int GLOBE_WIDTH = 256; // Width of a map that displays the entire world when zoomed all the way out
+
+            var latAngle = north - south;
+            if (latAngle < 0)
             {
-                this.AddHandler(ViewportMovedEvent, value);
+                latAngle += 360;
             }
-            remove
-            {
-                this.RemoveHandler(ViewportMovedEvent, value);
-            }
+
+            var lngAngle = east - west;
+
+            var latZoomLevel = Math.Floor(Math.Log(this.RenderSize.Height*360/latAngle/GLOBE_HEIGHT)/Math.Log(2));
+            var lngZoomLevel = Math.Floor(Math.Log(this.RenderSize.Width*360/lngAngle/GLOBE_WIDTH)/Math.Log(2)); //0.6931471805599453
+
+            return (latZoomLevel < lngZoomLevel) ? latZoomLevel : lngZoomLevel;
         }
 
-        public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
+        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
-            add
-            {
-                this.AddHandler(ZoomLevelChangedEvent, value);
-            }
-            remove
-            {
-                this.RemoveHandler(ZoomLevelChangedEvent, value);
-            }
+            base.OnManipulationInertiaStarting(e);
+            e.TranslationBehavior.DesiredDeceleration = 0.001;
+        }
+
+        public void ZoomTo(LocationRect rect)
+        {
+            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
         }
 
         /// <summary>
@@ -122,37 +132,28 @@ namespace Marv.Controls.Map
             this.ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
         }
 
-        public void ZoomTo(LocationRect rect)
+        public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
         {
-            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
-        }
-
-        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
-        {
-            base.OnManipulationInertiaStarting(e);
-            e.TranslationBehavior.DesiredDeceleration = 0.001;
-        }
-
-        /// <summary>
-        ///     Calculates a suitable zoom level given a boundary.
-        /// </summary>
-        private double GetBoundsZoomLevel(double north, double east, double south, double west)
-        {
-            var GLOBE_HEIGHT = 256; // Height of a map that displays the entire world when zoomed all the way out
-            var GLOBE_WIDTH = 256; // Width of a map that displays the entire world when zoomed all the way out
-
-            var latAngle = north - south;
-            if (latAngle < 0)
+            add
             {
-                latAngle += 360;
+                this.AddHandler(ViewportMovedEvent, value);
             }
+            remove
+            {
+                this.RemoveHandler(ViewportMovedEvent, value);
+            }
+        }
 
-            var lngAngle = east - west;
-
-            var latZoomLevel = Math.Floor(Math.Log(this.RenderSize.Height*360/latAngle/GLOBE_HEIGHT)/Math.Log(2));
-            var lngZoomLevel = Math.Floor(Math.Log(this.RenderSize.Width*360/lngAngle/GLOBE_WIDTH)/Math.Log(2)); //0.6931471805599453
-
-            return (latZoomLevel < lngZoomLevel) ? latZoomLevel : lngZoomLevel;
+        public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
+        {
+            add
+            {
+                this.AddHandler(ZoomLevelChangedEvent, value);
+            }
+            remove
+            {
+                this.RemoveHandler(ZoomLevelChangedEvent, value);
+            }
         }
     }
 }
