@@ -167,6 +167,7 @@
       <AdditionalLibraryDirectories>cppsmile;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ForceSymbolReferences>%(ForceSymbolReferences)</ForceSymbolReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalOptions>/KEYFILE:SmileNet.snk %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
