@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -7,7 +8,6 @@ using AddinExpress.XL;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
-using System.Collections.Generic;
 
 namespace Marv_Excel
 {
@@ -20,8 +20,8 @@ namespace Marv_Excel
         private ImageList IconList;
         private ADXRibbonTab MarvRibbonTab;
         private ADXRibbonButton OpenButton;
-        private ADXTaskPane TaskPane;
         private ADXRibbonButton RunButton;
+        private ADXTaskPane TaskPane;
 
         public AddinModule()
         {
@@ -45,13 +45,8 @@ namespace Marv_Excel
             }
         }
 
-        public static Workbook Workbook
-        {
-            get
-            {
-                return ExcelApp.ActiveWorkbook;
-            }
-        }
+        public string FileName { get; set; }
+        public Graph Graph { get; set; }
 
         public TaskPane MarvTaskPane
         {
@@ -61,8 +56,14 @@ namespace Marv_Excel
             }
         }
 
-        public string FileName { get; set; }
-        public Graph Graph { get; set; }
+        public static Workbook Workbook
+        {
+            get
+            {
+                return ExcelApp.ActiveWorkbook;
+            }
+        }
+
         public int nYears { get; set; }
 
         #region Component Designer generated code
@@ -79,7 +80,7 @@ namespace Marv_Excel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddinModule));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof (AddinModule));
             this.MarvRibbonTab = new AddinExpress.MSO.ADXRibbonTab(this.components);
             this.FileRibbonGroup = new AddinExpress.MSO.ADXRibbonGroup(this.components);
             this.OpenButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
@@ -118,7 +119,7 @@ namespace Marv_Excel
             // 
             // IconList
             // 
-            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IconList.ImageStream")));
+            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("IconList.ImageStream")));
             this.IconList.TransparentColor = System.Drawing.Color.Transparent;
             this.IconList.Images.SetKeyName(0, "Open.png");
             this.IconList.Images.SetKeyName(1, "Run.png");
@@ -156,12 +157,10 @@ namespace Marv_Excel
             // AddinModule
             // 
             this.AddinName = "Marv_Excel";
-            this.LoadBehavior = ((AddinExpress.MSO.ADXLoadBehavior)(((AddinExpress.MSO.ADXLoadBehavior.lbConnected | AddinExpress.MSO.ADXLoadBehavior.lbLoadAtStartup) 
-            | AddinExpress.MSO.ADXLoadBehavior.lbLoadOnDemand)));
+            this.LoadBehavior = ((AddinExpress.MSO.ADXLoadBehavior) (((AddinExpress.MSO.ADXLoadBehavior.lbConnected | AddinExpress.MSO.ADXLoadBehavior.lbLoadAtStartup)
+                                                                      | AddinExpress.MSO.ADXLoadBehavior.lbLoadOnDemand)));
             this.SupportedApps = AddinExpress.MSO.ADXOfficeHostApp.ohaExcel;
             this.TaskPanes.Add(this.TaskPane);
-            this.OnTaskPaneAfterShow += new AddinExpress.MSO.ADXTaskPaneAfterShow_EventHandler(this.Addin_OnTaskPaneAfterShow);
-
         }
 
         #endregion
@@ -190,11 +189,6 @@ namespace Marv_Excel
             return components;
         }
 
-        public override void UninstallControls()
-        {
-            base.UninstallControls();
-        }
-
         #endregion
 
         private void OpenButton_Click(object sender, IRibbonControl control, bool pressed)
@@ -210,56 +204,48 @@ namespace Marv_Excel
                 this.ExcelTaskPanesCollectionItem.TaskPaneInstance.Show();
 
                 this.FileName = dialog.FileName;
-                
+
                 this.Graph = Graph.Read(this.FileName);
 
                 var taskPane = this.ExcelTaskPanesCollectionItem.TaskPaneInstance as TaskPane;
-                taskPane.SetVertices(this.Graph.Vertices);
-                taskPane.DoneButtonClicked += taskPane_DoneButtonClicked;
+
+                if (taskPane != null)
+                {
+                    taskPane.Vertices = this.Graph.Vertices;
+                    taskPane.DoneButtonClicked += taskPane_DoneButtonClicked;
+                }
             }
+        }
+
+        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
+        {
+            // Workbook.GetWorksheetOrNew("Output");
+            // worksheet.WriteSkeleton(this.FileName, this.Graph.Vertices, this.nYears);
         }
 
         private void taskPane_DoneButtonClicked(object sender, EventArgs e)
         {
             var sheetModel = new SheetModel
             {
-                SheetHeaders = new Dictionary<string,object>
+                SheetHeaders = new Dictionary<string, object>
                 {
-                    { "Network File", this.FileName },
-                    { "Start Year", this.MarvTaskPane.StartYear },
-                    { "End Year", this.MarvTaskPane.EndYear }
+                    {"Network File", this.FileName},
+                    {"Start Year", this.MarvTaskPane.StartYear},
+                    {"End Year", this.MarvTaskPane.EndYear}
                 },
-
                 ColumnHeaders = new List<string>
                 {
                     "Section Name",
                     "Latitude",
                     "Longitude"
                 },
-
                 StartYear = this.MarvTaskPane.StartYear,
                 EndYear = this.MarvTaskPane.EndYear,
-
                 Vertices = this.MarvTaskPane.SelectedVertices
             };
+
+            var worksheet = Workbook.GetWorksheetOrNew("Input");
+            worksheet.WriteSkeleton(sheetModel);
         }
-
-        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
-        {
-            var worksheet = Workbook.GetWorksheetOrNew("Output");
-
-            worksheet.WriteSkeleton(this.FileName, this.Graph.Vertices, this.nYears);
-        }
-
-        private void StartupComplete(object sender, EventArgs e)
-        {
-            var a = this.ExcelTaskPanesCollectionItem.TaskPaneInstance;
-        }
-
-        private void Addin_OnTaskPaneAfterShow(object sender, ADXTaskPane.ADXCustomTaskPaneInstance instance)
-        {
-            var a = this.ExcelTaskPanesCollectionItem.TaskPaneInstance;
-        }
-
     }
 }

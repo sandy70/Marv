@@ -28,21 +28,11 @@ namespace Marv_Excel
             return worksheet;
         }
 
-        public static void WriteSkeleton(this Worksheet worksheet, string fileName, IEnumerable<Vertex> selectedVertices, int nYears)
+        public static void WriteSkeleton(this Worksheet worksheet, SheetModel sheetModel)
         {
-            var sheetModel = new SheetModel();
-            sheetModel.SheetHeaders["Network File"] = fileName;
-            sheetModel.SheetHeaders["Years"] = nYears;
-
-            sheetModel.ColumnHeaders.Add("Sections Name");
-            sheetModel.ColumnHeaders.Add("Latitude");
-            sheetModel.ColumnHeaders.Add("Longitude");
-
-            sheetModel.Vertices = selectedVertices.ToList();
-
             var row = 1;
             var col = 1;
-
+            
             foreach (var key in sheetModel.SheetHeaders.Keys)
             {
                 worksheet.WriteValue(row, col, key, true, true);
@@ -67,7 +57,7 @@ namespace Marv_Excel
                 worksheet.WriteValue(row, col, vertex.Key, true);
                 col++;
 
-                for (var year = 0; year < nYears; year++)
+                for (var year = sheetModel.StartYear; year < sheetModel.EndYear; year++)
                 {
                     worksheet.WriteValue(row, col, year, isText: true);
                     col++;
@@ -93,7 +83,7 @@ namespace Marv_Excel
                     row++;
                 }
 
-                col += nYears + 2;
+                col += (sheetModel.EndYear - sheetModel.StartYear) + 2;
             }
         }
 

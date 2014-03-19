@@ -37,17 +37,20 @@ namespace Marv_Excel
             }
         }
 
+        public IEnumerable<Vertex> Vertices
+        {
+            set
+            {
+                this.vertexSelectionControl.Vertices = value;
+            }
+        }
+
         public TaskPane()
         {
             InitializeComponent();
             this.Activated += TaskPane_Activated;
 
             this.vertexSelectionControl.DoneButtonClicked += vertexSelectionControl_DoneButtonClicked;
-        }
-
-        public void SetVertices(IEnumerable<Vertex> vertices)
-        {
-            this.vertexSelectionControl.Vertices = vertices;
         }
 
         private void TaskPane_Activated(object sender, EventArgs e)
