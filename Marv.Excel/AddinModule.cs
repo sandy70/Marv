@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AddinExpress.MSO;
 using AddinExpress.XL;
+using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 
@@ -19,6 +20,42 @@ namespace Marv_Excel
         private ADXRibbonTab MarvRibbonTab;
         private ADXRibbonButton OpenButton;
         private ADXTaskPane TaskPane;
+
+        private string fileName;
+
+        public AddinModule()
+        {
+            Application.EnableVisualStyles();
+            InitializeComponent();
+        }
+
+        public new static AddinModule CurrentInstance
+        {
+            get
+            {
+                return ADXAddinModule.CurrentInstance as AddinModule;
+            }
+        }
+
+        public static _Application ExcelApp
+        {
+            get
+            {
+                return (CurrentInstance.HostApplication as _Application);
+            }
+        }
+
+        public string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+            set
+            {
+                fileName = value;
+            }
+        }
 
         #region Component Designer generated code
 
@@ -85,7 +122,6 @@ namespace Marv_Excel
             // ExcelTaskPanesManager
             // 
             this.ExcelTaskPanesManager.Items.Add(this.ExcelTaskPanesCollectionItem);
-            this.ExcelTaskPanesManager.ADXBeforeTaskPaneInstanceCreate += new AddinExpress.XL.ADXBeforeTaskPaneInstanceCreateEventHandler(this.ExcelTaskPanesManager_BeforeTaskPaneInstanceCreate);
             this.ExcelTaskPanesManager.SetOwner(this);
             // 
             // ExcelTaskPanesCollectionItem
@@ -138,41 +174,25 @@ namespace Marv_Excel
 
         #endregion
 
-        public AddinModule()
-        {
-            Application.EnableVisualStyles();
-            InitializeComponent();
-
-            foreach (ADXTaskPane item in this.ExcelTaskPanesCollectionItem.TaskPaneInstances)
-            {
-                item.Visible = false;
-            }
-        }
-
-        public new static AddinModule CurrentInstance
-        {
-            get
-            {
-                return ADXAddinModule.CurrentInstance as AddinModule;
-            }
-        }
-
-        public _Application ExcelApp
-        {
-            get
-            {
-                return (HostApplication as _Application);
-            }
-        }
-
-        private void ExcelTaskPanesManager_BeforeTaskPaneInstanceCreate(object sender, ADXBeforeTaskPaneInstanceCreateEventArgs e)
-        {
-            e.Cancel = true;
-        }
-
         private void OpenButton_Click(object sender, IRibbonControl control, bool pressed)
         {
-            this.ExcelTaskPanesCollectionItem.CreateTaskPaneInstance();
+            var dialog = new OpenFileDialog
+            {
+                Filter = "NetworkFile (*.net)|*.net",
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                this.ExcelTaskPanesCollectionItem.TaskPaneInstance.Show();
+
+                this.FileName = dialog.FileName;
+
+                var graph = Graph.Read(this.FileName);
+
+                var taskPane = this.ExcelTaskPanesCollectionItem.TaskPaneInstance as TaskPane;
+                taskPane.SetVertices(graph.Vertices);
+            }
         }
     }
 }

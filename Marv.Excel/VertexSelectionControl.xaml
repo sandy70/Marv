@@ -3,8 +3,7 @@
              xmlns:global="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Name="Root"
-             Visibility="Collapsed">
+             Name="Root">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
