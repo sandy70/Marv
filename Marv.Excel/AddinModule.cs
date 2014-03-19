@@ -20,8 +20,7 @@ namespace Marv_Excel
         private ADXRibbonTab MarvRibbonTab;
         private ADXRibbonButton OpenButton;
         private ADXTaskPane TaskPane;
-
-        private string fileName;
+        private ADXRibbonButton RunButton;
 
         public AddinModule()
         {
@@ -45,17 +44,17 @@ namespace Marv_Excel
             }
         }
 
-        public string FileName
+        public static Workbook Workbook
         {
             get
             {
-                return fileName;
-            }
-            set
-            {
-                fileName = value;
+                return ExcelApp.ActiveWorkbook;
             }
         }
+
+        public string FileName { get; set; }
+        public Graph Graph { get; set; }
+        public int nYears { get; set; }
 
         #region Component Designer generated code
 
@@ -71,7 +70,7 @@ namespace Marv_Excel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof (AddinModule));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddinModule));
             this.MarvRibbonTab = new AddinExpress.MSO.ADXRibbonTab(this.components);
             this.FileRibbonGroup = new AddinExpress.MSO.ADXRibbonGroup(this.components);
             this.OpenButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
@@ -79,6 +78,7 @@ namespace Marv_Excel
             this.TaskPane = new AddinExpress.MSO.ADXTaskPane(this.components);
             this.ExcelTaskPanesManager = new AddinExpress.XL.ADXExcelTaskPanesManager(this.components);
             this.ExcelTaskPanesCollectionItem = new AddinExpress.XL.ADXExcelTaskPanesCollectionItem(this.components);
+            this.RunButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
             // 
             // MarvRibbonTab
             // 
@@ -91,6 +91,7 @@ namespace Marv_Excel
             // 
             this.FileRibbonGroup.Caption = "File";
             this.FileRibbonGroup.Controls.Add(this.OpenButton);
+            this.FileRibbonGroup.Controls.Add(this.RunButton);
             this.FileRibbonGroup.Id = "adxRibbonGroup_ad04fb6e0687428cb72fffa876b3e9e5";
             this.FileRibbonGroup.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.FileRibbonGroup.Ribbons = AddinExpress.MSO.ADXRibbons.msrExcelWorkbook;
@@ -108,7 +109,7 @@ namespace Marv_Excel
             // 
             // IconList
             // 
-            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("IconList.ImageStream")));
+            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IconList.ImageStream")));
             this.IconList.TransparentColor = System.Drawing.Color.Transparent;
             this.IconList.Images.SetKeyName(0, "Open.png");
             this.IconList.Images.SetKeyName(1, "Run.png");
@@ -132,13 +133,25 @@ namespace Marv_Excel
             this.ExcelTaskPanesCollectionItem.TaskPaneClassName = "Marv_Excel.TaskPane";
             this.ExcelTaskPanesCollectionItem.UseOfficeThemeForBackground = true;
             // 
+            // RunButton
+            // 
+            this.RunButton.Caption = "Run";
+            this.RunButton.Id = "adxRibbonButton_7a9eae8b54f543549e6f5d77f017c3a2";
+            this.RunButton.Image = 1;
+            this.RunButton.ImageList = this.IconList;
+            this.RunButton.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.RunButton.Ribbons = AddinExpress.MSO.ADXRibbons.msrExcelWorkbook;
+            this.RunButton.Size = AddinExpress.MSO.ADXRibbonXControlSize.Large;
+            this.RunButton.OnClick += new AddinExpress.MSO.ADXRibbonOnAction_EventHandler(this.RunButton_Click);
+            // 
             // AddinModule
             // 
             this.AddinName = "Marv_Excel";
-            this.LoadBehavior = ((AddinExpress.MSO.ADXLoadBehavior) (((AddinExpress.MSO.ADXLoadBehavior.lbConnected | AddinExpress.MSO.ADXLoadBehavior.lbLoadAtStartup)
-                                                                      | AddinExpress.MSO.ADXLoadBehavior.lbLoadOnDemand)));
+            this.LoadBehavior = ((AddinExpress.MSO.ADXLoadBehavior)(((AddinExpress.MSO.ADXLoadBehavior.lbConnected | AddinExpress.MSO.ADXLoadBehavior.lbLoadAtStartup) 
+            | AddinExpress.MSO.ADXLoadBehavior.lbLoadOnDemand)));
             this.SupportedApps = AddinExpress.MSO.ADXOfficeHostApp.ohaExcel;
             this.TaskPanes.Add(this.TaskPane);
+
         }
 
         #endregion
@@ -187,12 +200,19 @@ namespace Marv_Excel
                 this.ExcelTaskPanesCollectionItem.TaskPaneInstance.Show();
 
                 this.FileName = dialog.FileName;
-
-                var graph = Graph.Read(this.FileName);
+                
+                this.Graph = Graph.Read(this.FileName);
 
                 var taskPane = this.ExcelTaskPanesCollectionItem.TaskPaneInstance as TaskPane;
-                taskPane.SetVertices(graph.Vertices);
+                taskPane.SetVertices(this.Graph.Vertices);
             }
+        }
+
+        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
+        {
+            var worksheet = Workbook.GetWorksheetOrNew("Output");
+
+            worksheet.WriteHeader(this.FileName, this.Graph.Vertices, this.nYears);
         }
     }
 }

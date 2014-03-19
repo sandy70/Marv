@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>> where TValue : new()
+    public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>>
     {
         public Dictionary()
         {
@@ -21,19 +21,7 @@ namespace Marv.Common
         {
             get
             {
-                if (this.ContainsKey(key1))
-                {
-                    if (this[key1].ContainsKey(key2))
-                    {
-                        return this[key1][key2];
-                    }
-
-                    return this[key1][key2] = new TValue();
-                }
-
-                this[key1] = new Dictionary<T2, TValue>();
-
-                return this[key1][key2] = new TValue();
+                return this[key1][key2];
             }
 
             set

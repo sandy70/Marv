@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using AddinExpress.XL;
 using Marv.Common.Graph;
-using Microsoft.Office.Interop.Excel;
 
 namespace Marv_Excel
 {
@@ -43,9 +42,10 @@ namespace Marv_Excel
         private void vertexSelectionControl_DoneButtonClicked(object sender, RoutedEventArgs e)
         {
             var fileName = Marv_Excel.AddinModule.CurrentInstance.FileName;
-            var nYears = this.vertexSelectionControl.nYears;
+            var nYears = Marv_Excel.AddinModule.CurrentInstance.nYears = this.vertexSelectionControl.nYears;
             var selectedVertices = this.vertexSelectionControl.SelectedVertices.ToList();
-            var worksheet = (Worksheet) Marv_Excel.AddinModule.ExcelApp.ActiveSheet;
+            var workbook = Marv_Excel.AddinModule.ExcelApp.ActiveWorkbook;
+            var worksheet = workbook.GetWorksheetOrNew("Input");
 
             worksheet.WriteHeader(fileName, selectedVertices, nYears);
             worksheet.WriteVertexSkeletons(selectedVertices, nYears);

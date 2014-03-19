@@ -24,7 +24,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return new Dictionary<string,string,double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.Belief));
+                return new Dictionary<string, string, double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.Belief));
             }
 
             set
@@ -117,80 +117,6 @@ namespace Marv.Common.Graph
                     this.RaisePropertyChanged("Vertices");
                 }
             }
-        }
-
-        public static Graph Read(string fileName)
-        {
-            var graph = new Graph();
-
-            try
-            {
-                graph.network.ReadFile(fileName);
-            }
-            catch (SmileException exception)
-            {
-                logger.Warn("Error reading file {0}: {1}", fileName, exception.Message);
-                return graph;
-            }
-
-            var structure = NetworkStructure.Read(fileName);
-
-            // Add all the vertices
-            foreach (var structureVertex in structure.Vertices)
-            {
-                var vertex = new Vertex();
-
-                vertex.Key = structureVertex.Key;
-                vertex.ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions");
-                vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
-                vertex.Groups = structureVertex.ParseGroups();
-                vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
-                vertex.InputVertexKey = structureVertex.ParseStringProperty("inputvertexkey");
-                vertex.IsExpanded = structureVertex.ParseIsExpanded();
-                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
-                vertex.Name = structureVertex.ParseStringProperty("label");
-                vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup");
-                vertex.Units = structureVertex.ParseStringProperty("units");
-                vertex.States = structureVertex.ParseStates();
-                vertex.Type = structureVertex.ParseSubType();
-
-                // If all states have ranges, then it is an interval vertex. This is a hack. Remove
-                // this once the team starts using Hugin node types consistently.
-                if (vertex.States.Select(state => state.Range != null).Count() == vertex.States.Count()) vertex.Type = VertexType.Interval;
-
-                if (string.IsNullOrWhiteSpace(vertex.Units))
-                {
-                    vertex.Units = "n/a";
-                }
-
-                graph.Vertices.Add(vertex);
-
-                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
-                {
-                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
-                }
-            }
-
-            // Add all the edges
-            foreach (var srcNode in structure.Vertices)
-            {
-                foreach (var dstNode in srcNode.Children)
-                {
-                    graph.AddEdge(graph.Vertices[srcNode.Key], graph.Vertices[dstNode.Key]);
-                }
-            }
-
-            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
-            graph.Name = structure.ParseUserProperty("key", "");
-
-            graph.UpdateValue();
-            return graph;
-        }
-
-        public static Task<Graph> ReadAsync(string fileName)
-        {
-            return Task.Run(() => Graph.Read(fileName));
         }
 
         public void AddEdge(Vertex source, Vertex target)
@@ -394,6 +320,80 @@ namespace Marv.Common.Graph
             return hasEdge;
         }
 
+        public static Graph Read(string fileName)
+        {
+            var graph = new Graph();
+
+            try
+            {
+                graph.network.ReadFile(fileName);
+            }
+            catch (SmileException exception)
+            {
+                logger.Warn("Error reading file {0}: {1}", fileName, exception.Message);
+                return graph;
+            }
+
+            var structure = NetworkStructure.Read(fileName);
+
+            // Add all the vertices
+            foreach (var structureVertex in structure.Vertices)
+            {
+                var vertex = new Vertex();
+
+                vertex.Key = structureVertex.Key;
+                vertex.ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions");
+                vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
+                vertex.Groups = structureVertex.ParseGroups();
+                vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
+                vertex.InputVertexKey = structureVertex.ParseStringProperty("InputVertexKey");
+                vertex.IsExpanded = structureVertex.ParseIsExpanded();
+                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
+                vertex.Name = structureVertex.ParseStringProperty("label");
+                vertex.Position = structureVertex.ParsePosition();
+                vertex.PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup");
+                vertex.Units = structureVertex.ParseStringProperty("units");
+                vertex.States = structureVertex.ParseStates();
+                vertex.Type = structureVertex.ParseSubType();
+
+                // If all states have ranges, then it is an interval vertex. This is a hack. Remove
+                // this once the team starts using Hugin node types consistently.
+                if (vertex.States.Select(state => state.Range != null).Count() == vertex.States.Count()) vertex.Type = VertexType.Interval;
+
+                if (string.IsNullOrWhiteSpace(vertex.Units))
+                {
+                    vertex.Units = "n/a";
+                }
+
+                graph.Vertices.Add(vertex);
+
+                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
+                {
+                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
+                }
+            }
+
+            // Add all the edges
+            foreach (var srcNode in structure.Vertices)
+            {
+                foreach (var dstNode in srcNode.Children)
+                {
+                    graph.AddEdge(graph.Vertices[srcNode.Key], graph.Vertices[dstNode.Key]);
+                }
+            }
+
+            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = structure.ParseUserProperty("key", "");
+
+            graph.UpdateValue();
+            return graph;
+        }
+
+        public static Task<Graph> ReadAsync(string fileName)
+        {
+            return Task.Run(() => Read(fileName));
+        }
+
         public Dictionary<string, string, double> ReadValueCsv(string fileName)
         {
             var graphValue = new Dictionary<string, string, double>();
@@ -402,7 +402,7 @@ namespace Marv.Common.Graph
             {
                 var vertexValue = new Dictionary<string, double>();
 
-                var parts = line.Split(new[] { ',' });
+                var parts = line.Split(new[] {','});
 
                 var vertexKey = parts[0];
 
@@ -448,6 +448,38 @@ namespace Marv.Common.Graph
 
             for (var year = startYear; year <= endYear; year++)
             {
+                // If this is not the start year, then add the looped evidences
+                if (year > startYear)
+                {
+                    foreach (var srcVertexKey in this.Loops.Keys)
+                    {
+                        var dstVertexKey = this.Loops[srcVertexKey];
+
+                        var lastGraphValue = graphValueTimeSeries[year - 1];
+
+                        var lastVertexValue = lastGraphValue[srcVertexKey];
+
+                        graphEvidence[dstVertexKey] = new SoftEvidence
+                        {
+                            Evidence = lastVertexValue.Values.ToArray()
+                        };
+                    }
+                }
+
+                graphValueTimeSeries[year] = this.Run(graphEvidence);
+            }
+
+            return graphValueTimeSeries;
+        }
+
+        public Dictionary<int, string, string, double> Run(Dictionary<int, string, IEvidence> graphEvidenceTimeSeries, int startYear, int endYear)
+        {
+            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
+
+            for (var year = startYear; year <= endYear; year++)
+            {
+                var graphEvidence = graphEvidenceTimeSeries[year];
+
                 // If this is not the start year, then add the looped evidences
                 if (year > startYear)
                 {

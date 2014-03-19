@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 
@@ -6,6 +7,26 @@ namespace Marv_Excel
 {
     public static class Extensions
     {
+        public const int HeaderRows = 5;
+        public const int HeaderCols = 4;
+
+        public static Worksheet GetWorksheetOrNew(this Workbook workbook, string worksheetName)
+        {
+            Worksheet worksheet;
+
+            try
+            {
+                worksheet = (Worksheet) workbook.Sheets[worksheetName];
+            }
+            catch (Exception)
+            {
+                worksheet = (Worksheet) workbook.Worksheets.Add();
+                worksheet.Name = worksheetName;
+            }
+
+            return worksheet;
+        }
+
         public static void WriteHeader(this Worksheet worksheet, string fileName, IEnumerable<Vertex> selectedVertices, int nYears)
         {
             var row = 1;
@@ -13,18 +34,25 @@ namespace Marv_Excel
 
             ((Range) worksheet.Cells[row, col]).Font.Bold = true;
             worksheet.Cells[row, col++] = "Network File";
-            worksheet.Cells[row++, col] = fileName;
+            worksheet.Cells[row, col] = fileName;
+
+            row++;
+            col = 1;
+            worksheet.WriteValue(row, col, "Years", isBold: true);
+            
+            col++;
+            worksheet.WriteValue(row, col, nYears);
 
             col = 1;
-            row++;
-
+            row += 2;
             worksheet.WriteValue(row, col, "Section Name", true);
+            
             col++;
-
             worksheet.WriteValue(row, col, "Latitude", true);
+            
             col++;
-
             worksheet.WriteValue(row, col, "Longitude", true);
+            
             col += 2;
 
             if (selectedVertices != null)
@@ -72,11 +100,11 @@ namespace Marv_Excel
 
         public static void WriteVertexSkeletons(this Worksheet worksheet, IEnumerable<Vertex> selectedVertices, int nYears)
         {
-            var col = 5;
+            var col = HeaderCols + 1;
 
             foreach (var vertex in selectedVertices)
             {
-                const int row = 5;
+                const int row = HeaderRows + 1;
                 worksheet.WriteVertexSkeleton(row, col, vertex);
                 col += nYears;
                 col += 2;
