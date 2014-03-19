@@ -9,17 +9,32 @@ namespace Marv_Excel
         public static readonly DependencyProperty VerticesProperty =
             DependencyProperty.Register("Vertices", typeof (IEnumerable<Vertex>), typeof (VertexSelectionControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty nYearsProperty =
-            DependencyProperty.Register("nYears", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(1));
-
         public static readonly RoutedEvent DoneButtonClickedEvent =
             EventManager.RegisterRoutedEvent("DoneButtonClicked", RoutingStrategy.Bubble, typeof (RoutedEventHandler<RoutedEventArgs>), typeof (VertexSelectionControl));
+
+        public static readonly DependencyProperty StartYearProperty =
+            DependencyProperty.Register("StartYear", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(1990));
+
+        public static readonly DependencyProperty EndYearProperty =
+            DependencyProperty.Register("EndYear", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(2000));
 
         public VertexSelectionControl()
         {
             InitializeComponent();
 
             this.Loaded += VerticesSelectionControl_Loaded;
+        }
+
+        public int EndYear
+        {
+            get
+            {
+                return (int) GetValue(EndYearProperty);
+            }
+            set
+            {
+                SetValue(EndYearProperty, value);
+            }
         }
 
         public IEnumerable<Vertex> SelectedVertices
@@ -37,6 +52,18 @@ namespace Marv_Excel
             }
         }
 
+        public int StartYear
+        {
+            get
+            {
+                return (int) GetValue(StartYearProperty);
+            }
+            set
+            {
+                SetValue(StartYearProperty, value);
+            }
+        }
+
         public IEnumerable<Vertex> Vertices
         {
             get
@@ -46,18 +73,6 @@ namespace Marv_Excel
             set
             {
                 SetValue(VerticesProperty, value);
-            }
-        }
-
-        public int nYears
-        {
-            get
-            {
-                return (int) GetValue(nYearsProperty);
-            }
-            set
-            {
-                SetValue(nYearsProperty, value);
             }
         }
 
@@ -83,7 +98,16 @@ namespace Marv_Excel
         {
             this.SelectAllButton.Click += SelectAllButton_Click;
             this.SelectNoneButton.Click += SelectNoneButton_Click;
+            this.StartYearUpDown.ValueChanged += StartYearUpDown_ValueChanged;
             this.DoneButton.Click += DoneButton_Click;
+        }
+
+        private void StartYearUpDown_ValueChanged(object sender, Telerik.Windows.Controls.RadRangeBaseValueChangedEventArgs e)
+        {
+            if (this.EndYear < this.StartYear)
+            {
+                this.EndYear = this.StartYear;
+            }
         }
 
         public event RoutedEventHandler<RoutedEventArgs> DoneButtonClicked

@@ -9,7 +9,33 @@ namespace Marv_Excel
 {
     public partial class TaskPane : ADXExcelTaskPane
     {
+        public event EventHandler DoneButtonClicked;
+
         private bool isHiddenBefore;
+
+        public int StartYear
+        {
+            get
+            {
+                return this.vertexSelectionControl.StartYear;
+            }
+        }
+
+        public int EndYear
+        {
+            get
+            {
+                return this.vertexSelectionControl.EndYear;
+            }
+        }
+
+        public IEnumerable<Vertex> SelectedVertices
+        {
+            get
+            {
+                return this.vertexSelectionControl.SelectedVertices.ToList();
+            }
+        }
 
         public TaskPane()
         {
@@ -41,16 +67,12 @@ namespace Marv_Excel
 
         private void vertexSelectionControl_DoneButtonClicked(object sender, RoutedEventArgs e)
         {
-            var fileName = Marv_Excel.AddinModule.CurrentInstance.FileName;
-            var nYears = Marv_Excel.AddinModule.CurrentInstance.nYears = this.vertexSelectionControl.nYears;
-            var selectedVertices = this.vertexSelectionControl.SelectedVertices.ToList();
-            var workbook = Marv_Excel.AddinModule.ExcelApp.ActiveWorkbook;
-            var worksheet = workbook.GetWorksheetOrNew("Input");
-
-            worksheet.WriteHeader(fileName, selectedVertices, nYears);
-            worksheet.WriteVertexSkeletons(selectedVertices, nYears);
-
             this.Hide();
+
+            if (this.DoneButtonClicked != null)
+            {
+                this.DoneButtonClicked(this, new EventArgs());
+            }
         }
     }
 }

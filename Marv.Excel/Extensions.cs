@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 
@@ -27,49 +28,72 @@ namespace Marv_Excel
             return worksheet;
         }
 
-        public static void WriteHeader(this Worksheet worksheet, string fileName, IEnumerable<Vertex> selectedVertices, int nYears)
+        public static void WriteSkeleton(this Worksheet worksheet, string fileName, IEnumerable<Vertex> selectedVertices, int nYears)
         {
+            var sheetModel = new SheetModel();
+            sheetModel.SheetHeaders["Network File"] = fileName;
+            sheetModel.SheetHeaders["Years"] = nYears;
+
+            sheetModel.ColumnHeaders.Add("Sections Name");
+            sheetModel.ColumnHeaders.Add("Latitude");
+            sheetModel.ColumnHeaders.Add("Longitude");
+
+            sheetModel.Vertices = selectedVertices.ToList();
+
             var row = 1;
             var col = 1;
 
-            ((Range) worksheet.Cells[row, col]).Font.Bold = true;
-            worksheet.Cells[row, col++] = "Network File";
-            worksheet.Cells[row, col] = fileName;
-
-            row++;
-            col = 1;
-            worksheet.WriteValue(row, col, "Years", isBold: true);
-            
-            col++;
-            worksheet.WriteValue(row, col, nYears);
-
-            col = 1;
-            row += 2;
-            worksheet.WriteValue(row, col, "Section Name", true);
-            
-            col++;
-            worksheet.WriteValue(row, col, "Latitude", true);
-            
-            col++;
-            worksheet.WriteValue(row, col, "Longitude", true);
-            
-            col += 2;
-
-            if (selectedVertices != null)
+            foreach (var key in sheetModel.SheetHeaders.Keys)
             {
-                foreach (var vertex in selectedVertices)
+                worksheet.WriteValue(row, col, key, true, true);
+                worksheet.WriteValue(row, col + 1, sheetModel.SheetHeaders[key], isText: true);
+                row++;
+            }
+
+            // Leave blank row
+            row++;
+
+            foreach (var columnHeader in sheetModel.ColumnHeaders)
+            {
+                worksheet.WriteValue(row, col, columnHeader, true, true);
+                col++;
+            }
+
+            // Leave blank column
+            col++;
+
+            foreach (var vertex in sheetModel.Vertices)
+            {
+                worksheet.WriteValue(row, col, vertex.Key, true);
+                col++;
+
+                for (var year = 0; year < nYears; year++)
                 {
-                    worksheet.WriteValue(row, col, vertex.Key, true);
-                    col++;
-
-                    for (var year = 0; year < nYears; year++)
-                    {
-                        worksheet.WriteValue(row, col, year, isText: true);
-                        col++;
-                    }
-
+                    worksheet.WriteValue(row, col, year, isText: true);
                     col++;
                 }
+
+                col++;
+            }
+
+            // ColumnHeaders.Count + Blank Line + 1
+            col = sheetModel.ColumnHeaders.Count + 2;
+
+            foreach (var vertex in sheetModel.Vertices)
+            {
+                // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 1
+                row = sheetModel.SheetHeaders.Count + 4;
+
+                worksheet.WriteValue(row, col, "Value");
+                row++;
+
+                foreach (var state in vertex.States)
+                {
+                    worksheet.WriteValue(row, col, state.Key, isText: true);
+                    row++;
+                }
+
+                col += nYears + 2;
             }
         }
 
@@ -84,31 +108,6 @@ namespace Marv_Excel
 
             range.Value2 = text;
             range.Font.Bold = isBold;
-        }
-
-        public static void WriteVertexSkeleton(this Worksheet worksheet, int row, int col, Vertex vertex)
-        {
-            worksheet.WriteValue(row, col, "Value");
-            row++;
-
-            foreach (var state in vertex.States)
-            {
-                worksheet.WriteValue(row, col, state.Key, isText: true);
-                row++;
-            }
-        }
-
-        public static void WriteVertexSkeletons(this Worksheet worksheet, IEnumerable<Vertex> selectedVertices, int nYears)
-        {
-            var col = HeaderCols + 1;
-
-            foreach (var vertex in selectedVertices)
-            {
-                const int row = HeaderRows + 1;
-                worksheet.WriteVertexSkeleton(row, col, vertex);
-                col += nYears;
-                col += 2;
-            }
         }
     }
 }
