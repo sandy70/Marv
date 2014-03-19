@@ -49,7 +49,7 @@ namespace Marv_Excel
             this.Controls.Add(this.elementHost);
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "TaskPane";
-            this.Text = "MarvTaskPane";
+            this.Text = "TaskPane";
             this.SizeChanged += new System.EventHandler(this.TaskPane_SizeChanged);
             this.ResumeLayout(false);
         }

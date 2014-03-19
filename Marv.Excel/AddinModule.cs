@@ -21,7 +21,6 @@ namespace Marv_Excel
         private ADXRibbonTab MarvRibbonTab;
         private ADXRibbonButton OpenButton;
         private ADXRibbonButton RunButton;
-        private ADXTaskPane TaskPane;
 
         public AddinModule()
         {
@@ -48,7 +47,7 @@ namespace Marv_Excel
         public string FileName { get; set; }
         public Graph Graph { get; set; }
 
-        public TaskPane MarvTaskPane
+        public TaskPane TaskPane
         {
             get
             {
@@ -63,8 +62,6 @@ namespace Marv_Excel
                 return ExcelApp.ActiveWorkbook;
             }
         }
-
-        public int nYears { get; set; }
 
         #region Component Designer generated code
 
@@ -86,7 +83,6 @@ namespace Marv_Excel
             this.OpenButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
             this.IconList = new System.Windows.Forms.ImageList(this.components);
             this.RunButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
-            this.TaskPane = new AddinExpress.MSO.ADXTaskPane(this.components);
             this.ExcelTaskPanesManager = new AddinExpress.XL.ADXExcelTaskPanesManager(this.components);
             this.ExcelTaskPanesCollectionItem = new AddinExpress.XL.ADXExcelTaskPanesCollectionItem(this.components);
             // 
@@ -135,12 +131,6 @@ namespace Marv_Excel
             this.RunButton.Size = AddinExpress.MSO.ADXRibbonXControlSize.Large;
             this.RunButton.OnClick += new AddinExpress.MSO.ADXRibbonOnAction_EventHandler(this.RunButton_Click);
             // 
-            // TaskPane
-            // 
-            this.TaskPane.ControlProgID = "";
-            this.TaskPane.SupportedApps = AddinExpress.MSO.ADXOfficeHostApp.ohaExcel;
-            this.TaskPane.Visible = false;
-            // 
             // ExcelTaskPanesManager
             // 
             this.ExcelTaskPanesManager.Items.Add(this.ExcelTaskPanesCollectionItem);
@@ -160,7 +150,6 @@ namespace Marv_Excel
             this.LoadBehavior = ((AddinExpress.MSO.ADXLoadBehavior) (((AddinExpress.MSO.ADXLoadBehavior.lbConnected | AddinExpress.MSO.ADXLoadBehavior.lbLoadAtStartup)
                                                                       | AddinExpress.MSO.ADXLoadBehavior.lbLoadOnDemand)));
             this.SupportedApps = AddinExpress.MSO.ADXOfficeHostApp.ohaExcel;
-            this.TaskPanes.Add(this.TaskPane);
         }
 
         #endregion
@@ -230,8 +219,8 @@ namespace Marv_Excel
                 SheetHeaders = new Dictionary<string, object>
                 {
                     {"Network File", this.FileName},
-                    {"Start Year", this.MarvTaskPane.StartYear},
-                    {"End Year", this.MarvTaskPane.EndYear}
+                    {"Start Year", this.TaskPane.StartYear},
+                    {"End Year", this.TaskPane.EndYear}
                 },
                 ColumnHeaders = new List<string>
                 {
@@ -239,9 +228,9 @@ namespace Marv_Excel
                     "Latitude",
                     "Longitude"
                 },
-                StartYear = this.MarvTaskPane.StartYear,
-                EndYear = this.MarvTaskPane.EndYear,
-                Vertices = this.MarvTaskPane.SelectedVertices
+                StartYear = this.TaskPane.StartYear,
+                EndYear = this.TaskPane.EndYear,
+                Vertices = this.TaskPane.SelectedVertices
             };
 
             var worksheet = Workbook.GetWorksheetOrNew("Input");
