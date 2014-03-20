@@ -23,6 +23,7 @@ namespace Marv_Excel
         private ImageList IconList;
         private ADXRibbonTab MarvRibbonTab;
         private ADXRibbonButton OpenButton;
+        private ADXRibbonButton RunButton;
 
         #region Component Designer generated code
 
@@ -45,6 +46,7 @@ namespace Marv_Excel
             this.IconList = new System.Windows.Forms.ImageList(this.components);
             this.ExcelTaskPanesManager = new AddinExpress.XL.ADXExcelTaskPanesManager(this.components);
             this.ExcelTaskPanesCollectionItem = new AddinExpress.XL.ADXExcelTaskPanesCollectionItem(this.components);
+            this.RunButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
             // 
             // MarvRibbonTab
             // 
@@ -57,6 +59,7 @@ namespace Marv_Excel
             // 
             this.FileRibbonGrouop.Caption = "File";
             this.FileRibbonGrouop.Controls.Add(this.OpenButton);
+            this.FileRibbonGrouop.Controls.Add(this.RunButton);
             this.FileRibbonGrouop.Id = "adxRibbonGroup_85abbbe6b4e94c7baaf9b2fcef6db489";
             this.FileRibbonGrouop.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.FileRibbonGrouop.Ribbons = AddinExpress.MSO.ADXRibbons.msrExcelWorkbook;
@@ -91,6 +94,17 @@ namespace Marv_Excel
             this.ExcelTaskPanesCollectionItem.Position = AddinExpress.XL.ADXExcelTaskPanePosition.Right;
             this.ExcelTaskPanesCollectionItem.TaskPaneClassName = "Marv_Excel.TaskPane";
             this.ExcelTaskPanesCollectionItem.UseOfficeThemeForBackground = true;
+            // 
+            // RunButton
+            // 
+            this.RunButton.Caption = "Run";
+            this.RunButton.Id = "adxRibbonButton_174592a089b64ebb85750adf9908bb3f";
+            this.RunButton.Image = 1;
+            this.RunButton.ImageList = this.IconList;
+            this.RunButton.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.RunButton.Ribbons = AddinExpress.MSO.ADXRibbons.msrExcelWorkbook;
+            this.RunButton.Size = AddinExpress.MSO.ADXRibbonXControlSize.Large;
+            this.RunButton.OnClick += new AddinExpress.MSO.ADXRibbonOnAction_EventHandler(this.RunButton_Click);
             // 
             // AddinModule
             // 
@@ -215,7 +229,14 @@ namespace Marv_Excel
             };
 
             var worksheet = this.Workbook.GetWorksheetOrNew("Input");
-            worksheet.WriteSkeleton(sheetModel);
+            worksheet.Write(sheetModel);
+        }
+
+        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
+        {
+            var worksheet = this.Workbook.GetWorksheetOrNew("Input");
+            var sheetModel = worksheet.Read();
+            var a = 1 + 1;
         }
     }
 }

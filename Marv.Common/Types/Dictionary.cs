@@ -6,7 +6,6 @@ namespace Marv.Common
     {
         public Dictionary()
         {
-            
         }
 
         public Dictionary(Dictionary<T1, Dictionary<T2, TValue>> dict)
@@ -35,6 +34,24 @@ namespace Marv.Common
                     this[key1] = new Dictionary<T2, TValue>();
                     this[key1][key2] = value;
                 }
+            }
+        }
+
+        public new Dictionary<T2, TValue> this[T1 key]
+        {
+            get
+            {
+                if (this.ContainsKey(key))
+                {
+                    return base[key];
+                }
+
+                return this[key] = new Dictionary<T2, TValue>();
+            }
+
+            set
+            {
+                base[key] = value;
             }
         }
 

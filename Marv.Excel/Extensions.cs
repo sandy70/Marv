@@ -25,7 +25,7 @@ namespace Marv_Excel
             return worksheet;
         }
 
-        public static void WriteSkeleton(this Worksheet worksheet, SheetModel sheetModel)
+        public static void Write(this Worksheet worksheet, SheetModel sheetModel)
         {
             var row = 1;
             var col = 1;
@@ -80,7 +80,7 @@ namespace Marv_Excel
                     row++;
                 }
 
-                col += (sheetModel.EndYear - sheetModel.StartYear) + 2;
+                col += (sheetModel.EndYear - sheetModel.StartYear) + 3;
             }
         }
 
@@ -95,6 +95,131 @@ namespace Marv_Excel
 
             range.Value2 = text;
             range.Font.Bold = isBold;
+        }
+
+        public static SheetModel Read(this Worksheet worksheet)
+        {
+            var sheetModel = new SheetModel();
+
+            var row = 1;
+            var col = 1;
+
+            var key = worksheet.ReadText(row, col);
+            var value = worksheet.Read(row, col + 1);
+
+            while (key != null)
+            {
+                sheetModel.SheetHeaders[key] = value;
+
+                row++;
+                key = worksheet.ReadText(row, col);
+                value = worksheet.Read(row, col + 1);
+            }
+
+            // Go to next row
+            row++;
+
+            // This row should contain the column headers.
+            var columnHeader = worksheet.ReadText(row, col);
+
+            while (columnHeader != null)
+            {
+                sheetModel.ColumnHeaders.Add(columnHeader);
+
+                col++;
+                columnHeader = worksheet.ReadText(row, col);
+            }
+
+            var fileName = sheetModel.SheetHeaders["Network File"].ToString();
+            var graph = Graph.Read(fileName);
+
+            // For the vertex blocks we work with find.
+            Range currentFind = null;
+            Range firstFind = null;
+
+            currentFind = worksheet.Cells.Find("Value");
+
+            while (currentFind != null)
+            {
+                if (firstFind == null)
+                {
+                    firstFind = currentFind;
+                }
+                else if (currentFind.Address == firstFind.Address)
+                {
+                    break;
+                }
+
+                row = currentFind.Row;
+                col = currentFind.Column;
+
+                // Get vertexKey
+                var vertexKey = worksheet.ReadText(sheetModel.SheetHeaders.Count + 2, col);
+                var vertex = graph.Vertices[vertexKey];
+
+                col++;
+                var year = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+
+                while (year != null)
+                {
+                    value = worksheet.Read(row, col);
+
+                    if (value != null)
+                    {
+                        var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex);
+                        sheetModel.ModelEvidence[Convert.ToInt32(year)][vertexKey] = evidence;
+                    }
+                    else
+                    {
+                        var evidenceArray = new double[vertex.States.Count];
+
+                        for (int i = 0; i < evidenceArray.Length; i++)
+                        {
+                            value = worksheet.Read(row + i + 1, col);
+
+                            if (value == null)
+                            {
+                                evidenceArray[i] = 0;
+                            }
+                            else
+                            {
+                                evidenceArray[i] = Convert.ToDouble(value);
+                            }
+                        }
+
+                        var evidence = new SoftEvidence
+                        {
+                            Evidence = evidenceArray
+                        };
+
+                        sheetModel.ModelEvidence[Convert.ToInt32(year)][vertexKey] = evidence;
+                    }
+
+                    col++;
+                    year = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+                }
+
+                currentFind = worksheet.Cells.FindNext(currentFind);
+            }
+
+            return sheetModel;
+        }
+
+        public static object Read(this Worksheet worksheet, int row, int col)
+        {
+            return ((Range) worksheet.Cells[row, col]).Value2;
+        }
+
+        public static string ReadText(this Worksheet worksheet, int row, int col)
+        {
+            var value = ((Range) worksheet.Cells[row, col]).Value2;
+
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value.ToString();
         }
     }
 }

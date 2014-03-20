@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using Marv.Common;
 using Marv.Common.Graph;
 
 namespace Marv_Excel
 {
     public class SheetModel
     {
-        private List<string> columnHeaders;
+        private List<string> columnHeaders = new List<string>();
         private int endYear;
+        private Dictionary<int, string, IEvidence> modelEvidence = new Dictionary<int, string, IEvidence>();
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
         private int startYear;
         private IEnumerable<Vertex> vertices;
@@ -32,6 +34,18 @@ namespace Marv_Excel
             set
             {
                 endYear = value;
+            }
+        }
+
+        public Dictionary<int, string, IEvidence> ModelEvidence
+        {
+            get
+            {
+                return modelEvidence;
+            }
+            set
+            {
+                modelEvidence = value;
             }
         }
 
