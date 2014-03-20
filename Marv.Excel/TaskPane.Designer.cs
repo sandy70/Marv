@@ -29,33 +29,35 @@ namespace Marv_Excel
         /// </summary>
         private void InitializeComponent()
         {
-            this.elementHost = new System.Windows.Forms.Integration.ElementHost();
-            this.vertexSelectionControl = new VertexSelectionControl();
+            this.ElementHost = new System.Windows.Forms.Integration.ElementHost();
+            this.VertexSelectionControl = new Marv_Excel.VertexSelectionControl();
             this.SuspendLayout();
             // 
-            // elementHost
+            // ElementHost
             // 
-            this.elementHost.Location = new System.Drawing.Point(10, 10);
-            this.elementHost.Margin = new System.Windows.Forms.Padding(0);
-            this.elementHost.Name = "elementHost";
-            this.elementHost.Size = new System.Drawing.Size(353, 501);
-            this.elementHost.TabIndex = 0;
-            this.elementHost.Child = this.vertexSelectionControl;
+            this.ElementHost.Location = new System.Drawing.Point(0, 0);
+            this.ElementHost.Margin = new System.Windows.Forms.Padding(10);
+            this.ElementHost.Name = "ElementHost";
+            this.ElementHost.Size = new System.Drawing.Size(345, 626);
+            this.ElementHost.TabIndex = 0;
+            this.ElementHost.Text = "elementHost1";
+            this.ElementHost.Child = this.VertexSelectionControl;
             // 
             // TaskPane
             // 
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.ClientSize = new System.Drawing.Size(372, 520);
-            this.Controls.Add(this.elementHost);
+            this.ClientSize = new System.Drawing.Size(369, 650);
+            this.Controls.Add(this.ElementHost);
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "TaskPane";
             this.Text = "TaskPane";
             this.SizeChanged += new System.EventHandler(this.TaskPane_SizeChanged);
             this.ResumeLayout(false);
+
         }
         #endregion
 
-        private System.Windows.Forms.Integration.ElementHost elementHost;
-        private VertexSelectionControl vertexSelectionControl;
+        public System.Windows.Forms.Integration.ElementHost ElementHost;
+        public VertexSelectionControl VertexSelectionControl;
+
     }
 }

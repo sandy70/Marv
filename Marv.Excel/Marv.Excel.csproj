@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3EAA0765-B10D-4DEE-AF68-C9543FD18C95}</ProjectGuid>
+    <ProjectGuid>{17D61DC1-D1E3-4420-90B5-89803EDC5469}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Marv_Excel</RootNamespace>
@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -40,8 +40,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph.Data">
@@ -93,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Loader\adxloader.dll.manifest" />
-    <None Include="Marv.Excel.snk" />
     <None Include="packages.config" />
     <!--<None Include="Marv.Excel.snk" /> -->
   </ItemGroup>
@@ -106,6 +104,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SheetModel.cs" />
     <Compile Include="TaskPane.cs">
       <SubType>Form</SubType>
@@ -113,7 +112,6 @@
     <Compile Include="TaskPane.Designer.cs">
       <DependentUpon>TaskPane.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VertexSelectionControl.xaml.cs">
       <DependentUpon>VertexSelectionControl.xaml</DependentUpon>
     </Compile>
@@ -127,12 +125,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="VertexSelectionControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Marv.Common.Graph\Marv.Common.Graph.csproj">
       <Project>{5ec15f8c-655c-4a46-a4cf-7af1eac94376}</Project>
       <Name>Marv.Common.Graph</Name>
@@ -141,5 +133,14 @@
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="VertexSelectionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

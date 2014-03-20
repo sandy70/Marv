@@ -17,7 +17,7 @@ namespace Marv_Excel
         {
             get
             {
-                return this.vertexSelectionControl.StartYear;
+                return this.VertexSelectionControl.StartYear;
             }
         }
 
@@ -25,7 +25,7 @@ namespace Marv_Excel
         {
             get
             {
-                return this.vertexSelectionControl.EndYear;
+                return this.VertexSelectionControl.EndYear;
             }
         }
 
@@ -33,7 +33,7 @@ namespace Marv_Excel
         {
             get
             {
-                return this.vertexSelectionControl.SelectedVertices.ToList();
+                return this.VertexSelectionControl.SelectedVertices.ToList();
             }
         }
 
@@ -41,7 +41,7 @@ namespace Marv_Excel
         {
             set
             {
-                this.vertexSelectionControl.Vertices = value;
+                this.VertexSelectionControl.Vertices = value;
             }
         }
 
@@ -50,7 +50,7 @@ namespace Marv_Excel
             InitializeComponent();
             this.Activated += TaskPane_Activated;
 
-            this.vertexSelectionControl.DoneButtonClicked += vertexSelectionControl_DoneButtonClicked;
+            this.VertexSelectionControl.DoneButtonClicked += vertexSelectionControl_DoneButtonClicked;
         }
 
         private void TaskPane_Activated(object sender, EventArgs e)
@@ -64,8 +64,8 @@ namespace Marv_Excel
 
         private void TaskPane_SizeChanged(object sender, EventArgs e)
         {
-            this.elementHost.Height = this.Height - 20;
-            this.elementHost.Width = this.Width - 20;
+            this.ElementHost.Height = this.Height - 20;
+            this.ElementHost.Width = this.Width - 20;
         }
 
         private void vertexSelectionControl_DoneButtonClicked(object sender, RoutedEventArgs e)

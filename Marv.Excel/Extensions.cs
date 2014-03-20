@@ -8,9 +8,6 @@ namespace Marv_Excel
 {
     public static class Extensions
     {
-        public const int HeaderRows = 5;
-        public const int HeaderCols = 4;
-
         public static Worksheet GetWorksheetOrNew(this Workbook workbook, string worksheetName)
         {
             Worksheet worksheet;
@@ -57,7 +54,7 @@ namespace Marv_Excel
                 worksheet.WriteValue(row, col, vertex.Key, true);
                 col++;
 
-                for (var year = sheetModel.StartYear; year < sheetModel.EndYear; year++)
+                for (var year = sheetModel.StartYear; year <= sheetModel.EndYear; year++)
                 {
                     worksheet.WriteValue(row, col, year, isText: true);
                     col++;
