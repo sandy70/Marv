@@ -305,6 +305,12 @@ namespace Marv.Common.Graph
             return this.network.GetNodeTable(vertexKey);
         }
 
+        public Vertex GetVertex(string vertexKey)
+        {
+            // Do not remove! This is for Marv.Matlab
+            return this.Vertices[vertexKey];
+        }
+
         public bool HasEdge(string srcKey, string dstKey)
         {
             var hasEdge = false;
@@ -499,6 +505,8 @@ namespace Marv.Common.Graph
                 }
 
                 graphValueTimeSeries[year] = this.Run(graphEvidence);
+
+                this.ClearEvidence();
             }
 
             return graphValueTimeSeries;
@@ -517,6 +525,20 @@ namespace Marv.Common.Graph
 
         public void SetEvidence(string vertexKey, double[] evidence)
         {
+            this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetEvidence(string vertexKey, Dictionary<string, double> vertexEvidence)
+        {
+            var vertex = this.Vertices[vertexKey];
+            var evidence = new double[vertex.States.Count];
+
+            foreach (var state in vertex.States)
+            {
+                var stateIndex = vertex.States.IndexOf(state);
+                evidence[stateIndex] = vertexEvidence[state.Key];
+            }
+
             this.network.SetSoftEvidence(vertexKey, evidence);
         }
 

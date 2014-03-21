@@ -183,6 +183,22 @@ namespace Marv_Excel
             }
         }
 
+        public Worksheet InputSheet
+        {
+            get
+            {
+                return this.Workbook.GetWorksheetOrNew("Input");
+            }
+        }
+
+        public Worksheet OutputSheet
+        {
+            get
+            {
+                return this.Workbook.GetWorksheetOrNew("Output");
+            }
+        }
+
         private void OpenButton_Click(object sender, IRibbonControl control, bool pressed)
         {
             var dialog = new OpenFileDialog
@@ -209,6 +225,8 @@ namespace Marv_Excel
 
         private void taskPane_DoneButtonClicked(object sender, EventArgs e)
         {
+            this.InputSheet.Cells.Clear();
+
             var sheetModel = new SheetModel
             {
                 SheetHeaders = new Dictionary<string, object>
@@ -217,26 +235,31 @@ namespace Marv_Excel
                     {"Start Year", this.TaskPane.StartYear},
                     {"End Year", this.TaskPane.EndYear}
                 },
+                
                 ColumnHeaders = new List<string>
                 {
                     "Section Name",
                     "Latitude",
                     "Longitude"
                 },
+
                 StartYear = this.TaskPane.StartYear,
                 EndYear = this.TaskPane.EndYear,
                 Vertices = this.TaskPane.SelectedVertices
             };
-
-            var worksheet = this.Workbook.GetWorksheetOrNew("Input");
-            worksheet.Write(sheetModel);
+            
+            sheetModel.Write(this.InputSheet);
         }
 
         private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
         {
-            var worksheet = this.Workbook.GetWorksheetOrNew("Input");
-            var sheetModel = worksheet.Read();
-            var a = 1 + 1;
+            this.OutputSheet.Cells.Clear();
+
+            var sheetModel = SheetModel.Read(this.InputSheet);
+            sheetModel.Run();
+            sheetModel.Write(this.OutputSheet);
+
+            this.OutputSheet.Activate();
         }
     }
 }

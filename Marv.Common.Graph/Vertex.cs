@@ -489,6 +489,12 @@ namespace Marv.Common.Graph
             return stdev;
         }
 
+        // Do not remove! This is for Marv.Matlab
+        public double[] GetValue()
+        {
+            return this.States.Select(state => state.Value).ToArray();
+        }
+
         public void SelectState(int index)
         {
             for (var i = 0; i < this.States.Count; i++)
