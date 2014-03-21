@@ -28,7 +28,7 @@ namespace Marv
             {
                 return this.columnIndices[columnName];
             }
-            
+
             // Column indices are 1 based.
             var columnIndex = 1;
             var value = this.sheet.GetValue(1, columnIndex);
@@ -175,8 +175,8 @@ namespace Marv
                     multiLocation.Add(new Location
                     {
                         Key = this.GetValue(rowIndex, "section inlet").ToString(),
-                        Latitude = (double)this.GetValue(rowIndex, "Latitude"),
-                        Longitude = (double)this.GetValue(rowIndex, "Longitude"),
+                        Latitude = (double) this.GetValue(rowIndex, "Latitude"),
+                        Longitude = (double) this.GetValue(rowIndex, "Longitude"),
                         Name = this.GetValue(rowIndex, "section inlet").ToString()
                     });
                 }
@@ -187,162 +187,6 @@ namespace Marv
             }
 
             return multiLocations;
-        }
-
-        private IEvidence ParseDistribution(string evidenceString, Vertex vertex)
-        {
-            var parts = evidenceString.Trim()
-                                      .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            var evidenceArray = new double[vertex.States.Count];
-
-            foreach (var part in parts)
-            {
-                var partsOfPart = part.Trim()
-                                      .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                double probability;
-
-                if (Double.TryParse(partsOfPart[1], out probability))
-                {
-                    double value;
-
-                    if (Double.TryParse(partsOfPart[0], out value))
-                    {
-                        foreach (var state in vertex.States)
-                        {
-                            if (state.Range.Bounds(value))
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var state in vertex.States)
-                        {
-                            if (state.Key == partsOfPart[0])
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    throw new Smile.SmileException("");
-                }
-            }
-
-            return new SoftEvidence
-            {
-                Evidence = evidenceArray
-            };
-        }
-
-        private IEvidence ParseRange(string evidenceString, Vertex vertex)
-        {
-            IEvidence evidence;
-
-            var parts = evidenceString.Trim()
-                                      .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            double minValue;
-            double maxValue;
-
-            if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
-            {
-                var evidenceArray = new double[vertex.States.Count];
-
-                foreach (var state in vertex.States)
-                {
-                    if (maxValue < state.Range.Min)
-                    {
-                        // do nothing
-                    }
-                    else if (minValue > state.Range.Max)
-                    {
-                        // do nothing
-                    }
-                    else
-                    {
-                        if (minValue >= state.Range.Min && minValue <= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = (state.Range.Max - minValue) / (state.Range.Max - state.Range.Min);
-                        }
-
-                        if (maxValue >= state.Range.Min && maxValue <= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = (maxValue - state.Range.Min) / (state.Range.Max - state.Range.Min);
-                        }
-
-                        if (minValue <= state.Range.Min && maxValue >= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = 1;
-                        }
-                    }
-                }
-
-                evidence = new SoftEvidence
-                {
-                    Evidence = evidenceArray
-                };
-            }
-            else
-            {
-                throw new Smile.SmileException("");
-            }
-            return evidence;
-        }
-
-        private IEvidence ParseState(string evidenceString, Vertex vertex)
-        {
-            IEvidence evidence;
-
-            var stateIndex = -1;
-
-            foreach (var state in vertex.States)
-            {
-                if (state.Key == evidenceString)
-                {
-                    stateIndex = vertex.States.IndexOf(state);
-                }
-            }
-
-            if (stateIndex >= 0)
-            {
-                evidence = new HardEvidence
-                {
-                    StateIndex = stateIndex
-                };
-            }
-            else
-            {
-                double value;
-
-                if (Double.TryParse(evidenceString, out value))
-                {
-                    var evidenceArray = new double[vertex.States.Count];
-
-                    foreach (var state in vertex.States)
-                    {
-                        if (state.Range.Bounds(value))
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = 1;
-                        }
-                    }
-
-                    evidence = new SoftEvidence
-                    {
-                        Evidence = evidenceArray
-                    };
-                }
-                else
-                {
-                    throw new Smile.SmileException("");
-                }
-            }
-            return evidence;
         }
     }
 }

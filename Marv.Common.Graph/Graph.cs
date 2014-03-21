@@ -175,7 +175,7 @@ namespace Marv.Common.Graph
             return graphValue;
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer, Dictionary<string, IEvidence> graphEvidence = null)
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer, Dictionary<string, string, double> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
@@ -549,14 +549,6 @@ namespace Marv.Common.Graph
             foreach (var vertexKey in graphEvidence.Keys)
             {
                 this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
-            }
-        }
-
-        public void SetEvidence(Dictionary<string, IEvidence> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                graphEvidence[vertexKey].Set(this, vertexKey);
             }
         }
 
