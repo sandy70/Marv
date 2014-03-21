@@ -135,7 +135,10 @@ namespace Marv.Common.Graph
 
         public ObservableCollection<string> Groups
         {
-            get { return this.groups; }
+            get
+            {
+                return this.groups;
+            }
             set
             {
                 this.groups = value;
@@ -145,7 +148,10 @@ namespace Marv.Common.Graph
 
         public string HeaderOfGroup
         {
-            get { return this.headerOfGroup; }
+            get
+            {
+                return this.headerOfGroup;
+            }
             set
             {
                 this.headerOfGroup = value;
@@ -327,7 +333,10 @@ namespace Marv.Common.Graph
 
         public ModelCollection<State> States
         {
-            get { return this.states; }
+            get
+            {
+                return this.states;
+            }
             set
             {
                 this.states = value;
@@ -420,13 +429,13 @@ namespace Marv.Common.Graph
 
             foreach (var state in this.States)
             {
-                var mid = (state.Range.Min + state.Range.Max) / 2;
+                var mid = (state.Range.Min + state.Range.Max)/2;
 
-                numer += mid * vertexValue[state.Key];
+                numer += mid*vertexValue[state.Key];
                 denom += vertexValue[state.Key];
             }
 
-            return numer / denom;
+            return numer/denom;
         }
 
         public double GetMean(double[] evidence)
@@ -477,16 +486,26 @@ namespace Marv.Common.Graph
 
                 foreach (var state in this.States)
                 {
-                    var x = (state.Range.Min + state.Range.Max) / 2;
+                    var x = (state.Range.Min + state.Range.Max)/2;
                     var Px = vertexValue[state.Key];
 
-                    sum += Math.Pow(x - mu, 2) * Px;
+                    sum += Math.Pow(x - mu, 2)*Px;
                 }
 
                 stdev = Math.Sqrt(sum);
             }
 
             return stdev;
+        }
+
+        public double GetStatistics(string statisticsKey, IVertexValueComputer vertexValueComputer)
+        {
+            if (!this.Statistics.ContainsKey(statisticsKey))
+            {
+                this.Statistics[statisticsKey] = vertexValueComputer.Compute(this, this.Belief);
+            }
+
+            return this.Statistics[statisticsKey];
         }
 
         // Do not remove! This is for Marv.Matlab
@@ -511,27 +530,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public IEvidence ToEvidence()
+        public Dictionary<string, double> ToEvidence()
         {
-            var selectedStateIndex = this.GetSelectedStateIndex();
-            IEvidence evidence;
-
-            if (selectedStateIndex >= 0)
-            {
-                evidence = new HardEvidence
-                {
-                    StateIndex = selectedStateIndex
-                };
-            }
-            else
-            {
-                evidence = new SoftEvidence
-                {
-                    Evidence = this.States.Select(x => x.Value).ToArray()
-                };
-            }
-
-            return evidence;
+            return this.States.ToDictionary(state => state.Key, state => state.Value);
         }
 
         public override string ToString()
@@ -542,16 +543,6 @@ namespace Marv.Common.Graph
         public void UpdateMostProbableState()
         {
             this.MostProbableState = this.States.MaxBy(state => state.Value);
-        }
-
-        public double GetStatistics(string statisticsKey, IVertexValueComputer vertexValueComputer)
-        {
-            if (!this.Statistics.ContainsKey(statisticsKey))
-            {
-                this.Statistics[statisticsKey] = vertexValueComputer.Compute(this, this.Belief);
-            }
-
-            return this.Statistics[statisticsKey];
         }
     }
 }

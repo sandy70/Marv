@@ -142,14 +142,12 @@ namespace Marv
 
             if (e.Vertex.SelectedState != e.State)
             {
-                var evidence = new HardEvidence
-                {
-                    StateIndex = vertex.States.IndexOf(e.State)
-                };
+                var vertexEvidence = new Dictionary<string, double>();
+                vertexEvidence[e.State.Key] = 1;
 
                 try
                 {
-                    graph.Value = graph.Run(vertex.Key, evidence);
+                    graph.Value = graph.Run(vertex.Key, vertexEvidence);
                 }
                 catch (Smile.SmileException)
                 {

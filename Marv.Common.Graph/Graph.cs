@@ -436,9 +436,9 @@ namespace Marv.Common.Graph
             return graphValue;
         }
 
-        public Dictionary<string, string, double> Run(string vertexKey, IEvidence evidence)
+        public Dictionary<string, string, double> Run(string vertexKey, Dictionary<string, double> vertexEvidence)
         {
-            evidence.Set(this, vertexKey);
+            this.SetEvidence(vertexKey, vertexEvidence);
             return this.GetNetworkValue();
         }
 
@@ -536,7 +536,15 @@ namespace Marv.Common.Graph
             foreach (var state in vertex.States)
             {
                 var stateIndex = vertex.States.IndexOf(state);
-                evidence[stateIndex] = vertexEvidence[state.Key];
+
+                if (vertexEvidence.ContainsKey(state.Key))
+                {
+                    evidence[stateIndex] = vertexEvidence[state.Key];
+                }
+                else
+                {
+                    evidence[stateIndex] = 0;
+                }
             }
 
             this.network.SetSoftEvidence(vertexKey, evidence);
