@@ -161,10 +161,8 @@ namespace Marv_Excel
             sheetModel.Graph = Graph.Read(fileName);
 
             // For the vertex blocks we work with find.
-            Range currentFind = null;
             Range firstFind = null;
-
-            currentFind = worksheet.Cells.Find("Value");
+            Range currentFind = worksheet.Cells.Find("Value");
 
             while (currentFind != null)
             {
@@ -194,11 +192,10 @@ namespace Marv_Excel
                     if (value != null)
                     {
                         var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex);
-                        sheetModel.ModelEvidence[Convert.ToInt32(year)][vertexKey] = evidence;
+                        sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
                     }
                     else
                     {
-                        var evidenceArray = new double[vertex.States.Count];
                         var evidence = new Dictionary<string, double>();
 
                         foreach (var state in vertex.States)
@@ -217,7 +214,7 @@ namespace Marv_Excel
                             }
                         }
 
-                        sheetModel.ModelEvidence[Convert.ToInt32(year)][vertexKey] = evidence;
+                        sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
                     }
 
                     col++;

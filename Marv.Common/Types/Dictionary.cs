@@ -68,23 +68,6 @@ namespace Marv.Common
     {
         public Dictionary<T3, TValue> this[T1 key1, T2 key2]
         {
-            get
-            {
-                if (this.ContainsKey(key1))
-                {
-                    if (this[key1].ContainsKey(key2))
-                    {
-                        return this[key1][key2];
-                    }
-
-                    return this[key1][key2] = new Dictionary<T3, TValue>();
-                }
-
-                this[key1] = new Dictionary<T2, T3, TValue>();
-
-                return this[key1][key2] = new Dictionary<T3, TValue>();
-            }
-
             set
             {
                 if (this.ContainsKey(key1))
