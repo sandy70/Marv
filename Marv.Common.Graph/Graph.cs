@@ -442,13 +442,13 @@ namespace Marv.Common.Graph
             return this.GetNetworkValue();
         }
 
-        public Dictionary<string, string, double> Run(Dictionary<string, IEvidence> graphEvidence)
+        public Dictionary<string, string, double> Run(Dictionary<string, string, double> graphEvidence)
         {
             this.SetEvidence(graphEvidence);
             return this.GetNetworkValue();
         }
 
-        public Dictionary<int, string, string, double> Run(Dictionary<string, IEvidence> graphEvidence, int startYear, int endYear)
+        public Dictionary<int, string, string, double> Run(Dictionary<string, string, double> graphEvidence, int startYear, int endYear)
         {
             var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
@@ -465,10 +465,7 @@ namespace Marv.Common.Graph
 
                         var lastVertexValue = lastGraphValue[srcVertexKey];
 
-                        graphEvidence[dstVertexKey] = new SoftEvidence
-                        {
-                            Evidence = lastVertexValue.Values.ToArray()
-                        };
+                        graphEvidence[dstVertexKey] = lastVertexValue;
                     }
                 }
 
@@ -478,13 +475,13 @@ namespace Marv.Common.Graph
             return graphValueTimeSeries;
         }
 
-        public Dictionary<int, string, string, double> Run(Dictionary<int, string, IEvidence> graphEvidenceTimeSeries, int startYear, int endYear)
+        public Dictionary<int, string, string, double> Run(Dictionary<int, string, string, double> modelEvidence, int startYear, int endYear)
         {
             var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
             for (var year = startYear; year <= endYear; year++)
             {
-                var graphEvidence = graphEvidenceTimeSeries[year];
+                var graphEvidence = modelEvidence[year];
 
                 // If this is not the start year, then add the looped evidences
                 if (year > startYear)
@@ -497,10 +494,7 @@ namespace Marv.Common.Graph
 
                         var lastVertexValue = lastGraphValue[srcVertexKey];
 
-                        graphEvidence[dstVertexKey] = new SoftEvidence
-                        {
-                            Evidence = lastVertexValue.Values.ToArray()
-                        };
+                        graphEvidence[dstVertexKey] = lastVertexValue;
                     }
                 }
 
@@ -548,6 +542,14 @@ namespace Marv.Common.Graph
             }
 
             this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetEvidence(Dictionary<string, string, double> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
+            }
         }
 
         public void SetEvidence(Dictionary<string, IEvidence> graphEvidence)

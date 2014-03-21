@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
-using System;
 
 namespace Marv_Excel
 {
@@ -11,7 +11,7 @@ namespace Marv_Excel
         private List<string> columnHeaders = new List<string>();
         private int endYear;
         private Graph graph;
-        private Dictionary<int, string, IEvidence> modelEvidence = new Dictionary<int, string, IEvidence>();
+        private Dictionary<int, string, string, double> modelEvidence = new Dictionary<int, string, string, double>();
         private Dictionary<int, string, string, double> modelValue;
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
         private int startYear;
@@ -53,12 +53,13 @@ namespace Marv_Excel
             }
         }
 
-        public Dictionary<int, string, IEvidence> ModelEvidence
+        public Dictionary<int, string, string, double> ModelEvidence
         {
             get
             {
                 return modelEvidence;
             }
+
             set
             {
                 modelEvidence = value;
@@ -198,25 +199,23 @@ namespace Marv_Excel
                     else
                     {
                         var evidenceArray = new double[vertex.States.Count];
+                        var evidence = new Dictionary<string, double>();
 
-                        for (var i = 0; i < evidenceArray.Length; i++)
+                        foreach (var state in vertex.States)
                         {
+                            var i = vertex.States.IndexOf(state);
+
                             value = worksheet.Read(row + i + 1, col);
 
                             if (value == null)
                             {
-                                evidenceArray[i] = 0;
+                                evidence[state.Key] = 0;
                             }
                             else
                             {
-                                evidenceArray[i] = Convert.ToDouble(value);
+                                evidence[state.Key] = Convert.ToDouble(value);
                             }
                         }
-
-                        var evidence = new SoftEvidence
-                        {
-                            Evidence = evidenceArray
-                        };
 
                         sheetModel.ModelEvidence[Convert.ToInt32(year)][vertexKey] = evidence;
                     }
@@ -305,7 +304,6 @@ namespace Marv_Excel
                             worksheet.WriteValue(row, col, this.ModelValue[year][vertex.Key][state.Key], isText: true);
                             row++;
                         }
-                        
                     }
 
                     col++;

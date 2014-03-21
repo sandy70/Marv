@@ -1,4 +1,6 @@
-﻿namespace Marv.Common.Graph
+﻿using System.Collections.Generic;
+
+namespace Marv.Common.Graph
 {
     public abstract class EvidenceString
     {
@@ -9,6 +11,6 @@
             this._string = aString;
         }
 
-        public abstract IEvidence Parse(Vertex vertex);
+        public abstract Dictionary<string, double> Parse(Vertex vertex);
     }
 }

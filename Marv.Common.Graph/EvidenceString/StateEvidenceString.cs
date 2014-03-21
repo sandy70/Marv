@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Smile;
 
 namespace Marv.Common.Graph
 {
@@ -9,26 +12,13 @@ namespace Marv.Common.Graph
         {
         }
 
-        public override IEvidence Parse(Vertex vertex)
+        public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            IEvidence evidence;
+            var evidence = new Dictionary<string, double>();
 
-            var stateIndex = -1;
-
-            foreach (var state in vertex.States)
+            if (vertex.States.Count(state => state.Key == this._string) == 1)
             {
-                if (state.Key == this._string)
-                {
-                    stateIndex = vertex.States.IndexOf(state);
-                }
-            }
-
-            if (stateIndex >= 0)
-            {
-                evidence = new HardEvidence
-                {
-                    StateIndex = stateIndex,
-                };
+                evidence[this._string] = 1;
             }
             else
             {
@@ -36,26 +26,17 @@ namespace Marv.Common.Graph
 
                 if (Double.TryParse(this._string, out value))
                 {
-                    var evidenceArray = new double[vertex.States.Count];
-
-                    foreach (var state in vertex.States)
+                    foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
                     {
-                        if (state.Range.Bounds(value))
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = 1;
-                        }
+                        evidence[state.Key] = 1;
                     }
-
-                    evidence = new SoftEvidence
-                    {
-                        Evidence = evidenceArray,
-                    };
                 }
                 else
                 {
-                    throw new Smile.SmileException("");
+                    throw new SmileException("");
                 }
             }
+
             return evidence;
         }
     }

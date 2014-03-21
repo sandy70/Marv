@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Smile;
 
 namespace Marv.Common.Graph
 {
@@ -10,18 +12,23 @@ namespace Marv.Common.Graph
         {
         }
 
-        public override IEvidence Parse(Vertex vertex)
+        public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            var parts = this._string
-                            .Trim()
-                            .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            var evidence = vertex.ToEvidence();
 
-            var evidenceArray = new double[vertex.States.Count];
+            foreach (var stateKey in evidence.Keys)
+            {
+                evidence[stateKey] = 0;
+            }
+
+            var parts = this._string
+                .Trim()
+                .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var part in parts)
             {
                 var partsOfPart = part.Trim()
-                                      .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                    .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
                 double probability;
 
@@ -31,35 +38,26 @@ namespace Marv.Common.Graph
 
                     if (Double.TryParse(partsOfPart[0], out value))
                     {
-                        foreach (var state in vertex.States)
+                        foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
                         {
-                            if (state.Range.Bounds(value))
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
+                            evidence[state.Key] += probability;
                         }
                     }
                     else
                     {
-                        foreach (var state in vertex.States)
+                        foreach (var state in vertex.States.Where(state => state.Key == partsOfPart[0]))
                         {
-                            if (state.Key == partsOfPart[0])
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
+                            evidence[state.Key] += probability;
                         }
                     }
                 }
                 else
                 {
-                    throw new Smile.SmileException("");
+                    throw new SmileException("");
                 }
             }
 
-            return new SoftEvidence
-            {
-                Evidence = evidenceArray,
-            };
+            return evidence;
         }
     }
 }

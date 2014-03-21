@@ -10,14 +10,13 @@ namespace Marv.Common.Graph
             {
                 return new DistributionEvidenceString(evidenceString);
             }
-            else if (evidenceString.Contains(':'))
+
+            if (evidenceString.Contains(':'))
             {
                 return new RangeEvidenceString(evidenceString);
             }
-            else
-            {
-                return new StateEvidenceString(evidenceString);
-            }
+
+            return new StateEvidenceString(evidenceString);
         }
     }
 }
