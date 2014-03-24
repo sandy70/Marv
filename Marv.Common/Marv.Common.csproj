@@ -79,6 +79,8 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Kvp.cs" />
+    <Compile Include="ModelBase.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />
