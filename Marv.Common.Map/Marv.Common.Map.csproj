@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="Countries.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="GeoLine.cs" />
+    <Compile Include="GeoPoint.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="LocationCollection.cs" />
     <Compile Include="LocationRect.cs" />

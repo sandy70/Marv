@@ -10,10 +10,10 @@ namespace Marv.Common
     public class BooleanToColorConverter : DependencyObject, IValueConverter
     {
         public static readonly DependencyProperty FalseColorProperty =
-        DependencyProperty.Register("FalseColor", typeof(Color), typeof(BooleanToColorConverter), new PropertyMetadata(Colors.Black));
+        DependencyProperty.Register("FalseBrush", typeof(Color), typeof(BooleanToColorConverter), new PropertyMetadata(Colors.Black));
 
         public static readonly DependencyProperty TrueColorProperty =
-        DependencyProperty.Register("TrueColor", typeof(Color), typeof(BooleanToColorConverter), new PropertyMetadata(Colors.White));
+        DependencyProperty.Register("TrueBrush", typeof(Color), typeof(BooleanToColorConverter), new PropertyMetadata(Colors.White));
 
         public Color FalseColor
         {

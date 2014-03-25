@@ -1,9 +1,118 @@
 ﻿<Window x:Class="Marv.Input.MainWindow"
-                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                Title="MainWindow" Height="350" Width="525">
-        <telerik:RadGridView>
-            
-        </telerik:RadGridView>
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:Marv.Input"
+        xmlns:marv="http://dnvgl.com/marv"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow"
+        Name="Root">
+    <Window.Resources>
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+    </Window.Resources>
+
+    <Canvas Background="Red">
+        <StackPanel Background="White"
+                    Orientation="Vertical">
+            <StackPanel.Resources>
+                <marv:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
+            </StackPanel.Resources>
+
+            <!-- Title -->
+            <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarger}}"
+                                  FontWeight="Bold"
+                                  Margin="{Binding Source={StaticResource MarginSmall}}"
+                                  Text="{Binding ElementName=Root, Path=Vertex.Name}"
+                                  VerticalAlignment="Center" />
+
+            <!-- Accent -->
+            <Border
+                Background="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource IsHeaderToBackground}}"
+                Height="5" Width="Auto" />
+
+            <!-- States -->
+            <ItemsControl Name="StatesControl"
+                          Grid.IsSharedSizeScope="True"
+                          ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
+                          Margin="{Binding Source={StaticResource MarginSmall}}"
+                          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="FirstColumn" Width="Auto" />
+                                <ColumnDefinition SharedSizeGroup="SecondColumn" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Margin="5"
+                                       Text="{Binding Path=Key}"
+                                       TextAlignment="Right"
+                                       TextTrimming="CharacterEllipsis" />
+
+                            <marv:SliderProgressBar Grid.Column="1"
+                                                    IsEditable="{Binding IsEnabled, ElementName=Root}"
+                                                    Margin="1"
+                                                    SliderForeground="#20aeff"
+                                                    Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
+                                <i:Interaction.Behaviors>
+                                    <local:SliderProgressBarBehavior />
+                                </i:Interaction.Behaviors>
+                            </marv:SliderProgressBar>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Most Probable State -->
+            <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
+                  Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Margin="5"
+                           Text="{Binding ElementName=Root, Path=Vertex.MostProbableState.Key}"
+                           TextAlignment="Right"
+                           TextTrimming="CharacterEllipsis" />
+
+                <marv:SliderProgressBar Grid.Column="1"
+                                        IsEditable="{Binding IsEnabled, ElementName=Root}"
+                                        Margin="1"
+                                        SliderForeground="#20aeff"
+                                        Width="Auto"
+                                        Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
+                    <i:Interaction.Behaviors>
+                        <local:SliderProgressBarBehavior />
+                    </i:Interaction.Behaviors>
+                </marv:SliderProgressBar>
+            </Grid>
+
+            <!-- Units -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                           FontWeight="Bold"
+                           Margin="{Binding Source={StaticResource MarginSmall}}"
+                           Text="Units" />
+
+                <marv:EditableTextBox Grid.Column="1"
+                                      FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                                      Margin="{Binding Source={StaticResource MarginSmall}}"
+                                      Text="{Binding ElementName=Root, Path=Vertex.Units}" />
+            </Grid>
+
+            <!-- Description -->
+            <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
+                                  Margin="{Binding Source={StaticResource MarginSmall}}"
+                                  Text="{Binding ElementName=Root, Path=Vertex.Description}"
+                                  Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
+        </StackPanel>
+    </Canvas>
 </Window>

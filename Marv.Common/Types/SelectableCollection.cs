@@ -19,79 +19,11 @@ namespace Marv.Common
         {
         }
 
-        public bool IsEnabled
-        {
-            get
-            {
-                return this.isEnabled;
-            }
-
-            set
-            {
-                if (value != this.isEnabled)
-                {
-                    this.isEnabled = value;
-                    this.RaisePropertyChanged("IsEnabled");
-                }
-            }
-        }
-
-        public bool IsSelected
-        {
-            get
-            {
-                return this.isSelected;
-            }
-
-            set
-            {
-                if (value != this.isSelected)
-                {
-                    this.isSelected = value;
-                    this.RaisePropertyChanged("IsSelected");
-                }
-            }
-        }
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                if (value != this.key)
-                {
-                    this.key = value;
-                    this.RaisePropertyChanged("Key");
-                }
-            }
-        }
-
         public IEnumerable<string> Keys
         {
             get
             {
                 return this.dictionary.Keys;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-                    this.RaisePropertyChanged("Name");
-                }
             }
         }
 
@@ -150,14 +82,82 @@ namespace Marv.Common
             }
         }
 
-        public bool ContainsKey(string key)
+        public bool IsEnabled
         {
-            return this.dictionary.ContainsKey(key);
+            get
+            {
+                return this.isEnabled;
+            }
+
+            set
+            {
+                if (value != this.isEnabled)
+                {
+                    this.isEnabled = value;
+                    this.RaisePropertyChanged("IsEnabled");
+                }
+            }
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return this.isSelected;
+            }
+
+            set
+            {
+                if (value != this.isSelected)
+                {
+                    this.isSelected = value;
+                    this.RaisePropertyChanged("IsSelected");
+                }
+            }
+        }
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value != this.key)
+                {
+                    this.key = value;
+                    this.RaisePropertyChanged("Key");
+                }
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value != this.name)
+                {
+                    this.name = value;
+                    this.RaisePropertyChanged("Name");
+                }
+            }
         }
 
         protected void RaisePropertyChanged(string propertyName)
         {
             base.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return this.dictionary.ContainsKey(key);
         }
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 
 namespace Marv.Common
 {
-    public class ModelCollection<T> : ObservableCollection<T>, IModel where T : class, IModel
+    public class ModelCollection<T> : ObservableCollection<T>, IModel where T : IModel
     {
         private bool isEnabled;
         private bool isSelected;

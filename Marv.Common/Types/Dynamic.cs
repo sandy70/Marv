@@ -15,21 +15,12 @@ namespace Marv.Common
         {
             get
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                if (!this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
                 {
-                    if (dictionary.ContainsKey(name))
-                    {
-                        return dictionary[name];
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return this.dictionary.ContainsKey(name) ? this.dictionary[name] : null;
                 }
-                else
-                {
-                    return this.GetType().GetProperty(name).GetValue(this);
-                }
+
+                return this.GetType().GetProperty(name).GetValue(this);
             }
 
             set
@@ -47,14 +38,14 @@ namespace Marv.Common
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return this.dictionary.Keys.AsEnumerable<string>();
+            return this.dictionary.Keys.AsEnumerable();
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
             var name = (string)indexes[0];
 
-            if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+            if (this.GetType().GetProperties().Count(info => info.Name.Equals(name)) == 0)
             {
                 if (dictionary.ContainsKey(name))
                 {

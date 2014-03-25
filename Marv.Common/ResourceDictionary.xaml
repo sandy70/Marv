@@ -24,6 +24,7 @@
     <marv:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
     <marv:NullToVisibilityConverter x:Key="NullToVisibility" />
 
+    <system:Double x:Key="FontSizeMedium">12</system:Double>
     <system:Double x:Key="FontSizeLarge">14</system:Double>
     <system:Double x:Key="FontSizeLarger">16</system:Double>
     <system:Double x:Key="FontSizeLargest">18</system:Double>

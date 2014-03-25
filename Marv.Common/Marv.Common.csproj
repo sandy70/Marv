@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\BooleanNotConverter.cs" />
+    <Compile Include="Converters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\BooleanToColorConverter.cs" />
     <Compile Include="Converters\BooleanToStringConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -79,8 +80,7 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="Kvp.cs" />
-    <Compile Include="ModelBase.cs" />
+    <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />

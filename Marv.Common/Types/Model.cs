@@ -1,26 +1,19 @@
-﻿using System.ComponentModel;
-
-namespace Marv.Common
+﻿namespace Marv.Common
 {
-    public interface IModel : INotifyPropertyChanged
+    public interface IModel
     {
         bool IsEnabled { get; set; }
-
         bool IsSelected { get; set; }
-
         string Key { get; set; }
-
         string Name { get; set; }
     }
 
-    public class Model : IModel
+    public class Model : NotifyPropertyChanged, IModel
     {
         private bool isEnabled;
         private bool isSelected;
         private string key = "";
         private string name = "";
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsEnabled
         {
@@ -87,14 +80,6 @@ namespace Marv.Common
                     this.name = value;
                     this.RaisePropertyChanged("Name");
                 }
-            }
-        }
-
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

@@ -522,6 +522,14 @@ namespace Marv.Common.Graph
             }
         }
 
+        public void SelectState(State aState)
+        {
+            foreach (var state in this.States)
+            {
+                state.Value = state == aState ? 1 : 0;
+            }
+        }
+
         public void SetValueToZero()
         {
             foreach (var state in this.States)
