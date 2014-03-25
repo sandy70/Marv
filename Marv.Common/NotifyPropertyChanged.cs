@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class ModelBase : INotifyPropertyChanged
+    public class NotifyPropertyChanged : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
