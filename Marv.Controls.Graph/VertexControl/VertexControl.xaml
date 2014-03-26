@@ -54,12 +54,12 @@
                                TextTrimming="CharacterEllipsis" />
 
                     <marv:SliderProgressBar Grid.Column="1"
-                                            IsEditable="{Binding IsEnabled, ElementName=Root}"
+                                            IsEditable="{Binding ElementName=Root, Path=IsEditable}"
                                             Margin="1"
                                             SliderForeground="#20aeff"
                                             Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
                         <i:Interaction.Behaviors>
-                            <local:SliderProgressBarBehaviorNew />
+                            <local:SliderProgressBarBehavior />
                         </i:Interaction.Behaviors>
                     </marv:SliderProgressBar>
                 </Grid>
@@ -82,7 +82,7 @@
                    TextTrimming="CharacterEllipsis" />
 
         <marv:SliderProgressBar Grid.Column="1"
-                                IsEditable="{Binding IsEnabled, ElementName=Root}"
+                                IsEditable="False"
                                 Margin="1"
                                 SliderForeground="#20aeff"
                                 Width="Auto"
@@ -136,7 +136,7 @@
                                          Margin="{Binding Source={StaticResource MarginSmallest}}"
                                          Source="{Binding ImageSource}">
                     <i:Interaction.Behaviors>
-                        <local:VertexControlToolbarButtonClickBehavior />
+                        <local:ToolbarButtonClickBehavior />
                     </i:Interaction.Behaviors>
                 </marv:SurfaceImageButton>
             </DataTemplate>

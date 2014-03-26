@@ -75,12 +75,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DiagramPartBehavior.cs" />
-    <Compile Include="GraphControl.xaml.cs">
+    <Compile Include="GraphControl\DiagramPartBehavior.cs" />
+    <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GraphControlEventArgs.cs" />
-    <Compile Include="GraphControlVertexControlBehavior.cs" />
+    <Compile Include="GraphControl\VertexControlBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -94,17 +94,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SliderProgressBarBehavior.cs" />
-    <Compile Include="SliderProgressBarBehaviorNew.cs" />
-    <Compile Include="StatesControl.xaml.cs">
-      <DependentUpon>StatesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StatesControlBehavior.cs" />
-    <Compile Include="ToolbarButtonClickBehavior.cs" />
+    <Compile Include="VertexControl\SliderProgressBarBehavior.cs" />
     <Compile Include="VertexControl\VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VertexControl\VertexControlToolbarButtonClickBehavior.cs" />
+    <Compile Include="VertexControl\ToolbarButtonClickBehavior.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -137,11 +131,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="GraphControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="StatesControl.xaml">
+    <Page Include="GraphControl\GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

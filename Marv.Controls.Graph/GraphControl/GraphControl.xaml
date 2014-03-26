@@ -62,13 +62,14 @@
                         <Setter.Value>
                             <DataTemplate>
                                 <local:VertexControl Background="#DDDDDD"
+                                                     IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
                                     </local:VertexControl.Effect>
                                     
                                     <i:Interaction.Behaviors>
-                                        <local:GraphControlVertexControlBehavior />
+                                        <local:VertexControlBehavior />
                                     </i:Interaction.Behaviors>
                                 </local:VertexControl>
                             </DataTemplate>

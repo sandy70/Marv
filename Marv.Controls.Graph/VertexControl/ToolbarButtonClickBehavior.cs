@@ -6,7 +6,7 @@ using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
 {
-    internal class VertexControlToolbarButtonClickBehavior : Behavior<Button>
+    internal class ToolbarButtonClickBehavior : Behavior<Button>
     {
         protected override void OnAttached()
         {
@@ -19,10 +19,16 @@ namespace Marv.Controls.Graph
             var command = this.AssociatedObject.DataContext as Command<Vertex>;
             
             var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
-            
-            command.Excecute(vertexControl.Vertex);
+            var vertex = vertexControl.Vertex;
+
+            command.Excecute(vertex);
 
             vertexControl.RaiseCommandExecuted(command);
+
+            if (command == VertexCommands.VertexLockCommand && vertex.IsLocked)
+            {
+                vertexControl.RaiseEvidenceEntered();
+            }
         }
     }
 }
