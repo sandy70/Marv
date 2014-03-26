@@ -61,118 +61,16 @@
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <!-- Vertex -->
-                                <Border Background="#DDDDDD"
-                                        Width="250">
-                                    <Border.Resources>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="FontFamily" Value="Segoe UI" />
-                                            <Setter Property="Foreground" Value="Black" />
-                                            <Setter Property="Background" Value="#DDDDDD" />
-                                        </Style>
-
-                                        <Style TargetType="telerik:RadProgressBar">
-                                            <Setter Property="Foreground" Value="#20aeff" />
-                                            <Setter Property="Background" Value="#686868" />
-                                        </Style>
-                                    </Border.Resources>
-
-                                    <Border.Effect>
+                                <local:VertexControl Background="#DDDDDD"
+                                                     Vertex="{Binding}">
+                                    <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
-                                    </Border.Effect>
-
-                                    <!-- This is the vertex -->
-                                    <StackPanel Orientation="Vertical"
-                                                Visibility="Visible">
-
-                                        <!-- Title -->
-                                        <marv:EditableTextBox Grid.Column="0"
-                                                                FontSize="16"
-                                                                FontWeight="Bold"
-                                                                Foreground="Black"
-                                                                Margin="5"
-                                                                Text="{Binding Name, Mode=TwoWay}"
-                                                                VerticalAlignment="Center" />
-
-                                        <!-- Header Accent -->
-                                        <Border Background="{Binding IsHeader, Converter={StaticResource ResourceKey=IsHeaderToColor}}"
-                                                Height="5"
-                                                Margin="5,0,5,0" />
-
-                                        <!-- Static Text "Certainty" -->
-                                        <Grid Margin="10">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition Width="100" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock Grid.Column="0"
-                                                        FontSize="10"
-                                                        MinHeight="15"
-                                                        Text="" />
-
-                                            <TextBlock Grid.Column="1"
-                                                        FontSize="10"
-                                                        FontWeight="Bold"
-                                                        Text="Certainty" />
-                                        </Grid>
-
-                                        <!-- States -->
-                                        <local:StatesControl x:Name="StatesControl"
-                                                            IsEditable="{Binding IsLocked, Converter={StaticResource ResourceKey=BooleanNotConverter}, Mode=TwoWay}"
-                                                            IsExpanded="{Binding IsExpanded}"
-                                                            Margin="10"
-                                                            MostProbableState="{Binding MostProbableState}"
-                                                            SliderForeground="{Binding IsEvidenceEntered, Converter={StaticResource ResourceKey=IsEvidenceEnteredToColor}}"
-                                                            States="{Binding States}"
-                                                            StatesFontSize="12">
-                                        </local:StatesControl>
-
-                                        <!-- Units -->
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="Black"
-                                                        FontSize="14"
-                                                        Margin="10"
-                                                        Text="Units:" />
-
-                                            <marv:EditableTextBox Foreground="Black"
-                                                                    FontSize="14"
-                                                                    Margin="10"
-                                                                    Text="{Binding Units, Mode=TwoWay}" />
-                                        </StackPanel>
-
-                                        <!-- Description -->
-                                        <marv:EditableTextBox Foreground="Black"
-                                                            FontSize="14"
-                                                            Margin="10"
-                                                            Text="{Binding Description}"
-                                                            Visibility="{Binding IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityConverter}}" />
-
-                                        <!-- Toolbar -->
-                                        <ItemsControl ItemsSource="{Binding Commands}"
-                                                      Margin="2"
-                                                      Visibility="{Binding IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel HorizontalAlignment="Center"
-                                                                Orientation="Horizontal" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <marv:SurfaceImageButton Height="40" Width="40"
-                                                                              Margin="2"
-                                                                              Source="{Binding ImageSource}">
-                                                        <i:Interaction.Behaviors>
-                                                            <local:ToolbarButtonClickBehavior />
-                                                        </i:Interaction.Behaviors>
-                                                    </marv:SurfaceImageButton>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </Border>
+                                    </local:VertexControl.Effect>
+                                    
+                                    <i:Interaction.Behaviors>
+                                        <local:GraphControlVertexControlBehavior />
+                                    </i:Interaction.Behaviors>
+                                </local:VertexControl>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

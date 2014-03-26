@@ -1,6 +1,8 @@
-﻿using Marv.Common;
+﻿using System;
+using Marv.Common;
 using Marv.Common.Graph;
 using System.Windows;
+using Marv.Controls.Graph;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -26,6 +28,7 @@ namespace Marv.Input
                 Key = "Vertex",
                 Name = "My Vertex",
                 IsExpanded = true,
+                IsSelected = true,
                 Units = "My Units",
                 Description = "This is some random long description for this vertex. This will contain long sentences even running in paragraphs.",
 
@@ -52,6 +55,30 @@ namespace Marv.Input
             };
 
             this.Vertex.UpdateMostProbableState();
+
+            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
+        }
+
+        private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
+        {
+            if (command == VertexCommands.VertexLockCommand)
+            {
+                var vertexControl = sender as VertexControl;
+
+                if (vertexControl != null)
+                {
+                    var vertex = vertexControl.Vertex;
+
+                    if (vertex.IsLocked)
+                    {
+                        Console.WriteLine("Locked");
+                    }
+                    else
+                    {
+                        Console.WriteLine("UnLocked");
+                    }
+                }
+            }
         }
 
         public Vertex Vertex

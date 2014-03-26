@@ -80,6 +80,7 @@
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GraphControlEventArgs.cs" />
+    <Compile Include="GraphControlVertexControlBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -94,11 +95,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SliderProgressBarBehavior.cs" />
+    <Compile Include="SliderProgressBarBehaviorNew.cs" />
     <Compile Include="StatesControl.xaml.cs">
       <DependentUpon>StatesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="StatesControlBehavior.cs" />
     <Compile Include="ToolbarButtonClickBehavior.cs" />
+    <Compile Include="VertexControl\VertexControl.xaml.cs">
+      <DependentUpon>VertexControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VertexControl\VertexControlToolbarButtonClickBehavior.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -138,6 +144,10 @@
     <Page Include="StatesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VertexControl\VertexControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,7 +12,7 @@ using Marv.Common.Graph;
 
 namespace Marv.Input
 {
-    internal class SliderProgressBarBehavior : Behavior<SliderProgressBar>
+    internal class SliderProgressBarBehaviorNew : Behavior<SliderProgressBar>
     {
         protected override void OnAttached()
         {

@@ -15,6 +15,29 @@ namespace Marv.Common.Graph
             // VertexCommand.VertexLockCommand, VertexCommand.VertexClearCommand
         };
 
+        private ObservableCollection<Command<Vertex>> commandsNew = new ObservableCollection<Command<Vertex>>
+        {
+            VertexCommands.VertexExpandCommand,
+            VertexCommands.VertexLockCommand
+        };
+
+        public ObservableCollection<Command<Vertex>> CommandsNew
+        {
+            get
+            {
+                return this.commandsNew;
+            }
+
+            set
+            {
+                if (value != this.commandsNew)
+                {
+                    this.commandsNew = value;
+                    this.RaisePropertyChanged("CommandsNew");
+                }
+            }
+        }
+
         private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;

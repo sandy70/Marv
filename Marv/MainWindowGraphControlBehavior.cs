@@ -24,6 +24,7 @@ namespace Marv
             var window = this.AssociatedObject;
 
             window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
+            window.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
             MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
             MainWindow.VertexChartPofCommand.Executed += VertexChartPofCommand_Executed;
@@ -32,6 +33,28 @@ namespace Marv
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
             VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
             VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
+        }
+
+        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
+        {
+            var graph = this.AssociatedObject.SourceGraph;
+            var vertexEvidence = vertex.ToEvidence();
+            var window = this.AssociatedObject;
+
+            try
+            {
+                graph.Value = graph.Run(vertex.Key, vertexEvidence);
+            }
+            catch (Smile.SmileException)
+            {
+                window.Notifications.Push(new NotificationTimed
+                {
+                    Name = "Inconsistent Evidence",
+                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
+                });
+
+                graph.Value = graph.ClearEvidence(vertex.Key);
+            }
         }
 
         private void VertexChartPofCommand_Executed(object sender, Vertex e)

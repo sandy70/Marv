@@ -388,5 +388,5 @@ namespace Marv.Common
 
 namespace System.Windows
 {
-    public delegate void RoutedEventHandler<TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
+    public delegate void RoutedEventHandler<in TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
 }
