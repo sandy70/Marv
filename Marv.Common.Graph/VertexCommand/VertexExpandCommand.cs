@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common.Graph
 {
-    public class VertexExpandCommandNew : Command<Vertex>
+    public class VertexExpandCommand : Command<Vertex>
     {
         public override void Excecute(Vertex vertex)
         {

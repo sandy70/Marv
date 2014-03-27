@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common.Graph
 {
-    public class VertexLockCommandNew : Command<Vertex>
+    public class VertexLockCommand : Command<Vertex>
     {
         public override void Excecute(Vertex vertex)
         {

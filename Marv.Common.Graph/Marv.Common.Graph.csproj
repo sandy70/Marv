@@ -67,9 +67,9 @@
     <Compile Include="Graph.cs" />
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
-    <Compile Include="VertexCommands.cs" />
-    <Compile Include="VertexExpandCommandNew.cs" />
-    <Compile Include="VertexLockCommandNew.cs" />
+    <Compile Include="VertexCommand\VertexCommands.cs" />
+    <Compile Include="VertexCommand\VertexExpandCommand.cs" />
+    <Compile Include="VertexCommand\VertexLockCommand.cs" />
     <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
