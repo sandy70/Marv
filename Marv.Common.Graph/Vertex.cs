@@ -411,15 +411,33 @@ namespace Marv.Common.Graph
 
             set
             {
-                foreach (var state in this.States)
+                foreach (var stateKey in value.Keys)
                 {
-                    state.Value = value[state.Key];
+                    this.States[stateKey].Value = value[stateKey];
                 }
+
+                //foreach (var state in this.States)
+                //{
+                //    // loop over subset
+                //    state.Value = value[state.Key];
+                //}
 
                 this.UpdateMostProbableState();
 
                 this.RaisePropertyChanged("Value");
             }
+        }
+
+        public Dictionary<string, double> CreateEvidence()
+        {
+            var evidence = new Dictionary<string, double>();
+
+            foreach (var state in this.States)
+            {
+                evidence[state.Key] = 0;
+            }
+
+            return evidence;
         }
 
         public double GetMean(Dictionary<string, double> vertexValue)

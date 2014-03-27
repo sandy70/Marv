@@ -14,7 +14,9 @@ namespace Marv.Common.Graph
 
         public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            var evidence = new Dictionary<string, double>();
+            if (this._string.Length <= 0) return null;
+
+            var evidence = vertex.CreateEvidence();
 
             if (vertex.States.Count(state => state.Key == this._string) == 1)
             {
@@ -33,11 +35,11 @@ namespace Marv.Common.Graph
                 }
                 else
                 {
-                    throw new SmileException("");
+                    return null;
                 }
             }
 
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }

@@ -3,6 +3,7 @@
             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
             xmlns:local="clr-namespace:Marv.Controls.Graph"
             xmlns:marv="http://dnvgl.com/marv"
+            xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             Name="Root"
             Orientation="Vertical">
@@ -91,6 +92,33 @@
                 <local:SliderProgressBarBehavior />
             </i:Interaction.Behaviors>
         </marv:SliderProgressBar>
+    </Grid>
+    
+    <!-- Input -->
+    <Grid Visibility="{Binding ElementName=Root, Path=IsInputVisible}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   FontWeight="Bold"
+                   Margin="{Binding Source={StaticResource MarginSmall}}"
+                   Text="Value"
+                   TextAlignment="Right" />
+        
+        <TextBox Name="InputTextBox"
+                 Grid.Row="0" Grid.Column="1"
+                 Margin="{Binding Source={StaticResource MarginSmall}}" />
+        
+        <telerik:RadSlider Grid.Row="1" Grid.Column="0"
+                           Grid.ColumnSpan="2"
+                           Margin="{Binding Source={StaticResource MarginSmall}}" />
     </Grid>
 
     <!-- Units -->

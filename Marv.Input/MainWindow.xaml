@@ -3,14 +3,25 @@
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow"
-        Name="Root">
+        Name="Root"
+        Width="300">
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </Window.Resources>
 
-    <Canvas Background="Red">
-        <marv:VertexControl Name="VertexControl"
-                            Background="White"
-                            Vertex="{Binding ElementName=Root, Path=Vertex}" />
-    </Canvas>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        
+        <marv:NotificationControl Grid.Row="0"
+                                  Notifications="{Binding ElementName=Root, Path=Notifications}" />
+        
+        <Button Name="NewNotificationButton"
+                Grid.Row="1"
+                Content="New Notification"
+                Margin="5"
+                Width="100" />
+    </Grid>
 </Window>

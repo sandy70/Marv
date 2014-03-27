@@ -12,11 +12,15 @@ namespace Marv.Common.Graph
 
         public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            var evidence = new Dictionary<string, double>();
+            if (this._string.Length <= 0) return null;
+
+            var evidence = vertex.CreateEvidence();
 
             var parts = this._string
                             .Trim()
                             .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Count() != 2) return null;
 
             double minValue;
             double maxValue;
@@ -25,6 +29,8 @@ namespace Marv.Common.Graph
             {
                 foreach (var state in vertex.States)
                 {
+                    evidence[state.Key] = 0;
+
                     if (maxValue < state.Range.Min)
                     {
                         // do nothing
@@ -54,10 +60,10 @@ namespace Marv.Common.Graph
             }
             else
             {
-                throw new Smile.SmileException("");
+                return null;
             }
 
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }

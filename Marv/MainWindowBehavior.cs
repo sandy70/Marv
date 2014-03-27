@@ -34,7 +34,7 @@ namespace Marv
             base.OnAttached();
             this.AssociatedObject.Closing += this.AssociatedObject_Closing;
             this.AssociatedObject.Loaded += this.AssociatedObject_Loaded;
-            this.AssociatedObject.Loaded += this.AssociatedObject_Loaded_LoginSynergi;
+            // this.AssociatedObject.Loaded += this.AssociatedObject_Loaded_LoginSynergi;
             this.AssociatedObject.Loaded += this.AssociatedObject_Loaded_ReadNetwork;
             this.AssociatedObject.KeyDown += this.AssociatedObject_KeyDown;
         }
@@ -99,9 +99,9 @@ namespace Marv
             window.MapBoxRoadsMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxRoads;
             window.MapBoxTerrainMenuItem.Click += (o1, e1) => window.MapView.TileLayer = TileLayers.MapBoxTerrain;
 
-            window.EarthquakeControl.ScalingFunc = x => Marv.Common.Utils.Clamp(Math.Pow(x, 1.2)*10, 1, 150);
+            // window.EarthquakeControl.ScalingFunc = x => Marv.Common.Utils.Clamp(Math.Pow(x, 1.2)*10, 1, 150);
 
-            window.Earthquakes = new ModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
+            //window.Earthquakes = new ModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
@@ -144,6 +144,8 @@ namespace Marv
 
             // Close notification
             notification.Close();
+
+            Console.WriteLine(window.SourceGraph.Vertices[0].Belief.ToJson());
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
