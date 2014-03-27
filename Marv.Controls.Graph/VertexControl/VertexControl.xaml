@@ -5,6 +5,7 @@
             xmlns:marv="http://dnvgl.com/marv"
             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            Grid.IsSharedSizeScope="True"
             Name="Root"
             Orientation="Vertical">
     <StackPanel.Resources>
@@ -35,7 +36,6 @@
 
     <!-- States -->
     <ItemsControl Name="StatesControl"
-                  Grid.IsSharedSizeScope="True"
                   ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
                   Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
@@ -43,8 +43,9 @@
             <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="FirstColumn" Width="Auto" />
-                        <ColumnDefinition SharedSizeGroup="SecondColumn" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
+                        <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="Three" Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -63,6 +64,17 @@
                             <local:SliderProgressBarBehavior />
                         </i:Interaction.Behaviors>
                     </marv:SliderProgressBar>
+                    
+                    <telerik:RadMaskedNumericInput Grid.Column="2"
+                                                   HorizontalAlignment="Stretch"
+                                                   HorizontalContentAlignment="Right"
+                                                   Margin="1"
+                                                   Mask="#2.2"
+                                                   Placeholder=" "
+                                                   TextMode="PlainText"
+                                                   UpdateValueEvent="PropertyChanged"
+                                                   Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                                   Visibility="{Binding ElementName=Root, Path=IsEditable, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -95,49 +107,48 @@
     </Grid>
     
     <!-- Input -->
-    <Grid Visibility="{Binding ElementName=Root, Path=IsInputVisible}">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        
+    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
+          Visibility="{Binding ElementName=Root, Path=IsInputVisible}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
+            <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
         </Grid.ColumnDefinitions>
         
-        <TextBlock Grid.Row="0" Grid.Column="0"
+        <TextBlock Grid.Column="0"
+                   FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                    FontWeight="Bold"
                    Margin="{Binding Source={StaticResource MarginSmall}}"
                    Text="Value"
-                   TextAlignment="Right" />
+                   TextAlignment="Right"
+                   VerticalAlignment="Center" />
         
         <TextBox Name="InputTextBox"
-                 Grid.Row="0" Grid.Column="1"
-                 Margin="{Binding Source={StaticResource MarginSmall}}" />
-        
-        <telerik:RadSlider Grid.Row="1" Grid.Column="0"
-                           Grid.ColumnSpan="2"
-                           Margin="{Binding Source={StaticResource MarginSmall}}" />
+                 Grid.Column="1"
+                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                 Margin="{Binding Source={StaticResource MarginSmallest}}"
+                 VerticalAlignment="Center"/>
     </Grid>
 
     <!-- Units -->
-    <Grid>
+    <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
                    FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                    FontWeight="Bold"
                    Margin="{Binding Source={StaticResource MarginSmall}}"
-                   Text="Units" />
+                   Text="Units"
+                   TextAlignment="Right"
+                   VerticalAlignment="Center" />
 
         <marv:EditableTextBox Grid.Column="1"
                               FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                              Margin="{Binding Source={StaticResource MarginSmall}}"
-                              Text="{Binding ElementName=Root, Path=Vertex.Units}" />
+                              Margin="{Binding Source={StaticResource MarginSmallest}}"
+                              Text="{Binding ElementName=Root, Path=Vertex.Units}"
+                              VerticalAlignment="Center" />
     </Grid>
 
     <!-- Description -->

@@ -29,9 +29,11 @@ namespace Marv.Controls.Graph
             {
                 return (bool) GetValue(IsEditableProperty);
             }
+
             set
             {
                 SetValue(IsEditableProperty, value);
+                this.UpdateLayout();
             }
         }
 

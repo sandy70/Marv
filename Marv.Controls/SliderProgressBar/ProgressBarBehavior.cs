@@ -1,20 +1,12 @@
-﻿using Marv.Common;
-using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Interactivity;
+using Marv.Common;
 using Telerik.Windows.Controls;
 
 namespace Marv.Controls
 {
     public class ProgressBarBehavior : Behavior<RadProgressBar>
     {
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            this.AssociatedObject.MouseDown += this.AssociatedObject_MouseDown;
-            this.AssociatedObject.MouseMove += AssociatedObject_MouseMove;
-        }
-
         private void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -28,7 +20,15 @@ namespace Marv.Controls
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.SetValue(sender, e);
+                e.Handled = true;
             }
+        }
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+            this.AssociatedObject.MouseDown += this.AssociatedObject_MouseDown;
+            this.AssociatedObject.MouseMove += AssociatedObject_MouseMove;
         }
 
         private void SetValue(object sender, MouseEventArgs e)
@@ -39,7 +39,6 @@ namespace Marv.Controls
 
             var progressBar = sender as RadProgressBar;
             this.AssociatedObject.Value = (e.GetPosition(progressBar).X - 1)/(progressBar.ActualWidth - 2)*100;
-            e.Handled = true;
 
             parent.RaiseEvent(new ValueEventArgs<double>
             {

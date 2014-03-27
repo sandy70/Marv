@@ -26,20 +26,21 @@ namespace Marv.Common
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null) return 0;
+
             var original = (double)value;
 
             if (original < 0)
             {
                 return 0;
             }
-            else if (original <= 100)
+
+            if (original <= 100)
             {
                 return original / 100;
             }
-            else
-            {
-                return 1;
-            }
+
+            return 1;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
@@ -11,6 +12,8 @@ namespace Marv_Excel
         private List<string> columnHeaders = new List<string>();
         private int endYear;
         private Graph graph;
+        private Dictionary<string, int, string, string, double> lineEvidence = new Dictionary<string, int, string, string, double>();
+        private Dictionary<string, int, string, string, double> lineValue = new Dictionary<string,int,string,string,double>();
         private Dictionary<int, string, string, double> modelEvidence = new Dictionary<int, string, string, double>();
         private Dictionary<int, string, string, double> modelValue;
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
@@ -50,6 +53,32 @@ namespace Marv_Excel
             set
             {
                 graph = value;
+            }
+        }
+
+        public Dictionary<string, int, string, string, double> LineEvidence
+        {
+            get
+            {
+                return this.lineEvidence;
+            }
+
+            set
+            {
+                this.lineEvidence = value;
+            }
+        }
+
+        public Dictionary<string, int, string, string, double> LineValue
+        {
+            get
+            {
+                return lineValue;
+            }
+
+            set
+            {
+                lineValue = value;
             }
         }
 
@@ -162,7 +191,7 @@ namespace Marv_Excel
 
             // For the vertex blocks we work with find.
             Range firstFind = null;
-            Range currentFind = worksheet.Cells.Find("Value");
+            var currentFind = worksheet.Cells.Find("Value");
 
             while (currentFind != null)
             {
@@ -185,6 +214,8 @@ namespace Marv_Excel
                 col++;
                 var year = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
 
+                var sectionId = worksheet.ReadText(row, 1);
+
                 while (year != null)
                 {
                     value = worksheet.Read(row, col);
@@ -193,6 +224,7 @@ namespace Marv_Excel
                     {
                         var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex);
                         sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
+                        sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
                     }
                     else
                     {
@@ -215,6 +247,7 @@ namespace Marv_Excel
                         }
 
                         sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
+                        sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
                     }
 
                     col++;
@@ -229,7 +262,10 @@ namespace Marv_Excel
 
         public void Run()
         {
-            this.ModelValue = this.Graph.Run(this.ModelEvidence, this.StartYear, this.EndYear);
+            foreach (var sectionId in this.LineEvidence.Keys)
+            {
+                this.LineValue[sectionId] = this.Graph.Run(this.LineEvidence[sectionId], this.startYear, this.EndYear);
+            }
         }
 
         public void Write(Worksheet worksheet)
@@ -270,45 +306,57 @@ namespace Marv_Excel
                 col++;
             }
 
-            // ColumnHeaders.Count + Blank Line + 1
-            col = this.ColumnHeaders.Count + 2;
+            // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 1
+            var sectionRow = this.SheetHeaders.Count + 4;
 
-            foreach (var vertex in this.Vertices)
+            foreach (var sectionId in this.LineValue.Keys)
             {
-                // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 1
-                row = this.SheetHeaders.Count + 4;
+                // ColumnHeaders.Count + Blank Line + 1
+                col = this.ColumnHeaders.Count + 2;
 
-                worksheet.WriteValue(row, col, "Value");
-                row++;
+                worksheet.WriteValue(sectionRow, 1, sectionId, isText: true);
 
-                foreach (var state in vertex.States)
+                var modelValue = this.LineValue[sectionId];
+
+                foreach (var vertex in this.Vertices)
                 {
-                    worksheet.WriteValue(row, col, state.Key, isText: true);
+                    row = sectionRow;
+
+                    worksheet.WriteValue(row, col, "Value");
                     row++;
-                }
 
-                col++;
-
-                for (var year = this.StartYear; year <= this.EndYear; year++)
-                {
-                    if (this.ModelValue != null && this.ModelValue.ContainsKey(year))
+                    foreach (var state in vertex.States)
                     {
-                        // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 2
-                        row = this.SheetHeaders.Count + 5;
-
-                        foreach (var state in vertex.States)
-                        {
-                            worksheet.WriteValue(row, col, this.ModelValue[year][vertex.Key][state.Key], isText: true);
-                            row++;
-                        }
+                        worksheet.WriteValue(row, col, state.Key, isText: true);
+                        row++;
                     }
 
                     col++;
+
+                    for (var year = this.StartYear; year <= this.EndYear; year++)
+                    {
+                        if (modelValue.ContainsKey(year))
+                        {
+                            // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 2
+                            row = sectionRow + 1;
+
+                            foreach (var state in vertex.States)
+                            {
+                                worksheet.WriteValue(row, col, modelValue[year][vertex.Key][state.Key], isText: true);
+                                row++;
+                            }
+                        }
+
+                        col++;
+                    }
+
+                    // col += (this.EndYear - this.StartYear) + 3;
+                    col += 1;
                 }
 
-                // col += (this.EndYear - this.StartYear) + 3;
-                col += 1;
+                sectionRow += this.Vertices.Max(vertex => vertex.States.Count) + 2;
             }
+            
         }
     }
 }

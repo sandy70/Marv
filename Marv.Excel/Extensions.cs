@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 
 namespace Marv_Excel
@@ -25,23 +22,6 @@ namespace Marv_Excel
             return worksheet;
         }
 
-        
-
-        public static void WriteValue(this Worksheet worksheet, int row, int col, object text, bool isBold = false, bool isText = false)
-        {
-            var range = (Range) worksheet.Cells[row, col];
-
-            if (isText)
-            {
-                range.NumberFormat = "@";
-            }
-
-            range.Value2 = text;
-            range.Font.Bold = isBold;
-        }
-
-        
-
         public static object Read(this Worksheet worksheet, int row, int col)
         {
             return ((Range) worksheet.Cells[row, col]).Value2;
@@ -57,6 +37,19 @@ namespace Marv_Excel
             }
 
             return value.ToString();
+        }
+
+        public static void WriteValue(this Worksheet worksheet, int row, int col, object text, bool isBold = false, bool isText = false)
+        {
+            var range = (Range) worksheet.Cells[row, col];
+
+            if (isText)
+            {
+                range.NumberFormat = "@";
+            }
+
+            range.Value2 = text;
+            range.Font.Bold = isBold;
         }
     }
 }

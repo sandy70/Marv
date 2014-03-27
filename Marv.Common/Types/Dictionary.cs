@@ -87,4 +87,20 @@ namespace Marv.Common
             }
         }
     }
+
+    public class Dictionary<T1, T2, T3, T4, TValue> : Dictionary<T1, Dictionary<T2, T3, T4, TValue>> where TValue : new()
+    {
+        public Dictionary<T4, TValue> this[T1 key1, T2 key2, T3 key3]
+        {
+            set
+            {
+                if (!this.ContainsKey(key1))
+                {
+                    this[key1] = new Dictionary<T2, T3, T4, TValue>();
+                }
+
+                this[key1][key2, key3] = value;
+            }
+        }
+    }
 }
