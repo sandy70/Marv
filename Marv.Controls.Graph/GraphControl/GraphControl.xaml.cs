@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Marv.Common;
 using Marv.Common.Graph;
 using NLog;
 

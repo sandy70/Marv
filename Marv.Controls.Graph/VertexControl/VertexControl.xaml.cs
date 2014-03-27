@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Marv.Common;
 using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
