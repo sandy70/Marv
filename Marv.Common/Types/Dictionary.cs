@@ -62,6 +62,11 @@ namespace Marv.Common
                 return new List<T1>(base.Keys);
             }
         }
+
+        public bool ContainsKey(T1 key1, T2 key2)
+        {
+            return this.ContainsKey(key1) && this[key1].ContainsKey(key2);
+        }
     }
 
     public class Dictionary<T1, T2, T3, TValue> : Dictionary<T1, Dictionary<T2, T3, TValue>> where TValue : new()
