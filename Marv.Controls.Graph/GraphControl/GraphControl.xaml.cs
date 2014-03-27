@@ -116,6 +116,20 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
+        {
+            if (this.VertexCommandExecuted != null)
+            {
+                this.VertexCommandExecuted(this, new VertexCommandArgs
+                {
+                    Command = command,
+                    Vertex = vertex
+                });
+            }
+        }
+
         public event EventHandler<Vertex> EvidenceEntered;
+
+        public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
     }
 }

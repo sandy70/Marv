@@ -12,7 +12,7 @@
     <SolidColorBrush x:Key="BackgroundMedium" Color="DarkGray" />
     <SolidColorBrush x:Key="BackgroundDark" Color="Gray" />
     
-    <marv:BooleanNotConverter x:Key="BooleanNotConverter" />
+    <marv:BooleanNotConverter x:Key="BooleanNot" />
     <marv:BooleanToColorConverter x:Key="BooleanToColorConverter" />
     <marv:BooleanToStringConverter x:Key="IsHeaderToColor" TrueString="#b11d01" FalseString="#20aeff" />
     <marv:BooleanToStringConverter x:Key="IsEvidenceEnteredToColor" TrueString="#78ba00" FalseString="#20aeff" />

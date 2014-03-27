@@ -249,16 +249,16 @@ namespace Marv.Common.Graph
 
                     if (group == this.DefaultGroup)
                     {
-                        if (!vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        if (!vertex.Commands.Contains(VertexCommands.SubGraph))
                         {
-                            vertex.Commands.Push(VertexCommand.VertexSubGraphCommand);
+                            vertex.Commands.Push(VertexCommands.SubGraph);
                         }
                     }
                     else
                     {
-                        if (vertex.Commands.Contains(VertexCommand.VertexSubGraphCommand))
+                        if (vertex.Commands.Contains(VertexCommands.SubGraph))
                         {
-                            vertex.Commands.Remove(VertexCommand.VertexSubGraphCommand);
+                            vertex.Commands.Remove(VertexCommands.SubGraph);
                         }
                     }
 

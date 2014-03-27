@@ -9,34 +9,11 @@ namespace Marv.Common.Graph
 {
     public class Vertex : Model
     {
-        private ObservableCollection<IVertexCommand> commands = new ObservableCollection<IVertexCommand>
+        private ObservableCollection<Command<Vertex>> commands = new ObservableCollection<Command<Vertex>>
         {
-            VertexCommand.VertexExpandCommand,
-            // VertexCommand.VertexLockCommand, VertexCommand.VertexClearCommand
+            VertexCommands.Expand,
+            VertexCommands.Lock
         };
-
-        private ObservableCollection<Command<Vertex>> commandsNew = new ObservableCollection<Command<Vertex>>
-        {
-            VertexCommands.VertexExpandCommand,
-            VertexCommands.VertexLockCommand
-        };
-
-        public ObservableCollection<Command<Vertex>> CommandsNew
-        {
-            get
-            {
-                return this.commandsNew;
-            }
-
-            set
-            {
-                if (value != this.commandsNew)
-                {
-                    this.commandsNew = value;
-                    this.RaisePropertyChanged("CommandsNew");
-                }
-            }
-        }
 
         private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
         private string description = "";
@@ -83,7 +60,7 @@ namespace Marv.Common.Graph
             }
         }
 
-        public ObservableCollection<IVertexCommand> Commands
+        public ObservableCollection<Command<Vertex>> Commands
         {
             get
             {

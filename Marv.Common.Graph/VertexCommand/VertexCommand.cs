@@ -9,21 +9,6 @@ namespace Marv.Common.Graph
             ImageSource = "/Marv.Common;component/Resources/Icons/Clear.png"
         };
 
-        public static VertexExpandCommand VertexExpandCommand = new VertexExpandCommand
-        {
-            ImageSource = "/Marv.Common;component/Resources/Icons/Expand.png"
-        };
-
-        public static VertexLockCommand VertexLockCommand = new VertexLockCommand
-        {
-            ImageSource = "/Marv.Common;component/Resources/Icons/Lock.png"
-        };
-
-        public static VertexCommand VertexSubGraphCommand = new VertexCommand
-        {
-            ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
-        };
-
         private string imageSource;
 
         public event EventHandler<Vertex> Executed;

@@ -82,8 +82,6 @@
     <Compile Include="VertexCommand\VertexCommand.cs" />
     <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
     <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />
-    <Compile Include="VertexCommand\VertexExpandCommand.cs" />
-    <Compile Include="VertexCommand\VertexLockCommand.cs" />
     <Compile Include="VertexValueComputer\VertexMeanComputer.cs" />
     <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
     <Compile Include="VertexValueComputer\VertexStandardDeviationComputer.cs" />

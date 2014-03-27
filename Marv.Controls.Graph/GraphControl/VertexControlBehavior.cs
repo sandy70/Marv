@@ -6,10 +6,12 @@ namespace Marv.Controls.Graph
 {
     internal class VertexControlBehavior : Behavior<VertexControl>
     {
-        protected override void OnAttached()
+        private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
         {
-            base.OnAttached();
-            this.AssociatedObject.EvidenceEntered += AssociatedObject_EvidenceEntered;
+            var vertexControl = this.AssociatedObject;
+            var graphControl = vertexControl.FindParent<GraphControl>();
+
+            graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
         }
 
         private void AssociatedObject_EvidenceEntered(object sender, Vertex e)
@@ -18,6 +20,14 @@ namespace Marv.Controls.Graph
             var graphControl = vertexControl.FindParent<GraphControl>();
 
             graphControl.RaiseEvidenceEntered(vertexControl.Vertex);
+        }
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
+            this.AssociatedObject.EvidenceEntered += AssociatedObject_EvidenceEntered;
         }
     }
 }

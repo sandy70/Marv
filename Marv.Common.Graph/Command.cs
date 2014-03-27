@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common.Graph
 {
-    public abstract class Command<T> : NotifyPropertyChanged
+    public class Command<T> : NotifyPropertyChanged
     {
         private string imageSource;
 
@@ -20,6 +20,8 @@
             }
         }
 
-        public abstract void Excecute(T item);
+        public virtual void Excecute(T item)
+        {
+        }
     }
 }

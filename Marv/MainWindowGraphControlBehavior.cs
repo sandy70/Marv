@@ -23,16 +23,26 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.GraphControl.StateDoubleClicked += GraphControl_StateDoubleClicked;
             window.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
+            window.GraphControl.VertexCommandExecuted += GraphControl_VertexCommandExecuted;
 
             MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
             MainWindow.VertexChartPofCommand.Executed += VertexChartPofCommand_Executed;
             MainWindow.VertexBarChartCommand.Executed += VertexBarChartCommand_Executed;
 
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
-            VertexCommand.VertexLockCommand.Executed += VertexLockCommand_Executed;
-            VertexCommand.VertexSubGraphCommand.Executed += VertexSubGraphCommand_Executed;
+        }
+
+        private void GraphControl_VertexCommandExecuted(object sender, VertexCommandArgs e)
+        {
+            if (e.Command == VertexCommands.SubGraph)
+            {
+                var window = this.AssociatedObject;
+                var sourceGraph = window.SourceGraph;
+
+                window.DisplayGraph = sourceGraph.GetSubGraph(e.Vertex.HeaderOfGroup);
+                window.IsBackButtonVisible = true;
+            }
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
@@ -157,76 +167,10 @@ namespace Marv
             ChartAxes.VerticalLinearAxis.Title = "Probability";
         }
 
-        private void GraphControl_StateDoubleClicked(object sender, GraphControlEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
-            var vertex = e.Vertex;
-
-            if (e.Vertex.SelectedState != e.State)
-            {
-                var vertexEvidence = new Dictionary<string, double>();
-                vertexEvidence[e.State.Key] = 1;
-
-                try
-                {
-                    graph.Value = graph.Run(vertex.Key, vertexEvidence);
-                }
-                catch (Smile.SmileException)
-                {
-                    window.Notifications.Push(new NotificationTimed
-                    {
-                        Name = "Inconsistent Evidence",
-                        Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
-                    });
-
-                    graph.Value = graph.ClearEvidence(vertex.Key);
-                }
-            }
-            else
-            {
-                graph.Value = graph.ClearEvidence(vertex.Key);
-            }
-        }
-
         private void VertexClearCommand_Executed(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.SourceGraph;
             graph.Value = graph.ClearEvidence(vertex.Key);
-        }
-
-        private void VertexLockCommand_Executed(object sender, Vertex vertex)
-        {
-            var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
-
-            try
-            {
-                if (vertex.IsLocked)
-                {
-                    graph.Value = graph.Run(vertex.Key, vertex.ToEvidence());
-                }
-            }
-            catch (Smile.SmileException)
-            {
-                window.Notifications.Push(new NotificationTimed
-                {
-                    Name = "Inconsistent Evidence",
-                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
-                });
-
-                graph.Value = graph.ClearEvidence(vertex.Key);
-            }
-        }
-
-        private void VertexSubGraphCommand_Executed(object sender, Vertex vertex)
-        {
-            var window = this.AssociatedObject;
-            var displayGraph = window.DisplayGraph;
-            var sourceGraph = window.SourceGraph;
-
-            window.DisplayGraph = sourceGraph.GetSubGraph(vertex.HeaderOfGroup);
-            window.IsBackButtonVisible = true;
         }
     }
 }

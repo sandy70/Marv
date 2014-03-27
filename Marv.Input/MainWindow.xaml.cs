@@ -61,7 +61,7 @@ namespace Marv.Input
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
-            if (command == VertexCommands.VertexLockCommand)
+            if (command == VertexCommands.Lock)
             {
                 var vertexControl = sender as VertexControl;
 

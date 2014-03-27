@@ -120,7 +120,7 @@
                           Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 
     <!-- Toolbar -->
-    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.CommandsNew}"
+    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
                   Visibility="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
         <ItemsControl.ItemsPanel>
