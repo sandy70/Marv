@@ -28,9 +28,17 @@ namespace Marv.Common.Graph
 
                 if (Double.TryParse(this._string, out value))
                 {
+                    var isWithinBounds = false;
+
                     foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
                     {
                         evidence[state.Key] = 1;
+                        isWithinBounds = true;
+                    }
+
+                    if (!isWithinBounds)
+                    {
+                        return null;
                     }
                 }
                 else
