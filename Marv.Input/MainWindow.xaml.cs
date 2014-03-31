@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -15,8 +14,8 @@ namespace Marv.Input
         public static readonly DependencyProperty GraphProperty =
             DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty VertexProperty =
-            DependencyProperty.Register("Vertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
@@ -55,15 +54,15 @@ namespace Marv.Input
             }
         }
 
-        public Vertex Vertex
+        public Vertex SelectedVertex
         {
             get
             {
-                return (Vertex) GetValue(VertexProperty);
+                return (Vertex) GetValue(SelectedVertexProperty);
             }
             set
             {
-                SetValue(VertexProperty, value);
+                SetValue(SelectedVertexProperty, value);
             }
         }
 
@@ -84,7 +83,7 @@ namespace Marv.Input
 
         internal void SelectState(State state)
         {
-            this.Vertex.SelectState(state);
+            this.SelectedVertex.SelectState(state);
         }
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)

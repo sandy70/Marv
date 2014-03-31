@@ -30,7 +30,13 @@
                                  ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                  Margin="5"
                                  OpenDropDownOnFocus="True"
+                                 SelectedIndex="0"
+                                 SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
                                  TextSearchMode="Contains" />
+            
+            <marv:VertexControl Grid.Row="1"
+                                Margin="5"
+                                Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
         </Grid>
         
 
