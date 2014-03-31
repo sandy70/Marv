@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:marv="http://dnvgl.com/marv"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow"
         Name="Root"
@@ -15,7 +16,23 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         
-        <marv:NotificationControl Grid.Row="0"
-                                  Notifications="{Binding ElementName=Root, Path=Notifications}" />
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            
+            <telerik:RadComboBox CanAutocompleteSelectItems="True"
+                                 CanKeyboardNavigationSelectItems="True"
+                                 DisplayMemberPath="Name"
+                                 IsEditable="True"
+                                 IsFilteringEnabled="True"
+                                 ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                 Margin="5"
+                                 OpenDropDownOnFocus="True"
+                                 TextSearchMode="Contains" />
+        </Grid>
+        
+
     </Grid>
 </Window>

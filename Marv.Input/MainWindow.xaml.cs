@@ -36,6 +36,7 @@ namespace Marv.Input
             {
                 return (Graph) GetValue(GraphProperty);
             }
+
             set
             {
                 SetValue(GraphProperty, value);
@@ -69,7 +70,7 @@ namespace Marv.Input
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Read the graph
-            await Task.Run(() => this.Graph = Graph.Read(Settings.Default.FileName));
+            this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
         }
 
         private void NewNotificationButton_Click(object sender, RoutedEventArgs e)
