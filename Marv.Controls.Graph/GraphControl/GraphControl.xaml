@@ -63,6 +63,7 @@
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsInputVisible="True"
+                                                     IsStatesVisible="{Binding IsExpanded}"
                                                      IsToolbarVisible="{Binding IsSelected}"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
