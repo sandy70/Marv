@@ -83,7 +83,6 @@
     <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GraphControlEventArgs.cs" />
     <Compile Include="GraphControl\VertexControlBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
