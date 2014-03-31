@@ -1,7 +1,4 @@
-﻿using Marv.Common;
-using Marv.Common.Graph;
-
-namespace Marv.Controls.Graph
+﻿namespace Marv.Common.Graph
 {
     public class VertexCommandArgs
     {
