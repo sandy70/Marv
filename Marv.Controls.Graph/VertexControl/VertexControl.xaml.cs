@@ -23,6 +23,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsStatesVisibleProperty =
             DependencyProperty.Register("IsStatesVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsMostProbableStateVisibleProperty =
+            DependencyProperty.Register("IsMostProbableStateVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
+
         public VertexControl()
         {
             InitializeComponent();
@@ -51,6 +54,19 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsInputVisibleProperty, value);
+            }
+        }
+
+        public bool IsMostProbableStateVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsMostProbableStateVisibleProperty);
+            }
+
+            set
+            {
+                SetValue(IsMostProbableStateVisibleProperty, value);
             }
         }
 

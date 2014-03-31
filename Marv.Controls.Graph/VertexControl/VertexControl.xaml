@@ -85,7 +85,7 @@
 
     <!-- Most Probable State -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
+          Visibility="{Binding ElementName=Root, Path=IsMostProbableStateVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
