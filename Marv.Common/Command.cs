@@ -3,6 +3,7 @@
     public class Command<T> : NotifyPropertyChanged
     {
         private string imageSource;
+        private bool isVisible = true;
 
         public string ImageSource
         {
@@ -17,6 +18,23 @@
 
                 this.imageSource = value;
                 this.RaisePropertyChanged("ImageSource");
+            }
+        }
+
+        public bool IsVisible
+        {
+            get
+            {
+                return this.isVisible;
+            }
+
+            set
+            {
+                if (value != this.isVisible)
+                {
+                    this.isVisible = value;
+                    this.RaisePropertyChanged("IsVisible");
+                }
             }
         }
 
