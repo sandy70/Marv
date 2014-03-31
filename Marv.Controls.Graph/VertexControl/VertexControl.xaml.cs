@@ -17,6 +17,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsToolbarVisibleProperty =
+            DependencyProperty.Register("IsToolbarVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
+
         public VertexControl()
         {
             InitializeComponent();
@@ -45,6 +48,18 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsInputVisibleProperty, value);
+            }
+        }
+
+        public bool IsToolbarVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsToolbarVisibleProperty);
+            }
+            set
+            {
+                SetValue(IsToolbarVisibleProperty, value);
             }
         }
 

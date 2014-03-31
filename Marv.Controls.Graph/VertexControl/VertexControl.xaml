@@ -191,7 +191,7 @@
     <!-- Toolbar -->
     <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                  Visibility="{Binding ElementName=Root, Path=IsToolbarVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <StackPanel HorizontalAlignment="Center"

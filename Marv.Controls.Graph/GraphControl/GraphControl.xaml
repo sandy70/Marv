@@ -63,6 +63,7 @@
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsInputVisible="True"
+                                                     IsToolbarVisible="{Binding IsSelected}"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
