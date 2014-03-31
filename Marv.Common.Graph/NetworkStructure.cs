@@ -12,12 +12,12 @@ namespace Marv.Common.Graph
         public Dictionary<string, string> Properties = new Dictionary<string, string>();
         public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
 
+        public Network Network = new Network();
+
         public static NetworkStructure Read(string path)
         {
-            var network = new Network();
-            network.ReadFile(path);
-
             var structure = new NetworkStructure();
+            structure.Network.ReadFile(path);
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
 
@@ -77,9 +77,9 @@ namespace Marv.Common.Graph
             // Parse Children
             foreach (var vertex in structure.Vertices)
             {
-                foreach (var childHandle in network.GetChildren(vertex.Key))
+                foreach (var childHandle in structure.Network.GetChildren(vertex.Key))
                 {
-                    var childKey = network.GetNodeId(childHandle);
+                    var childKey = structure.Network.GetNodeId(childHandle);
                     vertex.Children.Add(structure.GetVertex(childKey));
                 }
             }

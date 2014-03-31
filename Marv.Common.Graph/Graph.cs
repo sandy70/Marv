@@ -328,19 +328,13 @@ namespace Marv.Common.Graph
 
         public static Graph Read(string fileName)
         {
+            var structure = NetworkStructure.Read(fileName);
+
             var graph = new Graph();
 
-            try
-            {
-                graph.network.ReadFile(fileName);
-            }
-            catch (SmileException exception)
-            {
-                logger.Warn("Error reading file {0}: {1}", fileName, exception.Message);
-                return graph;
-            }
-
-            var structure = NetworkStructure.Read(fileName);
+            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = structure.ParseUserProperty("key", "");
+            graph.network = structure.Network;
 
             // Add all the vertices
             foreach (var structureVertex in structure.Vertices)
@@ -364,32 +358,32 @@ namespace Marv.Common.Graph
 
                 // If all states have ranges, then it is an interval vertex. This is a hack. Remove
                 // this once the team starts using Hugin node types consistently.
-                if (vertex.States.Select(state => state.Range != null).Count() == vertex.States.Count()) vertex.Type = VertexType.Interval;
+                if (vertex.States.Count(state => state.Range != null) == vertex.States.Count())
+                {
+                    vertex.Type = VertexType.Interval;
+                }
 
                 if (string.IsNullOrWhiteSpace(vertex.Units))
                 {
                     vertex.Units = "n/a";
                 }
 
-                graph.Vertices.Add(vertex);
-
                 if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
                 {
                     graph.Loops[vertex.InputVertexKey] = vertex.Key;
                 }
+
+                graph.Vertices.Add(vertex);
             }
 
             // Add all the edges
-            foreach (var srcNode in structure.Vertices)
+            foreach (var srcVertex in structure.Vertices)
             {
-                foreach (var dstNode in srcNode.Children)
+                foreach (var dstVertex in srcVertex.Children)
                 {
-                    graph.AddEdge(graph.Vertices[srcNode.Key], graph.Vertices[dstNode.Key]);
+                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
                 }
             }
-
-            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
-            graph.Name = structure.ParseUserProperty("key", "");
 
             graph.UpdateValue();
             return graph;
