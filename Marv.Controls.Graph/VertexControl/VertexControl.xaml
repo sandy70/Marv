@@ -16,6 +16,8 @@
 
             <marv:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
 
+            <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
+            
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="Black" />
             </Style>
@@ -65,7 +67,7 @@
                             <local:SliderProgressBarBehavior />
                         </i:Interaction.Behaviors>
                     </marv:SliderProgressBar>
-                    
+
                     <telerik:RadMaskedNumericInput Grid.Column="2"
                                                    HorizontalAlignment="Stretch"
                                                    HorizontalContentAlignment="Right"
@@ -106,15 +108,16 @@
             </i:Interaction.Behaviors>
         </marv:SliderProgressBar>
     </Grid>
-    
+
     <!-- Input -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+            <ColumnDefinition SharedSizeGroup="Three" Width="Auto" />
         </Grid.ColumnDefinitions>
-        
+
         <TextBlock Grid.Column="0"
                    FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                    FontWeight="Bold"
@@ -122,12 +125,36 @@
                    Text="Value"
                    TextAlignment="Right"
                    VerticalAlignment="Center" />
-        
+
         <TextBox Name="InputTextBox"
-                 Grid.Column="1"
-                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                 Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 VerticalAlignment="Center"/>
+                Grid.Column="1"
+                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
+                FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                Margin="{Binding Source={StaticResource MarginSmallest}}"
+                VerticalAlignment="Center" />
+
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <telerik:RadButton Grid.Column="0"
+                               Background="{Binding Source={StaticResource BackgroundDark}}"
+                               Content="0"
+                               FontWeight="Bold"
+                               Foreground="Black"
+                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                               Margin="{Binding Source={StaticResource MarginSmallest}}" />
+
+            <telerik:RadButton Grid.Column="1"
+                               Background="{Binding Source={StaticResource BackgroundDark}}"
+                               Content="1"
+                               FontWeight="Bold"
+                               Foreground="Black"
+                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                               Margin="{Binding Source={StaticResource MarginSmallest}}" />
+        </Grid>
     </Grid>
 
     <!-- Units -->
