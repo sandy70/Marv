@@ -98,6 +98,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="StateControl.xaml.cs">
+      <DependentUpon>StateControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VertexCommandArgs.cs" />
     <Compile Include="VertexControl\SliderProgressBarBehavior.cs" />
     <Compile Include="VertexControl\VertexControl.xaml.cs">
@@ -139,6 +142,10 @@
     <Page Include="GraphControl\GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="StateControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="VertexControl\VertexControl.xaml">
       <SubType>Designer</SubType>

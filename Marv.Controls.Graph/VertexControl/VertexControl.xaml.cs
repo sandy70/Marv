@@ -33,7 +33,6 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsEditableProperty, value);
-                this.UpdateLayout();
             }
         }
 

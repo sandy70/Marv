@@ -80,7 +80,7 @@ namespace Marv.Input
             };
 
             this.Vertex.UpdateMostProbableState();
-            this.NewNotificationButton.Click += NewNotificationButton_Click;
+            // this.NewNotificationButton.Click += NewNotificationButton_Click;
         }
 
         private void NewNotificationButton_Click(object sender, RoutedEventArgs e)

@@ -107,8 +107,7 @@
     </Grid>
     
     <!-- Input -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=IsInputVisible}">
+    <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
