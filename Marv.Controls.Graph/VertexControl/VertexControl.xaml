@@ -57,6 +57,7 @@
 
                     <marv:SliderProgressBar Grid.Column="1"
                                             IsEditable="{Binding ElementName=Root, Path=IsEditable}"
+                                            IsTextVisible="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanNot}}"
                                             Margin="1"
                                             SliderForeground="#20aeff"
                                             Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
