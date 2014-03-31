@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
+using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -70,6 +74,59 @@ namespace Marv.Input
         {
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
+            this.Graph.SetValueToZero();
+
+            foreach (var vertex in this.Graph.Vertices)
+            {
+                vertex.PropertyChanged += vertex_PropertyChanged;
+            }
+
+            this.OpenButton.Click += OpenButton_Click;
+            this.SaveButton.Click += SaveButton_Click;
+            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
+        }
+
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter = "Graph Evidence |*.graphevidence";
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() == true)
+            {
+                var graphEvidence = Utils.ReadJson<Dictionary<string, Evidence>>(dialog.FileName);
+                this.Graph.SetEvidence(graphEvidence);
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.GetEvidence().WriteJson("marv.graphevidence");
+        }
+
+        void vertex_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var vertex = sender as Vertex;
+
+            if (vertex == null) return;
+
+            if (e.PropertyName == "IsEvidenceEntered")
+            {
+                if (vertex.IsEvidenceEntered)
+                {
+                    if (!vertex.Commands.Contains(VertexCommands.Clear))
+                    {
+                        vertex.Commands.Add(VertexCommands.Clear);
+                    }
+                }
+                else
+                {
+                    if (vertex.Commands.Contains(VertexCommands.Clear))
+                    {
+                        vertex.Commands.Remove(VertexCommands.Clear);
+                    }
+                }
+            }
         }
 
         private void NewNotificationButton_Click(object sender, RoutedEventArgs e)
@@ -88,23 +145,17 @@ namespace Marv.Input
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
-            if (command == VertexCommands.Lock)
+            var vertexControl = sender as VertexControl;
+            
+            if (vertexControl == null) return;
+
+            var vertex = vertexControl.Vertex;
+
+            if (command == VertexCommands.Clear)
             {
-                var vertexControl = sender as VertexControl;
-
-                if (vertexControl != null)
-                {
-                    var vertex = vertexControl.Vertex;
-
-                    if (vertex.IsLocked)
-                    {
-                        Console.WriteLine("Locked");
-                    }
-                    else
-                    {
-                        Console.WriteLine("UnLocked");
-                    }
-                }
+                vertex.SetValue(0);
+                vertex.IsEvidenceEntered = false;
+                vertex.EvidenceString = null;
             }
         }
     }

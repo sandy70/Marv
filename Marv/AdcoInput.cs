@@ -190,7 +190,7 @@ namespace Marv
             var parts = evidenceString.Trim()
                 .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            var evidence = vertex.ToEvidence();
+            var evidence = vertex.GetEvidence();
 
             foreach (var stateKey in evidence.Keys)
             {

@@ -14,10 +14,21 @@ namespace Marv.Controls.Graph
             vertexControl.RaiseEvidenceEntered();
         }
 
+        private void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
+
+            if (vertexControl.IsEditable)
+            {
+                vertexControl.Vertex.IsEvidenceEntered = true;
+            }
+        }
+
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.MouseDoubleClick += this.AssociatedObject_MouseDoubleClick;
+            this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
+            this.AssociatedObject.MouseDown += AssociatedObject_MouseDown;
         }
     }
 }

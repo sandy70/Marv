@@ -12,6 +12,29 @@ namespace Marv.Common.Graph
 {
     public partial class Graph : Model
     {
+        public Dictionary<string, Evidence> GetEvidence()
+        {
+            var graphEvidence = new Dictionary<string, Evidence>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                if (vertex.IsEvidenceEntered)
+                {
+                    graphEvidence[vertex.Key] = vertex.GetEvidence();
+                }
+            }
+
+            return graphEvidence;
+        }
+
+        public void SetEvidence(Dictionary<string, Evidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.Vertices[vertexKey].SetEvidence(graphEvidence[vertexKey]);
+            }
+        }
+
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string defaultGroup;

@@ -5,7 +5,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow"
         Name="Root"
-        Width="300">
+        Width="400">
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </Window.Resources>
@@ -34,11 +34,30 @@
                                  SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
                                  TextSearchMode="Contains" />
             
-            <marv:VertexControl Grid.Row="1"
+            <marv:VertexControl Name="VertexControl"
+                                Grid.Row="1"
+                                IsEditable="True"
+                                IsInputVisible="True"
+                                IsToolbarVisible="True"
                                 Margin="5"
                                 Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
         </Grid>
         
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
+            <Button Name="OpenButton"
+                Grid.Column="0"
+                Margin="5"
+                Content="Open" />
+            
+            <Button Name="SaveButton"
+                Grid.Column="1"
+                Margin="5"
+                Content="Save" />
+        </Grid>
     </Grid>
 </Window>

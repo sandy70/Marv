@@ -131,7 +131,7 @@
                  telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                  Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, Mode=TwoWay}"
                  VerticalAlignment="Center" />
 
         <Grid Grid.Column="2">
@@ -202,13 +202,16 @@
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <marv:SurfaceImageButton Height="40" Width="40"
-                                         Margin="{Binding Source={StaticResource MarginSmallest}}"
-                                         Source="{Binding ImageSource}">
+                <telerik:RadButton Background="{StaticResource BackgroundDark}"
+                                   Height="40" Width="40"
+                                   Margin="{Binding Source={StaticResource MarginSmallest}}"
+                                   Padding="0" >
+                    <Image Source="{Binding ImageSource}" />
+                    
                     <i:Interaction.Behaviors>
                         <local:ToolbarButtonClickBehavior />
                     </i:Interaction.Behaviors>
-                </marv:SurfaceImageButton>
+                </telerik:RadButton>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

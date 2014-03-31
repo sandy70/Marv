@@ -14,7 +14,7 @@ namespace Marv.Common.Graph
 
         public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            var evidence = vertex.ToEvidence();
+            var evidence = vertex.GetEvidence();
 
             foreach (var stateKey in evidence.Keys)
             {

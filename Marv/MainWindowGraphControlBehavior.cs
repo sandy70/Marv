@@ -48,7 +48,7 @@ namespace Marv
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.SourceGraph;
-            var vertexEvidence = vertex.ToEvidence();
+            var vertexEvidence = vertex.GetEvidence();
             var window = this.AssociatedObject;
 
             try

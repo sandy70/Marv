@@ -370,6 +370,7 @@ namespace Marv.Common
             var serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
             serializer.Formatting = Formatting.Indented;
+            serializer.TypeNameHandling = TypeNameHandling.Auto;
 
             using (var streamWriter = new StreamWriter(fileName))
             {

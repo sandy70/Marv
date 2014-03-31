@@ -38,8 +38,6 @@ namespace Marv.Common
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        
-
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
             if (value.CompareTo(minValue) < 0) value = minValue;

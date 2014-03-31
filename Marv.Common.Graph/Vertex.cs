@@ -592,9 +592,29 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, double> ToEvidence()
+        public Evidence GetEvidence()
         {
-            return this.States.ToDictionary(state => state.Key, state => state.Value);
+            var evidence = new Evidence();
+
+            foreach (var state in this.States)
+            {
+                evidence[state.Key] = state.Value;
+            }
+
+            evidence.String = this.EvidenceString;
+
+            return evidence;
+        }
+
+        public void SetEvidence(Evidence evidence)
+        {
+            foreach (var stateKey in evidence.Keys)
+            {
+                this.EvidenceString = evidence.String;
+                this.IsEvidenceEntered = true;
+
+                this.States[stateKey].Value = evidence[stateKey];
+            }
         }
 
         public override string ToString()

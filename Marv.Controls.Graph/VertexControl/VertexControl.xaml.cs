@@ -118,8 +118,20 @@ namespace Marv.Controls.Graph
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            var temp = EvidenceStringFactory.Create(this.InputTextBox.Text);
+
             var evidence = EvidenceStringFactory.Create(this.InputTextBox.Text).Parse(this.Vertex);
-            this.Vertex.Value = evidence ?? this.Vertex.Belief;
+
+            if (evidence == null)
+            {
+                this.Vertex.SetValue(0);
+                this.Vertex.IsEvidenceEntered = false;
+            }
+            else
+            {
+                this.Vertex.Value = evidence;
+                this.Vertex.IsEvidenceEntered = true;
+            }
         }
 
         public void RaiseCommandExecuted(Command<Vertex> command)
