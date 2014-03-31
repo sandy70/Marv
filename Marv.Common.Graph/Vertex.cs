@@ -18,6 +18,7 @@ namespace Marv.Common.Graph
         private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
+        private string evidenceString;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
         private string inputVertexKey;
@@ -130,6 +131,23 @@ namespace Marv.Common.Graph
                     {
                         this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
                     }
+                }
+            }
+        }
+
+        public string EvidenceString
+        {
+            get
+            {
+                return this.evidenceString;
+            }
+
+            set
+            {
+                if (value != this.evidenceString)
+                {
+                    this.evidenceString = value;
+                    this.RaisePropertyChanged("EvidenceString");
                 }
             }
         }

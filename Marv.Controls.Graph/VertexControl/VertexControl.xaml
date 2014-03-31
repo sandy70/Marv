@@ -17,7 +17,7 @@
             <marv:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
 
             <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
-            
+
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="Black" />
             </Style>
@@ -127,11 +127,12 @@
                    VerticalAlignment="Center" />
 
         <TextBox Name="InputTextBox"
-                Grid.Column="1"
+                 Grid.Column="1"
                  telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                Margin="{Binding Source={StaticResource MarginSmallest}}"
-                VerticalAlignment="Center" />
+                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                 Margin="{Binding Source={StaticResource MarginSmallest}}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString}"
+                 VerticalAlignment="Center" />
 
         <Grid Grid.Column="2">
             <Grid.ColumnDefinitions>

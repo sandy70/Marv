@@ -57,6 +57,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Evidence.cs" />
     <Compile Include="EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
