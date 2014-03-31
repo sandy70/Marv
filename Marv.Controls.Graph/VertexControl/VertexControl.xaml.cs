@@ -60,6 +60,16 @@ namespace Marv.Controls.Graph
             }
         }
 
+        private void All0Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Vertex.SetValue(0);
+        }
+
+        private void All1Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Vertex.SetValue(1);
+        }
+
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var evidence = EvidenceStringFactory.Create(this.InputTextBox.Text).Parse(this.Vertex);
@@ -84,6 +94,8 @@ namespace Marv.Controls.Graph
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.All0Button.Click += All0Button_Click;
+            this.All1Button.Click += All1Button_Click;
             this.InputTextBox.TextChanged += InputTextBox_TextChanged;
         }
 

@@ -561,7 +561,7 @@ namespace Marv.Common.Graph
         {
             foreach (var vertex in this.Vertices)
             {
-                vertex.SetValueToZero();
+                vertex.SetValue(0);
             }
         }
 

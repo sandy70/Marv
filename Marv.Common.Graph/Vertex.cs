@@ -548,11 +548,11 @@ namespace Marv.Common.Graph
             }
         }
 
-        public void SetValueToZero()
+        public void SetValue(int i)
         {
             foreach (var state in this.States)
             {
-                state.Value = 0;
+                state.Value = i;
             }
         }
 

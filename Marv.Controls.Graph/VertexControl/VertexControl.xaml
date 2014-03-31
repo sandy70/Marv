@@ -72,7 +72,7 @@
                                                    HorizontalAlignment="Stretch"
                                                    HorizontalContentAlignment="Right"
                                                    Margin="1"
-                                                   Mask="#2.2"
+                                                   Mask="#3.2"
                                                    Placeholder=" "
                                                    TextMode="PlainText"
                                                    UpdateValueEvent="PropertyChanged"
@@ -139,7 +139,8 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Grid.Column="0"
+            <telerik:RadButton Name="All0Button"
+                               Grid.Column="0"
                                Background="{Binding Source={StaticResource BackgroundDark}}"
                                Content="0"
                                FontWeight="Bold"
@@ -147,7 +148,8 @@
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                Margin="{Binding Source={StaticResource MarginSmallest}}" />
 
-            <telerik:RadButton Grid.Column="1"
+            <telerik:RadButton Name="All1Button"
+                               Grid.Column="1"
                                Background="{Binding Source={StaticResource BackgroundDark}}"
                                Content="1"
                                FontWeight="Bold"
