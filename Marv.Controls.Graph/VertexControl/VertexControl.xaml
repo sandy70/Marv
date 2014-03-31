@@ -74,7 +74,7 @@
                                                    TextMode="PlainText"
                                                    UpdateValueEvent="PropertyChanged"
                                                    Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsEditable, Converter={StaticResource BooleanToVisibility}}" />
+                                                   Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -107,7 +107,8 @@
     </Grid>
     
     <!-- Input -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
+    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
+          Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />

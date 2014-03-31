@@ -17,8 +17,5 @@
         
         <marv:NotificationControl Grid.Row="0"
                                   Notifications="{Binding ElementName=Root, Path=Notifications}" />
-        
-        <marv:StateControl Grid.Row="1" State="{Binding ElementName=Root, Path=Vertex.States[State1]}"
-                           IsEditable="True"/>
     </Grid>
 </Window>

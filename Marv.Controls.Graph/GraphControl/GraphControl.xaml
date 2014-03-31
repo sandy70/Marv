@@ -63,7 +63,7 @@
                             <DataTemplate>
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
-                                                     IsInputVisible="True"
+                                                     IsInputVisible="False"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
