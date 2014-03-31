@@ -32,6 +32,7 @@ namespace Marv.Common.Graph
         private State selectedState;
         private ModelCollection<State> states = new ModelCollection<State>();
         private Dictionary<string, double> statistics = new Dictionary<string, double>();
+        private double[,] table;
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
@@ -357,6 +358,23 @@ namespace Marv.Common.Graph
                 {
                     this.statistics = value;
                     this.RaisePropertyChanged("Statistics");
+                }
+            }
+        }
+
+        public double[,] Table
+        {
+            get
+            {
+                return this.table;
+            }
+
+            set
+            {
+                if (value != this.table)
+                {
+                    this.table = value;
+                    this.RaisePropertyChanged("Table");
                 }
             }
         }

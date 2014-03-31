@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
+using Marv.Input.Properties;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
+        public static readonly DependencyProperty GraphProperty =
+            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
 
@@ -23,6 +28,18 @@ namespace Marv.Input
             InitializeComponent();
 
             this.Loaded += MainWindow_Loaded;
+        }
+
+        public Graph Graph
+        {
+            get
+            {
+                return (Graph) GetValue(GraphProperty);
+            }
+            set
+            {
+                SetValue(GraphProperty, value);
+            }
         }
 
         public ObservableCollection<INotification> Notifications
@@ -49,38 +66,10 @@ namespace Marv.Input
             }
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Vertex = new Vertex
-            {
-                Key = "Vertex",
-                Name = "My Vertex",
-                IsExpanded = true,
-                IsSelected = true,
-                Units = "My Units",
-                Description = "This is some random long description for this vertex. This will contain long sentences even running in paragraphs.",
-                States = new ModelCollection<State>
-                {
-                    new State
-                    {
-                        Key = "State1",
-                        Name = "State One"
-                    },
-                    new State
-                    {
-                        Key = "State2;lkajd;lkjfa;lkd",
-                        Name = "State Two"
-                    },
-                    new State
-                    {
-                        Key = "State3",
-                        Name = "State Three"
-                    },
-                }
-            };
-
-            this.Vertex.UpdateMostProbableState();
-            // this.NewNotificationButton.Click += NewNotificationButton_Click;
+            // Read the graph
+            await Task.Run(() => this.Graph = Graph.Read(Settings.Default.FileName));
         }
 
         private void NewNotificationButton_Click(object sender, RoutedEventArgs e)
