@@ -247,6 +247,8 @@ namespace Marv_Excel
                 EndYear = this.TaskPane.EndYear,
                 Vertices = this.TaskPane.SelectedVertices
             };
+
+            sheetModel.LineValue["One"] = new Marv.Common.Dictionary<int, string, string, double>();
             
             sheetModel.Write(this.InputSheet);
         }

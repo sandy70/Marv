@@ -354,7 +354,7 @@ namespace Marv_Excel
                     col += 1;
                 }
 
-                sectionRow += this.Vertices.Max(vertex => vertex.States.Count) + 2;
+                sectionRow += this.Vertices.Max(vertex => vertex.States.Count) + 1;
             }
             
         }
