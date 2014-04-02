@@ -91,8 +91,9 @@
     <Reference Include="QuickGraph.Serialization">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="SmileNet.x64">
-      <HintPath>..\packages\Smile\SmileNet.$(Platform).dll</HintPath>
+    <Reference Include="SmileNet, Version=1.1.5205.27143, Culture=neutral, PublicKeyToken=808949b7dda55ecd, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Smile\SmileNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

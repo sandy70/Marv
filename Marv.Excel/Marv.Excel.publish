@@ -15,6 +15,6 @@
       <showRegMsg>true</showRegMsg>
       <showRunningApplicationsWarning>true</showRunningApplicationsWarning>
     </preferences>
-    <prerequisites createSetupProgram="true" installFromVendor="false" />
+    <prerequisites createSetupProgram="false" installFromVendor="true" />
   </application>
 </publishConfiguration>

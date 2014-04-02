@@ -12,29 +12,6 @@ namespace Marv.Common.Graph
 {
     public partial class Graph : Model
     {
-        public Dictionary<string, Evidence> GetEvidence()
-        {
-            var graphEvidence = new Dictionary<string, Evidence>();
-
-            foreach (var vertex in this.Vertices)
-            {
-                if (vertex.IsEvidenceEntered)
-                {
-                    graphEvidence[vertex.Key] = vertex.GetEvidence();
-                }
-            }
-
-            return graphEvidence;
-        }
-
-        public void SetEvidence(Dictionary<string, Evidence> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                this.Vertices[vertexKey].SetEvidence(graphEvidence[vertexKey]);
-            }
-        }
-
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string defaultGroup;
@@ -162,6 +139,21 @@ namespace Marv.Common.Graph
         {
             this.network.ClearEvidence(vertexKey);
             return this.GetNetworkValue();
+        }
+
+        public Dictionary<string, Evidence> GetEvidence()
+        {
+            var graphEvidence = new Dictionary<string, Evidence>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                if (vertex.IsEvidenceEntered)
+                {
+                    graphEvidence[vertex.Key] = vertex.GetEvidence();
+                }
+            }
+
+            return graphEvidence;
         }
 
         public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
@@ -498,6 +490,11 @@ namespace Marv.Common.Graph
 
             for (var year = startYear; year <= endYear; year++)
             {
+                if (!modelEvidence.ContainsKey(year))
+                {
+                    continue;
+                }
+
                 var graphEvidence = modelEvidence[year];
 
                 // If this is not the start year, then add the looped evidences
@@ -521,6 +518,14 @@ namespace Marv.Common.Graph
             }
 
             return graphValueTimeSeries;
+        }
+
+        public void SetEvidence(Dictionary<string, Evidence> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.Vertices[vertexKey].SetEvidence(graphEvidence[vertexKey]);
+            }
         }
 
         public void SetEvidence(string vertexKey, string stateKey)
