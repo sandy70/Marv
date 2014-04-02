@@ -13,7 +13,7 @@ namespace Marv_Excel
             EventManager.RegisterRoutedEvent("DoneButtonClicked", RoutingStrategy.Bubble, typeof (RoutedEventHandler<RoutedEventArgs>), typeof (VertexSelectionControl));
 
         public static readonly DependencyProperty StartYearProperty =
-            DependencyProperty.Register("StartYear", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(1990));
+            DependencyProperty.Register("StartYear", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(2000));
 
         public static readonly DependencyProperty EndYearProperty =
             DependencyProperty.Register("EndYear", typeof (int), typeof (VertexSelectionControl), new PropertyMetadata(2000));
