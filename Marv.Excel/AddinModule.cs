@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AddinExpress.MSO;
 using AddinExpress.XL;
+using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
-using System.Collections.Generic;
 
 namespace Marv_Excel
 {
@@ -39,7 +40,7 @@ namespace Marv_Excel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddinModule));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof (AddinModule));
             this.MarvRibbonTab = new AddinExpress.MSO.ADXRibbonTab(this.components);
             this.FileRibbonGrouop = new AddinExpress.MSO.ADXRibbonGroup(this.components);
             this.OpenButton = new AddinExpress.MSO.ADXRibbonButton(this.components);
@@ -77,7 +78,7 @@ namespace Marv_Excel
             // 
             // IconList
             // 
-            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IconList.ImageStream")));
+            this.IconList.ImageStream = ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("IconList.ImageStream")));
             this.IconList.TransparentColor = System.Drawing.Color.Transparent;
             this.IconList.Images.SetKeyName(0, "Open.png");
             this.IconList.Images.SetKeyName(1, "Run.png");
@@ -110,7 +111,6 @@ namespace Marv_Excel
             // 
             this.AddinName = "Marv_Excel";
             this.SupportedApps = AddinExpress.MSO.ADXOfficeHostApp.ohaExcel;
-
         }
 
         #endregion
@@ -167,22 +167,6 @@ namespace Marv_Excel
         public string FileName { get; set; }
         public Graph Graph { get; set; }
 
-        public TaskPane TaskPane
-        {
-            get
-            {
-                return this.ExcelTaskPanesCollectionItem.TaskPaneInstance as TaskPane;
-            }
-        }
-
-        public Workbook Workbook
-        {
-            get
-            {
-                return this.ExcelApp.ActiveWorkbook;
-            }
-        }
-
         public Worksheet InputSheet
         {
             get
@@ -196,6 +180,27 @@ namespace Marv_Excel
             get
             {
                 return this.Workbook.GetWorksheetOrNew("Output");
+            }
+        }
+
+        public TaskPane TaskPane
+        {
+            get
+            {
+                return this.ExcelTaskPanesCollectionItem.TaskPaneInstance as TaskPane;
+            }
+        }
+
+        public Workbook Workbook
+        {
+            get
+            {
+                if (this.ExcelApp.ActiveWorkbook == null)
+                {
+                    this.ExcelApp.Workbooks.Add();
+                }
+
+                return this.ExcelApp.ActiveWorkbook;
             }
         }
 
@@ -223,6 +228,17 @@ namespace Marv_Excel
             }
         }
 
+        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
+        {
+            this.OutputSheet.Cells.Clear();
+
+            var sheetModel = SheetModel.Read(this.InputSheet);
+            sheetModel.Run();
+            sheetModel.Write(this.OutputSheet);
+
+            this.OutputSheet.Activate();
+        }
+
         private void taskPane_DoneButtonClicked(object sender, EventArgs e)
         {
             this.InputSheet.Cells.Clear();
@@ -235,33 +251,20 @@ namespace Marv_Excel
                     {"Start Year", this.TaskPane.StartYear},
                     {"End Year", this.TaskPane.EndYear}
                 },
-                
                 ColumnHeaders = new List<string>
                 {
                     "Section Name",
                     "Latitude",
                     "Longitude"
                 },
-
                 StartYear = this.TaskPane.StartYear,
                 EndYear = this.TaskPane.EndYear,
                 Vertices = this.TaskPane.SelectedVertices
             };
 
-            sheetModel.LineValue["One"] = new Marv.Common.Dictionary<int, string, string, double>();
-            
+            sheetModel.LineValue["One"] = new Dictionary<int, string, string, double>();
+
             sheetModel.Write(this.InputSheet);
-        }
-
-        private void RunButton_Click(object sender, IRibbonControl control, bool pressed)
-        {
-            this.OutputSheet.Cells.Clear();
-
-            var sheetModel = SheetModel.Read(this.InputSheet);
-            sheetModel.Run();
-            sheetModel.Write(this.OutputSheet);
-
-            this.OutputSheet.Activate();
         }
     }
 }

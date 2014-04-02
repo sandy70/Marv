@@ -64,7 +64,7 @@ namespace Marv
             }
         }
 
-        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
 
