@@ -108,6 +108,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
+    <Reference Include="SmileNet">
+      <HintPath>..\packages\Smile\x64\SmileNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Caching" />
@@ -380,10 +383,6 @@
     <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
       <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
       <Name>Marv.Controls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SmileNet\smileNet_public.vcxproj">
-      <Project>{3719aeb6-8932-4255-8f96-3f32d5894976}</Project>
-      <Name>SmileNet</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

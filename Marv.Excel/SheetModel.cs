@@ -229,6 +229,7 @@ namespace Marv_Excel
                     else
                     {
                         var evidence = new Dictionary<string, double>();
+                        var isEvidenceNull = true;
 
                         foreach (var state in vertex.States)
                         {
@@ -242,12 +243,16 @@ namespace Marv_Excel
                             }
                             else
                             {
+                                isEvidenceNull = false;
                                 evidence[state.Key] = Convert.ToDouble(value);
                             }
                         }
 
-                        sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
-                        sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
+                        if (!isEvidenceNull)
+                        {
+                            sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
+                            sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
+                        }
                     }
 
                     col++;
