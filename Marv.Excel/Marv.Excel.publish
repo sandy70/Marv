@@ -17,4 +17,21 @@
     </preferences>
     <prerequisites createSetupProgram="false" installFromVendor="true" />
   </application>
+  <application version="2014.4.3.0">
+    <signingOptions>
+      <certificatePath>C:\Users\vkha\Source\Marv\Marv.Excel\Marv.Excel.pfx</certificatePath>
+    </signingOptions>
+    <deploymentOptions>
+      <providerURL>http://www.dnvgl.com/marv</providerURL>
+      <runAfterInstalling>false</runAfterInstalling>
+    </deploymentOptions>
+    <preferences>
+      <showErrors>true</showErrors>
+      <showGUI>true</showGUI>
+      <generateLogFile>false</generateLogFile>
+      <showRegMsg>true</showRegMsg>
+      <showRunningApplicationsWarning>true</showRunningApplicationsWarning>
+    </preferences>
+    <prerequisites createSetupProgram="false" installFromVendor="true" />
+  </application>
 </publishConfiguration>
