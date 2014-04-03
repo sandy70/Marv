@@ -207,56 +207,67 @@ namespace Marv_Excel
                 row = currentFind.Row;
                 col = currentFind.Column;
 
+                // Get sectionId
+                var sectionId = worksheet.ReadText(row, 1);
+
+                if (!sheetModel.LineEvidence.ContainsKey(sectionId))
+                {
+                    sheetModel.LineEvidence[sectionId] = new Dictionary<int, string, string, double>();
+                }
+
                 // Get vertexKey
                 var vertexKey = worksheet.ReadText(sheetModel.SheetHeaders.Count + 2, col);
                 var vertex = sheetModel.Graph.Vertices[vertexKey];
 
                 col++;
-                var year = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+                var yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
 
-                var sectionId = worksheet.ReadText(row, 1);
-
-                while (year != null)
+                while (yearCell != null)
                 {
+                    var year = Convert.ToInt32(yearCell);
+
+                    //if (sheetModel.LineEvidence[sectionId].ContainsKey(year))
+                    //{
+                    //    sheetModel.LineEvidence[sectionId][year] = new Dictionary<string, string, double>();
+                    //}
+
                     value = worksheet.Read(row, col);
 
                     if (value != null)
                     {
                         var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex);
-                        sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
-                        sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
+                        sheetModel.LineEvidence[sectionId, year, vertexKey] = evidence;
                     }
                     else
                     {
-                        var evidence = new Dictionary<string, double>();
+                        var vertexEvidence = new Dictionary<string, double>();
                         var isEvidenceNull = true;
 
                         foreach (var state in vertex.States)
                         {
                             var i = vertex.States.IndexOf(state);
 
-                            value = worksheet.Read(row + i + 1, col);
+                            var stateValue = worksheet.Read(row + i + 1, col);
 
-                            if (value == null)
+                            if (stateValue == null)
                             {
-                                evidence[state.Key] = 0;
+                                vertexEvidence[state.Key] = 0;
                             }
                             else
                             {
                                 isEvidenceNull = false;
-                                evidence[state.Key] = Convert.ToDouble(value);
+                                vertexEvidence[state.Key] = Convert.ToDouble(stateValue);
                             }
                         }
 
                         if (!isEvidenceNull)
                         {
-                            sheetModel.ModelEvidence[Convert.ToInt32(year), vertexKey] = evidence;
-                            sheetModel.LineEvidence[sectionId, Convert.ToInt32(year), vertexKey] = evidence;
+                            sheetModel.LineEvidence[sectionId, year, vertexKey] = vertexEvidence;
                         }
                     }
 
                     col++;
-                    year = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+                    yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
                 }
 
                 currentFind = worksheet.Cells.FindNext(currentFind);

@@ -492,6 +492,7 @@ namespace Marv.Common.Graph
             {
                 if (!modelEvidence.ContainsKey(year))
                 {
+                    graphValueTimeSeries[year] = this.Belief;
                     continue;
                 }
 
