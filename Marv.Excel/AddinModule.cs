@@ -9,6 +9,7 @@ using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
+using System.Linq;
 
 namespace Marv_Excel
 {
@@ -241,6 +242,13 @@ namespace Marv_Excel
 
         private void taskPane_DoneButtonClicked(object sender, EventArgs e)
         {
+            if (!this.TaskPane.SelectedVertices.Any())
+            {
+                MessageBox.Show("Select at least 1 node.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            this.TaskPane.Hide();
             this.InputSheet.Cells.Clear();
 
             var sheetModel = new SheetModel
@@ -257,13 +265,13 @@ namespace Marv_Excel
                     "Latitude",
                     "Longitude"
                 },
+
                 StartYear = this.TaskPane.StartYear,
                 EndYear = this.TaskPane.EndYear,
                 Vertices = this.TaskPane.SelectedVertices
             };
 
             sheetModel.LineValue["One"] = new Dictionary<int, string, string, double>();
-
             sheetModel.Write(this.InputSheet);
         }
     }

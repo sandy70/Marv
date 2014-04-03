@@ -70,8 +70,6 @@ namespace Marv_Excel
 
         private void vertexSelectionControl_DoneButtonClicked(object sender, RoutedEventArgs e)
         {
-            this.Hide();
-
             if (this.DoneButtonClicked != null)
             {
                 this.DoneButtonClicked(this, new EventArgs());
