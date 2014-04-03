@@ -249,7 +249,9 @@ namespace Marv_Excel
             }
 
             this.TaskPane.Hide();
+
             this.InputSheet.Cells.Clear();
+            this.InputSheet.Cells.NumberFormat = "@";
 
             var sheetModel = new SheetModel
             {
