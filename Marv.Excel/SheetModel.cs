@@ -220,11 +220,12 @@ namespace Marv_Excel
                 var vertex = sheetModel.Graph.Vertices[vertexKey];
 
                 col++;
-                var yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+                // var yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
 
-                while (yearCell != null)
+                // while (yearCell != null)
+                for(var year = sheetModel.StartYear;year <= sheetModel.EndYear;year++)
                 {
-                    var year = Convert.ToInt32(yearCell);
+                    //var year = Convert.ToInt32(yearCell);
 
                     //if (sheetModel.LineEvidence[sectionId].ContainsKey(year))
                     //{
@@ -267,7 +268,7 @@ namespace Marv_Excel
                     }
 
                     col++;
-                    yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
+                    //yearCell = worksheet.Read(sheetModel.SheetHeaders.Count + 2, col);
                 }
 
                 currentFind = worksheet.Cells.FindNext(currentFind);
@@ -319,7 +320,7 @@ namespace Marv_Excel
                     col++;
                 }
 
-                col++;
+                // col++;
             }
 
             // SheetHeaders.Count + Blank Line + ColumnHeader Lines + Blank Line + 1
@@ -367,7 +368,7 @@ namespace Marv_Excel
                     }
 
                     // col += (this.EndYear - this.StartYear) + 3;
-                    col += 1;
+                    // col += 1;
                 }
 
                 sectionRow += this.Vertices.Max(vertex => vertex.States.Count) + 1;
