@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Marv_Excel")]
 [assembly: AssemblyDescription("Marv_Excel")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Default Company")]
+[assembly: AssemblyCompany("DNV GL")]
 [assembly: AssemblyProduct("Marv_Excel")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
