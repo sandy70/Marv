@@ -17,6 +17,16 @@
                  HorizontalContentAlignment="Stretch"
                  ItemsSource="{Binding Vertices, ElementName=Root}"
                  SelectionMode="Multiple">
+            <ListBox.Resources>
+                <!-- Background of selected item when focussed -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                         Color="DodgerBlue" />
+                
+                <!-- Background of selected item when not focussed -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                         Color="DodgerBlue" />
+            </ListBox.Resources>
+            
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="IsSelected" Value="{Binding IsSelected}" />
