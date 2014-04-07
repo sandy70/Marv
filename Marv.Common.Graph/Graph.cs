@@ -361,7 +361,7 @@ namespace Marv.Common.Graph
                 vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
                 vertex.Groups = structureVertex.ParseGroups();
                 vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
-                vertex.InputVertexKey = structureVertex.ParseStringProperty("InputVertexKey");
+                vertex.InputVertexKey = structureVertex.ParseStringProperty("InputNode");
                 vertex.IsExpanded = structureVertex.ParseIsExpanded();
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
                 vertex.Name = structureVertex.ParseStringProperty("label");
