@@ -76,11 +76,6 @@ namespace Marv.Input
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
             this.Graph.SetValueToZero();
 
-            foreach (var vertex in this.Graph.Vertices)
-            {
-                vertex.PropertyChanged += vertex_PropertyChanged;
-            }
-
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
@@ -102,45 +97,6 @@ namespace Marv.Input
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.GetEvidence().WriteJson("marv.graphevidence");
-        }
-
-        void vertex_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var vertex = sender as Vertex;
-
-            if (vertex == null) return;
-
-            if (e.PropertyName == "IsEvidenceEntered")
-            {
-                if (vertex.IsEvidenceEntered)
-                {
-                    if (!vertex.Commands.Contains(VertexCommands.Clear))
-                    {
-                        vertex.Commands.Add(VertexCommands.Clear);
-                    }
-                }
-                else
-                {
-                    if (vertex.Commands.Contains(VertexCommands.Clear))
-                    {
-                        vertex.Commands.Remove(VertexCommands.Clear);
-                    }
-                }
-            }
-        }
-
-        private void NewNotificationButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Notifications.Push(new NotificationIndeterminate
-            {
-                Name = "Be Notified!",
-                Description = this.Notifications.Count + ". Are you notified yet?",
-            });
-        }
-
-        internal void SelectState(State state)
-        {
-            this.SelectedVertex.SelectState(state);
         }
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)

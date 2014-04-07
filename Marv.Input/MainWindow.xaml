@@ -38,7 +38,7 @@
                                 Grid.Row="1"
                                 IsEditable="True"
                                 IsInputVisible="True"
-                                IsToolbarVisible="True"
+                                IsToolbarVisible="False"
                                 Margin="5"
                                 Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
         </Grid>
