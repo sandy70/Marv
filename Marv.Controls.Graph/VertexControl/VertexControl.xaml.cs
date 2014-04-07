@@ -115,12 +115,11 @@ namespace Marv.Controls.Graph
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetValue(1);
+            this.Vertex.IsEvidenceEntered = true;
         }
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var temp = EvidenceStringFactory.Create(this.InputTextBox.Text);
-
             var evidence = EvidenceStringFactory.Create(this.InputTextBox.Text).Parse(this.Vertex);
 
             if (evidence == null)

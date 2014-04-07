@@ -14,8 +14,9 @@
                 <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <marv:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />
             <marv:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
-
+            
             <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
 
             <Style TargetType="TextBlock">
@@ -61,7 +62,7 @@
                                             IsEditable="{Binding ElementName=Root, Path=IsEditable}"
                                             IsTextVisible="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanNot}}"
                                             Margin="1"
-                                            SliderForeground="#20aeff"
+                                            SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
                                             Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
                         <i:Interaction.Behaviors>
                             <local:SliderProgressBarBehavior />
