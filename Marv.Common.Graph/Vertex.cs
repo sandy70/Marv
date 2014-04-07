@@ -590,6 +590,8 @@ namespace Marv.Common.Graph
             {
                 state.Value = i;
             }
+
+            this.Value = this.Value.Normalized();
         }
 
         public Evidence GetEvidence()
