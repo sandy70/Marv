@@ -223,7 +223,7 @@ namespace Marv_Excel
 
                 if (this.TaskPane != null)
                 {
-                    this.TaskPane.Vertices = this.Graph.Vertices;
+                    this.TaskPane.Vertices = this.Graph.Vertices.Where(vertex => !vertex.Groups.Contains("hidden"));
                     this.TaskPane.DoneButtonClicked += taskPane_DoneButtonClicked;
                 }
             }
