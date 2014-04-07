@@ -166,6 +166,7 @@ namespace Marv.Common
 
             // also try searching for parent in framework elements (such as DockPanel, etc)
             var frameworkElement = child as FrameworkElement;
+
             if (frameworkElement != null)
             {
                 var parent = frameworkElement.Parent;
@@ -188,7 +189,14 @@ namespace Marv.Common
 
             foreach (var key in evidence.Keys)
             {
-                normalized[key] = evidence[key]/sum;
+                if (sum == 0)
+                {
+                    normalized[key] = 0;
+                }
+                else
+                {
+                    normalized[key] = evidence[key] / sum;
+                }
             }
 
             return normalized;
