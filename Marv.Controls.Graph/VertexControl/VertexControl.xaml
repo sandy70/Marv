@@ -140,19 +140,19 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Name="All0Button"
+            <telerik:RadButton Name="UniformEvidenceButton"
                                Grid.Column="0"
                                Background="{Binding Source={StaticResource BackgroundDark}}"
-                               Content="0"
+                               Content="="
                                FontWeight="Bold"
                                Foreground="Black"
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                Margin="{Binding Source={StaticResource MarginSmallest}}" />
 
-            <telerik:RadButton Name="All1Button"
+            <telerik:RadButton Name="ClearEvidenceButton"
                                Grid.Column="1"
                                Background="{Binding Source={StaticResource BackgroundDark}}"
-                               Content="1"
+                               Content="X"
                                FontWeight="Bold"
                                Foreground="Black"
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"

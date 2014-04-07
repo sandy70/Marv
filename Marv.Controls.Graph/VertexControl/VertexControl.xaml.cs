@@ -106,12 +106,12 @@ namespace Marv.Controls.Graph
             }
         }
 
-        private void All0Button_Click(object sender, RoutedEventArgs e)
+        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetValue(0);
         }
 
-        private void All1Button_Click(object sender, RoutedEventArgs e)
+        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetValue(1);
         }
@@ -152,8 +152,8 @@ namespace Marv.Controls.Graph
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.All0Button.Click += All0Button_Click;
-            this.All1Button.Click += All1Button_Click;
+            this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
+            this.UniformEvidenceButton.Click += this.UniformEvidenceButton_Click;
             this.InputTextBox.TextChanged += InputTextBox_TextChanged;
         }
 
