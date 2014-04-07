@@ -109,6 +109,7 @@ namespace Marv.Controls.Graph
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetValue(0);
+            this.InputTextBox.Text = null;
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
