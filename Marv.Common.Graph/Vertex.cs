@@ -144,10 +144,20 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value != this.evidenceString)
+                this.evidenceString = value;
+                this.RaisePropertyChanged("EvidenceString");
+
+                var evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this);
+
+                if (evidence == null)
                 {
-                    this.evidenceString = value;
-                    this.RaisePropertyChanged("EvidenceString");
+                    this.SetValue(0);
+                    this.IsEvidenceEntered = false;
+                }
+                else
+                {
+                    this.Value = evidence;
+                    this.IsEvidenceEntered = true;
                 }
             }
         }
@@ -204,11 +214,8 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value != this.isEvidenceEntered)
-                {
-                    this.isEvidenceEntered = value;
-                    this.RaisePropertyChanged("IsEvidenceEntered");
-                }
+                this.isEvidenceEntered = value;
+                this.RaisePropertyChanged("IsEvidenceEntered");
             }
         }
 
@@ -435,28 +442,15 @@ namespace Marv.Common.Graph
         {
             get
             {
-                var value = new Dictionary<string, double>();
-
-                foreach (var state in this.States)
-                {
-                    value[state.Key] = state.Value;
-                }
-
-                return value;
+                return this.States.ToDictionary(state => state.Key, state => state.Value);
             }
 
             set
             {
-                foreach (var stateKey in value.Keys)
+                foreach (var state in this.States)
                 {
-                    this.States[stateKey].Value = value[stateKey];
+                    state.Value = value == null ? 0 : value[state.Key];
                 }
-
-                //foreach (var state in this.States)
-                //{
-                //    // loop over subset
-                //    state.Value = value[state.Key];
-                //}
 
                 this.UpdateMostProbableState();
 
@@ -474,6 +468,15 @@ namespace Marv.Common.Graph
             }
 
             return evidence;
+        }
+
+        public Evidence GetEvidence()
+        {
+            return new Evidence
+            {
+                String = this.EvidenceString, 
+                Value = this.Value
+            };
         }
 
         public double GetMean(Dictionary<string, double> vertexValue)
@@ -584,6 +587,13 @@ namespace Marv.Common.Graph
             }
         }
 
+        public void SetEvidence(Evidence evidence)
+        {
+            this.EvidenceString = evidence.String;
+            this.Value = evidence.Value;
+            this.IsEvidenceEntered = true;
+        }
+
         public void SetValue(int i)
         {
             foreach (var state in this.States)
@@ -594,31 +604,6 @@ namespace Marv.Common.Graph
             this.Value = this.Value.Normalized();
         }
 
-        public Evidence GetEvidence()
-        {
-            var evidence = new Evidence();
-
-            foreach (var state in this.States)
-            {
-                evidence[state.Key] = state.Value;
-            }
-
-            evidence.String = this.EvidenceString;
-
-            return evidence;
-        }
-
-        public void SetEvidence(Evidence evidence)
-        {
-            foreach (var stateKey in evidence.Keys)
-            {
-                this.EvidenceString = evidence.String;
-                this.IsEvidenceEntered = true;
-
-                this.States[stateKey].Value = evidence[stateKey];
-            }
-        }
-
         public override string ToString()
         {
             return String.Format("[{0}:{1}]", this.Key, this.Name);
@@ -627,6 +612,13 @@ namespace Marv.Common.Graph
         public void UpdateMostProbableState()
         {
             this.MostProbableState = this.States.MaxBy(state => state.Value);
+        }
+
+        internal void SetValue(Evidence evidence)
+        {
+            this.EvidenceString = evidence.String;
+            this.Value = evidence.Value;
+            this.IsEvidenceEntered = true;
         }
     }
 }

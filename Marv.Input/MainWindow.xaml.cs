@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
+using System.Linq;
 using System.Windows;
+using AutoMapper;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -83,26 +84,49 @@ namespace Marv.Input
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog();
-            dialog.Filter = "Graph Evidence |*.graphevidence";
-            dialog.Multiselect = false;
-
-            if (dialog.ShowDialog() == true)
+            var dialog = new OpenFileDialog
             {
-                var graphEvidence = Utils.ReadJson<Dictionary<string, Evidence>>(dialog.FileName);
-                this.Graph.SetEvidence(graphEvidence);
+                Filter = "Graph Evidence |*.vertices", 
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == false) return;
+
+            var list = Utils.ReadJson(dialog.FileName) as JArray;
+
+            foreach (var item in list)
+            {
+                var result = JsonConvert.DeserializeAnonymousType(item.ToString(), new
+                {
+                    EvidenceString = "",
+                    IsEvidenceEntered = true,
+                    Key = "",
+                    Value = new Dictionary<string, double>()
+                });
+
+                Mapper.DynamicMap(result, this.Graph.Vertices[result.Key]);
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.GetEvidence().WriteJson("marv.graphevidence");
+            this.Graph
+                .Vertices
+                .Where(vertex => vertex.IsEvidenceEntered)
+                .Select(vertex => new
+                {
+                    vertex.EvidenceString,
+                    vertex.IsEvidenceEntered,
+                    vertex.Key,
+                    vertex.Value
+                })
+                .WriteJson("marv.vertices");
         }
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
             var vertexControl = sender as VertexControl;
-            
+
             if (vertexControl == null) return;
 
             var vertex = vertexControl.Vertex;

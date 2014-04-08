@@ -48,12 +48,11 @@ namespace Marv
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.SourceGraph;
-            var vertexEvidence = vertex.GetEvidence();
             var window = this.AssociatedObject;
 
             try
             {
-                graph.Value = graph.Run(vertex.Key, vertexEvidence);
+                graph.Value = graph.Run(vertex.Key, vertex.Value);
             }
             catch (Smile.SmileException)
             {

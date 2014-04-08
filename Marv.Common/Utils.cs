@@ -61,6 +61,21 @@ namespace Marv.Common
             }
         }
 
+        public static object ReadJson(string fileName)
+        {
+            var serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            serializer.Formatting = Formatting.Indented;
+
+            using (var streamWriter = new StreamReader(fileName))
+            {
+                using (var jsonTextWriter = new JsonTextReader(streamWriter))
+                {
+                    return serializer.Deserialize(jsonTextWriter);
+                }
+            }
+        }
+
         public static Guid ToGuid(this long n)
         {
             var guidBinary = new byte[16];

@@ -190,11 +190,11 @@ namespace Marv
             var parts = evidenceString.Trim()
                 .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            var evidence = vertex.GetEvidence();
+            var vertexValue = new Dictionary<string, double>();
 
-            foreach (var stateKey in evidence.Keys)
+            foreach (var state in vertex.States)
             {
-                evidence[stateKey] = 0;
+                vertexValue[state.Key] = 0;
             }
 
             foreach (var part in parts)
@@ -214,7 +214,7 @@ namespace Marv
                         {
                             if (state.Range.Bounds(value))
                             {
-                                evidence[state.Key] += probability;
+                                vertexValue[state.Key] += probability;
                             }
                         }
                     }
@@ -224,7 +224,7 @@ namespace Marv
                         {
                             if (state.Key == partsOfPart[0])
                             {
-                                evidence[state.Key] += probability;
+                                vertexValue[state.Key] += probability;
                             }
                         }
                     }
@@ -235,7 +235,7 @@ namespace Marv
                 }
             }
 
-            return evidence;
+            return vertexValue;
         }
 
         private static Dictionary<string, double> ParseRange(string evidenceString, Vertex vertex)

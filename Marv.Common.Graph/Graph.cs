@@ -529,6 +529,14 @@ namespace Marv.Common.Graph
             }
         }
 
+        public void SetValue(Dictionary<string, Evidence> vertexValues)
+        {
+            foreach (var vertexKey in vertexValues.Keys)
+            {
+                this.Vertices[vertexKey].SetValue(vertexValues[vertexKey]);
+            }
+        }
+
         public void SetEvidence(string vertexKey, string stateKey)
         {
             var stateIndex = this.Vertices[vertexKey].States.IndexOf(stateKey);

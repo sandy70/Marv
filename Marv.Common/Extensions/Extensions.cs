@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using MoreLinq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Marv.Common
 {
@@ -195,7 +196,7 @@ namespace Marv.Common
                 }
                 else
                 {
-                    normalized[key] = evidence[key] / sum;
+                    normalized[key] = evidence[key]/sum;
                 }
             }
 
@@ -375,10 +376,12 @@ namespace Marv.Common
 
         public static void WriteJson(this object _object, string fileName)
         {
-            var serializer = new JsonSerializer();
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-            serializer.Formatting = Formatting.Indented;
-            serializer.TypeNameHandling = TypeNameHandling.Auto;
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
 
             using (var streamWriter = new StreamWriter(fileName))
             {
