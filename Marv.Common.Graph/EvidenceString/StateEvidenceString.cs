@@ -26,7 +26,7 @@ namespace Marv.Common.Graph
             {
                 double value;
 
-                if (Double.TryParse(this._string, out value))
+                if (Double.TryParse(this._string, out value) && vertex.Type == VertexType.Interval)
                 {
                     var isWithinBounds = false;
 

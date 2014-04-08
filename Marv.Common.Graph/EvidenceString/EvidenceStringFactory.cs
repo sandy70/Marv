@@ -6,6 +6,8 @@ namespace Marv.Common.Graph
     {
         public static EvidenceString Create(string evidenceString)
         {
+            if (evidenceString == null) return new NullEvidenceString(null);
+
             if (evidenceString.Contains(';'))
             {
                 return new DistributionEvidenceString(evidenceString);

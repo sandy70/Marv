@@ -14,11 +14,11 @@ namespace Marv.Common.Graph
 
         public override Dictionary<string, double> Parse(Vertex vertex)
         {
-            var evidence = vertex.GetEvidence();
+            var vertexValue = new Dictionary<string, double>();
 
-            foreach (var stateKey in evidence.Keys)
+            foreach (var state in vertex.States)
             {
-                evidence[stateKey] = 0;
+                vertexValue[state.Key] = 0;
             }
 
             var parts = this._string
@@ -40,14 +40,14 @@ namespace Marv.Common.Graph
                     {
                         foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
                         {
-                            evidence[state.Key] += probability;
+                            vertexValue[state.Key] += probability;
                         }
                     }
                     else
                     {
                         foreach (var state in vertex.States.Where(state => state.Key == partsOfPart[0]))
                         {
-                            evidence[state.Key] += probability;
+                            vertexValue[state.Key] += probability;
                         }
                     }
                 }
@@ -57,7 +57,7 @@ namespace Marv.Common.Graph
                 }
             }
 
-            return evidence;
+            return vertexValue;
         }
     }
 }
