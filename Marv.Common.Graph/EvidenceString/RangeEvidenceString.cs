@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Marv.Common.Graph
 {
-    public class RangeEvidenceString : EvidenceStringParser
+    public class RangeEvidenceString : IEvidenceStringParser
     {
-        public override Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(Vertex vertex, string str)
         {
             if (str.Length <= 0) return null;
 

@@ -4,7 +4,7 @@ namespace Marv.Common.Graph
 {
     public static class EvidenceStringFactory
     {
-        public static EvidenceStringParser Create(string evidenceString)
+        public static IEvidenceStringParser Create(string evidenceString)
         {
             if (evidenceString == null) return new NullEvidenceString();
 

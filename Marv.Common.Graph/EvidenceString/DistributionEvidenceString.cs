@@ -5,9 +5,9 @@ using Smile;
 
 namespace Marv.Common.Graph
 {
-    public class DistributionEvidenceString : EvidenceStringParser
+    public class DistributionEvidenceString : IEvidenceStringParser
     {
-        public override Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(Vertex vertex, string str)
         {
             var vertexValue = new Dictionary<string, double>();
 

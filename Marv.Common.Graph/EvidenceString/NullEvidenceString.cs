@@ -2,9 +2,9 @@
 
 namespace Marv.Common.Graph
 {
-    public class NullEvidenceString : EvidenceStringParser
+    public class NullEvidenceString : IEvidenceStringParser
     {
-        public override Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(Vertex vertex, string str)
         {
             return null;
         }

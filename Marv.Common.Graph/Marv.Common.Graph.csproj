@@ -65,7 +65,7 @@
     <Compile Include="EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
-    <Compile Include="EvidenceString\EvidenceStringParser.cs" />
+    <Compile Include="EvidenceString\IEvidenceStringParser.cs" />
     <Compile Include="EvidenceString\EvidenceStringFactory.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Graph.cs" />

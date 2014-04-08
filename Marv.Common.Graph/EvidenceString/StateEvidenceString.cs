@@ -5,9 +5,9 @@ using Smile;
 
 namespace Marv.Common.Graph
 {
-    public class StateEvidenceString : EvidenceStringParser
+    public class StateEvidenceString : IEvidenceStringParser
     {
-        public override Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(Vertex vertex, string str)
         {
             if (str.Length <= 0) return null;
 
