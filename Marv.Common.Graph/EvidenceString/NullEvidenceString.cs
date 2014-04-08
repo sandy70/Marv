@@ -2,7 +2,7 @@
 
 namespace Marv.Common.Graph
 {
-    public class NullEvidenceString : EvidenceString
+    public class NullEvidenceString : EvidenceStringParser
     {
         public NullEvidenceString(string aString) : base(aString)
         {

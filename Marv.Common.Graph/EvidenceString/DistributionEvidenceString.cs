@@ -5,7 +5,7 @@ using Smile;
 
 namespace Marv.Common.Graph
 {
-    public class DistributionEvidenceString : EvidenceString
+    public class DistributionEvidenceString : EvidenceStringParser
     {
         public DistributionEvidenceString(string aString)
             : base(aString)

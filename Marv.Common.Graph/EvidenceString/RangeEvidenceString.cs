@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Marv.Common.Graph
 {
-    public class RangeEvidenceString : EvidenceString
+    public class RangeEvidenceString : EvidenceStringParser
     {
         public RangeEvidenceString(string aString)
             : base(aString)

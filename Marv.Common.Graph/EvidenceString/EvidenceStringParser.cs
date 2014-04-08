@@ -2,11 +2,11 @@
 
 namespace Marv.Common.Graph
 {
-    public abstract class EvidenceString
+    public abstract class EvidenceStringParser
     {
-        protected string _string = null;
+        protected readonly string _string = null;
 
-        public EvidenceString(string aString)
+        protected EvidenceStringParser(string aString)
         {
             this._string = aString;
         }
