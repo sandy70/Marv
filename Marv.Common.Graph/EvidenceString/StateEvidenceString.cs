@@ -7,26 +7,21 @@ namespace Marv.Common.Graph
 {
     public class StateEvidenceString : EvidenceStringParser
     {
-        public StateEvidenceString(string aString)
-            : base(aString)
+        public override Dictionary<string, double> Parse(Vertex vertex, string str)
         {
-        }
-
-        public override Dictionary<string, double> Parse(Vertex vertex)
-        {
-            if (this._string.Length <= 0) return null;
+            if (str.Length <= 0) return null;
 
             var evidence = vertex.CreateEvidence();
 
-            if (vertex.States.Count(state => state.Key == this._string) == 1)
+            if (vertex.States.Count(state => state.Key == str) == 1)
             {
-                evidence[this._string] = 1;
+                evidence[str] = 1;
             }
             else
             {
                 double value;
 
-                if (Double.TryParse(this._string, out value) && vertex.Type == VertexType.Interval)
+                if (Double.TryParse(str, out value) && vertex.Type == VertexType.Interval)
                 {
                     var isWithinBounds = false;
 

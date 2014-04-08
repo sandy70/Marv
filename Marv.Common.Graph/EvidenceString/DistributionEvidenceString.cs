@@ -7,12 +7,7 @@ namespace Marv.Common.Graph
 {
     public class DistributionEvidenceString : EvidenceStringParser
     {
-        public DistributionEvidenceString(string aString)
-            : base(aString)
-        {
-        }
-
-        public override Dictionary<string, double> Parse(Vertex vertex)
+        public override Dictionary<string, double> Parse(Vertex vertex, string str)
         {
             var vertexValue = new Dictionary<string, double>();
 
@@ -21,7 +16,7 @@ namespace Marv.Common.Graph
                 vertexValue[state.Key] = 0;
             }
 
-            var parts = this._string
+            var parts = str
                 .Trim()
                 .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 

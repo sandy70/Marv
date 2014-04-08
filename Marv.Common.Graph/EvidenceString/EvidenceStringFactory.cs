@@ -6,19 +6,19 @@ namespace Marv.Common.Graph
     {
         public static EvidenceStringParser Create(string evidenceString)
         {
-            if (evidenceString == null) return new NullEvidenceString(null);
+            if (evidenceString == null) return new NullEvidenceString();
 
             if (evidenceString.Contains(';'))
             {
-                return new DistributionEvidenceString(evidenceString);
+                return new DistributionEvidenceString();
             }
 
             if (evidenceString.Contains(':'))
             {
-                return new RangeEvidenceString(evidenceString);
+                return new RangeEvidenceString();
             }
 
-            return new StateEvidenceString(evidenceString);
+            return new StateEvidenceString();
         }
     }
 }

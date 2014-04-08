@@ -6,17 +6,13 @@ namespace Marv.Common.Graph
 {
     public class RangeEvidenceString : EvidenceStringParser
     {
-        public RangeEvidenceString(string aString)
-            : base(aString)
-        { }
-
-        public override Dictionary<string, double> Parse(Vertex vertex)
+        public override Dictionary<string, double> Parse(Vertex vertex, string str)
         {
-            if (this._string.Length <= 0) return null;
+            if (str.Length <= 0) return null;
 
             var evidence = vertex.CreateEvidence();
 
-            var parts = this._string
+            var parts = str
                             .Trim()
                             .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 

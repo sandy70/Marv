@@ -147,7 +147,7 @@ namespace Marv.Common.Graph
                 this.evidenceString = value;
                 this.RaisePropertyChanged("EvidenceString");
 
-                var evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this);
+                var evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this, this.EvidenceString);
 
                 if (evidence == null)
                 {
