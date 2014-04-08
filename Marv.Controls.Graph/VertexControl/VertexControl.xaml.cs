@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
@@ -112,28 +113,6 @@ namespace Marv.Controls.Graph
             this.InputTextBox.Text = null;
         }
 
-        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Vertex.SetValue(1);
-            this.Vertex.IsEvidenceEntered = true;
-        }
-
-        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            var evidence = EvidenceStringFactory.Create(this.InputTextBox.Text).Parse(this.Vertex);
-
-            if (evidence == null)
-            {
-                this.Vertex.SetValue(0);
-                this.Vertex.IsEvidenceEntered = false;
-            }
-            else
-            {
-                this.Vertex.Value = evidence;
-                this.Vertex.IsEvidenceEntered = true;
-            }
-        }
-
         public void RaiseCommandExecuted(Command<Vertex> command)
         {
             if (this.CommandExecuted != null)
@@ -150,11 +129,17 @@ namespace Marv.Controls.Graph
             }
         }
 
+        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Vertex.EvidenceString = "";
+            this.Vertex.SetValue(1);
+            this.Vertex.IsEvidenceEntered = true;
+        }
+
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
             this.UniformEvidenceButton.Click += this.UniformEvidenceButton_Click;
-            this.InputTextBox.TextChanged += InputTextBox_TextChanged;
         }
 
         public event EventHandler<Command<Vertex>> CommandExecuted;

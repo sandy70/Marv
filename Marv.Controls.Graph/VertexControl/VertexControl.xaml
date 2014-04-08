@@ -132,7 +132,7 @@
                  telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                  Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, Mode=TwoWay}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center" />
 
         <Grid Grid.Column="2">
