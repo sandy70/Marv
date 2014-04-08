@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
@@ -9,13 +8,13 @@ using NLog;
 
 namespace Marv.Controls.Graph
 {
-    public partial class GraphControl : UserControl
+    public partial class GraphControl
     {
         public static readonly DependencyProperty ConnectionColorProperty =
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -25,6 +24,15 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
+
+        public static readonly DependencyProperty DisplayGraphProperty =
+            DependencyProperty.Register("DisplayGraph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty IsInputVisibleProperty =
+            DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -42,6 +50,19 @@ namespace Marv.Controls.Graph
             set
             {
                 this.SetValue(ConnectionColorProperty, value);
+            }
+        }
+
+        public Common.Graph.Graph DisplayGraph
+        {
+            get
+            {
+                return (Common.Graph.Graph) GetValue(DisplayGraphProperty);
+            }
+
+            set
+            {
+                SetValue(DisplayGraphProperty, value);
             }
         }
 
@@ -69,6 +90,19 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public bool IsInputVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsInputVisibleProperty);
+            }
+
+            set
+            {
+                SetValue(IsInputVisibleProperty, value);
+            }
+        }
+
         public Color OutgoingConnectionHighlightColor
         {
             get
@@ -78,6 +112,19 @@ namespace Marv.Controls.Graph
             set
             {
                 this.SetValue(OutgoingConnectionHighlightColorProperty, value);
+            }
+        }
+
+        public Vertex SelectedVertex
+        {
+            get
+            {
+                return (Vertex) GetValue(SelectedVertexProperty);
+            }
+
+            set
+            {
+                SetValue(SelectedVertexProperty, value);
             }
         }
 
@@ -107,6 +154,15 @@ namespace Marv.Controls.Graph
             };
 
             timer.Start();
+        }
+
+        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var graphControl = d as GraphControl;
+
+            if (graphControl == null) return;
+
+            graphControl.DisplayGraph = graphControl.Graph.GetSubGraph(graphControl.Graph.DefaultGroup);
         }
 
         public void RaiseEvidenceEntered(Vertex vertex)

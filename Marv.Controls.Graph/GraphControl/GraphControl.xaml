@@ -18,7 +18,7 @@
         <telerik:RadDiagram Name="DiagramPart"
                             ActiveTool="PanTool"
                             AllowDelete="True"
-                            GraphSource="{Binding Graph, ElementName=Root}"
+                            GraphSource="{Binding ElementName=Root, Path=DisplayGraph}"
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="False"
                             IsEditable="False"
@@ -28,7 +28,8 @@
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
-                            SelectionMode="Extended">
+                            SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
+                            SelectionMode="Single">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
@@ -62,7 +63,7 @@
                             <DataTemplate>
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
-                                                     IsInputVisible="True"
+                                                     IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
                                                      IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
                                                      IsStatesVisible="{Binding IsExpanded}"
                                                      IsToolbarVisible="{Binding IsSelected}"
