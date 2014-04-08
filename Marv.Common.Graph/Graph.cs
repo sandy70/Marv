@@ -300,7 +300,8 @@ namespace Marv.Common.Graph
                         {
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
-                                var connectorPostions = srcVertex.ConnectorPositions[group, dstVertex.Key];
+                                var connectorPostions = srcVertex.ConnectorPositions.GetValueOrNew(group, dstVertex.Key);
+                                
                                 subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
 
                                 src = edge.Target;
