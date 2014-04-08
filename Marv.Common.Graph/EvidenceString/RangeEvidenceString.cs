@@ -13,8 +13,8 @@ namespace Marv.Common.Graph
             var evidence = vertex.CreateEvidence();
 
             var parts = str
-                            .Trim()
-                            .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                .Trim()
+                .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Count() != 2) return null;
 
@@ -39,12 +39,12 @@ namespace Marv.Common.Graph
                     {
                         if (minValue >= state.Range.Min && minValue <= state.Range.Max)
                         {
-                            evidence[state.Key] = (state.Range.Max - minValue) / (state.Range.Max - state.Range.Min);
+                            evidence[state.Key] = (state.Range.Max - minValue)/(state.Range.Max - state.Range.Min);
                         }
 
                         if (maxValue >= state.Range.Min && maxValue <= state.Range.Max)
                         {
-                            evidence[state.Key] = (maxValue - state.Range.Min) / (state.Range.Max - state.Range.Min);
+                            evidence[state.Key] = (maxValue - state.Range.Min)/(state.Range.Max - state.Range.Min);
                         }
 
                         if (minValue <= state.Range.Min && maxValue >= state.Range.Max)

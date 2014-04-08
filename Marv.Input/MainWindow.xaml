@@ -10,54 +10,73 @@
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="50" />
-        </Grid.RowDefinitions>
-        
-        <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            
-            <telerik:RadComboBox CanAutocompleteSelectItems="True"
-                                 CanKeyboardNavigationSelectItems="True"
-                                 DisplayMemberPath="Name"
-                                 IsEditable="True"
-                                 IsFilteringEnabled="True"
-                                 ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
-                                 Margin="5"
-                                 OpenDropDownOnFocus="True"
-                                 SelectedIndex="0"
-                                 SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
-                                 TextSearchMode="Contains" />
-            
-            <marv:VertexControl Name="VertexControl"
-                                Grid.Row="1"
-                                IsEditable="True"
-                                IsInputVisible="True"
-                                IsToolbarVisible="False"
-                                Margin="5"
-                                Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
-        </Grid>
-        
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+    <telerik:RadDocking>
+        <telerik:RadDocking.DocumentHost>
+            <telerik:RadSplitContainer>
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="Network">
+                        <marv:GraphControl Graph="{Binding ElementName=Root, Path=Graph}" />
+                    </telerik:RadPane>
+                </telerik:RadPaneGroup>
+            </telerik:RadSplitContainer>
+        </telerik:RadDocking.DocumentHost>
 
-            <Button Name="OpenButton"
-                Grid.Column="0"
-                Margin="5"
-                Content="Open" />
-            
-            <Button Name="SaveButton"
-                Grid.Column="1"
-                Margin="5"
-                Content="Save" />
-        </Grid>
-    </Grid>
+        <telerik:RadSplitContainer InitialPosition="DockedRight"
+                                   Width="Auto">
+            <telerik:RadPaneGroup>
+                <telerik:RadPane Header="Node">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="50" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <telerik:RadComboBox CanAutocompleteSelectItems="True"
+                                                 CanKeyboardNavigationSelectItems="True"
+                                                 DisplayMemberPath="Name"
+                                                 IsEditable="True"
+                                                 IsFilteringEnabled="True"
+                                                 ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                                 Margin="5"
+                                                 OpenDropDownOnFocus="True"
+                                                 SelectedIndex="0"
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
+                                                 TextSearchMode="Contains" />
+
+                            <marv:VertexControl Name="VertexControl"
+                                                Grid.Row="1"
+                                                IsEditable="True"
+                                                IsInputVisible="True"
+                                                IsToolbarVisible="False"
+                                                Margin="5"
+                                                Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Name="OpenButton"
+                                    Grid.Column="0"
+                                    Margin="5"
+                                    Content="Open" />
+
+                            <Button Name="SaveButton"
+                                    Grid.Column="1"
+                                    Margin="5"
+                                    Content="Save" />
+                        </Grid>
+                    </Grid>
+                </telerik:RadPane>
+            </telerik:RadPaneGroup>
+        </telerik:RadSplitContainer>
+    </telerik:RadDocking>
 </Window>
