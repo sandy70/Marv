@@ -5,8 +5,8 @@
             xmlns:marv="http://dnvgl.com/marv"
             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            Grid.IsSharedSizeScope="True"
             Name="Root"
+            Grid.IsSharedSizeScope="True"
             Orientation="Vertical">
     <StackPanel.Resources>
         <ResourceDictionary>
@@ -16,7 +16,7 @@
 
             <marv:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />
             <marv:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
-            
+            <marv:BooleanToBrushConverter x:Key="IsSelectedToBackground" TrueBrush="#aaaaaa" FalseBrush="#dddddd" />
             <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
 
             <Style TargetType="TextBlock">
@@ -26,9 +26,11 @@
     </StackPanel.Resources>
 
     <!-- Title -->
-    <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarger}}"
+    <marv:EditableTextBox Background="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource IsSelectedToBackground}}"
+                          FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarger}}"
                           FontWeight="Bold"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
+                          Padding="{Binding Source={StaticResource MarginSmall}}"
                           Text="{Binding ElementName=Root, Path=Vertex.Name}"
                           VerticalAlignment="Center" />
 
@@ -87,8 +89,8 @@
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=IsMostProbableStateVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" Width="*" />
+            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
@@ -113,9 +115,9 @@
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="One" Width="*" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Three" Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="Three" Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
@@ -163,7 +165,7 @@
     <!-- Units -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="Auto" />
+            <ColumnDefinition SharedSizeGroup="One" Width="*" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
         </Grid.ColumnDefinitions>
 
