@@ -1,4 +1,5 @@
-﻿using System.Windows.Interactivity;
+﻿using System.Windows;
+using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
 
@@ -13,7 +14,7 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.SubGraph)
             {
-                graphControl.Graph.DisplayGraph = graphControl.Graph.GetSubGraph(vertexControl.Vertex.HeaderOfGroup);
+                graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup);
             }
 
             graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);

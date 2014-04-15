@@ -36,18 +36,7 @@ namespace Marv.Controls.Graph
         public GraphControl()
         {
             InitializeComponent();
-
             this.Loaded += GraphControl_Loaded;
-        }
-
-        void GraphControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.BackButton.Click += BackButton_Click;
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.DisplayGraph = this.Graph.GetSubGraph(this.Graph.DefaultGroup);
         }
 
         public Color ConnectionColor
@@ -150,6 +139,26 @@ namespace Marv.Controls.Graph
             };
 
             timer.Start();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
+        }
+
+        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.BackButton.Click -= BackButton_Click;
+            this.BackButton.Click += BackButton_Click;
+
+            this.ExpandButton.Click -= ExpandButton_Click;
+            this.ExpandButton.Click += ExpandButton_Click;
+        }
+
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("ExpandButton_Click");
+            this.Graph.IsExpanded = !this.Graph.IsExpanded;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex)

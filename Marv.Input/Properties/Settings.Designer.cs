@@ -25,7 +25,7 @@ namespace Marv.Input.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\vkha\\Data\\ADCO02\\ADCO_09.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\vkha\\Data\\ADCO02\\ADCO_08.net")]
         public string FileName {
             get {
                 return ((string)(this["FileName"]));

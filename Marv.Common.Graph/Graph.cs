@@ -17,6 +17,8 @@ namespace Marv.Common.Graph
         private string defaultGroup;
         private Graph displayGraph;
         private ModelCollection<Edge> edges = new ModelCollection<Edge>();
+        private bool isDefaultGroupVisible;
+        private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
@@ -63,7 +65,7 @@ namespace Marv.Common.Graph
                 return this.displayGraph;
             }
 
-            set
+            private set
             {
                 if (value != this.displayGraph)
                 {
@@ -90,10 +92,34 @@ namespace Marv.Common.Graph
             }
         }
 
-        public bool IsExpanded
+        public bool IsDefaultGroupVisible
         {
+            get
+            {
+                return this.isDefaultGroupVisible;
+            }
+
             set
             {
+                if (value != this.isDefaultGroupVisible)
+                {
+                    this.isDefaultGroupVisible = value;
+                    this.RaisePropertyChanged("IsDefaultGroupVisible");
+                }
+            }
+        }
+
+        public bool IsExpanded
+        {
+            get
+            {
+                return this.isExpanded;
+            }
+
+            set
+            {
+                this.isExpanded = value;
+
                 foreach (var vertex in this.Vertices)
                 {
                     vertex.IsExpanded = value;
@@ -430,9 +456,8 @@ namespace Marv.Common.Graph
                 }
             }
 
+            graph.UpdateDisplayGraph(graph.DefaultGroup);
             graph.UpdateValue();
-
-            graph.DisplayGraph = graph.GetSubGraph(graph.DefaultGroup);
 
             return graph;
         }
@@ -627,6 +652,13 @@ namespace Marv.Common.Graph
             {
                 vertex.SetValue(0);
             }
+        }
+
+        public void UpdateDisplayGraph(string group)
+        {
+            this.DisplayGraph = this.GetSubGraph(group);
+
+            this.IsDefaultGroupVisible = @group == this.DefaultGroup;
         }
 
         public void UpdateNetworkBeliefs()
