@@ -11,6 +11,11 @@ namespace Marv.Controls.Graph
             var vertexControl = this.AssociatedObject;
             var graphControl = vertexControl.FindParent<GraphControl>();
 
+            if (command == VertexCommands.SubGraph)
+            {
+                graphControl.DisplayGraph = graphControl.Graph.GetSubGraph(vertexControl.Vertex.HeaderOfGroup);
+            }
+
             graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
         }
 

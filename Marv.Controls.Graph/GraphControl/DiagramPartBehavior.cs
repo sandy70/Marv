@@ -120,11 +120,12 @@ namespace Marv.Controls.Graph
         private void AssociatedObject_ShapeClicked(object sender, Telerik.Windows.Controls.Diagrams.ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
-            var shapeList = new List<Telerik.Windows.Diagrams.Core.IDiagramItem>();
+            var shapeList = new List<IDiagramItem>();
             shapeList.Add(e.Shape);
 
             // Change color of connections
             var graphControl = this.AssociatedObject.FindParent<GraphControl>();
+            graphControl.SelectedVertex = e.Shape.Content as Vertex;
 
             foreach (var conn in this.AssociatedObject.Connections)
             {

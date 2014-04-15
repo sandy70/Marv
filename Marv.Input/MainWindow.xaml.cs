@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -20,14 +21,19 @@ namespace Marv.Input
             DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null, ChangedSelectedVertex));
+
+        private static void ChangedSelectedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            Console.WriteLine(e.NewValue);
+        }
 
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public MainWindow()
         {
-            StyleManager.ApplicationTheme = new Windows8TouchTheme();
+            StyleManager.ApplicationTheme = new Windows8Theme();
 
             InitializeComponent();
 
@@ -76,6 +82,7 @@ namespace Marv.Input
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
             this.Graph.SetValueToZero();
+            this.Graph.IsExpanded = true;
 
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;

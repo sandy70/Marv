@@ -3,9 +3,10 @@
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow"
         Name="Root"
-        Width="400">
+        Title="MARV - Input Designer"
+        Width="400"
+        WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </Window.Resources>
@@ -15,14 +16,16 @@
             <telerik:RadSplitContainer>
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network">
-                        <marv:GraphControl Graph="{Binding ElementName=Root, Path=Graph}" />
+                        <marv:GraphControl Background="WhiteSmoke"
+                                           Graph="{Binding ElementName=Root, Path=Graph}"
+                                           SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"/>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
         </telerik:RadDocking.DocumentHost>
 
         <telerik:RadSplitContainer InitialPosition="DockedRight"
-                                   Width="Auto">
+                                   Width="400">
             <telerik:RadPaneGroup>
                 <telerik:RadPane Header="Node">
                     <Grid>

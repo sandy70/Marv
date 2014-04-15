@@ -8,7 +8,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="600"
-             Background="Black"
+             Background="WhiteSmoke"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
@@ -28,7 +28,6 @@
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
-                            SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
                             SelectionMode="Single">
 
             <telerik:RadDiagram.ConnectionStyle>
@@ -37,9 +36,9 @@
                     <Setter Property="BezierTension" Value="3" />
                     <Setter Property="Opacity" Value="{Binding ShapeOpacity, ElementName=Root}" />
                     <Setter Property="SourceConnectorPosition" Value="{Binding ConnectorPositions.SourcePosition, Mode=TwoWay}" />
-                    <Setter Property="StrokeThickness" Value="10" />
+                    <Setter Property="StrokeThickness" Value="3" />
                     <Setter Property="TargetCapType" Value="Arrow1Filled" />
-                    <Setter Property="TargetCapSize" Value="20,20" />
+                    <Setter Property="TargetCapSize" Value="10,10" />
                     <Setter Property="TargetConnectorPosition" Value="{Binding ConnectorPositions.TargetPosition, Mode=TwoWay}" />
                     
                     <Setter Property="ContentTemplate">
@@ -61,21 +60,21 @@
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <local:VertexControl Background="#DDDDDD"
-                                                     IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
-                                                     IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
-                                                     IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
-                                                     IsStatesVisible="{Binding IsExpanded}"
-                                                     IsToolbarVisible="{Binding IsSelected}"
-                                                     Vertex="{Binding}">
-                                    <local:VertexControl.Effect>
-                                        <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
-                                    </local:VertexControl.Effect>
-                                    
-                                    <i:Interaction.Behaviors>
-                                        <local:VertexControlBehavior />
-                                    </i:Interaction.Behaviors>
-                                </local:VertexControl>
+                                    <local:VertexControl Background="#DDDDDD"
+                                                         IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
+                                                         IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
+                                                         IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
+                                                         IsStatesVisible="{Binding IsExpanded}"
+                                                         IsToolbarVisible="{Binding IsSelected}"
+                                                         Vertex="{Binding}">
+                                        <local:VertexControl.Effect>
+                                            <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
+                                        </local:VertexControl.Effect>
+
+                                        <i:Interaction.Behaviors>
+                                            <local:VertexControlBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </local:VertexControl>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

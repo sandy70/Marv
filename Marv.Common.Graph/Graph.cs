@@ -72,6 +72,17 @@ namespace Marv.Common.Graph
             }
         }
 
+        public bool IsExpanded
+        {
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    vertex.IsExpanded = value;
+                }
+            }
+        }
+
         public Dictionary<string, string> Loops
         {
             get
@@ -301,7 +312,7 @@ namespace Marv.Common.Graph
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
                                 var connectorPostions = srcVertex.ConnectorPositions.GetValueOrNew(group, dstVertex.Key);
-                                
+
                                 subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
 
                                 src = edge.Target;
@@ -530,14 +541,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public void SetValue(Dictionary<string, Evidence> vertexValues)
-        {
-            foreach (var vertexKey in vertexValues.Keys)
-            {
-                this.Vertices[vertexKey].SetValue(vertexValues[vertexKey]);
-            }
-        }
-
         public void SetEvidence(string vertexKey, string stateKey)
         {
             var stateIndex = this.Vertices[vertexKey].States.IndexOf(stateKey);
@@ -587,6 +590,14 @@ namespace Marv.Common.Graph
         public void SetTable(string vertexKey, double[,] table)
         {
             this.network.SetNodeTable(vertexKey, table);
+        }
+
+        public void SetValue(Dictionary<string, Evidence> vertexValues)
+        {
+            foreach (var vertexKey in vertexValues.Keys)
+            {
+                this.Vertices[vertexKey].SetValue(vertexValues[vertexKey]);
+            }
         }
 
         public void SetValueToZero()
