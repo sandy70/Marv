@@ -15,6 +15,7 @@ namespace Marv.Common.Graph
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private string defaultGroup;
+        private Graph displayGraph;
         private ModelCollection<Edge> edges = new ModelCollection<Edge>();
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
@@ -51,6 +52,23 @@ namespace Marv.Common.Graph
                 {
                     this.defaultGroup = value;
                     this.RaisePropertyChanged("DefaultGroup");
+                }
+            }
+        }
+
+        public Graph DisplayGraph
+        {
+            get
+            {
+                return this.displayGraph;
+            }
+
+            set
+            {
+                if (value != this.displayGraph)
+                {
+                    this.displayGraph = value;
+                    this.RaisePropertyChanged("DisplayGraph");
                 }
             }
         }
@@ -413,6 +431,9 @@ namespace Marv.Common.Graph
             }
 
             graph.UpdateValue();
+
+            graph.DisplayGraph = graph.GetSubGraph(graph.DefaultGroup);
+
             return graph;
         }
 
