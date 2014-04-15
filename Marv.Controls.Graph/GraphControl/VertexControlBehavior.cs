@@ -13,7 +13,7 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.SubGraph)
             {
-                graphControl.DisplayGraph = graphControl.Graph.GetSubGraph(vertexControl.Vertex.HeaderOfGroup);
+                graphControl.Graph.DisplayGraph = graphControl.Graph.GetSubGraph(vertexControl.Vertex.HeaderOfGroup);
             }
 
             graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);

@@ -14,7 +14,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
+            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -24,9 +24,6 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
-
-        public static readonly DependencyProperty DisplayGraphProperty =
-            DependencyProperty.Register("DisplayGraph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
@@ -39,6 +36,18 @@ namespace Marv.Controls.Graph
         public GraphControl()
         {
             InitializeComponent();
+
+            this.Loaded += GraphControl_Loaded;
+        }
+
+        void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.BackButton.Click += BackButton_Click;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.DisplayGraph = this.Graph.GetSubGraph(this.Graph.DefaultGroup);
         }
 
         public Color ConnectionColor
@@ -50,19 +59,6 @@ namespace Marv.Controls.Graph
             set
             {
                 this.SetValue(ConnectionColorProperty, value);
-            }
-        }
-
-        public Common.Graph.Graph DisplayGraph
-        {
-            get
-            {
-                return (Common.Graph.Graph) GetValue(DisplayGraphProperty);
-            }
-
-            set
-            {
-                SetValue(DisplayGraphProperty, value);
             }
         }
 
@@ -154,15 +150,6 @@ namespace Marv.Controls.Graph
             };
 
             timer.Start();
-        }
-
-        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var graphControl = d as GraphControl;
-
-            if (graphControl == null) return;
-
-            graphControl.DisplayGraph = graphControl.Graph.GetSubGraph(graphControl.Graph.DefaultGroup);
         }
 
         public void RaiseEvidenceEntered(Vertex vertex)
