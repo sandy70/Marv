@@ -344,13 +344,6 @@
                                                  Height="50" Width="50"
                                                  Margin="5"
                                                  Source="/Marv.Common;component/Resources/Icons/Close.png" />
-
-                        <!-- Back Button -->
-                        <marv:SurfaceImageButton Name="BackButton"
-                                                 Height="50" Width="50"
-                                                 Margin="5"
-                                                 Source="/Marv.Common;component/Resources/Icons/Back.png"
-                                                 Visibility="{Binding IsBackButtonVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
                     </StackPanel>
 
                     <!-- Year Label and Year Slider -->

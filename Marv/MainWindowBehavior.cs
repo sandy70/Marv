@@ -83,7 +83,6 @@ namespace Marv
             window.PipelineComputeValueMenuItem.Click += this.PipelineComputeValueMenuItem_Click;
             window.NetworkComputeValue.Click += this.NetworkComputeValue_Click;
 
-            window.BackButton.Click += this.BackButton_Click;
             window.RetractAllButton.Click += this.RetractAllButton_Click;
             window.TransitionControl.StatusChanged += this.TransitionControl_StatusChanged;
 
@@ -146,15 +145,6 @@ namespace Marv
             notification.Close();
 
             Console.WriteLine(window.SourceGraph.Vertices[0].Belief.ToJson());
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            var sourceGraph = window.SourceGraph;
-
-            window.DisplayGraph = sourceGraph.GetSubGraph(sourceGraph.DefaultGroup);
-            window.IsBackButtonVisible = false;
         }
 
         private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
