@@ -31,6 +31,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty IsVerticesEnabledProperty =
+            DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public GraphControl()
@@ -85,6 +88,19 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsInputVisibleProperty, value);
+            }
+        }
+
+        public bool IsVerticesEnabled
+        {
+            get
+            {
+                return (bool) GetValue(IsVerticesEnabledProperty);
+            }
+
+            set
+            {
+                SetValue(IsVerticesEnabledProperty, value);
             }
         }
 
@@ -146,6 +162,26 @@ namespace Marv.Controls.Graph
             this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
         }
 
+        public void DisableConnectorEditing()
+        {
+            this.IsVerticesEnabled = true;
+            this.DiagramPart.IsConnectorsManipulationEnabled = false;
+            this.DiagramPart.IsManipulationAdornerVisible = false;
+        }
+
+        public void EnableConnectorEditing()
+        {
+            this.IsVerticesEnabled = false;
+            this.DiagramPart.IsConnectorsManipulationEnabled = true;
+            this.DiagramPart.IsManipulationAdornerVisible = true;
+        }
+
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("ExpandButton_Click");
+            this.Graph.IsExpanded = !this.Graph.IsExpanded;
+        }
+
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.BackButton.Click -= BackButton_Click;
@@ -153,12 +189,6 @@ namespace Marv.Controls.Graph
 
             this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
-        }
-
-        private void ExpandButton_Click(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("ExpandButton_Click");
-            this.Graph.IsExpanded = !this.Graph.IsExpanded;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex)

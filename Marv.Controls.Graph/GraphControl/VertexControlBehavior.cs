@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Interactivity;
+﻿using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
 

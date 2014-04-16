@@ -40,7 +40,8 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <telerik:RadComboBox CanAutocompleteSelectItems="True"
+                            <telerik:RadComboBox Name="VertexComboBox"
+                                                 CanAutocompleteSelectItems="True"
                                                  CanKeyboardNavigationSelectItems="True"
                                                  DisplayMemberPath="Name"
                                                  IsEditable="True"

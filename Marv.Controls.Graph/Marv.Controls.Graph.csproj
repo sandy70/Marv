@@ -91,6 +91,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraphControl\GraphControlConnectorButtonBehavior.cs" />
     <Compile Include="GraphControl\DiagramPartBehavior.cs" />
     <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>

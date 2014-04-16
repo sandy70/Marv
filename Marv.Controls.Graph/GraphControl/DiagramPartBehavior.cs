@@ -6,49 +6,72 @@ using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Graph;
 using NLog;
+using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Controls.Graph
 {
-    internal class DiagramPartBehavior : Behavior<Telerik.Windows.Controls.RadDiagram>
+    internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private Edge oldEdge;
-        private Vertex oldVertex;
         private Edge newEdge;
         private Vertex newVertex;
+        private Edge oldEdge;
+        private Vertex oldVertex;
 
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-
-            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
-            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
-            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
-            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
-            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
-        }
-
-        private void AssociatedObject_CommandExecuted(object sender, Telerik.Windows.Controls.Diagrams.CommandRoutedEventArgs e)
+        private void AssociatedObject_CommandExecuted(object sender, CommandRoutedEventArgs e)
         {
             if (e.Command.Name == "Add Connection")
             {
                 this.AssociatedObject.Undo();
             }
-            else if (e.Command.Name == "Change Target")
+            else if ((e.Command.Name == "Change Target" || e.Command.Name == "Change Source"))
             {
-                if (this.oldVertex.Key != this.newVertex.Key)
+                if ((this.oldVertex == null || this.newVertex == null))
                 {
-                    this.AssociatedObject.Undo();
+                    base.AssociatedObject.Undo();
+                }
+                else if (this.oldVertex.Key != this.newVertex.Key)
+                {
+                    base.AssociatedObject.Undo();
                 }
             }
         }
 
-        private void AssociatedObject_ConnectionManipulationStarted(object sender, Telerik.Windows.Controls.Diagrams.ManipulationRoutedEventArgs e)
+        private void AssociatedObject_ConnectionManipulationCompleted(object sender, ManipulationRoutedEventArgs e)
+        {
+            if (e.Connection == null)
+            {
+                this.newEdge = null;
+            }
+            else
+            {
+                this.newEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
+                logger.Info(this.newEdge);
+            }
+
+            if (e.Shape == null)
+            {
+                this.newVertex = null;
+            }
+            else
+            {
+                this.newVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
+                logger.Info(this.newVertex.Key);
+            }
+
+            foreach (var command in base.AssociatedObject.UndoRedoService.UndoStack)
+            {
+                logger.Info(command.Name);
+            }
+        }
+
+        private void AssociatedObject_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
         {
             if (e.Connection != null)
             {
-                this.oldEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
+                this.oldEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
                 logger.Info(this.oldEdge);
             }
             else
@@ -58,47 +81,13 @@ namespace Marv.Controls.Graph
 
             if (e.Shape != null)
             {
-                this.oldVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
+                this.oldVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
                 logger.Info(this.oldVertex.Key);
             }
             else
             {
                 this.oldVertex = null;
             }
-        }
-
-        private void AssociatedObject_ConnectionManipulationCompleted(object sender, Telerik.Windows.Controls.Diagrams.ManipulationRoutedEventArgs e)
-        {
-            var diagram = this.AssociatedObject;
-
-            if (e.Connection != null)
-            {
-                this.newEdge = (e.Connection as Telerik.Windows.Controls.RadDiagramConnection).DataContext as Edge;
-                logger.Info(this.newEdge);
-            }
-            else
-            {
-                this.newEdge = null;
-            }
-
-            if (e.Shape != null)
-            {
-                this.newVertex = (e.Shape as Telerik.Windows.Controls.RadDiagramShape).DataContext as Vertex;
-                logger.Info(this.newVertex.Key);
-            }
-            else
-            {
-                this.newVertex = null;
-            }
-
-            foreach (var command in this.AssociatedObject.UndoRedoService.UndoStack)
-            {
-                logger.Info(command.Name);
-            }
-
-            //var graphSource = diagram.GraphSource as Graph;
-            //var edgeToRemove = graphSource.Edges.Where(x => x.Source.Key == "cpon" && x.Target.Key == "coatd").First();
-            //graphSource.Edges.Remove(edgeToRemove);
         }
 
         private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)
@@ -117,7 +106,7 @@ namespace Marv.Controls.Graph
             timer.Start();
         }
 
-        private void AssociatedObject_ShapeClicked(object sender, Telerik.Windows.Controls.Diagrams.ShapeRoutedEventArgs e)
+        private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
             var shapeList = new List<IDiagramItem>();
@@ -129,17 +118,17 @@ namespace Marv.Controls.Graph
 
             foreach (var conn in this.AssociatedObject.Connections)
             {
-                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
             }
 
             foreach (var conn in e.Shape.IncomingLinks)
             {
-                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
             }
 
             foreach (var conn in e.Shape.OutgoingLinks)
             {
-                (conn as Telerik.Windows.Controls.RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
             }
 
             this.AssociatedObject.BringToFront(shapeList);
@@ -150,19 +139,30 @@ namespace Marv.Controls.Graph
             };
 
             timer.Tick += (o, args) =>
+            {
+                if (!e.Shape.Bounds.IsInBounds(this.AssociatedObject.Viewport))
                 {
-                    if (!e.Shape.Bounds.IsInBounds(this.AssociatedObject.Viewport))
-                    {
-                        var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, 20);
+                    var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, 20);
 
-                        // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                        this.AssociatedObject.BringIntoView(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));
-                    }
+                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+                    this.AssociatedObject.BringIntoView(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));
+                }
 
-                    timer.Stop();
-                };
+                timer.Stop();
+            };
 
             timer.Start();
+        }
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
+            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
+            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
+            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
+            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
         }
     }
 }

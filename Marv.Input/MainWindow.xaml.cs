@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using AutoMapper;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -21,12 +22,7 @@ namespace Marv.Input
             DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null, ChangedSelectedVertex));
-
-        private static void ChangedSelectedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            Console.WriteLine(e.NewValue);
-        }
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
