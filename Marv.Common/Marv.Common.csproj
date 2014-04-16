@@ -111,7 +111,6 @@
     <Resource Include="Resources\Icons\Connector.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Resources\Icons\Connector.svg" />
     <Content Include="Resources\Icons\Open.png" />
     <Resource Include="Resources\Icons\Chart.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
