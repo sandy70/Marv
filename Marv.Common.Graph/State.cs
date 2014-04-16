@@ -4,6 +4,7 @@
     {
         private double _value;
         private double belief;
+        private double evidence;
         private Sequence<double> range = new Sequence<double>();
 
         public double Belief
@@ -17,6 +18,20 @@
             {
                 this.belief = value;
                 this.RaisePropertyChanged("Belief");
+            }
+        }
+
+        public double Evidence
+        {
+            get
+            {
+                return this.evidence;
+            }
+
+            set
+            {
+                this.evidence = value;
+                this.RaisePropertyChanged("Evidence");
             }
         }
 
@@ -39,7 +54,10 @@
 
         public double Value
         {
-            get { return this._value; }
+            get
+            {
+                return this._value;
+            }
             set
             {
                 this._value = value;

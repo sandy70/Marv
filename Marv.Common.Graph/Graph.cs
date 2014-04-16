@@ -169,7 +169,6 @@ namespace Marv.Common.Graph
                 foreach (var vertex in this.Vertices)
                 {
                     vertex.Value = value == null ? null : value[vertex.Key];
-                    vertex.IsEvidenceEntered = false;
                 }
 
                 this.RaisePropertyChanged("Value");
@@ -200,11 +199,6 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, string, double> ClearEvidence()
         {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.IsEvidenceEntered = false;
-            }
-
             this.network.ClearAllEvidence();
             return this.GetNetworkValue();
         }

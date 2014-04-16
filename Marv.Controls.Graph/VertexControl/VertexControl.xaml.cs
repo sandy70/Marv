@@ -133,7 +133,6 @@ namespace Marv.Controls.Graph
         {
             this.Vertex.EvidenceString = null;
             this.Vertex.SetValue(1);
-            this.Vertex.IsEvidenceEntered = true;
         }
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)

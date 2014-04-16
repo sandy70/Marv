@@ -107,7 +107,6 @@ namespace Marv.Input
                 });
 
                 Mapper.DynamicMap(result, this.Graph.Vertices[result.Key]);
-                this.Graph.Vertices[result.Key].IsEvidenceEntered = true;
             }
         }
 
@@ -136,7 +135,6 @@ namespace Marv.Input
             if (command == VertexCommands.Clear)
             {
                 vertex.SetValue(0);
-                vertex.IsEvidenceEntered = false;
                 vertex.EvidenceString = null;
             }
         }

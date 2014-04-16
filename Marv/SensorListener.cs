@@ -59,7 +59,6 @@ namespace Marv
                 var stateIndex = value * (nStates - 1) / 255;
 
                 this.vertexViewModel.SelectState(stateIndex);
-                this.vertexViewModel.IsEvidenceEntered = true;
 
                 var handler = this.NewEvidenceAvailable;
 

@@ -24,7 +24,6 @@ namespace Marv.Common.Graph
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
         private string inputVertexKey;
-        private bool isEvidenceEntered;
         private bool isExpanded;
         private bool isHeader;
         private bool isLocked = true;
@@ -136,6 +135,32 @@ namespace Marv.Common.Graph
             }
         }
 
+        public Dictionary<string, double> Evidence
+        {
+            get
+            {
+                var evidence = new Dictionary<string, double>();
+
+                foreach (var state in this.States)
+                {
+                    evidence[state.Key] = state.Evidence;
+                }
+
+                return evidence;
+            }
+
+            set
+            {
+                foreach (var state in this.States)
+                {
+                    state.Evidence = value[state.Key];
+                }
+
+                this.RaisePropertyChanged("Evidence");
+                this.RaisePropertyChanged("IsEvidenceEntered");
+            }
+        }
+
         public string EvidenceString
         {
             get
@@ -148,18 +173,7 @@ namespace Marv.Common.Graph
                 this.evidenceString = value;
                 this.RaisePropertyChanged("EvidenceString");
 
-                var evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this, this.EvidenceString);
-
-                if (evidence == null)
-                {
-                    this.SetValue(0);
-                    this.IsEvidenceEntered = false;
-                }
-                else
-                {
-                    this.Value = evidence;
-                    this.IsEvidenceEntered = true;
-                }
+                this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this, this.EvidenceString);
             }
         }
 
@@ -210,13 +224,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.isEvidenceEntered;
-            }
-
-            set
-            {
-                this.isEvidenceEntered = value;
-                this.RaisePropertyChanged("IsEvidenceEntered");
+                return this.States.Sum(state => state.Evidence) > 0;
             }
         }
 
@@ -612,7 +620,6 @@ namespace Marv.Common.Graph
         {
             this.EvidenceString = evidence.String;
             this.Value = evidence.Value;
-            this.IsEvidenceEntered = true;
         }
 
         public void SetValue(int i)
@@ -629,7 +636,6 @@ namespace Marv.Common.Graph
         {
             this.EvidenceString = evidence.String;
             this.Value = evidence.Value;
-            this.IsEvidenceEntered = true;
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

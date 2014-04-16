@@ -10,7 +10,6 @@ namespace Marv.Controls.Graph
         private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
-            vertexControl.Vertex.IsEvidenceEntered = true;
             vertexControl.Vertex.SelectState(this.AssociatedObject.DataContext as State);
             vertexControl.RaiseEvidenceEntered();
         }
@@ -21,7 +20,6 @@ namespace Marv.Controls.Graph
 
             if (vertexControl.IsEditable)
             {
-                vertexControl.Vertex.IsEvidenceEntered = true;
             }
         }
 
