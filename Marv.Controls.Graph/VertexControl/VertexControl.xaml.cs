@@ -131,7 +131,7 @@ namespace Marv.Controls.Graph
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.EvidenceString = "";
+            this.Vertex.EvidenceString = null;
             this.Vertex.SetValue(1);
             this.Vertex.IsEvidenceEntered = true;
         }

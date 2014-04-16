@@ -187,8 +187,24 @@ namespace Marv.Controls.Graph
             this.BackButton.Click -= BackButton_Click;
             this.BackButton.Click += BackButton_Click;
 
+            this.ClearValueButton.Click -= ClearValueButton_Click;
+            this.ClearValueButton.Click += ClearValueButton_Click;
+
             this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
+
+            this.RunButton.Click -= RunButton_Click;
+            this.RunButton.Click += RunButton_Click;
+        }
+
+        void RunButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Run();
+        }
+
+        void ClearValueButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Value = null;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex)

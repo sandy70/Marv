@@ -102,12 +102,12 @@ namespace Marv.Input
                 var result = JsonConvert.DeserializeAnonymousType(item.ToString(), new
                 {
                     EvidenceString = "",
-                    IsEvidenceEntered = true,
                     Key = "",
                     Value = new Dictionary<string, double>()
                 });
 
                 Mapper.DynamicMap(result, this.Graph.Vertices[result.Key]);
+                this.Graph.Vertices[result.Key].IsEvidenceEntered = true;
             }
         }
 
@@ -119,7 +119,6 @@ namespace Marv.Input
                 .Select(vertex => new
                 {
                     vertex.EvidenceString,
-                    vertex.IsEvidenceEntered,
                     vertex.Key,
                     vertex.Value
                 })

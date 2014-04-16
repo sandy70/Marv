@@ -121,6 +121,18 @@
                                      ToolTip="Edit connections tool.">
                 <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
             </telerik:RadToggleButton>
+
+            <telerik:RadButton Name="ClearValueButton"
+                               Height="50" Width="50"
+                               Margin="5">
+                <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+            </telerik:RadButton>
+
+            <telerik:RadButton Name="RunButton"
+                               Height="50" Width="50"
+                               Margin="5">
+                <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
+            </telerik:RadButton>
         </StackPanel>
     </Grid>
 </UserControl>
