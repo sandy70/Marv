@@ -124,15 +124,14 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value != this.displayPosition)
-                {
-                    this.displayPosition = value;
-                    this.RaisePropertyChanged("DisplayPosition");
+                if (value == this.displayPosition) return;
 
-                    if (this.DisplayPosition != null && this.SelectedGroup != null)
-                    {
-                        this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
-                    }
+                this.displayPosition = value;
+                this.RaisePropertyChanged("DisplayPosition");
+
+                if (this.SelectedGroup != null)
+                {
+                    this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
                 }
             }
         }
@@ -381,11 +380,13 @@ namespace Marv.Common.Graph
                 this.states = value;
                 RaisePropertyChanged("States");
 
-                this.States.CollectionChanged += States_CollectionChanged;
+                if (this.States == null) return;
+
+                this.States.CollectionChanged += this.States_CollectionChanged;
 
                 foreach (var state in this.States)
                 {
-                    state.PropertyChanged += state_PropertyChanged;
+                    state.PropertyChanged += this.state_PropertyChanged;
                 }
             }
         }
