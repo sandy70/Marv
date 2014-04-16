@@ -102,7 +102,7 @@
         <marv:SliderProgressBar Grid.Column="1"
                                 IsEditable="False"
                                 Margin="1"
-                                SliderForeground="#20aeff"
+                                SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
                                 Width="Auto"
                                 Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
             <i:Interaction.Behaviors>

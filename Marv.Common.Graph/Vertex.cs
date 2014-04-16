@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using MoreLinq;
@@ -31,7 +33,7 @@ namespace Marv.Common.Graph
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
         private State selectedState;
-        private ModelCollection<State> states = new ModelCollection<State>();
+        private ModelCollection<State> states;
         private Dictionary<string, double> statistics = new Dictionary<string, double>();
         private double[,] table;
         private VertexType type = VertexType.Labelled;
@@ -363,10 +365,28 @@ namespace Marv.Common.Graph
             {
                 return this.states;
             }
+
             set
             {
+                if (this.States != null)
+                {
+                    this.States.CollectionChanged -= States_CollectionChanged;
+
+                    foreach (var state in this.States)
+                    {
+                        state.PropertyChanged -= state_PropertyChanged;
+                    }
+                }
+
                 this.states = value;
                 RaisePropertyChanged("States");
+
+                this.States.CollectionChanged += States_CollectionChanged;
+
+                foreach (var state in this.States)
+                {
+                    state.PropertyChanged += state_PropertyChanged;
+                }
             }
         }
 
@@ -474,7 +494,7 @@ namespace Marv.Common.Graph
         {
             return new Evidence
             {
-                String = this.EvidenceString, 
+                String = this.EvidenceString,
                 Value = this.Value
             };
         }
@@ -604,6 +624,32 @@ namespace Marv.Common.Graph
             this.Value = this.Value.Normalized();
         }
 
+        internal void SetValue(Evidence evidence)
+        {
+            this.EvidenceString = evidence.String;
+            this.Value = evidence.Value;
+            this.IsEvidenceEntered = true;
+        }
+
+        private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (State state in e.NewItems)
+                {
+                    state.PropertyChanged += state_PropertyChanged;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (State state in e.OldItems)
+                {
+                    state.PropertyChanged -= state_PropertyChanged;
+                }
+            }
+        }
+
         public override string ToString()
         {
             return String.Format("[{0}:{1}]", this.Key, this.Name);
@@ -614,11 +660,12 @@ namespace Marv.Common.Graph
             this.MostProbableState = this.States.MaxBy(state => state.Value);
         }
 
-        internal void SetValue(Evidence evidence)
+        private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.EvidenceString = evidence.String;
-            this.Value = evidence.Value;
-            this.IsEvidenceEntered = true;
+            if (e.PropertyName == "Value")
+            {
+                this.UpdateMostProbableState();
+            }
         }
     }
 }

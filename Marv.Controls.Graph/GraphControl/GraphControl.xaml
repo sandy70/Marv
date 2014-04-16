@@ -117,7 +117,8 @@
 
             <telerik:RadToggleButton Name="ConnectorButton"
                                      Height="50" Width="50"
-                                     Margin="5">
+                                     Margin="5"
+                                     ToolTip="Edit connections tool.">
                 <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
             </telerik:RadToggleButton>
         </StackPanel>
