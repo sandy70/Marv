@@ -30,8 +30,13 @@
             <telerik:RadPaneGroup>
                 <telerik:RadPane Header="Input">
                     <telerik:RadGridView Name="InputGridView"
-                                         ItemsSource="{Binding ElementName=Root, Path=InputRows}"
-                                         AutoGenerateColumns="True" />
+                                         AutoGenerateColumns="True"
+                                         CanUserReorderColumns="False"
+                                         CanUserSortColumns="False"
+                                         IsFilteringAllowed="False"
+                                         ShowGroupPanel="False"
+                                         RowIndicatorVisibility="Collapsed"
+                                         ItemsSource="{Binding ElementName=Root, Path=InputRows}" />
                 </telerik:RadPane>
             </telerik:RadPaneGroup>
         </telerik:RadSplitContainer>
