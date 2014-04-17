@@ -5,7 +5,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Name="Root"
         Title="MARV - Input Designer"
-        Width="400"
         WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
@@ -19,7 +18,7 @@
                         <marv:GraphControl Name="GraphControl"
                                            Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph}"
-                                           SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"/>
+                                           SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
@@ -29,14 +28,55 @@
                                    Width="600">
             <telerik:RadPaneGroup>
                 <telerik:RadPane Header="Input">
-                    <telerik:RadGridView Name="InputGridView"
-                                         AutoGenerateColumns="True"
-                                         CanUserReorderColumns="False"
-                                         CanUserSortColumns="False"
-                                         IsFilteringAllowed="False"
-                                         ShowGroupPanel="False"
-                                         RowIndicatorVisibility="Collapsed"
-                                         ItemsSource="{Binding ElementName=Root, Path=InputRows}" />
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <telerik:RadGridView Grid.Row="0"
+                                             Name="InputGridView"
+                                             AutoGenerateColumns="True"
+                                             CanUserReorderColumns="False"
+                                             CanUserSortColumns="False"
+                                             IsFilteringAllowed="False"
+                                             ShowGroupPanel="False"
+                                             RowIndicatorVisibility="Collapsed"
+                                             ItemsSource="{Binding ElementName=Root, Path=InputRows}" />
+
+                        <UniformGrid Grid.Row="1"
+                                     Rows="1">
+                            <TextBlock Margin="2"
+                                       TextAlignment="Right" VerticalAlignment="Center"
+                                       Text="Start Year" />
+
+                            <telerik:RadNumericUpDown Margin="2"
+                                                      Maximum="2050"
+                                                      Minimum="1950"
+                                                      Value="{Binding ElementName=Root, Path=StartYear}"
+                                                      NumberDecimalDigits="0"
+                                                      SmallChange="1"
+                                                      LargeChange="5" />
+
+                            <TextBlock Margin="2"
+                                       TextAlignment="Right" VerticalAlignment="Center"
+                                       Text="End Year" />
+
+                            <telerik:RadNumericUpDown Margin="2"
+                                                      Maximum="2050"
+                                                      Minimum="1950"
+                                                      Value="{Binding ElementName=Root, Path=EndYear}"
+                                                      NumberDecimalDigits="0"
+                                                      SmallChange="1"
+                                                      LargeChange="5" />
+
+                            <telerik:RadButton Name="CreateInputButton"
+                                               Content="Create"
+                                               Margin="2" />
+
+                        </UniformGrid>
+                    </Grid>
+
                 </telerik:RadPane>
             </telerik:RadPaneGroup>
         </telerik:RadSplitContainer>
@@ -57,8 +97,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <telerik:RadComboBox Name="VertexComboBox"
-                                                 CanAutocompleteSelectItems="True"
+                            <telerik:RadComboBox CanAutocompleteSelectItems="True"
                                                  CanKeyboardNavigationSelectItems="True"
                                                  DisplayMemberPath="Name"
                                                  IsEditable="True"

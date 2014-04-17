@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
@@ -17,7 +18,11 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
-        private Dictionary<string, string, string, double> modelEvidence = new Dictionary<string, string, string, double>();
+        public static readonly DependencyProperty StartYearProperty =
+            DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
+
+        public static readonly DependencyProperty EndYearProperty =
+            DependencyProperty.Register("EndYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedEndYear));
 
         public static readonly DependencyProperty InputRowsProperty =
             DependencyProperty.Register("InputRows", typeof (ObservableCollection<dynamic>), typeof (MainWindow), new PropertyMetadata(null));
@@ -31,6 +36,8 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
+        private Dictionary<string, string, string, double> modelEvidence = new Dictionary<string, string, string, double>();
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -38,6 +45,19 @@ namespace Marv.Input
             InitializeComponent();
 
             this.Loaded += MainWindow_Loaded;
+        }
+
+        public int EndYear
+        {
+            get
+            {
+                return (int) GetValue(EndYearProperty);
+            }
+
+            set
+            {
+                SetValue(EndYearProperty, value);
+            }
         }
 
         public Graph Graph
@@ -90,12 +110,66 @@ namespace Marv.Input
             }
         }
 
+        public int StartYear
+        {
+            get
+            {
+                return (int) GetValue(StartYearProperty);
+            }
+
+            set
+            {
+                SetValue(StartYearProperty, value);
+            }
+        }
+
+        private static void ChangedEndYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mainWindow = d as MainWindow;
+
+            if (mainWindow == null) return;
+
+            if (mainWindow.EndYear < mainWindow.StartYear)
+            {
+                mainWindow.StartYear = mainWindow.EndYear;
+            }
+        }
+
+        private static void ChangedStartYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mainWindow = d as MainWindow;
+
+            if (mainWindow == null) return;
+
+            if (mainWindow.StartYear > mainWindow.EndYear)
+            {
+                mainWindow.EndYear = mainWindow.StartYear;
+            }
+        }
+
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
         {
             this.Graph.Run();
 
             var year = (string) this.InputGridView.CurrentCell.Column.Header;
             modelEvidence[year] = this.Graph.Evidence;
+        }
+
+        private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        {
+            if (e.NewCell != null)
+            {
+                Console.WriteLine(e.NewCell.Column.Header);
+
+                var year = (string) e.NewCell.Column.Header;
+
+                if (!modelEvidence.ContainsKey(year))
+                {
+                    modelEvidence[year] = new Dictionary<string, string, double>();
+                }
+
+                this.Graph.Evidence = modelEvidence[year];
+            }
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -107,6 +181,9 @@ namespace Marv.Input
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
 
+            this.CreateInputButton.Click -= CreateInputButton_Click;
+            this.CreateInputButton.Click += CreateInputButton_Click;
+
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
@@ -115,34 +192,21 @@ namespace Marv.Input
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-
-            var inputRows = new ObservableCollection<dynamic>();
-
-            var row = new Dynamic();
-            row["Section ID"] = "Section 1";
-            row["2001"] = "";
-            row["2002"] = "";
-
-            inputRows.Add(row);
-
-            this.InputRows = inputRows;
         }
 
-        void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.NewCell != null)
+            var inputRows = new ObservableCollection<dynamic>();
+            var row = new Dynamic();
+            row["Section ID"] = "Section 1";
+
+            for (int year = this.StartYear; year <= this.EndYear; year++)
             {
-                Console.WriteLine(e.NewCell.Column.Header);
-
-                var year = (string)e.NewCell.Column.Header;
-
-                if (!modelEvidence.ContainsKey(year))
-                {
-                    modelEvidence[year] = new Dictionary<string, string, double>();
-                }
-
-                this.Graph.Evidence = modelEvidence[year];
+                row[year.ToString()] = "";
             }
+
+            inputRows.Add(row);
+            this.InputRows = inputRows;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
