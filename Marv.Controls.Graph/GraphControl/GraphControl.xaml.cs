@@ -162,6 +162,12 @@ namespace Marv.Controls.Graph
             this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
         }
 
+        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Evidence = null;
+            this.RaiseEvidenceEntered();
+        }
+
         public void DisableConnectorEditing()
         {
             this.IsVerticesEnabled = true;
@@ -178,8 +184,7 @@ namespace Marv.Controls.Graph
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("ExpandButton_Click");
-            this.Graph.IsExpanded = !this.Graph.IsExpanded;
+            this.Graph.DisplayGraph.IsExpanded = !this.Graph.DisplayGraph.IsMostlyExpanded;
         }
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
@@ -187,8 +192,8 @@ namespace Marv.Controls.Graph
             this.BackButton.Click -= BackButton_Click;
             this.BackButton.Click += BackButton_Click;
 
-            this.ClearValueButton.Click -= ClearValueButton_Click;
-            this.ClearValueButton.Click += ClearValueButton_Click;
+            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
+            this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
 
             this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
@@ -197,17 +202,7 @@ namespace Marv.Controls.Graph
             this.RunButton.Click += RunButton_Click;
         }
 
-        void RunButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.Run();
-        }
-
-        void ClearValueButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.Value = null;
-        }
-
-        public void RaiseEvidenceEntered(Vertex vertex)
+        public void RaiseEvidenceEntered(Vertex vertex = null)
         {
             if (this.EvidenceEntered != null)
             {
@@ -225,6 +220,11 @@ namespace Marv.Controls.Graph
                     Vertex = vertex
                 });
             }
+        }
+
+        private void RunButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Run();
         }
 
         public event EventHandler<Vertex> EvidenceEntered;

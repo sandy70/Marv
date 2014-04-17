@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
@@ -27,6 +26,12 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsMostProbableStateVisibleProperty =
             DependencyProperty.Register("IsMostProbableStateVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsEvidenceVisibleProperty =
+            DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsValueVisibleProperty =
+            DependencyProperty.Register("IsValueVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+
         public VertexControl()
         {
             InitializeComponent();
@@ -43,6 +48,19 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsEditableProperty, value);
+            }
+        }
+
+        public bool IsEvidenceVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsEvidenceVisibleProperty);
+            }
+
+            set
+            {
+                SetValue(IsEvidenceVisibleProperty, value);
             }
         }
 
@@ -95,6 +113,19 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public bool IsValueVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsValueVisibleProperty);
+            }
+
+            set
+            {
+                SetValue(IsValueVisibleProperty, value);
+            }
+        }
+
         public Vertex Vertex
         {
             get
@@ -109,8 +140,8 @@ namespace Marv.Controls.Graph
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.SetValue(0);
-            this.InputTextBox.Text = null;
+            this.Vertex.EvidenceString = null;
+            this.RaiseEvidenceEntered();
         }
 
         public void RaiseCommandExecuted(Command<Vertex> command)
@@ -131,14 +162,25 @@ namespace Marv.Controls.Graph
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.EvidenceString = null;
-            this.Vertex.SetValue(1);
+            this.Vertex.SetEvidenceUniform();
+            this.RaiseEvidenceEntered();
         }
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
+            this.EvidenceStringTextBox.TextChanged += EvidenceStringTextBox_TextChanged;
             this.UniformEvidenceButton.Click += this.UniformEvidenceButton_Click;
+        }
+
+        void EvidenceStringTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var evidence = EvidenceStringFactory.Create(this.Vertex.EvidenceString).Parse(this.Vertex, this.Vertex.EvidenceString);
+
+            if (evidence != null)
+            {
+                this.RaiseEvidenceEntered();
+            }
         }
 
         public event EventHandler<Command<Vertex>> CommandExecuted;

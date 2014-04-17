@@ -153,7 +153,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var state in this.States)
                 {
-                    state.Evidence = value[state.Key];
+                    state.Evidence = value == null ? 0 : value[state.Key];
                 }
 
                 this.RaisePropertyChanged("Evidence");
@@ -482,7 +482,6 @@ namespace Marv.Common.Graph
                 }
 
                 this.UpdateMostProbableState();
-
                 this.RaisePropertyChanged("Value");
             }
         }
@@ -616,10 +615,37 @@ namespace Marv.Common.Graph
             }
         }
 
+        public void SetEvidence(State aState)
+        {
+            var evidence = new Dictionary<string, double>();
+
+            foreach (var state in this.States)
+            {
+                evidence[state.Key] = state == aState ? 1 : 0;
+            }
+
+            this.Evidence = evidence;
+        }
+
         public void SetEvidence(Evidence evidence)
         {
             this.EvidenceString = evidence.String;
             this.Value = evidence.Value;
+        }
+
+        public void SetEvidenceUniform()
+        {
+            this.EvidenceString = null;
+
+            var value = 1.0/this.States.Count;
+            var evidence = new Dictionary<string, double>();
+
+            foreach (var state in this.States)
+            {
+                evidence[state.Key] = value;
+            }
+
+            this.Evidence = evidence;
         }
 
         public void SetValue(int i)

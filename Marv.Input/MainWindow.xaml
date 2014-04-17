@@ -16,13 +16,25 @@
             <telerik:RadSplitContainer>
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network">
-                        <marv:GraphControl Background="WhiteSmoke"
+                        <marv:GraphControl Name="GraphControl"
+                                           Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph}"
                                            SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"/>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
         </telerik:RadDocking.DocumentHost>
+
+        <telerik:RadSplitContainer InitialPosition="DockedLeft"
+                                   Width="600">
+            <telerik:RadPaneGroup>
+                <telerik:RadPane Header="Input">
+                    <telerik:RadGridView Name="InputGridView"
+                                         ItemsSource="{Binding ElementName=Root, Path=InputRows}"
+                                         AutoGenerateColumns="True" />
+                </telerik:RadPane>
+            </telerik:RadPaneGroup>
+        </telerik:RadSplitContainer>
 
         <telerik:RadSplitContainer InitialPosition="DockedRight"
                                    Width="400">
@@ -56,8 +68,10 @@
                             <marv:VertexControl Name="VertexControl"
                                                 Grid.Row="1"
                                                 IsEditable="True"
+                                                IsEvidenceVisible="True"
                                                 IsInputVisible="True"
                                                 IsToolbarVisible="False"
+                                                IsValueVisible="False"
                                                 Margin="5"
                                                 Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
                         </Grid>

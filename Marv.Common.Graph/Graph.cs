@@ -23,6 +23,14 @@ namespace Marv.Common.Graph
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
+        public bool IsMostlyExpanded
+        {
+            get
+            {
+                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
+            }
+        }
+
         public Dictionary<string, string, double> Belief
         {
             get
@@ -92,21 +100,36 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, Evidence> Evidence
+        public Dictionary<string, string, double> Evidence
         {
             get
             {
-                var graphEvidence = new Dictionary<string, Evidence>();
+                var graphEvidence = new Dictionary<string, string, double>();
 
-                foreach (var vertex in this.Vertices)
+                foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
                 {
-                    if (vertex.IsEvidenceEntered)
-                    {
-                        graphEvidence[vertex.Key] = vertex.GetEvidence();
-                    }
+                    graphEvidence[vertex.Key] = vertex.Evidence;
                 }
 
                 return graphEvidence;
+            }
+
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    if (value == null)
+                    {
+                        vertex.EvidenceString = null;
+                    }
+                    else
+                    {
+                        if (!value.ContainsKey(vertex.Key)) continue;
+
+                        vertex.EvidenceString = null;
+                        vertex.Evidence = value[vertex.Key];
+                    }
+                }
             }
         }
 
@@ -508,6 +531,11 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.Evidence = vertex.Evidence.Normalized();
+            }
+
             this.ClearNetworkEvidence();
             this.SetNetworkEvidence(this.Evidence);
             this.Value = this.GetNetworkValue();
@@ -643,11 +671,11 @@ namespace Marv.Common.Graph
             }
         }
 
-        private void SetNetworkEvidence(Dictionary<string, Evidence> graphEvidence)
+        private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
-                this.SetEvidence(vertexKey, graphEvidence[vertexKey].Value);
+                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
             }
         }
 

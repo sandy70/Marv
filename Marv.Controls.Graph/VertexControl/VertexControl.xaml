@@ -60,12 +60,29 @@
                                TextAlignment="Right"
                                TextTrimming="CharacterEllipsis" />
 
+                    <!-- Evidence -->
                     <marv:SliderProgressBar Grid.Column="1"
                                             IsEditable="{Binding ElementName=Root, Path=IsEditable}"
-                                            IsTextVisible="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanNot}}"
-                                            Margin="1"
-                                            SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
-                                            Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
+                                            IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
+                                            Margin="0"
+                                            SliderForeground="YellowGreen"
+                                            Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                            Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}">
+                        <i:Interaction.Behaviors>
+                            <local:SliderProgressBarBehavior />
+                        </i:Interaction.Behaviors>
+                    </marv:SliderProgressBar>
+
+                    <!-- Value -->
+                    <marv:SliderProgressBar Grid.Column="1"
+                                            IsEditable="False"
+                                            IsEnabled="False"
+                                            IsHitTestVisible="False"
+                                            IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                            Margin="0,0,0,3"
+                                            SliderForeground="#20aeff"
+                                            Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                            Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}">
                         <i:Interaction.Behaviors>
                             <local:SliderProgressBarBehavior />
                         </i:Interaction.Behaviors>
@@ -78,7 +95,7 @@
                                                    Placeholder=" "
                                                    TextMode="PlainText"
                                                    UpdateValueEvent="PropertyChanged"
-                                                   Value="{Binding Value, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                                   Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
                                                    Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
@@ -128,12 +145,12 @@
                    TextAlignment="Right"
                    VerticalAlignment="Center" />
 
-        <TextBox Name="InputTextBox"
+        <TextBox Name="EvidenceStringTextBox"
                  Grid.Column="1"
                  telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                  Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center" />
 
         <Grid Grid.Column="2">
