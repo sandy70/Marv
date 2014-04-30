@@ -9,7 +9,7 @@ namespace Marv.Common
     public class NullToBooleanConverter : DependencyObject, IValueConverter
     {
         public static readonly DependencyProperty IsReversedProperty =
-            DependencyProperty.Register("IsReversed", typeof (bool), typeof (NullToVisibilityConverter), new PropertyMetadata(false));
+            DependencyProperty.Register("IsReversed", typeof (bool), typeof (NullToBooleanConverter), new PropertyMetadata(false));
 
         public bool IsReversed
         {
