@@ -283,11 +283,27 @@ namespace Marv.Input
 
         private void VertexControl_EvidenceEntered(object sender, Vertex e)
         {
-            this.Graph.Run();
+            this.UpdateModelEvidence();
+        }
 
-            var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
+        private void UpdateModelEvidence()
+        {
+            if (this.InputGridView.CurrentCell == null)
+            {
+                this.Notifications.Push(new NotificationTimed
+                {
+                    Description = "You must select a year before you can enter evidence.",
+                    Name =  "Select Year!"
+                });
+            }
+            else
+            {
+                this.Graph.Run();
 
-            this.ModelEvidence[year] = this.Graph.Evidence;
+                var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
+
+                this.ModelEvidence[year] = this.Graph.Evidence;
+            }
         }
     }
 }

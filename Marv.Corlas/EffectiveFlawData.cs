@@ -4,11 +4,10 @@ namespace Marv.Corlas
 {
     public class EffectiveFlawData
     {
-        private double _area;
         private double _crackstart;
 
         //effval(i,2) = effective crack area, in.
-        private double _flow;
+        private double flow;
 
         //effval(i,3) = flow-strength failure stress for effective crack, psi
         //effval(i,4) = start of effective crack, in.
@@ -19,11 +18,7 @@ namespace Marv.Corlas
         //effval(i,5) = applied value of J, lb/in.
         private double _tearing;    //effval(i,6) = applied value of tearing
 
-        public double Area
-        {
-            get { return _area; }
-            set { _area = value; }
-        }
+        public double Area { get; set; }
 
         public double CrackStart
         {
@@ -33,8 +28,8 @@ namespace Marv.Corlas
 
         public double FlowStrStress
         {
-            get { return _flow; }
-            set { _flow = value; }
+            get { return this.flow; }
+            set { this.flow = value; }
         }
 
         public double JValue

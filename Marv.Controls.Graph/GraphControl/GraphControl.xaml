@@ -8,8 +8,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="600"
-             Background="WhiteSmoke"
              Name="Root">
+    
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
@@ -106,33 +106,33 @@
                     Orientation="Horizontal">
             <telerik:RadButton Name="BackButton"
                                Height="50" Width="50"
-                               Margin="5"
-                               Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}">
+                               Margin="4"
+                               Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}" IsCancel="True">
                 <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
             </telerik:RadButton>
 
             <telerik:RadButton Name="ExpandButton"
                                Height="50" Width="50"
-                               Margin="5">
+                               Margin="4">
                 <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
             </telerik:RadButton>
 
             <telerik:RadToggleButton Name="ConnectorButton"
                                      Height="50" Width="50"
-                                     Margin="5"
+                                     Margin="4"
                                      ToolTip="Edit connections tool.">
                 <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
             </telerik:RadToggleButton>
 
             <telerik:RadButton Name="ClearEvidenceButton"
                                Height="50" Width="50"
-                               Margin="5">
+                               Margin="4">
                 <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
             </telerik:RadButton>
 
             <telerik:RadButton Name="RunButton"
                                Height="50" Width="50"
-                               Margin="5">
+                               Margin="4">
                 <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
             </telerik:RadButton>
         </StackPanel>
