@@ -18,6 +18,7 @@
                         <marv:GraphControl Name="GraphControl"
                                            Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph}"
+                                           IsEnabled="False"
                                            SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -112,6 +113,7 @@
                             <marv:VertexControl Name="VertexControl"
                                                 Grid.Row="1"
                                                 IsEditable="True"
+                                                IsEnabled="False"
                                                 IsEvidenceVisible="True"
                                                 IsInputVisible="True"
                                                 IsToolbarVisible="False"

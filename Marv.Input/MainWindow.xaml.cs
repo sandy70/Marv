@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using AutoMapper;
@@ -36,7 +35,7 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
-        private Dictionary<string, string, string, double> modelEvidence = new Dictionary<string, string, string, double>();
+        private Dictionary<int, string, string, double> ModelEvidence = new Dictionary<int, string, string, double>();
 
         public MainWindow()
         {
@@ -147,28 +146,58 @@ namespace Marv.Input
             }
         }
 
+        private void CreateInputButton_Click(object sender, RoutedEventArgs e)
+        {
+            var inputRows = new ObservableCollection<dynamic>();
+            var row = new Dynamic();
+            row["Section ID"] = "Section 1";
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                row[year.ToString()] = "";
+            }
+
+            inputRows.Add(row);
+            this.InputRows = inputRows;
+        }
+
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
         {
             this.Graph.Run();
 
-            var year = (string) this.InputGridView.CurrentCell.Column.Header;
-            modelEvidence[year] = this.Graph.Evidence;
+            var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
+
+            this.ModelEvidence[year] = this.Graph.Evidence;
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell != null)
             {
-                Console.WriteLine(e.NewCell.Column.Header);
+                this.GraphControl.IsEnabled = true;
+                this.VertexControl.IsEnabled = true;
 
-                var year = (string) e.NewCell.Column.Header;
-
-                if (!modelEvidence.ContainsKey(year))
+                try
                 {
-                    modelEvidence[year] = new Dictionary<string, string, double>();
-                }
+                    var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                this.Graph.Evidence = modelEvidence[year];
+                    if (this.ModelEvidence.ContainsKey(year))
+                    {
+                        this.Graph.Evidence = this.ModelEvidence[year];
+                    }
+                    else
+                    {
+                        this.Graph.Evidence = null;
+                    }
+                }
+                catch (FormatException)
+                {
+                }
+            }
+            else
+            {
+                this.GraphControl.IsEnabled = true;
+                this.VertexControl.IsEnabled = true;
             }
         }
 
@@ -194,26 +223,11 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
-        void CreateInputButton_Click(object sender, RoutedEventArgs e)
-        {
-            var inputRows = new ObservableCollection<dynamic>();
-            var row = new Dynamic();
-            row["Section ID"] = "Section 1";
-
-            for (int year = this.StartYear; year <= this.EndYear; year++)
-            {
-                row[year.ToString()] = "";
-            }
-
-            inputRows.Add(row);
-            this.InputRows = inputRows;
-        }
-
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "Graph Evidence |*.vertices",
+                Filter = "Input|*.input",
                 Multiselect = false
             };
 
@@ -238,16 +252,18 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph
-                .Vertices
-                .Where(vertex => vertex.IsEvidenceEntered)
-                .Select(vertex => new
-                {
-                    vertex.EvidenceString,
-                    vertex.Key,
-                    vertex.Evidence
-                })
-                .WriteJson("marv.vertices");
+            //this.Graph
+            //    .Vertices
+            //    .Where(vertex => vertex.IsEvidenceEntered)
+            //    .Select(vertex => new
+            //    {
+            //        vertex.EvidenceString,
+            //        vertex.Key,
+            //        vertex.Evidence
+            //    })
+            //    .WriteJson("marv.vertices");
+
+            this.ModelEvidence.WriteJson("marv.input");
         }
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
@@ -268,6 +284,10 @@ namespace Marv.Input
         private void VertexControl_EvidenceEntered(object sender, Vertex e)
         {
             this.Graph.Run();
+
+            var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
+
+            this.ModelEvidence[year] = this.Graph.Evidence;
         }
     }
 }
