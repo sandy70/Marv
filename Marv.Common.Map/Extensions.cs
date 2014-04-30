@@ -8,14 +8,11 @@ namespace Marv.Common.Map
     {
         public static LocationRect GetBounds(this IEnumerable<LocationCollection> locationCollections)
         {
-            var bounds = locationCollections.First().Bounds;
+            var collections = locationCollections as IList<LocationCollection> ?? locationCollections.ToList();
 
-            foreach (var locationCollection in locationCollections)
-            {
-                bounds = LocationRect.Union(bounds, locationCollection.Bounds);
-            }
+            var bounds = collections.First().Bounds;
 
-            return bounds;
+            return collections.Aggregate(bounds, (current, locationCollection) => LocationRect.Union(current, locationCollection.Bounds));
         }
 
         public static Location NearestTo(this IEnumerable<Location> locations, Location queryLocation)
@@ -26,9 +23,12 @@ namespace Marv.Common.Map
             }
 
             var nearestDistance = Double.MaxValue;
-            var nearestLocation = locations.FirstOrDefault();
 
-            foreach (var location in locations)
+            var locationList = locations as IList<Location> ?? locations.ToList();
+
+            var nearestLocation = locationList.FirstOrDefault();
+
+            foreach (var location in locationList)
             {
                 var distance = Utils.Distance(location, queryLocation);
 
@@ -44,7 +44,11 @@ namespace Marv.Common.Map
 
         public static MapControl.Location ToMapControlLocation(this Location location)
         {
-            return new MapControl.Location { Latitude = location.Latitude, Longitude = location.Longitude };
+            return new MapControl.Location
+            {
+                Latitude = location.Latitude, 
+                Longitude = location.Longitude
+            };
         }
 
         public static IEnumerable<Location> Within(this IEnumerable<Location> locations, LocationRect rect)
