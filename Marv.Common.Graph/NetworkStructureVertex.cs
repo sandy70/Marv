@@ -121,11 +121,8 @@ namespace Marv.Common.Graph
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
                             // we use ParseDouble to take care of infinities
-                            Range = new Sequence<double>
-                            {
-                               stateStrings[i + 1].ParseDouble(),
-                               stateStrings[i].ParseDouble()
-                            }
+                            Max = stateStrings[i + 1].ParseDouble(),
+                            Min = stateStrings[i].ParseDouble()
                         });
                     }
                 }
@@ -139,14 +136,13 @@ namespace Marv.Common.Graph
 
                     for (var i = 0; i < nStatesStrings; i++)
                     {
+                        var value = double.Parse(stateStrings[i]);
+
                         states.Add(new State
                         {
                             Key = stateStrings[i],
-
-                            Range = new Sequence<double>
-                            {
-                                double.Parse(stateStrings[i])
-                            }
+                            Min = value,
+                            Max = value
                         });
                     }
                 }
@@ -171,7 +167,8 @@ namespace Marv.Common.Graph
                                 states.Add(new State
                                 {
                                     Key = stateString,
-                                    Range = range
+                                    Max = range.Max,
+                                    Min = range.Min
                                 });
 
                                 stateIndex++;

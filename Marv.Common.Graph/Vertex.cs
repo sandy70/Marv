@@ -42,14 +42,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                var belief = new Dictionary<string, double>();
-
-                foreach (var state in this.States)
-                {
-                    belief[state.Key] = state.Belief;
-                }
-
-                return belief;
+                return this.States.ToDictionary(state => state.Key, state => state.Belief);
             }
 
             set
@@ -80,6 +73,7 @@ namespace Marv.Common.Graph
             }
         }
 
+        // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
         public Dictionary<string, string, EdgeConnectorPositions> ConnectorPositions
         {
             get
@@ -139,25 +133,17 @@ namespace Marv.Common.Graph
         {
             get
             {
-                var evidence = new Dictionary<string, double>();
-
-                foreach (var state in this.States)
-                {
-                    evidence[state.Key] = state.Evidence;
-                }
-
-                return evidence;
+                return this.States.ToDictionary(state => state.Key, state => state.Belief);
             }
 
             set
             {
                 foreach (var state in this.States)
                 {
-                    state.Evidence = value == null ? 0 : value[state.Key];
+                    state.Belief = value[state.Key];
                 }
 
                 this.RaisePropertyChanged("Evidence");
-                this.RaisePropertyChanged("IsEvidenceEntered");
             }
         }
 
@@ -172,8 +158,6 @@ namespace Marv.Common.Graph
             {
                 this.evidenceString = value;
                 this.RaisePropertyChanged("EvidenceString");
-
-                this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this, this.EvidenceString);
             }
         }
 
@@ -471,18 +455,18 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.ToDictionary(state => state.Key, state => state.Value);
+                return this.States.ToDictionary(state => state.Key, state => state.Belief);
             }
 
             set
             {
                 foreach (var state in this.States)
                 {
-                    state.Value = value == null ? 0 : value[state.Key];
+                    state.Belief = value == null ? 0 : value[state.Key];
                 }
 
                 this.UpdateMostProbableState();
-                this.RaisePropertyChanged("Value");
+                this.RaisePropertyChanged("Belief");
             }
         }
 
@@ -501,7 +485,7 @@ namespace Marv.Common.Graph
         public Evidence GetEvidence()
         {
             return new Evidence
-            {
+            { 
                 String = this.EvidenceString,
                 Value = this.Value
             };
@@ -514,7 +498,7 @@ namespace Marv.Common.Graph
 
             foreach (var state in this.States)
             {
-                var mid = (state.Range.Min + state.Range.Max)/2;
+                var mid = (state.Min + state.Max) / 2;
 
                 numer += mid*vertexValue[state.Key];
                 denom += vertexValue[state.Key];
@@ -543,7 +527,7 @@ namespace Marv.Common.Graph
 
             foreach (var state in this.States)
             {
-                if (state.Value == 1)
+                if (state.Belief == 1)
                 {
                     oneCount++;
                     selectedState = state;
@@ -571,7 +555,7 @@ namespace Marv.Common.Graph
 
                 foreach (var state in this.States)
                 {
-                    var x = (state.Range.Min + state.Range.Max)/2;
+                    var x = (state.Min + state.Max)/2;
                     var Px = vertexValue[state.Key];
 
                     sum += Math.Pow(x - mu, 2)*Px;
@@ -596,35 +580,23 @@ namespace Marv.Common.Graph
         // Do not remove! This is for Marv.Matlab
         public double[] GetValue()
         {
-            return this.States.Select(state => state.Value).ToArray();
+            return this.States.Select(state => state.Belief).ToArray();
         }
 
         public void SelectState(int index)
         {
             for (var i = 0; i < this.States.Count; i++)
             {
-                this.States[i].Value = i == index ? 1 : 0;
-            }
-        }
-
-        public void SelectState(State aState)
-        {
-            foreach (var state in this.States)
-            {
-                state.Value = state == aState ? 1 : 0;
+                this.States[i].Belief = i == index ? 1 : 0;
             }
         }
 
         public void SetEvidence(State aState)
         {
-            var evidence = new Dictionary<string, double>();
-
             foreach (var state in this.States)
             {
-                evidence[state.Key] = state == aState ? 1 : 0;
+                state.Evidence = state == aState ? 1 : 0;
             }
-
-            this.Evidence = evidence;
         }
 
         public void SetEvidence(Evidence evidence)
@@ -635,24 +607,19 @@ namespace Marv.Common.Graph
 
         public void SetEvidenceUniform()
         {
-            this.EvidenceString = null;
-
-            var value = 1.0/this.States.Count;
-            var evidence = new Dictionary<string, double>();
-
+            var value = 1.0 / this.States.Count;
+            
             foreach (var state in this.States)
             {
-                evidence[state.Key] = value;
+                state.Evidence = value;
             }
-
-            this.Evidence = evidence;
         }
 
         public void SetValue(int i)
         {
             foreach (var state in this.States)
             {
-                state.Value = i;
+                state.Belief = i;
             }
 
             this.Value = this.Value.Normalized();
@@ -690,12 +657,12 @@ namespace Marv.Common.Graph
 
         public void UpdateMostProbableState()
         {
-            this.MostProbableState = this.States.MaxBy(state => state.Value);
+            this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
         private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Value")
+            if (e.PropertyName == "Belief")
             {
                 this.UpdateMostProbableState();
             }

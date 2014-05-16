@@ -45,7 +45,7 @@ namespace Marv.Common.Graph
                     vertex.Belief = value[vertex.Key];
                 }
 
-                this.RaisePropertyChanged("Belief");
+                this.RaisePropertyChanged("OriginalBelief");
             }
         }
 
@@ -118,17 +118,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    if (value == null)
-                    {
-                        vertex.EvidenceString = null;
-                    }
-                    else
-                    {
-                        if (!value.ContainsKey(vertex.Key)) continue;
-
-                        vertex.EvidenceString = null;
-                        vertex.Evidence = value[vertex.Key];
-                    }
+                    vertex.Evidence = value[vertex.Key];
                 }
             }
         }
@@ -194,7 +184,7 @@ namespace Marv.Common.Graph
                     vertex.Value = value == null ? null : value[vertex.Key];
                 }
 
-                this.RaisePropertyChanged("Value");
+                this.RaisePropertyChanged("Belief");
             }
         }
 
@@ -453,13 +443,6 @@ namespace Marv.Common.Graph
                 vertex.States = structureVertex.ParseStates();
                 vertex.Type = structureVertex.ParseSubType();
 
-                // If all states have ranges, then it is an interval vertex. This is a hack. Remove
-                // this once the team starts using Hugin node types consistently.
-                if (vertex.States.Count(state => state.Range != null) == vertex.States.Count())
-                {
-                    vertex.Type = VertexType.Interval;
-                }
-
                 if (string.IsNullOrWhiteSpace(vertex.Units))
                 {
                     vertex.Units = "n/a";
@@ -531,11 +514,6 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.Evidence = vertex.Evidence.Normalized();
-            }
-
             this.ClearNetworkEvidence();
             this.SetNetworkEvidence(this.Evidence);
             this.Value = this.GetNetworkValue();

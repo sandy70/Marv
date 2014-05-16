@@ -252,27 +252,27 @@ namespace Marv
             {
                 foreach (var state in vertex.States)
                 {
-                    if (maxValue < state.Range.Min)
+                    if (maxValue < state.Min)
                     {
                         // do nothing
                     }
-                    else if (minValue > state.Range.Max)
+                    else if (minValue > state.Max)
                     {
                         // do nothing
                     }
                     else
                     {
-                        if (minValue >= state.Range.Min && minValue <= state.Range.Max)
+                        if (minValue >= state.Min && minValue <= state.Max)
                         {
-                            evidence[state.Key] = (state.Range.Max - minValue)/(state.Range.Max - state.Range.Min);
+                            evidence[state.Key] = (state.Max - minValue) / (state.Max - state.Min);
                         }
 
-                        if (maxValue >= state.Range.Min && maxValue <= state.Range.Max)
+                        if (maxValue >= state.Min && maxValue <= state.Max)
                         {
-                            evidence[state.Key] = (maxValue - state.Range.Min) / (state.Range.Max - state.Range.Min);
+                            evidence[state.Key] = (maxValue - state.Min) / (state.Max - state.Min);
                         }
 
-                        if (minValue <= state.Range.Min && maxValue >= state.Range.Max)
+                        if (minValue <= state.Min && maxValue >= state.Max)
                         {
                             evidence[state.Key] = 1;
                         }

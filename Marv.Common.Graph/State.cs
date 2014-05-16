@@ -2,10 +2,11 @@
 {
     public class State : Model
     {
-        private double _value;
         private double belief;
         private double evidence;
-        private Sequence<double> range = new Sequence<double>();
+        private double max;
+        private double min;
+        private double originalBelief;
 
         public double Belief
         {
@@ -35,34 +36,57 @@
             }
         }
 
-        public Sequence<double> Range
+        public double Max
         {
             get
             {
-                return this.range;
+                return this.max;
             }
 
             set
             {
-                if (value != this.range)
+                if (value != this.max)
                 {
-                    this.range = value;
-                    this.RaisePropertyChanged("Range");
+                    this.max = value;
+                    this.RaisePropertyChanged("Max");
                 }
             }
         }
 
-        public double Value
+        public double Min
         {
             get
             {
-                return this._value;
+                return this.min;
             }
+
             set
             {
-                this._value = value;
-                this.RaisePropertyChanged("Value");
+                if (value != this.min)
+                {
+                    this.min = value;
+                    this.RaisePropertyChanged("Min");
+                }
             }
+        }
+
+        public double OriginalBelief
+        {
+            get
+            {
+                return this.originalBelief;
+            }
+
+            set
+            {
+                this.originalBelief = value;
+                this.RaisePropertyChanged("OriginalBelief");
+            }
+        }
+
+        public bool Contains(double value)
+        {
+            return this.Min < value && value < this.Max;
         }
     }
 }

@@ -191,7 +191,7 @@ namespace Marv_Excel
 
             // For the vertex blocks we work with find.
             Range firstFind = null;
-            var currentFind = worksheet.Cells.Find("Value");
+            var currentFind = worksheet.Cells.Find("Belief");
 
             while (currentFind != null)
             {
@@ -236,8 +236,8 @@ namespace Marv_Excel
 
                     if (value != null)
                     {
-                        var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex);
-                        sheetModel.LineEvidence[sectionId, year, vertexKey] = evidence;
+                        var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex, value.ToString());
+                        // sheetModel.LineEvidence[sectionId, year, vertexKey] = evidence;
                     }
                     else
                     {
@@ -339,7 +339,7 @@ namespace Marv_Excel
                 {
                     row = sectionRow;
 
-                    worksheet.WriteValue(row, col, "Value");
+                    worksheet.WriteValue(row, col, "Belief");
                     row++;
 
                     foreach (var state in vertex.States)

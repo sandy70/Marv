@@ -4,6 +4,6 @@ namespace Marv.Common.Graph
 {
     public interface IEvidenceStringParser
     {
-        Dictionary<string, double> Parse(Vertex vertex, string str);
+        Evidence Parse(Vertex vertex, string str);
     }
 }

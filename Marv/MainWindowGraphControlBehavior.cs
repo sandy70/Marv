@@ -149,7 +149,7 @@ namespace Marv
 
                 foreach (var state in vertex.States)
                 {
-                    var x = (state.Range.Min + state.Range.Max) / 2;
+                    var x = (state.Min + state.Max) / 2;
                     var y = window.GraphValues[year][vertex.Key][state.Key];
 
                     chartSeries.Add(new ScatterPoint

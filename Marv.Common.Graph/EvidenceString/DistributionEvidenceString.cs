@@ -7,13 +7,14 @@ namespace Marv.Common.Graph
 {
     public class DistributionEvidenceString : IEvidenceStringParser
     {
-        public Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Evidence Parse(Vertex vertex, string str)
         {
-            var vertexValue = new Dictionary<string, double>();
+            var evidence = new Evidence();
+            evidence.String = str;
 
             foreach (var state in vertex.States)
             {
-                vertexValue[state.Key] = 0;
+                evidence.Value[state.Key] = 0;
             }
 
             var parts = str
@@ -33,16 +34,16 @@ namespace Marv.Common.Graph
 
                     if (Double.TryParse(partsOfPart[0], out value))
                     {
-                        foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
+                        foreach (var state in vertex.States.Where(state => state.Contains(value)))
                         {
-                            vertexValue[state.Key] += probability;
+                            evidence.Value[state.Key] += probability;
                         }
                     }
                     else
                     {
                         foreach (var state in vertex.States.Where(state => state.Key == partsOfPart[0]))
                         {
-                            vertexValue[state.Key] += probability;
+                            evidence.Value[state.Key] += probability;
                         }
                     }
                 }
@@ -52,7 +53,7 @@ namespace Marv.Common.Graph
                 }
             }
 
-            return vertexValue;
+            return evidence;
         }
     }
 }

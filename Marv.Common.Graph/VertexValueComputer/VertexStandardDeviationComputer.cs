@@ -17,9 +17,9 @@ namespace Marv.Common.Graph
             {
                 stdev += vertexValue[state.Key] *
                          (
-                         1.0 / 3 * (Math.Pow(state.Range.Max, 3) - Math.Pow(state.Range.Min, 3)) +
-                         Math.Pow(mu, 2) * (state.Range.Max - state.Range.Min) -
-                         mu * (Math.Pow(state.Range.Max, 2) - Math.Pow(state.Range.Min, 2))
+                         1.0 / 3 * (Math.Pow(state.Max, 3) - Math.Pow(state.Min, 3)) +
+                         Math.Pow(mu, 2) * (state.Max - state.Min) -
+                         mu * (Math.Pow(state.Max, 2) - Math.Pow(state.Min, 2))
                          );
             }
 

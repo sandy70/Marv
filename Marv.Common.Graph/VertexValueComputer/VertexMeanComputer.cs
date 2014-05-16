@@ -16,7 +16,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var state in vertex.States)
                 {
-                    mean += (vertexValue[state.Key] / 2) * (Math.Pow(state.Range.Max, 2) - Math.Pow(state.Range.Min, 2));
+                    mean += (vertexValue[state.Key] / 2) * (Math.Pow(state.Max, 2) - Math.Pow(state.Min, 2));
                 }
             }
             else

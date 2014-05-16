@@ -1,4 +1,4 @@
-﻿namespace Marv.Common
+﻿namespace Marv.Common.Graph
 {
     public enum VertexType
     {

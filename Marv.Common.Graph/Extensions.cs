@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Marv.Common.Graph
 {
-    public static partial class Extensions
+    public static class Extensions
     {
         public static void AddUnique(this ModelCollection<Edge> edges, Vertex source, Vertex target, EdgeConnectorPositions connectorPostions = null)
         {

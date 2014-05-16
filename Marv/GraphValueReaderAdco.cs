@@ -15,7 +15,7 @@ namespace Marv
             catch (OdbDataNotFoundException exception)
             {
                 throw new GraphValueNotFoundException(
-                    "Value not found for location: " + locationKey + " on line: " + lineKey, exception);
+                    "Belief not found for location: " + locationKey + " on line: " + lineKey, exception);
             }
         }
 

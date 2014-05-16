@@ -6,5 +6,10 @@ namespace Marv.Common.Graph
     {
         public string String { get; set; }
         public Dictionary<string, double> Value { get; set; }
+
+        public void Normalize()
+        {
+            this.Value = this.Value.Normalized();
+        }
     }
 }

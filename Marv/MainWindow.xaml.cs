@@ -127,7 +127,7 @@ namespace Marv
                 }
                 catch (OdbDataNotFoundException)
                 {
-                    logger.Info("Value not found for point {0}.", location);
+                    logger.Info("Belief not found for point {0}.", location);
                 }
 
                 logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
@@ -201,7 +201,7 @@ namespace Marv
 
                 this.Notifications.Push(new NotificationTimed
                 {
-                    Name = "Value Not Found",
+                    Name = "Belief Not Found",
                     Description = exception.Message
                 });
 
@@ -220,7 +220,7 @@ namespace Marv
                 }
                 catch (OdbDataNotFoundException)
                 {
-                    logger.Warn("Value not found for line {0}.", multiLocation.Name);
+                    logger.Warn("Belief not found for line {0}.", multiLocation.Name);
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace Marv
                     }
                     catch (KeyNotFoundException)
                     {
-                        logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                        logger.Warn("Belief not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
                     }
                 }
             }

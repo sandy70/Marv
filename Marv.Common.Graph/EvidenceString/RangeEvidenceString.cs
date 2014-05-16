@@ -6,11 +6,12 @@ namespace Marv.Common.Graph
 {
     public class RangeEvidenceString : IEvidenceStringParser
     {
-        public Dictionary<string, double> Parse(Vertex vertex, string str)
+        public Evidence Parse(Vertex vertex, string str)
         {
             if (str.Length <= 0) return null;
 
-            var evidence = vertex.CreateEvidence();
+            var evidence = new Evidence();
+            evidence.String = str;
 
             var parts = str
                 .Trim()
@@ -25,31 +26,31 @@ namespace Marv.Common.Graph
             {
                 foreach (var state in vertex.States)
                 {
-                    evidence[state.Key] = 0;
+                    evidence.Value[state.Key] = 0;
 
-                    if (maxValue < state.Range.Min)
+                    if (maxValue < state.Min)
                     {
                         // do nothing
                     }
-                    else if (minValue > state.Range.Max)
+                    else if (minValue > state.Max)
                     {
                         // do nothing
                     }
                     else
                     {
-                        if (minValue >= state.Range.Min && minValue <= state.Range.Max)
+                        if (minValue >= state.Min && minValue <= state.Max)
                         {
-                            evidence[state.Key] = (state.Range.Max - minValue)/(state.Range.Max - state.Range.Min);
+                            evidence.Value[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
                         }
 
-                        if (maxValue >= state.Range.Min && maxValue <= state.Range.Max)
+                        if (maxValue >= state.Min && maxValue <= state.Max)
                         {
-                            evidence[state.Key] = (maxValue - state.Range.Min)/(state.Range.Max - state.Range.Min);
+                            evidence.Value[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
                         }
 
-                        if (minValue <= state.Range.Min && maxValue >= state.Range.Max)
+                        if (minValue <= state.Min && maxValue >= state.Max)
                         {
-                            evidence[state.Key] = 1;
+                            evidence.Value[state.Key] = 1;
                         }
                     }
                 }
@@ -59,7 +60,9 @@ namespace Marv.Common.Graph
                 return null;
             }
 
-            return evidence.Normalized();
+            evidence.Value = evidence.Value.Normalized();
+
+            return evidence;
         }
     }
 }

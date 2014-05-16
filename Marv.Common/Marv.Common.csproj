@@ -90,7 +90,6 @@
     <Compile Include="MetaObject.cs" />
     <Compile Include="NormalDistribution.cs" />
     <Compile Include="Types\Dictionary.cs" />
-    <Compile Include="Enums.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
     <Compile Include="Notification\Notification.cs" />
