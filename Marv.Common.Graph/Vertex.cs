@@ -49,7 +49,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var state in this.States)
                 {
-                    state.Belief = value[state.Key];
+                    state.Belief = value == null ? 0 : value[state.Key];
                 }
 
                 this.RaisePropertyChanged("Belief");
@@ -133,14 +133,14 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.ToDictionary(state => state.Key, state => state.Belief);
+                return this.States.ToDictionary(state => state.Key, state => state.Evidence);
             }
 
             set
             {
                 foreach (var state in this.States)
                 {
-                    state.Belief = value[state.Key];
+                    state.Evidence = (value == null) || !value.ContainsKey(state.Key) ? 0 : value[state.Key];
                 }
 
                 this.RaisePropertyChanged("Evidence");

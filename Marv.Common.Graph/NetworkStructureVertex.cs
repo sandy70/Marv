@@ -20,7 +20,7 @@ namespace Marv.Common.Graph
             {
                 var groupsValueString = this.Properties["groups"];
 
-                var parts = groupsValueString.Split(new[] { '"', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = groupsValueString.Split(new[] {'"', ','}, StringSplitOptions.RemoveEmptyEntries);
 
                 groups = new ObservableCollection<string>(parts);
 
@@ -52,7 +52,7 @@ namespace Marv.Common.Graph
         {
             var posValueString = this.Properties["position"];
 
-            var parts = posValueString.Split(new[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = posValueString.Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries);
 
             var position = new Point
             {
@@ -109,8 +109,8 @@ namespace Marv.Common.Graph
                 if (subtype.Equals("interval"))
                 {
                     var stateStrings = this.Properties["state_values"]
-                                           .Split(new[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                                           .ToList();
+                        .Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
 
                     var nStatesStrings = stateStrings.Count;
 
@@ -129,8 +129,8 @@ namespace Marv.Common.Graph
                 else if (subtype.Equals("number"))
                 {
                     var stateStrings = this.Properties["state_values"]
-                                           .Split(new[] { '(', ')', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                                           .ToList();
+                        .Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
 
                     var nStatesStrings = stateStrings.Count;
 
@@ -156,7 +156,7 @@ namespace Marv.Common.Graph
                 if (this.Properties.TryGetValue("states", out statesString))
                 {
                     var isReading = false;
-                    foreach (var c in statesString.ToCharArray())
+                    foreach (var c in statesString)
                     {
                         if (c == '"')
                         {

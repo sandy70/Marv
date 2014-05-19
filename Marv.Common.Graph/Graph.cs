@@ -42,10 +42,10 @@ namespace Marv.Common.Graph
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    vertex.Belief = value[vertex.Key];
+                    vertex.Belief = value == null ? null : value[vertex.Key];
                 }
 
-                this.RaisePropertyChanged("OriginalBelief");
+                this.RaisePropertyChanged("Belief");
             }
         }
 
@@ -118,7 +118,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    vertex.Evidence = value[vertex.Key];
+                    vertex.Evidence = value == null ? null : value[vertex.Key];
                 }
             }
         }

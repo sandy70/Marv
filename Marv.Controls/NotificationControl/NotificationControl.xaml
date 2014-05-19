@@ -8,7 +8,8 @@
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
@@ -34,10 +35,13 @@
                         <EventTrigger.Actions>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1"
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0"
+                                                     To="1"
                                                      Duration="0:0:.2" />
-                                    
-                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="0"
+
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     From="0"
                                                      Duration="0:0:.2" />
                                 </Storyboard>
                             </BeginStoryboard>
@@ -74,19 +78,20 @@
                                    TextTrimming="WordEllipsis"
                                    TextWrapping="WrapWithOverflow" />
 
-                        <Button Name="NotificationCloseButton"
-                                Grid.Column="1"
-                                Background="{StaticResource BackgroundDark}"
-                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Margin="5"
-                                Padding="0">
-                            
+                        <surface:SurfaceButton Name="NotificationCloseButton"
+                                               Grid.Column="1"
+                                               Background="{StaticResource BackgroundDark}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Margin="5"
+                                               Padding="0">
+
                             <Image Source="/Marv.Common;component/Resources/Icons/Close.png" />
 
                             <i:Interaction.Behaviors>
                                 <local:NotificationCloseButtonBehavior />
                             </i:Interaction.Behaviors>
-                        </Button>
+                        </surface:SurfaceButton>
                     </Grid>
 
                     <!-- Notification Description -->

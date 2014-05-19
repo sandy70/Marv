@@ -212,7 +212,7 @@ namespace Marv
                     {
                         foreach (var state in vertex.States)
                         {
-                            if (state.Range.Bounds(value))
+                            if (state.Contains(value))
                             {
                                 vertexValue[state.Key] += probability;
                             }
@@ -301,7 +301,7 @@ namespace Marv
 
                 if (Double.TryParse(evidenceString, out value))
                 {
-                    foreach (var state in vertex.States.Where(state => state.Range.Bounds(value)))
+                    foreach (var state in vertex.States.Where(state => state.Contains(value)))
                     {
                         evidence[state.Key] = 1;
                     }

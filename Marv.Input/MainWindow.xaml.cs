@@ -159,15 +159,14 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
+            this.ModelEvidence = new Dictionary<int, string, string, double>();
+            this.Graph.Belief = null;
+            this.Graph.Evidence = null;
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
         {
-            this.Graph.Run();
-
-            var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
-
-            this.ModelEvidence[year] = this.Graph.Evidence;
+            this.UpdateModelEvidence();
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
