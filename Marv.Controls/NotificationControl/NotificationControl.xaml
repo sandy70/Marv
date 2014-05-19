@@ -78,20 +78,20 @@
                                    TextTrimming="WordEllipsis"
                                    TextWrapping="WrapWithOverflow" />
 
-                        <surface:SurfaceButton Name="NotificationCloseButton"
-                                               Grid.Column="1"
-                                               Background="{StaticResource BackgroundDark}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Margin="5"
-                                               Padding="0">
+                        <telerik:RadButton Name="NotificationCloseButton"
+                                           Grid.Column="1"
+                                           Background="{StaticResource BackgroundDark}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5"
+                                           Padding="0">
 
                             <Image Source="/Marv.Common;component/Resources/Icons/Close.png" />
 
                             <i:Interaction.Behaviors>
                                 <local:NotificationCloseButtonBehavior />
                             </i:Interaction.Behaviors>
-                        </surface:SurfaceButton>
+                        </telerik:RadButton>
                     </Grid>
 
                     <!-- Notification Description -->
