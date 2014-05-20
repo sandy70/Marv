@@ -595,7 +595,7 @@ namespace Marv.Common.Graph
             return graphValueTimeSeries;
         }
 
-        public void SetEvidence(Dictionary<string, Evidence> graphEvidence)
+        public void SetEvidence(Dictionary<string, IVertexEvidence> graphEvidence)
         {
             foreach (var vertexKey in graphEvidence.Keys)
             {
@@ -662,14 +662,6 @@ namespace Marv.Common.Graph
             this.network.SetNodeTable(vertexKey, table);
         }
 
-        public void SetValue(Dictionary<string, Evidence> vertexValues)
-        {
-            foreach (var vertexKey in vertexValues.Keys)
-            {
-                this.Vertices[vertexKey].SetValue(vertexValues[vertexKey]);
-            }
-        }
-
         public void SetValueToZero()
         {
             foreach (var vertex in this.Vertices)
@@ -726,6 +718,25 @@ namespace Marv.Common.Graph
             }
 
             structure.Write(fileName);
+        }
+
+        public Dictionary<string, IVertexEvidence> GetEvidence()
+        {
+            var graphEvidence = new Dictionary<string, IVertexEvidence>();
+
+            foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
+            {
+                if (!string.IsNullOrEmpty(vertex.EvidenceString))
+                {
+                    graphEvidence[vertex.Key] = new VertexEvidenceString(vertex.EvidenceString);
+                }
+                else
+                {
+                    graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence);
+                }
+            }
+
+            return graphEvidence;
         }
     }
 }

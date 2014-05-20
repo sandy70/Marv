@@ -35,7 +35,7 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
-        private Dictionary<int, string, string, double> ModelEvidence = new Dictionary<int, string, string, double>();
+        private Dictionary<int, string, IVertexEvidence> ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
 
         public MainWindow()
         {
@@ -159,7 +159,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.ModelEvidence = new Dictionary<int, string, string, double>();
+            this.ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.Evidence = null;
         }
@@ -182,7 +182,8 @@ namespace Marv.Input
 
                     if (this.ModelEvidence.ContainsKey(year))
                     {
-                        this.Graph.Evidence = this.ModelEvidence[year];
+                        // this.Graph.Evidence = this.ModelEvidence[year];
+                        this.Graph.SetEvidence(this.ModelEvidence[year]);
                     }
                     else
                     {
@@ -290,7 +291,7 @@ namespace Marv.Input
 
                 var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
 
-                this.ModelEvidence[year] = this.Graph.Evidence;
+                this.ModelEvidence[year] = this.Graph.GetEvidence();
             }
         }
     }

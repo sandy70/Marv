@@ -2,15 +2,24 @@
 
 namespace Marv.Common.Graph
 {
-    public class VertexEvidence
+    public interface IVertexEvidence
     {
-        public string String { get; set; }
+        bool Set(Vertex vertex);
+    }
 
-        public Dictionary<string, double> Value { get; set; }
+    public class VertexEvidence : IVertexEvidence
+    {
+        private readonly Dictionary<string, double> evidence;
 
-        public void Normalize()
+        public VertexEvidence(Dictionary<string, double> evidence)
         {
-            this.Value = this.Value.Normalized();
+            this.evidence = evidence;
+        }
+
+        public bool Set(Vertex vertex)
+        {
+            vertex.Evidence = this.evidence;
+            return true;
         }
     }
 }

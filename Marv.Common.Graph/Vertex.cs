@@ -482,15 +482,6 @@ namespace Marv.Common.Graph
             return evidence;
         }
 
-        public Evidence GetEvidence()
-        {
-            return new Evidence
-            { 
-                String = this.EvidenceString,
-                Value = this.Value
-            };
-        }
-
         public double GetMean(Dictionary<string, double> vertexValue)
         {
             double numer = 0;
@@ -599,10 +590,11 @@ namespace Marv.Common.Graph
             }
         }
 
-        public void SetEvidence(Evidence evidence)
+        // Returns true if  the evidence was set successfully. The method might fail if VertexEvidenceString is provided and 
+        // the string is malformed.
+        public bool SetEvidence(IVertexEvidence vertexEvidence)
         {
-            this.EvidenceString = evidence.String;
-            this.Value = evidence.Value;
+            return vertexEvidence.Set(this);
         }
 
         public void SetEvidenceUniform()
@@ -623,12 +615,6 @@ namespace Marv.Common.Graph
             }
 
             this.Value = this.Value.Normalized();
-        }
-
-        internal void SetValue(Evidence evidence)
-        {
-            this.EvidenceString = evidence.String;
-            this.Value = evidence.Value;
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

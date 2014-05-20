@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>> where TValue : new()
+    public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>>
     {
         public TValue GetValueOrNew(T1 key1, T2 key2)
         {
@@ -13,7 +13,7 @@ namespace Marv.Common
 
             if (!this[key1].ContainsKey(key2))
             {
-                this[key1][key2] = new TValue();
+                this[key1][key2] = default(TValue);
             }
 
             return this[key1][key2];

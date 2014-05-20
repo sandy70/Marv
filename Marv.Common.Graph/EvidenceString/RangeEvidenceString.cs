@@ -6,14 +6,12 @@ namespace Marv.Common.Graph
 {
     public class RangeEvidenceString : IEvidenceStringParser
     {
-        public Evidence Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
             if (str.Length <= 0) return null;
 
-            var evidence = new Evidence();
-            evidence.String = str;
-            evidence.Value = new Dictionary<string, double>();
-
+            var evidence = new Dictionary<string, double>();
+            
             var parts = str
                 .Trim()
                 .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -25,9 +23,9 @@ namespace Marv.Common.Graph
 
             if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
             {
-                foreach (var state in vertex.States)
+                foreach (var state in states)
                 {
-                    evidence.Value[state.Key] = 0;
+                    evidence[state.Key] = 0;
 
                     if (maxValue < state.Min)
                     {
@@ -41,17 +39,17 @@ namespace Marv.Common.Graph
                     {
                         if (minValue >= state.Min && minValue <= state.Max)
                         {
-                            evidence.Value[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
+                            evidence[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
                         }
 
                         if (maxValue >= state.Min && maxValue <= state.Max)
                         {
-                            evidence.Value[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
+                            evidence[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
                         }
 
                         if (minValue <= state.Min && maxValue >= state.Max)
                         {
-                            evidence.Value[state.Key] = 1;
+                            evidence[state.Key] = 1;
                         }
                     }
                 }
@@ -61,9 +59,7 @@ namespace Marv.Common.Graph
                 return null;
             }
 
-            evidence.Value = evidence.Value.Normalized();
-
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }

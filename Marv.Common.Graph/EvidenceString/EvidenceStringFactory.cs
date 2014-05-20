@@ -6,7 +6,10 @@ namespace Marv.Common.Graph
     {
         public static IEvidenceStringParser Create(string evidenceString)
         {
-            if (evidenceString == null) return new NullEvidenceString();
+            if (evidenceString == null)
+            {
+                return new NullEvidenceString();
+            }
 
             if (evidenceString.Contains(';'))
             {

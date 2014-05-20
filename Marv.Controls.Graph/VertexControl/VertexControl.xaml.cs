@@ -175,11 +175,10 @@ namespace Marv.Controls.Graph
 
         void EvidenceStringTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var evidence = EvidenceStringFactory.Create(this.Vertex.EvidenceString).Parse(this.Vertex, this.Vertex.EvidenceString);
+            var result = this.Vertex.SetEvidence(new VertexEvidenceString(this.Vertex.EvidenceString));
 
-            if (evidence != null)
+            if (result)
             {
-                this.Vertex.Evidence = evidence.Value;
                 this.RaiseEvidenceEntered();
             }
         }

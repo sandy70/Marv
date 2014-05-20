@@ -6,29 +6,27 @@ namespace Marv.Common.Graph
 {
     public class StateEvidenceString : IEvidenceStringParser
     {
-        public Evidence Parse(Vertex vertex, string str)
+        public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
             if (str.Length <= 0) return null;
 
-            var evidence = new Evidence();
-            evidence.String = str;
-            evidence.Value = new Dictionary<string, double>();
+            var evidence = new Dictionary<string, double>();
 
-            if (vertex.States.Count(state => state.Key == str) == 1)
+            if (states.Count(state => state.Key == str) == 1)
             {
-                evidence.Value[str] = 1;
+                evidence[str] = 1;
             }
             else
             {
                 double value;
 
-                if (Double.TryParse(str, out value) && vertex.Type == VertexType.Interval)
+                if (Double.TryParse(str, out value))
                 {
                     var isWithinBounds = false;
 
-                    foreach (var state in vertex.States.Where(state => state.Contains(value)))
+                    foreach (var state in states.Where(state => state.Contains(value)))
                     {
-                        evidence.Value[state.Key] = 1;
+                        evidence[state.Key] = 1;
                         isWithinBounds = true;
                     }
 
@@ -43,8 +41,7 @@ namespace Marv.Common.Graph
                 }
             }
 
-            evidence.Value = evidence.Value.Normalized();
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }
