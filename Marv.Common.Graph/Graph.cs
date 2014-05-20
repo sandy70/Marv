@@ -278,7 +278,7 @@ namespace Marv.Common.Graph
             if (graphEvidence != null)
             {
                 // Set the given evidence
-                this.SetEvidence(graphEvidence);
+                this.Evidence = graphEvidence;
 
                 // Collect more vertices to ignore
                 verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
@@ -527,7 +527,7 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, string, double> Run(Dictionary<string, string, double> graphEvidence)
         {
-            this.SetEvidence(graphEvidence);
+            this.Evidence = graphEvidence;
             return this.GetNetworkValue();
         }
 
@@ -597,9 +597,25 @@ namespace Marv.Common.Graph
 
         public void SetEvidence(Dictionary<string, IVertexEvidence> graphEvidence)
         {
-            foreach (var vertexKey in graphEvidence.Keys)
+            foreach (var vertex in this.Vertices)
             {
-                this.Vertices[vertexKey].SetEvidence(graphEvidence[vertexKey]);
+                if (graphEvidence == null)
+                {
+                    vertex.Evidence = null;
+                    vertex.EvidenceString = null;
+                }
+                else
+                {
+                    if (graphEvidence.ContainsKey(vertex.Key))
+                    {
+                        vertex.SetEvidence(graphEvidence[vertex.Key]);
+                    }
+                    else
+                    {
+                        vertex.Evidence = null;
+                        vertex.EvidenceString = null;
+                    }
+                }
             }
         }
 
@@ -639,14 +655,6 @@ namespace Marv.Common.Graph
             }
 
             this.network.SetSoftEvidence(vertexKey, evidence);
-        }
-
-        public void SetEvidence(Dictionary<string, string, double> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
-            }
         }
 
         private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)

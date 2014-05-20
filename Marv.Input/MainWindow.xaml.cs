@@ -161,7 +161,7 @@ namespace Marv.Input
             this.InputRows = inputRows;
             this.ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
             this.Graph.Belief = null;
-            this.Graph.Evidence = null;
+            this.Graph.SetEvidence(null);
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
