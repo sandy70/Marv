@@ -251,17 +251,6 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.Graph
-            //    .Vertices
-            //    .Where(vertex => vertex.IsEvidenceEntered)
-            //    .Select(vertex => new
-            //    {
-            //        vertex.EvidenceString,
-            //        vertex.Key,
-            //        vertex.Evidence
-            //    })
-            //    .WriteJson("marv.vertices");
-
             this.ModelEvidence.WriteJson("marv.input");
         }
 

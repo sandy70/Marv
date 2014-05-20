@@ -179,6 +179,7 @@ namespace Marv.Controls.Graph
 
             if (evidence != null)
             {
+                this.Vertex.Evidence = evidence.Value;
                 this.RaiseEvidenceEntered();
             }
         }

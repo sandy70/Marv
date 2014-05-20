@@ -12,6 +12,7 @@ namespace Marv.Common.Graph
 
             var evidence = new Evidence();
             evidence.String = str;
+            evidence.Value = new Dictionary<string, double>();
 
             if (vertex.States.Count(state => state.Key == str) == 1)
             {
