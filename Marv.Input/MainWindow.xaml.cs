@@ -182,12 +182,11 @@ namespace Marv.Input
 
                     if (this.ModelEvidence.ContainsKey(year))
                     {
-                        // this.Graph.Evidence = this.ModelEvidence[year];
                         this.Graph.SetEvidence(this.ModelEvidence[year]);
                     }
                     else
                     {
-                        this.Graph.Evidence = null;
+                        this.Graph.SetEvidence(null);
                     }
                 }
                 catch (FormatException)
