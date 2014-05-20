@@ -2,7 +2,7 @@
 
 namespace Marv.Common.Graph
 {
-    public class Evidence
+    public class VertexEvidence
     {
         public string String { get; set; }
 
