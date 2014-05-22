@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Marv.Common.Graph
+﻿namespace Marv.Common.Graph
 {
     public class VertexEvidenceString : IVertexEvidence
     {
-        private readonly string _string;
-
         public VertexEvidenceString(string aString)
         {
-            this._string = aString;
+            this.String = aString;
         }
 
-        public virtual bool Set(Vertex vertex)
+        public string String { get; set; }
+
+        public bool Set(Vertex vertex)
         {
-            vertex.EvidenceString = this._string;
-            var evidence = EvidenceStringFactory.Create(this._string).Parse(vertex.States, this._string);
+            vertex.EvidenceString = this.String;
+            var evidence = EvidenceStringFactory.Create(this.String).Parse(vertex.States, this.String);
 
             if (evidence != null)
             {

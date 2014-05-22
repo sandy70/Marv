@@ -4,16 +4,16 @@ namespace Marv.Common.Graph
 {
     public class VertexEvidence : IVertexEvidence
     {
-        private readonly Dictionary<string, double> evidence;
-
         public VertexEvidence(Dictionary<string, double> evidence)
         {
-            this.evidence = evidence;
+            this.Evidence = evidence;
         }
+
+        public Dictionary<string, double> Evidence { get; set; }
 
         public bool Set(Vertex vertex)
         {
-            vertex.Evidence = this.evidence;
+            vertex.Evidence = this.Evidence;
             return true;
         }
     }

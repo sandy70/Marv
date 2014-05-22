@@ -51,7 +51,8 @@ namespace Marv.Common
             var serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
             serializer.Formatting = Formatting.Indented;
-
+            serializer.TypeNameHandling = TypeNameHandling.Objects;
+            
             using (var streamWriter = new StreamReader(fileName))
             {
                 using (var jsonTextWriter = new JsonTextReader(streamWriter))

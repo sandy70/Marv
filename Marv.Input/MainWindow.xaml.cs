@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using AutoMapper;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -232,20 +228,21 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            var list = Utils.ReadJson(dialog.FileName) as JArray;
+            this.ModelEvidence = Utils.ReadJson<Dictionary<int, string, IVertexEvidence>>(dialog.FileName);
 
-            foreach (var item in list)
+            var inputRows = new ObservableCollection<dynamic>();
+            var row = new Dynamic();
+            row["Section ID"] = "Section 1";
+
+            foreach (var year in this.ModelEvidence.Keys)
             {
-                var result = JsonConvert.DeserializeAnonymousType(item.ToString(), new
-                {
-                    EvidenceString = "",
-                    Key = "",
-                    Evidence = new Dictionary<string, double>()
-                });
-
-                Mapper.DynamicMap(result, this.Graph.Vertices[result.Key]);
+                row[year.ToString()] = "";
             }
 
+            inputRows.Add(row);
+            this.InputRows = inputRows;
+
+            this.Graph.SetEvidence(this.ModelEvidence.First().Value);
             this.Graph.Run();
         }
 
@@ -281,14 +278,14 @@ namespace Marv.Input
                 this.Notifications.Push(new NotificationTimed
                 {
                     Description = "You must select a year before you can enter evidence.",
-                    Name =  "Select Year!"
+                    Name = "Select Year!"
                 });
             }
             else
             {
                 this.Graph.Run();
 
-                var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
+                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
 
                 this.ModelEvidence[year] = this.Graph.GetEvidence();
             }
