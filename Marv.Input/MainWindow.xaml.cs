@@ -5,7 +5,6 @@ using Marv.Input.Properties;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using Telerik.Windows.Controls;
@@ -168,7 +167,10 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.Graph.SetEvidence(this.SelectedVertex.Key, new VertexEvidenceString(e.NewData as string));
+            if (e.Cell.Column.DisplayIndex > 0)
+            {
+                this.Graph.SetEvidence(this.SelectedVertex.Key, new VertexEvidenceString(e.NewData as string));
+            }
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
