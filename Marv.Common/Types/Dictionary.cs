@@ -4,21 +4,6 @@ namespace Marv.Common
 {
     public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>>
     {
-        public TValue GetValueOrNew(T1 key1, T2 key2)
-        {
-            if (!this.ContainsKey(key1))
-            {
-                this[key1] = new Dictionary<T2, TValue>();
-            }
-
-            if (!this[key1].ContainsKey(key2))
-            {
-                this[key1][key2] = default(TValue);
-            }
-
-            return this[key1][key2];
-        }
-
         public Dictionary()
         {
         }
@@ -28,6 +13,14 @@ namespace Marv.Common
             foreach (var key in dict.Keys)
             {
                 this[key] = dict[key];
+            }
+        }
+
+        public new List<T1> Keys
+        {
+            get
+            {
+                return new List<T1>(base.Keys);
             }
         }
 
@@ -70,21 +63,28 @@ namespace Marv.Common
             }
         }
 
-        public new List<T1> Keys
-        {
-            get
-            {
-                return new List<T1>(base.Keys);
-            }
-        }
-
         public bool ContainsKey(T1 key1, T2 key2)
         {
             return this.ContainsKey(key1) && this[key1].ContainsKey(key2);
         }
+
+        public TValue GetValueOrNew(T1 key1, T2 key2)
+        {
+            if (!this.ContainsKey(key1))
+            {
+                this[key1] = new Dictionary<T2, TValue>();
+            }
+
+            if (!this[key1].ContainsKey(key2))
+            {
+                this[key1][key2] = Utils.Create<TValue>();
+            }
+
+            return this[key1][key2];
+        }
     }
 
-    public class Dictionary<T1, T2, T3, TValue> : Dictionary<T1, Dictionary<T2, T3, TValue>> where TValue : new()
+    public class Dictionary<T1, T2, T3, TValue> : Dictionary<T1, Dictionary<T2, T3, TValue>>
     {
         public Dictionary<T3, TValue> this[T1 key1, T2 key2]
         {
@@ -103,7 +103,7 @@ namespace Marv.Common
         }
     }
 
-    public class Dictionary<T1, T2, T3, T4, TValue> : Dictionary<T1, Dictionary<T2, T3, T4, TValue>> where TValue : new()
+    public class Dictionary<T1, T2, T3, T4, TValue> : Dictionary<T1, Dictionary<T2, T3, T4, TValue>>
     {
         public Dictionary<T4, TValue> this[T1 key1, T2 key2, T3 key3]
         {
