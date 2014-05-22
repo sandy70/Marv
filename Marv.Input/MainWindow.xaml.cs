@@ -1,35 +1,36 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using Marv.Common;
+﻿using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
-        public static readonly DependencyProperty StartYearProperty =
-            DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
-
         public static readonly DependencyProperty EndYearProperty =
-            DependencyProperty.Register("EndYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedEndYear));
-
-        public static readonly DependencyProperty InputRowsProperty =
-            DependencyProperty.Register("InputRows", typeof (ObservableCollection<dynamic>), typeof (MainWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedEndYear));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty InputRowsProperty =
+            DependencyProperty.Register("InputRows", typeof(ObservableCollection<dynamic>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty NotificationsProperty =
-            DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
+            DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
+
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof(Vertex), typeof(MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty StartYearProperty =
+            DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         private Dictionary<int, string, IVertexEvidence> ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
 
@@ -46,7 +47,7 @@ namespace Marv.Input
         {
             get
             {
-                return (int) GetValue(EndYearProperty);
+                return (int)GetValue(EndYearProperty);
             }
 
             set
@@ -59,7 +60,7 @@ namespace Marv.Input
         {
             get
             {
-                return (Graph) GetValue(GraphProperty);
+                return (Graph)GetValue(GraphProperty);
             }
 
             set
@@ -72,7 +73,7 @@ namespace Marv.Input
         {
             get
             {
-                return (ObservableCollection<dynamic>) GetValue(InputRowsProperty);
+                return (ObservableCollection<dynamic>)GetValue(InputRowsProperty);
             }
 
             set
@@ -85,7 +86,7 @@ namespace Marv.Input
         {
             get
             {
-                return (ObservableCollection<INotification>) GetValue(NotificationsProperty);
+                return (ObservableCollection<INotification>)GetValue(NotificationsProperty);
             }
             set
             {
@@ -97,7 +98,7 @@ namespace Marv.Input
         {
             get
             {
-                return (Vertex) GetValue(SelectedVertexProperty);
+                return (Vertex)GetValue(SelectedVertexProperty);
             }
             set
             {
@@ -109,7 +110,7 @@ namespace Marv.Input
         {
             get
             {
-                return (int) GetValue(StartYearProperty);
+                return (int)GetValue(StartYearProperty);
             }
 
             set
@@ -165,6 +166,11 @@ namespace Marv.Input
             this.UpdateModelEvidence();
         }
 
+        private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+        {
+            this.Graph.SetEvidence(this.SelectedVertex.Key, new VertexEvidenceString(e.NewData as string));
+        }
+
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell != null)
@@ -174,7 +180,7 @@ namespace Marv.Input
 
                 try
                 {
-                    var year = Convert.ToInt32((string) e.NewCell.Column.Header);
+                    var year = Convert.ToInt32((string)e.NewCell.Column.Header);
 
                     if (this.ModelEvidence.ContainsKey(year))
                     {
@@ -184,6 +190,8 @@ namespace Marv.Input
                     {
                         this.Graph.SetEvidence(null);
                     }
+
+                    this.Graph.Run();
                 }
                 catch (FormatException)
                 {
@@ -214,6 +222,8 @@ namespace Marv.Input
             this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
+            this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
+
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
@@ -242,6 +252,15 @@ namespace Marv.Input
             inputRows.Add(row);
             this.InputRows = inputRows;
 
+            var item = this.InputGridView.Items[0];
+            var column = this.InputGridView.Columns[1];
+            var cellToEdit = new GridViewCellInfo(item, column, this.InputGridView);
+
+            this.InputGridView.IsSynchronizedWithCurrentItem = true;
+            this.InputGridView.SelectedItem = item;
+            this.InputGridView.CurrentItem = item;
+            this.InputGridView.CurrentCellInfo = cellToEdit;
+
             this.Graph.SetEvidence(this.ModelEvidence.First().Value);
             this.Graph.Run();
         }
@@ -249,6 +268,26 @@ namespace Marv.Input
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             this.ModelEvidence.WriteJson("marv.input");
+        }
+
+        private void UpdateModelEvidence()
+        {
+            if (this.InputGridView.CurrentCell == null)
+            {
+                this.Notifications.Push(new NotificationTimed
+                {
+                    Description = "You must select a year before you can enter evidence.",
+                    Name = "Select Year!"
+                });
+            }
+            else
+            {
+                this.Graph.Run();
+
+                var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
+
+                this.ModelEvidence[year] = this.Graph.GetEvidence();
+            }
         }
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
@@ -269,26 +308,6 @@ namespace Marv.Input
         private void VertexControl_EvidenceEntered(object sender, Vertex e)
         {
             this.UpdateModelEvidence();
-        }
-
-        private void UpdateModelEvidence()
-        {
-            if (this.InputGridView.CurrentCell == null)
-            {
-                this.Notifications.Push(new NotificationTimed
-                {
-                    Description = "You must select a year before you can enter evidence.",
-                    Name = "Select Year!"
-                });
-            }
-            else
-            {
-                this.Graph.Run();
-
-                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
-
-                this.ModelEvidence[year] = this.Graph.GetEvidence();
-            }
         }
     }
 }

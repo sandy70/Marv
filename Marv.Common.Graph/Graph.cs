@@ -1,12 +1,12 @@
-﻿using System;
+﻿using NLog;
+using QuickGraph.Algorithms.RankedShortestPath;
+using Smile;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using NLog;
-using QuickGraph.Algorithms.RankedShortestPath;
-using Smile;
 
 namespace Marv.Common.Graph
 {
@@ -22,14 +22,6 @@ namespace Marv.Common.Graph
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
-
-        public bool IsMostlyExpanded
-        {
-            get
-            {
-                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
-            }
-        }
 
         public Dictionary<string, string, double> Belief
         {
@@ -158,6 +150,14 @@ namespace Marv.Common.Graph
             }
         }
 
+        public bool IsMostlyExpanded
+        {
+            get
+            {
+                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
+            }
+        }
+
         public Dictionary<string, string> Loops
         {
             get
@@ -205,6 +205,69 @@ namespace Marv.Common.Graph
             }
         }
 
+        public static Graph Read(string fileName)
+        {
+            var structure = NetworkStructure.Read(fileName);
+
+            var graph = new Graph();
+
+            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = structure.ParseUserProperty("key", "");
+            graph.network = structure.Network;
+
+            // Add all the vertices
+            foreach (var structureVertex in structure.Vertices)
+            {
+                var vertex = new Vertex();
+
+                vertex.Key = structureVertex.Key;
+                vertex.ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions");
+                vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
+                vertex.Groups = structureVertex.ParseGroups();
+                vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
+                vertex.InputVertexKey = structureVertex.ParseStringProperty("InputNode");
+                vertex.IsExpanded = structureVertex.ParseIsExpanded();
+                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
+                vertex.Name = structureVertex.ParseStringProperty("label");
+                vertex.Position = structureVertex.ParsePosition();
+                vertex.PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup");
+                vertex.Units = structureVertex.ParseStringProperty("units");
+                vertex.States = structureVertex.ParseStates();
+                vertex.Type = structureVertex.ParseSubType();
+
+                if (string.IsNullOrWhiteSpace(vertex.Units))
+                {
+                    vertex.Units = "n/a";
+                }
+
+                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
+                {
+                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
+                }
+
+                graph.Vertices.Add(vertex);
+            }
+
+            // Add all the edges
+            foreach (var srcVertex in structure.Vertices)
+            {
+                foreach (var dstVertex in srcVertex.Children)
+                {
+                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
+                }
+            }
+
+            graph.UpdateDisplayGraph(graph.DefaultGroup);
+            graph.UpdateValue();
+
+            return graph;
+        }
+
+        public static Task<Graph> ReadAsync(string fileName)
+        {
+            return Task.Run(() => Read(fileName));
+        }
+
         public void AddEdge(Vertex source, Vertex target)
         {
             this.Edges.Add(new Edge(source, target));
@@ -222,9 +285,23 @@ namespace Marv.Common.Graph
             return this.GetNetworkValue();
         }
 
-        private void ClearNetworkEvidence()
+        public Dictionary<string, IVertexEvidence> GetEvidence()
         {
-            this.network.ClearAllEvidence();
+            var graphEvidence = new Dictionary<string, IVertexEvidence>();
+
+            foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
+            {
+                if (!string.IsNullOrEmpty(vertex.EvidenceString))
+                {
+                    graphEvidence[vertex.Key] = new VertexEvidenceString(vertex.EvidenceString);
+                }
+                else
+                {
+                    graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence);
+                }
+            }
+
+            return graphEvidence;
         }
 
         public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
@@ -413,69 +490,6 @@ namespace Marv.Common.Graph
             return hasEdge;
         }
 
-        public static Graph Read(string fileName)
-        {
-            var structure = NetworkStructure.Read(fileName);
-
-            var graph = new Graph();
-
-            graph.DefaultGroup = structure.ParseUserProperty("defaultgroup", "all");
-            graph.Name = structure.ParseUserProperty("key", "");
-            graph.network = structure.Network;
-
-            // Add all the vertices
-            foreach (var structureVertex in structure.Vertices)
-            {
-                var vertex = new Vertex();
-
-                vertex.Key = structureVertex.Key;
-                vertex.ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions");
-                vertex.Description = structureVertex.ParseStringProperty("HR_HTML_Desc");
-                vertex.Groups = structureVertex.ParseGroups();
-                vertex.HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup");
-                vertex.InputVertexKey = structureVertex.ParseStringProperty("InputNode");
-                vertex.IsExpanded = structureVertex.ParseIsExpanded();
-                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
-                vertex.Name = structureVertex.ParseStringProperty("label");
-                vertex.Position = structureVertex.ParsePosition();
-                vertex.PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup");
-                vertex.Units = structureVertex.ParseStringProperty("units");
-                vertex.States = structureVertex.ParseStates();
-                vertex.Type = structureVertex.ParseSubType();
-
-                if (string.IsNullOrWhiteSpace(vertex.Units))
-                {
-                    vertex.Units = "n/a";
-                }
-
-                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
-                {
-                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
-                }
-
-                graph.Vertices.Add(vertex);
-            }
-
-            // Add all the edges
-            foreach (var srcVertex in structure.Vertices)
-            {
-                foreach (var dstVertex in srcVertex.Children)
-                {
-                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
-                }
-            }
-
-            graph.UpdateDisplayGraph(graph.DefaultGroup);
-            graph.UpdateValue();
-
-            return graph;
-        }
-
-        public static Task<Graph> ReadAsync(string fileName)
-        {
-            return Task.Run(() => Read(fileName));
-        }
-
         public Dictionary<string, string, double> ReadValueCsv(string fileName)
         {
             var graphValue = new Dictionary<string, string, double>();
@@ -484,7 +498,7 @@ namespace Marv.Common.Graph
             {
                 var vertexValue = new Dictionary<string, double>();
 
-                var parts = line.Split(new[] {','});
+                var parts = line.Split(new[] { ',' });
 
                 var vertexKey = parts[0];
 
@@ -657,12 +671,9 @@ namespace Marv.Common.Graph
             this.network.SetSoftEvidence(vertexKey, evidence);
         }
 
-        private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)
+        public void SetEvidence(string vertexKey, VertexEvidenceString vertexEvidenceString)
         {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
-            }
+            this.Vertices[vertexKey].SetEvidence(vertexEvidenceString);
         }
 
         public void SetTable(string vertexKey, double[,] table)
@@ -728,23 +739,17 @@ namespace Marv.Common.Graph
             structure.Write(fileName);
         }
 
-        public Dictionary<string, IVertexEvidence> GetEvidence()
+        private void ClearNetworkEvidence()
         {
-            var graphEvidence = new Dictionary<string, IVertexEvidence>();
+            this.network.ClearAllEvidence();
+        }
 
-            foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
+        private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
             {
-                if (!string.IsNullOrEmpty(vertex.EvidenceString))
-                {
-                    graphEvidence[vertex.Key] = new VertexEvidenceString(vertex.EvidenceString);
-                }
-                else
-                {
-                    graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence);
-                }
+                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
             }
-
-            return graphEvidence;
         }
     }
 }

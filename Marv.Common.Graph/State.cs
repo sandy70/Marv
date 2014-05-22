@@ -86,7 +86,7 @@
 
         public bool Contains(double value)
         {
-            return this.Min < value && value < this.Max;
+            return this.Min <= value && value <= this.Max;
         }
     }
 }

@@ -12,7 +12,8 @@
         public bool Set(Vertex vertex)
         {
             vertex.EvidenceString = this.String;
-            var evidence = EvidenceStringFactory.Create(this.String).Parse(vertex.States, this.String);
+            var evidenceStringParser = EvidenceStringFactory.Create(this.String);
+            var evidence = evidenceStringParser.Parse(vertex.States, this.String);
 
             if (evidence != null)
             {

@@ -24,7 +24,7 @@ namespace Marv.Common.Graph
                 {
                     var isWithinBounds = false;
 
-                    foreach (var state in states.Where(state => state.Contains(value)))
+                    foreach (var state in states.Where(s => s.Contains(value)))
                     {
                         evidence[state.Key] = 1;
                         isWithinBounds = true;
