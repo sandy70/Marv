@@ -75,6 +75,10 @@
                                 <telerik:RadButton Name="CreateInputButton"
                                                    Content="Create"
                                                    Margin="2" />
+                                
+                                <telerik:RadButton Name="AddSectionButton"
+                                                   Content="Add Section"
+                                                   Margin="2" />
 
                             </UniformGrid>
                         </Grid>

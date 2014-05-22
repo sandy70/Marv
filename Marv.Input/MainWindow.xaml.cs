@@ -31,7 +31,8 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
-        private Dictionary<int, string, IVertexEvidence> ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
+        // Dictionary<sectionID, year, vertexKey, vertexEvidence>
+        private Dictionary<string, int, string, IVertexEvidence> ModelEvidence = new Dictionary<string, int, string, IVertexEvidence>();
 
         public MainWindow()
         {
@@ -155,7 +156,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.ModelEvidence = new Dictionary<int, string, IVertexEvidence>();
+            this.ModelEvidence = new Dictionary<string, int, string, IVertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
         }
@@ -184,14 +185,14 @@ namespace Marv.Input
                 {
                     var year = Convert.ToInt32((string)e.NewCell.Column.Header);
 
-                    if (this.ModelEvidence.ContainsKey(year))
-                    {
-                        this.Graph.SetEvidence(this.ModelEvidence[year]);
-                    }
-                    else
-                    {
-                        this.Graph.SetEvidence(null);
-                    }
+                    //if (this.ModelEvidence.ContainsKey(year))
+                    //{
+                    //    this.Graph.SetEvidence(this.ModelEvidence[year]);
+                    //}
+                    //else
+                    //{
+                    //    this.Graph.SetEvidence(null);
+                    //}
 
                     this.Graph.Run();
                 }
@@ -212,6 +213,7 @@ namespace Marv.Input
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
             this.Graph.Value = null;
 
+            this.AddSectionButton.Click += AddSectionButton_Click;
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
 
@@ -230,6 +232,19 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
+        void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var row = new Dynamic();
+            row["Section ID"] = "Section " + (this.InputRows.Count + 1);
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                row[year.ToString()] = "";
+            }
+
+            this.InputRows.Add(row);
+        }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
@@ -240,7 +255,7 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.ModelEvidence = Utils.ReadJson<Dictionary<int, string, IVertexEvidence>>(dialog.FileName);
+            // this.ModelEvidence = Utils.ReadJson<Dictionary<int, string, IVertexEvidence>>(dialog.FileName);
 
             var inputRows = new ObservableCollection<dynamic>();
             var row = new Dynamic();
@@ -263,7 +278,7 @@ namespace Marv.Input
             this.InputGridView.CurrentItem = item;
             this.InputGridView.CurrentCellInfo = cellToEdit;
 
-            this.Graph.SetEvidence(this.ModelEvidence.First().Value);
+            //this.Graph.SetEvidence(this.ModelEvidence.First().Value);
             this.Graph.Run();
         }
 
@@ -287,8 +302,10 @@ namespace Marv.Input
                 this.Graph.Run();
 
                 var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
+                var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
+                var sectionId = row["Section ID"] as string;
 
-                this.ModelEvidence[year] = this.Graph.GetEvidence();
+                this.ModelEvidence[sectionId, year] = this.Graph.GetEvidence();
             }
         }
 
