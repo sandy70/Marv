@@ -1,13 +1,38 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using Newtonsoft.Json;
 
 namespace Marv.Common
 {
     public static class Utils
     {
+        public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
+        {
+            if (value.CompareTo(minValue) < 0) value = minValue;
+            if (value.CompareTo(maxValue) > 0) value = maxValue;
+
+            return value;
+        }
+
+        public static T Create<T>()
+        {
+            System.Reflection.ConstructorInfo constructor = (typeof(T)).GetConstructor(System.Type.EmptyTypes);
+            if (ReferenceEquals(constructor, null))
+            {
+                //there is no default constructor
+                return default(T);
+            }
+            else
+            {
+                //there is a default constructor
+                //you can invoke it like so:
+                return (T)constructor.Invoke(new object[0]);
+                //return constructor.Invoke(new object[0]) as T; //If T is class
+            }
+        }
+
         public static double Distance(Point p1, Point p2, Point p)
         {
             var area = Math.Abs(.5 * (p1.X * p2.Y + p2.X * p.Y + p.X * p1.Y - p2.X * p1.Y - p.X * p2.Y - p1.X * p.Y));
@@ -38,12 +63,11 @@ namespace Marv.Common
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
+        public static double ParseDouble(this string str)
         {
-            if (value.CompareTo(minValue) < 0) value = minValue;
-            if (value.CompareTo(maxValue) > 0) value = maxValue;
-
-            return value;
+            if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
+            if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
+            return double.Parse(str);
         }
 
         public static T ReadJson<T>(string fileName)
@@ -52,7 +76,7 @@ namespace Marv.Common
             serializer.NullValueHandling = NullValueHandling.Ignore;
             serializer.Formatting = Formatting.Indented;
             serializer.TypeNameHandling = TypeNameHandling.Objects;
-            
+
             using (var streamWriter = new StreamReader(fileName))
             {
                 using (var jsonTextWriter = new JsonTextReader(streamWriter))
@@ -90,13 +114,6 @@ namespace Marv.Common
         public static long ToInt64(this Guid guid)
         {
             return BitConverter.ToInt64(guid.ToByteArray(), 8);
-        }
-
-        public static double ParseDouble(this string str)
-        {
-            if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
-            if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
-            return double.Parse(str);
         }
     }
 }
