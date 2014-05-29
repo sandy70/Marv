@@ -2,14 +2,13 @@
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Marv.Common
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
-        private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
         public object this[string name]
         {
@@ -25,16 +24,20 @@ namespace Marv.Common
 
             set
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    dictionary[name] = value;
-                }
-                else
+                if (this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
                 {
                     this.GetType().GetProperty(name).SetValue(this, value);
                 }
+                else
+                {
+                    this.dictionary[name] = value;
+                }
+
+                this.RaisePropertyChanged(name);
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
@@ -43,7 +46,7 @@ namespace Marv.Common
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            var name = (string)indexes[0];
+            var name = (string) indexes[0];
 
             if (this.GetType().GetProperties().Count(info => info.Name.Equals(name)) == 0)
             {
@@ -73,15 +76,15 @@ namespace Marv.Common
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            var name = (string)indexes[0];
+            var name = (string) indexes[0];
 
-            if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+            if (this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
             {
-                dictionary[name] = value;
+                this.GetType().GetProperty(name).SetValue(this, value);
             }
             else
             {
-                this.GetType().GetProperty(name).SetValue(this, value);
+                this.dictionary[name] = value;
             }
 
             this.RaisePropertyChanged(name);
@@ -96,7 +99,7 @@ namespace Marv.Common
             return true;
         }
 
-        protected virtual void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (this.PropertyChanged != null)
             {
