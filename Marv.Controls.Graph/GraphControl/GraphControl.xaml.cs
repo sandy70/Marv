@@ -4,7 +4,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Graph;
-using NLog;
 
 namespace Marv.Controls.Graph
 {
@@ -33,8 +32,6 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
-
-        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public GraphControl()
         {

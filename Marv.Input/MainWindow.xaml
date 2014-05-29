@@ -114,7 +114,8 @@
                                                      SelectedIndex="0"
                                                      SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
                                                      TextSearchMode="Contains" />
-
+                                
+                                <!-- Vertex Control -->
                                 <marv:VertexControl Name="VertexControl"
                                                     Grid.Row="1"
                                                     IsEditable="True"

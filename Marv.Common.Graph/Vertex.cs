@@ -143,7 +143,10 @@ namespace Marv.Common.Graph
                     state.Evidence = (value == null) || !value.ContainsKey(state.Key) ? 0 : value[state.Key];
                 }
 
-                this.RaisePropertyChanged("Evidence");
+                this.RaisePropertyChanged();
+
+                this.evidenceString = null;
+                this.RaisePropertyChanged("EvidenceString");
             }
         }
 
@@ -157,7 +160,16 @@ namespace Marv.Common.Graph
             set
             {
                 this.evidenceString = value;
-                this.RaisePropertyChanged("EvidenceString");
+                this.RaisePropertyChanged();
+
+                var evidence = EvidenceStringFactory.Create(this.evidenceString).Parse(this.States, this.evidenceString);
+
+                foreach (var state in this.States)
+                {
+                    state.Evidence = (evidence == null) || !evidence.ContainsKey(state.Key) ? 0 : evidence[state.Key];
+                }
+
+                this.RaisePropertyChanged("Evidence");
             }
         }
 
@@ -489,7 +501,7 @@ namespace Marv.Common.Graph
 
             foreach (var state in this.States)
             {
-                var mid = (state.Min + state.Max) / 2;
+                var mid = (state.Min + state.Max)/2;
 
                 numer += mid*vertexValue[state.Key];
                 denom += vertexValue[state.Key];
@@ -599,8 +611,8 @@ namespace Marv.Common.Graph
 
         public void SetEvidenceUniform()
         {
-            var value = 1.0 / this.States.Count;
-            
+            var value = 1.0/this.States.Count;
+
             foreach (var state in this.States)
             {
                 state.Evidence = value;
@@ -615,6 +627,16 @@ namespace Marv.Common.Graph
             }
 
             this.Value = this.Value.Normalized();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("[{0}:{1}]", this.Key, this.Name);
+        }
+
+        public void UpdateMostProbableState()
+        {
+            this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -634,16 +656,6 @@ namespace Marv.Common.Graph
                     state.PropertyChanged -= state_PropertyChanged;
                 }
             }
-        }
-
-        public override string ToString()
-        {
-            return String.Format("[{0}:{1}]", this.Key, this.Name);
-        }
-
-        public void UpdateMostProbableState()
-        {
-            this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
         private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)

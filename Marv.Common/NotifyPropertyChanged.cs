@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Marv.Common
 {
@@ -6,9 +7,9 @@ namespace Marv.Common
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null)
+            if (PropertyChanged != null && propertyName.Length > 0)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
