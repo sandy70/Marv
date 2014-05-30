@@ -2,12 +2,12 @@
 {
     public class VertexEvidenceString : IVertexEvidence
     {
+        public string String { get; set; }
+
         public VertexEvidenceString(string aString)
         {
             this.String = aString;
         }
-
-        public string String { get; set; }
 
         public bool Set(Vertex vertex)
         {
@@ -22,6 +22,11 @@
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return this.String;
         }
     }
 }
