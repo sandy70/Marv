@@ -4,9 +4,9 @@
     {
         private double belief;
         private double evidence;
+        private double initialBelief;
         private double max;
         private double min;
-        private double originalBelief;
 
         public double Belief
         {
@@ -18,7 +18,7 @@
             set
             {
                 this.belief = value;
-                this.RaisePropertyChanged("Belief");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -32,7 +32,7 @@
             set
             {
                 this.evidence = value;
-                this.RaisePropertyChanged("Evidence");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -48,7 +48,7 @@
                 if (value != this.max)
                 {
                     this.max = value;
-                    this.RaisePropertyChanged("Max");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -65,22 +65,22 @@
                 if (value != this.min)
                 {
                     this.min = value;
-                    this.RaisePropertyChanged("Min");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
-        public double OriginalBelief
+        public double InitialBelief
         {
             get
             {
-                return this.originalBelief;
+                return this.initialBelief;
             }
 
             set
             {
-                this.originalBelief = value;
-                this.RaisePropertyChanged("OriginalBelief");
+                this.initialBelief = value;
+                this.RaisePropertyChanged();
             }
         }
 
