@@ -31,10 +31,8 @@ namespace Marv.Common.Graph
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
-        private State selectedState;
         private ModelCollection<State> states;
         private Dictionary<string, double> statistics = new Dictionary<string, double>();
-        private double[,] table;
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
@@ -220,7 +218,8 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.Sum(state => state.Evidence) > 0;
+                return this.States.Sum(state => state.Evidence) > 0 ||
+                       this.EvidenceString != null;
             }
         }
 
@@ -345,23 +344,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public State SelectedState
-        {
-            get
-            {
-                return this.selectedState;
-            }
-
-            set
-            {
-                if (value != this.selectedState)
-                {
-                    this.selectedState = value;
-                    this.RaisePropertyChanged("SelectedState");
-                }
-            }
-        }
-
         public ModelCollection<State> States
         {
             get
@@ -408,23 +390,6 @@ namespace Marv.Common.Graph
                 {
                     this.statistics = value;
                     this.RaisePropertyChanged("Statistics");
-                }
-            }
-        }
-
-        public double[,] Table
-        {
-            get
-            {
-                return this.table;
-            }
-
-            set
-            {
-                if (value != this.table)
-                {
-                    this.table = value;
-                    this.RaisePropertyChanged("Table");
                 }
             }
         }
@@ -482,18 +447,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, double> CreateEvidence()
-        {
-            var evidence = new Dictionary<string, double>();
-
-            foreach (var state in this.States)
-            {
-                evidence[state.Key] = 0;
-            }
-
-            return evidence;
-        }
-
         public double GetMean(Dictionary<string, double> vertexValue)
         {
             double numer = 0;
@@ -521,27 +474,6 @@ namespace Marv.Common.Graph
             }
 
             return this.GetMean(vertexValue);
-        }
-
-        public int GetSelectedStateIndex()
-        {
-            State selectedState = null;
-            var oneCount = 0;
-
-            foreach (var state in this.States)
-            {
-                if (state.Belief == 1)
-                {
-                    oneCount++;
-                    selectedState = state;
-                }
-
-                if (oneCount > 1) break;
-            }
-
-            if (selectedState == null)
-                return -1;
-            return this.States.IndexOf(selectedState);
         }
 
         public double GetStandardDeviation(Dictionary<string, double> vertexValue)
