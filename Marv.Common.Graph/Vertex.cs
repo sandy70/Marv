@@ -50,7 +50,7 @@ namespace Marv.Common.Graph
                     state.Belief = value == null ? 0 : value[state.Key];
                 }
 
-                this.RaisePropertyChanged("Belief");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -66,7 +66,7 @@ namespace Marv.Common.Graph
                 if (value != this.commands)
                 {
                     this.commands = value;
-                    this.RaisePropertyChanged("Commands");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace Marv.Common.Graph
                 if (value != this.connectorPositions)
                 {
                     this.connectorPositions = value;
-                    this.RaisePropertyChanged("ConnectorPositions");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace Marv.Common.Graph
                 if (value != this.description)
                 {
                     this.description = value;
-                    this.RaisePropertyChanged("Description");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace Marv.Common.Graph
                 if (value == this.displayPosition) return;
 
                 this.displayPosition = value;
-                this.RaisePropertyChanged("DisplayPosition");
+                this.RaisePropertyChanged();
 
                 if (this.SelectedGroup != null)
                 {
@@ -177,10 +177,11 @@ namespace Marv.Common.Graph
             {
                 return this.groups;
             }
+
             set
             {
                 this.groups = value;
-                RaisePropertyChanged("Groups");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -193,7 +194,25 @@ namespace Marv.Common.Graph
             set
             {
                 this.headerOfGroup = value;
-                RaisePropertyChanged("HeaderOfGroup");
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Dictionary<string, double> InitialBelief
+        {
+            get
+            {
+                return this.States.ToDictionary(state => state.Key, state => state.InitialBelief);
+            }
+
+            set
+            {
+                foreach (var state in this.States)
+                {
+                    state.InitialBelief = value == null ? 0 : value[state.Key];
+                }
+
+                this.RaisePropertyChanged();
             }
         }
 
@@ -209,7 +228,7 @@ namespace Marv.Common.Graph
                 if (value != this.inputVertexKey)
                 {
                     this.inputVertexKey = value;
-                    this.RaisePropertyChanged("InputVertexKey");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -235,7 +254,7 @@ namespace Marv.Common.Graph
                 if (value != this.isExpanded)
                 {
                     this.isExpanded = value;
-                    this.RaisePropertyChanged("IsExpanded");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -250,7 +269,7 @@ namespace Marv.Common.Graph
             set
             {
                 this.isHeader = value;
-                RaisePropertyChanged("IsHeader");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -266,7 +285,7 @@ namespace Marv.Common.Graph
                 if (this.isLocked != value)
                 {
                     this.isLocked = value;
-                    this.RaisePropertyChanged("IsLocked");
+                    this.RaisePropertyChanged();
                 }
 
                 if (this.IsLocked == false)
@@ -288,7 +307,7 @@ namespace Marv.Common.Graph
                 if (value != this.mostProbableState)
                 {
                     this.mostProbableState = value;
-                    this.RaisePropertyChanged("MostProbableState");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -305,7 +324,7 @@ namespace Marv.Common.Graph
                 if (value != this.position)
                 {
                     this.position = value;
-                    this.RaisePropertyChanged("Position");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -322,7 +341,7 @@ namespace Marv.Common.Graph
                 if (value != this.positionsForGroup)
                 {
                     this.positionsForGroup = value;
-                    this.RaisePropertyChanged("PositionForGroup");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -339,7 +358,7 @@ namespace Marv.Common.Graph
                 if (value != this.selectedGroup)
                 {
                     this.selectedGroup = value;
-                    this.RaisePropertyChanged("SelectedGroup");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -364,7 +383,7 @@ namespace Marv.Common.Graph
                 }
 
                 this.states = value;
-                RaisePropertyChanged("States");
+                this.RaisePropertyChanged();
 
                 if (this.States == null) return;
 
@@ -389,7 +408,7 @@ namespace Marv.Common.Graph
                 if (value != this.statistics)
                 {
                     this.statistics = value;
-                    this.RaisePropertyChanged("Statistics");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -406,7 +425,7 @@ namespace Marv.Common.Graph
                 if (value != this.type)
                 {
                     this.type = value;
-                    this.RaisePropertyChanged("Type");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -423,27 +442,8 @@ namespace Marv.Common.Graph
                 if (value != this.units)
                 {
                     this.units = value;
-                    this.RaisePropertyChanged("Units");
+                    this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public Dictionary<string, double> Value
-        {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.Belief);
-            }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.Belief = value == null ? 0 : value[state.Key];
-                }
-
-                this.UpdateMostProbableState();
-                this.RaisePropertyChanged("Belief");
             }
         }
 
@@ -491,9 +491,9 @@ namespace Marv.Common.Graph
                 foreach (var state in this.States)
                 {
                     var x = (state.Min + state.Max)/2;
-                    var Px = vertexValue[state.Key];
+                    var px = vertexValue[state.Key];
 
-                    sum += Math.Pow(x - mu, 2)*Px;
+                    sum += Math.Pow(x - mu, 2)*px;
                 }
 
                 stdev = Math.Sqrt(sum);
@@ -549,16 +549,6 @@ namespace Marv.Common.Graph
             {
                 state.Evidence = value;
             }
-        }
-
-        public void SetValue(int i)
-        {
-            foreach (var state in this.States)
-            {
-                state.Belief = i;
-            }
-
-            this.Value = this.Value.Normalized();
         }
 
         public override string ToString()
