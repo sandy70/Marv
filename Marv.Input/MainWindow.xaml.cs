@@ -34,15 +34,6 @@ namespace Marv.Input
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         private Dictionary<string, int, string, IVertexEvidence> modelEvidence = new Dictionary<string, int, string, IVertexEvidence>();
 
-        public MainWindow()
-        {
-            StyleManager.ApplicationTheme = new Windows8Theme();
-
-            InitializeComponent();
-
-            this.Loaded += MainWindow_Loaded;
-        }
-
         public int EndYear
         {
             get
@@ -119,6 +110,28 @@ namespace Marv.Input
             }
         }
 
+        public MainWindow()
+        {
+            StyleManager.ApplicationTheme = new Windows8Theme();
+
+            InitializeComponent();
+
+            this.Loaded += MainWindow_Loaded;
+        }
+
+        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var row = new Dynamic();
+            row["Section ID"] = "Section " + (this.InputRows.Count + 1);
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                row[year.ToString()] = "";
+            }
+
+            this.InputRows.Add(row);
+        }
+
         private static void ChangedEndYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mainWindow = d as MainWindow;
@@ -170,7 +183,6 @@ namespace Marv.Input
         {
             if (e.Cell.Column.DisplayIndex <= 0) return;
 
-            //this.Graph.SetEvidence(this.SelectedVertex.Key, new VertexEvidenceString(e.NewData as string));
             this.SelectedVertex.EvidenceString = e.NewData as string;
             this.UpdateModelEvidence();
         }
@@ -185,20 +197,16 @@ namespace Marv.Input
                 try
                 {
                     var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
-                    var sectionId = row["Section ID"] as string;
-                    var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                    var evidence = this.modelEvidence.GetValueOrNew(sectionId, year);
-                    this.Graph.SetEvidence(evidence);
+                    if (row != null)
+                    {
+                        var sectionId = row["Section ID"] as string;
+                        var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                    //if (this.ModelEvidence.ContainsKey(year))
-                    //{
-                    //    this.Graph.SetEvidence(this.ModelEvidence[year]);
-                    //}
-                    //else
-                    //{
-                    //    this.Graph.SetEvidence(null);
-                    //}
+                        var evidence = this.modelEvidence.GetValueOrNew(sectionId, year);
+
+                        this.Graph.SetEvidence(evidence);
+                    }
 
                     this.Graph.Run();
                 }
@@ -208,8 +216,8 @@ namespace Marv.Input
             }
             else
             {
-                this.GraphControl.IsEnabled = true;
-                this.VertexControl.IsEnabled = true;
+                this.GraphControl.IsEnabled = false;
+                this.VertexControl.IsEnabled = false;
             }
         }
 
@@ -217,7 +225,7 @@ namespace Marv.Input
         {
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
-            this.Graph.Value = null;
+            this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.OpenButton.Click += OpenButton_Click;
@@ -236,19 +244,6 @@ namespace Marv.Input
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-        }
-
-        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var row = new Dynamic();
-            row["Section ID"] = "Section " + (this.InputRows.Count + 1);
-
-            for (var year = this.StartYear; year <= this.EndYear; year++)
-            {
-                row[year.ToString()] = "";
-            }
-
-            this.InputRows.Add(row);
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -284,13 +279,31 @@ namespace Marv.Input
             this.InputGridView.CurrentItem = item;
             this.InputGridView.CurrentCellInfo = cellToEdit;
 
-            //this.Graph.SetEvidence(this.ModelEvidence.First().Value);
+            //this.Graph.SetNetworkEvidence(this.ModelEvidence.First().Value);
             this.Graph.Run();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             this.modelEvidence.WriteJson("marv.input");
+        }
+
+        private void UpdateGrid()
+        {
+            foreach (var row in this.InputRows)
+            {
+                foreach (var year in Enumerable.Range(this.StartYear, this.EndYear - this.StartYear + 1))
+                {
+                    var sectionId = row["Section ID"] as string;
+
+                    if (sectionId != null)
+                    {
+                        var evidence = this.modelEvidence[sectionId][year][this.SelectedVertex.Key];
+                        var evidenceString = evidence.ToString();
+                        row[year.ToString()] = evidenceString;
+                    }
+                }
+            }
         }
 
         private void UpdateModelEvidence()
@@ -309,21 +322,12 @@ namespace Marv.Input
 
                 var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
-                var sectionId = row["Section ID"] as string;
 
-                this.modelEvidence[sectionId, year] = this.Graph.GetEvidence();
-            }
-        }
-
-        private void UpdateGrid()
-        {
-            foreach (var row in this.InputRows)
-            {
-                foreach (var year in Enumerable.Range(this.StartYear, this.EndYear - this.StartYear))
+                if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
-                    var evidence = this.modelEvidence[sectionId][year][this.SelectedVertex.Key];
-                    row[year.ToString()] = evidence.ToString();
+
+                    this.modelEvidence[sectionId, year] = this.Graph.GetEvidence();
                 }
             }
         }
@@ -338,7 +342,7 @@ namespace Marv.Input
 
             if (command == VertexCommands.Clear)
             {
-                vertex.SetValue(0);
+                vertex.Evidence = null;
                 vertex.EvidenceString = null;
             }
         }

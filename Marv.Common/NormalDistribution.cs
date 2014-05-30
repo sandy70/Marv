@@ -56,7 +56,7 @@ namespace Marv.Common
             3.78239633202758244e-3, 7.29751555083966205e-5
         };
 
-        private static readonly double root32 = 5.656854248e0;
+        private const double Root32 = 5.656854248e0;
         private static readonly double sixten = 1.60e0;
         private static readonly double sqrpi = 3.9894228040143267794e-1;
         private static readonly double thrsh = 0.66291e0;
@@ -210,7 +210,7 @@ namespace Marv.Common
                 //
                 // Evaluate  anorm  for 0.66291 <= |X| <= sqrt(32)
                 //
-            else if (y <= root32)
+            else if (y <= Root32)
             {
                 xnum = c[8]*y;
                 xden = y;

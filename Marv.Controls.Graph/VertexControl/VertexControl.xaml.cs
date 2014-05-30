@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Controls;
 using Marv.Common;
 using Marv.Common.Graph;
 
@@ -160,6 +160,12 @@ namespace Marv.Controls.Graph
             this.RaiseEvidenceEntered();
         }
 
+        private void EvidenceStringTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.Vertex.EvidenceString = this.EvidenceStringTextBox.Text;
+            this.RaiseEvidenceEntered();
+        }
+
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetEvidenceUniform();
@@ -171,11 +177,6 @@ namespace Marv.Controls.Graph
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
             this.EvidenceStringTextBox.TextChanged += EvidenceStringTextBox_TextChanged;
             this.UniformEvidenceButton.Click += this.UniformEvidenceButton_Click;
-        }
-
-        void EvidenceStringTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            this.RaiseEvidenceEntered();
         }
 
         public event EventHandler<Command<Vertex>> CommandExecuted;

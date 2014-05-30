@@ -26,7 +26,7 @@ namespace Marv.Corlas
          * Ratio of yield strength to tensile strength can not be < 0.5 or > 1.0
          **/
 
-        public static double crackPredictedCriticalPressure(int profile, int flowStrengthFormula, double yieldStrength, double ultimateStrength, double flowConstant,
+        public static double CrackPredictedCriticalPressure(int profile, int flowStrengthFormula, double yieldStrength, double ultimateStrength, double flowConstant,
                 BindingList<Flaw> flaws, double maxLength, double maxDepth, double od, double wt, double yFactor, string jFract, string location, double MOP,
                 double tMod, double eMod, double hExp, double fTough, int alloyGrp)
         {
@@ -151,6 +151,7 @@ namespace Marv.Corlas
             {
                 double mD = 0;
                 double mL = 0;
+
                 for (var i = 0; i < flaws.Count; i++)
                 {
                     if (flaws[i].Depth > mD)
