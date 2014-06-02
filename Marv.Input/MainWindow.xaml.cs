@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace Marv.Input
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
-        private Dictionary<string, int, string, IVertexEvidence> modelEvidence = new Dictionary<string, int, string, IVertexEvidence>();
+        private Dictionary<string, int, string, IVertexEvidence> lineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
 
         public int EndYear
         {
@@ -169,7 +170,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.modelEvidence = new Dictionary<string, int, string, IVertexEvidence>();
+            this.lineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
         }
@@ -203,7 +204,7 @@ namespace Marv.Input
                         var sectionId = row["Section ID"] as string;
                         var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                        var evidence = this.modelEvidence.GetValueOrNew(sectionId, year);
+                        var evidence = this.lineEvidence.GetValueOrNew(sectionId, year);
 
                         this.Graph.SetEvidence(evidence);
                     }
@@ -258,18 +259,25 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            // this.ModelEvidence = Utils.ReadJson<Dictionary<int, string, IVertexEvidence>>(dialog.FileName);
+            this.lineEvidence = Utils.ReadJson<Dictionary<string, int, string, IVertexEvidence>>(dialog.FileName);
 
             var inputRows = new ObservableCollection<dynamic>();
-            var row = new Dynamic();
-            row["Section ID"] = "Section 1";
 
-            foreach (var year in this.modelEvidence.Keys)
+            foreach (var section in this.lineEvidence.Keys)
             {
-                row[year] = "";
-            }
+                var row = new Dynamic();
+                row["Section ID"] = section;
 
-            inputRows.Add(row);
+                var sectionEvidence = this.lineEvidence[section];
+
+                foreach (var year in sectionEvidence.Keys)
+                {
+                    row[year.ToString()] = this.lineEvidence[section][year];
+                }
+
+                inputRows.Add(row);
+            }
+            
             this.InputRows = inputRows;
 
             var item = this.InputGridView.Items[0];
@@ -287,7 +295,7 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.modelEvidence.WriteJson("marv.input");
+            this.lineEvidence.WriteJson("marv.input");
         }
 
         private void UpdateGrid()
@@ -300,9 +308,16 @@ namespace Marv.Input
 
                     if (sectionId != null)
                     {
-                        //var evidence = this.modelEvidence[sectionId][year][this.SelectedVertex.Key];
-                        //var evidenceString = evidence.ToString();
-                        //row[year.ToString()] = evidenceString;
+                        try
+                        {
+                            var evidence = this.lineEvidence[sectionId][year][this.SelectedVertex.Key];
+                            var evidenceString = evidence.ToString();
+                            row[year.ToString()] = evidenceString;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            row[year.ToString()] = null;
+                        }
                     }
                 }
             }
@@ -328,7 +343,7 @@ namespace Marv.Input
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
-                    this.modelEvidence[sectionId, year] = this.Graph.GetEvidence();
+                    this.lineEvidence[sectionId, year] = this.Graph.GetEvidence();
                 }
             }
         }
