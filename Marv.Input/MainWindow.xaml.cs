@@ -243,6 +243,8 @@ namespace Marv.Input
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
+
+            this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
@@ -298,9 +300,9 @@ namespace Marv.Input
 
                     if (sectionId != null)
                     {
-                        var evidence = this.modelEvidence[sectionId][year][this.SelectedVertex.Key];
-                        var evidenceString = evidence.ToString();
-                        row[year.ToString()] = evidenceString;
+                        //var evidence = this.modelEvidence[sectionId][year][this.SelectedVertex.Key];
+                        //var evidenceString = evidence.ToString();
+                        //row[year.ToString()] = evidenceString;
                     }
                 }
             }
@@ -326,7 +328,6 @@ namespace Marv.Input
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
-
                     this.modelEvidence[sectionId, year] = this.Graph.GetEvidence();
                 }
             }

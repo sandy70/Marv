@@ -142,9 +142,6 @@ namespace Marv.Common.Graph
                 }
 
                 this.RaisePropertyChanged();
-
-                this.evidenceString = null;
-                this.RaisePropertyChanged("EvidenceString");
             }
         }
 
@@ -159,15 +156,6 @@ namespace Marv.Common.Graph
             {
                 this.evidenceString = value;
                 this.RaisePropertyChanged();
-
-                var evidence = EvidenceStringFactory.Create(this.evidenceString).Parse(this.States, this.evidenceString);
-
-                foreach (var state in this.States)
-                {
-                    state.Evidence = (evidence == null) || !evidence.ContainsKey(state.Key) ? 0 : evidence[state.Key];
-                }
-
-                this.RaisePropertyChanged("Evidence");
             }
         }
 
@@ -554,6 +542,11 @@ namespace Marv.Common.Graph
         public override string ToString()
         {
             return String.Format("[{0}:{1}]", this.Key, this.Name);
+        }
+
+        public void UpdateEvidence()
+        {
+            this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this.States, this.EvidenceString);
         }
 
         public void UpdateMostProbableState()
