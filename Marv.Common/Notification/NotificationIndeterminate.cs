@@ -7,7 +7,6 @@ namespace Marv.Common
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public NotificationIndeterminate()
-            : base()
         {
             this.IsIndeterminate = true;
         }

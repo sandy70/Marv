@@ -1,47 +1,36 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml.Linq;
 
 namespace Marv.Common
 {
     public static class Utils
     {
-        public static double Distance(Location l1, Location l2)
+        public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
-            double distance = 0;
+            if (value.CompareTo(minValue) < 0) value = minValue;
+            if (value.CompareTo(maxValue) > 0) value = maxValue;
 
-            double dLat = (l2.Latitude - l1.Latitude) / 180 * Math.PI;
-            double dLong = (l2.Longitude - l1.Longitude) / 180 * Math.PI;
+            return value;
+        }
 
-            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2)
-                        + Math.Cos(l1.Latitude / 180 * Math.PI) * Math.Cos(l2.Latitude / 180 * Math.PI) * Math.Sin(dLong / 2) * Math.Sin(dLong / 2);
-
-            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-            //Calculate radius of earth
-            // For this you can assume any of the two points.
-            double radiusE = 6378135; // Equatorial radius, in metres
-            double radiusP = 6356750; // Polar Radius
-
-            //Numerator part of function
-            double nr = Math.Pow(radiusE * radiusP * Math.Cos(l1.Latitude / 180 * Math.PI), 2);
-
-            //Denominator part of the function
-            double dr = Math.Pow(radiusE * Math.Cos(l1.Latitude / 180 * Math.PI), 2)
-                            + Math.Pow(radiusP * Math.Sin(l1.Latitude / 180 * Math.PI), 2);
-
-            double radius = Math.Sqrt(nr / dr);
-
-            //Calaculate distance in metres.
-            distance = radius * c;
-            return distance;
+        public static T Create<T>()
+        {
+            System.Reflection.ConstructorInfo constructor = (typeof(T)).GetConstructor(System.Type.EmptyTypes);
+            if (ReferenceEquals(constructor, null))
+            {
+                //there is no default constructor
+                return default(T);
+            }
+            else
+            {
+                //there is a default constructor
+                //you can invoke it like so:
+                return (T)constructor.Invoke(new object[0]);
+                //return constructor.Invoke(new object[0]) as T; //If T is class
+            }
         }
 
         public static double Distance(Point p1, Point p2, Point p)
@@ -50,7 +39,7 @@ namespace Marv.Common
 
             var bottom = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
 
-            var height = 0.0;
+            double height;
 
             if (bottom == 0.0)
             {
@@ -66,62 +55,38 @@ namespace Marv.Common
 
         public static Color DoubleToColor(double value)
         {
-            double fourValue = 4 * value;
-            double red = Math.Min(fourValue - 1.5, -fourValue + 4.5);
-            double green = Math.Min(fourValue - 0.5, -fourValue + 3.5);
-            double blue = Math.Min(fourValue + 0.5, -fourValue + 2.5);
+            var fourValue = 4 * value;
+            var red = Math.Min(fourValue - 1.5, -fourValue + 4.5);
+            var green = Math.Min(fourValue - 0.5, -fourValue + 3.5);
+            var blue = Math.Min(fourValue + 0.5, -fourValue + 2.5);
 
             return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
         }
 
-        public static Location Mid(Location l1, Location l2)
+        public static double ParseDouble(this string str)
         {
-            if (l1 == null || l2 == null)
-            {
-                return null;
-            }
-            else
-            {
-                // This is technically not correct but should be okay for small distances
-                return new Location
-                {
-                    Latitude = (l1.Latitude + l2.Latitude) / 2,
-                    Longitude = (l1.Longitude + l2.Longitude) / 2,
-                };
-            }
-        }
-
-        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync(IProgress<double> progress)
-        {
-            var webClient = new WebClient();
-
-            var stream = await webClient.OpenReadTaskAsync(new Uri("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.atom"));
-
-            var xDocument = XDocument.Load(stream);
-
-            return xDocument.Root.Elements("{http://www.w3.org/2005/Atom}entry")
-                                 .Select(entry =>
-                                 {
-                                     var location = Location.Parse(entry.Element("{http://www.georss.org/georss}point").Value);
-
-                                     location.Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3));
-
-                                     // location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
-                                     // location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
-
-                                     return location;
-                                 });
-        }
-
-        public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
-        {
-            if (value.CompareTo(minValue) < 0) value = minValue;
-            if (value.CompareTo(maxValue) > 0) value = maxValue;
-
-            return value;
+            if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
+            if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
+            return double.Parse(str);
         }
 
         public static T ReadJson<T>(string fileName)
+        {
+            var serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            serializer.Formatting = Formatting.Indented;
+            serializer.TypeNameHandling = TypeNameHandling.Objects;
+
+            using (var streamWriter = new StreamReader(fileName))
+            {
+                using (var jsonTextWriter = new JsonTextReader(streamWriter))
+                {
+                    return serializer.Deserialize<T>(jsonTextWriter);
+                }
+            }
+        }
+
+        public static object ReadJson(string fileName)
         {
             var serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
@@ -131,7 +96,7 @@ namespace Marv.Common
             {
                 using (var jsonTextWriter = new JsonTextReader(streamWriter))
                 {
-                    return serializer.Deserialize<T>(jsonTextWriter);
+                    return serializer.Deserialize(jsonTextWriter);
                 }
             }
         }

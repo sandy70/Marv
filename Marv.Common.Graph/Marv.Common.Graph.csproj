@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5EC15F8C-655C-4A46-A4CF-7AF1EAC94376}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Marv.Common.Graph</RootNamespace>
+    <AssemblyName>Marv.Common.Graph</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Marv.Common.Graph.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MoreLinq, Version=1.0.16006.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\morelinq.1.0.16006\lib\net35\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SmileNet, Version=1.1.5205.26969, Culture=neutral, PublicKeyToken=808949b7dda55ecd, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Smile\SmileNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2014.1.331.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\RCWPF\2014.1.331.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IVertexEvidence.cs" />
+    <Compile Include="VertexEvidence.cs" />
+    <Compile Include="EvidenceString\DistributionEvidenceString.cs" />
+    <Compile Include="Edge.cs" />
+    <Compile Include="EdgeConnectorPositions.cs" />
+    <Compile Include="EvidenceString\IEvidenceStringParser.cs" />
+    <Compile Include="EvidenceString\EvidenceStringFactory.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Graph.IBidirectionalGraph.cs" />
+    <Compile Include="Graph.IObservableGraphSource.cs" />
+    <Compile Include="EvidenceString\NullEvidenceString.cs" />
+    <Compile Include="VertexCommandArgs.cs" />
+    <Compile Include="VertexCommand\VertexCommands.cs" />
+    <Compile Include="VertexCommand\VertexExpandCommand.cs" />
+    <Compile Include="VertexCommand\VertexLockCommand.cs" />
+    <Compile Include="VertexEvidenceString.cs" />
+    <Compile Include="VertexType.cs" />
+    <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
+    <Compile Include="NetworkStructure.cs" />
+    <Compile Include="NetworkStructureVertex.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EvidenceString\RangeEvidenceString.cs" />
+    <Compile Include="State.cs" />
+    <Compile Include="EvidenceString\StateEvidenceString.cs" />
+    <Compile Include="Vertex.cs" />
+    <Compile Include="VertexCommand\VertexCommand.cs" />
+    <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexMeanComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
+    <Compile Include="VertexValueComputer\VertexStandardDeviationComputer.cs" />
+    <Compile Include="VertexValueUndefinedException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
+      <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
+      <Name>Marv.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Marv.Common.Graph.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

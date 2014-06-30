@@ -27,13 +27,13 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="InputFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO Synergi.xlsx</Value>
+      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO 7.xlsx</Value>
     </Setting>
     <Setting Name="IsPropertyGridVisible" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="NetworkFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO_08.net</Value>
+      <Value Profile="(Default)">C:\Users\vkha\Data\ADCO02\ADCO_09.net</Value>
     </Setting>
     <Setting Name="InputDir" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Users\vkha\Data\CNPC\GraphValues</Value>

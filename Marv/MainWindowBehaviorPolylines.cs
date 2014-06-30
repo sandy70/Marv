@@ -1,10 +1,10 @@
-﻿using Marv.Common;
-using NLog;
-using System.Collections.Specialized;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Interactivity;
+using Marv.Common;
+using Marv.Common.Map;
+using NLog;
 
 namespace Marv
 {
@@ -23,7 +23,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.Polylines = new ViewModelCollection<LocationCollection>();
+            window.Polylines = new ModelCollection<LocationCollection>();
 
             try
             {
@@ -50,57 +50,19 @@ namespace Marv
                     Description = exp.Message,
                 };
 
-                window.Notifications.Push<INotification>(notification);
+                window.Notifications.Push(notification);
             }
         }
 
-        private void AssociatedObject_PolylinesChanged(object sender, ViewModelCollection<LocationCollection> e)
+        private void AssociatedObject_PolylinesChanged(object sender, ModelCollection<LocationCollection> e)
         {
             var window = this.AssociatedObject;
 
-            if (window.Polylines != null)
-            {
-                window.Polylines.CollectionChanged += Polylines_CollectionChanged;
+            if (window.Polylines == null || window.Polylines.Count <= 0) return;
 
-                this.PolylinesAttachHandlers(window.Polylines);
-
-                if (window.Polylines.Count > 0)
-                {
-                    // Calculate start year
-                    window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation.Properties["StartYear"]);
-                    window.SelectedYear = window.StartYear;
-                }
-            }
-        }
-
-        private void polyline_SelectionChanged(object sender, Location e)
-        {
-            var window = this.AssociatedObject;
-
-            window.ReadGraphValues();
-            window.UpdateGraphValue();
-
-            if (window.SynergiViewModel.Sections != null)
-            {
-                window.SynergiViewModel.Sections.SelectedItem = window.SynergiViewModel.Sections.FirstOrDefault(x => x.Name == e.Key);
-            }
-        }
-
-        private void Polylines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var polylines = sender as ViewModelCollection<LocationCollection>;
-            this.PolylinesAttachHandlers(polylines);
-        }
-
-        private void PolylinesAttachHandlers(ViewModelCollection<LocationCollection> polylines)
-        {
-            foreach (var polyline in polylines)
-            {
-                // Attach event so that we can load data when selection changes The -= ensures that
-                // events aren't subscribed twice
-                polyline.SelectionChanged -= polyline_SelectionChanged;
-                polyline.SelectionChanged += polyline_SelectionChanged;
-            }
+            // Calculate start year
+            window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation.Properties["StartYear"]);
+            window.SelectedYear = window.StartYear;
         }
     }
 }

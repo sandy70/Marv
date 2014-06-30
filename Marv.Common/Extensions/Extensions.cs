@@ -1,26 +1,31 @@
-﻿using MoreLinq;
-using Newtonsoft.Json;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using MoreLinq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Marv.Common
 {
     public static partial class Extensions
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                collection.Add(item);
+            }
+        }
 
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
-            else if (val.CompareTo(max) > 0) return max;
-            else return val;
+            if (val.CompareTo(max) > 0) return max;
+            return val;
         }
 
         public static string Dequote(this string str, char startChar, char endChar)
@@ -73,20 +78,20 @@ namespace Marv.Common
 
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
-            if (depObj != null)
-            {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T)
-                    {
-                        yield return (T)child;
-                    }
+            if (depObj == null) yield break;
 
-                    foreach (T childOfChild in FindChildren<T>(child))
-                    {
-                        yield return childOfChild;
-                    }
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                if (child is T)
+                {
+                    yield return (T) child;
+                }
+
+                foreach (var childOfChild in FindChildren<T>(child))
+                {
+                    yield return childOfChild;
                 }
             }
         }
@@ -103,32 +108,29 @@ namespace Marv.Common
         public static T FindParent<T>(this DependencyObject child) where T : DependencyObject
         {
             //get parent item
-            DependencyObject parentObject = GetParentObject(child);
+            var parentObject = GetParentObject(child);
 
             //we've reached the end of the tree
             if (parentObject == null) return null;
 
             //check if the parent matches the type we're looking for
-            T parent = parentObject as T;
+            var parent = parentObject as T;
             if (parent != null)
             {
                 return parent;
             }
-            else
-            {
-                //use recursion to proceed with next level
-                return FindParent<T>(parentObject);
-            }
+            //use recursion to proceed with next level
+            return FindParent<T>(parentObject);
         }
 
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
         {
             var point = new Point();
 
-            double left = bounds.Left - viewport.Left;
-            double right = bounds.Right - viewport.Right;
-            double top = bounds.Top - viewport.Top;
-            double bottom = bounds.Bottom - viewport.Bottom;
+            var left = bounds.Left - viewport.Left;
+            var right = bounds.Right - viewport.Right;
+            var top = bounds.Top - viewport.Top;
+            var bottom = bounds.Bottom - viewport.Bottom;
 
             if (left > 0 && right > 0) point.X = right + pad;
             else if (left < 0 && right < 0) point.X = left - pad;
@@ -153,21 +155,22 @@ namespace Marv.Common
             if (child == null) return null;
 
             // handle content elements separately
-            ContentElement contentElement = child as ContentElement;
+            var contentElement = child as ContentElement;
             if (contentElement != null)
             {
-                DependencyObject parent = ContentOperations.GetParent(contentElement);
+                var parent = ContentOperations.GetParent(contentElement);
                 if (parent != null) return parent;
 
-                FrameworkContentElement fce = contentElement as FrameworkContentElement;
+                var fce = contentElement as FrameworkContentElement;
                 return fce != null ? fce.Parent : null;
             }
 
             // also try searching for parent in framework elements (such as DockPanel, etc)
-            FrameworkElement frameworkElement = child as FrameworkElement;
+            var frameworkElement = child as FrameworkElement;
+
             if (frameworkElement != null)
             {
-                DependencyObject parent = frameworkElement.Parent;
+                var parent = frameworkElement.Parent;
                 if (parent != null) return parent;
             }
 
@@ -177,129 +180,27 @@ namespace Marv.Common
 
         public static Color NextColor(this Random random)
         {
-            return Color.FromScRgb(1.0f, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            return Color.FromScRgb(1.0f, (float) random.NextDouble(), (float) random.NextDouble(), (float) random.NextDouble());
         }
 
-        public static void Push<T>(this Collection<T> collection, T item)
+        public static Dictionary<string, double> Normalized(this Dictionary<string, double> evidence)
         {
-            collection.Insert(0, item);
-        }
+            var normalized = new Dictionary<string, double>();
+            var sum = evidence.Sum(kvp => kvp.Value);
 
-        public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
-        {
-            if (points.Count() <= 2)
+            foreach (var key in evidence.Keys)
             {
-                return points;
-            }
-            else
-            {
-                var nPoints = points.Count();
-
-                var first = points.First();
-                var last = points.Last();
-
-                var maxDistance = double.MinValue;
-                var maxDistancePoint = first;
-
-                foreach (var point in points)
+                if (sum == 0)
                 {
-                    var distance = Utils.Distance(first, last, point);
-
-                    if (distance > maxDistance)
-                    {
-                        maxDistance = distance;
-                        maxDistancePoint = point;
-                    }
-                }
-
-                if (maxDistance > tolerance)
-                {
-                    return points.TakeUntil(x => x == maxDistancePoint)
-                                    .Reduce(tolerance)
-                                    .Concat(points.SkipWhile(x => x != maxDistancePoint)
-                                                     .Reduce(tolerance)
-                                                     .Skip(1));
+                    normalized[key] = 0;
                 }
                 else
                 {
-                    return points.Take(1)
-                                 .Concat(last);
-                }
-            }
-        }
-
-        public static string String(this IEnumerable<string> strings)
-        {
-            var str = "";
-
-            if (strings.Count() == 0)
-            {
-                return str;
-            }
-            else if (strings.Count() == 1)
-            {
-                str += strings.First();
-                return str;
-            }
-
-            foreach (var s in strings.AllButLast())
-            {
-                str += s + ",";
-            }
-
-            str += strings.Last();
-
-            return str;
-        }
-
-        public static string String(this Dictionary<string, Point> positionsByGroup)
-        {
-            var str = "";
-
-            if (positionsByGroup.Count == 0)
-            {
-                return str;
-            }
-            else if (positionsByGroup.Count == 1)
-            {
-                var kvpFirst = positionsByGroup.First();
-                str += kvpFirst.Key + "," + kvpFirst.Value.X + "," + kvpFirst.Value.Y;
-                return str;
-            }
-
-            foreach (var kvp in positionsByGroup.AllButLast())
-            {
-                str += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
-            }
-
-            var kvpLast = positionsByGroup.Last();
-            str += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
-
-            return str;
-        }
-
-        public static KeyValuePair<string, string> ParseKeyValue(this string str)
-        {
-            var key = "";
-            var value = "";
-            var readString = "";
-
-            foreach (var c in str.Trim())
-            {
-                if (c == ',')
-                {
-                    key = readString;
-                    readString = "";
-                }
-                else
-                {
-                    readString += c;
+                    normalized[key] = evidence[key]/sum;
                 }
             }
 
-            value = readString;
-
-            return new KeyValuePair<string, string>(key, value);
+            return normalized;
         }
 
         public static List<string> ParseBlocks(this string str)
@@ -318,13 +219,13 @@ namespace Marv.Common
                     count++;
                     isReading = true;
                 }
-                
+
                 if (c == endChar)
                 {
                     count--;
                 }
 
-                if(isReading)
+                if (isReading)
                 {
                     readStr += c;
                 }
@@ -340,6 +241,134 @@ namespace Marv.Common
             return blocks;
         }
 
+        public static T ParseJson<T>(this string _string)
+        {
+            return JsonConvert.DeserializeObject<T>(_string);
+        }
+
+        public static KeyValuePair<string, string> ParseKeyValue(this string str)
+        {
+            var key = "";
+            var readString = "";
+
+            foreach (var c in str.Trim())
+            {
+                if (c == ',')
+                {
+                    key = readString;
+                    readString = "";
+                }
+                else
+                {
+                    readString += c;
+                }
+            }
+
+            return new KeyValuePair<string, string>(key, readString);
+        }
+
+        public static void Push<T>(this Collection<T> collection, T item)
+        {
+            collection.Insert(0, item);
+        }
+
+        public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
+        {
+            var pointList = points as IList<Point> ?? points.ToList();
+
+            if (pointList.Count <= 2)
+            {
+                return pointList;
+            }
+
+            var first = pointList.First();
+            var last = pointList.Last();
+
+            var maxDistance = double.MinValue;
+            var maxDistancePoint = first;
+
+            foreach (var point in pointList)
+            {
+                var distance = Utils.Distance(first, last, point);
+
+                if (distance < maxDistance) continue;
+
+                maxDistance = distance;
+                maxDistancePoint = point;
+            }
+
+            if (maxDistance > tolerance)
+            {
+                return pointList.TakeUntil(x => x == maxDistancePoint)
+                    .Reduce(tolerance)
+                    .Concat(pointList.SkipWhile(x => x != maxDistancePoint)
+                        .Reduce(tolerance)
+                        .Skip(1));
+            }
+            return pointList.Take(1)
+                .Concat(last);
+        }
+
+        public static string String(this IEnumerable<string> strings)
+        {
+            var str = "";
+
+            var stringList = strings as IList<string> ?? strings.ToList();
+
+            if (stringList.Count == 0)
+            {
+                return str;
+            }
+
+            if (stringList.Count == 1)
+            {
+                str += stringList.First();
+                return str;
+            }
+
+            str = stringList.AllButLast().Aggregate(str, (current, s) => current + s + ",");
+
+            str += stringList.Last();
+
+            return str;
+        }
+
+        public static string String(this Dictionary<string, Point> positionsByGroup)
+        {
+            var str = "";
+
+            if (positionsByGroup.Count == 0)
+            {
+                return str;
+            }
+            if (positionsByGroup.Count == 1)
+            {
+                var kvpFirst = positionsByGroup.First();
+                str += kvpFirst.Key + "," + kvpFirst.Value.X + "," + kvpFirst.Value.Y;
+                return str;
+            }
+
+            foreach (var kvp in positionsByGroup.AllButLast())
+            {
+                str += kvp.Key + "," + kvp.Value.X + "," + kvp.Value.Y + ",";
+            }
+
+            var kvpLast = positionsByGroup.Last();
+            str += kvpLast.Key + "," + kvpLast.Value.X + "," + kvpLast.Value.Y;
+
+            return str;
+        }
+
+        public static TValue[] ToArray<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        {
+            return dictionary.Values.ToArray();
+        }
+
+        public static string ToJson(this object _object)
+        {
+            return JsonConvert.SerializeObject(_object);
+        }
+
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)
         {
             return untrimmed.Select(x => x.Trim());
@@ -347,9 +376,12 @@ namespace Marv.Common
 
         public static void WriteJson(this object _object, string fileName)
         {
-            var serializer = new JsonSerializer();
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-            serializer.Formatting = Formatting.Indented;
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
 
             using (var streamWriter = new StreamWriter(fileName))
             {
@@ -359,34 +391,10 @@ namespace Marv.Common
                 }
             }
         }
-
-        public static string ToJson(this object _object)
-        {
-            return JsonConvert.SerializeObject(_object);
-        }
-
-        public static TValue[] ToArray<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
-        {
-            return dictionary.Values.ToArray<TValue>();
-        }
-
-        public static T ParseJson<T>(this string _string)
-        {
-            return JsonConvert.DeserializeObject<T>(_string);
-        }
-
-        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items)
-        {
-            foreach (var item in items)
-            {
-                collection.Add(item);
-            }
-        }
-
     }
 }
 
 namespace System.Windows
 {
-    public delegate void RoutedEventHandler<TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
+    public delegate void RoutedEventHandler<in TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
 }

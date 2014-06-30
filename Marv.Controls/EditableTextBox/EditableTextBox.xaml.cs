@@ -1,17 +1,16 @@
-﻿using Marv.Common;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Input;
+using Marv.Common;
 
 namespace Marv.Controls
 {
-    public partial class EditableTextBox : UserControl
+    public partial class EditableTextBox
     {
         public static readonly DependencyProperty IsEditableProperty =
-        DependencyProperty.Register("IsEditable", typeof(bool), typeof(EditableTextBox), new PropertyMetadata(false));
+            DependencyProperty.Register("IsEditable", typeof (bool), typeof (EditableTextBox), new PropertyMetadata(false));
 
         public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register("Text", typeof(string), typeof(EditableTextBox), new PropertyMetadata(null));
+            DependencyProperty.Register("Text", typeof (string), typeof (EditableTextBox), new PropertyMetadata(null));
 
         public EditableTextBox()
         {
@@ -24,14 +23,26 @@ namespace Marv.Controls
 
         public bool IsEditable
         {
-            get { return (bool)GetValue(IsEditableProperty); }
-            set { SetValue(IsEditableProperty, value); }
+            get
+            {
+                return (bool) GetValue(IsEditableProperty);
+            }
+            set
+            {
+                SetValue(IsEditableProperty, value);
+            }
         }
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get
+            {
+                return (string) GetValue(TextProperty);
+            }
+            set
+            {
+                SetValue(TextProperty, value);
+            }
         }
 
         private void EditableTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -62,7 +73,7 @@ namespace Marv.Controls
                 var position = e.GetPosition(this);
 
                 if (position.X < 0 || position.X > this.ActualWidth ||
-                   position.Y < 0 || position.Y > this.ActualHeight)
+                    position.Y < 0 || position.Y > this.ActualHeight)
                 {
                     this.IsEditable = false;
                     this.ReleaseMouseCapture();

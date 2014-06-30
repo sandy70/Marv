@@ -8,18 +8,50 @@
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <!-- Notification Listbox -->
-    <surface:SurfaceListBox Grid.Row="1"
+    <surface:SurfaceListBox Background="LightGray"
                             HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding Notifications, ElementName=Root}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <surface:SurfaceListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type surface:SurfaceListBoxItem}">
+
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <ScaleTransform x:Name="transform" />
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0"
+                                                     To="1"
+                                                     Duration="0:0:.2" />
+
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     From="0"
+                                                     Duration="0:0:.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Style.Triggers>
+
+            </Style>
+        </surface:SurfaceListBox.ItemContainerStyle>
+
         <surface:SurfaceListBox.ItemTemplate>
             <DataTemplate>
                 <Grid>
@@ -37,42 +69,44 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Name="TextBlock"
-                                    Grid.Column="0"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    HorizontalAlignment="Stretch"
-                                    Margin="5"
-                                    Text="{Binding Name}"
-                                    TextTrimming="WordEllipsis"
-                                    TextWrapping="WrapWithOverflow" />
+                                   Grid.Column="0"
+                                   FontSize="12"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Stretch"
+                                   Margin="5"
+                                   Text="{Binding Name}"
+                                   TextTrimming="WordEllipsis"
+                                   TextWrapping="WrapWithOverflow" />
 
-                        <Button Name="NotificationCloseButton"
-                                               Grid.Column="1"
-                                               Background="{StaticResource ResourceKey=BackgroundDark}"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               Margin="5"
-                                               Padding="0">
+                        <telerik:RadButton Name="NotificationCloseButton"
+                                           Grid.Column="1"
+                                           Background="{StaticResource BackgroundDark}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5"
+                                           Padding="0">
+
                             <Image Source="/Marv.Common;component/Resources/Icons/Close.png" />
 
                             <i:Interaction.Behaviors>
                                 <local:NotificationCloseButtonBehavior />
                             </i:Interaction.Behaviors>
-                        </Button>
+                        </telerik:RadButton>
                     </Grid>
 
                     <!-- Notification Description -->
                     <TextBlock Grid.Row="1"
-                                FontSize="12"
-                                Margin="5"
-                                Text="{Binding Description}"
-                                TextTrimming="WordEllipsis"
-                                TextWrapping="Wrap" />
+                               FontSize="12"
+                               Margin="5"
+                               Text="{Binding Description}"
+                               TextTrimming="WordEllipsis"
+                               TextWrapping="Wrap" />
 
                     <!-- Notification Progressbar -->
                     <telerik:RadProgressBar Grid.Row="2"
                                             Height="10"
                                             IsIndeterminate="{Binding IsIndeterminate}"
-                                            Value="{Binding Value}" />
+                                            Value="{Binding Value, Mode=OneWay}" />
                 </Grid>
             </DataTemplate>
         </surface:SurfaceListBox.ItemTemplate>

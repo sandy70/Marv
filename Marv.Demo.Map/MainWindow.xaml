@@ -1,0 +1,21 @@
+﻿<Window x:Class="Marv.Demo.Map.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:marv="http://dnvgl.com/marv"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525"
+        Name="Root">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+    </Window.Resources>
+
+    <marv:MapView TileLayer="{Binding Source={x:Static marv:TileLayers.BingMapsRoads}}"
+                  StartExtent="USA">
+
+        <marv:PolylineControl Name="PolylineControl"
+                              Locations="{Binding ElementName=Root, Path=Locations}"
+                              SelectedLocation="{Binding ElementName=Root, Path=Locations.SelectedItem}"
+                              Stroke="DarkRed" />
+
+    </marv:MapView>
+</Window>

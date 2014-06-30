@@ -15,21 +15,21 @@ namespace Marv.Common
 
         public static GridFloatHeader Read(string filePath)
         {
-            GridFloatHeader gridFloatHeader = new GridFloatHeader();
+            var gridFloatHeader = new GridFloatHeader();
 
             string line;
-            string[,] headerParts = new string[7, 2];
-            int j = 0;
+            var headerParts = new string[7, 2];
+            var j = 0;
 
             // Read the file and display it line by line.
-            using (StreamReader file = new StreamReader(filePath))
+            using (var file = new StreamReader(filePath))
             {
                 while ((line = file.ReadLine()) != null)
                 {
-                    char[] delimiters = new char[] { '\t', ' ' };
-                    string[] parts = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+                    var delimiters = new char[] { '\t', ' ' };
+                    var parts = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
-                    int i = 0;
+                    var i = 0;
                     foreach (var part in parts)
                     {
                         headerParts[j, i] = part;

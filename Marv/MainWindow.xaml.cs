@@ -1,18 +1,20 @@
-﻿using Caching;
-using Marv.Common;
-using Marv.Controls;
-using NLog;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
+using Caching;
+using MapControl;
+using Marv.Common;
+using Marv.Common.Graph;
+using Marv.Controls.Map;
+using NLog;
+using OfficeOpenXml;
 using Telerik.Windows.Controls;
+using LocationCollection = Marv.Common.Map.LocationCollection;
 
 namespace Marv
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public static VertexCommand VertexBarChartCommand = new VertexCommand
         {
@@ -29,12 +31,12 @@ namespace Marv
             ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
         };
 
-        public Dictionary<LocationCollection, MultiLocationValueTimeSeries> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, MultiLocationValueTimeSeries>();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        public Dictionary<LocationCollection, Dictionary<int, string, double>> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dictionary<int, string, double>>();
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public IGraphValueReader GraphValueReader { get; set; }
 
-        private IGraphValueReader graphValueReader;
-        private Dictionary<int, string, string, double> graphValues;
+        public Dictionary<int, string, string, double> GraphValues { get; set; }
 
         public MainWindow()
         {
@@ -42,24 +44,12 @@ namespace Marv
             InitializeComponent();
 
             var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MARV");
-            MapControl.TileImageLoader.Cache = new ImageFileCache(MapControl.TileImageLoader.DefaultCacheName, cacheDirectory);
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, cacheDirectory);
 
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public IGraphValueReader GraphValueReader
-        {
-            get { return graphValueReader; }
-            set { graphValueReader = value; }
-        }
-
-        public Dictionary<int, string, string, double> GraphValues
-        {
-            get { return graphValues; }
-            set { graphValues = value; }
-        }
-
-        public static MultiLocationValueTimeSeries CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
+        public static Dictionary<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
         {
             logger.Info("Computing belief for line {0}.", multiLocation.Name);
 
@@ -68,7 +58,7 @@ namespace Marv
             var stateKey = "Fail";
             // var quantity = "Mean";
 
-            var multiLocationValueTimeSeries = new MultiLocationValueTimeSeries();
+            var multiLocationValueTimeSeries = new Dictionary<int, string, double>();
             var nCompleted = 0;
             var nLocations = multiLocation.Count;
 
@@ -96,7 +86,7 @@ namespace Marv
 
                 excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
 
-                var fileName = MainWindow.GetFileNameForModelValue(multiLocation.Name, location.Name);
+                var fileName = GetFileNameForModelValue(multiLocation.Name, location.Name);
 
                 try
                 {
@@ -125,7 +115,7 @@ namespace Marv
                 }
                 catch (OdbDataNotFoundException)
                 {
-                    logger.Info("Value not found for point {0}.", location);
+                    logger.Info("Belief not found for point {0}.", location);
                 }
 
                 logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
@@ -133,18 +123,15 @@ namespace Marv
 
             excelPackage.Save();
 
-            var fName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            Odb.Write<MultiLocationValueTimeSeries>(fName, multiLocationValueTimeSeries);
+            var fName = GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
+            Odb.Write(fName, multiLocationValueTimeSeries);
 
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<MultiLocationValueTimeSeries> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
+        public static Task<Dictionary<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
         {
-            return Task.Run(() =>
-                {
-                    return MainWindow.CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph);
-                });
+            return Task.Run(() => { return CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph); });
         }
 
         public static string GetFileNameForModelValue(string multiLocationName, string locationName)
@@ -155,33 +142,6 @@ namespace Marv
         public static string GetFileNameForMultiLocationValueTimeSeries(LocationCollection multiLocation, string vertexKey, string stateKey)
         {
             return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, vertexKey + "_" + stateKey + ".db");
-        }
-
-        public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
-        {
-            var graph = Graph.Read(networkFileName);
-            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
-
-            var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
-
-            var fileName = MainWindow.GetFileNameForModelValue(multiLocationName, locationName);
-
-            try
-            {
-                Odb.Write<Dictionary<int, string, string, double>>(fileName, graphValueTimeSeries);
-            }
-            catch(IOException exp)
-            {
-                logger.Warn(exp.Message);
-            }
-        }
-
-        public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
-        {
-            return Task.Run(() =>
-                {
-                    MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
-                });
         }
 
         public void ReadGraphValues()
@@ -199,7 +159,7 @@ namespace Marv
 
                 this.Notifications.Push(new NotificationTimed
                 {
-                    Name = "Value Not Found",
+                    Name = "Belief Not Found",
                     Description = exception.Message
                 });
 
@@ -213,14 +173,38 @@ namespace Marv
             {
                 try
                 {
-                    var fileName = MainWindow.GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
-                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<MultiLocationValueTimeSeries>(fileName, x => true);
+                    var fileName = GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
+                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<Dictionary<int, string, double>>(fileName, x => true);
                 }
                 catch (OdbDataNotFoundException)
                 {
-                    logger.Warn("Value not found for line {0}.", multiLocation.Name);
+                    logger.Warn("Belief not found for line {0}.", multiLocation.Name);
                 }
             }
+        }
+
+        public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            var graph = Graph.Read(networkFileName);
+            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
+
+            var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
+
+            var fileName = GetFileNameForModelValue(multiLocationName, locationName);
+
+            try
+            {
+                Odb.Write(fileName, graphValueTimeSeries);
+            }
+            catch (IOException exp)
+            {
+                logger.Warn(exp.Message);
+            }
+        }
+
+        public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        {
+            return Task.Run(() => { RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear); });
         }
 
         public void UpdateGraphValue()
@@ -231,16 +215,16 @@ namespace Marv
                 {
                     if (this.GraphValues.ContainsKey(this.SelectedYear))
                     {
-                        this.SourceGraph.Value = this.GraphValues[this.SelectedYear];
+                        this.SourceGraph.Belief = this.GraphValues[this.SelectedYear];
                     }
                     else
                     {
-                        this.SourceGraph.SetValueToZero();
+                        this.SourceGraph.Belief = null;
                     }
                 }
                 else
                 {
-                    this.SourceGraph.SetValueToZero();
+                    this.SourceGraph.Belief = null;
                 }
             }
         }
@@ -249,7 +233,7 @@ namespace Marv
         {
             foreach (var multiLocation in this.Polylines)
             {
-                if ((int)multiLocation.Properties["StartYear"] > this.SelectedYear)
+                if ((int) multiLocation.Properties["StartYear"] > this.SelectedYear)
                 {
                     multiLocation.IsEnabled = false;
                 }
@@ -259,7 +243,7 @@ namespace Marv
 
                     if (this.Polylines.SelectedItem.IsEnabled == false)
                     {
-                        this.Polylines.SelectedItem = multiLocation;
+                        // this.Polylines.Select(multiLocation);
                     }
 
                     try
@@ -268,7 +252,7 @@ namespace Marv
                     }
                     catch (KeyNotFoundException)
                     {
-                        logger.Warn("Value not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+                        logger.Warn("Belief not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
                     }
                 }
             }

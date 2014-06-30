@@ -1,8 +1,8 @@
-﻿using Marv.Common;
-using System;
+﻿using System;
 using System.IO.Ports;
 using System.Linq;
 using System.Windows.Threading;
+using Marv.Common.Graph;
 
 namespace Marv
 {
@@ -10,7 +10,7 @@ namespace Marv
     {
         private SerialPort serialPort = new SerialPort();
         private DispatcherTimer timer = new DispatcherTimer();
-        private Vertex vertexViewModel = null;
+        private Vertex vertexViewModel;
 
         public SensorListener()
         {
@@ -52,14 +52,13 @@ namespace Marv
         {
             try
             {
-                int value = this.serialPort.ReadByte();
+                var value = this.serialPort.ReadByte();
 
-                int nStates = this.vertexViewModel.States.Count;
+                var nStates = this.vertexViewModel.States.Count;
 
-                int stateIndex = value * (nStates - 1) / 255;
+                var stateIndex = value * (nStates - 1) / 255;
 
                 this.vertexViewModel.SelectState(stateIndex);
-                this.vertexViewModel.IsEvidenceEntered = true;
 
                 var handler = this.NewEvidenceAvailable;
 

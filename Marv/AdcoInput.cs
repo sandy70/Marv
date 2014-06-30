@@ -1,9 +1,12 @@
-﻿using Marv.Common;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Marv.Common;
+using Marv.Common.Graph;
+using Marv.Common.Map;
+using OfficeOpenXml;
+using Smile;
 
 namespace Marv
 {
@@ -63,11 +66,11 @@ namespace Marv
             }
         }
 
-        public static Dictionary<string, IEvidence> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
+        public static Dictionary<string, string, double> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var graphEvidence = new Dictionary<string, IEvidence>();
+                var graphEvidence = new Dictionary<string, string, double>();
                 var nHeaderRows = 3;
                 var sheet = package.Workbook.Worksheets.Single(worksheet => worksheet.Name == "data");
 
@@ -80,7 +83,7 @@ namespace Marv
 
                     if (evidenceType != null)
                     {
-                        if (evidenceType.ToString() == "Simple")
+                        if (evidenceType == "Simple")
                         {
                             var rowIndex = nHeaderRows + 1;
                             var currentPipeName = sheet.GetValue(rowIndex, "R1C1");
@@ -90,7 +93,7 @@ namespace Marv
                                 currentPipeName = sheet.GetValue(++rowIndex, "R1C1");
                             }
 
-                            IEvidence evidence = null;
+                            Dictionary<string, double> evidence = null;
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
@@ -130,7 +133,7 @@ namespace Marv
                                 currentLocationName = sheet.GetValue<string>(rowIndex, "section inlet");
                             }
 
-                            IEvidence evidence = null;
+                            Dictionary<string, double> evidence = null;
                             var evidenceString = sheet.GetValue<string>(rowIndex, colIndex);
                             var vertexKey = sheet.GetValue<string>(1, colIndex);
 
@@ -182,11 +185,141 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static ViewModelCollection<LocationCollection> Read(string fileName)
+        private static Dictionary<string, double> ParseDistribution(string evidenceString, Vertex vertex)
+        {
+            var parts = evidenceString.Trim()
+                .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            var vertexValue = new Dictionary<string, double>();
+
+            foreach (var state in vertex.States)
+            {
+                vertexValue[state.Key] = 0;
+            }
+
+            foreach (var part in parts)
+            {
+                var partsOfPart = part.Trim()
+                    .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                double probability;
+
+                if (Double.TryParse(partsOfPart[1], out probability))
+                {
+                    double value;
+
+                    if (Double.TryParse(partsOfPart[0], out value))
+                    {
+                        foreach (var state in vertex.States)
+                        {
+                            if (state.Contains(value))
+                            {
+                                vertexValue[state.Key] += probability;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var state in vertex.States)
+                        {
+                            if (state.Key == partsOfPart[0])
+                            {
+                                vertexValue[state.Key] += probability;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new SmileException("");
+                }
+            }
+
+            return vertexValue;
+        }
+
+        private static Dictionary<string, double> ParseRange(string evidenceString, Vertex vertex)
+        {
+            var evidence = new Dictionary<string, double>();
+
+            var parts = evidenceString.Trim()
+                .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            double minValue;
+            double maxValue;
+
+            if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
+            {
+                foreach (var state in vertex.States)
+                {
+                    if (maxValue < state.Min)
+                    {
+                        // do nothing
+                    }
+                    else if (minValue > state.Max)
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        if (minValue >= state.Min && minValue <= state.Max)
+                        {
+                            evidence[state.Key] = (state.Max - minValue) / (state.Max - state.Min);
+                        }
+
+                        if (maxValue >= state.Min && maxValue <= state.Max)
+                        {
+                            evidence[state.Key] = (maxValue - state.Min) / (state.Max - state.Min);
+                        }
+
+                        if (minValue <= state.Min && maxValue >= state.Max)
+                        {
+                            evidence[state.Key] = 1;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new SmileException("");
+            }
+
+            return evidence;
+        }
+
+        private static Dictionary<string, double> ParseState(string evidenceString, Vertex vertex)
+        {
+            var evidence = new Dictionary<string, double>();
+
+            if (vertex.States.Count(state => state.Key == evidenceString) == 1)
+            {
+                evidence[evidenceString] = 1;
+            }
+            else
+            {
+                double value;
+
+                if (Double.TryParse(evidenceString, out value))
+                {
+                    foreach (var state in vertex.States.Where(state => state.Contains(value)))
+                    {
+                        evidence[state.Key] = 1;
+                    }
+                }
+                else
+                {
+                    throw new SmileException("");
+                }
+            }
+
+            return evidence;
+        }
+
+        public static ModelCollection<LocationCollection> Read(string fileName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var multiLocations = new ViewModelCollection<LocationCollection>();
+                var multiLocations = new ModelCollection<LocationCollection>();
                 var nHeaderRows = 3;
                 var pipelineStartRowIndices = new List<int>();
                 var rowIndex = nHeaderRows + 1;
@@ -225,8 +358,8 @@ namespace Marv
                     {
                         multiLocation.Add(new Location
                         {
-                            Latitude = (double)sheet.GetValue(rowIndex, "Latitude"),
-                            Longitude = (double)sheet.GetValue(rowIndex, "Longitude"),
+                            Latitude = (double) sheet.GetValue(rowIndex, "Latitude"),
+                            Longitude = (double) sheet.GetValue(rowIndex, "Longitude"),
                             Name = sheet.GetValue(rowIndex, "section inlet").ToString()
                         });
                     }
@@ -238,162 +371,6 @@ namespace Marv
 
                 return multiLocations;
             }
-        }
-
-        private static IEvidence ParseDistribution(string evidenceString, Vertex vertex)
-        {
-            var parts = evidenceString.Trim()
-                                      .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            double[] evidenceArray = new double[vertex.States.Count];
-
-            foreach (var part in parts)
-            {
-                var partsOfPart = part.Trim()
-                                      .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                double probability;
-
-                if (Double.TryParse(partsOfPart[1], out probability))
-                {
-                    double value;
-
-                    if (Double.TryParse(partsOfPart[0], out value))
-                    {
-                        foreach (var state in vertex.States)
-                        {
-                            if (state.Range.Bounds(value))
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var state in vertex.States)
-                        {
-                            if (state.Key == partsOfPart[0])
-                            {
-                                evidenceArray[vertex.States.IndexOf(state)] += probability;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    throw new Smile.SmileException("");
-                }
-            }
-
-            return new SoftEvidence
-            {
-                Evidence = evidenceArray
-            };
-        }
-
-        private static IEvidence ParseRange(string evidenceString, Vertex vertex)
-        {
-            IEvidence evidence = null;
-
-            var parts = evidenceString.Trim()
-                                      .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            double minValue;
-            double maxValue;
-
-            if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
-            {
-                double[] evidenceArray = new double[vertex.States.Count];
-
-                foreach (var state in vertex.States)
-                {
-                    if (maxValue < state.Range.Min)
-                    {
-                        // do nothing
-                    }
-                    else if (minValue > state.Range.Max)
-                    {
-                        // do nothing
-                    }
-                    else
-                    {
-                        if (minValue >= state.Range.Min && minValue <= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = (state.Range.Max - minValue) / (state.Range.Max - state.Range.Min);
-                        }
-
-                        if (maxValue >= state.Range.Min && maxValue <= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = (maxValue - state.Range.Min) / (state.Range.Max - state.Range.Min);
-                        }
-
-                        if (minValue <= state.Range.Min && maxValue >= state.Range.Max)
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = 1;
-                        }
-                    }
-                }
-
-                evidence = new SoftEvidence
-                {
-                    Evidence = evidenceArray
-                };
-            }
-            else
-            {
-                throw new Smile.SmileException("");
-            }
-            return evidence;
-        }
-
-        private static IEvidence ParseState(string evidenceString, Vertex vertex)
-        {
-            IEvidence evidence = null;
-
-            int stateIndex = -1;
-
-            foreach (var state in vertex.States)
-            {
-                if (state.Key == evidenceString)
-                {
-                    stateIndex = vertex.States.IndexOf(state);
-                }
-            }
-
-            if (stateIndex >= 0)
-            {
-                evidence = new HardEvidence
-                {
-                    StateIndex = stateIndex
-                };
-            }
-            else
-            {
-                double value;
-
-                if (Double.TryParse(evidenceString, out value))
-                {
-                    double[] evidenceArray = new double[vertex.States.Count];
-
-                    foreach (var state in vertex.States)
-                    {
-                        if (state.Range.Bounds(value))
-                        {
-                            evidenceArray[vertex.States.IndexOf(state)] = 1;
-                        }
-                    }
-
-                    evidence = new SoftEvidence
-                    {
-                        Evidence = evidenceArray
-                    };
-                }
-                else
-                {
-                    throw new Smile.SmileException("");
-                }
-            }
-            return evidence;
         }
     }
 }

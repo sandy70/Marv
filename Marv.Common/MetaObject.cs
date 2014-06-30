@@ -16,15 +16,15 @@ namespace Marv.Common
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
             // Method call in the containing class:
-            string methodName = "GetMember";
+            var methodName = "GetMember";
 
             // One parameter
-            Expression[] parameters = new Expression[]
+            var parameters = new Expression[]
             {
                 Expression.Constant(binder.Name)
             };
 
-            DynamicMetaObject getDictionaryEntry = new DynamicMetaObject(
+            var getDictionaryEntry = new DynamicMetaObject(
                 Expression.Call(
                     Expression.Convert(Expression, LimitType),
                     typeof(T).GetMethod(methodName),
@@ -36,17 +36,17 @@ namespace Marv.Common
         public override DynamicMetaObject BindInvokeMember(
                     InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
-            StringBuilder paramInfo = new StringBuilder();
+            var paramInfo = new StringBuilder();
             paramInfo.AppendFormat("Calling {0}(", binder.Name);
             foreach (var item in args)
                 paramInfo.AppendFormat("{0}, ", item.Value);
             paramInfo.Append(")");
 
-            Expression[] parameters = new Expression[]
+            var parameters = new Expression[]
             {
                 Expression.Constant(paramInfo.ToString())
             };
-            DynamicMetaObject methodInfo = new DynamicMetaObject(
+            var methodInfo = new DynamicMetaObject(
                 Expression.Call(
                 Expression.Convert(Expression, LimitType),
                 typeof(T).GetMethod("WriteMethodInfo"),
@@ -59,14 +59,14 @@ namespace Marv.Common
                     DynamicMetaObject value)
         {
             // Method to call in the containing class:
-            string methodName = "SetMember";
+            var methodName = "SetMember";
 
             // setup the binding restrictions.
-            BindingRestrictions restrictions =
+            var restrictions =
                 BindingRestrictions.GetTypeRestriction(Expression, LimitType);
 
             // setup the parameters:
-            Expression[] args = new Expression[2];
+            var args = new Expression[2];
             // First parameter is the name of the property to Set
             args[0] = Expression.Constant(binder.Name);
             // Second parameter is the value
@@ -81,7 +81,7 @@ namespace Marv.Common
                     args);
 
             // Create a meta object to invoke Set later:
-            DynamicMetaObject setDictionaryEntry = new DynamicMetaObject(
+            var setDictionaryEntry = new DynamicMetaObject(
                 methodCall,
                 restrictions);
             // return that dynamic object

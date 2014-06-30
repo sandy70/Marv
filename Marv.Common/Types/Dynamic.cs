@@ -2,59 +2,53 @@
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Marv.Common
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
-        private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
         public object this[string name]
         {
             get
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+                if (!this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
                 {
-                    if (dictionary.ContainsKey(name))
-                    {
-                        return dictionary[name];
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return this.dictionary.ContainsKey(name) ? this.dictionary[name] : null;
                 }
-                else
-                {
-                    return this.GetType().GetProperty(name).GetValue(this);
-                }
+
+                return this.GetType().GetProperty(name).GetValue(this);
             }
 
             set
             {
-                if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
-                {
-                    dictionary[name] = value;
-                }
-                else
+                if (this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
                 {
                     this.GetType().GetProperty(name).SetValue(this, value);
                 }
+                else
+                {
+                    this.dictionary[name] = value;
+                }
+
+                this.RaisePropertyChanged(name);
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return this.dictionary.Keys.AsEnumerable<string>();
+            return this.dictionary.Keys.AsEnumerable();
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            string name = (string)indexes[0];
+            var name = (string) indexes[0];
 
-            if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+            if (this.GetType().GetProperties().Count(info => info.Name.Equals(name)) == 0)
             {
                 if (dictionary.ContainsKey(name))
                 {
@@ -76,21 +70,21 @@ namespace Marv.Common
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            string name = binder.Name;
+            var name = binder.Name;
             return dictionary.TryGetValue(name, out result);
         }
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            string name = (string)indexes[0];
+            var name = (string) indexes[0];
 
-            if (this.GetType().GetProperties().Where(info => info.Name.Equals(name)).Count() == 0)
+            if (this.GetType().GetProperties().Any(info => info.Name.Equals(name)))
             {
-                dictionary[name] = value;
+                this.GetType().GetProperty(name).SetValue(this, value);
             }
             else
             {
-                this.GetType().GetProperty(name).SetValue(this, value);
+                this.dictionary[name] = value;
             }
 
             this.RaisePropertyChanged(name);
@@ -105,7 +99,7 @@ namespace Marv.Common
             return true;
         }
 
-        protected virtual void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (this.PropertyChanged != null)
             {

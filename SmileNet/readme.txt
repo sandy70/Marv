@@ -1,1 +1,0 @@
-Unpack SMILE distribution into cppsmile subdirectory, then build the release configuration.

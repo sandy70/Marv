@@ -3,9 +3,7 @@
   <Version>2013.3.1204.45</Version>
   <Trial>false</Trial>
   <Dependencies>
-    <Project>37506e1a-457b-4186-8c4f-11ba0e7aa78e</Project>
     <Project>a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d</Project>
-    <Project>8f3727ce-d0a7-4f58-a9bf-f0d2a130f912</Project>
   </Dependencies>
   <NoXaml>false</NoXaml>
 </Distribution>

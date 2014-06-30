@@ -1,0 +1,164 @@
+﻿<Window x:Class="Marv.Input.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:marv="http://dnvgl.com/marv"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Name="Root"
+        Title="MARV - Input Designer"
+        WindowState="Maximized">
+    <Window.Resources>
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+    </Window.Resources>
+
+    <Grid>
+        <telerik:RadDocking>
+            <telerik:RadDocking.DocumentHost>
+                <telerik:RadSplitContainer>
+                    <telerik:RadPaneGroup>
+                        <telerik:RadPane Header="Network">
+                            
+                            <!-- GraphControl -->
+                            <marv:GraphControl Name="GraphControl"
+                                               Background="WhiteSmoke"
+                                               Graph="{Binding ElementName=Root, Path=Graph}"
+                                               IsEnabled="False"
+                                               SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
+                            
+                        </telerik:RadPane>
+                    </telerik:RadPaneGroup>
+                </telerik:RadSplitContainer>
+            </telerik:RadDocking.DocumentHost>
+
+            <telerik:RadSplitContainer InitialPosition="DockedLeft"
+                                       Width="600">
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="Input">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <telerik:RadGridView Grid.Row="0"
+                                                 Name="InputGridView"
+                                                 AutoGenerateColumns="True"
+                                                 CanUserReorderColumns="False"
+                                                 CanUserSortColumns="False"
+                                                 IsFilteringAllowed="False"
+                                                 ShowGroupPanel="False"
+                                                 RowIndicatorVisibility="Collapsed"
+                                                 ItemsSource="{Binding ElementName=Root, Path=InputRows}" />
+
+                            <UniformGrid Grid.Row="1"
+                                         Rows="1">
+                                <TextBlock Margin="2"
+                                           TextAlignment="Right" VerticalAlignment="Center"
+                                           Text="Start Year" />
+
+                                <telerik:RadNumericUpDown Margin="2"
+                                                          Maximum="2050"
+                                                          Minimum="1950"
+                                                          Value="{Binding ElementName=Root, Path=StartYear}"
+                                                          NumberDecimalDigits="0"
+                                                          SmallChange="1"
+                                                          LargeChange="5" />
+
+                                <TextBlock Margin="2"
+                                           TextAlignment="Right" VerticalAlignment="Center"
+                                           Text="End Year" />
+
+                                <telerik:RadNumericUpDown Margin="2"
+                                                          Maximum="2050"
+                                                          Minimum="1950"
+                                                          Value="{Binding ElementName=Root, Path=EndYear}"
+                                                          NumberDecimalDigits="0"
+                                                          SmallChange="1"
+                                                          LargeChange="5" />
+
+                                <telerik:RadButton Name="CreateInputButton"
+                                                   Content="Create"
+                                                   Margin="2" />
+                                
+                                <telerik:RadButton Name="AddSectionButton"
+                                                   Content="Add Section"
+                                                   Margin="2" />
+
+                            </UniformGrid>
+                        </Grid>
+
+                    </telerik:RadPane>
+                </telerik:RadPaneGroup>
+            </telerik:RadSplitContainer>
+
+            <telerik:RadSplitContainer InitialPosition="DockedRight"
+                                       Width="400">
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="Node">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="50" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <telerik:RadComboBox CanAutocompleteSelectItems="True"
+                                                     CanKeyboardNavigationSelectItems="True"
+                                                     DisplayMemberPath="Name"
+                                                     IsEditable="True"
+                                                     IsFilteringEnabled="True"
+                                                     ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                                     Margin="5"
+                                                     OpenDropDownOnFocus="True"
+                                                     SelectedIndex="0"
+                                                     SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
+                                                     TextSearchMode="Contains" />
+                                
+                                <!-- Vertex Control -->
+                                <marv:VertexControl Name="VertexControl"
+                                                    Grid.Row="1"
+                                                    IsEditable="True"
+                                                    IsEnabled="False"
+                                                    IsEvidenceVisible="True"
+                                                    IsInputVisible="True"
+                                                    IsToolbarVisible="False"
+                                                    IsValueVisible="False"
+                                                    Margin="5"
+                                                    Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Name="OpenButton"
+                                        Grid.Column="0"
+                                        Margin="5"
+                                        Content="Open" />
+
+                                <Button Name="SaveButton"
+                                        Grid.Column="1"
+                                        Margin="5"
+                                        Content="Save" />
+                            </Grid>
+                        </Grid>
+                    </telerik:RadPane>
+                </telerik:RadPaneGroup>
+            </telerik:RadSplitContainer>
+        </telerik:RadDocking>
+        
+        <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
+                                  Margin="16"
+                                  Notifications="{Binding ElementName=Root, Path=Notifications}" >
+            <marv:NotificationControl.Effect>
+                <DropShadowEffect Opacity="0.5" />
+            </marv:NotificationControl.Effect>
+        </marv:NotificationControl>
+    </Grid>
+</Window>
