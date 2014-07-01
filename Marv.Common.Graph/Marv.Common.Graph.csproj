@@ -46,9 +46,9 @@
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="SmileNet, Version=1.1.5205.27143, Culture=neutral, PublicKeyToken=808949b7dda55ecd, processorArchitecture=x86">
+    <Reference Include="SmileNet, Version=1.1.5205.27119, Culture=neutral, PublicKeyToken=808949b7dda55ecd, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Smile\x64\SmileNet.dll</HintPath>
+      <HintPath>..\packages\Smile\x86\SmileNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
