@@ -19,7 +19,13 @@
     </i:Interaction.Behaviors>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition  />
+        </Grid.RowDefinitions>
+        
         <telerik:RadDiagram Name="DiagramPart"
+                            Grid.Row="1"
                             ActiveTool="PanTool"
                             AllowDelete="True"
                             GraphSource="{Binding ElementName=Root, Path=Graph.DisplayGraph}"
@@ -102,6 +108,7 @@
                                           VerticalAlignment="Bottom" />-->
 
         <StackPanel Margin="5"
+                    Grid.Row="0"
                     HorizontalAlignment="Left" VerticalAlignment="Top"
                     Orientation="Horizontal">
             <telerik:RadButton Name="BackButton"
