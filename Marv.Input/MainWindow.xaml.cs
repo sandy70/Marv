@@ -213,6 +213,8 @@ namespace Marv.Input
                 }
                 catch (FormatException)
                 {
+                    this.VertexControl.IsEnabled = false;
+                    this.GraphControl.IsEnabled = false;
                 }
             }
             else
@@ -336,15 +338,18 @@ namespace Marv.Input
             else
             {
                 this.Graph.Run();
-
-                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
+                
+                
+                var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
-
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
                     this.lineEvidence[sectionId, year] = this.Graph.GetEvidence();
-                }
+                }  
+                
+
+                
             }
         }
 
