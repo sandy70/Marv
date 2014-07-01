@@ -224,6 +224,11 @@ namespace Marv.Controls.Graph
             this.Graph.Run();
         }
 
+        private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         public event EventHandler<Vertex> EvidenceEntered;
 
         public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
