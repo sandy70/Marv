@@ -185,6 +185,64 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
+        public static ModelCollection<LocationCollection> Read(string fileName)
+        {
+            using (var package = new ExcelPackage(new FileInfo(fileName)))
+            {
+                var multiLocations = new ModelCollection<LocationCollection>();
+                var nHeaderRows = 3;
+                var pipelineStartRowIndices = new List<int>();
+                var rowIndex = nHeaderRows + 1;
+                var sheet = package.Workbook.Worksheets.Single(worksheet => worksheet.Name == "data");
+
+                var nameColumnIndex = sheet.GetColumnIndex("R1C1");
+                var name = sheet.GetValue(rowIndex, nameColumnIndex);
+
+                while (name != null)
+                {
+                    if (rowIndex == nHeaderRows + 1 || name != sheet.GetValue(rowIndex - 1, nameColumnIndex))
+                    {
+                        pipelineStartRowIndices.Add(rowIndex);
+                    }
+
+                    name = sheet.GetValue(++rowIndex, nameColumnIndex);
+                }
+
+                pipelineStartRowIndices.Add(rowIndex);
+
+                var pipelineIndex = 1;
+
+                while (pipelineIndex < pipelineStartRowIndices.Count)
+                {
+                    var pipelineStartRowIndex = pipelineStartRowIndices[pipelineIndex - 1];
+                    var pipelineEndRowIndex = pipelineStartRowIndices[pipelineIndex];
+
+                    var multiLocation = new LocationCollection();
+                    multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "R1C1") as string;
+
+                    var startYear = sheet.GetValue(pipelineStartRowIndex, "START");
+
+                    multiLocation.Properties["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
+
+                    for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
+                    {
+                        multiLocation.Add(new Location
+                        {
+                            Latitude = (double) sheet.GetValue(rowIndex, "Latitude"),
+                            Longitude = (double) sheet.GetValue(rowIndex, "Longitude"),
+                            Name = sheet.GetValue(rowIndex, "section inlet").ToString()
+                        });
+                    }
+
+                    multiLocations.Add(multiLocation);
+
+                    pipelineIndex++;
+                }
+
+                return multiLocations;
+            }
+        }
+
         private static Dictionary<string, double> ParseDistribution(string evidenceString, Vertex vertex)
         {
             var parts = evidenceString.Trim()
@@ -264,12 +322,12 @@ namespace Marv
                     {
                         if (minValue >= state.Min && minValue <= state.Max)
                         {
-                            evidence[state.Key] = (state.Max - minValue) / (state.Max - state.Min);
+                            evidence[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
                         }
 
                         if (maxValue >= state.Min && maxValue <= state.Max)
                         {
-                            evidence[state.Key] = (maxValue - state.Min) / (state.Max - state.Min);
+                            evidence[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
                         }
 
                         if (minValue <= state.Min && maxValue >= state.Max)
@@ -313,64 +371,6 @@ namespace Marv
             }
 
             return evidence;
-        }
-
-        public static ModelCollection<LocationCollection> Read(string fileName)
-        {
-            using (var package = new ExcelPackage(new FileInfo(fileName)))
-            {
-                var multiLocations = new ModelCollection<LocationCollection>();
-                var nHeaderRows = 3;
-                var pipelineStartRowIndices = new List<int>();
-                var rowIndex = nHeaderRows + 1;
-                var sheet = package.Workbook.Worksheets.Single(worksheet => worksheet.Name == "data");
-
-                var nameColumnIndex = sheet.GetColumnIndex("R1C1");
-                var name = sheet.GetValue(rowIndex, nameColumnIndex);
-
-                while (name != null)
-                {
-                    if (rowIndex == nHeaderRows + 1 || name != sheet.GetValue(rowIndex - 1, nameColumnIndex))
-                    {
-                        pipelineStartRowIndices.Add(rowIndex);
-                    }
-
-                    name = sheet.GetValue(++rowIndex, nameColumnIndex);
-                }
-
-                pipelineStartRowIndices.Add(rowIndex);
-
-                var pipelineIndex = 1;
-
-                while (pipelineIndex < pipelineStartRowIndices.Count)
-                {
-                    var pipelineStartRowIndex = pipelineStartRowIndices[pipelineIndex - 1];
-                    var pipelineEndRowIndex = pipelineStartRowIndices[pipelineIndex];
-
-                    var multiLocation = new LocationCollection();
-                    multiLocation.Name = sheet.GetValue(pipelineStartRowIndex, "R1C1") as string;
-
-                    var startYear = sheet.GetValue(pipelineStartRowIndex, "START");
-
-                    multiLocation.Properties["StartYear"] = Convert.ToInt32(sheet.GetValue(pipelineStartRowIndex, "START"));
-
-                    for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
-                    {
-                        multiLocation.Add(new Location
-                        {
-                            Latitude = (double) sheet.GetValue(rowIndex, "Latitude"),
-                            Longitude = (double) sheet.GetValue(rowIndex, "Longitude"),
-                            Name = sheet.GetValue(rowIndex, "section inlet").ToString()
-                        });
-                    }
-
-                    multiLocations.Add(multiLocation);
-
-                    pipelineIndex++;
-                }
-
-                return multiLocations;
-            }
         }
     }
 }

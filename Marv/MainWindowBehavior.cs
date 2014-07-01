@@ -27,8 +27,6 @@ namespace Marv
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        private object _lock = new object();
-
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -293,7 +291,7 @@ namespace Marv
         private void RetractAllButton_Click(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            window.SourceGraph.Value = window.SourceGraph.ClearEvidence();
+            window.SourceGraph.Belief = window.SourceGraph.ClearEvidence();
         }
 
         private void SectionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

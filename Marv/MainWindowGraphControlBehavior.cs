@@ -5,8 +5,7 @@ using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls;
-using Marv.Controls.Graph;
-using NLog;
+using Smile;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv
@@ -33,6 +32,27 @@ namespace Marv
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
         }
 
+        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
+        {
+            var graph = this.AssociatedObject.SourceGraph;
+            var window = this.AssociatedObject;
+
+            try
+            {
+                graph.Belief = graph.Run(vertex.Key, vertex.Evidence);
+            }
+            catch (SmileException)
+            {
+                window.Notifications.Push(new NotificationTimed
+                {
+                    Name = "Inconsistent Evidence",
+                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
+                });
+
+                graph.Belief = graph.ClearEvidence(vertex.Key);
+            }
+        }
+
         private void GraphControl_VertexCommandExecuted(object sender, VertexCommandArgs e)
         {
             if (e.Command == VertexCommands.SubGraph)
@@ -45,56 +65,6 @@ namespace Marv
             }
         }
 
-        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
-        {
-            var graph = this.AssociatedObject.SourceGraph;
-            var window = this.AssociatedObject;
-
-            try
-            {
-                graph.Value = graph.Run(vertex.Key, vertex.Value);
-            }
-            catch (Smile.SmileException)
-            {
-                window.Notifications.Push(new NotificationTimed
-                {
-                    Name = "Inconsistent Evidence",
-                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
-                });
-
-                graph.Value = graph.ClearEvidence(vertex.Key);
-            }
-        }
-
-        private void VertexChartPofCommand_Executed(object sender, Vertex e)
-        {
-            var window = this.AssociatedObject;
-            window.IsChartControlVisible = true;
-
-            var chartSeries = new ChartSeries<ScatterPoint>
-            {
-                Name = "Prob. of Failure",
-                Type = typeof(ScatterLineSeries)
-            };
-
-            foreach (var year in window.GraphValues.Keys)
-            {
-                var pof = window.GraphValues[year]["coatd"]["YEs"];
-
-                chartSeries.Add(new ScatterPoint
-                {
-                    XValue = year,
-                    YValue = pof
-                });
-            }
-
-            window.ChartSeries.Clear();
-            window.ChartSeries.Add(chartSeries);
-
-            ChartAxes.HorizontalLinearAxis.Title = "Time";
-            ChartAxes.VerticalLinearAxis.Title = "Probability of Failure";
-        }
-
         private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
         {
             var window = this.AssociatedObject;
@@ -103,7 +73,7 @@ namespace Marv
             var categoryPoints = new ChartSeries<CategoricalPoint>
             {
                 Name = vertex.Name,
-                Type = typeof(Telerik.Windows.Controls.ChartView.BarSeries),
+                Type = typeof (BarSeries),
             };
 
             foreach (var state in vertex.States)
@@ -132,10 +102,10 @@ namespace Marv
 
             var colorForYear = new Dictionary<int, Color>
             {
-                { 1973, Colors.Red },
-                { 1993, Colors.Green },
-                { 2004, Colors.Blue },
-                { 2011, Colors.Orange }
+                {1973, Colors.Red},
+                {1993, Colors.Green},
+                {2004, Colors.Blue},
+                {2011, Colors.Orange}
             };
 
             foreach (var year in colorForYear.Keys)
@@ -144,12 +114,12 @@ namespace Marv
                 {
                     Name = year.ToString(),
                     Stroke = new SolidColorBrush(colorForYear[year]),
-                    Type = typeof(ScatterSplineSeries),
+                    Type = typeof (ScatterSplineSeries),
                 };
 
                 foreach (var state in vertex.States)
                 {
-                    var x = (state.Min + state.Max) / 2;
+                    var x = (state.Min + state.Max)/2;
                     var y = window.GraphValues[year][vertex.Key][state.Key];
 
                     chartSeries.Add(new ScatterPoint
@@ -166,10 +136,39 @@ namespace Marv
             ChartAxes.VerticalLinearAxis.Title = "Probability";
         }
 
+        private void VertexChartPofCommand_Executed(object sender, Vertex e)
+        {
+            var window = this.AssociatedObject;
+            window.IsChartControlVisible = true;
+
+            var chartSeries = new ChartSeries<ScatterPoint>
+            {
+                Name = "Prob. of Failure",
+                Type = typeof (ScatterLineSeries)
+            };
+
+            foreach (var year in window.GraphValues.Keys)
+            {
+                var pof = window.GraphValues[year]["coatd"]["YEs"];
+
+                chartSeries.Add(new ScatterPoint
+                {
+                    XValue = year,
+                    YValue = pof
+                });
+            }
+
+            window.ChartSeries.Clear();
+            window.ChartSeries.Add(chartSeries);
+
+            ChartAxes.HorizontalLinearAxis.Title = "Time";
+            ChartAxes.VerticalLinearAxis.Title = "Probability of Failure";
+        }
+
         private void VertexClearCommand_Executed(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.SourceGraph;
-            graph.Value = graph.ClearEvidence(vertex.Key);
+            graph.Belief = graph.ClearEvidence(vertex.Key);
         }
     }
 }

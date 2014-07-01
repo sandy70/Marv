@@ -150,4 +150,3 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 *.suo
-packages/Smile/SmileNet.dll
