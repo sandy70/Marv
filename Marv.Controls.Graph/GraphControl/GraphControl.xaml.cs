@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Marv.Common;
 using Marv.Common.Graph;
+
+
 
 namespace Marv.Controls.Graph
 {
@@ -24,6 +29,8 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
+       
+
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
@@ -32,6 +39,8 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
+        
 
         public GraphControl()
         {
@@ -50,6 +59,8 @@ namespace Marv.Controls.Graph
                 this.SetValue(ConnectionColorProperty, value);
             }
         }
+
+        
 
         public Common.Graph.Graph Graph
         {
@@ -197,6 +208,9 @@ namespace Marv.Controls.Graph
 
             this.RunButton.Click -= RunButton_Click;
             this.RunButton.Click += RunButton_Click;
+
+            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
+            this.OpenNetworkButton.Click += OpenNetworkButton_Click;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex = null)
@@ -226,7 +240,32 @@ namespace Marv.Controls.Graph
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
+            
+            OpenFileDialog openDialog = new OpenFileDialog();
 
+            
+            openDialog.Filter = "Network Files (.net)|*.net";
+            openDialog.FilterIndex = 1;
+            openDialog.Multiselect = false;
+
+            if (openDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.Graph = Marv.Common.Graph.Graph.Read(openDialog.FileName);
+            this.Graph.Run();
+        }
+
+        private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+
+            saveDialog.Filter = "Network Files (.net)|*.net";
+            saveDialog.FilterIndex = 2;
+            saveDialog.RestoreDirectory = true;
+
+            saveDialog.ShowDialog();
         }
 
         public event EventHandler<Vertex> EvidenceEntered;
