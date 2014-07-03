@@ -46,8 +46,10 @@
                                                  CanUserSortColumns="False"
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
+                                                 SelectionMode="Extended"
+                                                 SelectionUnit="Cell"
                                                  RowIndicatorVisibility="Collapsed"
-                                                 ItemsSource="{Binding ElementName=Root, Path=InputRows}" />
+                                                 ItemsSource="{Binding ElementName=Root, Path=InputRows}" Margin="0,1,0,25" Grid.RowSpan="2" />
 
                             <UniformGrid Grid.Row="1"
                                          Rows="1">

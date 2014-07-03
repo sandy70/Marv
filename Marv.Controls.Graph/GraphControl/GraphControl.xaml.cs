@@ -29,8 +29,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
-       
-
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
@@ -211,6 +209,9 @@ namespace Marv.Controls.Graph
 
             this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
             this.OpenNetworkButton.Click += OpenNetworkButton_Click;
+
+            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
+            this.SaveNetworkButton.Click += SaveNetworkButton_Click;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex = null)
@@ -254,18 +255,13 @@ namespace Marv.Controls.Graph
             }
 
             this.Graph = Marv.Common.Graph.Graph.Read(openDialog.FileName);
+            this.Graph.FileName = openDialog.FileName;
             this.Graph.Run();
         }
 
         private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-
-            saveDialog.Filter = "Network Files (.net)|*.net";
-            saveDialog.FilterIndex = 2;
-            saveDialog.RestoreDirectory = true;
-
-            saveDialog.ShowDialog();
+            this.Graph.Write(this.Graph.FileName);
         }
 
         public event EventHandler<Vertex> EvidenceEntered;

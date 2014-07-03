@@ -23,6 +23,8 @@ namespace Marv.Common.Graph
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
+        public String FileName { get; set; }
+
         public Dictionary<string, string, double> Belief
         {
             get
