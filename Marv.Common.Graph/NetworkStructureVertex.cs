@@ -167,8 +167,8 @@ namespace Marv.Common.Graph
                                 states.Add(new State
                                 {
                                     Key = stateString,
-                                    Max = range.Max,
-                                    Min = range.Min
+                                    Max = range == null ? 0 : range.Max,
+                                    Min = range == null ? 0 : range.Min,
                                 });
 
                                 stateIndex++;
