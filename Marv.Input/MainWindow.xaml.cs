@@ -323,8 +323,7 @@ namespace Marv.Input
                         try
                         {
                             var evidence = this.LineEvidence[sectionId][year][this.SelectedVertex.Key];
-                            var evidenceString = evidence.ToString();
-                            row[year.ToString()] = evidenceString;
+                            row[year.ToString()] = evidence;
                         }
                         catch (KeyNotFoundException)
                         {
@@ -348,7 +347,6 @@ namespace Marv.Input
             else
             {
                 this.Graph.Run();
-                
                 
                 var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;

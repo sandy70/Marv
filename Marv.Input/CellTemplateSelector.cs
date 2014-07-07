@@ -15,17 +15,12 @@ namespace Marv.Input
         {
             try
             {
-                var window = Application.Current.MainWindow as MainWindow;
-                var lineEvidence = window.LineEvidence;
-                var selectedVertex = window.SelectedVertex;
-
                 var row = item as dynamic;
-                var sectionId = row["Section ID"] as string;
 
                 var cell = container as GridViewCell;
-                var year = Convert.ToInt32((string) cell.Column.Header);
+                var year = (string) cell.Column.Header;
 
-                var evidence = lineEvidence[sectionId][year][selectedVertex.Key];
+                var evidence = row[year];
 
                 if (evidence is VertexEvidence)
                 {
