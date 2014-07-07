@@ -11,8 +11,8 @@ namespace Marv
 {
     public class PipelineInput
     {
-        private Dictionary<string, int> columnIndices = new Dictionary<string, int>();
-        private ExcelWorksheet sheet;
+        private readonly Dictionary<string, int> columnIndices = new Dictionary<string, int>();
+        private readonly ExcelWorksheet sheet;
 
         public PipelineInput(string fileName)
         {
@@ -81,7 +81,7 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex, evidenceString);
+                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
 
                         if (evidence != null)
                         {
@@ -110,7 +110,7 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex,  evidenceString);
+                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
 
                         if (evidence != null)
                         {

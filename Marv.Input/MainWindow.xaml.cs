@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -33,7 +34,7 @@ namespace Marv.Input
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
-        private Dictionary<string, int, string, IVertexEvidence> lineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
+        public Dictionary<string, int, string, IVertexEvidence> LineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
         
         public int EndYear
         {
@@ -170,7 +171,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.lineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
+            this.LineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
         }
@@ -204,7 +205,7 @@ namespace Marv.Input
                         var sectionId = row["Section ID"] as string;
                         var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                        var evidence = this.lineEvidence.GetValueOrNew(sectionId, year);
+                        var evidence = this.LineEvidence.GetValueOrNew(sectionId, year);
 
                         this.Graph.SetEvidence(evidence);
                     }
@@ -241,6 +242,9 @@ namespace Marv.Input
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
+            this.InputGridView.AutoGeneratingColumn -= InputGridView_AutoGeneratingColumn;
+            this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
+
             this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
@@ -250,6 +254,11 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
+        }
+
+        void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -262,20 +271,20 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.lineEvidence = Utils.ReadJson<Dictionary<string, int, string, IVertexEvidence>>(dialog.FileName);
+            this.LineEvidence = Utils.ReadJson<Dictionary<string, int, string, IVertexEvidence>>(dialog.FileName);
 
             var inputRows = new ObservableCollection<dynamic>();
 
-            foreach (var section in this.lineEvidence.Keys)
+            foreach (var section in this.LineEvidence.Keys)
             {
                 var row = new Dynamic();
                 row["Section ID"] = section;
 
-                var sectionEvidence = this.lineEvidence[section];
+                var sectionEvidence = this.LineEvidence[section];
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    row[year.ToString()] = this.lineEvidence[section][year];
+                    row[year.ToString()] = this.LineEvidence[section][year];
                 }
 
                 inputRows.Add(row);
@@ -298,7 +307,7 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.lineEvidence.WriteJson("marv.input");
+            this.LineEvidence.WriteJson("marv.input");
         }
 
         private void UpdateGrid()
@@ -313,7 +322,7 @@ namespace Marv.Input
                     {
                         try
                         {
-                            var evidence = this.lineEvidence[sectionId][year][this.SelectedVertex.Key];
+                            var evidence = this.LineEvidence[sectionId][year][this.SelectedVertex.Key];
                             var evidenceString = evidence.ToString();
                             row[year.ToString()] = evidenceString;
                         }
@@ -346,11 +355,8 @@ namespace Marv.Input
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
-                    this.lineEvidence[sectionId, year] = this.Graph.GetEvidence();
+                    this.LineEvidence[sectionId, year] = this.Graph.GetEvidence();
                 }  
-                
-
-                
             }
         }
 
