@@ -49,9 +49,11 @@
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
                                                  SelectionMode="Extended"
+                                                 ClipboardPasteMode="AllSelectedCells"
                                                  SelectionUnit="Cell"
                                                  RowIndicatorVisibility="Collapsed"
                                                  ItemsSource="{Binding ElementName=Root, Path=InputRows}">
+                               
                                 <telerik:RadGridView.Resources>
                                     <local:CellTemplateSelector x:Key="CellTemplateSelector">
                                         <local:CellTemplateSelector.VertexEvidenceTemplate>

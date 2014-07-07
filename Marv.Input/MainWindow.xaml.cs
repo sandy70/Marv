@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -124,7 +125,14 @@ namespace Marv.Input
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             var row = new Dynamic();
-            row["Section ID"] = "Section " + (this.InputRows.Count + 1);
+            try
+            {
+                row["Section ID"] = "Section " + (this.InputRows.Count + 1);
+            }
+            catch (NullReferenceException)
+            {
+                return;
+            }
 
             for (var year = this.StartYear; year <= this.EndYear; year++)
             {
@@ -245,6 +253,8 @@ namespace Marv.Input
             this.InputGridView.AutoGeneratingColumn -= InputGridView_AutoGeneratingColumn;
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
 
+            this.InputGridView.Pasting += InputGridView_Pasting;
+
             this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
@@ -258,7 +268,20 @@ namespace Marv.Input
 
         void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
-            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+        }
+
+        private int GetLinesFromClipboard(String text)
+        {
+            return text.Split('\n').Length - 1;
+        }
+
+        private void InputGridView_Pasting(object sender, GridViewClipboardEventArgs e)
+        {
+            if ((GetLinesFromClipboard(Clipboard.GetText()) > this.InputRows.Count))
+            {
+                e.Cancel = true;
+            }
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
