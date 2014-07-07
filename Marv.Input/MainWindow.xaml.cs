@@ -243,6 +243,8 @@ namespace Marv.Input
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
+            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
+
             this.InputGridView.AutoGeneratingColumn -= InputGridView_AutoGeneratingColumn;
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
 
@@ -255,6 +257,11 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
+        }
+
+        void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateGrid();
         }
 
         void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)

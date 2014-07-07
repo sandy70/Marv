@@ -17,14 +17,14 @@
                 <telerik:RadSplitContainer>
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Network">
-                            
+
                             <!-- GraphControl -->
                             <marv:GraphControl Name="GraphControl"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph}"
                                                IsEnabled="False"
                                                SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
-                            
+
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
@@ -106,7 +106,7 @@
                                 <telerik:RadButton Name="CreateInputButton"
                                                    Content="Create"
                                                    Margin="2" />
-                                
+
                                 <telerik:RadButton Name="AddSectionButton"
                                                    Content="Add Section"
                                                    Margin="2" />
@@ -145,7 +145,7 @@
                                                      SelectedIndex="0"
                                                      SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
                                                      TextSearchMode="Contains" />
-                                
+
                                 <!-- Vertex Control -->
                                 <marv:VertexControl Name="VertexControl"
                                                     Grid.Row="1"
@@ -180,10 +180,10 @@
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
-        
+
         <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
                                   Margin="16"
-                                  Notifications="{Binding ElementName=Root, Path=Notifications}" >
+                                  Notifications="{Binding ElementName=Root, Path=Notifications}">
             <marv:NotificationControl.Effect>
                 <DropShadowEffect Opacity="0.5" />
             </marv:NotificationControl.Effect>
