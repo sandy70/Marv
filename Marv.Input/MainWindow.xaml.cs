@@ -35,7 +35,7 @@ namespace Marv.Input
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, IVertexEvidence> LineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
-
+        
         public int EndYear
         {
             get
@@ -229,6 +229,7 @@ namespace Marv.Input
         {
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
+            this.Graph.FileName = Settings.Default.FileName;
             this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;

@@ -38,7 +38,7 @@
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
-                            SelectionMode="Single">
+                            SelectionMode="Single" Margin="10,-31,-10,31">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
@@ -107,41 +107,63 @@
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom" />-->
 
-        <StackPanel Margin="5"
+        <telerik:RadToolBar Margin="0"
                     Grid.Row="0"
-                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    
+                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
                     Orientation="Horizontal">
             <telerik:RadButton Name="BackButton"
-                               Height="50" Width="50"
-                               Margin="4"
+                               Height="30" Width="30"
+                               Margin="2"
                                Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}" IsCancel="True">
                 <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
             </telerik:RadButton>
 
             <telerik:RadButton Name="ExpandButton"
-                               Height="50" Width="50"
-                               Margin="4">
+                               Height="30" Width="30"
+                               Margin="2"
+                               ToolTip="Expand network for more information.">
                 <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
             </telerik:RadButton>
 
             <telerik:RadToggleButton Name="ConnectorButton"
-                                     Height="50" Width="50"
-                                     Margin="4"
+                                     Height="30" Width="30"
+                                     Margin="2"
                                      ToolTip="Edit connections tool.">
                 <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
             </telerik:RadToggleButton>
 
             <telerik:RadButton Name="ClearEvidenceButton"
-                               Height="50" Width="50"
-                               Margin="4">
+                               Height="30" Width="30"
+                               Margin="2"
+                               ToolTip="Clears the evidence in the network."
+                               >
                 <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
             </telerik:RadButton>
 
             <telerik:RadButton Name="RunButton"
-                               Height="50" Width="50"
-                               Margin="4">
+                               Height="30" Width="30"
+                               Margin="2"
+                               ToolTip="Runs the evidence into the network."
+                               >
                 <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
             </telerik:RadButton>
-        </StackPanel>
+            
+            <telerik:RadButton Name="OpenNetworkButton"
+                               Height="25" Width="25"
+                               Margin="4"
+                               ToolTip="Opens a preexisting network."
+                               >
+                <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
+            </telerik:RadButton>
+
+            <telerik:RadButton Name="SaveNetworkButton"
+                               Height="25" Width="25"
+                               Margin="4"
+                               ToolTip="Saves the current network."
+                               >
+                <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+            </telerik:RadButton>
+        </telerik:RadToolBar>
     </Grid>
 </UserControl>

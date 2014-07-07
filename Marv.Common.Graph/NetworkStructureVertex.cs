@@ -48,15 +48,6 @@ namespace Marv.Common.Graph
             return false;
         }
 
-        public T ParseJson<T>(string propertyName) where T : new()
-        {
-            if (this.Properties.ContainsKey(propertyName))
-            {
-                return this.Properties[propertyName].Dequote().ParseJson<T>();
-            }
-            return new T();
-        }
-
         public Point ParsePosition()
         {
             var posValueString = this.Properties["position"];
@@ -172,20 +163,12 @@ namespace Marv.Common.Graph
                             if (isReading)
                             {
                                 var range = this.ParseStateRange(stateIndex);
-                                var max = 0.0;
-                                var min = 0.0;
-
-                                if (range != null)
-                                {
-                                    max = range.Max;
-                                    min = range.Min;
-                                }
 
                                 states.Add(new State
                                 {
                                     Key = stateString,
-                                    Max = max,
-                                    Min = min
+                                    Max = range == null ? 0 : range.Max,
+                                    Min = range == null ? 0 : range.Min,
                                 });
 
                                 stateIndex++;
@@ -232,6 +215,15 @@ namespace Marv.Common.Graph
                 return VertexType.Interval;
             }
             return VertexType.Labelled;
+        }
+
+        public T ParseJson<T>(string propertyName) where T : new()
+        {
+            if (this.Properties.ContainsKey(propertyName))
+            {
+                return this.Properties[propertyName].Dequote().ParseJson<T>();
+            }
+            return new T();
         }
     }
 }

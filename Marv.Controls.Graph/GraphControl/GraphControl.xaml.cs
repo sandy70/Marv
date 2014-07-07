@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Marv.Common;
 using Marv.Common.Graph;
+
+
 
 namespace Marv.Controls.Graph
 {
@@ -33,6 +38,8 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
+        
+
         public GraphControl()
         {
             InitializeComponent();
@@ -50,6 +57,8 @@ namespace Marv.Controls.Graph
                 this.SetValue(ConnectionColorProperty, value);
             }
         }
+
+        
 
         public Common.Graph.Graph Graph
         {
@@ -197,6 +206,12 @@ namespace Marv.Controls.Graph
 
             this.RunButton.Click -= RunButton_Click;
             this.RunButton.Click += RunButton_Click;
+
+            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
+            this.OpenNetworkButton.Click += OpenNetworkButton_Click;
+
+            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
+            this.SaveNetworkButton.Click += SaveNetworkButton_Click;
         }
 
         public void RaiseEvidenceEntered(Vertex vertex = null)
@@ -222,6 +237,31 @@ namespace Marv.Controls.Graph
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Run();
+        }
+
+        private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            OpenFileDialog openDialog = new OpenFileDialog();
+
+            
+            openDialog.Filter = "Network Files (.net)|*.net";
+            openDialog.FilterIndex = 1;
+            openDialog.Multiselect = false;
+
+            if (openDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.Graph = Marv.Common.Graph.Graph.Read(openDialog.FileName);
+            this.Graph.FileName = openDialog.FileName;
+            this.Graph.Run();
+        }
+
+        private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Write(this.Graph.FileName);
         }
 
         public event EventHandler<Vertex> EvidenceEntered;
