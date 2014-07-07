@@ -46,6 +46,8 @@
                                                  AutoGenerateColumns="True"
                                                  CanUserReorderColumns="False"
                                                  CanUserSortColumns="False"
+                                                 EnableColumnVirtualization="False"
+                                                 EnableRowVirtualization="False"
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
                                                  SelectionMode="Extended"
@@ -56,13 +58,19 @@
                                     <local:CellTemplateSelector x:Key="CellTemplateSelector">
                                         <local:CellTemplateSelector.VertexEvidenceTemplate>
                                             <DataTemplate>
-                                                <Ellipse Height="20" Width="20" Fill="Red" Stroke="Green" />
+                                                <StackPanel Orientation="Vertical">
+                                                    <telerik:RadColumnSparkline ItemsSource="{Binding Tag, RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}}"
+                                                                                XValuePath="XValue"
+                                                                                YValuePath="YValue"
+                                                                                Height="20"
+                                                                                Width="60" />
+                                                </StackPanel>
                                             </DataTemplate>
                                         </local:CellTemplateSelector.VertexEvidenceTemplate>
 
                                         <local:CellTemplateSelector.VertexEvidenceStringTemplate>
                                             <DataTemplate>
-                                                <Ellipse Height="20" Width="20" Fill="Red" Stroke="Yellow" />
+                                                <TextBlock Text="{Binding Tag, RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}}" />
                                             </DataTemplate>
                                         </local:CellTemplateSelector.VertexEvidenceStringTemplate>
                                     </local:CellTemplateSelector>

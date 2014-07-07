@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -259,6 +260,8 @@ namespace Marv.Input
         void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            var x = this.InputGridView;
+            var a = 1 + 1;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -307,7 +310,8 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.LineEvidence.WriteJson("marv.input");
+            // this.LineEvidence.WriteJson("marv.input");
+            Console.WriteLine(this.InputGridView.CurrentCell.DataContext);
         }
 
         private void UpdateGrid()

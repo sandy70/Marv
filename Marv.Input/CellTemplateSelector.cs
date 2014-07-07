@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows.Controls.GridView;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -22,14 +24,12 @@ namespace Marv.Input
 
                 var evidence = row[year];
 
+                var gridViewCell = container as GridViewCell;
+
                 if (evidence is VertexEvidence)
                 {
+                    gridViewCell.Tag = (evidence as VertexEvidence).Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val.Value}).ToList();
                     return this.VertexEvidenceTemplate;
-                }
-
-                if (evidence is VertexEvidenceString)
-                {
-                    return this.VertexEvidenceStringTemplate;
                 }
             }
             catch(Exception exp)
