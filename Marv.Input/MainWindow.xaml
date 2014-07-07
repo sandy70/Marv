@@ -48,6 +48,8 @@
                                                  CanUserSortColumns="False"
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
+                                                 SelectionMode="Extended"
+                                                 SelectionUnit="Cell"
                                                  RowIndicatorVisibility="Collapsed"
                                                  ItemsSource="{Binding ElementName=Root, Path=InputRows}">
                                 <telerik:RadGridView.Resources>
