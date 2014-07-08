@@ -152,8 +152,7 @@
                                          Locations="{Binding Earthquakes, ElementName=Root}"
                                          Opacity="0.8" />
 
-                    <Label
-                        mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                    <Label mapcontrol:MapPanel.Location="{Binding Earthquakes.SelectedItem, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
                         Background="Gray"
                         Content="{Binding Earthquakes.SelectedItem.Value, ElementName=Root}"
                         Height="30" Width="100"
@@ -330,7 +329,7 @@
                                        Grid.Row="0"
                                        Background="Transparent"
                                        ConnectionColor="#252525"
-                                       Graph="{Binding DisplayGraph, ElementName=Root}"
+                                       Graph="{Binding Graph, ElementName=Root}"
                                        IncomingConnectionHighlightColor="#b11d01"
                                        OutgoingConnectionHighlightColor="#20aeff" />
 

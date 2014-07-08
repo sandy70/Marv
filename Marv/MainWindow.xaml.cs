@@ -209,22 +209,22 @@ namespace Marv
 
         public void UpdateGraphValue()
         {
-            if (this.SourceGraph != null)
+            if (this.Graph != null)
             {
                 if (this.GraphValues != null)
                 {
                     if (this.GraphValues.ContainsKey(this.SelectedYear))
                     {
-                        this.SourceGraph.Belief = this.GraphValues[this.SelectedYear];
+                        this.Graph.Belief = this.GraphValues[this.SelectedYear];
                     }
                     else
                     {
-                        this.SourceGraph.Belief = null;
+                        this.Graph.Belief = null;
                     }
                 }
                 else
                 {
-                    this.SourceGraph.Belief = null;
+                    this.Graph.Belief = null;
                 }
             }
         }
