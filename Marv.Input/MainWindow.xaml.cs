@@ -8,6 +8,7 @@ using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
+using Telerik.Windows;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -34,6 +35,7 @@ namespace Marv.Input
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+        private GridViewCellClipboardEventArgs cellClipboardEventArgs;
 
         public int EndYear
         {
@@ -185,60 +187,6 @@ namespace Marv.Input
             this.UpdateGrid();
         }
 
-        private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
-        {
-            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
-        }
-
-        private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
-        {
-            if (e.Cell.Column.DisplayIndex <= 0) return;
-            
-            this.SelectedVertex.EvidenceString = e.NewData as string;
-            this.SelectedVertex.UpdateEvidence();
-            this.UpdateModelEvidence();
-
-            var row = e.Cell.ParentRow.DataContext as Dynamic;
-            var year = (string) e.Cell.Column.Header;
-            row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-        }
-
-        private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
-        {
-            if (e.NewCell != null)
-            {
-                this.GraphControl.IsEnabled = true;
-                this.VertexControl.IsEnabled = true;
-
-                try
-                {
-                    var row = e.NewCell.ParentRow.DataContext as Dynamic;
-
-                    if (row != null)
-                    {
-                        var sectionId = row["Section ID"] as string;
-                        var year = Convert.ToInt32((string) e.NewCell.Column.Header);
-
-                        var evidence = this.LineEvidence.GetValueOrNew(sectionId, year);
-
-                        this.Graph.SetEvidence(evidence);
-                    }
-
-                    this.Graph.Run();
-                }
-                catch (FormatException)
-                {
-                    this.VertexControl.IsEnabled = false;
-                    this.GraphControl.IsEnabled = false;
-                }
-            }
-            else
-            {
-                this.GraphControl.IsEnabled = false;
-                this.VertexControl.IsEnabled = false;
-            }
-        }
-
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Read the graph
@@ -258,43 +206,14 @@ namespace Marv.Input
 
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
-            
+
             this.InputGridView.Pasted += InputGridView_Pasted;
-            this.InputGridView.Pasting += InputGridView_Pasting;
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
 
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-        }
-
-        void InputGridView_Pasting(object sender, GridViewClipboardEventArgs e)
-        {
-            Console.Write(e);
-        }
-
-        void InputGridView_Pasted(object sender, Telerik.Windows.RadRoutedEventArgs e)
-        {
-            if (this.cellClipboardEventArgs != null)
-            {
-                this.SelectedVertex.EvidenceString = cellClipboardEventArgs.Value as string;
-                this.SelectedVertex.UpdateEvidence();
-                this.UpdateModelEvidence();
-
-                var row = cellClipboardEventArgs.Cell.Item as Dynamic;
-                var year = (string)cellClipboardEventArgs.Cell.Column.Header;
-                row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-
-                this.cellClipboardEventArgs = null;
-            }
-        }
-
-        private GridViewCellClipboardEventArgs cellClipboardEventArgs = null;
-
-        void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
-        {
-            this.cellClipboardEventArgs = e;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
