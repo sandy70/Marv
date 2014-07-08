@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -250,6 +251,8 @@ namespace Marv.Input
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
+            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
+
             this.InputGridView.AutoGeneratingColumn -= InputGridView_AutoGeneratingColumn;
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
 
@@ -266,8 +269,14 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
+        void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateGrid();
+        }
+
         void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
+<<<<<<< HEAD
              e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
@@ -282,6 +291,11 @@ namespace Marv.Input
             {
                 e.Cancel = true;
             }
+=======
+            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            var x = this.InputGridView;
+            var a = 1 + 1;
+>>>>>>> upstream/master
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -330,7 +344,8 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.LineEvidence.WriteJson("marv.input");
+            // this.LineEvidence.WriteJson("marv.input");
+            Console.WriteLine(this.InputGridView.CurrentCell.DataContext);
         }
 
         private void UpdateGrid()
@@ -346,8 +361,7 @@ namespace Marv.Input
                         try
                         {
                             var evidence = this.LineEvidence[sectionId][year][this.SelectedVertex.Key];
-                            var evidenceString = evidence.ToString();
-                            row[year.ToString()] = evidenceString;
+                            row[year.ToString()] = evidence;
                         }
                         catch (KeyNotFoundException)
                         {
@@ -371,7 +385,6 @@ namespace Marv.Input
             else
             {
                 this.Graph.Run();
-                
                 
                 var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;

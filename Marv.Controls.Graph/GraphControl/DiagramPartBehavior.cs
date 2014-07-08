@@ -14,11 +14,22 @@ namespace Marv.Controls.Graph
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private Edge newEdge;
         private Vertex newVertex;
         private Edge oldEdge;
         private Vertex oldVertex;
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
+            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
+            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
+            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
+            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
+        }
 
         private void AssociatedObject_CommandExecuted(object sender, CommandRoutedEventArgs e)
         {
@@ -152,17 +163,6 @@ namespace Marv.Controls.Graph
             };
 
             timer.Start();
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-
-            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
-            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
-            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
-            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
-            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
         }
     }
 }

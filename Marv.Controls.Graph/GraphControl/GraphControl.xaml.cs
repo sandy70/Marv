@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Marv.Common;
 using Marv.Common.Graph;
-
-
+using System.Linq;
 
 namespace Marv.Controls.Graph
 {
@@ -38,14 +36,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
-        
-
-        public GraphControl()
-        {
-            InitializeComponent();
-            this.Loaded += GraphControl_Loaded;
-        }
-
         public Color ConnectionColor
         {
             get
@@ -57,8 +47,6 @@ namespace Marv.Controls.Graph
                 this.SetValue(ConnectionColorProperty, value);
             }
         }
-
-        
 
         public Common.Graph.Graph Graph
         {
@@ -147,6 +135,12 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public GraphControl()
+        {
+            InitializeComponent();
+            this.Loaded += GraphControl_Loaded;
+        }
+
         public void AutoFit()
         {
             var timer = new DispatcherTimer
@@ -163,17 +157,6 @@ namespace Marv.Controls.Graph
             timer.Start();
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
-        }
-
-        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.Evidence = null;
-            this.RaiseEvidenceEntered();
-        }
-
         public void DisableConnectorEditing()
         {
             this.IsVerticesEnabled = true;
@@ -186,6 +169,45 @@ namespace Marv.Controls.Graph
             this.IsVerticesEnabled = false;
             this.DiagramPart.IsConnectorsManipulationEnabled = true;
             this.DiagramPart.IsManipulationAdornerVisible = true;
+        }
+
+        public void RaiseEvidenceEntered(Vertex vertex = null)
+        {
+            if (this.EvidenceEntered != null)
+            {
+                this.EvidenceEntered(this, vertex);
+            }
+        }
+
+        public void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
+        {
+            if (this.VertexCommandExecuted != null)
+            {
+                this.VertexCommandExecuted(this, new VertexCommandArgs
+                {
+                    Command = command,
+                    Vertex = vertex
+                });
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
+        }
+
+        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Evidence = null;
+            this.RaiseEvidenceEntered();
+        }
+
+        private void DiagramPart_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            {
+                this.RaiseSelectionChanged(e.AddedItems[0] as Vertex);
+            }
         }
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
@@ -212,39 +234,16 @@ namespace Marv.Controls.Graph
 
             this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
             this.SaveNetworkButton.Click += SaveNetworkButton_Click;
-        }
 
-        public void RaiseEvidenceEntered(Vertex vertex = null)
-        {
-            if (this.EvidenceEntered != null)
-            {
-                this.EvidenceEntered(this, vertex);
-            }
-        }
-
-        public void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
-        {
-            if (this.VertexCommandExecuted != null)
-            {
-                this.VertexCommandExecuted(this, new VertexCommandArgs
-                {
-                    Command = command,
-                    Vertex = vertex
-                });
-            }
-        }
-
-        private void RunButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.Run();
+            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
+            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
         }
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            
-            OpenFileDialog openDialog = new OpenFileDialog();
+            var openDialog = new OpenFileDialog();
 
-            
+
             openDialog.Filter = "Network Files (.net)|*.net";
             openDialog.FilterIndex = 1;
             openDialog.Multiselect = false;
@@ -254,8 +253,21 @@ namespace Marv.Controls.Graph
                 return;
             }
 
-            this.Graph = Marv.Common.Graph.Graph.Read(openDialog.FileName);
+            this.Graph = Common.Graph.Graph.Read(openDialog.FileName);
             this.Graph.FileName = openDialog.FileName;
+            this.Graph.Run();
+        }
+
+        private void RaiseSelectionChanged(Vertex vertex)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, vertex);
+            }
+        }
+
+        private void RunButton_Click(object sender, RoutedEventArgs e)
+        {
             this.Graph.Run();
         }
 
@@ -267,5 +279,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<Vertex> EvidenceEntered;
 
         public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
+
+        public event EventHandler<Vertex> SelectionChanged;
     }
 }
