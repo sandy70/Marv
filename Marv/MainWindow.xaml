@@ -174,7 +174,7 @@
                                          SearchBoxVisibility="Collapsed"
                                          SortAndGroupButtonsVisibility="Collapsed"
                                          Width="350">
-                    
+
                     <telerik:RadPropertyGrid.PropertyDefinitions>
                         <telerik:PropertyDefinition Binding="{Binding Latitude}"
                                                     DisplayName="Latitude" />
@@ -188,7 +188,7 @@
                         <telerik:PropertyDefinition Binding="{Binding Value}"
                                                     DisplayName="PoF" />
                     </telerik:RadPropertyGrid.PropertyDefinitions>
-                    
+
                 </telerik:RadPropertyGrid>
 
                 <!-- Pipeline Info Control -->
@@ -333,18 +333,6 @@
                                        Graph="{Binding DisplayGraph, ElementName=Root}"
                                        IncomingConnectionHighlightColor="#b11d01"
                                        OutgoingConnectionHighlightColor="#20aeff" />
-
-                    <!-- Graph Toolbar -->
-                    <StackPanel Grid.Row="0"
-                                Effect="{StaticResource ResourceKey=DropShadow}"
-                                HorizontalAlignment="Left" VerticalAlignment="Top"
-                                Orientation="Vertical">
-                        <!-- Retract All Button -->
-                        <marv:SurfaceImageButton Name="RetractAllButton"
-                                                 Height="50" Width="50"
-                                                 Margin="5"
-                                                 Source="/Marv.Common;component/Resources/Icons/Close.png" />
-                    </StackPanel>
 
                     <!-- Year Label and Year Slider -->
                     <Grid Grid.Row="1"
