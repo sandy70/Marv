@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -35,8 +33,8 @@ namespace Marv.Input
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
-        public Dictionary<string, int, string, IVertexEvidence> LineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
-        
+        public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+
         public int EndYear
         {
             get
@@ -172,7 +170,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.LineEvidence = new Dictionary<string, int, string, IVertexEvidence>();
+            this.LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
         }
@@ -182,13 +180,27 @@ namespace Marv.Input
             this.UpdateModelEvidence();
         }
 
+        private void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateGrid();
+        }
+
+        private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+        }
+
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             if (e.Cell.Column.DisplayIndex <= 0) return;
-
+            
             this.SelectedVertex.EvidenceString = e.NewData as string;
             this.SelectedVertex.UpdateEvidence();
             this.UpdateModelEvidence();
+
+            var row = e.Cell.ParentRow.DataContext as Dynamic;
+            var year = (string) e.Cell.Column.Header;
+            row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -200,7 +212,7 @@ namespace Marv.Input
 
                 try
                 {
-                    var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
+                    var row = e.NewCell.ParentRow.DataContext as Dynamic;
 
                     if (row != null)
                     {
@@ -241,33 +253,47 @@ namespace Marv.Input
             this.CreateInputButton.Click -= CreateInputButton_Click;
             this.CreateInputButton.Click += CreateInputButton_Click;
 
-            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
-
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
 
-            this.InputGridView.AutoGeneratingColumn -= InputGridView_AutoGeneratingColumn;
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
+            this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
+            
+            this.InputGridView.Pasted += InputGridView_Pasted;
+            this.InputGridView.Pasting += InputGridView_Pasting;
+            this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
 
-            this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
-            this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
-
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
-
-            this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
-        void GraphControl_SelectionChanged(object sender, Vertex e)
+        void InputGridView_Pasting(object sender, GridViewClipboardEventArgs e)
         {
-            this.UpdateGrid();
+            Console.Write(e);
         }
 
-        void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        void InputGridView_Pasted(object sender, Telerik.Windows.RadRoutedEventArgs e)
         {
-            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            if (this.cellClipboardEventArgs != null)
+            {
+                this.SelectedVertex.EvidenceString = cellClipboardEventArgs.Value as string;
+                this.SelectedVertex.UpdateEvidence();
+
+                var row = cellClipboardEventArgs.Cell.Item as Dynamic;
+                var year = (string)cellClipboardEventArgs.Cell.Column.Header;
+                row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+
+                this.cellClipboardEventArgs = null;
+            }
+        }
+
+        private GridViewCellClipboardEventArgs cellClipboardEventArgs = null;
+
+        void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
+        {
+            this.cellClipboardEventArgs = e;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -280,7 +306,7 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.LineEvidence = Utils.ReadJson<Dictionary<string, int, string, IVertexEvidence>>(dialog.FileName);
+            this.LineEvidence = Utils.ReadJson<Dictionary<string, int, string, VertexEvidence>>(dialog.FileName);
 
             var inputRows = new ObservableCollection<dynamic>();
 
@@ -298,7 +324,7 @@ namespace Marv.Input
 
                 inputRows.Add(row);
             }
-            
+
             this.InputRows = inputRows;
 
             var item = this.InputGridView.Items[0];
@@ -356,14 +382,14 @@ namespace Marv.Input
             else
             {
                 this.Graph.Run();
-                
-                var year = Convert.ToInt32((string)this.InputGridView.CurrentCell.Column.Header);
+
+                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
                     this.LineEvidence[sectionId, year] = this.Graph.GetEvidence();
-                }  
+                }
             }
         }
 
