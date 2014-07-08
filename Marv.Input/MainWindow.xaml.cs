@@ -187,6 +187,7 @@ namespace Marv.Input
             if (e.Cell.Column.DisplayIndex <= 0) return;
 
             this.SelectedVertex.EvidenceString = e.NewData as string;
+            this.SelectedVertex.UpdateEvidence();
             this.UpdateModelEvidence();
         }
 
