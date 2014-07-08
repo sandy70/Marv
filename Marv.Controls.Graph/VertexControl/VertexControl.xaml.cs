@@ -146,6 +146,16 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void RaiseEvidenceChanged()
+        {
+            if (this.EvidenceChanged != null)
+            {
+                this.EvidenceChanged(this, this.Vertex);
+            }
+
+            this.RaiseEvidenceEntered();
+        }
+
         public void RaiseEvidenceEntered()
         {
             if (this.EvidenceEntered != null)
@@ -154,48 +164,47 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseEvidenceStringEntered()
+        public void RaiseEvidenceStringChanged()
         {
-            if (this.EvidenceStringEntered != null)
+            if (this.EvidenceStringChanged != null)
             {
-                this.EvidenceStringEntered(this, this.Vertex.EvidenceString);
+                this.EvidenceStringChanged(this, this.Vertex);
             }
+
+            this.RaiseEvidenceEntered();
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.Evidence = null;
-            this.Vertex.EvidenceString = null;
-
-            this.RaiseEvidenceEntered();
-            this.RaiseEvidenceStringEntered();
+            this.RaiseEvidenceChanged();
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.RaiseEvidenceStringEntered();
+            this.RaiseEvidenceStringChanged();
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.SetEvidenceUniform();
-            this.RaiseEvidenceEntered();
+            this.RaiseEvidenceChanged();
         }
 
-        private void VertexControl_EvidenceEntered(object sender, Vertex e)
+        private void VertexControl_EvidenceChanged(object sender, Vertex e)
         {
             this.Vertex.UpdateEvidenceString();
         }
 
-        private void VertexControl_EvidenceStringEntered(object sender, string e)
+        private void VertexControl_EvidenceStringChanged(object sender, Vertex e)
         {
             this.Vertex.UpdateEvidence();
         }
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.EvidenceEntered += VertexControl_EvidenceEntered;
-            this.EvidenceStringEntered += VertexControl_EvidenceStringEntered;
+            this.EvidenceChanged += this.VertexControl_EvidenceChanged;
+            this.EvidenceStringChanged += this.VertexControl_EvidenceStringChanged;
 
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
             this.EvidenceStringTextBox.KeyUp += EvidenceStringTextBox_KeyUp;
@@ -204,8 +213,10 @@ namespace Marv.Controls.Graph
 
         public event EventHandler<Command<Vertex>> CommandExecuted;
 
-        public event EventHandler<Vertex> EvidenceEntered;
+        public event EventHandler<Vertex> EvidenceChanged;
 
-        public event EventHandler<string> EvidenceStringEntered;
+        public event EventHandler<Vertex> EvidenceStringChanged;
+
+        public event EventHandler<Vertex> EvidenceEntered;
     }
 }
