@@ -17,7 +17,7 @@ namespace Marv.Controls.Graph
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var command = this.AssociatedObject.DataContext as Command<Vertex>;
-            
+
             var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
             var vertex = vertexControl.Vertex;
 
@@ -27,7 +27,7 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.Lock && vertex.IsLocked)
             {
-                vertexControl.RaiseEvidenceEntered();
+                vertexControl.RaiseEvidenceChanged();
             }
         }
     }

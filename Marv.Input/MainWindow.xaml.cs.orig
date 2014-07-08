@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+<<<<<<< HEAD
+using System.Windows.Controls;
 using System.Windows.Input;
+=======
+>>>>>>> upstream/master
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -214,8 +218,15 @@ namespace Marv.Input
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
 
+<<<<<<< HEAD
+            this.InputGridView.Pasting += InputGridView_Pasting;
+
+            this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
+            this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
+=======
             this.InputGridView.Pasted += InputGridView_Pasted;
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
+>>>>>>> upstream/master
 
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
@@ -223,6 +234,14 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
+<<<<<<< HEAD
+        void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateGrid();
+        }
+
+        void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
 <<<<<<< HEAD
              e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
@@ -238,6 +257,13 @@ namespace Marv.Input
             {
                 e.Cancel = true;
             }
+=======
+            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            var x = this.InputGridView;
+            var a = 1 + 1;
+>>>>>>> upstream/master
+        }
+
 =======
 >>>>>>> upstream/master
         private void OpenButton_Click(object sender, RoutedEventArgs e)

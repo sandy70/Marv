@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ namespace Marv
 {
     internal class MainWindowBehavior : Behavior<MainWindow>
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         protected override void OnAttached()
         {
@@ -39,7 +38,7 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
         {
-            this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.NetworkFileName);
+            this.AssociatedObject.Graph.Write(this.AssociatedObject.NetworkFileName);
             Settings.Default.Save();
         }
 
@@ -73,7 +72,7 @@ namespace Marv
 
             window.EditNetworkFilesMenuItem.Click += this.EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += this.EditSettingsMenuItem_Click;
-
+            window.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             window.LocationRunModelMenuItem.Click += this.LocationRunModelMenuItem_Click;
             window.PipelineRunModelMenuItem.Click += this.PipelineRunModelMenuItem_Click;
             window.NetworkRunModelMenuItem.Click += this.NetworkRunModelMenuItem_Click;
@@ -81,7 +80,6 @@ namespace Marv
             window.PipelineComputeValueMenuItem.Click += this.PipelineComputeValueMenuItem_Click;
             window.NetworkComputeValue.Click += this.NetworkComputeValue_Click;
 
-            window.RetractAllButton.Click += this.RetractAllButton_Click;
             window.TransitionControl.StatusChanged += this.TransitionControl_StatusChanged;
 
             window.LinesListBox.SelectionChanged += this.LinesListBox_SelectionChanged;
@@ -101,6 +99,11 @@ namespace Marv
             //window.Earthquakes = new ModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
         }
 
+        void GraphControl_EvidenceEntered(object sender, Vertex e)
+        {
+            this.AssociatedObject.Graph.Run();
+        }
+
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
         {
             var window = this.AssociatedObject;
@@ -117,7 +120,7 @@ namespace Marv
             }
             catch (Exception)
             {
-                logger.Error("Unable to log in to Synergi Pipeline");
+                Logger.Error("Unable to log in to Synergi Pipeline");
             }
         }
 
@@ -134,15 +137,15 @@ namespace Marv
             window.Notifications.Push(notification);
 
             // Read source graph
-            window.SourceGraph = await Graph.ReadAsync(window.NetworkFileName);
+            window.Graph = await Graph.ReadAsync(window.NetworkFileName);
 
             // Set display graph
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+            // window.DisplayGraph = window.Graph.GetSubGraph(window.Graph.DefaultGroup);
 
             // Close notification
             notification.Close();
 
-            Console.WriteLine(window.SourceGraph.Vertices[0].Belief.ToJson());
+            Console.WriteLine(window.Graph.Vertices[0].Belief.ToJson());
         }
 
         private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
@@ -198,7 +201,7 @@ namespace Marv
         private async void NetworkComputeValue_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
+            var graph = window.Graph;
             var multiLocations = window.Polylines;
 
             var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dictionary<int, string, double>>();
@@ -243,7 +246,7 @@ namespace Marv
 
                         MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                        logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                        Logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
                     }
                 }
             });
@@ -252,7 +255,7 @@ namespace Marv
         private async void PipelineComputeValueMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
+            var graph = window.Graph;
             var multiLocation = window.Polylines.SelectedItem;
 
             window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);
@@ -283,15 +286,9 @@ namespace Marv
 
                     MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                    logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+                    Logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
                 }
             });
-        }
-
-        private void RetractAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = this.AssociatedObject;
-            window.SourceGraph.Belief = window.SourceGraph.ClearEvidence();
         }
 
         private void SectionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -307,8 +304,6 @@ namespace Marv
 
             if (selectedSection != null)
             {
-                var dataTable = new DataTable();
-
                 // The order here is taken from MarvToSynergiMap.xlsx
                 var data = new[]
                 {
@@ -351,10 +346,9 @@ namespace Marv
                     var nHeaders = segments.Headers.Count();
                     var nSegments = segments.Segments.Count();
 
-                    logger.Info("nSegments" + nSegments);
+                    Logger.Info("nSegments" + nSegments);
 
                     var segmentData = new Dictionary<string, string>();
-                    var properties = new Dynamic();
 
                     for (var s = 0; s < nSegments - 1; s++)
                     {
@@ -374,7 +368,7 @@ namespace Marv
                 }
                 catch (Exception exception)
                 {
-                    logger.Warn(exception.Message);
+                    Logger.Warn(exception.Message);
                 }
 
                 //dgSegment.AutoGenerateColumns = true;
