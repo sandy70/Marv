@@ -35,7 +35,6 @@ namespace Marv.Input
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
-        private GridViewCellClipboardEventArgs cellClipboardEventArgs;
 
         public int EndYear
         {
