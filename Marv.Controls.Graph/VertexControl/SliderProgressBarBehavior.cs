@@ -9,12 +9,6 @@ namespace Marv.Controls.Graph
     {
         private VertexControl vertexControl;
 
-        private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            this.vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
-            this.vertexControl.RaiseEvidenceEntered();
-        }
-
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -26,17 +20,23 @@ namespace Marv.Controls.Graph
             this.AssociatedObject.MouseUp += AssociatedObject_MouseUp;
         }
 
-        private void AssociatedObject_MouseUp(object sender, MouseButtonEventArgs e)
+        private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (!this.vertexControl.IsValueVisible)
-            {
-                this.vertexControl.RaiseEvidenceEntered();
-            }
+            this.vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
+            this.vertexControl.RaiseEvidenceChanged();
         }
 
         private void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.vertexControl.Vertex.EvidenceString = null;
+        }
+
+        private void AssociatedObject_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!this.vertexControl.IsValueVisible)
+            {
+                this.vertexControl.RaiseEvidenceChanged();
+            }
         }
     }
 }

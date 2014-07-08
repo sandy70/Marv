@@ -37,12 +37,12 @@ namespace Marv.Common.Graph
                     }
                     else
                     {
-                        if (minValue >= state.Min && minValue <= state.Max)
+                        if (state.Min <= minValue && minValue <= state.Max)
                         {
                             evidence[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
                         }
 
-                        if (maxValue >= state.Min && maxValue <= state.Max)
+                        if (state.Min <= maxValue && maxValue <= state.Max)
                         {
                             evidence[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
                         }

@@ -38,7 +38,7 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
         {
-            this.AssociatedObject.SourceGraph.Write(this.AssociatedObject.NetworkFileName);
+            this.AssociatedObject.Graph.Write(this.AssociatedObject.NetworkFileName);
             Settings.Default.Save();
         }
 
@@ -72,7 +72,7 @@ namespace Marv
 
             window.EditNetworkFilesMenuItem.Click += this.EditNetworkFilesMenuItem_Click;
             window.EditSettingsMenuItem.Click += this.EditSettingsMenuItem_Click;
-
+            window.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             window.LocationRunModelMenuItem.Click += this.LocationRunModelMenuItem_Click;
             window.PipelineRunModelMenuItem.Click += this.PipelineRunModelMenuItem_Click;
             window.NetworkRunModelMenuItem.Click += this.NetworkRunModelMenuItem_Click;
@@ -97,6 +97,11 @@ namespace Marv
             // window.EarthquakeControl.ScalingFunc = x => Marv.Common.Utils.Clamp(Math.Pow(x, 1.2)*10, 1, 150);
 
             //window.Earthquakes = new ModelCollection<Location>(await Marv.Common.Map.Utils.ReadEarthquakesAsync(new Progress<double>()));
+        }
+
+        void GraphControl_EvidenceEntered(object sender, Vertex e)
+        {
+            this.AssociatedObject.Graph.Run();
         }
 
         private void AssociatedObject_Loaded_LoginSynergi(object sender, RoutedEventArgs e)
@@ -132,15 +137,15 @@ namespace Marv
             window.Notifications.Push(notification);
 
             // Read source graph
-            window.SourceGraph = await Graph.ReadAsync(window.NetworkFileName);
+            window.Graph = await Graph.ReadAsync(window.NetworkFileName);
 
             // Set display graph
-            window.DisplayGraph = window.SourceGraph.GetSubGraph(window.SourceGraph.DefaultGroup);
+            // window.DisplayGraph = window.Graph.GetSubGraph(window.Graph.DefaultGroup);
 
             // Close notification
             notification.Close();
 
-            Console.WriteLine(window.SourceGraph.Vertices[0].Belief.ToJson());
+            Console.WriteLine(window.Graph.Vertices[0].Belief.ToJson());
         }
 
         private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
@@ -196,7 +201,7 @@ namespace Marv
         private async void NetworkComputeValue_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
+            var graph = window.Graph;
             var multiLocations = window.Polylines;
 
             var multiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dictionary<int, string, double>>();
@@ -250,7 +255,7 @@ namespace Marv
         private async void PipelineComputeValueMenuItem_Click(object sender, RadRoutedEventArgs e)
         {
             var window = this.AssociatedObject;
-            var graph = window.SourceGraph;
+            var graph = window.Graph;
             var multiLocation = window.Polylines.SelectedItem;
 
             window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);

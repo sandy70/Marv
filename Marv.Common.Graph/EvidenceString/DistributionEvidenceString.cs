@@ -1,58 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Smile;
 
 namespace Marv.Common.Graph
 {
     public class DistributionEvidenceString : IEvidenceStringParser
     {
-        public Dictionary<string, double> Parse(IEnumerable<State> states , string str)
+        public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
             var evidence = new Dictionary<string, double>();
 
-            foreach (var state in states)
-            {
-                evidence[state.Key] = 0;
-            }
-
             var parts = str
                 .Trim()
-                .Split(";".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var part in parts)
+            var stateList = states as IList<State> ?? states.ToList();
+
+            if (parts.Count() < stateList.Count() || parts.Count() > stateList.Count())
             {
-                var partsOfPart = part.Trim()
-                    .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                return null;
+            }
 
-                double probability;
+            for (var i = 0; i < parts.Count(); i++)
+            {
+                double value;
 
-                if (Double.TryParse(partsOfPart[1], out probability))
+                if (Double.TryParse(parts[i], out value))
                 {
-                    double value;
-
-                    if (Double.TryParse(partsOfPart[0], out value))
-                    {
-                        foreach (var state in states.Where(state => state.Contains(value)))
-                        {
-                            evidence[state.Key] += probability;
-                        }
-                    }
-                    else
-                    {
-                        foreach (var state in states.Where(state => state.Key == partsOfPart[0]))
-                        {
-                            evidence[state.Key] += probability;
-                        }
-                    }
+                    var stateKey = stateList.ElementAt(i).Key;
+                    evidence[stateKey] = value;
                 }
                 else
                 {
-                    throw new SmileException("");
+                    return null;
                 }
             }
 
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }

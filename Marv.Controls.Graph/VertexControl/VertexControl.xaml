@@ -224,9 +224,9 @@
                 <telerik:RadButton Background="{StaticResource BackgroundDark}"
                                    Height="40" Width="40"
                                    Margin="{Binding Source={StaticResource MarginSmallest}}"
-                                   Padding="0" >
+                                   Padding="0">
                     <Image Source="{Binding ImageSource}" />
-                    
+
                     <i:Interaction.Behaviors>
                         <local:ToolbarButtonClickBehavior />
                     </i:Interaction.Behaviors>

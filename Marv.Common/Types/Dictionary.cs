@@ -4,26 +4,6 @@ namespace Marv.Common
 {
     public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>>
     {
-        public Dictionary()
-        {
-        }
-
-        public Dictionary(Dictionary<T1, Dictionary<T2, TValue>> dict)
-        {
-            foreach (var key in dict.Keys)
-            {
-                this[key] = dict[key];
-            }
-        }
-
-        public new List<T1> Keys
-        {
-            get
-            {
-                return new List<T1>(base.Keys);
-            }
-        }
-
         public TValue this[T1 key1, T2 key2]
         {
             get
@@ -63,6 +43,26 @@ namespace Marv.Common
             }
         }
 
+        public new List<T1> Keys
+        {
+            get
+            {
+                return new List<T1>(base.Keys);
+            }
+        }
+
+        public Dictionary()
+        {
+        }
+
+        public Dictionary(Dictionary<T1, Dictionary<T2, TValue>> dict)
+        {
+            foreach (var key in dict.Keys)
+            {
+                this[key] = dict[key];
+            }
+        }
+
         public bool ContainsKey(T1 key1, T2 key2)
         {
             return this.ContainsKey(key1) && this[key1].ContainsKey(key2);
@@ -88,6 +88,21 @@ namespace Marv.Common
     {
         public Dictionary<T3, TValue> this[T1 key1, T2 key2]
         {
+            get
+            {
+                if (!this.ContainsKey(key1))
+                {
+                    this[key1] = new Dictionary<T2, T3, TValue>();
+                }
+
+                if (!this[key1].ContainsKey(key2))
+                {
+                    this[key1][key2] = Utils.Create<Dictionary<T3, TValue>>();
+                }
+
+                return this[key1][key2];
+            }
+
             set
             {
                 if (this.ContainsKey(key1))
@@ -102,19 +117,22 @@ namespace Marv.Common
             }
         }
 
-        public Dictionary<T3, TValue> GetValueOrNew(T1 key1, T2 key2)
+        public TValue this[T1 key1, T2 key2, T3 key3]
         {
-            if (!this.ContainsKey(key1))
+            get
             {
-                this[key1] = new Dictionary<T2, T3, TValue>();
+                if (!this[key1, key2].ContainsKey(key3))
+                {
+                    this[key1, key2][key3] = Utils.Create<TValue>();
+                }
+
+                return this[key1, key2][key3];
             }
 
-            if (!this[key1].ContainsKey(key2))
+            set
             {
-                this[key1][key2] = Utils.Create<Dictionary<T3, TValue>>();
+                this[key1, key2][key3] = value;
             }
-
-            return this[key1][key2];
         }
     }
 

@@ -16,9 +16,6 @@ namespace Marv
         public static readonly DependencyProperty ChartSeriesProperty =
         DependencyProperty.Register("ChartSeries", typeof(ModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ModelCollection<IChartSeries>()));
 
-        public static readonly DependencyProperty DisplayGraphProperty =
-        DependencyProperty.Register("DisplayGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty EarthquakesProperty =
         DependencyProperty.Register("Earthquakes", typeof(ModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
@@ -79,8 +76,8 @@ namespace Marv
         public static readonly DependencyProperty SelectedYearProperty =
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001, OnSelectedYearChanged));
 
-        public static readonly DependencyProperty SourceGraphProperty =
-        DependencyProperty.Register("SourceGraph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty GraphProperty =
+        DependencyProperty.Register("Graph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001));
@@ -102,12 +99,6 @@ namespace Marv
         {
             get { return (ModelCollection<IChartSeries>)GetValue(ChartSeriesProperty); }
             set { SetValue(ChartSeriesProperty, value); }
-        }
-
-        public Graph DisplayGraph
-        {
-            get { return (Graph)GetValue(DisplayGraphProperty); }
-            set { SetValue(DisplayGraphProperty, value); }
         }
 
         public ModelCollection<Location> Earthquakes
@@ -218,10 +209,10 @@ namespace Marv
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public Graph SourceGraph
+        public Graph Graph
         {
-            get { return (Graph)GetValue(SourceGraphProperty); }
-            set { SetValue(SourceGraphProperty, value); }
+            get { return (Graph)GetValue(GraphProperty); }
+            set { SetValue(GraphProperty, value); }
         }
 
         public int StartYear

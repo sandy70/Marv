@@ -5,6 +5,12 @@ namespace Marv.Controls.Graph
 {
     public class GraphControlConnectorButtonBehavior : Behavior<GraphControl>
     {
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+            this.AssociatedObject.Loaded += AssociatedObject_Loaded;
+        }
+
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             // I don't know why Loaded is being called twice!
@@ -25,12 +31,6 @@ namespace Marv.Controls.Graph
         private void ConnectorButton_Unchecked(object sender, RoutedEventArgs e)
         {
             this.AssociatedObject.DisableConnectorEditing();
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            this.AssociatedObject.Loaded += AssociatedObject_Loaded;
         }
     }
 }

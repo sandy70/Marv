@@ -5,7 +5,6 @@ using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls;
-using Smile;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv
@@ -20,49 +19,11 @@ namespace Marv
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
-            var window = this.AssociatedObject;
-
-            window.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
-            window.GraphControl.VertexCommandExecuted += GraphControl_VertexCommandExecuted;
-
             MainWindow.VertexChartCommand.Executed += VertexChartCommand_Executed;
             MainWindow.VertexChartPofCommand.Executed += VertexChartPofCommand_Executed;
             MainWindow.VertexBarChartCommand.Executed += VertexBarChartCommand_Executed;
 
             VertexCommand.VertexClearCommand.Executed += VertexClearCommand_Executed;
-        }
-
-        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
-        {
-            var graph = this.AssociatedObject.SourceGraph;
-            var window = this.AssociatedObject;
-
-            try
-            {
-                graph.Belief = graph.Run(vertex.Key, vertex.Evidence);
-            }
-            catch (SmileException)
-            {
-                window.Notifications.Push(new NotificationTimed
-                {
-                    Name = "Inconsistent Evidence",
-                    Description = "Inconsistent evidence entered for sourceVertex: " + vertex.Name,
-                });
-
-                graph.Belief = graph.ClearEvidence(vertex.Key);
-            }
-        }
-
-        private void GraphControl_VertexCommandExecuted(object sender, VertexCommandArgs e)
-        {
-            if (e.Command == VertexCommands.SubGraph)
-            {
-                var window = this.AssociatedObject;
-                var sourceGraph = window.SourceGraph;
-
-                window.DisplayGraph = sourceGraph.GetSubGraph(e.Vertex.HeaderOfGroup);
-                window.IsBackButtonVisible = true;
-            }
         }
 
         private void VertexBarChartCommand_Executed(object sender, Vertex vertex)
@@ -167,7 +128,7 @@ namespace Marv
 
         private void VertexClearCommand_Executed(object sender, Vertex vertex)
         {
-            var graph = this.AssociatedObject.SourceGraph;
+            var graph = this.AssociatedObject.Graph;
             graph.Belief = graph.ClearEvidence(vertex.Key);
         }
     }

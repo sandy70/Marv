@@ -11,7 +11,7 @@ namespace Marv.Common.Graph
                 return new NullEvidenceString();
             }
 
-            if (evidenceString.Contains(';'))
+            if (evidenceString.Contains(','))
             {
                 return new DistributionEvidenceString();
             }

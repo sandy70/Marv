@@ -522,13 +522,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        // Returns true if  the evidence was set successfully. The method might fail if VertexEvidenceString is provided and 
-        // the string is malformed.
-        public bool SetEvidence(IVertexEvidence vertexEvidence)
-        {
-            return vertexEvidence.Set(this);
-        }
-
         public void SetEvidenceUniform()
         {
             var value = 1.0/this.States.Count;
@@ -547,6 +540,18 @@ namespace Marv.Common.Graph
         public void UpdateEvidence()
         {
             this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this.States, this.EvidenceString);
+        }
+
+        public void UpdateEvidenceString()
+        {
+            if (this.Evidence.Sum(kvp => kvp.Value) > 0)
+            {
+                this.EvidenceString = this.Evidence.String("{0:F2}");
+            }
+            else
+            {
+                this.EvidenceString = null;
+            }
         }
 
         public void UpdateMostProbableState()

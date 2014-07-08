@@ -6,7 +6,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Graph;
-using System.Linq;
 
 namespace Marv.Controls.Graph
 {
