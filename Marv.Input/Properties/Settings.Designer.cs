@@ -25,7 +25,7 @@ namespace Marv.Input.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\stop\\Documents\\GitHub\\MARV Files\\FreeCorp.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\stop\\Documents\\GitHub\\Marv Files\\FreeCorp.net")]
         public string FileName {
             get {
                 return ((string)(this["FileName"]));

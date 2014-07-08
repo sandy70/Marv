@@ -51,7 +51,6 @@
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
                                                  SelectionMode="Extended"
-                                                 ClipboardPasteMode="AllSelectedCells"
                                                  SelectionUnit="Cell"
                                                  RowIndicatorVisibility="Collapsed"
                                                  ItemsSource="{Binding ElementName=Root, Path=InputRows}">

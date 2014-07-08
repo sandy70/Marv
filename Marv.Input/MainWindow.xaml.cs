@@ -217,15 +217,15 @@ namespace Marv.Input
             this.InputGridView.Pasted += InputGridView_Pasted;
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
 
+            this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
-<<<<<<< HEAD
-             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
-        }
+
+           
 
         private int GetLinesFromClipboard(String text)
         {
@@ -238,8 +238,8 @@ namespace Marv.Input
             {
                 e.Cancel = true;
             }
-=======
->>>>>>> upstream/master
+        }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog

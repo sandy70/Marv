@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows;
@@ -92,6 +93,14 @@ namespace Marv.Input
             }
 
             cellClipboardEventArgs.Clear();
+        }
+
+        private void InputGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Back)
+            {
+                this.InputGridView.SelectedItems.Clear();
+            }
         }
 
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
