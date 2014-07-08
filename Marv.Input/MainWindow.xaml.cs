@@ -318,8 +318,7 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // this.LineEvidence.WriteJson("marv.input");
-            Console.WriteLine(this.InputGridView.CurrentCell.DataContext);
+            this.LineEvidence.WriteJson("marv.input");
         }
 
         private void UpdateGrid()

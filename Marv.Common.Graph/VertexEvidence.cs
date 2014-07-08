@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
@@ -21,7 +22,7 @@ namespace Marv.Common.Graph
         public override string ToString()
         {
             return this.Evidence
-                .Select(kvp => kvp.Value.ToString())
+                .Select(kvp => String.Format("{0:F2}", kvp.Value))
                 .String();
         }
     }
