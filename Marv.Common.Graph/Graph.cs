@@ -23,8 +23,6 @@ namespace Marv.Common.Graph
         private Network network = new Network();
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
-        public String FileName { get; set; }
-
         public Dictionary<string, string, double> Belief
         {
             get
@@ -116,6 +114,8 @@ namespace Marv.Common.Graph
                 }
             }
         }
+
+        public String FileName { get; set; }
 
         public Dictionary<string, string, double> InitialBelief
         {
@@ -224,20 +224,13 @@ namespace Marv.Common.Graph
             return this.GetNetworkBelief();
         }
 
-        public Dictionary<string, IVertexEvidence> GetEvidence()
+        public Dictionary<string, VertexEvidence> GetEvidence()
         {
-            var graphEvidence = new Dictionary<string, IVertexEvidence>();
+            var graphEvidence = new Dictionary<string, VertexEvidence>();
 
             foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
             {
-                if (!string.IsNullOrEmpty(vertex.EvidenceString))
-                {
-                    graphEvidence[vertex.Key] = new VertexEvidenceString(vertex.EvidenceString);
-                }
-                else
-                {
-                    graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence);
-                }
+                graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence, vertex.EvidenceString);
             }
 
             return graphEvidence;
@@ -614,26 +607,19 @@ namespace Marv.Common.Graph
             return graphValueTimeSeries;
         }
 
-        public void SetEvidence(Dictionary<string, IVertexEvidence> graphEvidence)
+        public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
         {
             foreach (var vertex in this.Vertices)
             {
-                if (graphEvidence == null)
+                if (graphEvidence != null && graphEvidence.ContainsKey(vertex.Key))
                 {
-                    vertex.Evidence = null;
-                    vertex.EvidenceString = null;
+                    vertex.Evidence = graphEvidence[vertex.Key].Evidence;
+                    vertex.EvidenceString = graphEvidence[vertex.Key].String;
                 }
                 else
                 {
-                    if (graphEvidence.ContainsKey(vertex.Key))
-                    {
-                        vertex.SetEvidence(graphEvidence[vertex.Key]);
-                    }
-                    else
-                    {
-                        vertex.Evidence = null;
-                        vertex.EvidenceString = null;
-                    }
+                    vertex.Evidence = null;
+                    vertex.EvidenceString = null;
                 }
             }
         }
@@ -649,9 +635,10 @@ namespace Marv.Common.Graph
             this.network.SetEvidence(vertexKey, stateIndex);
         }
 
-        public void SetEvidence(string vertexKey, VertexEvidenceString vertexEvidenceString)
+        public void SetEvidence(string vertexKey, VertexEvidence vertexEvidence)
         {
-            this.Vertices[vertexKey].SetEvidence(vertexEvidenceString);
+            this.Vertices[vertexKey].Evidence = vertexEvidence.Evidence;
+            this.Vertices[vertexKey].EvidenceString = vertexEvidence.String;
         }
 
         public void SetNetworkEvidence(string vertexKey, Dictionary<string, double> vertexEvidence)

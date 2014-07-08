@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Marv.Common.Graph
 {
-    public class VertexEvidence : IVertexEvidence
+    public class VertexEvidence
     {
         public Dictionary<string, double> Evidence { get; set; }
+        public string String { get; set; }
 
-        public VertexEvidence(Dictionary<string, double> evidence)
+        public VertexEvidence(Dictionary<string, double> evidence, string str)
         {
             this.Evidence = evidence;
-        }
-
-        public bool Set(Vertex vertex)
-        {
-            vertex.Evidence = this.Evidence;
-            return true;
+            this.String = str;
         }
 
         public override string ToString()
         {
-            return this.Evidence
-                .Select(kvp => String.Format("{0:F2}", kvp.Value))
-                .String();
+            return this.String;
         }
     }
 }

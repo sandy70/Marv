@@ -112,7 +112,7 @@
                             Grid.Row="0"
                             HorizontalAlignment="Stretch" VerticalAlignment="Top"
                             Orientation="Horizontal">
-            
+
             <telerik:RadButton Name="BackButton"
                                Height="30" Width="30"
                                Margin="2"
