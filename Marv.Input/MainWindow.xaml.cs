@@ -280,6 +280,7 @@ namespace Marv.Input
             {
                 this.SelectedVertex.EvidenceString = cellClipboardEventArgs.Value as string;
                 this.SelectedVertex.UpdateEvidence();
+                this.UpdateModelEvidence();
 
                 var row = cellClipboardEventArgs.Cell.Item as Dynamic;
                 var year = (string)cellClipboardEventArgs.Cell.Column.Header;
