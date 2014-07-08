@@ -268,8 +268,6 @@ namespace Marv.Input
         void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
-            var x = this.InputGridView;
-            var a = 1 + 1;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

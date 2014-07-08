@@ -154,28 +154,49 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void RaiseEvidenceStringEntered()
+        {
+            if (this.EvidenceStringEntered != null)
+            {
+                this.EvidenceStringEntered(this, this.Vertex.EvidenceString);
+            }
+        }
+
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.EvidenceString = null;
             this.Vertex.Evidence = null;
+            this.Vertex.EvidenceString = null;
+
             this.RaiseEvidenceEntered();
+            this.RaiseEvidenceStringEntered();
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.Vertex.UpdateEvidence();
-            this.RaiseEvidenceEntered();
+            this.RaiseEvidenceStringEntered();
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.EvidenceString = null;
             this.Vertex.SetEvidenceUniform();
             this.RaiseEvidenceEntered();
         }
 
+        private void VertexControl_EvidenceEntered(object sender, Vertex e)
+        {
+            this.Vertex.UpdateEvidenceString();
+        }
+
+        private void VertexControl_EvidenceStringEntered(object sender, string e)
+        {
+            this.Vertex.UpdateEvidence();
+        }
+
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.EvidenceEntered += VertexControl_EvidenceEntered;
+            this.EvidenceStringEntered += VertexControl_EvidenceStringEntered;
+
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
             this.EvidenceStringTextBox.KeyUp += EvidenceStringTextBox_KeyUp;
             this.UniformEvidenceButton.Click += this.UniformEvidenceButton_Click;
@@ -184,5 +205,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<Command<Vertex>> CommandExecuted;
 
         public event EventHandler<Vertex> EvidenceEntered;
+
+        public event EventHandler<string> EvidenceStringEntered;
     }
 }

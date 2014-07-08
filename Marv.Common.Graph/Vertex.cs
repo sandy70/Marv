@@ -549,6 +549,18 @@ namespace Marv.Common.Graph
             this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this.States, this.EvidenceString);
         }
 
+        public void UpdateEvidenceString()
+        {
+            if (this.Evidence.Sum(kvp => kvp.Value) > 0)
+            {
+                this.EvidenceString = this.Evidence.String("{0:F2}");
+            }
+            else
+            {
+                this.EvidenceString = null;
+            }
+        }
+
         public void UpdateMostProbableState()
         {
             this.MostProbableState = this.States.MaxBy(state => state.Belief);
