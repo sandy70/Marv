@@ -182,6 +182,10 @@ namespace Marv.Input
             this.LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
+            foreach (var column in this.InputGridView.Columns)
+            {
+                column.Width = 70;
+            }
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
@@ -204,6 +208,7 @@ namespace Marv.Input
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
+            this.ClearAll.Click += ClearAll_Click;
 
             this.CreateInputButton.Click -= CreateInputButton_Click;
             this.CreateInputButton.Click += CreateInputButton_Click;
@@ -263,10 +268,15 @@ namespace Marv.Input
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    row[year.ToString()] = this.LineEvidence[section][year];
+                    var yearEvidence = this.LineEvidence[section][year];
+                    foreach (var key in yearEvidence.Keys)
+                    {
+                        row[year.ToString()] = this.LineEvidence[section][year][key];
+                    }
+                    
                 }
-
                 inputRows.Add(row);
+              
             }
 
             this.InputRows = inputRows;
@@ -286,7 +296,39 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.LineEvidence.WriteJson("marv.input");
+            SaveFileDialog dialog = new SaveFileDialog 
+            {
+                Filter = "Input|*.input",
+            };
+
+            if (dialog.ShowDialog() == false) return;
+            if (dialog.FileName != null)
+            {
+                this.LineEvidence.WriteJson(dialog.FileName);
+            }
+        }
+
+        private void ClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            this.InputGridView.SelectAll();
+            foreach (var cell in this.InputGridView.SelectedCells)
+            {
+                this.SelectedVertex.EvidenceString = null;
+                this.SelectedVertex.UpdateEvidence();
+
+                var row = cell.Item as Dynamic;
+                var sectionId = row["Section ID"] as string;
+                var year = (string)cell.Column.Header;
+                if (year != "Section ID")
+                {
+                    row[year] = null;
+                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                    row[year] = evidence;
+                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+
+                }
+            }
+            this.InputGridView.UnselectAll();
         }
 
         private void UpdateGrid()

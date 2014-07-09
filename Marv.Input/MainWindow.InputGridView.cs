@@ -87,8 +87,9 @@ namespace Marv.Input
                     var year = (string) cell.Column.Header;
                     var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
                     row[year] = evidence;
-
+                    
                     this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                    
                 }
             }
 
@@ -99,7 +100,26 @@ namespace Marv.Input
         {
             if (e.Key == Key.Back)
             {
-                this.InputGridView.SelectedItems.Clear();
+                if (this.InputGridView.SelectedCells.Count > 0)
+                {
+                    foreach (var cell in this.InputGridView.SelectedCells)
+                    {
+                        this.SelectedVertex.EvidenceString = null;
+                        this.SelectedVertex.UpdateEvidence();
+
+                        var row = cell.Item as Dynamic;
+                        var sectionId = row["Section ID"] as string;
+                        var year = (string)cell.Column.Header;
+                        if (year != "Section ID")
+                        {
+                            row[year] = null;
+                            var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                            row[year] = evidence;
+                            this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                            
+                        }
+                    }
+                }
             }
         }
 
