@@ -20,20 +20,23 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
-        public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
-            DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
-
-        public static readonly DependencyProperty ShapeOpacityProperty =
-            DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
+        public static readonly DependencyProperty IsAutoRunEnabledProperty =
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsVerticesEnabledProperty =
+            DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
+            DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
+
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty IsVerticesEnabledProperty =
-            DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty ShapeOpacityProperty =
+            DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
         public Color ConnectionColor
         {
@@ -68,6 +71,18 @@ namespace Marv.Controls.Graph
             set
             {
                 this.SetValue(IncomingConnectionHighlightColorProperty, value);
+            }
+        }
+
+        public bool IsAutoRunEnabled
+        {
+            get
+            {
+                return (bool) GetValue(IsAutoRunEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsAutoRunEnabledProperty, value);
             }
         }
 
@@ -241,7 +256,6 @@ namespace Marv.Controls.Graph
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
             var openDialog = new OpenFileDialog();
-
 
             openDialog.Filter = "Network Files (.net)|*.net";
             openDialog.FilterIndex = 1;
