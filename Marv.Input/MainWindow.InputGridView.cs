@@ -12,20 +12,22 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
-        public void SetCell(GridViewCellInfo cellInfo, string evidenceString)
+        public void SetCell(dynamic row, string columnHeader, string str)
         {
-            this.SelectedVertex.EvidenceString = evidenceString;
+            this.SelectedVertex.EvidenceString = str;
             this.SelectedVertex.UpdateEvidence();
 
-            var row = cellInfo.Item as Dynamic;
             var sectionId = row["Section ID"] as string;
-            var year = (string) cellInfo.Column.Header;
 
-            if (year != "Section ID")
+            if (columnHeader == "Section ID")
+            {
+                row[columnHeader] = str;
+            }
+            else
             {
                 var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                row[year] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                row[columnHeader] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.SelectedVertex.Key] = evidence;
             }
         }
 
@@ -92,12 +94,9 @@ namespace Marv.Input
         {
             if (e.Key == Key.Delete)
             {
-                if (this.InputGridView.SelectedCells.Count > 0)
+                foreach (var cellInfo in this.InputGridView.SelectedCells)
                 {
-                    foreach (var cellInfo in this.InputGridView.SelectedCells)
-                    {
-                        this.SetCell(cellInfo, null);
-                    }
+                    this.SetCell(cellInfo.Item as dynamic, cellInfo.Column.Header as string, null);
                 }
             }
         }
@@ -106,7 +105,7 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                this.SetCell(cellClipboardEventArg.Cell, cellClipboardEventArg.Value as string);
+                this.SetCell(cellClipboardEventArg.Cell.Item as dynamic, cellClipboardEventArg.Cell.Column.Header as string, cellClipboardEventArg.Value as string);
             }
 
             cellClipboardEventArgs.Clear();
