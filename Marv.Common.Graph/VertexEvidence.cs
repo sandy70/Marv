@@ -7,6 +7,10 @@ namespace Marv.Common.Graph
         public Dictionary<string, double> Evidence { get; set; }
         public string String { get; set; }
 
+        public VertexEvidence()
+        {
+        }
+
         public VertexEvidence(Dictionary<string, double> evidence, string str)
         {
             this.Evidence = evidence;
