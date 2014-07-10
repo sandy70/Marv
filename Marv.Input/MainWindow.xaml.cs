@@ -321,7 +321,7 @@ namespace Marv.Input
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var evidenceString = this.LineEvidence[sectionId][year][this.SelectedVertex.Key].String;
+                    var evidenceString = this.LineEvidence[sectionId, year, this.SelectedVertex.Key].String;
                     this.SetCell(row, year.ToString(), evidenceString);
                 }
             }
