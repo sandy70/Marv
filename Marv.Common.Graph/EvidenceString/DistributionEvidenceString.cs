@@ -36,7 +36,7 @@ namespace Marv.Common.Graph
                 }
             }
 
-            return evidence.Normalized();
+            return evidence;
         }
     }
 }

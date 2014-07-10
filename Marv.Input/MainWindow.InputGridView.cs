@@ -12,6 +12,25 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
+        public void SetCell(dynamic row, string columnHeader, string str)
+        {
+            this.SelectedVertex.EvidenceString = str;
+            this.SelectedVertex.UpdateEvidence();
+
+            var sectionId = row["Section ID"] as string;
+
+            if (columnHeader == "Section ID")
+            {
+                row[columnHeader] = str;
+            }
+            else
+            {
+                var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                row[columnHeader] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.SelectedVertex.Key] = evidence;
+            }
+        }
+
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
@@ -19,20 +38,7 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            var row = e.Cell.ParentRow.DataContext as Dynamic;
-
-            if (e.Cell.Column.DisplayIndex <= 0)
-            {
-                row["Section ID"] = e.NewData;
-                return;
-            }
-
-            this.SelectedVertex.EvidenceString = e.NewData as string;
-            this.SelectedVertex.UpdateEvidence();
-            this.UpdateModelEvidence();
-
-            var year = (string) e.Cell.Column.Header;
-            row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+            this.SetCell(e.Cell.DataContext as dynamic, e.Cell.Column.Header as string, e.NewData as string);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -71,56 +77,25 @@ namespace Marv.Input
             }
         }
 
+        private void InputGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                foreach (var cellInfo in this.InputGridView.SelectedCells)
+                {
+                    this.SetCell(cellInfo.Item as dynamic, cellInfo.Column.Header as string, null);
+                }
+            }
+        }
+
         private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                if (this.cellClipboardEventArgs != null)
-                {
-                    var cell = cellClipboardEventArg.Cell;
-
-                    this.SelectedVertex.EvidenceString = cellClipboardEventArg.Value as string;
-                    this.SelectedVertex.UpdateEvidence();
-
-                    var row = cell.Item as Dynamic;
-                    var sectionId = row["Section ID"] as string;
-                    var year = (string) cell.Column.Header;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                    row[year] = evidence;
-                    
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-                    
-                }
+                this.SetCell(cellClipboardEventArg.Cell.Item as dynamic, cellClipboardEventArg.Cell.Column.Header as string, cellClipboardEventArg.Value as string);
             }
 
             cellClipboardEventArgs.Clear();
-        }
-
-        private void InputGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Back)
-            {
-                if (this.InputGridView.SelectedCells.Count > 0)
-                {
-                    foreach (var cell in this.InputGridView.SelectedCells)
-                    {
-                        this.SelectedVertex.EvidenceString = null;
-                        this.SelectedVertex.UpdateEvidence();
-
-                        var row = cell.Item as Dynamic;
-                        var sectionId = row["Section ID"] as string;
-                        var year = (string)cell.Column.Header;
-                        if (year != "Section ID")
-                        {
-                            row[year] = null;
-                            var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                            row[year] = evidence;
-                            this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-                            
-                        }
-                    }
-                }
-            }
         }
 
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)

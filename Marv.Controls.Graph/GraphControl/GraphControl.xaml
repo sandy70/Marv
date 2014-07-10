@@ -38,7 +38,7 @@
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
-                            SelectionMode="Single" Margin="10,-31,-10,31"
+                            SelectionMode="Single"
                             SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}">
 
             <telerik:RadDiagram.ConnectionStyle>

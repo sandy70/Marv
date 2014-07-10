@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
-using Telerik.Windows;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -166,6 +162,28 @@ namespace Marv.Input
             }
         }
 
+        private void ClearAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.InputGridView.SelectAll();
+            foreach (var cell in this.InputGridView.SelectedCells)
+            {
+                this.SelectedVertex.EvidenceString = null;
+                this.SelectedVertex.UpdateEvidence();
+
+                var row = cell.Item as Dynamic;
+                var sectionId = row["Section ID"] as string;
+                var year = (string) cell.Column.Header;
+                if (year != "Section ID")
+                {
+                    row[year] = null;
+                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                    row[year] = evidence;
+                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                }
+            }
+            this.InputGridView.UnselectAll();
+        }
+
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
             var inputRows = new ObservableCollection<dynamic>();
@@ -206,12 +224,10 @@ namespace Marv.Input
             this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
+            this.ClearAllButton.Click += this.ClearAllButton_Click;
+            this.CreateInputButton.Click += CreateInputButton_Click;
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
-            this.ClearAll.Click += ClearAll_Click;
-
-            this.CreateInputButton.Click -= CreateInputButton_Click;
-            this.CreateInputButton.Click += CreateInputButton_Click;
 
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
@@ -227,22 +243,6 @@ namespace Marv.Input
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-        }
-
-
-           
-
-        private int GetLinesFromClipboard(String text)
-        {
-            return text.Split('\n').Length - 1;
-        }
-
-        private void InputGridView_Pasting(object sender, GridViewClipboardEventArgs e)
-        {
-            if ((GetLinesFromClipboard(Clipboard.GetText()) > this.InputRows.Count))
-            {
-                e.Cancel = true;
-            }
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -265,7 +265,7 @@ namespace Marv.Input
                 row["Section ID"] = section;
 
                 var sectionEvidence = this.LineEvidence[section];
-                
+
                 foreach (var year in sectionEvidence.Keys)
                 {
                     var yearEvidence = this.LineEvidence[section][year];
@@ -278,10 +278,9 @@ namespace Marv.Input
                     else
                     {
                         row[year.ToString()] = "";
-                    }                  
+                    }
                 }
                 inputRows.Add(row);
-              
             }
 
             this.InputRows = inputRows;
@@ -301,7 +300,7 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog 
+            var dialog = new SaveFileDialog
             {
                 Filter = "Input|*.input",
             };
@@ -313,49 +312,18 @@ namespace Marv.Input
             }
         }
 
-        private void ClearAll_Click(object sender, RoutedEventArgs e)
-        {
-            this.InputGridView.SelectAll();
-            foreach (var cell in this.InputGridView.SelectedCells)
-            {
-                this.SelectedVertex.EvidenceString = null;
-                this.SelectedVertex.UpdateEvidence();
-
-                var row = cell.Item as Dynamic;
-                var sectionId = row["Section ID"] as string;
-                var year = (string)cell.Column.Header;
-                if (year != "Section ID")
-                {
-                    row[year] = null;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                    row[year] = evidence;
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-
-                }
-            }
-            this.InputGridView.UnselectAll();
-        }
-
         private void UpdateGrid()
         {
             foreach (var row in this.InputRows)
             {
-                foreach (var year in Enumerable.Range(this.StartYear, this.EndYear - this.StartYear + 1))
-                {
-                    var sectionId = row["Section ID"] as string;
+                var sectionId = row["Section ID"] as string;
 
-                    if (sectionId != null)
-                    {
-                        try
-                        {
-                            var evidence = this.LineEvidence[sectionId][year][this.SelectedVertex.Key];
-                            row[year.ToString()] = evidence;
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            row[year.ToString()] = null;
-                        }
-                    }
+                var sectionEvidence = this.LineEvidence[sectionId];
+
+                foreach (var year in sectionEvidence.Keys)
+                {
+                    var evidenceString = this.LineEvidence[sectionId][year][this.SelectedVertex.Key].String;
+                    this.SetCell(row, year.ToString(), evidenceString);
                 }
             }
         }

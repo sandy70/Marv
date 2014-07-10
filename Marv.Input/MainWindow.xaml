@@ -36,8 +36,8 @@
                     <telerik:RadPane Header="Input">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="104*"/>
-                                <ColumnDefinition Width="193*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
@@ -132,7 +132,7 @@
                                         Margin="9, 2, 9, 2"
                                         Content="Save" />
 
-                                    <telerik:RadButton Name="ClearAll"
+                                    <telerik:RadButton Name="ClearAllButton"
                                         Margin="9, 2, 9, 2"
                                         Content="Clear All" />
                                 </telerik:RadToolBar>
