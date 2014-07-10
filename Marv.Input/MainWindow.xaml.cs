@@ -293,8 +293,6 @@ namespace Marv.Input
             this.InputGridView.SelectedItem = item;
             this.InputGridView.CurrentItem = item;
             this.InputGridView.CurrentCellInfo = cellToEdit;
-
-            //this.Graph.SetNetworkEvidence(this.ModelEvidence.First().Value);
             this.Graph.Run();
         }
 
