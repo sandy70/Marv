@@ -11,7 +11,9 @@ namespace Marv.Controls.Graph
             base.OnAttached();
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
-            this.AssociatedObject.EvidenceChanged += this.AssociatedObject_EvidenceChanged;
+
+            this.AssociatedObject.EvidenceChanged += (o, e) => this.RaiseEvidenceEntered();
+            this.AssociatedObject.EvidenceEntered += (o, e) => this.RaiseEvidenceEntered();
         }
 
         private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
@@ -27,7 +29,7 @@ namespace Marv.Controls.Graph
             graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
         }
 
-        private void AssociatedObject_EvidenceChanged(object sender, Vertex e)
+        private void RaiseEvidenceEntered()
         {
             var vertexControl = this.AssociatedObject;
             var graphControl = vertexControl.FindParent<GraphControl>();

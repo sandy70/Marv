@@ -20,9 +20,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
-        public static readonly DependencyProperty IsAutoRunEnabledProperty =
-            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
-
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
@@ -71,18 +68,6 @@ namespace Marv.Controls.Graph
             set
             {
                 this.SetValue(IncomingConnectionHighlightColorProperty, value);
-            }
-        }
-
-        public bool IsAutoRunEnabled
-        {
-            get
-            {
-                return (bool) GetValue(IsAutoRunEnabledProperty);
-            }
-            set
-            {
-                SetValue(IsAutoRunEnabledProperty, value);
             }
         }
 
