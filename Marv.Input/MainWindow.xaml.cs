@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -318,22 +316,14 @@ namespace Marv.Input
         {
             foreach (var row in this.InputRows)
             {
-                foreach (var year in Enumerable.Range(this.StartYear, this.EndYear - this.StartYear + 1))
-                {
-                    var sectionId = row["Section ID"] as string;
+                var sectionId = row["Section ID"] as string;
 
-                    if (sectionId != null)
-                    {
-                        try
-                        {
-                            var evidence = this.LineEvidence[sectionId][year][this.SelectedVertex.Key];
-                            row[year.ToString()] = evidence;
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            row[year.ToString()] = null;
-                        }
-                    }
+                var sectionEvidence = this.LineEvidence[sectionId];
+
+                foreach (var year in sectionEvidence.Keys)
+                {
+                    var evidenceString = this.LineEvidence[sectionId][year][this.SelectedVertex.Key].String;
+                    this.SetCell(row, year.ToString(), evidenceString);
                 }
             }
         }
