@@ -253,7 +253,6 @@ namespace Marv.Controls.Graph
             }
 
             this.Graph = Common.Graph.Graph.Read(openDialog.FileName);
-            this.Graph.FileName = openDialog.FileName;
             this.Graph.Run();
         }
 

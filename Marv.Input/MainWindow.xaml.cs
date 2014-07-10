@@ -220,7 +220,6 @@ namespace Marv.Input
         {
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
-            this.Graph.FileName = Settings.Default.FileName;
             this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
@@ -344,6 +343,7 @@ namespace Marv.Input
 
                 var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
+
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
