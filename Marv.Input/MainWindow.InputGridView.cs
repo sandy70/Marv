@@ -12,6 +12,23 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
+        public void SetCell(GridViewCellInfo cellInfo, string evidenceString)
+        {
+            this.SelectedVertex.EvidenceString = evidenceString;
+            this.SelectedVertex.UpdateEvidence();
+
+            var row = cellInfo.Item as Dynamic;
+            var sectionId = row["Section ID"] as string;
+            var year = (string) cellInfo.Column.Header;
+
+            if (year != "Section ID")
+            {
+                var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                row[year] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+            }
+        }
+
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
@@ -71,56 +88,28 @@ namespace Marv.Input
             }
         }
 
-        private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
-        {
-            foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
-            {
-                if (this.cellClipboardEventArgs != null)
-                {
-                    var cell = cellClipboardEventArg.Cell;
-
-                    this.SelectedVertex.EvidenceString = cellClipboardEventArg.Value as string;
-                    this.SelectedVertex.UpdateEvidence();
-
-                    var row = cell.Item as Dynamic;
-                    var sectionId = row["Section ID"] as string;
-                    var year = (string) cell.Column.Header;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                    row[year] = evidence;
-                    
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-                    
-                }
-            }
-
-            cellClipboardEventArgs.Clear();
-        }
-
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {
                 if (this.InputGridView.SelectedCells.Count > 0)
                 {
-                    foreach (var cell in this.InputGridView.SelectedCells)
+                    foreach (var cellInfo in this.InputGridView.SelectedCells)
                     {
-                        this.SelectedVertex.EvidenceString = null;
-                        this.SelectedVertex.UpdateEvidence();
-
-                        var row = cell.Item as Dynamic;
-                        var sectionId = row["Section ID"] as string;
-                        var year = (string)cell.Column.Header;
-                        if (year != "Section ID")
-                        {
-                            row[year] = null;
-                            var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                            row[year] = evidence;
-                            this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-                            
-                        }
+                        this.SetCell(cellInfo, null);
                     }
                 }
             }
+        }
+
+        private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
+        {
+            foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
+            {
+                this.SetCell(cellClipboardEventArg.Cell, cellClipboardEventArg.Value as string);
+            }
+
+            cellClipboardEventArgs.Clear();
         }
 
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
