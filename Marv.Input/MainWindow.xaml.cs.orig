@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+<<<<<<< HEAD
+using System.Windows.Controls;
 using System.Windows.Input;
+=======
+>>>>>>> upstream/master
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -182,10 +186,6 @@ namespace Marv.Input
             this.LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
-            foreach (var column in this.InputGridView.Columns)
-            {
-                column.Width = 70;
-            }
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex e)
@@ -208,7 +208,6 @@ namespace Marv.Input
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
-            this.ClearAll.Click += ClearAll_Click;
 
             this.CreateInputButton.Click -= CreateInputButton_Click;
             this.CreateInputButton.Click += CreateInputButton_Click;
@@ -219,18 +218,33 @@ namespace Marv.Input
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
 
+<<<<<<< HEAD
+            this.InputGridView.Pasting += InputGridView_Pasting;
+
+            this.InputGridView.CurrentCellChanged -= InputGridView_CurrentCellChanged;
+            this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
+=======
             this.InputGridView.Pasted += InputGridView_Pasted;
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
+>>>>>>> upstream/master
 
-            this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
         }
 
+<<<<<<< HEAD
+        void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateGrid();
+        }
 
-           
+        void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
+<<<<<<< HEAD
+             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+        }
 
         private int GetLinesFromClipboard(String text)
         {
@@ -243,8 +257,15 @@ namespace Marv.Input
             {
                 e.Cancel = true;
             }
+=======
+            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            var x = this.InputGridView;
+            var a = 1 + 1;
+>>>>>>> upstream/master
         }
 
+=======
+>>>>>>> upstream/master
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
@@ -265,23 +286,13 @@ namespace Marv.Input
                 row["Section ID"] = section;
 
                 var sectionEvidence = this.LineEvidence[section];
-                
+
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var yearEvidence = this.LineEvidence[section][year];
-
-                    if (yearEvidence.ContainsKey(this.SelectedVertex.Key))
-                    {
-                        var input = yearEvidence[this.SelectedVertex.Key];
-                        row[year.ToString()] = input;
-                    }
-                    else
-                    {
-                        row[year.ToString()] = "";
-                    }                  
+                    row[year.ToString()] = this.LineEvidence[section][year];
                 }
+
                 inputRows.Add(row);
-              
             }
 
             this.InputRows = inputRows;
@@ -301,39 +312,7 @@ namespace Marv.Input
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog 
-            {
-                Filter = "Input|*.input",
-            };
-
-            if (dialog.ShowDialog() == false) return;
-            if (dialog.FileName != null)
-            {
-                this.LineEvidence.WriteJson(dialog.FileName);
-            }
-        }
-
-        private void ClearAll_Click(object sender, RoutedEventArgs e)
-        {
-            this.InputGridView.SelectAll();
-            foreach (var cell in this.InputGridView.SelectedCells)
-            {
-                this.SelectedVertex.EvidenceString = null;
-                this.SelectedVertex.UpdateEvidence();
-
-                var row = cell.Item as Dynamic;
-                var sectionId = row["Section ID"] as string;
-                var year = (string)cell.Column.Header;
-                if (year != "Section ID")
-                {
-                    row[year] = null;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
-                    row[year] = evidence;
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
-
-                }
-            }
-            this.InputGridView.UnselectAll();
+            this.LineEvidence.WriteJson("marv.input");
         }
 
         private void UpdateGrid()

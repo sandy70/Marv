@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows;
@@ -86,12 +87,40 @@ namespace Marv.Input
                     var year = (string) cell.Column.Header;
                     var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
                     row[year] = evidence;
-
+                    
                     this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                    
                 }
             }
 
             cellClipboardEventArgs.Clear();
+        }
+
+        private void InputGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Back)
+            {
+                if (this.InputGridView.SelectedCells.Count > 0)
+                {
+                    foreach (var cell in this.InputGridView.SelectedCells)
+                    {
+                        this.SelectedVertex.EvidenceString = null;
+                        this.SelectedVertex.UpdateEvidence();
+
+                        var row = cell.Item as Dynamic;
+                        var sectionId = row["Section ID"] as string;
+                        var year = (string)cell.Column.Header;
+                        if (year != "Section ID")
+                        {
+                            row[year] = null;
+                            var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                            row[year] = evidence;
+                            this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                            
+                        }
+                    }
+                }
+            }
         }
 
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)

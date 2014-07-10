@@ -83,9 +83,15 @@
       <HintPath>..\packages\Smile\x86\SmileNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+<<<<<<< HEAD
     <Reference Include="System.Windows.Forms" />
+=======
     <Reference Include="System.Data" />
+<<<<<<< HEAD
+>>>>>>> upstream/master
+=======
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+>>>>>>> upstream/master
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -136,7 +142,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Settings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -178,9 +183,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marv.Common.Graph\Marv.Common.Graph.csproj">
