@@ -38,20 +38,7 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            var row = e.Cell.ParentRow.DataContext as Dynamic;
-
-            if (e.Cell.Column.DisplayIndex <= 0)
-            {
-                row["Section ID"] = e.NewData;
-                return;
-            }
-
-            this.SelectedVertex.EvidenceString = e.NewData as string;
-            this.SelectedVertex.UpdateEvidence();
-            this.UpdateModelEvidence();
-
-            var year = (string) e.Cell.Column.Header;
-            row[year] = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+            this.SetCell(e.Cell.DataContext as dynamic, e.Cell.Column.Header as string, e.NewData as string);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
