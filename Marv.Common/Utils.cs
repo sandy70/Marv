@@ -19,6 +19,7 @@ namespace Marv.Common
         public static T Create<T>()
         {
             System.Reflection.ConstructorInfo constructor = (typeof(T)).GetConstructor(System.Type.EmptyTypes);
+
             if (ReferenceEquals(constructor, null))
             {
                 //there is no default constructor
