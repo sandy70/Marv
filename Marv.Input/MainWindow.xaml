@@ -35,10 +35,16 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Input">
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="104*"/>
+                                <ColumnDefinition Width="193*"/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+
+                            
 
                             <!-- Input Grid View -->
                             <telerik:RadGridView Grid.Row="0"
@@ -53,8 +59,8 @@
                                                  SelectionMode="Extended"
                                                  SelectionUnit="Cell"
                                                  RowIndicatorVisibility="Collapsed"
-                                                 ItemsSource="{Binding ElementName=Root, Path=InputRows}">
-                               
+                                                 ItemsSource="{Binding ElementName=Root, Path=InputRows}" Grid.ColumnSpan="2">
+
                                 <telerik:RadGridView.Resources>
                                     <local:CellTemplateSelector x:Key="CellTemplateSelector">
                                         <local:CellTemplateSelector.VertexEvidenceTemplate>
@@ -79,7 +85,7 @@
                             </telerik:RadGridView>
 
                             <UniformGrid Grid.Row="1"
-                                         Rows="1">
+                                         Rows="1" Grid.ColumnSpan="2">
                                 <TextBlock Margin="2"
                                            TextAlignment="Right" VerticalAlignment="Center"
                                            Text="Start Year" />
@@ -104,28 +110,30 @@
                                                           SmallChange="1"
                                                           LargeChange="5" />
 
-                                <telerik:RadToolBar Margin="0"
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                                    Orientation="Horizontal">
-                                    <telerik:RadButton Name="CreateInputButton"
+                                <telerik:RadButton Name="CreateInputButton"
                                                    Content="Create"
                                                    Margin="2" />
 
-                                    <telerik:RadButton Name="AddSectionButton"
+                                <telerik:RadButton Name="AddSectionButton"
                                                    Content="Add Section"
                                                    Margin="2" />
 
+                                <telerik:RadToolBar Margin="0"
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                                    Orientation="Horizontal" Grid.ColumnSpan="2">
+
                                     <telerik:RadButton Name="OpenButton"
-                                        Margin="2"
+                                        Margin="9, 2, 9, 2"
+                                                   
                                         Content="Open" />
 
                                     <telerik:RadButton Name="SaveButton"
-                                        Margin="2"
+                                        Margin="9, 2, 9, 2"
                                         Content="Save" />
 
                                     <telerik:RadButton Name="ClearAll"
-                                        Margin="2"
+                                        Margin="9, 2, 9, 2"
                                         Content="Clear All" />
                                 </telerik:RadToolBar>
                             </UniformGrid>

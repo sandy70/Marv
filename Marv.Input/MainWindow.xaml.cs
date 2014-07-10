@@ -265,15 +265,20 @@ namespace Marv.Input
                 row["Section ID"] = section;
 
                 var sectionEvidence = this.LineEvidence[section];
-
+                
                 foreach (var year in sectionEvidence.Keys)
                 {
                     var yearEvidence = this.LineEvidence[section][year];
-                    foreach (var key in yearEvidence.Keys)
+
+                    if (yearEvidence.ContainsKey(this.SelectedVertex.Key))
                     {
-                        row[year.ToString()] = this.LineEvidence[section][year][key];
+                        var input = yearEvidence[this.SelectedVertex.Key];
+                        row[year.ToString()] = input;
                     }
-                    
+                    else
+                    {
+                        row[year.ToString()] = "";
+                    }                  
                 }
                 inputRows.Add(row);
               
