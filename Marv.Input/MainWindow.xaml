@@ -132,7 +132,7 @@
                                         Margin="9, 2, 9, 2"
                                         Content="Save" />
 
-                                    <telerik:RadButton Name="ClearAll"
+                                    <telerik:RadButton Name="ClearAllButton"
                                         Margin="9, 2, 9, 2"
                                         Content="Clear All" />
                                 </telerik:RadToolBar>

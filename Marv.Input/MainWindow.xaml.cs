@@ -164,7 +164,7 @@ namespace Marv.Input
             }
         }
 
-        private void ClearAll_Click(object sender, RoutedEventArgs e)
+        private void ClearAllButton_Click(object sender, RoutedEventArgs e)
         {
             this.InputGridView.SelectAll();
             foreach (var cell in this.InputGridView.SelectedCells)
@@ -226,12 +226,10 @@ namespace Marv.Input
             this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
+            this.ClearAllButton.Click += this.ClearAllButton_Click;
+            this.CreateInputButton.Click += CreateInputButton_Click;
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
-            this.ClearAll.Click += ClearAll_Click;
-
-            this.CreateInputButton.Click -= CreateInputButton_Click;
-            this.CreateInputButton.Click += CreateInputButton_Click;
 
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
