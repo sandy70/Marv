@@ -98,7 +98,7 @@ namespace Marv.Input
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Back)
+            if (e.Key == Key.Delete)
             {
                 if (this.InputGridView.SelectedCells.Count > 0)
                 {
