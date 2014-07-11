@@ -17,6 +17,7 @@ namespace Marv.Common.Graph
         private string defaultGroup;
         private Graph displayGraph;
         private ModelCollection<Edge> edges = new ModelCollection<Edge>();
+        private string fileName;
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
@@ -115,7 +116,22 @@ namespace Marv.Common.Graph
             }
         }
 
-        public String FileName { get; set; }
+        public string FileName
+        {
+            get
+            {
+                return this.fileName;
+            }
+
+            private set
+            {
+                if (value != this.fileName)
+                {
+                    this.fileName = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
 
         public Dictionary<string, string, double> InitialBelief
         {
@@ -428,9 +444,10 @@ namespace Marv.Common.Graph
 
             var graph = new Graph
             {
+                network = structure.Network,
                 DefaultGroup = structure.ParseUserProperty("defaultgroup", "all"),
+                FileName = fileName,
                 Name = structure.ParseUserProperty("key", ""),
-                network = structure.Network
             };
 
             // Add all the vertices

@@ -123,7 +123,9 @@ namespace Marv.Input
             var row = new Dynamic();
             try
             {
-                row["Section ID"] = "Section " + (this.InputRows.Count + 1);
+                var sectionId = "Section " + (this.InputRows.Count + 1);
+                row["Section ID"] = sectionId;
+                this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
             }
             catch (NullReferenceException)
             {
@@ -188,7 +190,10 @@ namespace Marv.Input
         {
             var inputRows = new ObservableCollection<dynamic>();
             var row = new Dynamic();
-            row["Section ID"] = "Section 1";
+
+            var sectionId = "Section 1";
+            row["Section ID"] = sectionId;
+            this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
 
             for (var year = this.StartYear; year <= this.EndYear; year++)
             {
@@ -197,7 +202,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+            
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
             foreach (var column in this.InputGridView.Columns)
@@ -220,7 +225,6 @@ namespace Marv.Input
         {
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
-            this.Graph.FileName = Settings.Default.FileName;
             this.Graph.Belief = null;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
@@ -322,7 +326,7 @@ namespace Marv.Input
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var evidenceString = this.LineEvidence[sectionId][year][this.SelectedVertex.Key].String;
+                    var evidenceString = this.LineEvidence[sectionId, year, this.SelectedVertex.Key].String;
                     this.SetCell(row, year.ToString(), evidenceString);
                 }
             }
@@ -344,6 +348,7 @@ namespace Marv.Input
 
                 var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
                 var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
+
                 if (row != null)
                 {
                     var sectionId = row["Section ID"] as string;
