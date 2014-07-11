@@ -36,7 +36,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
         public static readonly DependencyProperty AutoSaveDurationProperty =
-            DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(0));
+            DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(10000));
 
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof(bool), typeof(GraphControl), new PropertyMetadata(true));
@@ -167,16 +167,16 @@ namespace Marv.Controls.Graph
         public GraphControl()
         {
             InitializeComponent();
-            AutoSaveStart();
+            InitializeAutoSave();
             this.Loaded += GraphControl_Loaded;
         }
 
 
-        public void AutoSaveStart()
+        public void InitializeAutoSave()
         {
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(10000)
+                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
             };
 
             timer.Tick += (o, e2) =>

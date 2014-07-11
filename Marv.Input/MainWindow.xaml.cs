@@ -7,6 +7,8 @@ using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace Marv.Input
 {
@@ -109,14 +111,25 @@ namespace Marv.Input
             }
         }
 
+        void InitializePlot()
+        {
+            this.MyModel = new PlotModel();
+            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+        }
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
 
             InitializeComponent();
 
+            InitializePlot();
+
+
             this.Loaded += MainWindow_Loaded;
         }
+
+        public PlotModel MyModel { get; private set; }
 
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
