@@ -20,20 +20,20 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
-        public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
-            DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
-
-        public static readonly DependencyProperty ShapeOpacityProperty =
-            DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
-
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty IsVerticesEnabledProperty =
+            DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
+            DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
 
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty IsVerticesEnabledProperty =
-            DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty ShapeOpacityProperty =
+            DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
         public static readonly DependencyProperty AutoSaveDurationProperty =
             DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(0));
@@ -295,7 +295,6 @@ namespace Marv.Controls.Graph
         {
             var openDialog = new OpenFileDialog();
 
-
             openDialog.Filter = "Network Files (.net)|*.net";
             openDialog.FilterIndex = 1;
             openDialog.Multiselect = false;
@@ -306,7 +305,6 @@ namespace Marv.Controls.Graph
             }
 
             this.Graph = Common.Graph.Graph.Read(openDialog.FileName);
-            this.Graph.FileName = openDialog.FileName;
             this.Graph.Run();
         }
 

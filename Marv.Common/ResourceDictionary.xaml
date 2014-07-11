@@ -32,7 +32,7 @@
     <system:Double x:Key="FontSizeLargest">18</system:Double>
 
     <system:String x:Key="MarginSmallest">1</system:String>
-    <system:String x:Key="MarginSmaller">3</system:String>
-    <system:String x:Key="MarginSmall">5</system:String>
-    <system:String x:Key="MarginMedium">10</system:String>
+    <system:String x:Key="MarginSmaller">2</system:String>
+    <system:String x:Key="MarginSmall">4</system:String>
+    <system:String x:Key="MarginMedium">8</system:String>
 </ResourceDictionary>
