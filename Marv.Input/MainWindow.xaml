@@ -72,6 +72,15 @@
                                         ToolTip="Deletes all input." >
                                 <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                                 </telerik:RadButton>
+                                
+                                <telerik:RadButton Name="PlotButton"
+                                        Margin="5, 0, 6, 0"
+                                        Height="30" Width="30"
+                                        IsEnabled="False"
+                                        ToolTip="Plots input values." >
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
+                                </telerik:RadButton>
+
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
@@ -156,7 +165,7 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="DataPlot">
                         <Grid>
-                            <oxy:PlotView Model="{Binding MyModel}"/>
+                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}"/>
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
