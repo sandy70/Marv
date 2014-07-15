@@ -130,23 +130,16 @@ namespace Marv.Input
             this.DataPlotModel = new PlotModel {
                 Title = "InputData"
             };
-            foreach (var row in this.InputRows)
+            
+            if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var sectionId = row["Section ID"] as string;
-
-                var sectionEvidence = this.LineEvidence[sectionId];
-
-                foreach (var year in sectionEvidence.Keys)
+                ScatterSeries series = new ScatterSeries();
+                var year = this.InputGridView.SelectedCells[0].Column.Header;
+                foreach (var row in this.InputRows)
                 {
-                    ScatterSeries series = new ScatterSeries();
-                    double rowCount = 1;
-                    while(rowCount <= this.InputRows.Count)
-                    {
-                        series.Points.Add(new OxyPlot.Series.ScatterPoint((double) year, rowCount));
-                        rowCount++;
-                    }
-                    this.DataPlotModel.Series.Add(series);
-                    this.DataPlotModel.InvalidatePlot(true);               
+                    var sectionID = row["Section ID"];
+                    var value = this.InputRows[sectionID][year].ToString().ToDouble();
+                    series.Points.Add(new OxyPlot.Series.ScatterPoint(sectionID, value));
                 }
             }
              
