@@ -133,16 +133,34 @@ namespace Marv.Input
             
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                ScatterSeries series = new ScatterSeries();
+                ScatterSeries series1 = new ScatterSeries();
+                CandleStickSeries series2 = new CandleStickSeries();
                 var year = this.InputGridView.SelectedCells[0].Column.Header;
                 foreach (var row in this.InputRows)
                 {
-                    var sectionID = row["Section ID"];
-                    var value = this.InputRows[sectionID][year].ToString().ToDouble();
-                    series.Points.Add(new OxyPlot.Series.ScatterPoint(sectionID, value));
+                    double rowIndex = this.InputRows.IndexOf(row);
+                    try
+                    {
+                    if (!(row[year] is string) && (!row[year].String.Contains(":")) )
+                        {
+                            double value = Convert.ToDouble(row[year].String);
+                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
+                        }
+                    else if (row[year].String.Contains(":"))
+                        {
+                            
+                        }
+                    }
+                    catch (FormatException e)
+                    {
+
+                    }
+                    
                 }
+                
+                this.DataPlotModel.Series.Add(series1);
             }
-             
+            this.DataPlotModel.InvalidatePlot(true);
             
             
         }
