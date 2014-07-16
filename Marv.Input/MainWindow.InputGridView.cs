@@ -79,7 +79,7 @@ namespace Marv.Input
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
+            if (e.Key == Key.Delete || e.Key == Key.Back)
             {
                 foreach (var cellInfo in this.InputGridView.SelectedCells)
                 {

@@ -4,6 +4,7 @@
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.codeplex.com"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized">
@@ -31,6 +32,7 @@
             </telerik:RadDocking.DocumentHost>
 
             <telerik:RadSplitContainer InitialPosition="DockedLeft"
+                                       Orientation="Vertical"
                                        Width="600">
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Input">
@@ -40,14 +42,49 @@
                                 <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            
+                            <telerik:RadToolBar Margin="0"
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                                    Orientation="Horizontal" Grid.ColumnSpan="2">
+
+                                <telerik:RadButton Name="OpenButton"
+                                        Margin="9, 0, 9, 0"
+                                        Height="20" Width="20"
+                                        ToolTip="Opens input file and populates input.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
+                                </telerik:RadButton>
+
+                                <telerik:RadButton Name="SaveButton"
+                                        Margin="9, 0, 9, 0"
+                                        Height="20" Width="20"
+                                        ToolTip="Saves input to input file.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                                </telerik:RadButton>
+
+                                <telerik:RadButton Name="ClearAllButton"
+                                        Margin="5, 0, 6, 0"
+                                        Height="30" Width="30"
+                                        ToolTip="Deletes all input." >
+                                <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+                                </telerik:RadButton>
+                                
+                                <telerik:RadButton Name="PlotButton"
+                                        Margin="5, 0, 6, 0"
+                                        Height="30" Width="30"
+                                        IsEnabled="False"
+                                        ToolTip="Plots input values." >
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
+                                </telerik:RadButton>
+
+                            </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
-                            <telerik:RadGridView Grid.Row="0"
+                            <telerik:RadGridView Grid.Row="1"
                                                  Name="InputGridView"
                                                  AutoGenerateColumns="True"
                                                  CanUserReorderColumns="False"
@@ -84,7 +121,7 @@
                                 </telerik:RadGridView.Resources>
                             </telerik:RadGridView>
 
-                            <UniformGrid Grid.Row="1"
+                            <UniformGrid Grid.Row="2"
                                          Rows="1" Grid.ColumnSpan="2">
                                 <TextBlock Margin="2"
                                            TextAlignment="Right" VerticalAlignment="Center"
@@ -118,27 +155,18 @@
                                                    Content="Add Section"
                                                    Margin="2" />
 
-                                <telerik:RadToolBar Margin="0"
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                                    Orientation="Horizontal" Grid.ColumnSpan="2">
-
-                                    <telerik:RadButton Name="OpenButton"
-                                        Margin="9, 2, 9, 2"
-                                                   
-                                        Content="Open" />
-
-                                    <telerik:RadButton Name="SaveButton"
-                                        Margin="9, 2, 9, 2"
-                                        Content="Save" />
-
-                                    <telerik:RadButton Name="ClearAllButton"
-                                        Margin="9, 2, 9, 2"
-                                        Content="Clear All" />
-                                </telerik:RadToolBar>
+                                
                             </UniformGrid>
                         </Grid>
 
+                    </telerik:RadPane>
+                    
+                </telerik:RadPaneGroup>
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="DataPlot">
+                        <Grid>
+                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}"/>
+                        </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>

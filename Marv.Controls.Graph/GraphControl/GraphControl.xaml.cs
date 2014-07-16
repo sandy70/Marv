@@ -35,6 +35,12 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
+        public static readonly DependencyProperty AutoSaveDurationProperty =
+            DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(10000));
+
+        public static readonly DependencyProperty IsAutoSaveEnabledProperty =
+            DependencyProperty.Register("IsAutoSaveEnabled", typeof(bool), typeof(GraphControl), new PropertyMetadata(true));
+
         public Color ConnectionColor
         {
             get
@@ -134,10 +140,57 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public int AutoSaveDuration
+        {
+            get
+            {
+                return (int)this.GetValue(AutoSaveDurationProperty);
+            }
+            set
+            {
+                this.SetValue(AutoSaveDurationProperty, value);
+            }
+        }
+
+        public bool IsAutoSaveEnabled
+        {
+            get
+            {
+                return (bool)this.GetValue(IsAutoSaveEnabledProperty);
+            }
+            set
+            {
+                this.SetValue(IsAutoSaveEnabledProperty, value);
+            }
+        }
+
         public GraphControl()
         {
             InitializeComponent();
+            InitializeAutoSave();
             this.Loaded += GraphControl_Loaded;
+        }
+
+
+        public void InitializeAutoSave()
+        {
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
+            };
+
+            timer.Tick += (o, e2) =>
+            {
+                if (!IsAutoSaveEnabled)
+                {
+                    timer.Stop();
+                }
+                else
+                {
+                    this.Graph.Write(this.Graph.FileName);
+                }
+            };
+            timer.Start();
         }
 
         public void AutoFit()
