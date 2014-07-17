@@ -217,7 +217,7 @@ namespace Marv.Controls.Graph
 
             timer.Tick += (o, e2) =>
             {
-                if(this.IsAutoSaveEnabled)
+                if(this.IsAutoSaveEnabled && this.Graph != null)
                 {
                     this.Graph.Write(this.Graph.FileName);
                 }
