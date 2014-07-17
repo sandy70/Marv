@@ -217,17 +217,35 @@ namespace Marv.Controls.Graph
 
             timer.Tick += (o, e2) =>
             {
-                if (!IsAutoSaveEnabled)
-                {
-                    timer.Stop();
-                }
-                else
+                if(this.IsAutoSaveEnabled)
                 {
                     this.Graph.Write(this.Graph.FileName);
                 }
             };
 
             timer.Start();
+        }
+
+        public void Open(string fileName)
+        {
+            this.Graph = Common.Graph.Graph.Read(fileName);
+            this.Graph.Run();
+        }
+
+        public void Open()
+        {
+            var openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Filter = "Network Files (.net)|*.net";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = false;
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.Open(openFileDialog.FileName);
         }
 
         public void RaiseEvidenceEntered(Vertex vertex = null)
@@ -300,19 +318,7 @@ namespace Marv.Controls.Graph
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            var openDialog = new OpenFileDialog();
-
-            openDialog.Filter = "Network Files (.net)|*.net";
-            openDialog.FilterIndex = 1;
-            openDialog.Multiselect = false;
-
-            if (openDialog.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
-            this.Graph = Common.Graph.Graph.Read(openDialog.FileName);
-            this.Graph.Run();
+            this.Open();
         }
 
         private void RaiseSelectionChanged(Vertex vertex)
