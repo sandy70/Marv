@@ -6,14 +6,18 @@ using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
-using Telerik.Windows.Controls;
 using OxyPlot;
 using OxyPlot.Series;
+using Telerik.Windows.Controls;
+using ScatterPoint = OxyPlot.Series.ScatterPoint;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
+        public static readonly DependencyProperty DataPlotModelProperty =
+            DependencyProperty.Register("DataPlotModel", typeof (PlotModel), typeof (MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty EndYearProperty =
             DependencyProperty.Register("EndYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedEndYear));
 
@@ -32,11 +36,20 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
-        public static readonly DependencyProperty DataPlotModelProperty =
-            DependencyProperty.Register("DataPlotModel", typeof(PlotModel), typeof(MainWindow), new PropertyMetadata(null));
-
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+
+        public PlotModel DataPlotModel
+        {
+            get
+            {
+                return (PlotModel) GetValue(DataPlotModelProperty);
+            }
+            set
+            {
+                SetValue(DataPlotModelProperty, value);
+            }
+        }
 
         public int EndYear
         {
@@ -114,65 +127,12 @@ namespace Marv.Input
             }
         }
 
-        public PlotModel DataPlotModel { 
-            get
-            {
-                return (PlotModel)GetValue(DataPlotModelProperty);
-            }
-            set 
-            {
-                SetValue(DataPlotModelProperty, value);
-            }
-        }
-
-        void InitializePlot()
-        {
-            this.DataPlotModel = new PlotModel {
-                Title = "InputData"
-            };
-            
-            if (this.InputGridView.SelectedCells.Count == 1)
-            {
-                ScatterSeries series1 = new ScatterSeries();
-                CandleStickSeries series2 = new CandleStickSeries();
-                var year = this.InputGridView.SelectedCells[0].Column.Header;
-                foreach (var row in this.InputRows)
-                {
-                    double rowIndex = this.InputRows.IndexOf(row);
-                    try
-                    {
-                    if (!(row[year] is string) && (!row[year].String.Contains(":")) )
-                        {
-                            double value = Convert.ToDouble(row[year].String);
-                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
-                        }
-                    else if (row[year].String.Contains(":"))
-                        {
-                            
-                        }
-                    }
-                    catch (FormatException e)
-                    {
-
-                    }
-                    
-                }
-                
-                this.DataPlotModel.Series.Add(series1);
-            }
-            this.DataPlotModel.InvalidatePlot(true);
-            
-            
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
         }
-
-        
 
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
@@ -277,6 +237,43 @@ namespace Marv.Input
             this.UpdateGrid();
         }
 
+        private void InitializePlot()
+        {
+            this.DataPlotModel = new PlotModel
+            {
+                Title = "InputData"
+            };
+
+            if (this.InputGridView.SelectedCells.Count == 1)
+            {
+                var series1 = new ScatterSeries();
+                var series2 = new CandleStickSeries();
+                var year = this.InputGridView.SelectedCells[0].Column.Header;
+
+                foreach (var row in this.InputRows)
+                {
+                    double rowIndex = this.InputRows.IndexOf(row);
+                    try
+                    {
+                        if (!(row[year] is string) && (!row[year].String.Contains(":")))
+                        {
+                            double value = Convert.ToDouble(row[year].String);
+                            series1.Points.Add(new ScatterPoint(rowIndex, value));
+                        }
+                        else if (row[year].String.Contains(":"))
+                        {
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                    }
+                }
+
+                this.DataPlotModel.Series.Add(series1);
+            }
+            this.DataPlotModel.InvalidatePlot(true);
+        }
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Read the graph
@@ -304,11 +301,6 @@ namespace Marv.Input
 
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-        }
-
-        private void PlotButton_Click(object sender, RoutedEventArgs e)
-        {
-            InitializePlot();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -361,6 +353,11 @@ namespace Marv.Input
             this.InputGridView.CurrentCellInfo = cellToEdit;
             this.PlotButton.IsEnabled = true;
             this.Graph.Run();
+        }
+
+        private void PlotButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializePlot();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
