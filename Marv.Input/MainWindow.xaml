@@ -38,46 +38,46 @@
                     <telerik:RadPane Header="Input">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <telerik:RadToolBar Margin="0"
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                                    Orientation="Horizontal" Grid.ColumnSpan="2">
+                                                Grid.Row="0"
+                                                HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                                                Orientation="Horizontal" Grid.ColumnSpan="2">
 
                                 <telerik:RadButton Name="OpenButton"
-                                        Margin="9, 0, 9, 0"
-                                        Height="20" Width="20"
-                                        ToolTip="Opens input file and populates input.">
+                                                   Margin="9, 0, 9, 0"
+                                                   Height="20" Width="20"
+                                                   ToolTip="Opens input file and populates input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="SaveButton"
-                                        Margin="9, 0, 9, 0"
-                                        Height="20" Width="20"
-                                        ToolTip="Saves input to input file.">
+                                                   Margin="9, 0, 9, 0"
+                                                   Height="20" Width="20"
+                                                   ToolTip="Saves input to input file.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="ClearAllButton"
-                                        Margin="5, 0, 6, 0"
-                                        Height="30" Width="30"
-                                        ToolTip="Deletes all input." >
-                                <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+                                                   Margin="5, 0, 6, 0"
+                                                   Height="30" Width="30"
+                                                   ToolTip="Deletes all input.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                                 </telerik:RadButton>
-                                
+
                                 <telerik:RadButton Name="PlotButton"
-                                        Margin="5, 0, 6, 0"
-                                        Height="30" Width="30"
-                                        IsEnabled="False"
-                                        ToolTip="Plots input values." >
+                                                   Margin="5, 0, 6, 0"
+                                                   Height="30" Width="30"
+                                                   IsEnabled="False"
+                                                   ToolTip="Plots input values.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
                                 </telerik:RadButton>
 
@@ -155,17 +155,17 @@
                                                    Content="Add Section"
                                                    Margin="2" />
 
-                                
+
                             </UniformGrid>
                         </Grid>
 
                     </telerik:RadPane>
-                    
+
                 </telerik:RadPaneGroup>
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="DataPlot">
                         <Grid>
-                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}"/>
+                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" />
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>

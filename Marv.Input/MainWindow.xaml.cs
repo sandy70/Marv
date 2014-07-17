@@ -299,8 +299,8 @@ namespace Marv.Input
             this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
-            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
-            this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
+            this.VertexControl.CommandExecuted += this.VertexControl_CommandExecuted;
+            this.VertexControl.EvidenceEntered += this.VertexControl_EvidenceEntered;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

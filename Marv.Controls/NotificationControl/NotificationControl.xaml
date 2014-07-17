@@ -16,7 +16,7 @@
     </UserControl.Resources>
 
     <!-- Notification Listbox -->
-    <surface:SurfaceListBox Background="Transparent"
+    <surface:SurfaceListBox Background="LightGray"
                             HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding Notifications, ElementName=Root}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"

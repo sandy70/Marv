@@ -185,7 +185,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count/2;
+                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
             }
         }
 
