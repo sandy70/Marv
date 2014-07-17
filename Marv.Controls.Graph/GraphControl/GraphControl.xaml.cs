@@ -11,6 +11,9 @@ namespace Marv.Controls.Graph
 {
     public partial class GraphControl
     {
+        public static readonly DependencyProperty AutoSaveDurationProperty =
+            DependencyProperty.Register("AutoSaveDuration", typeof (int), typeof (GraphControl), new PropertyMetadata(10000));
+
         public static readonly DependencyProperty ConnectionColorProperty =
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
@@ -19,6 +22,9 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
+
+        public static readonly DependencyProperty IsAutoSaveEnabledProperty =
+            DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
@@ -35,11 +41,18 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
-        public static readonly DependencyProperty AutoSaveDurationProperty =
-            DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(10000));
+        public int AutoSaveDuration
+        {
+            get
+            {
+                return (int) this.GetValue(AutoSaveDurationProperty);
+            }
 
-        public static readonly DependencyProperty IsAutoSaveEnabledProperty =
-            DependencyProperty.Register("IsAutoSaveEnabled", typeof(bool), typeof(GraphControl), new PropertyMetadata(true));
+            set
+            {
+                this.SetValue(AutoSaveDurationProperty, value);
+            }
+        }
 
         public Color ConnectionColor
         {
@@ -47,6 +60,7 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(ConnectionColorProperty);
             }
+
             set
             {
                 this.SetValue(ConnectionColorProperty, value);
@@ -59,6 +73,7 @@ namespace Marv.Controls.Graph
             {
                 return (Common.Graph.Graph) this.GetValue(GraphProperty);
             }
+
             set
             {
                 this.SetValue(GraphProperty, value);
@@ -71,9 +86,23 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(IncomingConnectionHighlightColorProperty);
             }
+
             set
             {
                 this.SetValue(IncomingConnectionHighlightColorProperty, value);
+            }
+        }
+
+        public bool IsAutoSaveEnabled
+        {
+            get
+            {
+                return (bool) this.GetValue(IsAutoSaveEnabledProperty);
+            }
+
+            set
+            {
+                this.SetValue(IsAutoSaveEnabledProperty, value);
             }
         }
 
@@ -109,6 +138,7 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty);
             }
+
             set
             {
                 this.SetValue(OutgoingConnectionHighlightColorProperty, value);
@@ -134,33 +164,10 @@ namespace Marv.Controls.Graph
             {
                 return (double) this.GetValue(ShapeOpacityProperty);
             }
+
             set
             {
                 this.SetValue(ShapeOpacityProperty, value);
-            }
-        }
-
-        public int AutoSaveDuration
-        {
-            get
-            {
-                return (int)this.GetValue(AutoSaveDurationProperty);
-            }
-            set
-            {
-                this.SetValue(AutoSaveDurationProperty, value);
-            }
-        }
-
-        public bool IsAutoSaveEnabled
-        {
-            get
-            {
-                return (bool)this.GetValue(IsAutoSaveEnabledProperty);
-            }
-            set
-            {
-                this.SetValue(IsAutoSaveEnabledProperty, value);
             }
         }
 
@@ -169,28 +176,6 @@ namespace Marv.Controls.Graph
             InitializeComponent();
             InitializeAutoSave();
             this.Loaded += GraphControl_Loaded;
-        }
-
-
-        public void InitializeAutoSave()
-        {
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
-            };
-
-            timer.Tick += (o, e2) =>
-            {
-                if (!IsAutoSaveEnabled)
-                {
-                    timer.Stop();
-                }
-                else
-                {
-                    this.Graph.Write(this.Graph.FileName);
-                }
-            };
-            timer.Start();
         }
 
         public void AutoFit()
@@ -221,6 +206,28 @@ namespace Marv.Controls.Graph
             this.IsVerticesEnabled = false;
             this.DiagramPart.IsConnectorsManipulationEnabled = true;
             this.DiagramPart.IsManipulationAdornerVisible = true;
+        }
+
+        public void InitializeAutoSave()
+        {
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
+            };
+
+            timer.Tick += (o, e2) =>
+            {
+                if (!IsAutoSaveEnabled)
+                {
+                    timer.Stop();
+                }
+                else
+                {
+                    this.Graph.Write(this.Graph.FileName);
+                }
+            };
+
+            timer.Start();
         }
 
         public void RaiseEvidenceEntered(Vertex vertex = null)
