@@ -112,6 +112,24 @@ namespace Marv.Input
             }
         }
 
+                series2.Color = OxyColors.Green;
+
+
+                series2.Items.Add(new HighLowItem(0, 3, 6, 3, 6));
+                        if (!(row[year] is string))
+                        {
+                            if ((!row[year].String.Contains(":")))
+                            {
+                                double value = Convert.ToDouble(row[year].String);
+                                series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                this.DataPlotModel.Series.Add(series2);
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
