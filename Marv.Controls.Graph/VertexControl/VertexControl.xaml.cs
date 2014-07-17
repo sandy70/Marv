@@ -140,7 +140,6 @@ namespace Marv.Controls.Graph
             this.Unloaded += VertexControl_Unloaded;
 
             this.EvidenceChanged += VertexControl_EvidenceChanged;
-            this.EvidenceEntered += VertexControl_EvidenceEntered;
             this.EvidenceStringChanged += VertexControl_EvidenceStringChanged;
         }
 
@@ -199,13 +198,8 @@ namespace Marv.Controls.Graph
 
         private void VertexControl_EvidenceChanged(object sender, Vertex e)
         {
-            this.Vertex.UpdateEvidenceString();
-        }
-
-        private void VertexControl_EvidenceEntered(object sender, Vertex vertex)
-        {
-            Console.WriteLine("VertexControl_EvidenceEntered");
             this.Vertex.Evidence = this.Vertex.Evidence.Normalized();
+            this.Vertex.UpdateEvidenceString();
         }
 
         private void VertexControl_EvidenceStringChanged(object sender, Vertex e)
