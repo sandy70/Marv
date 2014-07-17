@@ -12,23 +12,62 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
+        private bool checkValidityOfInput(string str)
+        {
+            double value;
+            if ((!str.Contains(":")))
+            {
+                if (Double.TryParse(str, out value))
+                {
+                    return true;
+                }
+            }
+            else if (str.Split(":".ToCharArray()).Length == 2)
+            {
+                String[] valueSet = str.Split(":".ToCharArray());
+                if (Double.TryParse(valueSet[0], out value) && Double.TryParse(valueSet[1], out value))
+                {
+                    return true;
+                }
+            }
+            else if(str == null){
+                return true;
+            }
+            return false;
+        }
+
         public void SetCell(dynamic row, string columnHeader, string str)
         {
-            this.Graph.SelectedVertex.EvidenceString = str;
-            this.Graph.SelectedVertex.UpdateEvidence();
-
-            var sectionId = row["Section ID"] as string;
-
-            if (columnHeader == "Section ID")
+            if (checkValidityOfInput(str) || columnHeader.Equals("Section ID"))
             {
-                row[columnHeader] = str;
+                this.SelectedVertex.EvidenceString = str;
+                this.SelectedVertex.UpdateEvidence();
+
+                var sectionId = row["Section ID"] as string;
+
+                if (columnHeader == "Section ID")
+                {
+                    row[columnHeader] = str;
+                }
+                else
+                {
+                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
+                    row[columnHeader] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
+                }
             }
             else
             {
-                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
-                row[columnHeader] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
+                row[columnHeader] = null;
+                this.Notifications.Add(new NotificationIndeterminate
+                {
+                    Description = "Please enter valid data (number, range in the form number:number).",
+                    Name = "Invalid Data Entry"
+                    
+                });
+               
             }
+            
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)

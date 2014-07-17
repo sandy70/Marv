@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Linq;
 using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
@@ -114,18 +115,19 @@ namespace Marv.Input
 
                 series2.Color = OxyColors.Green;
 
-
-                series2.Items.Add(new HighLowItem(0, 3, 6, 3, 6));
-                        if (!(row[year] is string))
+                        var entry = row[year];
+                        if (!(entry is string))
                         {
-                            if ((!row[year].String.Contains(":")))
+                            if ((!entry.String.Contains(":")))
                             {
                                 double value = Convert.ToDouble(row[year].String);
                                 series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
                             }
-                            else
+                            else if(entry.String.Split(":".ToArray()).Length == 2)
                             {
-
+                                String[] valueSet = entry.String.Split(":".ToArray());
+                                series2.Items.Add(new HighLowItem(rowIndex, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]), 
+                                    Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
                             }
                         }
                     }
