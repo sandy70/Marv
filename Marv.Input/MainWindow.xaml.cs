@@ -135,20 +135,27 @@ namespace Marv.Input
             {
                 ScatterSeries series1 = new ScatterSeries();
                 CandleStickSeries series2 = new CandleStickSeries();
+                series2.Color = OxyColors.Green;
+
+
+                series2.Items.Add(new HighLowItem(0, 3, 6, 3, 6));
                 var year = this.InputGridView.SelectedCells[0].Column.Header;
                 foreach (var row in this.InputRows)
                 {
                     double rowIndex = this.InputRows.IndexOf(row);
                     try
                     {
-                    if (!(row[year] is string) && (!row[year].String.Contains(":")) )
+                        if (!(row[year] is string))
                         {
-                            double value = Convert.ToDouble(row[year].String);
-                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
-                        }
-                    else if (row[year].String.Contains(":"))
-                        {
-                            
+                            if ((!row[year].String.Contains(":")))
+                            {
+                                double value = Convert.ToDouble(row[year].String);
+                                series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
                     catch (FormatException e)
@@ -159,6 +166,7 @@ namespace Marv.Input
                 }
                 
                 this.DataPlotModel.Series.Add(series1);
+                this.DataPlotModel.Series.Add(series2);
             }
             this.DataPlotModel.InvalidatePlot(true);
             
