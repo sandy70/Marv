@@ -22,6 +22,7 @@
     <marv:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
     <marv:DoubleToBrushConverter x:Key="DoubleToBrush" />
     <marv:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
+    <marv:IntToVisibilityConverter x:Key="IntToVisibility" />
     <marv:NullToBooleanConverter x:Key="NullToBoolean" />
     <marv:NullToBooleanConverter x:Key="NullToBooleanReversed" IsReversed="True" />
     <marv:NullToVisibilityConverter x:Key="NullToVisibility" />
