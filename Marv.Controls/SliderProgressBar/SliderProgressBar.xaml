@@ -9,7 +9,7 @@
     <telerik:RadSlider.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </telerik:RadSlider.Resources>
-    
+
     <telerik:RadSlider.Template>
         <ControlTemplate>
             <Grid>
