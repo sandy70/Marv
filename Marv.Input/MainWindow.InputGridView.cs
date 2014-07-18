@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
-using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 
@@ -10,25 +8,6 @@ namespace Marv.Input
     public partial class MainWindow
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
-
-        public void SetCell(dynamic row, string columnHeader, string str)
-        {
-            this.Graph.SelectedVertex.EvidenceString = str;
-            this.Graph.SelectedVertex.UpdateEvidence();
-
-            var sectionId = row["Section ID"] as string;
-
-            if (columnHeader == "Section ID")
-            {
-                row[columnHeader] = str;
-            }
-            else
-            {
-                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
-                row[columnHeader] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
-            }
-        }
 
         public void SetCell(CellModel cellModel, string str)
         {
@@ -46,7 +25,7 @@ namespace Marv.Input
             selectedVertex.UpdateEvidence();
 
             var vertexData = selectedVertex.GetData();
-            
+
             cellModel.Data = vertexData;
 
             if (selectedVertex.IsEvidenceEntered)
@@ -96,10 +75,7 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                var cellModel = cellClipboardEventArg.Cell.ToModel();
-                var str = cellClipboardEventArg.Value as string;
-
-                this.SetCell(cellModel, str);
+                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
             }
 
             cellClipboardEventArgs.Clear();
