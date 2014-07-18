@@ -214,9 +214,18 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_EvidenceEntered(object sender, Vertex e)
+        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.UpdateModelEvidence();
+            this.Graph.Run();
+
+            if (this.InputGridView.CurrentCell == null) return;
+
+            var vertexData = vertex.GetData();
+
+            var cellModel = this.InputGridView.CurrentCell.ToModel();
+            cellModel.Data = vertexData;
+
+            this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
@@ -379,31 +388,6 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateModelEvidence()
-        {
-            if (this.InputGridView.CurrentCell == null)
-            {
-                this.Notifications.Push(new NotificationTimed
-                {
-                    Description = "You must select a year before you can enter evidence.",
-                    Name = "Select Year!"
-                });
-            }
-            else
-            {
-                this.Graph.Run();
-
-                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
-                var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
-
-                if (row != null)
-                {
-                    var sectionId = row["Section ID"] as string;
-                    this.LineEvidence[sectionId, year] = this.Graph.GetEvidence();
-                }
-            }
-        }
-
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
             var vertexControl = sender as VertexControl;
@@ -419,10 +403,17 @@ namespace Marv.Input
             }
         }
 
-        private void VertexControl_EvidenceEntered(object sender, Vertex e)
+        private void VertexControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.UpdateModelEvidence();
-            this.UpdateGrid();
+            this.Graph.Run();
+
+            if (this.InputGridView.CurrentCell == null) return;
+
+            var cellModel = new CellModel(this.InputGridView.CurrentCell);
+            var vertexData = vertex.GetData();
+
+            cellModel.Row[cellModel.YearString] = vertexData;
+            this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
     }
 }

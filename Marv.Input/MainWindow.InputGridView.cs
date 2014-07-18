@@ -43,6 +43,8 @@ namespace Marv.Input
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
+            if (e.NewCell == null) return;
+
             var row = e.NewCell.ParentRow.DataContext as Dynamic;
 
             if (row != null)
