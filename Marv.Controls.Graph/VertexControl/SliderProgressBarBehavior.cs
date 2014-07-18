@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+﻿using System;
 using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -7,36 +7,23 @@ namespace Marv.Controls.Graph
 {
     internal class SliderProgressBarBehavior : Behavior<SliderProgressBar>
     {
-        private VertexControl vertexControl;
-
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            this.vertexControl = this.AssociatedObject.FindParent<VertexControl>();
-
-            this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
-            this.AssociatedObject.MouseDown += AssociatedObject_MouseDown;
-            this.AssociatedObject.MouseUp += AssociatedObject_MouseUp;
+            this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
         }
 
-        private void AssociatedObject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void AssociatedObject_ValueEntered(object sender, double e)
         {
-            this.vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
-            this.vertexControl.RaiseEvidenceChanged();
-        }
+            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
 
-        private void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            this.vertexControl.Vertex.EvidenceString = null;
-        }
-
-        private void AssociatedObject_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (!this.vertexControl.IsValueVisible)
+            if (Math.Abs(e - 100) < Utils.Epsilon)
             {
-                this.vertexControl.RaiseEvidenceChanged();
+                vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }
+
+            vertexControl.Vertex.UpdateEvidenceString();
+            vertexControl.RaiseEvidenceChanged();
         }
     }
 }
