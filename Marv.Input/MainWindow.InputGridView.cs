@@ -15,7 +15,7 @@ namespace Marv.Input
         private bool checkValidityOfInput(string str)
         {
             double value;
-            if ((!str.Contains(":")))
+            if (str != null &&(!str.Contains(":")))
             {
                 if (Double.TryParse(str, out value))
                 {
@@ -40,8 +40,8 @@ namespace Marv.Input
         {
             if (checkValidityOfInput(str) || columnHeader.Equals("Section ID"))
             {
-                this.SelectedVertex.EvidenceString = str;
-                this.SelectedVertex.UpdateEvidence();
+                this.Graph.SelectedVertex.EvidenceString = str;
+                this.Graph.SelectedVertex.UpdateEvidence();
 
                 var sectionId = row["Section ID"] as string;
 
@@ -51,9 +51,11 @@ namespace Marv.Input
                 }
                 else
                 {
+
                 var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
                     row[columnHeader] = evidence;
                 this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
+
                 }
             }
             else
@@ -62,8 +64,7 @@ namespace Marv.Input
                 this.Notifications.Add(new NotificationIndeterminate
                 {
                     Description = "Please enter valid data (number, range in the form number:number).",
-                    Name = "Invalid Data Entry"
-                    
+                    Name = "Invalid Data Entry"                  
                 });
                
             }
@@ -75,6 +76,7 @@ namespace Marv.Input
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
+        
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             this.SetCell(e.Cell.DataContext as dynamic, e.Cell.Column.Header as string, e.NewData as string);
