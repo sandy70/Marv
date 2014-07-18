@@ -45,18 +45,9 @@ namespace Marv.Input
         {
             if (e.NewCell == null) return;
 
-            var row = e.NewCell.ParentRow.DataContext as Dynamic;
+            var cellModel = e.NewCell.ToModel();
 
-            if (row != null)
-            {
-                var sectionId = row["Section ID"] as string;
-                var year = Convert.ToInt32((string) e.NewCell.Column.Header);
-
-                var evidence = this.LineEvidence[sectionId, year];
-
-                this.Graph.SetEvidence(evidence);
-            }
-
+            this.Graph.SetEvidence(this.LineEvidence[cellModel.SectionId, cellModel.Year]);
             this.Graph.Run();
         }
 
