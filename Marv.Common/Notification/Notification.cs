@@ -1,12 +1,9 @@
-﻿using NLog;
-using System;
+﻿using System;
 
 namespace Marv.Common
 {
     public interface INotification
     {
-        event EventHandler Closed;
-
         string Description { get; set; }
 
         bool IsIndeterminate { get; }
@@ -18,15 +15,15 @@ namespace Marv.Common
         void Close();
 
         void Open();
+
+        event EventHandler Closed;
     }
 
     public abstract class Notification : Model, INotification
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         private double _value = 100;
-        private string description = "";
-        private bool isIndeterminate = false;
+        private string description;
+        private bool isIndeterminate;
 
         public event EventHandler Closed;
 
@@ -42,7 +39,7 @@ namespace Marv.Common
                 if (value != this.description)
                 {
                     this.description = value;
-                    this.RaisePropertyChanged("Description");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -59,7 +56,7 @@ namespace Marv.Common
                 if (value != this.isIndeterminate)
                 {
                     this.isIndeterminate = value;
-                    this.RaisePropertyChanged("IsIndeterminate");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -76,7 +73,7 @@ namespace Marv.Common
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.RaisePropertyChanged("Value");
+                    this.RaisePropertyChanged();
                 }
             }
         }
