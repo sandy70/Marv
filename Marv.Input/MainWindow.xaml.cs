@@ -6,14 +6,18 @@ using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
-using Telerik.Windows.Controls;
 using OxyPlot;
 using OxyPlot.Series;
+using Telerik.Windows.Controls;
+using ScatterPoint = OxyPlot.Series.ScatterPoint;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
+        public static readonly DependencyProperty DataPlotModelProperty =
+            DependencyProperty.Register("DataPlotModel", typeof (PlotModel), typeof (MainWindow), new PropertyMetadata(null));
+
         public static readonly DependencyProperty EndYearProperty =
             DependencyProperty.Register("EndYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedEndYear));
 
@@ -26,17 +30,23 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
-        public static readonly DependencyProperty DataPlotModelProperty =
-            DependencyProperty.Register("DataPlotModel", typeof(PlotModel), typeof(MainWindow), new PropertyMetadata(null));
-
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+
+        public PlotModel DataPlotModel
+        {
+            get
+            {
+                return (PlotModel) GetValue(DataPlotModelProperty);
+            }
+            set
+            {
+                SetValue(DataPlotModelProperty, value);
+            }
+        }
 
         public int EndYear
         {
@@ -89,18 +99,6 @@ namespace Marv.Input
             }
         }
 
-        public Vertex SelectedVertex
-        {
-            get
-            {
-                return (Vertex) GetValue(SelectedVertexProperty);
-            }
-            set
-            {
-                SetValue(SelectedVertexProperty, value);
-            }
-        }
-
         public int StartYear
         {
             get
@@ -114,65 +112,12 @@ namespace Marv.Input
             }
         }
 
-        public PlotModel DataPlotModel { 
-            get
-            {
-                return (PlotModel)GetValue(DataPlotModelProperty);
-            }
-            set 
-            {
-                SetValue(DataPlotModelProperty, value);
-            }
-        }
-
-        void InitializePlot()
-        {
-            this.DataPlotModel = new PlotModel {
-                Title = "InputData"
-            };
-            
-            if (this.InputGridView.SelectedCells.Count == 1)
-            {
-                ScatterSeries series1 = new ScatterSeries();
-                CandleStickSeries series2 = new CandleStickSeries();
-                var year = this.InputGridView.SelectedCells[0].Column.Header;
-                foreach (var row in this.InputRows)
-                {
-                    double rowIndex = this.InputRows.IndexOf(row);
-                    try
-                    {
-                    if (!(row[year] is string) && (!row[year].String.Contains(":")) )
-                        {
-                            double value = Convert.ToDouble(row[year].String);
-                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
-                        }
-                    else if (row[year].String.Contains(":"))
-                        {
-                            
-                        }
-                    }
-                    catch (FormatException e)
-                    {
-
-                    }
-                    
-                }
-                
-                this.DataPlotModel.Series.Add(series1);
-            }
-            this.DataPlotModel.InvalidatePlot(true);
-            
-            
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
         }
-
-        
 
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
@@ -223,10 +168,11 @@ namespace Marv.Input
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
         {
             this.InputGridView.SelectAll();
+
             foreach (var cell in this.InputGridView.SelectedCells)
             {
-                this.SelectedVertex.EvidenceString = null;
-                this.SelectedVertex.UpdateEvidence();
+                this.Graph.SelectedVertex.EvidenceString = null;
+                this.Graph.SelectedVertex.UpdateEvidence();
 
                 var row = cell.Item as Dynamic;
                 var sectionId = row["Section ID"] as string;
@@ -234,11 +180,12 @@ namespace Marv.Input
                 if (year != "Section ID")
                 {
                     row[year] = null;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                    var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
                     row[year] = evidence;
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.Graph.SelectedVertex.Key] = evidence;
                 }
             }
+
             this.InputGridView.UnselectAll();
         }
 
@@ -267,14 +214,60 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_EvidenceEntered(object sender, Vertex e)
+        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.UpdateModelEvidence();
+            this.Graph.Run();
+
+            if (this.InputGridView.CurrentCell == null) return;
+
+            var vertexData = vertex.GetData();
+
+            var cellModel = this.InputGridView.CurrentCell.ToModel();
+            cellModel.Data = vertexData;
+
+            this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateGrid();
+        }
+
+        private void InitializePlot()
+        {
+            this.DataPlotModel = new PlotModel
+            {
+                Title = "InputData"
+            };
+
+            if (this.InputGridView.SelectedCells.Count == 1)
+            {
+                var series1 = new ScatterSeries();
+                var series2 = new CandleStickSeries();
+                var year = this.InputGridView.SelectedCells[0].Column.Header;
+
+                foreach (var row in this.InputRows)
+                {
+                    double rowIndex = this.InputRows.IndexOf(row);
+                    try
+                    {
+                        if (!(row[year] is string) && (!row[year].String.Contains(":")))
+                        {
+                            double value = Convert.ToDouble(row[year].String);
+                            series1.Points.Add(new ScatterPoint(rowIndex, value));
+                        }
+                        else if (row[year].String.Contains(":"))
+                        {
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                    }
+                }
+
+                this.DataPlotModel.Series.Add(series1);
+            }
+            this.DataPlotModel.InvalidatePlot(true);
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -302,13 +295,8 @@ namespace Marv.Input
             this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
-            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
-            this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
-        }
-
-        private void PlotButton_Click(object sender, RoutedEventArgs e)
-        {
-            InitializePlot();
+            this.VertexControl.CommandExecuted += this.VertexControl_CommandExecuted;
+            this.VertexControl.EvidenceEntered += this.VertexControl_EvidenceEntered;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -336,9 +324,9 @@ namespace Marv.Input
                 {
                     var yearEvidence = this.LineEvidence[section][year];
 
-                    if (yearEvidence.ContainsKey(this.SelectedVertex.Key))
+                    if (yearEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
-                        var input = yearEvidence[this.SelectedVertex.Key];
+                        var input = yearEvidence[this.Graph.SelectedVertex.Key];
                         row[year.ToString()] = input;
                     }
                     else
@@ -363,6 +351,11 @@ namespace Marv.Input
             this.Graph.Run();
         }
 
+        private void PlotButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializePlot();
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new SaveFileDialog
@@ -379,6 +372,8 @@ namespace Marv.Input
 
         private void UpdateGrid()
         {
+            if (this.InputRows == null) return;
+
             foreach (var row in this.InputRows)
             {
                 var sectionId = row["Section ID"] as string;
@@ -387,33 +382,8 @@ namespace Marv.Input
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var evidenceString = this.LineEvidence[sectionId, year, this.SelectedVertex.Key].String;
+                    var evidenceString = this.LineEvidence[sectionId, year, this.Graph.SelectedVertex.Key].String;
                     this.SetCell(row, year.ToString(), evidenceString);
-                }
-            }
-        }
-
-        private void UpdateModelEvidence()
-        {
-            if (this.InputGridView.CurrentCell == null)
-            {
-                this.Notifications.Push(new NotificationTimed
-                {
-                    Description = "You must select a year before you can enter evidence.",
-                    Name = "Select Year!"
-                });
-            }
-            else
-            {
-                this.Graph.Run();
-
-                var year = Convert.ToInt32((string) this.InputGridView.CurrentCell.Column.Header);
-                var row = this.InputGridView.CurrentCell.ParentRow.DataContext as Dynamic;
-
-                if (row != null)
-                {
-                    var sectionId = row["Section ID"] as string;
-                    this.LineEvidence[sectionId, year] = this.Graph.GetEvidence();
                 }
             }
         }
@@ -433,10 +403,17 @@ namespace Marv.Input
             }
         }
 
-        private void VertexControl_EvidenceEntered(object sender, Vertex e)
+        private void VertexControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.UpdateModelEvidence();
-            this.UpdateGrid();
+            this.Graph.Run();
+
+            if (this.InputGridView.CurrentCell == null) return;
+
+            var cellModel = new CellModel(this.InputGridView.CurrentCell);
+            var vertexData = vertex.GetData();
+
+            cellModel.Row[cellModel.YearString] = vertexData;
+            this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
     }
 }

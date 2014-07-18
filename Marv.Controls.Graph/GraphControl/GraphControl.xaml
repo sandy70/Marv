@@ -24,6 +24,63 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <ToolBarTray Grid.Row="0"
+                     IsLocked="False">
+            
+            <ToolBar telerik:RadToolBarTray.IsLocked="False"
+                     Band="0">
+
+                <telerik:RadButton Name="BackButton"
+                                   Height="30" Width="30"
+                                   Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}"
+                                   IsCancel="True">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="ExpandButton"
+                                   Height="30" Width="30"
+                                   ToolTip="Expand network for more information.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="ClearEvidenceButton"
+                                   Height="30" Width="30"
+                                   ToolTip="Clears the evidence in the network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="RunButton"
+                                   Height="30" Width="30"
+                                   ToolTip="Runs the evidence into the network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
+                </telerik:RadButton>
+                
+            </ToolBar>
+
+            <ToolBar telerik:RadToolBarTray.IsLocked="False"
+                     Band="0">
+                
+                <telerik:RadButton Name="OpenNetworkButton"
+                                   Height="30" Width="30"
+                                   ToolTip="Opens a preexisting network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="SaveNetworkButton"
+                                   Height="30" Width="30"
+                                   ToolTip="Saves the current network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                </telerik:RadButton>
+
+                <telerik:RadToggleButton Name="ConnectorButton"
+                                         Height="30" Width="30"
+                                         ToolTip="Edit connections tool.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
+                </telerik:RadToggleButton>
+                
+            </ToolBar>
+        </ToolBarTray>
+
         <telerik:RadDiagram Name="DiagramPart"
                             Grid.Row="1"
                             ActiveTool="PanTool"
@@ -39,7 +96,7 @@
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
                             SelectionMode="Single"
-                            SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}">
+                            SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
@@ -107,77 +164,6 @@
                                           Margin="10"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom" />-->
-        <ToolBarTray IsLocked="False">
-            <ToolBar Margin="0"
-                            telerik:RadToolBarTray.IsLocked="False"
-                            Grid.Row="0"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                            Band="0"
-                            >
-
-                <telerik:RadButton Name="BackButton"
-                                   Height="30" Width="30"
-                                   Margin="2"
-                                   BorderBrush="Transparent"
-                                   Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}"
-                                   IsCancel="True">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="ExpandButton"
-                                   Height="30" Width="30"
-                                   Margin="2"
-                                   BorderBrush="Transparent"
-                                   ToolTip="Expand network for more information.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="ClearEvidenceButton"
-                                   Height="30" Width="30"
-                                   Margin="2"
-                                   BorderBrush="Transparent"
-                                   ToolTip="Clears the evidence in the network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="RunButton"
-                                   Height="30" Width="30"
-                                   Margin="2"
-                                   BorderBrush="Transparent"
-                                   ToolTip="Runs the evidence into the network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
-                </telerik:RadButton>              
-            </ToolBar>
-            <ToolBar Margin="0"
-                            Grid.Row="0"
-                            telerik:RadToolBarTray.IsLocked="False"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                            Band="1"
-                            >
-                <telerik:RadButton Name="OpenNetworkButton"
-                                   Height="25" Width="25"
-                                   Margin="4"
-                                   BorderBrush="Transparent"
-                                   ToolTip="Opens a preexisting network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="SaveNetworkButton"
-                                   Height="25" Width="25"
-                                   Margin="4"
-                                   BorderBrush="Transparent"
-                                   ToolTip="Saves the current network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
-                </telerik:RadButton>
-
-                <telerik:RadToggleButton Name="ConnectorButton"
-                                         Height="30" Width="30"
-                                         Margin="2"
-                                         BorderBrush="Transparent"
-                                         ToolTip="Edit connections tool.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
-                </telerik:RadToggleButton>
-            </ToolBar>
-        </ToolBarTray>
+      
     </Grid>
 </UserControl>

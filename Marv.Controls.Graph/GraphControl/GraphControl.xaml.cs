@@ -11,6 +11,9 @@ namespace Marv.Controls.Graph
 {
     public partial class GraphControl
     {
+        public static readonly DependencyProperty AutoSaveDurationProperty =
+            DependencyProperty.Register("AutoSaveDuration", typeof (int), typeof (GraphControl), new PropertyMetadata(10000));
+
         public static readonly DependencyProperty ConnectionColorProperty =
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
@@ -19,6 +22,9 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
+
+        public static readonly DependencyProperty IsAutoSaveEnabledProperty =
+            DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
@@ -29,17 +35,21 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
-        public static readonly DependencyProperty AutoSaveDurationProperty =
-            DependencyProperty.Register("AutoSaveDuration", typeof(int), typeof(GraphControl), new PropertyMetadata(10000));
+        public int AutoSaveDuration
+        {
+            get
+            {
+                return (int) this.GetValue(AutoSaveDurationProperty);
+            }
 
-        public static readonly DependencyProperty IsAutoSaveEnabledProperty =
-            DependencyProperty.Register("IsAutoSaveEnabled", typeof(bool), typeof(GraphControl), new PropertyMetadata(true));
+            set
+            {
+                this.SetValue(AutoSaveDurationProperty, value);
+            }
+        }
 
         public Color ConnectionColor
         {
@@ -47,6 +57,7 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(ConnectionColorProperty);
             }
+
             set
             {
                 this.SetValue(ConnectionColorProperty, value);
@@ -59,6 +70,7 @@ namespace Marv.Controls.Graph
             {
                 return (Common.Graph.Graph) this.GetValue(GraphProperty);
             }
+
             set
             {
                 this.SetValue(GraphProperty, value);
@@ -71,9 +83,23 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(IncomingConnectionHighlightColorProperty);
             }
+
             set
             {
                 this.SetValue(IncomingConnectionHighlightColorProperty, value);
+            }
+        }
+
+        public bool IsAutoSaveEnabled
+        {
+            get
+            {
+                return (bool) this.GetValue(IsAutoSaveEnabledProperty);
+            }
+
+            set
+            {
+                this.SetValue(IsAutoSaveEnabledProperty, value);
             }
         }
 
@@ -109,22 +135,10 @@ namespace Marv.Controls.Graph
             {
                 return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty);
             }
+
             set
             {
                 this.SetValue(OutgoingConnectionHighlightColorProperty, value);
-            }
-        }
-
-        public Vertex SelectedVertex
-        {
-            get
-            {
-                return (Vertex) GetValue(SelectedVertexProperty);
-            }
-
-            set
-            {
-                SetValue(SelectedVertexProperty, value);
             }
         }
 
@@ -134,33 +148,10 @@ namespace Marv.Controls.Graph
             {
                 return (double) this.GetValue(ShapeOpacityProperty);
             }
+
             set
             {
                 this.SetValue(ShapeOpacityProperty, value);
-            }
-        }
-
-        public int AutoSaveDuration
-        {
-            get
-            {
-                return (int)this.GetValue(AutoSaveDurationProperty);
-            }
-            set
-            {
-                this.SetValue(AutoSaveDurationProperty, value);
-            }
-        }
-
-        public bool IsAutoSaveEnabled
-        {
-            get
-            {
-                return (bool)this.GetValue(IsAutoSaveEnabledProperty);
-            }
-            set
-            {
-                this.SetValue(IsAutoSaveEnabledProperty, value);
             }
         }
 
@@ -169,28 +160,6 @@ namespace Marv.Controls.Graph
             InitializeComponent();
             InitializeAutoSave();
             this.Loaded += GraphControl_Loaded;
-        }
-
-
-        public void InitializeAutoSave()
-        {
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
-            };
-
-            timer.Tick += (o, e2) =>
-            {
-                if (!IsAutoSaveEnabled)
-                {
-                    timer.Stop();
-                }
-                else
-                {
-                    this.Graph.Write(this.Graph.FileName);
-                }
-            };
-            timer.Start();
         }
 
         public void AutoFit()
@@ -223,7 +192,47 @@ namespace Marv.Controls.Graph
             this.DiagramPart.IsManipulationAdornerVisible = true;
         }
 
-        public void RaiseEvidenceEntered(Vertex vertex = null)
+        public void InitializeAutoSave()
+        {
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
+            };
+
+            timer.Tick += (o, e2) =>
+            {
+                if (this.IsAutoSaveEnabled && this.Graph != null)
+                {
+                    this.Graph.Write(this.Graph.FileName);
+                }
+            };
+
+            timer.Start();
+        }
+
+        public void Open(string fileName)
+        {
+            this.Graph = Common.Graph.Graph.Read(fileName);
+            this.Graph.Run();
+        }
+
+        public void Open()
+        {
+            var openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Filter = "Network Files (.net)|*.net";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = false;
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.Open(openFileDialog.FileName);
+        }
+
+        internal void RaiseEvidenceEntered(Vertex vertex = null)
         {
             if (this.EvidenceEntered != null)
             {
@@ -231,7 +240,15 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
+        internal void RaiseSelectionChanged(Vertex vertex)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, vertex);
+            }
+        }
+
+        internal void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
         {
             if (this.VertexCommandExecuted != null)
             {
@@ -293,27 +310,7 @@ namespace Marv.Controls.Graph
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            var openDialog = new OpenFileDialog();
-
-            openDialog.Filter = "Network Files (.net)|*.net";
-            openDialog.FilterIndex = 1;
-            openDialog.Multiselect = false;
-
-            if (openDialog.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
-            this.Graph = Common.Graph.Graph.Read(openDialog.FileName);
-            this.Graph.Run();
-        }
-
-        private void RaiseSelectionChanged(Vertex vertex)
-        {
-            if (this.SelectionChanged != null)
-            {
-                this.SelectionChanged(this, vertex);
-            }
+            this.Open();
         }
 
         private void RunButton_Click(object sender, RoutedEventArgs e)

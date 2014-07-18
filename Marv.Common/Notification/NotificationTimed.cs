@@ -6,7 +6,7 @@ namespace Marv.Common
 {
     public class NotificationTimed : Notification
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private TimeSpan duration = TimeSpan.FromSeconds(3);
 
@@ -22,14 +22,14 @@ namespace Marv.Common
                 if (value != this.duration)
                 {
                     this.duration = value;
-                    this.RaisePropertyChanged("Duration");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
         public override void Open()
         {
-            logger.Trace("");
+            Logger.Trace("");
 
             var timer = new DispatcherTimer
             {

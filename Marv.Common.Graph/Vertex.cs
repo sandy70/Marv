@@ -442,13 +442,13 @@ namespace Marv.Common.Graph
 
             foreach (var state in this.States)
             {
-                var mid = (state.Min + state.Max)/2;
+                var mid = (state.Min + state.Max) / 2;
 
-                numer += mid*vertexValue[state.Key];
+                numer += mid * vertexValue[state.Key];
                 denom += vertexValue[state.Key];
             }
 
-            return numer/denom;
+            return numer / denom;
         }
 
         public double GetMean(double[] evidence)
@@ -478,10 +478,10 @@ namespace Marv.Common.Graph
 
                 foreach (var state in this.States)
                 {
-                    var x = (state.Min + state.Max)/2;
+                    var x = (state.Min + state.Max) / 2;
                     var px = vertexValue[state.Key];
 
-                    sum += Math.Pow(x - mu, 2)*px;
+                    sum += Math.Pow(x - mu, 2) * px;
                 }
 
                 stdev = Math.Sqrt(sum);
@@ -506,6 +506,15 @@ namespace Marv.Common.Graph
             return this.States.Select(state => state.Belief).ToArray();
         }
 
+        public VertexEvidence GetData()
+        {
+            return new VertexEvidence
+            {
+                Evidence = this.Evidence,
+                String = this.EvidenceString
+            };
+        }
+
         public void SelectState(int index)
         {
             for (var i = 0; i < this.States.Count; i++)
@@ -524,7 +533,7 @@ namespace Marv.Common.Graph
 
         public void SetEvidenceUniform()
         {
-            var value = 1.0/this.States.Count;
+            var value = 1.0 / this.States.Count;
 
             foreach (var state in this.States)
             {

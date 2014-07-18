@@ -22,6 +22,7 @@ namespace Marv.Common.Graph
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
+        private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
         public Dictionary<string, string, double> Belief
@@ -185,7 +186,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count/2;
+                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
             }
         }
 
@@ -201,6 +202,23 @@ namespace Marv.Common.Graph
                 if (value != this.loops)
                 {
                     this.loops = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public Vertex SelectedVertex
+        {
+            get
+            {
+                return this.selectedVertex;
+            }
+
+            set
+            {
+                if (value != this.selectedVertex)
+                {
+                    this.selectedVertex = value;
                     this.RaisePropertyChanged();
                 }
             }

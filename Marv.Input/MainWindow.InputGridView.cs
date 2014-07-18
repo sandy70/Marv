@@ -14,8 +14,8 @@ namespace Marv.Input
 
         public void SetCell(dynamic row, string columnHeader, string str)
         {
-            this.SelectedVertex.EvidenceString = str;
-            this.SelectedVertex.UpdateEvidence();
+            this.Graph.SelectedVertex.EvidenceString = str;
+            this.Graph.SelectedVertex.UpdateEvidence();
 
             var sectionId = row["Section ID"] as string;
 
@@ -25,9 +25,9 @@ namespace Marv.Input
             }
             else
             {
-                var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
                 row[columnHeader] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.SelectedVertex.Key] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
             }
         }
 
@@ -43,38 +43,12 @@ namespace Marv.Input
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell != null)
-            {
-                this.GraphControl.IsEnabled = true;
-                this.VertexControl.IsEnabled = true;
+            if (e.NewCell == null) return;
 
-                try
-                {
-                    var row = e.NewCell.ParentRow.DataContext as Dynamic;
+            var cellModel = e.NewCell.ToModel();
 
-                    if (row != null)
-                    {
-                        var sectionId = row["Section ID"] as string;
-                        var year = Convert.ToInt32((string) e.NewCell.Column.Header);
-
-                        var evidence = this.LineEvidence[sectionId, year];
-
-                        this.Graph.SetEvidence(evidence);
-                    }
-
-                    this.Graph.Run();
-                }
-                catch (FormatException)
-                {
-                    this.VertexControl.IsEnabled = false;
-                    this.GraphControl.IsEnabled = false;
-                }
-            }
-            else
-            {
-                this.GraphControl.IsEnabled = false;
-                this.VertexControl.IsEnabled = false;
-            }
+            this.Graph.SetEvidence(this.LineEvidence[cellModel.SectionId, cellModel.Year]);
+            this.Graph.Run();
         }
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)

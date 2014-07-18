@@ -1,11 +1,7 @@
-﻿using NLog;
-
-namespace Marv.Common
+﻿namespace Marv.Common
 {
     public class NotificationIndeterminate : Notification
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         public NotificationIndeterminate()
         {
             this.IsIndeterminate = true;
