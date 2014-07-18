@@ -44,35 +44,29 @@
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-
-                            <telerik:RadToolBar Margin="0"
-                                                Grid.Row="0"
-                                                HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                                                Orientation="Horizontal" Grid.ColumnSpan="2">
+                                
+                            <!-- Input Grid View Toolbar -->
+                            <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
 
                                 <telerik:RadButton Name="OpenButton"
-                                                   Margin="9, 0, 9, 0"
-                                                   Height="20" Width="20"
+                                                   Height="30" Width="30"
                                                    ToolTip="Opens input file and populates input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="SaveButton"
-                                                   Margin="9, 0, 9, 0"
-                                                   Height="20" Width="20"
+                                                   Height="30" Width="30"
                                                    ToolTip="Saves input to input file.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="ClearAllButton"
-                                                   Margin="5, 0, 6, 0"
                                                    Height="30" Width="30"
                                                    ToolTip="Deletes all input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="PlotButton"
-                                                   Margin="5, 0, 6, 0"
                                                    Height="30" Width="30"
                                                    IsEnabled="False"
                                                    ToolTip="Plots input values.">
