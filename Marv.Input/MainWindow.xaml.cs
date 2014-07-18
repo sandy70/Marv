@@ -125,7 +125,7 @@ namespace Marv.Input
             try
             {
                 var sectionId = "Section " + (this.InputRows.Count + 1);
-                row["Section ID"] = sectionId;
+                row[CellModel.SectionIdHeader] = sectionId;
                 this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
             }
             catch (NullReferenceException)
@@ -175,9 +175,9 @@ namespace Marv.Input
                 this.Graph.SelectedVertex.UpdateEvidence();
 
                 var row = cell.Item as Dynamic;
-                var sectionId = row["Section ID"] as string;
+                var sectionId = row[CellModel.SectionIdHeader] as string;
                 var year = (string) cell.Column.Header;
-                if (year != "Section ID")
+                if (year != CellModel.SectionIdHeader)
                 {
                     row[year] = null;
                     var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
@@ -195,7 +195,7 @@ namespace Marv.Input
             var row = new Dynamic();
 
             var sectionId = "Section 1";
-            row["Section ID"] = sectionId;
+            row[CellModel.SectionIdHeader] = sectionId;
             this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
 
             for (var year = this.StartYear; year <= this.EndYear; year++)
@@ -204,10 +204,12 @@ namespace Marv.Input
             }
 
             inputRows.Add(row);
+            
             this.InputRows = inputRows;
             this.PlotButton.IsEnabled = true;
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
+
             foreach (var column in this.InputGridView.Columns)
             {
                 column.Width = 70;
@@ -223,6 +225,9 @@ namespace Marv.Input
             var vertexData = vertex.GetData();
 
             var cellModel = this.InputGridView.CurrentCell.ToModel();
+
+            if (cellModel.IsColumnSectionId) return;
+
             cellModel.Data = vertexData;
 
             this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
@@ -316,7 +321,7 @@ namespace Marv.Input
             foreach (var section in this.LineEvidence.Keys)
             {
                 var row = new Dynamic();
-                row["Section ID"] = section;
+                row[CellModel.SectionIdHeader] = section;
 
                 var sectionEvidence = this.LineEvidence[section];
 
@@ -376,14 +381,12 @@ namespace Marv.Input
 
             foreach (var row in this.InputRows)
             {
-                var sectionId = row["Section ID"] as string;
-
+                var sectionId = row[CellModel.SectionIdHeader] as string;
                 var sectionEvidence = this.LineEvidence[sectionId];
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var evidenceString = this.LineEvidence[sectionId, year, this.Graph.SelectedVertex.Key].String;
-                    this.SetCell(row, year.ToString(), evidenceString);
+                    row[year.ToString()] = this.LineEvidence[sectionId, year, this.Graph.SelectedVertex.Key];
                 }
             }
         }
@@ -409,10 +412,10 @@ namespace Marv.Input
 
             if (this.InputGridView.CurrentCell == null) return;
 
-            var cellModel = new CellModel(this.InputGridView.CurrentCell);
+            var cellModel = this.InputGridView.CurrentCell.ToModel();
             var vertexData = vertex.GetData();
 
-            cellModel.Row[cellModel.YearString] = vertexData;
+            cellModel.Data = vertexData;
             this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
     }

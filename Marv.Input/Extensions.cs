@@ -1,4 +1,5 @@
-﻿using Telerik.Windows.Controls.GridView;
+﻿using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -7,6 +8,11 @@ namespace Marv.Input
         public static CellModel ToModel(this GridViewCell cell)
         {
             return new CellModel(cell);
+        }
+
+        public static CellModel ToModel(this GridViewCellInfo cellInfo)
+        {
+            return new CellModel(cellInfo);
         }
     }
 }
