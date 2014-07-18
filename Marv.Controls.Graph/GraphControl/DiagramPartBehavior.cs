@@ -14,7 +14,7 @@ namespace Marv.Controls.Graph
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Edge newEdge;
         private Vertex newVertex;
         private Edge oldEdge;
@@ -59,7 +59,7 @@ namespace Marv.Controls.Graph
             else
             {
                 this.newEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-                logger.Info(this.newEdge);
+                Logger.Info(this.newEdge);
             }
 
             if (e.Shape == null)
@@ -69,12 +69,12 @@ namespace Marv.Controls.Graph
             else
             {
                 this.newVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
-                logger.Info(this.newVertex.Key);
+                Logger.Info(this.newVertex.Key);
             }
 
             foreach (var command in base.AssociatedObject.UndoRedoService.UndoStack)
             {
-                logger.Info(command.Name);
+                Logger.Info(command.Name);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Marv.Controls.Graph
             if (e.Connection != null)
             {
                 this.oldEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-                logger.Info(this.oldEdge);
+                Logger.Info(this.oldEdge);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace Marv.Controls.Graph
             if (e.Shape != null)
             {
                 this.oldVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
-                logger.Info(this.oldVertex.Key);
+                Logger.Info(this.oldVertex.Key);
             }
             else
             {
@@ -120,12 +120,13 @@ namespace Marv.Controls.Graph
         private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
-            var shapeList = new List<IDiagramItem>();
-            shapeList.Add(e.Shape);
+            var shapeList = new List<IDiagramItem>
+            {
+                e.Shape
+            };
 
             // Change color of connections
             var graphControl = this.AssociatedObject.FindParent<GraphControl>();
-            graphControl.SelectedVertex = e.Shape.Content as Vertex;
 
             foreach (var conn in this.AssociatedObject.Connections)
             {

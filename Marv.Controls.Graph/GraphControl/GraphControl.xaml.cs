@@ -35,9 +35,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
@@ -145,19 +142,6 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public Vertex SelectedVertex
-        {
-            get
-            {
-                return (Vertex) GetValue(SelectedVertexProperty);
-            }
-
-            set
-            {
-                SetValue(SelectedVertexProperty, value);
-            }
-        }
-
         public double ShapeOpacity
         {
             get
@@ -248,7 +232,7 @@ namespace Marv.Controls.Graph
             this.Open(openFileDialog.FileName);
         }
 
-        public void RaiseEvidenceEntered(Vertex vertex = null)
+        internal void RaiseEvidenceEntered(Vertex vertex = null)
         {
             if (this.EvidenceEntered != null)
             {
@@ -256,7 +240,15 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
+        internal void RaiseSelectionChanged(Vertex vertex)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, vertex);
+            }
+        }
+
+        internal void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
         {
             if (this.VertexCommandExecuted != null)
             {
@@ -319,14 +311,6 @@ namespace Marv.Controls.Graph
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
         {
             this.Open();
-        }
-
-        private void RaiseSelectionChanged(Vertex vertex)
-        {
-            if (this.SelectionChanged != null)
-            {
-                this.SelectionChanged(this, vertex);
-            }
         }
 
         private void RunButton_Click(object sender, RoutedEventArgs e)

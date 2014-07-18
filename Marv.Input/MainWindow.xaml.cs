@@ -30,9 +30,6 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (MainWindow), new PropertyMetadata(null));
-
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
@@ -99,18 +96,6 @@ namespace Marv.Input
             set
             {
                 SetValue(NotificationsProperty, value);
-            }
-        }
-
-        public Vertex SelectedVertex
-        {
-            get
-            {
-                return (Vertex) GetValue(SelectedVertexProperty);
-            }
-            set
-            {
-                SetValue(SelectedVertexProperty, value);
             }
         }
 
@@ -183,10 +168,11 @@ namespace Marv.Input
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
         {
             this.InputGridView.SelectAll();
+
             foreach (var cell in this.InputGridView.SelectedCells)
             {
-                this.SelectedVertex.EvidenceString = null;
-                this.SelectedVertex.UpdateEvidence();
+                this.Graph.SelectedVertex.EvidenceString = null;
+                this.Graph.SelectedVertex.UpdateEvidence();
 
                 var row = cell.Item as Dynamic;
                 var sectionId = row["Section ID"] as string;
@@ -194,11 +180,12 @@ namespace Marv.Input
                 if (year != "Section ID")
                 {
                     row[year] = null;
-                    var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                    var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
                     row[year] = evidence;
-                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.SelectedVertex.Key] = evidence;
+                    this.LineEvidence[sectionId, Convert.ToInt32(year), this.Graph.SelectedVertex.Key] = evidence;
                 }
             }
+
             this.InputGridView.UnselectAll();
         }
 
@@ -328,9 +315,9 @@ namespace Marv.Input
                 {
                     var yearEvidence = this.LineEvidence[section][year];
 
-                    if (yearEvidence.ContainsKey(this.SelectedVertex.Key))
+                    if (yearEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
-                        var input = yearEvidence[this.SelectedVertex.Key];
+                        var input = yearEvidence[this.Graph.SelectedVertex.Key];
                         row[year.ToString()] = input;
                     }
                     else
@@ -386,7 +373,7 @@ namespace Marv.Input
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    var evidenceString = this.LineEvidence[sectionId, year, this.SelectedVertex.Key].String;
+                    var evidenceString = this.LineEvidence[sectionId, year, this.Graph.SelectedVertex.Key].String;
                     this.SetCell(row, year.ToString(), evidenceString);
                 }
             }

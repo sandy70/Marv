@@ -96,7 +96,7 @@
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
                             SelectionMode="Single"
-                            SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}">
+                            SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">

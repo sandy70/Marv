@@ -14,8 +14,8 @@ namespace Marv.Input
 
         public void SetCell(dynamic row, string columnHeader, string str)
         {
-            this.SelectedVertex.EvidenceString = str;
-            this.SelectedVertex.UpdateEvidence();
+            this.Graph.SelectedVertex.EvidenceString = str;
+            this.Graph.SelectedVertex.UpdateEvidence();
 
             var sectionId = row["Section ID"] as string;
 
@@ -25,9 +25,9 @@ namespace Marv.Input
             }
             else
             {
-                var evidence = new VertexEvidence(this.SelectedVertex.Evidence, this.SelectedVertex.EvidenceString);
+                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
                 row[columnHeader] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.SelectedVertex.Key] = evidence;
+                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
             }
         }
 

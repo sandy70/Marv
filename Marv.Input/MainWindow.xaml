@@ -22,8 +22,7 @@
                             <!-- GraphControl -->
                             <marv:GraphControl Name="GraphControl"
                                                Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph}"
-                                               SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
+                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
 
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -175,7 +174,7 @@
                                        Width="400">
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Node">
-                        <Grid>
+                        <Grid Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition Height="50" />
@@ -196,20 +195,19 @@
                                                      Margin="5"
                                                      OpenDropDownOnFocus="True"
                                                      SelectedIndex="0"
-                                                     SelectedItem="{Binding ElementName=Root, Path=SelectedVertex}"
+                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                      TextSearchMode="Contains" />
 
                                 <!-- Vertex Control -->
                                 <marv:VertexControl Name="VertexControl"
                                                     Grid.Row="1"
                                                     IsEditable="True"
-                                                    IsEnabled="False"
                                                     IsEvidenceVisible="True"
                                                     IsInputVisible="True"
                                                     IsToolbarVisible="False"
                                                     IsValueVisible="False"
                                                     Margin="5"
-                                                    Vertex="{Binding ElementName=Root, Path=SelectedVertex}" />
+                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
                             </Grid>
 
                             <Grid Grid.Row="1">
