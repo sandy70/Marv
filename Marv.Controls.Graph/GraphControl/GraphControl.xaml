@@ -28,7 +28,6 @@
                      IsLocked="False">
             
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                      Band="0">
 
                 <telerik:RadButton Name="BackButton"
@@ -59,7 +58,6 @@
             </ToolBar>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                      Band="0">
                 
                 <telerik:RadButton Name="OpenNetworkButton"
