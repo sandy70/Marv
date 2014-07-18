@@ -13,7 +13,8 @@
     <telerik:RadSlider.Template>
         <ControlTemplate>
             <Grid>
-                <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
+                <telerik:RadProgressBar Name="ProgressBar"
+                                        Foreground="{Binding SliderForeground, ElementName=Root}"
                                         Value="{Binding Value, ElementName=Root}">
                     <i:Interaction.Behaviors>
                         <local:ProgressBarBehavior />
