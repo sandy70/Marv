@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -71,6 +70,35 @@ namespace Marv.Input
             
         }
 
+        public void SetCell(CellModel cellModel, string str)
+        {
+            if (cellModel.IsColumnSectionId)
+            {
+                cellModel.Data = str;
+                return;
+            }
+
+            var selectedVertex = this.Graph.SelectedVertex;
+
+            if (selectedVertex == null) return;
+
+            selectedVertex.EvidenceString = str;
+            selectedVertex.UpdateEvidence();
+
+            var vertexData = selectedVertex.GetData();
+            
+            cellModel.Data = vertexData;
+
+            if (selectedVertex.IsEvidenceEntered)
+            {
+                this.LineEvidence[cellModel.SectionId, cellModel.Year, selectedVertex.Key] = vertexData;
+            }
+            else
+            {
+                this.LineEvidence.Remove(cellModel.SectionId, cellModel.Year, selectedVertex.Key);
+            }
+        }
+
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
@@ -79,7 +107,7 @@ namespace Marv.Input
         
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.SetCell(e.Cell.DataContext as dynamic, e.Cell.Column.Header as string, e.NewData as string);
+            this.SetCell(e.Cell.ToModel(), e.NewData as string);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -87,6 +115,8 @@ namespace Marv.Input
             if (e.NewCell == null) return;
 
             var cellModel = e.NewCell.ToModel();
+
+            if (cellModel.IsColumnSectionId) return;
 
             this.Graph.SetEvidence(this.LineEvidence[cellModel.SectionId, cellModel.Year]);
             this.Graph.Run();
@@ -98,7 +128,7 @@ namespace Marv.Input
             {
                 foreach (var cellInfo in this.InputGridView.SelectedCells)
                 {
-                    this.SetCell(cellInfo.Item as dynamic, cellInfo.Column.Header as string, null);
+                    this.SetCell(cellInfo.ToModel(), null);
                 }
             }
         }
@@ -107,7 +137,10 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                this.SetCell(cellClipboardEventArg.Cell.Item as dynamic, cellClipboardEventArg.Cell.Column.Header as string, cellClipboardEventArg.Value as string);
+                var cellModel = cellClipboardEventArg.Cell.ToModel();
+                var str = cellClipboardEventArg.Value as string;
+
+                this.SetCell(cellModel, str);
             }
 
             cellClipboardEventArgs.Clear();
