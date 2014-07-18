@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:Marv.Controls"
+             xmlns:marv="http://dnvgl.com/marv"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:surface="http://schemas.microsoft.com/surface/2008"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
