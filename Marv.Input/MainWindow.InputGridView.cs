@@ -43,38 +43,19 @@ namespace Marv.Input
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell != null)
+            var row = e.NewCell.ParentRow.DataContext as Dynamic;
+
+            if (row != null)
             {
-                this.GraphControl.IsEnabled = true;
-                this.VertexControl.IsEnabled = true;
+                var sectionId = row["Section ID"] as string;
+                var year = Convert.ToInt32((string) e.NewCell.Column.Header);
 
-                try
-                {
-                    var row = e.NewCell.ParentRow.DataContext as Dynamic;
+                var evidence = this.LineEvidence[sectionId, year];
 
-                    if (row != null)
-                    {
-                        var sectionId = row["Section ID"] as string;
-                        var year = Convert.ToInt32((string) e.NewCell.Column.Header);
-
-                        var evidence = this.LineEvidence[sectionId, year];
-
-                        this.Graph.SetEvidence(evidence);
-                    }
-
-                    this.Graph.Run();
-                }
-                catch (FormatException)
-                {
-                    this.VertexControl.IsEnabled = false;
-                    this.GraphControl.IsEnabled = false;
-                }
+                this.Graph.SetEvidence(evidence);
             }
-            else
-            {
-                this.GraphControl.IsEnabled = false;
-                this.VertexControl.IsEnabled = false;
-            }
+
+            this.Graph.Run();
         }
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)

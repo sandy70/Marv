@@ -23,7 +23,6 @@
                             <marv:GraphControl Name="GraphControl"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph}"
-                                               IsEnabled="False"
                                                SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}" />
 
                         </telerik:RadPane>
@@ -121,6 +120,7 @@
                                 </telerik:RadGridView.Resources>
                             </telerik:RadGridView>
 
+                            <!-- Input Grid View Buttons -->
                             <UniformGrid Grid.Row="2"
                                          Rows="1" Grid.ColumnSpan="2">
                                 <TextBlock Margin="2"

@@ -376,6 +376,8 @@ namespace Marv.Input
 
         private void UpdateGrid()
         {
+            if (this.InputRows == null) return;
+
             foreach (var row in this.InputRows)
             {
                 var sectionId = row["Section ID"] as string;
