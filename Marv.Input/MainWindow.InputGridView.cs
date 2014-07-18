@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
-using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 
@@ -35,15 +33,11 @@ namespace Marv.Input
             return false;
         }
 
-        public void SetCell(dynamic row, string columnHeader, string str)
-        {
             if (checkValidityOfInput(str) || columnHeader.Equals("Section ID"))
             {
                 this.Graph.SelectedVertex.EvidenceString = str;
                 this.Graph.SelectedVertex.UpdateEvidence();
-
                 var sectionId = row["Section ID"] as string;
-
                 if (columnHeader == "Section ID")
                 {
                     row[columnHeader] = str;
@@ -52,7 +46,7 @@ namespace Marv.Input
                 {
 
                 var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
-                    row[columnHeader] = evidence;
+                row[columnHeader] = evidence;
                 this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
 
                 }
@@ -66,10 +60,7 @@ namespace Marv.Input
                     Name = "Invalid Data Entry"                  
                 });
                
-            }
             
-        }
-
         public void SetCell(CellModel cellModel, string str)
         {
             if (cellModel.IsColumnSectionId)
@@ -86,7 +77,7 @@ namespace Marv.Input
             selectedVertex.UpdateEvidence();
 
             var vertexData = selectedVertex.GetData();
-            
+
             cellModel.Data = vertexData;
 
             if (selectedVertex.IsEvidenceEntered)
@@ -137,6 +128,7 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
+                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
                 var cellModel = cellClipboardEventArg.Cell.ToModel();
                 var str = cellClipboardEventArg.Value as string;
 
