@@ -78,6 +78,15 @@
                                                    ToolTip="Plots input values.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
                                 </telerik:RadButton>
+                                
+                                <RadioButton Name="TypePlotButtonYear"
+                                                        Content="Plot By Year" 
+                                                        IsChecked="True"
+                                                        ></RadioButton>
+
+                                <RadioButton Name="TypePlotButtonSection"
+                                                        Content="Plot By Section"
+                                                        ></RadioButton>
 
                             </telerik:RadToolBar>
 

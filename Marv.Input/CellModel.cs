@@ -30,7 +30,15 @@ namespace Marv.Input
             this.Row = cell.ParentRow.DataContext as Dynamic;
             this.SectionId = this.Row["Section ID"] as string;
             this.YearString = cell.Column.Header as string;
-            this.Year = Convert.ToInt32(this.YearString);
+            try
+            {
+                this.Year = Convert.ToInt32(this.YearString);
+            }
+            catch (FormatException e)
+            { 
+            
+                
+            }
         }
     }
 }
