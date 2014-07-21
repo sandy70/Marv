@@ -273,7 +273,7 @@ namespace Marv.Common.Graph
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
-                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
+                    graph.Edges.Add(new Edge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]));
                 }
             }
 
@@ -286,16 +286,6 @@ namespace Marv.Common.Graph
         public static Task<Graph> ReadAsync(string fileName)
         {
             return Task.Run(() => Read(fileName));
-        }
-
-        public void AddEdge(Vertex source, Vertex target)
-        {
-            this.Edges.Add(new Edge(source, target));
-        }
-
-        public void ClearEvidence(string vertexKey)
-        {
-            this.Vertices[vertexKey].Evidence = null;
         }
 
         public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, string, double> graphEvidence = null)
@@ -337,7 +327,8 @@ namespace Marv.Common.Graph
 
                         value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
-                        this.ClearEvidence(sourceVertex.Key);
+                        sourceVertex.Evidence = null;
+                        sourceVertex.UpdateEvidenceString();
                     }
                     catch (SmileException exception)
                     {
@@ -466,6 +457,8 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
+            this.networkStructure.ClearEvidence();
+
             foreach (var vertex in this.Vertices)
             {
                 if (vertex.IsEvidenceEntered)
@@ -476,76 +469,6 @@ namespace Marv.Common.Graph
 
             this.UpdateBelief();
         }
-
-        //public Dictionary<string, string, double> Run(Dictionary<string, string, double> graphEvidence)
-        //{
-        //    this.Evidence = graphEvidence;
-        //    return this.GetNetworkBelief();
-        //}
-
-        //public Dictionary<int, string, string, double> Run(Dictionary<string, string, double> graphEvidence, int startYear, int endYear)
-        //{
-        //    var graphValueTimeSeries = new Dictionary<int, string, string, double>();
-
-        //    for (var year = startYear; year <= endYear; year++)
-        //    {
-        //        // If this is not the start year, then add the looped evidences
-        //        if (year > startYear)
-        //        {
-        //            foreach (var srcVertexKey in this.Loops.Keys)
-        //            {
-        //                var dstVertexKey = this.Loops[srcVertexKey];
-
-        //                var lastGraphValue = graphValueTimeSeries[year - 1];
-
-        //                var lastVertexValue = lastGraphValue[srcVertexKey];
-
-        //                graphEvidence[dstVertexKey] = lastVertexValue;
-        //            }
-        //        }
-
-        //        graphValueTimeSeries[year] = this.Run(graphEvidence);
-        //    }
-
-        //    return graphValueTimeSeries;
-        //}
-
-        //public Dictionary<int, string, string, double> Run(Dictionary<int, string, string, double> modelEvidence, int startYear, int endYear)
-        //{
-        //    var graphValueTimeSeries = new Dictionary<int, string, string, double>();
-
-        //    for (var year = startYear; year <= endYear; year++)
-        //    {
-        //        if (!modelEvidence.ContainsKey(year))
-        //        {
-        //            graphValueTimeSeries[year] = this.Belief;
-        //            continue;
-        //        }
-
-        //        var graphEvidence = modelEvidence[year];
-
-        //        // If this is not the start year, then add the looped evidences
-        //        if (year > startYear)
-        //        {
-        //            foreach (var srcVertexKey in this.Loops.Keys)
-        //            {
-        //                var dstVertexKey = this.Loops[srcVertexKey];
-
-        //                var lastGraphValue = graphValueTimeSeries[year - 1];
-
-        //                var lastVertexValue = lastGraphValue[srcVertexKey];
-
-        //                graphEvidence[dstVertexKey] = lastVertexValue;
-        //            }
-        //        }
-
-        //        graphValueTimeSeries[year] = this.Run(graphEvidence);
-
-        //        this.networkStructure.ClearEvidence();
-        //    }
-
-        //    return graphValueTimeSeries;
-        //}
 
         public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
         {
@@ -579,8 +502,7 @@ namespace Marv.Common.Graph
         public void UpdateDisplayGraph(string group)
         {
             this.DisplayGraph = this.GetSubGraph(group);
-
-            this.IsDefaultGroupVisible = @group == this.DefaultGroup;
+            this.IsDefaultGroupVisible = group == this.DefaultGroup;
         }
 
         public void Write()
