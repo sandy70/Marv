@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -9,58 +10,6 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
-        private bool checkValidityOfInput(string str)
-        {
-            double value;
-            if (str != null &&(!str.Contains(":")))
-            {
-                if (Double.TryParse(str, out value))
-                {
-                    return true;
-                }
-            }
-            else if (str.Split(":".ToCharArray()).Length == 2)
-            {
-                String[] valueSet = str.Split(":".ToCharArray());
-                if (Double.TryParse(valueSet[0], out value) && Double.TryParse(valueSet[1], out value))
-                {
-                    return true;
-                }
-            }
-            else if(str == null){
-                return true;
-            }
-            return false;
-        }
-
-            if (checkValidityOfInput(str) || columnHeader.Equals("Section ID"))
-            {
-                this.Graph.SelectedVertex.EvidenceString = str;
-                this.Graph.SelectedVertex.UpdateEvidence();
-                var sectionId = row["Section ID"] as string;
-                if (columnHeader == "Section ID")
-                {
-                    row[columnHeader] = str;
-                }
-                else
-                {
-
-                var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
-                row[columnHeader] = evidence;
-                this.LineEvidence[sectionId, Convert.ToInt32(columnHeader), this.Graph.SelectedVertex.Key] = evidence;
-
-                }
-            }
-            else
-            {
-                row[columnHeader] = null;
-                this.Notifications.Add(new NotificationIndeterminate
-                {
-                    Description = "Please enter valid data (number, range in the form number:number).",
-                    Name = "Invalid Data Entry"                  
-                });
-               
-            
         public void SetCell(CellModel cellModel, string str)
         {
             if (cellModel.IsColumnSectionId)
@@ -95,7 +44,7 @@ namespace Marv.Input
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
-        
+
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             this.SetCell(e.Cell.ToModel(), e.NewData as string);
@@ -141,6 +90,31 @@ namespace Marv.Input
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
             this.cellClipboardEventArgs.Add(e);
+        }
+
+        private bool checkValidityOfInput(string str)
+        {
+            double value;
+            if (str != null && (!str.Contains(":")))
+            {
+                if (Double.TryParse(str, out value))
+                {
+                    return true;
+                }
+            }
+            else if (str.Split(":".ToCharArray()).Length == 2)
+            {
+                var valueSet = str.Split(":".ToCharArray());
+                if (Double.TryParse(valueSet[0], out value) && Double.TryParse(valueSet[1], out value))
+                {
+                    return true;
+                }
+            }
+            else if (str == null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
