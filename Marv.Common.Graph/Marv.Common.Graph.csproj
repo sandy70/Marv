@@ -46,9 +46,8 @@
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="SmileNet, Version=1.1.5205.27143, Culture=neutral, PublicKeyToken=808949b7dda55ecd, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Smile\x86\SmileNet.dll</HintPath>
+    <Reference Include="SmileNet">
+      <HintPath>..\packages\Smile\x64\SmileNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,6 +60,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.Vertex.cs" />
+    <Compile Include="VertexData.cs" />
     <Compile Include="VertexEvidence.cs" />
     <Compile Include="EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="Edge.cs" />
@@ -77,7 +78,6 @@
     <Compile Include="VertexCommand\VertexExpandCommand.cs" />
     <Compile Include="VertexCommand\VertexLockCommand.cs" />
     <Compile Include="VertexType.cs" />
-    <Compile Include="VertexValueComputer\IVertexValueComputer.cs" />
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,11 +86,6 @@
     <Compile Include="EvidenceString\StateEvidenceString.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="VertexCommand\VertexCommand.cs" />
-    <Compile Include="VertexValueComputer\VertexEntropyComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexEntropyDifferenceComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexMeanComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexMeanDifferenceComputer.cs" />
-    <Compile Include="VertexValueComputer\VertexStandardDeviationComputer.cs" />
     <Compile Include="VertexValueUndefinedException.cs" />
   </ItemGroup>
   <ItemGroup>

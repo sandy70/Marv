@@ -115,7 +115,6 @@ namespace Marv.Input
             }
         }
 
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -245,23 +244,20 @@ namespace Marv.Input
 
         private void InitializePlot()
         {
-            this.DataPlotModel = new PlotModel
-            {
-                Title = "InputData"
-            };
-
             if (this.InputGridView.SelectedCells.Count == 1)
             {
                 var series1 = new ScatterSeries();
                 var series2 = new CandleStickSeries();
                 series2.Color = OxyColors.Green;
 
+                this.DataPlotModel = new PlotModel
+                {
+                    Title = "InputData"
+                };
+
                 if (IsYearPlot)
                 {
-                    this.DataPlotModel = new PlotModel
-                    {
-                        Title = "InputData"
-                    };
+
                     var year = this.InputGridView.SelectedCells[0].Column.Header;
                     foreach (var row in this.InputRows)
                     {
@@ -289,8 +285,9 @@ namespace Marv.Input
                 }
 
                 this.DataPlotModel.Series.Add(series1);
+                this.DataPlotModel.Series.Add(series2);
+                this.DataPlotModel.InvalidatePlot(true);
             }
-            this.DataPlotModel.InvalidatePlot(true);
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

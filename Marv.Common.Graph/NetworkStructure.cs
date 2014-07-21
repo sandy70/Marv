@@ -9,45 +9,17 @@ namespace Marv.Common.Graph
     public class NetworkStructure
     {
         public readonly List<string> Footer = new List<string>();
-        public readonly Network Network = new Network();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         public readonly List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
+
+        private readonly Network network = new Network();
+
         public string FileName;
-
-        public NetworkStructureVertex GetVertex(string key)
-        {
-            return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
-        }
-
-        public string ParseUserProperty(string userPropertyName, string defaultValue)
-        {
-            if (this.Properties.ContainsKey("HR_Desc"))
-            {
-                var descValueString = this.Properties["HR_Desc"];
-
-                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
-                {
-                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                    if (subParts.Count() == 2)
-                    {
-                        if (subParts[0].Equals(userPropertyName))
-                        {
-                            return subParts[1];
-                        }
-                    }
-                }
-            }
-
-            return defaultValue;
-        }
 
         public static NetworkStructure Read(string path)
         {
             var structure = new NetworkStructure();
-            structure.Network.ReadFile(path);
+            structure.network.ReadFile(path);
             structure.FileName = path;
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
@@ -108,14 +80,101 @@ namespace Marv.Common.Graph
             // Parse Children
             foreach (var vertex in structure.Vertices)
             {
-                foreach (var childHandle in structure.Network.GetChildren(vertex.Key))
+                foreach (var childHandle in structure.network.GetChildren(vertex.Key))
                 {
-                    var childKey = structure.Network.GetNodeId(childHandle);
+                    var childKey = structure.network.GetNodeId(childHandle);
                     vertex.Children.Add(structure.GetVertex(childKey));
                 }
             }
 
             return structure;
+        }
+
+        public void ClearEvidence()
+        {
+            this.network.ClearAllEvidence();
+        }
+
+        public void ClearEvidence(string vertexKey)
+        {
+            this.network.ClearEvidence(vertexKey);
+        }
+
+        public Dictionary<string, double[]> GetBelief()
+        {
+            this.Run();
+
+            var graphValue = new Dictionary<string, double[]>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
+            }
+
+            return graphValue;
+        }
+
+        public double[,] GetTable(string vertexKey)
+        {
+            return this.network.GetNodeTable(vertexKey);
+        }
+
+        public NetworkStructureVertex GetVertex(string key)
+        {
+            return this.Vertices.Where(x => x.Key.Equals(key)).FirstOrDefault();
+        }
+
+        public string ParseUserProperty(string userPropertyName, string defaultValue)
+        {
+            if (this.Properties.ContainsKey("HR_Desc"))
+            {
+                var descValueString = this.Properties["HR_Desc"];
+
+                var parts = descValueString.Split("\",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
+                {
+                    var subParts = part.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    if (subParts.Count() == 2)
+                    {
+                        if (subParts[0].Equals(userPropertyName))
+                        {
+                            return subParts[1];
+                        }
+                    }
+                }
+            }
+
+            return defaultValue;
+        }
+
+        public void Run()
+        {
+            this.network.UpdateBeliefs();
+        }
+
+        public void SetEvidence(string vertexKey, int stateIndex)
+        {
+            this.network.SetEvidence(vertexKey, stateIndex);
+        }
+
+        public void SetEvidence(string vertexKey, double[] evidence)
+        {
+            this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetEvidence(Dictionary<string, double[]> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
+            }
+        }
+
+        public void SetTable(string vertexKey, double[,] table)
+        {
+            this.network.SetNodeTable(vertexKey, table);
         }
 
         public void Write()

@@ -46,7 +46,6 @@ namespace Marv.Input
             e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
-
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             this.SetCell(e.Cell.ToModel(), e.NewData as string);

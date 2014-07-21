@@ -32,7 +32,6 @@ namespace Marv.Common.Graph
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
         private ModelCollection<State> states;
-        private Dictionary<string, double> statistics = new Dictionary<string, double>();
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
@@ -225,8 +224,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.Sum(state => state.Evidence) > 0 ||
-                       this.EvidenceString != null;
+                return this.States.Sum(state => state.Evidence) > 0;
             }
         }
 
@@ -384,23 +382,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, double> Statistics
-        {
-            get
-            {
-                return this.statistics;
-            }
-
-            set
-            {
-                if (value != this.statistics)
-                {
-                    this.statistics = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public VertexType Type
         {
             get
@@ -435,77 +416,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public double GetMean(Dictionary<string, double> vertexValue)
-        {
-            double numer = 0;
-            double denom = 0;
-
-            foreach (var state in this.States)
-            {
-                var mid = (state.Min + state.Max) / 2;
-
-                numer += mid * vertexValue[state.Key];
-                denom += vertexValue[state.Key];
-            }
-
-            return numer / denom;
-        }
-
-        public double GetMean(double[] evidence)
-        {
-            var vertexValue = new Dictionary<string, double>();
-
-            foreach (var state in this.States)
-            {
-                var stateIndex = this.States.IndexOf(state);
-                vertexValue[state.Key] = evidence[stateIndex];
-            }
-
-            return this.GetMean(vertexValue);
-        }
-
-        public double GetStandardDeviation(Dictionary<string, double> vertexValue)
-        {
-            // Formula for standard deviation of a pdf stdev = sqrt(sum((x - mu)^2 * P(x)); From
-            // here: http://www.wyzant.com/resources/lessons/math/statistics_and_probability/expected_value/variance
-
-            var mu = this.GetMean(vertexValue);
-            var stdev = 0.0;
-
-            if (this.Type == VertexType.Interval)
-            {
-                var sum = 0.0;
-
-                foreach (var state in this.States)
-                {
-                    var x = (state.Min + state.Max) / 2;
-                    var px = vertexValue[state.Key];
-
-                    sum += Math.Pow(x - mu, 2) * px;
-                }
-
-                stdev = Math.Sqrt(sum);
-            }
-
-            return stdev;
-        }
-
-        public double GetStatistics(string statisticsKey, IVertexValueComputer vertexValueComputer)
-        {
-            if (!this.Statistics.ContainsKey(statisticsKey))
-            {
-                this.Statistics[statisticsKey] = vertexValueComputer.Compute(this, this.Belief);
-            }
-
-            return this.Statistics[statisticsKey];
-        }
-
-        // Do not remove! This is for Marv.Matlab
-        public double[] GetValue()
-        {
-            return this.States.Select(state => state.Belief).ToArray();
-        }
-
         public VertexEvidence GetData()
         {
             return new VertexEvidence
@@ -515,11 +425,31 @@ namespace Marv.Common.Graph
             };
         }
 
+        // Do not remove! This is for Marv.Matlab
+        public double[] GetValue()
+        {
+            return this.States.Select(state => state.Belief).ToArray();
+        }
+
         public void SelectState(int index)
         {
             for (var i = 0; i < this.States.Count; i++)
             {
                 this.States[i].Belief = i == index ? 1 : 0;
+            }
+        }
+
+        public void SetBelief(double[] belief)
+        {
+            if (belief.Length > this.States.Count)
+            {
+                var message = String.Format("The length of belief array [{0}] should be <= number of states in this vertex [{1}:{2}].", belief.Length, this.Key, this.States.Count);
+                throw new InvalidValueException(message);
+            }
+
+            for (var i = 0; i < belief.Length; i++)
+            {
+                this.States[i].Belief = belief[i];
             }
         }
 

@@ -401,6 +401,11 @@ namespace Marv.Common
                 }
             }
         }
+
+        public static double Entropy(this double[] array)
+        {
+            return array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Length);
+        }
     }
 }
 

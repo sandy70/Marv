@@ -81,6 +81,8 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="EvidenceStringType.cs" />
+    <Compile Include="InvalidValueException.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />

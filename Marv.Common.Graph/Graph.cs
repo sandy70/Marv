@@ -223,70 +223,82 @@ namespace Marv.Common.Graph
             }
         }
 
+        public static Graph Read(string fileName)
+        {
+            var graph = new Graph
+            {
+                networkStructure = NetworkStructure.Read(fileName)
+            };
+
+            graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = graph.networkStructure.ParseUserProperty("key", "");
+
+            // Add all the vertices
+            foreach (var structureVertex in graph.networkStructure.Vertices)
+            {
+                var vertex = new Vertex
+                {
+                    ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    Description = structureVertex.ParseStringProperty("HR_HTML_Desc"),
+                    Groups = structureVertex.ParseGroups(),
+                    HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup"),
+                    InputVertexKey = structureVertex.ParseStringProperty("InputNode"),
+                    IsExpanded = structureVertex.ParseIsExpanded(),
+                    Key = structureVertex.Key,
+                    Name = structureVertex.ParseStringProperty("label"),
+                    Position = structureVertex.ParsePosition(),
+                    PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
+                    Units = structureVertex.ParseStringProperty("units"),
+                    States = structureVertex.ParseStates(),
+                    Type = structureVertex.ParseSubType()
+                };
+
+                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
+
+                if (string.IsNullOrWhiteSpace(vertex.Units))
+                {
+                    vertex.Units = "n/a";
+                }
+
+                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
+                {
+                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
+                }
+
+                graph.Vertices.Add(vertex);
+            }
+
+            // Add all the edges
+            foreach (var srcVertex in graph.networkStructure.Vertices)
+            {
+                foreach (var dstVertex in srcVertex.Children)
+                {
+                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
+                }
+            }
+
+            graph.UpdateDisplayGraph(graph.DefaultGroup);
+            graph.Run();
+
+            return graph;
+        }
+
+        public static Task<Graph> ReadAsync(string fileName)
+        {
+            return Task.Run(() => Read(fileName));
+        }
+
         public void AddEdge(Vertex source, Vertex target)
         {
             this.Edges.Add(new Edge(source, target));
         }
 
-        public Dictionary<string, string, double> ClearEvidence()
+        public void ClearEvidence(string vertexKey)
         {
-            this.networkStructure.Network.ClearAllEvidence();
-            return this.GetNetworkBelief();
+            this.Vertices[vertexKey].Evidence = null;
         }
 
-        public Dictionary<string, string, double> ClearEvidence(string vertexKey)
-        {
-            this.networkStructure.Network.ClearEvidence(vertexKey);
-            return this.GetNetworkBelief();
-        }
-
-        public Dictionary<string, VertexEvidence> GetEvidence()
-        {
-            var graphEvidence = new Dictionary<string, VertexEvidence>();
-
-            foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
-            {
-                graphEvidence[vertex.Key] = new VertexEvidence(vertex.Evidence, vertex.EvidenceString);
-            }
-
-            return graphEvidence;
-        }
-
-        public double GetMean(string vertexKey, Dictionary<string, double> vertexValue)
-        {
-            return this.Vertices[vertexKey].GetMean(vertexValue);
-        }
-
-        public Dictionary<string, string, double> GetNetworkBelief()
-        {
-            this.UpdateNetworkBeliefs();
-
-            var graphValue = new Dictionary<string, string, double>();
-
-            foreach (var vertex in this.Vertices)
-            {
-                var vertexValue = new Dictionary<string, double>();
-
-                foreach (var state in vertex.States)
-                {
-                    try
-                    {
-                        vertexValue[state.Key] = this.networkStructure.Network.GetNodeValue(vertex.Key)[vertex.States.IndexOf(state.Key)];
-                    }
-                    catch (SmileException exception)
-                    {
-                        Logger.Warn(exception.Message);
-                        vertexValue[state.Key] = 0;
-                    }
-                }
-
-                graphValue[vertex.Key] = vertexValue;
-            }
-
-            return graphValue;
-        }
-
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer vertexValueComputer, Dictionary<string, string, double> graphEvidence = null)
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, string, double> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
@@ -294,11 +306,13 @@ namespace Marv.Common.Graph
             var value = new Dictionary<string, string, double>();
 
             // Clear all evidence to begin with
-            this.ClearEvidence();
+            this.networkStructure.ClearEvidence();
 
             // Collect vertices to ignore
-            var verticesToIgnore = new List<Vertex>();
-            verticesToIgnore.Add(targetVertex);
+            var verticesToIgnore = new List<Vertex>
+            {
+                targetVertex
+            };
 
             if (graphEvidence != null)
             {
@@ -315,12 +329,13 @@ namespace Marv.Common.Graph
                 {
                     try
                     {
-                        this.SetEvidence(sourceVertex.Key, sourceState.Key);
+                        var stateIndex = sourceVertex.States.IndexOf(sourceState);
+                        this.networkStructure.SetEvidence(sourceVertex.Key, stateIndex);
 
-                        var graphValue = this.GetNetworkBelief();
+                        var graphValue = this.networkStructure.GetBelief();
                         var targetVertexValue = graphValue[targetVertex.Key];
 
-                        value[sourceVertex.Key, sourceState.Key] = vertexValueComputer.Compute(targetVertex, targetVertexValue);
+                        value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
                         this.ClearEvidence(sourceVertex.Key);
                     }
@@ -334,11 +349,6 @@ namespace Marv.Common.Graph
             }
 
             return value;
-        }
-
-        public double GetStandardDeviation(string vertexKey, Dictionary<string, double> vertexValue)
-        {
-            return this.Vertices[vertexKey].GetStandardDeviation(vertexValue);
         }
 
         public Graph GetSubGraph(string group)
@@ -412,95 +422,10 @@ namespace Marv.Common.Graph
             return subGraph;
         }
 
-        public double[,] GetTable(string vertexKey)
-        {
-            return this.networkStructure.Network.GetNodeTable(vertexKey);
-        }
-
         public Vertex GetVertex(string vertexKey)
         {
             // Do not remove! This is for Marv.Matlab
             return this.Vertices[vertexKey];
-        }
-
-        public bool HasEdge(string srcKey, string dstKey)
-        {
-            var hasEdge = false;
-
-            foreach (var edge in this.Edges)
-            {
-                if (edge.Source.Key.Equals(srcKey) && edge.Target.Key.Equals(dstKey))
-                {
-                    hasEdge = true;
-                }
-            }
-
-            return hasEdge;
-        }
-
-        public static Graph Read(string fileName)
-        {
-            var graph = new Graph
-            {
-                networkStructure = NetworkStructure.Read(fileName)
-            };
-
-            graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
-            graph.Name = graph.networkStructure.ParseUserProperty("key", "");
-
-            // Add all the vertices
-            foreach (var structureVertex in graph.networkStructure.Vertices)
-            {
-                var vertex = new Vertex
-                {
-                    ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
-                    Description = structureVertex.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = structureVertex.ParseGroups(),
-                    HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup"),
-                    InputVertexKey = structureVertex.ParseStringProperty("InputNode"),
-                    IsExpanded = structureVertex.ParseIsExpanded(),
-                    Key = structureVertex.Key,
-                    Name = structureVertex.ParseStringProperty("label"),
-                    Position = structureVertex.ParsePosition(),
-                    PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
-                    Units = structureVertex.ParseStringProperty("units"),
-                    States = structureVertex.ParseStates(),
-                    Type = structureVertex.ParseSubType()
-                };
-
-                vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
-
-                if (string.IsNullOrWhiteSpace(vertex.Units))
-                {
-                    vertex.Units = "n/a";
-                }
-
-                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
-                {
-                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
-                }
-
-                graph.Vertices.Add(vertex);
-            }
-
-            // Add all the edges
-            foreach (var srcVertex in graph.networkStructure.Vertices)
-            {
-                foreach (var dstVertex in srcVertex.Children)
-                {
-                    graph.AddEdge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]);
-                }
-            }
-
-            graph.UpdateDisplayGraph(graph.DefaultGroup);
-            graph.UpdateBelief();
-
-            return graph;
-        }
-
-        public static Task<Graph> ReadAsync(string fileName)
-        {
-            return Task.Run(() => Read(fileName));
         }
 
         public Dictionary<string, string, double> ReadValueCsv(string fileName)
@@ -541,86 +466,86 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
-            this.ClearNetworkEvidence();
-            this.SetNetworkEvidence(this.Evidence);
-            this.Belief = this.GetNetworkBelief();
-        }
-
-        public Dictionary<string, string, double> Run(string vertexKey, Dictionary<string, double> vertexEvidence)
-        {
-            this.SetNetworkEvidence(vertexKey, vertexEvidence);
-            return this.GetNetworkBelief();
-        }
-
-        public Dictionary<string, string, double> Run(Dictionary<string, string, double> graphEvidence)
-        {
-            this.Evidence = graphEvidence;
-            return this.GetNetworkBelief();
-        }
-
-        public Dictionary<int, string, string, double> Run(Dictionary<string, string, double> graphEvidence, int startYear, int endYear)
-        {
-            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
-
-            for (var year = startYear; year <= endYear; year++)
+            foreach (var vertex in this.Vertices)
             {
-                // If this is not the start year, then add the looped evidences
-                if (year > startYear)
+                if (vertex.IsEvidenceEntered)
                 {
-                    foreach (var srcVertexKey in this.Loops.Keys)
-                    {
-                        var dstVertexKey = this.Loops[srcVertexKey];
-
-                        var lastGraphValue = graphValueTimeSeries[year - 1];
-
-                        var lastVertexValue = lastGraphValue[srcVertexKey];
-
-                        graphEvidence[dstVertexKey] = lastVertexValue;
-                    }
+                    this.networkStructure.SetEvidence(vertex.Key, vertex.Evidence.Select(kvp => kvp.Value).ToArray());
                 }
-
-                graphValueTimeSeries[year] = this.Run(graphEvidence);
             }
 
-            return graphValueTimeSeries;
+            this.UpdateBelief();
         }
 
-        public Dictionary<int, string, string, double> Run(Dictionary<int, string, string, double> modelEvidence, int startYear, int endYear)
-        {
-            var graphValueTimeSeries = new Dictionary<int, string, string, double>();
+        //public Dictionary<string, string, double> Run(Dictionary<string, string, double> graphEvidence)
+        //{
+        //    this.Evidence = graphEvidence;
+        //    return this.GetNetworkBelief();
+        //}
 
-            for (var year = startYear; year <= endYear; year++)
-            {
-                if (!modelEvidence.ContainsKey(year))
-                {
-                    graphValueTimeSeries[year] = this.Belief;
-                    continue;
-                }
+        //public Dictionary<int, string, string, double> Run(Dictionary<string, string, double> graphEvidence, int startYear, int endYear)
+        //{
+        //    var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
-                var graphEvidence = modelEvidence[year];
+        //    for (var year = startYear; year <= endYear; year++)
+        //    {
+        //        // If this is not the start year, then add the looped evidences
+        //        if (year > startYear)
+        //        {
+        //            foreach (var srcVertexKey in this.Loops.Keys)
+        //            {
+        //                var dstVertexKey = this.Loops[srcVertexKey];
 
-                // If this is not the start year, then add the looped evidences
-                if (year > startYear)
-                {
-                    foreach (var srcVertexKey in this.Loops.Keys)
-                    {
-                        var dstVertexKey = this.Loops[srcVertexKey];
+        //                var lastGraphValue = graphValueTimeSeries[year - 1];
 
-                        var lastGraphValue = graphValueTimeSeries[year - 1];
+        //                var lastVertexValue = lastGraphValue[srcVertexKey];
 
-                        var lastVertexValue = lastGraphValue[srcVertexKey];
+        //                graphEvidence[dstVertexKey] = lastVertexValue;
+        //            }
+        //        }
 
-                        graphEvidence[dstVertexKey] = lastVertexValue;
-                    }
-                }
+        //        graphValueTimeSeries[year] = this.Run(graphEvidence);
+        //    }
 
-                graphValueTimeSeries[year] = this.Run(graphEvidence);
+        //    return graphValueTimeSeries;
+        //}
 
-                this.ClearEvidence();
-            }
+        //public Dictionary<int, string, string, double> Run(Dictionary<int, string, string, double> modelEvidence, int startYear, int endYear)
+        //{
+        //    var graphValueTimeSeries = new Dictionary<int, string, string, double>();
 
-            return graphValueTimeSeries;
-        }
+        //    for (var year = startYear; year <= endYear; year++)
+        //    {
+        //        if (!modelEvidence.ContainsKey(year))
+        //        {
+        //            graphValueTimeSeries[year] = this.Belief;
+        //            continue;
+        //        }
+
+        //        var graphEvidence = modelEvidence[year];
+
+        //        // If this is not the start year, then add the looped evidences
+        //        if (year > startYear)
+        //        {
+        //            foreach (var srcVertexKey in this.Loops.Keys)
+        //            {
+        //                var dstVertexKey = this.Loops[srcVertexKey];
+
+        //                var lastGraphValue = graphValueTimeSeries[year - 1];
+
+        //                var lastVertexValue = lastGraphValue[srcVertexKey];
+
+        //                graphEvidence[dstVertexKey] = lastVertexValue;
+        //            }
+        //        }
+
+        //        graphValueTimeSeries[year] = this.Run(graphEvidence);
+
+        //        this.networkStructure.ClearEvidence();
+        //    }
+
+        //    return graphValueTimeSeries;
+        //}
 
         public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
         {
@@ -639,37 +564,16 @@ namespace Marv.Common.Graph
             }
         }
 
-        public void SetEvidence(string vertexKey, string stateKey)
-        {
-            var stateIndex = this.Vertices[vertexKey].States.IndexOf(stateKey);
-            this.SetEvidence(vertexKey, stateIndex);
-        }
-
-        public void SetEvidence(string vertexKey, int stateIndex)
-        {
-            this.networkStructure.Network.SetEvidence(vertexKey, stateIndex);
-        }
-
-        public void SetEvidence(string vertexKey, VertexEvidence vertexEvidence)
-        {
-            this.Vertices[vertexKey].Evidence = vertexEvidence.Evidence;
-            this.Vertices[vertexKey].EvidenceString = vertexEvidence.String;
-        }
-
-        public void SetNetworkEvidence(string vertexKey, Dictionary<string, double> vertexEvidence)
-        {
-            this.networkStructure.Network.SetSoftEvidence(vertexKey, vertexEvidence.ToArray());
-        }
-
-        public void SetNetworkTable(string vertexKey, double[,] table)
-        {
-            this.networkStructure.Network.SetNodeTable(vertexKey, table);
-        }
-
         public void UpdateBelief()
         {
-            var networkBelief = this.GetNetworkBelief();
-            this.Belief = networkBelief;
+            this.networkStructure.Run();
+
+            var belief = this.networkStructure.GetBelief();
+
+            foreach (var vertexKey in belief.Keys)
+            {
+                this.Vertices[vertexKey].SetBelief(belief[vertexKey]);
+            }
         }
 
         public void UpdateDisplayGraph(string group)
@@ -679,32 +583,9 @@ namespace Marv.Common.Graph
             this.IsDefaultGroupVisible = @group == this.DefaultGroup;
         }
 
-        public void UpdateNetworkBeliefs()
-        {
-            this.networkStructure.Network.UpdateBeliefs();
-        }
-
         public void Write()
         {
             this.networkStructure.Write(this);
-        }
-
-        public void Write(string fName)
-        {
-            this.networkStructure.Write(fName, this);
-        }
-
-        private void ClearNetworkEvidence()
-        {
-            this.networkStructure.Network.ClearAllEvidence();
-        }
-
-        private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)
-        {
-            foreach (var vertexKey in graphEvidence.Keys)
-            {
-                this.SetNetworkEvidence(vertexKey, graphEvidence[vertexKey]);
-            }
         }
     }
 }

@@ -129,7 +129,8 @@ namespace Marv
         private void VertexClearCommand_Executed(object sender, Vertex vertex)
         {
             var graph = this.AssociatedObject.Graph;
-            graph.Belief = graph.ClearEvidence(vertex.Key);
+            graph.ClearEvidence(vertex.Key);
+            graph.Run();
         }
     }
 }

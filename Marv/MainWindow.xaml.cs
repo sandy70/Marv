@@ -188,13 +188,13 @@ namespace Marv
             var graph = Graph.Read(networkFileName);
             var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
 
-            var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
+            // var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
 
             var fileName = GetFileNameForModelValue(multiLocationName, locationName);
 
             try
             {
-                Odb.Write(fileName, graphValueTimeSeries);
+                // Odb.Write(fileName, graphValueTimeSeries);
             }
             catch (IOException exp)
             {
