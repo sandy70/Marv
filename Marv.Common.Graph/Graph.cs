@@ -17,11 +17,11 @@ namespace Marv.Common.Graph
         private string defaultGroup;
         private Graph displayGraph;
         private ModelCollection<Edge> edges = new ModelCollection<Edge>();
-        private string fileName;
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Network network = new Network();
+        private NetworkStructure networkStructure;
         private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
@@ -113,23 +113,6 @@ namespace Marv.Common.Graph
                 foreach (var vertex in this.Vertices)
                 {
                     vertex.Evidence = value == null ? null : value[vertex.Key];
-                }
-            }
-        }
-
-        public string FileName
-        {
-            get
-            {
-                return this.fileName;
-            }
-
-            private set
-            {
-                if (value != this.fileName)
-                {
-                    this.fileName = value;
-                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -458,18 +441,16 @@ namespace Marv.Common.Graph
 
         public static Graph Read(string fileName)
         {
-            var structure = NetworkStructure.Read(fileName);
-
             var graph = new Graph
             {
-                network = structure.Network,
-                DefaultGroup = structure.ParseUserProperty("defaultgroup", "all"),
-                FileName = fileName,
-                Name = structure.ParseUserProperty("key", ""),
+                networkStructure = NetworkStructure.Read(fileName)
             };
 
+            graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
+            graph.Name = graph.networkStructure.ParseUserProperty("key", "");
+
             // Add all the vertices
-            foreach (var structureVertex in structure.Vertices)
+            foreach (var structureVertex in graph.networkStructure.Vertices)
             {
                 var vertex = new Vertex
                 {
@@ -504,7 +485,7 @@ namespace Marv.Common.Graph
             }
 
             // Add all the edges
-            foreach (var srcVertex in structure.Vertices)
+            foreach (var srcVertex in graph.networkStructure.Vertices)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -706,40 +687,12 @@ namespace Marv.Common.Graph
 
         public void Write()
         {
-            this.Write(this.FileName);
+            this.networkStructure.Write(this);
         }
 
         public void Write(string fName)
         {
-            var structure = NetworkStructure.Read(fName);
-
-            var userProperties = new List<string>
-            {
-                "defaultgroup=" + this.DefaultGroup,
-                "key=" + this.Name,
-            };
-
-            structure.Properties["HR_Desc"] = userProperties.String().Enquote();
-
-            foreach (var networkStructureVertex in structure.Vertices)
-            {
-                var vertex = this.Vertices[networkStructureVertex.Key];
-
-                networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
-                networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
-                networkStructureVertex.Properties["HR_Desc"] = vertex.Description.Enquote();
-                networkStructureVertex.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
-                networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
-                networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
-                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
-                networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
-
-                // Remove legacy properties
-                networkStructureVertex.Properties.Remove("grouppositions");
-                networkStructureVertex.Properties.Remove("isheaderofgroup");
-            }
-
-            structure.Write(fName);
+            this.networkStructure.Write(fName, this);
         }
 
         private void ClearNetworkEvidence()
