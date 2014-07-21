@@ -722,6 +722,8 @@ namespace Marv.Common.Graph
 
                 networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
                 networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
+                networkStructureVertex.Properties["HR_Desc"] = vertex.Description.Enquote();
+                networkStructureVertex.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
                 networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
                 networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
                 networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
