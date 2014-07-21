@@ -8,6 +8,7 @@ using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 using Telerik.Windows.Controls;
 using ScatterPoint = OxyPlot.Series.ScatterPoint;
@@ -119,54 +120,83 @@ namespace Marv.Input
         {
 
 
-            if (this.InputGridView.SelectedCells.Count == 1)
+            if (this.InputGridView.SelectedCells.Count == 1 )
             {
                 ScatterSeries series1 = new ScatterSeries();
+                series1.MarkerFill = OxyColors.Green;
                 CandleStickSeries series2 = new CandleStickSeries();
                 series2.Color = OxyColors.Green;
-               
+                this.DataPlotModel = new PlotModel { };
+
+                var model = new CellModel(this.InputGridView.SelectedCells[0]);
+                if (model.IsColumnSectionId)
+                {
+                    return;
+                }
                 if (IsYearPlot)
                 {
-                    this.DataPlotModel = new PlotModel
-                    {
-                        Title = "InputData"
-                    };
-                    var year = this.InputGridView.SelectedCells[0].Column.Header;
+                    this.DataPlotModel.Title = "Input Data for the Year " + model.Year.ToString();
+                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, "Section ID"));
+                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+                    
                     foreach (var row in this.InputRows)
                     {
-                        double rowIndex = this.InputRows.IndexOf(row);
+                        var rowIndex = this.InputRows.IndexOf(row);
                         try
                         {
-
-                            var entry = row[year];
-                            if (!(entry is string))
+                            var entry = row[model.Header];
+                           
+                            if ((!entry.ToString().Contains(":")))
                             {
-                                if ((!entry.String.Contains(":")))
-                                {
-                                    double value = Convert.ToDouble(row[year].String);
-                                    series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
-                                }
-                                else if (entry.String.Split(":".ToArray()).Length == 2)
-                                {
-                                    String[] valueSet = entry.String.Split(":".ToArray());
-                                    series2.Items.Add(new HighLowItem(rowIndex, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
-                                        Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
-                                }
+                                double value = Convert.ToDouble(entry);
+                                series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
                             }
+                            else if (entry.ToString().Split(":".ToArray()).Length == 2)
+                            {
+                                String[] valueSet = entry.ToString().Split(":".ToArray());
+                                series2.Items.Add(new HighLowItem(rowIndex, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
+                                    Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
+                            }
+                            
                         }
-                        catch (FormatException e)
-                        {
-
-                        }
+                        catch (FormatException e) { }             
                     }
 
                    
                 }
-                
+                else
+                {
+                    this.DataPlotModel.Title = "Input Data for " + model.SectionId;
+                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, "Year"));
+                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+                    var row = model.Row;
+                    foreach(var column in this.InputGridView.Columns)
+                    {
+                        var year = column.Header.ToString();
+                        var entry = row[year];
+                        if(year == CellModel.SectionIdHeader || entry == "")
+                        {
+                            continue;
+                        }
+                        if ((!entry.ToString().Contains(":")))
+                        {
+                            double value = Convert.ToDouble(entry);
+                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(Convert.ToDouble(year), value));
+                        }
+                        else if (entry.ToString().Split(":".ToArray()).Length == 2)
+                        {
+                            String[] valueSet = entry.ToString().Split(":".ToArray());
+                            series2.Items.Add(new HighLowItem(Convert.ToDouble(year), Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
+                                Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
+                        }
+                    }
+                    
+                }
+                this.DataPlotModel.Series.Add(series1);
+                this.DataPlotModel.Series.Add(series2);
+                this.DataPlotModel.InvalidatePlot(true);
             }
-            this.DataPlotModel.Series.Add(series1);
-            this.DataPlotModel.Series.Add(series2);
-            this.DataPlotModel.InvalidatePlot(true);
+            
             
             
         }
@@ -241,8 +271,11 @@ namespace Marv.Input
 
             foreach (var cell in this.InputGridView.SelectedCells)
             {
-                this.Graph.SelectedVertex.EvidenceString = null;
-                this.Graph.SelectedVertex.UpdateEvidence();
+                if (this.Graph.SelectedVertex != null)
+                {
+                    this.Graph.SelectedVertex.EvidenceString = null;
+                    this.Graph.SelectedVertex.UpdateEvidence();
+                }
 
                 var row = cell.Item as Dynamic;
                 var sectionId = row["Section ID"] as string;
@@ -277,6 +310,8 @@ namespace Marv.Input
             inputRows.Add(row);
             this.InputRows = inputRows;
             this.PlotButton.IsEnabled = true;
+            this.CopyAcrossColumns.IsEnabled = true;
+            this.CopyAcrossRows.IsEnabled = true;
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
             foreach (var column in this.InputGridView.Columns)
@@ -312,6 +347,7 @@ namespace Marv.Input
             // Read the graph
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
             this.Graph.Belief = null;
+            IsYearPlot = true;
 
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.ClearAllButton.Click += this.ClearAllButton_Click;
@@ -452,7 +488,7 @@ namespace Marv.Input
             var cellModel = new CellModel(this.InputGridView.CurrentCell);
             var vertexData = vertex.GetData();
 
-            cellModel.Row[cellModel.YearString] = vertexData;
+            cellModel.Row[cellModel.Header] = vertexData;
             this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
     }

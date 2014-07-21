@@ -88,6 +88,22 @@
                                                         Content="Plot By Section"
                                                         ></RadioButton>
 
+                                <telerik:RadButton Name="CopyAcrossColumns"
+                                                   Margin="5, 0, 6, 0"
+                                                   Height="30" Width="30"
+                                                   IsEnabled="False"
+                                                   ToolTip="Copies value across columns.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossColumns.png" />
+                                </telerik:RadButton>
+                                
+                                <telerik:RadButton Name="CopyAcrossRows"
+                                                   Margin="5, 0, 6, 0"
+                                                   Height="30" Width="30"
+                                                   IsEnabled="False"
+                                                   ToolTip="Copies value across rows.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
+                                </telerik:RadButton>
+                                
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
