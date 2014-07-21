@@ -441,7 +441,7 @@ namespace Marv.Common.Graph
 
         public void SetBelief(double[] belief)
         {
-            if (belief.Length > this.States.Count)
+            if (belief.Length != this.States.Count)
             {
                 var message = String.Format("The length of belief array [{0}] should be <= number of states in this vertex [{1}:{2}].", belief.Length, this.Key, this.States.Count);
                 throw new InvalidValueException(message);
