@@ -704,9 +704,14 @@ namespace Marv.Common.Graph
             this.network.UpdateBeliefs();
         }
 
-        public void Write(string fileName)
+        public void Write()
         {
-            var structure = NetworkStructure.Read(fileName);
+            this.Write(this.FileName);
+        }
+
+        public void Write(string fName)
+        {
+            var structure = NetworkStructure.Read(fName);
 
             var userProperties = new List<string>
             {
@@ -734,7 +739,7 @@ namespace Marv.Common.Graph
                 networkStructureVertex.Properties.Remove("isheaderofgroup");
             }
 
-            structure.Write(fileName);
+            structure.Write(fName);
         }
 
         private void ClearNetworkEvidence()

@@ -203,7 +203,7 @@ namespace Marv.Controls.Graph
             {
                 if (this.IsAutoSaveEnabled && this.Graph != null)
                 {
-                    this.Graph.Write(this.Graph.FileName);
+                    this.Graph.Write();
                 }
             };
 
@@ -320,7 +320,7 @@ namespace Marv.Controls.Graph
 
         private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Write(this.Graph.FileName);
+            this.Graph.Write();
         }
 
         public event EventHandler<Vertex> EvidenceEntered;
