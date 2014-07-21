@@ -245,6 +245,11 @@ namespace Marv.Input
 
         private void InitializePlot()
         {
+            this.DataPlotModel = new PlotModel
+            {
+                Title = "InputData"
+            };
+
             if (this.InputGridView.SelectedCells.Count == 1)
             {
                 var series1 = new ScatterSeries();
@@ -282,7 +287,10 @@ namespace Marv.Input
                         catch (FormatException e) {}
                     }
                 }
+
+                this.DataPlotModel.Series.Add(series1);
             }
+            this.DataPlotModel.InvalidatePlot(true);
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

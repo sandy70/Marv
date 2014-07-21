@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Marv.Common;
+using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 
