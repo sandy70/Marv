@@ -20,7 +20,6 @@ namespace Marv.Common.Graph
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
-        private Network network = new Network();
         private NetworkStructure networkStructure;
         private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
@@ -231,13 +230,13 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, string, double> ClearEvidence()
         {
-            this.network.ClearAllEvidence();
+            this.networkStructure.Network.ClearAllEvidence();
             return this.GetNetworkBelief();
         }
 
         public Dictionary<string, string, double> ClearEvidence(string vertexKey)
         {
-            this.network.ClearEvidence(vertexKey);
+            this.networkStructure.Network.ClearEvidence(vertexKey);
             return this.GetNetworkBelief();
         }
 
@@ -272,7 +271,7 @@ namespace Marv.Common.Graph
                 {
                     try
                     {
-                        vertexValue[state.Key] = this.network.GetNodeValue(vertex.Key)[vertex.States.IndexOf(state.Key)];
+                        vertexValue[state.Key] = this.networkStructure.Network.GetNodeValue(vertex.Key)[vertex.States.IndexOf(state.Key)];
                     }
                     catch (SmileException exception)
                     {
@@ -415,7 +414,7 @@ namespace Marv.Common.Graph
 
         public double[,] GetTable(string vertexKey)
         {
-            return this.network.GetNodeTable(vertexKey);
+            return this.networkStructure.Network.GetNodeTable(vertexKey);
         }
 
         public Vertex GetVertex(string vertexKey)
@@ -648,7 +647,7 @@ namespace Marv.Common.Graph
 
         public void SetEvidence(string vertexKey, int stateIndex)
         {
-            this.network.SetEvidence(vertexKey, stateIndex);
+            this.networkStructure.Network.SetEvidence(vertexKey, stateIndex);
         }
 
         public void SetEvidence(string vertexKey, VertexEvidence vertexEvidence)
@@ -659,12 +658,12 @@ namespace Marv.Common.Graph
 
         public void SetNetworkEvidence(string vertexKey, Dictionary<string, double> vertexEvidence)
         {
-            this.network.SetSoftEvidence(vertexKey, vertexEvidence.ToArray());
+            this.networkStructure.Network.SetSoftEvidence(vertexKey, vertexEvidence.ToArray());
         }
 
         public void SetNetworkTable(string vertexKey, double[,] table)
         {
-            this.network.SetNodeTable(vertexKey, table);
+            this.networkStructure.Network.SetNodeTable(vertexKey, table);
         }
 
         public void UpdateBelief()
@@ -682,7 +681,7 @@ namespace Marv.Common.Graph
 
         public void UpdateNetworkBeliefs()
         {
-            this.network.UpdateBeliefs();
+            this.networkStructure.Network.UpdateBeliefs();
         }
 
         public void Write()
@@ -697,7 +696,7 @@ namespace Marv.Common.Graph
 
         private void ClearNetworkEvidence()
         {
-            this.network.ClearAllEvidence();
+            this.networkStructure.Network.ClearAllEvidence();
         }
 
         private void SetNetworkEvidence(Dictionary<string, string, double> graphEvidence)
