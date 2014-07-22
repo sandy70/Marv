@@ -177,7 +177,7 @@
                                        Width="400">
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Node">
-                        <Grid Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition Height="50" />
@@ -188,7 +188,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-
+                                
+                                <!-- Vertex Combo Box -->
                                 <telerik:RadComboBox CanAutocompleteSelectItems="True"
                                                      CanKeyboardNavigationSelectItems="True"
                                                      DisplayMemberPath="Name"
@@ -198,7 +199,7 @@
                                                      Margin="5"
                                                      OpenDropDownOnFocus="True"
                                                      SelectedIndex="0"
-                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
                                                      TextSearchMode="Contains" />
 
                                 <!-- Vertex Control -->
@@ -210,7 +211,8 @@
                                                     IsToolbarVisible="False"
                                                     IsValueVisible="False"
                                                     Margin="5"
-                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                    Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}"/>
                             </Grid>
 
                             <Grid Grid.Row="1">
