@@ -12,11 +12,12 @@ namespace Marv.Input
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
 
-        public void SetCell(CellModel cellModel, string str)
+        public void SetCell(CellModel cellModel, string newStr, string oldStr = null)
         {
-            if (cellModel.IsColumnSectionId)
+            if (cellModel.IsColumnSectionId && oldStr != null)
             {
-                cellModel.Data = str;
+                cellModel.Data = newStr;
+                this.LineEvidence[newStr] = this.LineEvidence[oldStr]; 
                 return;
             }
 
@@ -24,7 +25,7 @@ namespace Marv.Input
 
             if (selectedVertex == null) return;
 
-            selectedVertex.EvidenceString = str;
+            selectedVertex.EvidenceString = newStr;
             selectedVertex.UpdateEvidence();
 
             var vertexData = selectedVertex.GetData();
@@ -48,7 +49,7 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.SetCell(e.Cell.ToModel(), e.NewData as string);
+            this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
