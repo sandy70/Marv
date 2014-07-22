@@ -17,7 +17,7 @@
             {
                 this.latitude = value;
 
-                this.RaisePropertyChanged("Latitude");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -31,7 +31,7 @@
             set
             {
                 this.longitude = value;
-                this.RaisePropertyChanged("Longitude");
+                this.RaisePropertyChanged();
             }
         }
 
@@ -45,17 +45,8 @@
             set
             {
                 this._value = value;
-                this.RaisePropertyChanged("Value");
+                this.RaisePropertyChanged();
             }
-        }
-
-        public static implicit operator Location(MapControl.Location mLocation)
-        {
-            return new Location
-            {
-                Latitude = mLocation.Latitude,
-                Longitude = mLocation.Longitude
-            };
         }
 
         public static Location Parse(string locationString)
@@ -72,6 +63,15 @@
         public override string ToString()
         {
             return this.Latitude + ", " + this.Longitude;
+        }
+
+        public static implicit operator Location(MapControl.Location mLocation)
+        {
+            return new Location
+            {
+                Latitude = mLocation.Latitude,
+                Longitude = mLocation.Longitude
+            };
         }
     }
 }
