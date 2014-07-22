@@ -18,7 +18,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -232,6 +232,18 @@ namespace Marv.Controls.Graph
             this.Open(openFileDialog.FileName);
         }
 
+        public void RaiseGraphChanged(Common.Graph.Graph newGraph, Common.Graph.Graph oldGraph)
+        {
+            if (this.GraphChanged != null)
+            {
+                this.GraphChanged(this, new ValueChangedArgs<Common.Graph.Graph>
+                {
+                    NewValue = newGraph,
+                    OldValue = oldGraph
+                });
+            }
+        }
+
         internal void RaiseEvidenceEntered(Vertex vertex = null)
         {
             if (this.EvidenceEntered != null)
@@ -258,6 +270,15 @@ namespace Marv.Controls.Graph
                     Vertex = vertex
                 });
             }
+        }
+
+        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as GraphControl;
+
+            if (control == null) return;
+
+            control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, e.OldValue as Common.Graph.Graph);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -328,5 +349,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
 
         public event EventHandler<Vertex> SelectionChanged;
+
+        public event EventHandler<ValueChangedArgs<Common.Graph.Graph>> GraphChanged;
     }
 }
