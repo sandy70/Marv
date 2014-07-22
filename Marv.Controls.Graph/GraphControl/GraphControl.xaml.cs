@@ -278,6 +278,11 @@ namespace Marv.Controls.Graph
 
             if (control == null) return;
 
+            if (control.Graph.Vertices.Count > 0)
+            {
+                control.Graph.SelectedVertex = control.Graph.Vertices[0];
+            }
+
             control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, e.OldValue as Common.Graph.Graph);
         }
 
