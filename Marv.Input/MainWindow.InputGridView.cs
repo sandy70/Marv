@@ -50,6 +50,7 @@ namespace Marv.Input
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
+            this.Graph.Run();
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
