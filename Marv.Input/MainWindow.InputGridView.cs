@@ -38,6 +38,11 @@ namespace Marv.Input
 
         public void SetCell(dynamic row, string columnHeader, string str)
         {
+            if(this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
+
             if (checkValidityOfInput(str) || columnHeader.Equals("Section ID"))
             {
                 this.Graph.SelectedVertex.EvidenceString = str;
@@ -87,6 +92,11 @@ namespace Marv.Input
             if (e.NewCell == null) return;
 
             var cellModel = e.NewCell.ToModel();
+
+            if (cellModel.IsColumnSectionId)
+            {
+                return;
+            }
 
             this.Graph.SetEvidence(this.LineEvidence[cellModel.SectionId, cellModel.Year]);
             this.Graph.Run();
