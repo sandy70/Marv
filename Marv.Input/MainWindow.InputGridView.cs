@@ -27,6 +27,11 @@ namespace Marv.Input
             }
 
             var selectedVertex = this.Graph.SelectedVertex;
+            if(this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
+
 
             if (selectedVertex == null) return;
 
@@ -64,6 +69,11 @@ namespace Marv.Input
 
             var cellModel = e.NewCell.ToModel();
 
+            if (cellModel.IsColumnSectionId)
+            {
+                return;
+            }
+
             if (cellModel.IsColumnSectionId) return;
 
             this.Graph.SetEvidence(this.LineEvidence[cellModel.SectionId, cellModel.Year]);
@@ -86,11 +96,7 @@ namespace Marv.Input
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
                 this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
-                var cellModel = cellClipboardEventArg.Cell.ToModel();
-                var str = cellClipboardEventArg.Value as string;
-
-                this.SetCell(cellModel, str);
-            }
+           }
 
             cellClipboardEventArgs.Clear();
         }

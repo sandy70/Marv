@@ -50,15 +50,15 @@ namespace Marv.Input
             this.Row = row;
             this.SectionId = this.Row[SectionIdHeader] as string;
             this.Header = header;
-
+            
             int result;
             this.IsColumnSectionId = !Int32.TryParse(this.Header, out result);
             this.Year = !this.IsColumnSectionId ? result : -1;
         }
 
-        public CellModel(GridViewCellInfo cellInfo) : this(cellInfo.Item as Dynamic, cellInfo.Column.Header as string) {}
+        public CellModel(GridViewCellInfo cellInfo) : this(cellInfo.Item as Dynamic, cellInfo.Column.Header as string) { }
 
-        public CellModel(GridViewCell cell) : this(cell.ParentRow.DataContext as Dynamic, cell.Column.Header as string) {}
+        public CellModel(GridViewCell cell) : this(cell.ParentRow.DataContext as Dynamic, cell.Column.Header as string) { }
 
         public const string SectionIdHeader = "Section ID";
     }

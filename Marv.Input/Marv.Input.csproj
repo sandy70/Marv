@@ -121,6 +121,7 @@
     </ApplicationDefinition>
     <Compile Include="CellModel.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="InvalidValueException.cs" />
     <Compile Include="Settings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
