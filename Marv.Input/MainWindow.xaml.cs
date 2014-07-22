@@ -118,8 +118,6 @@ namespace Marv.Input
         
         void InitializePlot()
         {
-
-
             if (this.InputGridView.SelectedCells.Count == 1 )
             {
                 ScatterSeries series1 = new ScatterSeries();
@@ -156,13 +154,10 @@ namespace Marv.Input
                                 String[] valueSet = entry.ToString().Split(":".ToArray());
                                 series2.Items.Add(new HighLowItem(rowIndex, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
                                     Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
-                            }
-                            
+                            }                          
                         }
                         catch (FormatException e) { }             
-                    }
-
-                   
+                    }                  
                 }
                 else
                 {
@@ -355,6 +350,8 @@ namespace Marv.Input
             this.OpenButton.Click += OpenButton_Click;
             this.SaveButton.Click += SaveButton_Click;
             this.PlotButton.Click += PlotButton_Click;
+            this.CopyAcrossColumns.Click += CopyAcrossColumns_Click;
+            this.CopyAcrossRows.Click += CopyAcrossRows_Click;
 
             this.TypePlotButtonYear.Checked +=TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked +=TypePlotButtonSection_Checked;
@@ -443,6 +440,44 @@ namespace Marv.Input
             if (dialog.FileName != null)
             {
                 this.LineEvidence.WriteJson(dialog.FileName);
+            }
+        }
+
+        private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.InputGridView.SelectedCells.Count == 1)
+            {
+                var model = new CellModel(this.InputGridView.SelectedCells[0]);
+                if (model.IsColumnSectionId)
+                {
+                    return;
+                }
+                var value = model.Data;
+                foreach(var row in this.InputRows)
+                {
+                    row[model.Header] = value;
+                }
+
+            }
+        }
+
+        private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.InputGridView.SelectedCells.Count == 1 )
+            {
+                var model = new CellModel(this.InputGridView.SelectedCells[0]);
+                if (model.IsColumnSectionId)
+                {
+                    return;
+                }
+                var value = model.Data;
+                foreach (var column in this.InputGridView.Columns)
+                {
+                    if (column.Header.ToString() != CellModel.SectionIdHeader)
+                    {
+                        model.Row[column.Header.ToString()] = value;
+                    }
+                }
             }
         }
 
