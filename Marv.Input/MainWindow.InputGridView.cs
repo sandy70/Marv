@@ -14,10 +14,15 @@ namespace Marv.Input
 
         public void SetCell(CellModel cellModel, string newStr, string oldStr = null)
         {
-            if (cellModel.IsColumnSectionId && oldStr != null)
+            if (cellModel.IsColumnSectionId)
             {
                 cellModel.Data = newStr;
-                this.LineEvidence[newStr] = this.LineEvidence[oldStr]; 
+
+                if (oldStr != null)
+                {
+                    this.LineEvidence[newStr] = this.LineEvidence[oldStr];
+                } 
+
                 return;
             }
 
