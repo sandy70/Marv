@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Marv.Common
@@ -186,7 +187,7 @@ namespace Marv.Common
             }
         }
 
-        protected void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             base.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
