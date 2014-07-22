@@ -6,6 +6,7 @@ namespace Marv.Common.Map
 {
     public class LocationCollection : ModelCollection<Location>
     {
+        // ReSharper disable once InconsistentNaming
         private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
 
@@ -33,7 +34,7 @@ namespace Marv.Common.Map
                 if (value != this.bounds)
                 {
                     this.bounds = value;
-                    this.RaisePropertyChanged("GetBounds");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -50,7 +51,7 @@ namespace Marv.Common.Map
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.RaisePropertyChanged("Value");
+                    this.RaisePropertyChanged();
 
                     foreach (var location in this)
                     {
