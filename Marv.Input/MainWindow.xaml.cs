@@ -35,6 +35,10 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
+        public static readonly DependencyProperty IsInputToolbarEnabledProperty =
+            DependencyProperty.Register("IsInputToolbarEnabled", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
         public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
 
@@ -47,6 +51,18 @@ namespace Marv.Input
             set
             {
                 SetValue(DataPlotModelProperty, value);
+            }
+        }
+
+        public bool IsInputToolbarEnabled
+        {
+            get
+            {
+                return (bool)GetValue(IsInputToolbarEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsInputToolbarEnabledProperty, value);
             }
         }
 
@@ -133,57 +149,27 @@ namespace Marv.Input
                 }
                 if (IsYearPlot)
                 {
-                    this.DataPlotModel.Title = "Input Data for the Year " + model.Year.ToString();
-                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, "Section ID"));
-                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
-                    
+                    AddPlotInfo("Input Data for the Year " + model.Year.ToString(), "Section ID");
                     foreach (var row in this.InputRows)
                     {
                         var rowIndex = this.InputRows.IndexOf(row);
-                        try
-                        {
-                            var entry = row[model.Header];
-                           
-                            if ((!entry.ToString().Contains(":")))
-                            {
-                                double value = Convert.ToDouble(entry);
-                                series1.Points.Add(new OxyPlot.Series.ScatterPoint(rowIndex, value));
-                            }
-                            else if (entry.ToString().Split(":".ToArray()).Length == 2)
-                            {
-                                String[] valueSet = entry.ToString().Split(":".ToArray());
-                                series2.Items.Add(new HighLowItem(rowIndex, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
-                                    Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
-                            }                          
-                        }
-                        catch (FormatException e) { }             
+                        var entry = row[model.Header];
+                        AddPointsToPlot(entry, series1, series2, Convert.ToDouble(rowIndex));   
                     }                  
                 }
                 else
                 {
-                    this.DataPlotModel.Title = "Input Data for " + model.SectionId;
-                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, "Year"));
-                    this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+                    AddPlotInfo("Input Data for " + model.SectionId, "Year");
                     var row = model.Row;
-                    foreach(var column in this.InputGridView.Columns)
+                    foreach (var column in this.InputGridView.Columns)
                     {
                         var year = column.Header.ToString();
                         var entry = row[year];
-                        if(year == CellModel.SectionIdHeader || entry == "")
+                        if (year != CellModel.SectionIdHeader && entry != "")
                         {
-                            continue;
+                            AddPointsToPlot(entry, series1, series2, Convert.ToDouble(year));
                         }
-                        if ((!entry.ToString().Contains(":")))
-                        {
-                            double value = Convert.ToDouble(entry);
-                            series1.Points.Add(new OxyPlot.Series.ScatterPoint(Convert.ToDouble(year), value));
-                        }
-                        else if (entry.ToString().Split(":".ToArray()).Length == 2)
-                        {
-                            String[] valueSet = entry.ToString().Split(":".ToArray());
-                            series2.Items.Add(new HighLowItem(Convert.ToDouble(year), Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
-                                Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
-                        }
+                        
                     }
                     
                 }
@@ -194,6 +180,28 @@ namespace Marv.Input
             
             
             
+        }
+
+        private void AddPlotInfo(string title, string xAxis)
+        {
+            this.DataPlotModel.Title = title;
+            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, xAxis));
+            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+        }
+
+        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
+        {
+            if ((!entry.ToString().Contains(":")))
+            {
+                double value = Convert.ToDouble(entry);
+                series1.Points.Add(new OxyPlot.Series.ScatterPoint(index, value));
+            }
+            else if (entry.ToString().Split(":".ToArray()).Length == 2)
+            {
+                String[] valueSet = entry.ToString().Split(":".ToArray());
+                series2.Items.Add(new HighLowItem(index, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
+                    Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
+            }                
         }
 
         
@@ -304,9 +312,7 @@ namespace Marv.Input
 
             inputRows.Add(row);
             this.InputRows = inputRows;
-            this.PlotButton.IsEnabled = true;
-            this.CopyAcrossColumns.IsEnabled = true;
-            this.CopyAcrossRows.IsEnabled = true;
+            this.IsInputToolbarEnabled = true;
             this.Graph.Belief = null;
             this.Graph.SetEvidence(null);
             foreach (var column in this.InputGridView.Columns)

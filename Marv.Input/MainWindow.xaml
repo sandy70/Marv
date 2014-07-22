@@ -70,7 +70,7 @@
 
                                 <telerik:RadButton Name="PlotButton"                                                  
                                                    Height="30" Width="30"
-                                                   IsEnabled="False"
+                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Plots input values.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
                                 </telerik:RadButton>
@@ -86,14 +86,14 @@
 
                                 <telerik:RadButton Name="CopyAcrossColumns"                                                  
                                                    Height="30" Width="30"
-                                                   IsEnabled="False"
+                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Copies value across columns.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossColumns.png" />
                                 </telerik:RadButton>
                                 
                                 <telerik:RadButton Name="CopyAcrossRows"                                                  
                                                    Height="30" Width="30"
-                                                   IsEnabled="False"
+                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Copies value across rows.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
                                 </telerik:RadButton>
