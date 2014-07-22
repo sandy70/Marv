@@ -405,19 +405,21 @@ namespace Marv.Input
 
         private void UpdateGrid()
         {
-            if (this.InputRows == null) return;
+            if (this.InputRows == null || this.Graph.SelectedVertex == null) return;
 
             foreach (var row in this.InputRows)
             {
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                var sectionEvidence = this.LineEvidence[sectionId];
-
-                foreach (var year in sectionEvidence.Keys)
+                foreach (var column in this.InputGridView.Columns)
                 {
-                    row[year.ToString()] = this.LineEvidence[sectionId, year, this.Graph.SelectedVertex.Key];
+                    var cellModel = new CellModel(row, column.Header as string);
+
+                    if (cellModel.IsColumnSectionId) continue;
+
+                    cellModel.Data = this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key];
                 }
             }
         }
+
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
