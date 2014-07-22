@@ -122,28 +122,6 @@ namespace Marv.Input
             this.Loaded += MainWindow_Loaded;
         }
 
-        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var row = new Dynamic();
-            try
-            {
-                var sectionId = "Section " + (this.InputRows.Count + 1);
-                row[CellModel.SectionIdHeader] = sectionId;
-                this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
-            }
-            catch (NullReferenceException)
-            {
-                return;
-            }
-
-            for (var year = this.StartYear; year <= this.EndYear; year++)
-            {
-                row[year.ToString()] = "";
-            }
-
-            this.InputRows.Add(row);
-        }
-
         private static void ChangedEndYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mainWindow = d as MainWindow;
@@ -166,6 +144,28 @@ namespace Marv.Input
             {
                 mainWindow.EndYear = mainWindow.StartYear;
             }
+        }
+
+        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var row = new Dynamic();
+            try
+            {
+                var sectionId = "Section " + (this.InputRows.Count + 1);
+                row[CellModel.SectionIdHeader] = sectionId;
+                this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
+            }
+            catch (NullReferenceException)
+            {
+                return;
+            }
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                row[year.ToString()] = "";
+            }
+
+            this.InputRows.Add(row);
         }
 
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
@@ -237,6 +237,12 @@ namespace Marv.Input
             this.LineEvidence[cellModel.SectionId, cellModel.Year, this.Graph.SelectedVertex.Key] = vertexData;
         }
 
+        private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
+        {
+            this.LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+            this.UpdateGrid();
+        }
+
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateGrid();
@@ -257,7 +263,6 @@ namespace Marv.Input
 
                 if (IsYearPlot)
                 {
-
                     var year = this.InputGridView.SelectedCells[0].Column.Header;
                     foreach (var row in this.InputRows)
                     {
@@ -307,6 +312,7 @@ namespace Marv.Input
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
 
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
+            this.GraphControl.GraphChanged += GraphControl_GraphChanged;
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
 
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
@@ -419,7 +425,6 @@ namespace Marv.Input
                 }
             }
         }
-
 
         private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
         {
