@@ -393,6 +393,7 @@ namespace Marv.Input
             };
 
             if (dialog.ShowDialog() == false) return;
+
             if (dialog.FileName != null)
             {
                 this.LineEvidence.WriteJson(dialog.FileName);
