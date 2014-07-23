@@ -476,7 +476,22 @@ namespace Marv.Common.Graph
             {
                 if (graphEvidence != null && graphEvidence.ContainsKey(vertex.Key))
                 {
-                    vertex.Evidence = graphEvidence[vertex.Key].Evidence;
+                    var evidenceArray = graphEvidence[vertex.Key].Evidence;
+                    var evidence = new Dictionary<string, double>();
+
+                    if (evidenceArray == null)
+                    {
+                        evidence = null;
+                    }
+                    else
+                    {
+                        foreach (var state in vertex.States) 
+                        {
+                            evidence[state.Key] = evidenceArray[vertex.States.IndexOf(state)];
+                        }
+                    }
+
+                    vertex.Evidence = evidence;
                     vertex.EvidenceString = graphEvidence[vertex.Key].String;
                 }
                 else

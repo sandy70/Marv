@@ -24,7 +24,7 @@ namespace Marv.Input
 
             if (evidence == null || evidence.Evidence == null) return null;
 
-            cell.Tag = evidence.Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val.Value}).ToList();
+            cell.Tag = evidence.Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val}).ToList();
             return this.VertexEvidenceTemplate;
         }
     }

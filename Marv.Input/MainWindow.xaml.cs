@@ -165,8 +165,18 @@ namespace Marv.Input
         private void AddPlotInfo(string title, string xAxis)
         {
             this.DataPlotModel.Title = title;
-            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, xAxis));
-            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+         
+            this.DataPlotModel.Axes.Add(new LinearAxis 
+            { 
+                Position = AxisPosition.Bottom,
+                Title = xAxis
+            });
+
+            this.DataPlotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Input Data"
+            });
         }
 
         private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
@@ -224,7 +234,7 @@ namespace Marv.Input
                 if (year != CellModel.SectionIdHeader)
                 {
                     row[year] = null;
-                    var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
+                    var evidence = this.Graph.SelectedVertex.GetData();
                     row[year] = evidence;
                     this.LineEvidence[sectionId, Convert.ToInt32(year), this.Graph.SelectedVertex.Key] = evidence;
                 }
@@ -237,18 +247,19 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var model = new CellModel(this.InputGridView.SelectedCells[0]);
-                if (model.IsColumnSectionId)
+                var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+                if (selectedCellModel.IsColumnSectionId)
                 {
                     return;
                 }
-                var value = model.Data;
+                
+                var vertexEvidence = selectedCellModel.Data as VertexEvidence;
+                
                 foreach (var column in this.InputGridView.Columns)
                 {
-                    if (column.Header.ToString() != CellModel.SectionIdHeader)
-                    {
-                        model.Row[column.Header.ToString()] = value;
-                    }
+                    var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+                    this.SetCell(cellModel, vertexEvidence.String);
                 }
             }
         }
@@ -257,15 +268,19 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var model = new CellModel(this.InputGridView.SelectedCells[0]);
-                if (model.IsColumnSectionId)
+                var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+                if (selectedCellModel.IsColumnSectionId)
                 {
                     return;
                 }
-                var value = model.Data;
+
+                var selectedCellData = selectedCellModel.Data as VertexEvidence;
+
                 foreach (var row in this.InputRows)
                 {
-                    row[model.Header] = value;
+                    var cellModel = new CellModel(row, selectedCellModel.Header);
+                    this.SetCell(cellModel, selectedCellData.String);
                 }
             }
         }

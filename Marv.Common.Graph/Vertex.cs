@@ -421,7 +421,7 @@ namespace Marv.Common.Graph
         {
             return new VertexEvidence
             {
-                Evidence = this.Evidence,
+                Evidence = this.Evidence.Select(kvp => kvp.Value).ToArray(),
                 String = this.EvidenceString
             };
         }
