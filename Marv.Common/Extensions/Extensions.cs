@@ -191,6 +191,8 @@ namespace Marv.Common
 
         public static Dictionary<string, double> Normalized(this Dictionary<string, double> evidence)
         {
+            if (evidence == null) return null;
+
             var normalized = new Dictionary<string, double>();
             var sum = evidence.Sum(kvp => kvp.Value);
 
