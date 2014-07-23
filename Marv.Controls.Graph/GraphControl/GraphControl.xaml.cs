@@ -29,6 +29,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsNavigationPaneVisibleProperty =
+            DependencyProperty.Register("IsNavigationPaneVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
@@ -113,6 +116,18 @@ namespace Marv.Controls.Graph
             set
             {
                 SetValue(IsInputVisibleProperty, value);
+            }
+        }
+
+        public bool IsNavigationPaneVisible
+        {
+            get
+            {
+                return (bool) GetValue(IsNavigationPaneVisibleProperty);
+            }
+            set
+            {
+                SetValue(IsNavigationPaneVisibleProperty, value);
             }
         }
 

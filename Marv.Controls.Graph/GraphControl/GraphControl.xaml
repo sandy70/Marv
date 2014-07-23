@@ -83,7 +83,13 @@
                                          ToolTip="Edit connections tool.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
                 </telerik:RadToggleButton>
-                
+
+                <telerik:RadToggleButton Height="30" Width="30"
+                                         IsChecked="{Binding ElementName=Root, Path=IsNavigationPaneVisible}"
+                                         ToolTip="Edit connections tool.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
+                </telerik:RadToggleButton>
+
             </ToolBar>
         </ToolBarTray>
 
@@ -165,11 +171,12 @@
             </i:Interaction.Behaviors>
         </telerik:RadDiagram>
 
-        <!--<telerik:RadDiagramNavigationPane Name="NavigationPart"
+        <telerik:RadDiagramNavigationPane Grid.Row="1"
                                           Diagram="{Binding ElementName=DiagramPart}"
                                           Margin="10"
                                           HorizontalAlignment="Right"
-                                          VerticalAlignment="Bottom" />-->
+                                          VerticalAlignment="Bottom"
+                                          Visibility="{Binding ElementName=Root, Path=IsNavigationPaneVisible, Converter={StaticResource BooleanToVisibility}}"/>
       
     </Grid>
 </UserControl>
