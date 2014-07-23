@@ -14,7 +14,8 @@ namespace Marv.Common.Graph
         private ObservableCollection<Command<Vertex>> commands = new ObservableCollection<Command<Vertex>>
         {
             VertexCommands.Expand,
-            VertexCommands.Lock
+            VertexCommands.Lock,
+            VertexCommands.Clear
         };
 
         private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();

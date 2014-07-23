@@ -17,7 +17,7 @@
             ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
         };
 
-        public static readonly Command<Vertex> Clear = new Command<Vertex>
+        public static readonly Command<Vertex> Clear = new VertexClearCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/Clear.png"
         };

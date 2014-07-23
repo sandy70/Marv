@@ -29,6 +29,11 @@ namespace Marv.Controls.Graph
             {
                 vertexControl.RaiseEvidenceChanged();
             }
+
+            if (command == VertexCommands.Clear)
+            {
+                vertexControl.RaiseEvidenceChanged();
+            }
         }
     }
 }
