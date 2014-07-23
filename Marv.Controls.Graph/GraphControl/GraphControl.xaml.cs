@@ -161,7 +161,6 @@ namespace Marv.Controls.Graph
             InitializeAutoSave();
 
             this.Loaded += GraphControl_Loaded;
-            this.Unloaded += GraphControl_Unloaded;
         }
 
         public void AutoFit()
@@ -319,28 +318,29 @@ namespace Marv.Controls.Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.AutoFitButton.Click -= AutoFitButton_Click;
             this.AutoFitButton.Click += AutoFitButton_Click;
+
+            this.BackButton.Click -= BackButton_Click;
             this.BackButton.Click += BackButton_Click;
+
+            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
+
+            this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
+
+            this.RunButton.Click -= RunButton_Click;
             this.RunButton.Click += RunButton_Click;
+
+            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
             this.OpenNetworkButton.Click += OpenNetworkButton_Click;
+
+            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
             this.SaveNetworkButton.Click += SaveNetworkButton_Click;
 
-            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
-        }
-
-        private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.AutoFitButton.Click -= AutoFitButton_Click;
-            this.BackButton.Click -= BackButton_Click;
-            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
-            this.ExpandButton.Click -= ExpandButton_Click;
-            this.RunButton.Click -= RunButton_Click;
-            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
-            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
-
             this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
+            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
         }
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
