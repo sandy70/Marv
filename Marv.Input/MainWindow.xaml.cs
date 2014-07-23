@@ -7,6 +7,7 @@ using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -165,9 +166,9 @@ namespace Marv.Input
         private void AddPlotInfo(string title, string xAxis)
         {
             this.DataPlotModel.Title = title;
-         
-            this.DataPlotModel.Axes.Add(new LinearAxis 
-            { 
+
+            this.DataPlotModel.Axes.Add(new LinearAxis
+            {
                 Position = AxisPosition.Bottom,
                 Title = xAxis
             });
@@ -253,9 +254,9 @@ namespace Marv.Input
                 {
                     return;
                 }
-                
+
                 var vertexEvidence = selectedCellModel.Data as VertexEvidence;
-                
+
                 foreach (var column in this.InputGridView.Columns)
                 {
                     var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
@@ -492,7 +493,8 @@ namespace Marv.Input
 
             if (dialog.FileName != null)
             {
-                this.LineEvidence.WriteJson(dialog.FileName);
+                // User Formatting.None to save space. These files are not intended to be human readable.
+                this.LineEvidence.WriteJson(dialog.FileName, Formatting.None);
             }
         }
 
