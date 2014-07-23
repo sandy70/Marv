@@ -96,7 +96,11 @@
                                                    TextMode="PlainText"
                                                    UpdateValueEvent="PropertyChanged"
                                                    Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}" />
+                                                   Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
+                        <i:Interaction.Behaviors>
+                            <local:MaskedNumericInputBehavior />
+                        </i:Interaction.Behaviors>
+                    </telerik:RadMaskedNumericInput>
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
