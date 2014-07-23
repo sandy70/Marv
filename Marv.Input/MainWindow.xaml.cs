@@ -396,6 +396,7 @@ namespace Marv.Input
 
             this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
+            this.InputGridView.CellValidating += InputGridView_CellValidating;
 
             this.InputGridView.Pasted += InputGridView_Pasted;
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
