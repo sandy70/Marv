@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Marv.Common.Graph
 {
@@ -28,7 +25,7 @@ namespace Marv.Common.Graph
             CheckVertexStatisticComputable(vertex, newValue);
 
             return vertex.States
-                .Select((state, i) => (newValue[i] / 2) * (Math.Pow(state.Max, 2) - Math.Pow(state.Min, 2)))
+                .Select((state, i) => (newValue[i] * (state.Max + state.Min) / 2))
                 .Sum();
         }
 
