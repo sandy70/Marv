@@ -86,7 +86,7 @@
 
                 <telerik:RadToggleButton Height="30" Width="30"
                                          IsChecked="{Binding ElementName=Root, Path=IsNavigationPaneVisible}"
-                                         ToolTip="Edit connections tool.">
+                                         ToolTip="Show/Hide navigation pane.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
                 </telerik:RadToggleButton>
 
