@@ -159,14 +159,16 @@ namespace Marv.Controls.Graph
         {
             InitializeComponent();
             InitializeAutoSave();
+
             this.Loaded += GraphControl_Loaded;
+            this.Unloaded += GraphControl_Unloaded;
         }
 
         public void AutoFit()
         {
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(500)
+                Interval = TimeSpan.FromMilliseconds(300)
             };
 
             timer.Tick += (o, e2) =>
@@ -286,6 +288,11 @@ namespace Marv.Controls.Graph
             control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, e.OldValue as Common.Graph.Graph);
         }
 
+        private void AutoFitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AutoFit();
+        }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
@@ -312,26 +319,28 @@ namespace Marv.Controls.Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.BackButton.Click -= BackButton_Click;
+            this.AutoFitButton.Click += AutoFitButton_Click;
             this.BackButton.Click += BackButton_Click;
-
-            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
-
-            this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
-
-            this.RunButton.Click -= RunButton_Click;
             this.RunButton.Click += RunButton_Click;
-
-            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
             this.OpenNetworkButton.Click += OpenNetworkButton_Click;
-
-            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
             this.SaveNetworkButton.Click += SaveNetworkButton_Click;
 
-            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
             this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
+        }
+
+        private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.AutoFitButton.Click -= AutoFitButton_Click;
+            this.BackButton.Click -= BackButton_Click;
+            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
+            this.ExpandButton.Click -= ExpandButton_Click;
+            this.RunButton.Click -= RunButton_Click;
+            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
+            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
+
+            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
         }
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
