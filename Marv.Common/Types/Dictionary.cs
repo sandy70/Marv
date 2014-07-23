@@ -134,6 +134,11 @@ namespace Marv.Common
                 this[key1, key2][key3] = value;
             }
         }
+
+        public void Remove(T1 key1, T2 key2, T3 key3)
+        {
+            this[key1, key2].Remove(key3);
+        }
     }
 
     public class Dictionary<T1, T2, T3, T4, TValue> : Dictionary<T1, Dictionary<T2, T3, T4, TValue>>

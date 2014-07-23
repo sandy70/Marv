@@ -8,9 +8,9 @@ namespace Marv.Common.Graph
 {
     public class NetworkStructureVertex
     {
-        public List<NetworkStructureVertex> Children = new List<NetworkStructureVertex>();
+        public readonly List<NetworkStructureVertex> Children = new List<NetworkStructureVertex>();
         public string Key = "";
-        public Dictionary<string, string> Properties = new Dictionary<string, string>();
+        public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
         public ObservableCollection<string> ParseGroups()
         {

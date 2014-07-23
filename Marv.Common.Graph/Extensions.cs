@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static void AddUnique(this ModelCollection<Edge> edges, Vertex source, Vertex target, EdgeConnectorPositions connectorPostions = null)
         {

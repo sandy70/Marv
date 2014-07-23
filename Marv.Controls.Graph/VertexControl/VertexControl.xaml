@@ -204,7 +204,7 @@
     <!-- Description -->
     <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
-                          Text="{Binding ElementName=Root, Path=Vertex.Description}"
+                          Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
                           Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                           Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 

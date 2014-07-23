@@ -9,11 +9,12 @@
     <telerik:RadSlider.Resources>
         <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
     </telerik:RadSlider.Resources>
-    
+
     <telerik:RadSlider.Template>
         <ControlTemplate>
             <Grid>
-                <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
+                <telerik:RadProgressBar Name="ProgressBar"
+                                        Foreground="{Binding SliderForeground, ElementName=Root}"
                                         Value="{Binding Value, ElementName=Root}">
                     <i:Interaction.Behaviors>
                         <local:ProgressBarBehavior />

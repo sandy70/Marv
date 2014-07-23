@@ -8,16 +8,19 @@ namespace Marv.Common.Graph
 {
     public class NetworkStructure
     {
-        public List<string> Footer = new List<string>();
-        public Dictionary<string, string> Properties = new Dictionary<string, string>();
-        public List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
+        public readonly List<string> Footer = new List<string>();
+        public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        public readonly List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
 
-        public Network Network = new Network();
+        private readonly Network network = new Network();
+
+        public string FileName;
 
         public static NetworkStructure Read(string path)
         {
             var structure = new NetworkStructure();
-            structure.Network.ReadFile(path);
+            structure.network.ReadFile(path);
+            structure.FileName = path;
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
 
@@ -28,9 +31,9 @@ namespace Marv.Common.Graph
                 // Parse the node section
                 if (fileLines[i].StartsWith("node"))
                 {
-                    var parts = fileLines[i].Split(new[] { ' ' }, 2).ToList();
+                    var parts = fileLines[i].Split(new[] {' '}, 2).ToList();
 
-                    var node = new NetworkStructureVertex { Key = parts[1] };
+                    var node = new NetworkStructureVertex {Key = parts[1]};
 
                     structure.Vertices.Add(node);
 
@@ -43,13 +46,13 @@ namespace Marv.Common.Graph
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        parts = fileLines[i].Split(new[] { '=', ';' }, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        parts = fileLines[i].Split(new[] {'=', ';'}, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
                         node.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
                 }
 
-                // Parse the header 'net' section
+                    // Parse the header 'net' section
                 else if (fileLines[i].Equals("net"))
                 {
                     while (!fileLines[i].Equals("{"))
@@ -61,13 +64,13 @@ namespace Marv.Common.Graph
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        var parts = fileLines[i].Split(new[] { '=', ';' }, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var parts = fileLines[i].Split(new[] {'=', ';'}, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
                         structure.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
                 }
 
-                // Else just add to the footer. Later these might be 'potential' objects
+                    // Else just add to the footer. Later these might be 'potential' objects
                 else
                 {
                     structure.Footer.Add(fileLines[i]);
@@ -77,14 +80,43 @@ namespace Marv.Common.Graph
             // Parse Children
             foreach (var vertex in structure.Vertices)
             {
-                foreach (var childHandle in structure.Network.GetChildren(vertex.Key))
+                foreach (var childHandle in structure.network.GetChildren(vertex.Key))
                 {
-                    var childKey = structure.Network.GetNodeId(childHandle);
+                    var childKey = structure.network.GetNodeId(childHandle);
                     vertex.Children.Add(structure.GetVertex(childKey));
                 }
             }
 
             return structure;
+        }
+
+        public void ClearEvidence()
+        {
+            this.network.ClearAllEvidence();
+        }
+
+        public void ClearEvidence(string vertexKey)
+        {
+            this.network.ClearEvidence(vertexKey);
+        }
+
+        public Dictionary<string, double[]> GetBelief()
+        {
+            this.Run();
+
+            var graphValue = new Dictionary<string, double[]>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
+            }
+
+            return graphValue;
+        }
+
+        public double[,] GetTable(string vertexKey)
+        {
+            return this.network.GetNodeTable(vertexKey);
         }
 
         public NetworkStructureVertex GetVertex(string key)
@@ -115,6 +147,44 @@ namespace Marv.Common.Graph
             }
 
             return defaultValue;
+        }
+
+        public void Run()
+        {
+            this.network.UpdateBeliefs();
+        }
+
+        public void SetEvidence(string vertexKey, int stateIndex)
+        {
+            this.network.SetEvidence(vertexKey, stateIndex);
+        }
+
+        public void SetEvidence(string vertexKey, double[] evidence)
+        {
+            this.network.SetSoftEvidence(vertexKey, evidence);
+        }
+
+        public void SetEvidence(Dictionary<string, double[]> graphEvidence)
+        {
+            foreach (var vertexKey in graphEvidence.Keys)
+            {
+                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
+            }
+        }
+
+        public void SetTable(string vertexKey, double[,] table)
+        {
+            this.network.SetNodeTable(vertexKey, table);
+        }
+
+        public void Write()
+        {
+            this.Write(this.FileName);
+        }
+
+        public void Write(Graph graph)
+        {
+            this.Write(this.FileName, graph);
         }
 
         public void Write(string path)
@@ -155,6 +225,37 @@ namespace Marv.Common.Graph
                     }
                 }
             }
+        }
+
+        public void Write(string path, Graph graph)
+        {
+            var userProperties = new List<string>
+            {
+                "defaultgroup=" + graph.DefaultGroup,
+                "key=" + graph.Name,
+            };
+
+            this.Properties["HR_Desc"] = userProperties.String().Enquote();
+
+            foreach (var networkStructureVertex in this.Vertices)
+            {
+                var vertex = graph.Vertices[networkStructureVertex.Key];
+
+                networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
+                networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
+                networkStructureVertex.Properties["HR_Desc"] = vertex.Description.Enquote();
+                networkStructureVertex.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
+                networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
+                networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
+                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
+                networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
+
+                // Remove legacy properties
+                networkStructureVertex.Properties.Remove("grouppositions");
+                networkStructureVertex.Properties.Remove("isheaderofgroup");
+            }
+
+            this.Write(path);
         }
     }
 }

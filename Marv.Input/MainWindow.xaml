@@ -44,22 +44,20 @@
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-
-                            <telerik:RadToolBar Margin="0"
-                                                Grid.Row="0"
-                                                HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                                                Orientation="Horizontal" Grid.ColumnSpan="2">
+                                
+                            <!-- Input Grid View Toolbar -->
+                            <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
 
                                 <telerik:RadButton Name="OpenButton"                                              
-                                                   Height="25" Width="25"
+                                                   Height="30" Width="30"
                                                    ToolTip="Opens input file and populates input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="SaveButton"                                                   
-                                                   Height="25" Width="25"
+                                                   Height="30" Width="30"
                                                    ToolTip="Saves input to input file.">
-                                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+					<Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                                 </telerik:RadButton>
 
                                 <telerik:RadButton Name="ClearAllButton"                                                   
@@ -193,7 +191,7 @@
                                        Width="400">
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Node">
-                        <Grid Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition Height="50" />
@@ -204,7 +202,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-
+                                
+                                <!-- Vertex Combo Box -->
                                 <telerik:RadComboBox CanAutocompleteSelectItems="True"
                                                      CanKeyboardNavigationSelectItems="True"
                                                      DisplayMemberPath="Name"
@@ -214,7 +213,7 @@
                                                      Margin="5"
                                                      OpenDropDownOnFocus="True"
                                                      SelectedIndex="0"
-                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
                                                      TextSearchMode="Contains" />
 
                                 <!-- Vertex Control -->
@@ -226,7 +225,8 @@
                                                     IsToolbarVisible="False"
                                                     IsValueVisible="False"
                                                     Margin="5"
-                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                    Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}"/>
                             </Grid>
 
                             <Grid Grid.Row="1">

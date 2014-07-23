@@ -16,7 +16,7 @@
                 if (value == this.imageSource) return;
 
                 this.imageSource = value;
-                this.RaisePropertyChanged("ImageSource");
+                this.RaisePropertyChanged();
             }
         }
 

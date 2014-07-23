@@ -18,7 +18,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -159,6 +159,7 @@ namespace Marv.Controls.Graph
         {
             InitializeComponent();
             InitializeAutoSave();
+
             this.Loaded += GraphControl_Loaded;
         }
 
@@ -166,7 +167,7 @@ namespace Marv.Controls.Graph
         {
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(500)
+                Interval = TimeSpan.FromMilliseconds(300)
             };
 
             timer.Tick += (o, e2) =>
@@ -203,7 +204,7 @@ namespace Marv.Controls.Graph
             {
                 if (this.IsAutoSaveEnabled && this.Graph != null)
                 {
-                    this.Graph.Write(this.Graph.FileName);
+                    this.Graph.Write();
                 }
             };
 
@@ -230,6 +231,18 @@ namespace Marv.Controls.Graph
             }
 
             this.Open(openFileDialog.FileName);
+        }
+
+        public void RaiseGraphChanged(Common.Graph.Graph newGraph, Common.Graph.Graph oldGraph)
+        {
+            if (this.GraphChanged != null)
+            {
+                this.GraphChanged(this, new ValueChangedArgs<Common.Graph.Graph>
+                {
+                    NewValue = newGraph,
+                    OldValue = oldGraph
+                });
+            }
         }
 
         internal void RaiseEvidenceEntered(Vertex vertex = null)
@@ -260,6 +273,25 @@ namespace Marv.Controls.Graph
             }
         }
 
+        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as GraphControl;
+
+            if (control == null) return;
+
+            if (control.Graph.Vertices.Count > 0)
+            {
+                control.Graph.SelectedVertex = control.Graph.Vertices[0];
+            }
+
+            control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, e.OldValue as Common.Graph.Graph);
+        }
+
+        private void AutoFitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AutoFit();
+        }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
@@ -286,6 +318,9 @@ namespace Marv.Controls.Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.AutoFitButton.Click -= AutoFitButton_Click;
+            this.AutoFitButton.Click += AutoFitButton_Click;
+
             this.BackButton.Click -= BackButton_Click;
             this.BackButton.Click += BackButton_Click;
 
@@ -320,7 +355,7 @@ namespace Marv.Controls.Graph
 
         private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Write(this.Graph.FileName);
+            this.Graph.Write();
         }
 
         public event EventHandler<Vertex> EvidenceEntered;
@@ -328,5 +363,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
 
         public event EventHandler<Vertex> SelectionChanged;
+
+        public event EventHandler<ValueChangedArgs<Common.Graph.Graph>> GraphChanged;
     }
 }

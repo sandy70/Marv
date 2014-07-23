@@ -15,29 +15,17 @@ namespace Marv.Input
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            try
-            {
-                var row = item as dynamic;
+            var cell = container as GridViewCell;
+            var cellModel = cell.ToModel();
 
-                var cell = container as GridViewCell;
-                var year = (string) cell.Column.Header;
+            if (cellModel.IsColumnSectionId) return null;
 
-                var evidence = row[year];
+            var evidence = cellModel.Data as VertexEvidence;
 
-                var gridViewCell = container as GridViewCell;
+            if (evidence == null || evidence.Evidence == null) return null;
 
-                if (evidence is VertexEvidence)
-                {
-                    gridViewCell.Tag = (evidence as VertexEvidence).Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val.Value}).ToList();
-                    return this.VertexEvidenceTemplate;
-                }
-            }
-            catch(Exception exp)
-            {
-                Console.WriteLine(exp);
-            }
-
-            return null;
+            cell.Tag = evidence.Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val.Value}).ToList();
+            return this.VertexEvidenceTemplate;
         }
     }
 }

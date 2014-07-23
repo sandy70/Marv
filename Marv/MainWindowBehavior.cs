@@ -38,7 +38,7 @@ namespace Marv
 
         private void AssociatedObject_Closing(object sender, CancelEventArgs e)
         {
-            this.AssociatedObject.Graph.Write(this.AssociatedObject.NetworkFileName);
+            this.AssociatedObject.Graph.Write();
             Settings.Default.Save();
         }
 

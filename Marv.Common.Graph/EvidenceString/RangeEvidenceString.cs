@@ -11,7 +11,7 @@ namespace Marv.Common.Graph
             if (str.Length <= 0) return null;
 
             var evidence = new Dictionary<string, double>();
-            
+
             var parts = str
                 .Trim()
                 .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -23,6 +23,14 @@ namespace Marv.Common.Graph
 
             if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
             {
+                // If min and max are reversed, then swap.
+                if (minValue > maxValue)
+                {
+                    var temp = minValue;
+                    minValue = maxValue;
+                    maxValue = temp;
+                }
+
                 foreach (var state in states)
                 {
                     evidence[state.Key] = 0;
@@ -39,12 +47,12 @@ namespace Marv.Common.Graph
                     {
                         if (state.Min <= minValue && minValue <= state.Max)
                         {
-                            evidence[state.Key] = (state.Max - minValue)/(state.Max - state.Min);
+                            evidence[state.Key] = (state.Max - minValue) / (state.Max - state.Min);
                         }
 
                         if (state.Min <= maxValue && maxValue <= state.Max)
                         {
-                            evidence[state.Key] = (maxValue - state.Min)/(state.Max - state.Min);
+                            evidence[state.Key] = (maxValue - state.Min) / (state.Max - state.Min);
                         }
 
                         if (minValue <= state.Min && maxValue >= state.Max)

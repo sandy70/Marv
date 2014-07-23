@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using MoreLinq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
 
 namespace Marv.Common
 {
@@ -400,6 +401,26 @@ namespace Marv.Common
                     serializer.Serialize(jsonTextWriter, _object);
                 }
             }
+        }
+
+        public static void WriteBson(this object _object, string fileName)
+        {
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+
+            using (var jsonTextWriter = new BsonWriter(File.Open(fileName, FileMode.Create)))
+            {
+                serializer.Serialize(jsonTextWriter, _object);
+            }
+        }
+
+        public static double Entropy(this double[] array)
+        {
+            return array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Length);
         }
     }
 }
