@@ -95,7 +95,14 @@
                                                    ToolTip="Copies value across rows.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
                                 </telerik:RadButton>
-                                
+
+                                <telerik:RadButton Name="CopyAcrossAll"                                                  
+                                                   Height="25" Width="25"
+                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   ToolTip="Copies value across entire grid.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
+                                </telerik:RadButton>
+
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->

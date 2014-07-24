@@ -64,7 +64,7 @@ namespace Marv.Input
         private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             
-            if (!e.Cell.ToModel().IsColumnSectionId)
+            if (!e.Cell.ToModel().IsColumnSectionId && !(e.NewValue.Equals("")))
             {
                 double d;
                 bool isRange = e.NewValue.ToString().Contains(":");
