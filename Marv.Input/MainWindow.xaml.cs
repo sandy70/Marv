@@ -274,6 +274,9 @@ namespace Marv.Input
                 foreach (var column in this.InputGridView.Columns)
                 {
                     var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+
+                    if (cellModel.IsColumnSectionId) continue;
+
                     this.SetCell(cellModel, vertexEvidence.String);
                 }
             }
