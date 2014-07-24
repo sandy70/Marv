@@ -39,8 +39,7 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
-        // Dictionary<sectionID, year, vertexKey, vertexEvidence>
-        public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+        private LineInput lineInput = new LineInput();
 
         public PlotModel DataPlotModel
         {
@@ -106,6 +105,20 @@ namespace Marv.Input
         }
 
         public bool IsYearPlot { get; set; }
+
+        // Dictionary<sectionID, year, vertexKey, vertexEvidence>
+        public Dictionary<string, int, string, VertexEvidence> LineEvidence
+        {
+            get
+            {
+                return this.lineInput.Evidence;
+            }
+
+            set
+            {
+                this.lineInput.Evidence = value;
+            }
+        }
 
         public ObservableCollection<INotification> Notifications
         {
@@ -434,7 +447,7 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.LineEvidence = Utils.ReadJson<Dictionary<string, int, string, VertexEvidence>>(dialog.FileName);
+            this.lineInput = Utils.ReadJson<LineInput>(dialog.FileName);
 
             var inputRows = new ObservableCollection<dynamic>();
 
@@ -494,7 +507,7 @@ namespace Marv.Input
             if (dialog.FileName != null)
             {
                 // User Formatting.None to save space. These files are not intended to be human readable.
-                this.LineEvidence.WriteJson(dialog.FileName, Formatting.None);
+                this.lineInput.WriteJson(dialog.FileName, Formatting.None);
             }
         }
 
