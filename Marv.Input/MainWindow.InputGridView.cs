@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Marv.Common;
-using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 
@@ -21,13 +19,13 @@ namespace Marv.Input
                 if (oldStr != null)
                 {
                     this.LineEvidence[newStr] = this.LineEvidence[oldStr];
-                } 
+                }
 
                 return;
             }
 
             var selectedVertex = this.Graph.SelectedVertex;
-            if(this.Graph.SelectedVertex == null)
+            if (this.Graph.SelectedVertex == null)
             {
                 return;
             }
@@ -63,6 +61,40 @@ namespace Marv.Input
             this.Graph.Run();
         }
 
+        private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
+        {
+            
+            if (!e.Cell.ToModel().IsColumnSectionId)
+            {
+                double d;
+                bool isRange = e.NewValue.ToString().Contains(":");
+                if (!(isRange) && !(Double.TryParse(e.NewValue.ToString(), out d)))
+                {
+                    e.IsValid = false;
+                }
+                else if (isRange)
+                {
+                    var valueSet = e.NewValue.ToString().Split(':');
+                    if (valueSet.Length > 2)
+                    {
+                        e.IsValid = false;                        
+                    }
+                    else if(!(Double.TryParse(valueSet[0], out d)) || !(Double.TryParse(valueSet[1], out d)))
+                    {
+                        e.IsValid = false;                        
+                    }
+                    else if (Convert.ToDouble(valueSet[0]) > Convert.ToDouble(valueSet[1]))
+                    {
+                        e.IsValid = false;
+                    }
+                }
+            }
+            if (!e.IsValid)
+            {
+                e.ErrorMessage = "Not a proper value or range of values.";
+            }
+        }
+
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell == null) return;
@@ -96,7 +128,7 @@ namespace Marv.Input
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
                 this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
-           }
+            }
 
             cellClipboardEventArgs.Clear();
         }
