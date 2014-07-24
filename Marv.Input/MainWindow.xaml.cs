@@ -107,6 +107,7 @@ namespace Marv.Input
         public bool IsYearPlot { get; set; }
 
         // Dictionary<sectionID, year, vertexKey, vertexEvidence>
+        [Obsolete("LineEvidence is obsolete and maybe removed in later releases. Use lineInput.Evidence instead.")]
         public Dictionary<string, int, string, VertexEvidence> LineEvidence
         {
             get
