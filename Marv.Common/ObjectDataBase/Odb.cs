@@ -73,7 +73,7 @@ namespace Marv.Common
             using (var odb = OdbFactory.Open(fileName))
             {
                 Logger.Info("Storing: {0}", anObject);
-                odb.Store<T>(anObject);
+                odb.Store(anObject);
                 Logger.Info("Stored: {0}", anObject);
             }
         }

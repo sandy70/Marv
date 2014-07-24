@@ -17,6 +17,7 @@ namespace Marv.Common.Graph
         private string defaultGroup;
         private Graph displayGraph;
         private ModelCollection<Edge> edges = new ModelCollection<Edge>();
+        private Guid guid;
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
@@ -112,6 +113,23 @@ namespace Marv.Common.Graph
                 foreach (var vertex in this.Vertices)
                 {
                     vertex.Evidence = value == null ? null : value[vertex.Key];
+                }
+            }
+        }
+
+        public Guid Guid
+        {
+            get
+            {
+                return this.guid;
+            }
+
+            set
+            {
+                if (value != this.guid)
+                {
+                    this.guid = value;
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -231,6 +249,7 @@ namespace Marv.Common.Graph
             };
 
             graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
+            graph.Guid = Guid.Parse(graph.networkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
             graph.Name = graph.networkStructure.ParseUserProperty("key", "");
 
             // Add all the vertices
@@ -476,7 +495,22 @@ namespace Marv.Common.Graph
             {
                 if (graphEvidence != null && graphEvidence.ContainsKey(vertex.Key))
                 {
-                    vertex.Evidence = graphEvidence[vertex.Key].Evidence;
+                    var evidenceArray = graphEvidence[vertex.Key].Evidence;
+                    var evidence = new Dictionary<string, double>();
+
+                    if (evidenceArray == null)
+                    {
+                        evidence = null;
+                    }
+                    else
+                    {
+                        foreach (var state in vertex.States)
+                        {
+                            evidence[state.Key] = evidenceArray[vertex.States.IndexOf(state)];
+                        }
+                    }
+
+                    vertex.Evidence = evidence;
                     vertex.EvidenceString = graphEvidence[vertex.Key].String;
                 }
                 else

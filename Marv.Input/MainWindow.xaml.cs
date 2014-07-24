@@ -7,6 +7,7 @@ using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -38,8 +39,7 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
-        // Dictionary<sectionID, year, vertexKey, vertexEvidence>
-        public Dictionary<string, int, string, VertexEvidence> LineEvidence = new Dictionary<string, int, string, VertexEvidence>();
+        private LineInput lineInput = new LineInput();
 
         public PlotModel DataPlotModel
         {
@@ -106,6 +106,21 @@ namespace Marv.Input
 
         public bool IsYearPlot { get; set; }
 
+        // Dictionary<sectionID, year, vertexKey, vertexEvidence>
+        [Obsolete("LineEvidence is obsolete and maybe removed in later releases. Use lineInput.Evidence instead.")]
+        public Dictionary<string, int, string, VertexEvidence> LineEvidence
+        {
+            get
+            {
+                return this.lineInput.Evidence;
+            }
+
+            set
+            {
+                this.lineInput.Evidence = value;
+            }
+        }
+
         public ObservableCollection<INotification> Notifications
         {
             get
@@ -165,8 +180,18 @@ namespace Marv.Input
         private void AddPlotInfo(string title, string xAxis)
         {
             this.DataPlotModel.Title = title;
-            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Bottom, xAxis));
-            this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
+
+            this.DataPlotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = xAxis
+            });
+
+            this.DataPlotModel.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Input Data"
+            });
         }
 
         private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
@@ -224,7 +249,7 @@ namespace Marv.Input
                 if (year != CellModel.SectionIdHeader)
                 {
                     row[year] = null;
-                    var evidence = new VertexEvidence(this.Graph.SelectedVertex.Evidence, this.Graph.SelectedVertex.EvidenceString);
+                    var evidence = this.Graph.SelectedVertex.GetData();
                     row[year] = evidence;
                     this.LineEvidence[sectionId, Convert.ToInt32(year), this.Graph.SelectedVertex.Key] = evidence;
                 }
@@ -237,18 +262,22 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var model = new CellModel(this.InputGridView.SelectedCells[0]);
-                if (model.IsColumnSectionId)
+                var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+                if (selectedCellModel.IsColumnSectionId)
                 {
                     return;
                 }
-                var value = model.Data;
+
+                var vertexEvidence = selectedCellModel.Data as VertexEvidence;
+
                 foreach (var column in this.InputGridView.Columns)
                 {
-                    if (column.Header.ToString() != CellModel.SectionIdHeader)
-                    {
-                        model.Row[column.Header.ToString()] = value;
-                    }
+                    var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+
+                    if (cellModel.IsColumnSectionId) continue;
+
+                    this.SetCell(cellModel, vertexEvidence.String);
                 }
             }
         }
@@ -257,26 +286,44 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var model = new CellModel(this.InputGridView.SelectedCells[0]);
-                if (model.IsColumnSectionId)
+                var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+                if (selectedCellModel.IsColumnSectionId)
                 {
                     return;
                 }
-                var value = model.Data;
+
+                var selectedCellData = selectedCellModel.Data as VertexEvidence;
+
                 foreach (var row in this.InputRows)
                 {
-                    row[model.Header] = value;
+                    var cellModel = new CellModel(row, selectedCellModel.Header);
+                    this.SetCell(cellModel, selectedCellData.String);
                 }
             }
         }
 
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.Graph == null)
+            {
+                this.Notifications.Push(new NotificationIndeterminate
+                {
+                    Name = "No network available!",
+                    Description = "You cannot create and input if no network is opened."
+                });
+
+                return;
+            }
+
             var inputRows = new ObservableCollection<dynamic>();
             var row = new Dynamic();
 
             var sectionId = "Section 1";
             row[CellModel.SectionIdHeader] = sectionId;
+
+            this.lineInput = new LineInput();
+            this.lineInput.GraphGuid = this.Graph.Guid;
 
             this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
 
@@ -418,7 +465,17 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.LineEvidence = Utils.ReadJson<Dictionary<string, int, string, VertexEvidence>>(dialog.FileName);
+            this.lineInput = Utils.ReadJson<LineInput>(dialog.FileName);
+
+            var isCorrectInput = true;
+
+            if (this.lineInput.GraphGuid != this.Graph.Guid)
+            {
+                RadWindow.Confirm("This input was not created for the loaded network. Do you still want to open it?",
+                    (o1, e1) => isCorrectInput = e1.DialogResult.Value);
+            }
+
+            if (!isCorrectInput) return;
 
             var inputRows = new ObservableCollection<dynamic>();
 
@@ -429,9 +486,9 @@ namespace Marv.Input
 
                 var sectionEvidence = this.LineEvidence[section];
 
-                foreach (var year in sectionEvidence.Keys)
+                foreach (var year in this.lineInput.Years)
                 {
-                    var yearEvidence = this.LineEvidence[section][year];
+                    var yearEvidence = this.LineEvidence[section, year];
 
                     if (yearEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
@@ -477,7 +534,8 @@ namespace Marv.Input
 
             if (dialog.FileName != null)
             {
-                this.LineEvidence.WriteJson(dialog.FileName);
+                // User Formatting.None to save space. These files are not intended to be human readable.
+                this.lineInput.WriteJson(dialog.FileName, Formatting.None);
             }
         }
 

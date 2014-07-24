@@ -1,17 +1,13 @@
-﻿using System.Collections.Generic;
-
-namespace Marv.Common.Graph
+﻿namespace Marv.Common.Graph
 {
     public class VertexEvidence
     {
-        public Dictionary<string, double> Evidence { get; set; }
+        public double[] Evidence { get; set; }
         public string String { get; set; }
 
-        public VertexEvidence()
-        {
-        }
+        public VertexEvidence() {}
 
-        public VertexEvidence(Dictionary<string, double> evidence, string str)
+        public VertexEvidence(double[] evidence, string str)
         {
             this.Evidence = evidence;
             this.String = str;

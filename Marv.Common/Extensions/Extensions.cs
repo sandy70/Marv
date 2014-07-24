@@ -191,6 +191,8 @@ namespace Marv.Common
 
         public static Dictionary<string, double> Normalized(this Dictionary<string, double> evidence)
         {
+            if (evidence == null) return null;
+
             var normalized = new Dictionary<string, double>();
             var sum = evidence.Sum(kvp => kvp.Value);
 
@@ -385,12 +387,12 @@ namespace Marv.Common
             return untrimmed.Select(x => x.Trim());
         }
 
-        public static void WriteJson(this object _object, string fileName)
+        public static void WriteJson(this object _object, string fileName, Formatting formatting = Formatting.Indented)
         {
             var serializer = new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented,
+                Formatting = formatting,
                 TypeNameHandling = TypeNameHandling.Auto
             };
 
@@ -403,12 +405,12 @@ namespace Marv.Common
             }
         }
 
-        public static void WriteBson(this object _object, string fileName)
+        public static void WriteBson(this object _object, string fileName, Formatting formatting = Formatting.Indented)
         {
             var serializer = new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented,
+                Formatting = formatting,
                 TypeNameHandling = TypeNameHandling.Auto
             };
 

@@ -292,7 +292,7 @@ namespace Marv.Controls.Graph
         {
             var control = d as GraphControl;
 
-            if (control == null) return;
+            if (control == null || control.Graph == null) return;
 
             if (control.Graph.Vertices.Count > 0)
             {
