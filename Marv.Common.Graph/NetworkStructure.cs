@@ -232,6 +232,7 @@ namespace Marv.Common.Graph
             var userProperties = new List<string>
             {
                 "defaultgroup=" + graph.DefaultGroup,
+                "guid=" + graph.Guid,
                 "key=" + graph.Name,
             };
 
