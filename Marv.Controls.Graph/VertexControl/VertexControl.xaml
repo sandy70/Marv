@@ -31,7 +31,7 @@
                           FontWeight="Bold"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
                           Padding="{Binding Source={StaticResource MarginSmall}}"
-                          Text="{Binding ElementName=Root, Path=Vertex.Name}"
+                          Text="{Binding ElementName=Root, Path=Vertex.Name, Mode=TwoWay}"
                           VerticalAlignment="Center" />
 
     <!-- Accent -->
