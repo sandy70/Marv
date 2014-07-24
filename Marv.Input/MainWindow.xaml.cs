@@ -486,9 +486,9 @@ namespace Marv.Input
 
                 var sectionEvidence = this.LineEvidence[section];
 
-                foreach (var year in sectionEvidence.Keys)
+                foreach (var year in this.lineInput.Years)
                 {
-                    var yearEvidence = this.LineEvidence[section][year];
+                    var yearEvidence = this.LineEvidence[section, year];
 
                     if (yearEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Marv.Common;
 using Marv.Common.Graph;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -40,6 +42,24 @@ namespace Marv.Input
                     this.graphGuid = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public IEnumerable<int> Years
+        {
+            get
+            {
+                var years = new List<int>();
+
+                foreach (var sectionId in this.Evidence.Keys)
+                {
+                    var sectionEvidence = this.Evidence[sectionId];
+                    years.AddRange(sectionEvidence.Keys);
+                }
+
+                years.Sort();
+
+                return years.Distinct();
             }
         }
     }
