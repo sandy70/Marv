@@ -6,6 +6,7 @@ using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls.Graph;
 using Marv.Input.Properties;
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Win32;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -169,21 +170,26 @@ namespace Marv.Input
             this.DataPlotModel.Axes.Add(new LinearAxis(AxisPosition.Left, "Input Data"));
         }
 
-        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
+        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, LineSeries series3, double index)
         {
             if ((!entry.ToString().Contains(":")))
             {
                 var value = Convert.ToDouble(entry);
                 series1.Points.Add(new ScatterPoint(index, value));
+                series3.Points.Add(new DataPoint(index, value));
             }
             else if (entry.ToString().Split(":".ToArray()).Length == 2)
             {
                 var valueSet = entry.ToString().Split(":".ToArray());
-                series2.Items.Add(new HighLowItem(index, Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1]),
-                    Convert.ToDouble(valueSet[0]), Convert.ToDouble(valueSet[1])));
+                var value1 = Convert.ToDouble(valueSet[0]);
+                var value2 = Convert.ToDouble(valueSet[1]);
+                series2.Items.Add(new HighLowItem(index, value1, value2,
+                    value1, value2));
+                series3.Points.Add(new DataPoint(index, (value1 + value2) / 2));
             }
         }
 
+        
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             var row = new Dynamic();
@@ -354,6 +360,12 @@ namespace Marv.Input
                 series1.MarkerFill = OxyColors.Green;
                 var series2 = new CandleStickSeries();
                 series2.Color = OxyColors.Green;
+                var series3 = new LineSeries();
+                series3.MarkerFill = OxyColors.Green;
+                var series4 = new ScatterSeries();
+                series4.MarkerFill = OxyColors.Blue;
+                var series5 = new LineSeries();
+                series5.MarkerFill = OxyColors.Blue;
                 this.DataPlotModel = new PlotModel();
 
                 var model = new CellModel(this.InputGridView.SelectedCells[0]);
@@ -367,8 +379,19 @@ namespace Marv.Input
                     foreach (var row in this.InputRows)
                     {
                         var rowIndex = this.InputRows.IndexOf(row);
-                        var entry = row[model.Header];
-                        AddPointsToPlot(entry, series1, series2, Convert.ToDouble(rowIndex));
+                        var entry = "";
+                        try
+                        {
+                            entry = row[model.Header].String;
+                        }
+                        catch(RuntimeBinderException e)
+                        {
+                            entry = row[model.Header];
+                        }
+                        if (!String.IsNullOrEmpty(entry))
+                        {
+                            AddPointsToPlot(entry, series1, series2, series3, Convert.ToDouble(rowIndex));
+                        }
                     }
                 }
                 else
@@ -378,15 +401,44 @@ namespace Marv.Input
                     foreach (var column in this.InputGridView.Columns)
                     {
                         var year = column.Header.ToString();
-                        var entry = row[year];
-                        if (year != CellModel.SectionIdHeader && entry != "")
+                        var entry = row[year].ToString();
+
+                        if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
                         {
-                            AddPointsToPlot(entry, series1, series2, Convert.ToDouble(year));
+                            AddPointsToPlot(entry, series1, series2, series3, Convert.ToDouble(year));
                         }
                     }
                 }
+
+                this.DataPlotModel.MouseDown += (s, e) =>
+                {
+                    if (e.ChangedButton == OxyMouseButton.Left)
+                    {
+                        var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
+                        point.X = (int)point.X;
+                        series5.Points.Add(point);
+                        series4.Points.Add(new ScatterPoint(point.X, point.Y));
+                        this.DataPlotModel.InvalidatePlot(true);
+                    }
+                    else if (e.ChangedButton == OxyMouseButton.Right)
+                    {
+                        var series4Count = series4.Points.Count;
+                        var series5Count = series5.Points.Count;                       
+                        if (series4Count > 0 && series5Count > 0)
+                        {
+                            series5.Points.RemoveAt(series5Count - 1);
+                            series4.Points.RemoveAt(series4Count - 1);                          
+                        }
+                        
+                    }
+                    this.DataPlotModel.InvalidatePlot(true);
+                };
+
+                this.DataPlotModel.Series.Add(series3);
                 this.DataPlotModel.Series.Add(series1);
                 this.DataPlotModel.Series.Add(series2);
+                this.DataPlotModel.Series.Add(series5);
+                this.DataPlotModel.Series.Add(series4);
                 this.DataPlotModel.InvalidatePlot(true);
             }
         }
