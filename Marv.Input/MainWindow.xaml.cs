@@ -303,6 +303,26 @@ namespace Marv.Input
             }
         }
 
+        private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.InputGridView.SelectedCells.Count == 1)
+            {
+                var model = new CellModel(this.InputGridView.SelectedCells[0]);
+                if (!model.IsColumnSectionId)
+                {
+                    this.InputGridView.SelectAll();
+                    foreach (var cell in this.InputGridView.SelectedCells)
+                    {
+                        var oldModel = new CellModel(cell);
+                        if (!oldModel.IsColumnSectionId)
+                        {
+                            oldModel.Data = model.Data;
+                        }
+                    }
+                }
+            }
+        }
+
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.Graph == null)
@@ -433,6 +453,7 @@ namespace Marv.Input
             this.PlotButton.Click += PlotButton_Click;
             this.CopyAcrossColumns.Click += CopyAcrossColumns_Click;
             this.CopyAcrossRows.Click += CopyAcrossRows_Click;
+            this.CopyAcrossAll.Click += CopyAcrossAll_Click;
 
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
