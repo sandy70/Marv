@@ -302,11 +302,25 @@ namespace Marv.Input
 
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.Graph == null)
+            {
+                this.Notifications.Push(new NotificationIndeterminate
+                {
+                    Name = "No network available!",
+                    Description = "You cannot create and input if no network is opened."
+                });
+
+                return;
+            }
+
             var inputRows = new ObservableCollection<dynamic>();
             var row = new Dynamic();
 
             var sectionId = "Section 1";
             row[CellModel.SectionIdHeader] = sectionId;
+
+            this.lineInput = new LineInput();
+            this.lineInput.GraphGuid = this.Graph.Guid;
 
             this.LineEvidence[sectionId] = new Dictionary<int, string, VertexEvidence>();
 
@@ -449,6 +463,16 @@ namespace Marv.Input
             if (dialog.ShowDialog() == false) return;
 
             this.lineInput = Utils.ReadJson<LineInput>(dialog.FileName);
+
+            var isCorrectInput = true;
+
+            if (this.lineInput.GraphGuid != this.Graph.Guid)
+            {
+                RadWindow.Confirm("This input was not created for the loaded network. Do you still want to open it?",
+                    (o1, e1) => isCorrectInput = e1.DialogResult.Value);
+            }
+
+            if (!isCorrectInput) return;
 
             var inputRows = new ObservableCollection<dynamic>();
 
