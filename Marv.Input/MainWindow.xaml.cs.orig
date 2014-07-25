@@ -498,28 +498,6 @@ namespace Marv.Input
                         }
                         
                     }
-
-                this.DataPlotModel.MouseDown += (s, e) =>
-                {
-                    if (e.ChangedButton == OxyMouseButton.Left)
-                    {
-                        var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
-                        point.X = (int)point.X;
-                        series5.Points.Add(point);
-                        series4.Points.Add(new ScatterPoint(point.X, point.Y));
-                        this.DataPlotModel.InvalidatePlot(true);
-                    }
-                    else if (e.ChangedButton == OxyMouseButton.Right)
-                    {
-                        var series4Count = series4.Points.Count;
-                        var series5Count = series5.Points.Count;                       
-                        if (series4Count > 0 && series5Count > 0)
-                        {
-                            series5.Points.RemoveAt(series5Count - 1);
-                            series4.Points.RemoveAt(series4Count - 1);                          
-                        }
-                        
-                    }
                     this.DataPlotModel.InvalidatePlot(true);
                 };
 
@@ -563,7 +541,10 @@ namespace Marv.Input
             this.CopyAcrossColumns.Click += CopyAcrossColumns_Click;
             this.CopyAcrossRows.Click += CopyAcrossRows_Click;
             this.CopyAcrossAll.Click += CopyAcrossAll_Click;
+<<<<<<< HEAD
             this.UploadFromPlot.Click += UploadFromPlot_Click;
+=======
+>>>>>>> e26f8d216bc1b160103ee00c838d521cb00126c9
 
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
