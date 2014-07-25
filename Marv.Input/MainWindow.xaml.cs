@@ -490,6 +490,21 @@ namespace Marv.Input
             }
         }
 
+        private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataPlotModel != null)
+            {
+                if (IsYearPlot)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+        }
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Read the graph
@@ -506,6 +521,7 @@ namespace Marv.Input
             this.CopyAcrossColumns.Click += CopyAcrossColumns_Click;
             this.CopyAcrossRows.Click += CopyAcrossRows_Click;
             this.CopyAcrossAll.Click += CopyAcrossAll_Click;
+            this.UploadFromPlot.Click += UploadFromPlot_Click;
 
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;

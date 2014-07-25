@@ -103,6 +103,13 @@
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
                                 </telerik:RadButton>
 
+                                <telerik:RadButton Name="UploadFromPlot"                                                  
+                                                   Height="27" Width="27"
+                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   ToolTip="Uploads plot data into input data.">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
+                                </telerik:RadButton>
+
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
