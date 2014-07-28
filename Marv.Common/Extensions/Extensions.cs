@@ -76,6 +76,11 @@ namespace Marv.Common
             return str.Enquote('"');
         }
 
+        public static double Entropy(this double[] array)
+        {
+            return array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Length);
+        }
+
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj == null) yield break;
@@ -204,7 +209,7 @@ namespace Marv.Common
                 }
                 else
                 {
-                    normalized[key] = evidence[key]/sum;
+                    normalized[key] = evidence[key] / sum;
                 }
             }
 
@@ -277,7 +282,18 @@ namespace Marv.Common
 
         public static void Push<T>(this Collection<T> collection, T item)
         {
-            collection.Insert(0, item);
+            if (!collection.Contains(item))
+            {
+                collection.Insert(0, item);
+            }
+        }
+
+        public static void Push(this ObservableCollection<INotification> notifications, INotification notification)
+        {
+            if (!notifications.Contains(notification) && (!notification.IsMuteable || !notification.IsMuted))
+            {
+                notifications.Insert(0, notification);
+            }
         }
 
         public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
@@ -387,6 +403,21 @@ namespace Marv.Common
             return untrimmed.Select(x => x.Trim());
         }
 
+        public static void WriteBson(this object _object, string fileName, Formatting formatting = Formatting.Indented)
+        {
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = formatting,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+
+            using (var jsonTextWriter = new BsonWriter(File.Open(fileName, FileMode.Create)))
+            {
+                serializer.Serialize(jsonTextWriter, _object);
+            }
+        }
+
         public static void WriteJson(this object _object, string fileName, Formatting formatting = Formatting.Indented)
         {
             var serializer = new JsonSerializer
@@ -403,26 +434,6 @@ namespace Marv.Common
                     serializer.Serialize(jsonTextWriter, _object);
                 }
             }
-        }
-
-        public static void WriteBson(this object _object, string fileName, Formatting formatting = Formatting.Indented)
-        {
-            var serializer = new JsonSerializer
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = formatting,
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
-            using (var jsonTextWriter = new BsonWriter(File.Open(fileName, FileMode.Create)))
-            {
-                serializer.Serialize(jsonTextWriter, _object);
-            }
-        }
-
-        public static double Entropy(this double[] array)
-        {
-            return array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Length);
         }
     }
 }
