@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -178,6 +178,30 @@ namespace Marv.Controls.Graph
             this.Loaded += GraphControl_Loaded;
         }
 
+        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as GraphControl;
+
+            if (control == null || control.Graph == null) return;
+
+            var oldGraph = e.OldValue as Common.Graph.Graph;
+
+            control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, oldGraph);
+
+            if (oldGraph != null)
+            {
+                oldGraph.PropertyChanged -= control.Graph_PropertyChanged;
+            }
+
+            control.Graph.PropertyChanged -= control.Graph_PropertyChanged;
+            control.Graph.PropertyChanged += control.Graph_PropertyChanged;
+
+            if (control.Graph.Vertices.Count > 0)
+            {
+                control.Graph.SelectedVertex = control.Graph.Vertices[0];
+            }
+        }
+
         public void AutoFit()
         {
             var timer = new DispatcherTimer
@@ -206,6 +230,14 @@ namespace Marv.Controls.Graph
             this.IsVerticesEnabled = false;
             this.DiagramPart.IsConnectorsManipulationEnabled = true;
             this.DiagramPart.IsManipulationAdornerVisible = true;
+        }
+
+        public void Graph_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedVertex")
+            {
+                this.RaiseSelectionChanged(this.Graph.SelectedVertex);
+            }
         }
 
         public void InitializeAutoSave()
@@ -288,20 +320,6 @@ namespace Marv.Controls.Graph
             }
         }
 
-        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as GraphControl;
-
-            if (control == null || control.Graph == null) return;
-
-            if (control.Graph.Vertices.Count > 0)
-            {
-                control.Graph.SelectedVertex = control.Graph.Vertices[0];
-            }
-
-            control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, e.OldValue as Common.Graph.Graph);
-        }
-
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
             this.AutoFit();
@@ -316,14 +334,6 @@ namespace Marv.Controls.Graph
         {
             this.Graph.Evidence = null;
             this.RaiseEvidenceEntered();
-        }
-
-        private void DiagramPart_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
-            {
-                this.RaiseSelectionChanged(e.AddedItems[0] as Vertex);
-            }
         }
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
@@ -353,9 +363,6 @@ namespace Marv.Controls.Graph
 
             this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
             this.SaveNetworkButton.Click += SaveNetworkButton_Click;
-
-            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
-            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
         }
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
