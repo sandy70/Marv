@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -92,34 +91,15 @@ namespace Marv.Input
 
         private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            if (!e.Cell.ToModel().IsColumnSectionId)
+            if (e.Cell.ToModel().IsColumnSectionId) return;
+
+            var evidenceString = e.NewValue as string;
+            var vertexEvidence = EvidenceStringFactory.Create(evidenceString).Parse(this.Graph.SelectedVertex.States, evidenceString);
+
+            if (vertexEvidence == null)
             {
-                double d;
-                var isRange = e.NewValue.ToString().Contains(":");
-                if (!(isRange) && !(Double.TryParse(e.NewValue.ToString(), out d)))
-                {
-                    e.IsValid = false;
-                }
-                else if (isRange)
-                {
-                    var valueSet = e.NewValue.ToString().Split(':');
-                    if (valueSet.Length > 2)
-                    {
-                        e.IsValid = false;
-                    }
-                    else if (!(Double.TryParse(valueSet[0], out d)) || !(Double.TryParse(valueSet[1], out d)))
-                    {
-                        e.IsValid = false;
-                    }
-                    else if (Convert.ToDouble(valueSet[0]) > Convert.ToDouble(valueSet[1]))
-                    {
-                        e.IsValid = false;
-                    }
-                }
-            }
-            if (!e.IsValid)
-            {
-                e.ErrorMessage = "Not a proper value or range of values.";
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
             }
         }
 
@@ -129,21 +109,11 @@ namespace Marv.Input
 
             var cellModel = e.NewCell.ToModel();
 
-            if (cellModel.IsColumnSectionId)
-            {
-                return;
-            }
-
             if (cellModel.IsColumnSectionId) return;
 
-            var sectionEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId];
+            var graphEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
 
-            if (!sectionEvidence.YearEvidences.ContainsKey(cellModel.Year))
-            {
-                sectionEvidence.YearEvidences.Add(new YearEvidence {Year = cellModel.Year});
-            }
-
-            this.Graph.SetEvidence(sectionEvidence.YearEvidences[cellModel.Year].GraphEvidence);
+            this.Graph.SetEvidence(graphEvidence);
             this.Graph.Run();
         }
 
