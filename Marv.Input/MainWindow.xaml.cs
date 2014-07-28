@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
-using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -40,6 +39,13 @@ namespace Marv.Input
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         public LineEvidence LineEvidence;
+
+        private NotificationTimed notificationNoCurrentCell = new NotificationTimed
+        {
+            Name = "Warning!",
+            Description = "No section/year selected for input.",
+            IsMuteable = true
+        };
 
         public PlotModel DataPlotModel
         {
@@ -439,7 +445,6 @@ namespace Marv.Input
             this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
-            this.VertexControl.CommandExecuted += this.VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += this.VertexControl_EvidenceEntered;
         }
 
@@ -545,14 +550,7 @@ namespace Marv.Input
 
                     if (cellModel.IsColumnSectionId) continue;
 
-                    var sectionEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId];
-
-                    if (!sectionEvidence.YearEvidences.ContainsKey(cellModel.Year))
-                    {
-                        sectionEvidence.YearEvidences.Add(new YearEvidence {Year = cellModel.Year});
-                    }
-
-                    var graphEvidence = sectionEvidence.YearEvidences[cellModel.Year].GraphEvidence;
+                    var graphEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
 
                     if (graphEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
@@ -566,26 +564,15 @@ namespace Marv.Input
             }
         }
 
-        private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
-        {
-            var vertexControl = sender as VertexControl;
-
-            if (vertexControl == null) return;
-
-            var vertex = vertexControl.Vertex;
-
-            if (command == VertexCommands.Clear)
-            {
-                vertex.Evidence = null;
-                vertex.EvidenceString = null;
-            }
-        }
-
         private void VertexControl_EvidenceEntered(object sender, Vertex vertex)
         {
             this.Graph.Run();
 
-            if (this.InputGridView.CurrentCell == null) return;
+            if (this.InputGridView.CurrentCell == null)
+            {
+                this.Notifications.Push(this.notificationNoCurrentCell);
+                return;
+            }
 
             var cellModel = this.InputGridView.CurrentCell.ToModel();
             var vertexData = vertex.GetData();
