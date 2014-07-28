@@ -114,6 +114,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Icons\Interpolate.png" />
     <Resource Include="Resources\Icons\Upload.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
