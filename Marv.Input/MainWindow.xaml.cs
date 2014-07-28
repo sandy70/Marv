@@ -296,7 +296,8 @@ namespace Marv.Input
             if (this.InputGridView.SelectedCells.Count == 1)
             {
                 var model = new CellModel(this.InputGridView.SelectedCells[0]);
-                if (!model.IsColumnSectionId)
+                var modelData = model.Data as VertexEvidence;
+                if (!model.IsColumnSectionId && modelData != null)
                 {
                     this.InputGridView.SelectAll();
                     foreach (var cell in this.InputGridView.SelectedCells)
@@ -304,7 +305,7 @@ namespace Marv.Input
                         var oldModel = new CellModel(cell);
                         if (!oldModel.IsColumnSectionId)
                         {
-                            oldModel.Data = model.Data;
+                            this.SetCell(oldModel, modelData.String);
                         }
                     }
                 }
@@ -411,16 +412,16 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                var series1 = new ScatterSeries();
-                series1.MarkerFill = OxyColors.Green;
-                var series2 = new CandleStickSeries();
-                series2.Color = OxyColors.Green;
-                var series3 = new LineSeries();
-                series3.MarkerFill = OxyColors.Green;
-                var series4 = new ScatterSeries();
-                series4.MarkerFill = OxyColors.Blue;
-                var series5 = new LineSeries();
-                series5.MarkerFill = OxyColors.Blue;
+                var inputScatter = new ScatterSeries();
+                inputScatter.MarkerFill = OxyColors.Green;
+                var inputCandleStick = new CandleStickSeries();
+                inputCandleStick.Color = OxyColors.Green;
+                var inputLine = new LineSeries();
+                inputLine.MarkerFill = OxyColors.Green;
+                var plotScatter = new ScatterSeries();
+                plotScatter.MarkerFill = OxyColors.Blue;
+                var plotLine = new LineSeries();
+                plotLine.MarkerFill = OxyColors.Blue;
                 this.DataPlotModel = new PlotModel();
 
                 var model = new CellModel(this.InputGridView.SelectedCells[0]);
@@ -445,7 +446,7 @@ namespace Marv.Input
                         }
                         if (!String.IsNullOrEmpty(entry))
                         {
-                            AddPointsToPlot(entry, series1, series2, series3, Convert.ToDouble(rowIndex));
+                            AddPointsToPlot(entry, inputScatter, inputCandleStick, inputLine, Convert.ToDouble(rowIndex));
                         }
                     }
                 }
@@ -460,7 +461,7 @@ namespace Marv.Input
 
                         if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
                         {
-                            AddPointsToPlot(entry, series1, series2, series3, Convert.ToDouble(year));
+                            AddPointsToPlot(entry, inputScatter, inputCandleStick, inputLine, Convert.ToDouble(year));
                         }
                     }
                 }
@@ -493,29 +494,29 @@ namespace Marv.Input
                     {
                         var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
                         point.X = (int)point.X;
-                        series5.Points.Add(point);
-                        series4.Points.Add(new ScatterPoint(point.X, point.Y));
+                        plotLine.Points.Add(point);
+                        plotScatter.Points.Add(new ScatterPoint(point.X, point.Y));
                         this.DataPlotModel.InvalidatePlot(true);
                     }
                     else if (e.ChangedButton == OxyMouseButton.Right)
                     {
-                        var series4Count = series4.Points.Count;
-                        var series5Count = series5.Points.Count;                       
+                        var series4Count = plotScatter.Points.Count;
+                        var series5Count = plotLine.Points.Count;                       
                         if (series4Count > 0 && series5Count > 0)
                         {
-                            series5.Points.RemoveAt(series5Count - 1);
-                            series4.Points.RemoveAt(series4Count - 1);                          
+                            plotLine.Points.RemoveAt(series5Count - 1);
+                            plotScatter.Points.RemoveAt(series4Count - 1);                          
                         }
                         
                     }
                     this.DataPlotModel.InvalidatePlot(true);
                 };
 
-                this.DataPlotModel.Series.Add(series3);
-                this.DataPlotModel.Series.Add(series1);
-                this.DataPlotModel.Series.Add(series2);
-                this.DataPlotModel.Series.Add(series5);
-                this.DataPlotModel.Series.Add(series4);
+                this.DataPlotModel.Series.Add(inputLine);
+                this.DataPlotModel.Series.Add(inputScatter);
+                this.DataPlotModel.Series.Add(inputCandleStick);
+                this.DataPlotModel.Series.Add(plotLine);
+                this.DataPlotModel.Series.Add(plotScatter);
                 this.DataPlotModel.InvalidatePlot(true);
             }
         }
