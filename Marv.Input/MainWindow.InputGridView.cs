@@ -143,30 +143,5 @@ namespace Marv.Input
             this.cellClipboardEventArgs.Add(e);
             this.oldValues[e] = e.Cell.ToModel().Data;
         }
-
-        private bool checkValidityOfInput(string str)
-        {
-            double value;
-            if (str != null && (!str.Contains(":")))
-            {
-                if (Double.TryParse(str, out value))
-                {
-                    return true;
-                }
-            }
-            else if (str.Split(":".ToCharArray()).Length == 2)
-            {
-                var valueSet = str.Split(":".ToCharArray());
-                if (Double.TryParse(valueSet[0], out value) && Double.TryParse(valueSet[1], out value))
-                {
-                    return true;
-                }
-            }
-            else if (str == null)
-            {
-                return true;
-            }
-            return false;
-        }
     }
 }
