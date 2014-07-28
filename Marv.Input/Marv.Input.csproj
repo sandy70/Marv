@@ -130,8 +130,11 @@
     <Compile Include="CellModel.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InvalidValueException.cs" />
+    <Compile Include="LineEvidence.cs" />
     <Compile Include="LineInput.cs" />
+    <Compile Include="SectionEvidence.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="YearEvidence.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
