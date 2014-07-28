@@ -86,6 +86,8 @@
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
+    <Compile Include="Types\IKey.cs" />
+    <Compile Include="Types\List.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />
