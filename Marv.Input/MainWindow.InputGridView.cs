@@ -14,6 +14,10 @@ namespace Marv.Input
 
         public void SetCell(CellModel cellModel, Vertex vertex)
         {
+            if (cellModel == null || cellModel.IsColumnSectionId) return;
+
+            if (vertex == null) return;
+
             if (vertex.IsEvidenceEntered)
             {
                 var vertexData = vertex.GetData();

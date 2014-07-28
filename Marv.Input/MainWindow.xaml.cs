@@ -209,7 +209,7 @@ namespace Marv.Input
 
             foreach (var year in this.LineEvidence.Years)
             {
-                row[year.ToString()] = "";
+                row[year.ToString()] = null;
             }
 
             this.InputRows.Add(row);
@@ -254,26 +254,11 @@ namespace Marv.Input
 
             foreach (var cell in this.InputGridView.SelectedCells)
             {
-                if (this.Graph.SelectedVertex != null)
-                {
-                    this.Graph.SelectedVertex.EvidenceString = null;
-                    this.Graph.SelectedVertex.UpdateEvidence();
-                }
+                var cellModel = cell.ToModel();
 
-                var row = cell.Item as Dynamic;
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                var year = (string) cell.Column.Header;
-                if (year != CellModel.SectionIdHeader)
-                {
-                    row[year] = null;
-                    var evidence = this.Graph.SelectedVertex.GetData();
-                    row[year] = evidence;
+                if (cellModel.IsColumnSectionId) continue;
 
-                    this.LineEvidence
-                        .SectionEvidences[sectionId]
-                        .YearEvidences[Convert.ToInt32(year)]
-                        .GraphEvidence[this.Graph.SelectedVertex.Key] = evidence;
-                }
+                this.SetCell(cellModel, "");
             }
 
             this.InputGridView.UnselectAll();
