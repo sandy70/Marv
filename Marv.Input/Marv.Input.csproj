@@ -134,6 +134,7 @@
     <Compile Include="LineInput.cs" />
     <Compile Include="SectionEvidence.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="VertexEvidenceProgress.cs" />
     <Compile Include="YearEvidence.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

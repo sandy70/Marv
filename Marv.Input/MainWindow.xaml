@@ -44,58 +44,56 @@
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                                
+
                             <!-- Input Grid View Toolbar -->
                             <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
 
-                                <telerik:RadButton Name="OpenButton"                                              
+                                <telerik:RadButton Name="OpenButton"
                                                    Height="30" Width="30"
                                                    ToolTip="Opens input file and populates input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="SaveButton"                                                   
+                                <telerik:RadButton Name="SaveButton"
                                                    Height="30" Width="30"
                                                    ToolTip="Saves input to input file.">
-					<Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="ClearAllButton"                                                   
+                                <telerik:RadButton Name="ClearAllButton"
                                                    Height="30" Width="30"
                                                    ToolTip="Deletes all input.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="PlotButton"                                                  
+                                <telerik:RadButton Name="PlotButton"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Plots input values.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
                                 </telerik:RadButton>
-                                
+
                                 <RadioButton Name="TypePlotButtonYear"
-                                                        Content="Plot By Year" 
-                                                        IsChecked="True"
-                                                        ></RadioButton>
+                                             Content="Plot By Year"
+                                             IsChecked="True" />
 
                                 <RadioButton Name="TypePlotButtonSection"
-                                                        Content="Plot By Section"
-                                                        ></RadioButton>
+                                             Content="Plot By Section" />
 
-                                <telerik:RadButton Name="CopyAcrossColumns"                                                  
+                                <telerik:RadButton Name="CopyAcrossColumns"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Copies value across columns.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossColumns.png" />
                                 </telerik:RadButton>
-                                
-                                <telerik:RadButton Name="CopyAcrossRows"                                                  
+
+                                <telerik:RadButton Name="CopyAcrossRows"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Copies value across rows.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
                                 </telerik:RadButton>
-                                
+
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
@@ -202,13 +200,14 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                
+
                                 <!-- Vertex Combo Box -->
                                 <telerik:RadComboBox CanAutocompleteSelectItems="True"
                                                      CanKeyboardNavigationSelectItems="True"
                                                      DisplayMemberPath="Name"
                                                      IsEditable="True"
                                                      IsFilteringEnabled="True"
+                                                     IsSynchronizedWithCurrentItem="False"
                                                      ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                                      Margin="5"
                                                      OpenDropDownOnFocus="True"
@@ -226,7 +225,7 @@
                                                     IsValueVisible="False"
                                                     Margin="5"
                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                    Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}"/>
+                                                    Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}" />
                             </Grid>
 
                             <Grid Grid.Row="1">

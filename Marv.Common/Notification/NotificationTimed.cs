@@ -31,6 +31,8 @@ namespace Marv.Common
         {
             Logger.Trace("");
 
+            this.Value = 100;
+
             var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(this.Duration.TotalMilliseconds / 100)

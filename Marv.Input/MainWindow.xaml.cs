@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
-using Marv.Controls.Graph;
 using Marv.Input.Properties;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -38,6 +37,13 @@ namespace Marv.Input
 
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
+
+        private readonly NotificationTimed notificationBadCurrentCell = new NotificationTimed
+        {
+            Name = "Warning!",
+            Description = "No section/year selected for input.",
+            IsMuteable = true
+        };
 
         public LineEvidence LineEvidence;
 
@@ -203,10 +209,43 @@ namespace Marv.Input
 
             foreach (var year in this.LineEvidence.Years)
             {
-                row[year.ToString()] = "";
+                row[year.ToString()] = null;
             }
 
             this.InputRows.Add(row);
+        }
+
+        private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
+        {
+            var progress = VertexEvidenceProgress.Full;
+
+            var total = this.LineEvidence.SectionEvidences.Count * this.LineEvidence.Years.Count();
+            var sum = 0;
+
+            foreach (var sectionEvidence in this.LineEvidence.SectionEvidences)
+            {
+                foreach (var year in this.LineEvidence.Years)
+                {
+                    var graphEvidence = sectionEvidence.YearEvidences[year].GraphEvidence;
+
+                    if (graphEvidence.ContainsKey(vertex.Key))
+                    {
+                        sum++;
+                    }
+                }
+            }
+
+            if (sum == 0)
+            {
+                return VertexEvidenceProgress.None;
+            }
+
+            if (sum < total)
+            {
+                return VertexEvidenceProgress.Partial;
+            }
+
+            return VertexEvidenceProgress.Full;
         }
 
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
@@ -215,26 +254,11 @@ namespace Marv.Input
 
             foreach (var cell in this.InputGridView.SelectedCells)
             {
-                if (this.Graph.SelectedVertex != null)
-                {
-                    this.Graph.SelectedVertex.EvidenceString = null;
-                    this.Graph.SelectedVertex.UpdateEvidence();
-                }
+                var cellModel = cell.ToModel();
 
-                var row = cell.Item as Dynamic;
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                var year = (string) cell.Column.Header;
-                if (year != CellModel.SectionIdHeader)
-                {
-                    row[year] = null;
-                    var evidence = this.Graph.SelectedVertex.GetData();
-                    row[year] = evidence;
+                if (cellModel.IsColumnSectionId) continue;
 
-                    this.LineEvidence
-                        .SectionEvidences[sectionId]
-                        .YearEvidences[Convert.ToInt32(year)]
-                        .GraphEvidence[this.Graph.SelectedVertex.Key] = evidence;
-                }
+                this.SetCell(cellModel, "");
             }
 
             this.InputGridView.UnselectAll();
@@ -334,20 +358,21 @@ namespace Marv.Input
         {
             this.Graph.Run();
 
-            if (this.InputGridView.CurrentCell == null) return;
-
-            var vertexData = vertex.GetData();
+            if (this.InputGridView.CurrentCell == null)
+            {
+                this.Notifications.Push(this.notificationBadCurrentCell);
+                return;
+            }
 
             var cellModel = this.InputGridView.CurrentCell.ToModel();
 
-            if (cellModel.IsColumnSectionId) return;
+            if (cellModel.IsColumnSectionId)
+            {
+                this.Notifications.Push(this.notificationBadCurrentCell);
+                return;
+            }
 
-            cellModel.Data = vertexData;
-
-            this.LineEvidence
-                .SectionEvidences[cellModel.SectionId]
-                .YearEvidences[cellModel.Year]
-                .GraphEvidence[this.Graph.SelectedVertex.Key] = vertexData;
+            this.SetCell(cellModel, vertex);
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
@@ -439,8 +464,7 @@ namespace Marv.Input
             this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
-            this.VertexControl.CommandExecuted += this.VertexControl_CommandExecuted;
-            this.VertexControl.EvidenceEntered += this.VertexControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -545,14 +569,7 @@ namespace Marv.Input
 
                     if (cellModel.IsColumnSectionId) continue;
 
-                    var sectionEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId];
-
-                    if (!sectionEvidence.YearEvidences.ContainsKey(cellModel.Year))
-                    {
-                        sectionEvidence.YearEvidences.Add(new YearEvidence {Year = cellModel.Year});
-                    }
-
-                    var graphEvidence = sectionEvidence.YearEvidences[cellModel.Year].GraphEvidence;
+                    var graphEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
 
                     if (graphEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
@@ -564,37 +581,6 @@ namespace Marv.Input
                     }
                 }
             }
-        }
-
-        private void VertexControl_CommandExecuted(object sender, Command<Vertex> command)
-        {
-            var vertexControl = sender as VertexControl;
-
-            if (vertexControl == null) return;
-
-            var vertex = vertexControl.Vertex;
-
-            if (command == VertexCommands.Clear)
-            {
-                vertex.Evidence = null;
-                vertex.EvidenceString = null;
-            }
-        }
-
-        private void VertexControl_EvidenceEntered(object sender, Vertex vertex)
-        {
-            this.Graph.Run();
-
-            if (this.InputGridView.CurrentCell == null) return;
-
-            var cellModel = this.InputGridView.CurrentCell.ToModel();
-            var vertexData = vertex.GetData();
-
-            cellModel.Data = vertexData;
-            this.LineEvidence
-                .SectionEvidences[cellModel.SectionId]
-                .YearEvidences[cellModel.Year]
-                .GraphEvidence[this.Graph.SelectedVertex.Key] = vertexData;
         }
     }
 }

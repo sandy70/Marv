@@ -5,11 +5,10 @@ namespace Marv.Common
     public interface INotification
     {
         string Description { get; set; }
-
         bool IsIndeterminate { get; }
-
+        bool IsMuteable { get; set; }
+        bool IsMuted { get; set; }
         string Name { get; set; }
-
         double Value { get; }
 
         void Close();
@@ -24,6 +23,42 @@ namespace Marv.Common
         private double _value = 100;
         private string description;
         private bool isIndeterminate;
+        private bool isMuteable;
+        private bool isMuted;
+
+        public bool IsMuteable
+        {
+            get
+            {
+                return this.isMuteable;
+            }
+
+            set
+            {
+                if (value != this.isMuteable)
+                {
+                    this.isMuteable = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsMuted
+        {
+            get
+            {
+                return this.isMuted;
+            }
+
+            set
+            {
+                if (value != this.isMuted)
+                {
+                    this.isMuted = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
 
         public event EventHandler Closed;
 
