@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Marv.Common;
+using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 
@@ -9,7 +11,31 @@ namespace Marv.Input
     public partial class MainWindow
     {
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
-        private Dictionary<GridViewCellClipboardEventArgs, object> oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
+        private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
+
+        public void SetCell(CellModel cellModel, Vertex vertex)
+        {
+            if (vertex.IsEvidenceEntered)
+            {
+                var vertexData = vertex.GetData();
+
+                cellModel.Data = vertexData;
+
+                this.LineEvidence
+                    .SectionEvidences[cellModel.SectionId]
+                    .YearEvidences[cellModel.Year]
+                    .GraphEvidence[vertex.Key] = vertexData;
+            }
+            else
+            {
+                cellModel.Data = null;
+
+                this.LineEvidence
+                    .SectionEvidences[cellModel.SectionId]
+                    .YearEvidences[cellModel.Year]
+                    .GraphEvidence.Remove(vertex.Key);
+            }
+        }
 
         public void SetCell(CellModel cellModel, string newStr, string oldStr = null)
         {
@@ -45,35 +71,12 @@ namespace Marv.Input
 
             var selectedVertex = this.Graph.SelectedVertex;
 
-            if (this.Graph.SelectedVertex == null)
-            {
-                return;
-            }
-
-
             if (selectedVertex == null) return;
 
             selectedVertex.EvidenceString = newStr;
             selectedVertex.UpdateEvidence();
 
-            var vertexData = selectedVertex.GetData();
-
-            cellModel.Data = vertexData;
-
-            if (selectedVertex.IsEvidenceEntered)
-            {
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence[this.Graph.SelectedVertex.Key] = vertexData;
-            }
-            else
-            {
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence.Remove(this.Graph.SelectedVertex.Key);
-            }
+            this.SetCell(cellModel, selectedVertex);
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -89,11 +92,10 @@ namespace Marv.Input
 
         private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            
             if (!e.Cell.ToModel().IsColumnSectionId)
             {
                 double d;
-                bool isRange = e.NewValue.ToString().Contains(":");
+                var isRange = e.NewValue.ToString().Contains(":");
                 if (!(isRange) && !(Double.TryParse(e.NewValue.ToString(), out d)))
                 {
                     e.IsValid = false;
@@ -103,11 +105,11 @@ namespace Marv.Input
                     var valueSet = e.NewValue.ToString().Split(':');
                     if (valueSet.Length > 2)
                     {
-                        e.IsValid = false;                        
+                        e.IsValid = false;
                     }
-                    else if(!(Double.TryParse(valueSet[0], out d)) || !(Double.TryParse(valueSet[1], out d)))
+                    else if (!(Double.TryParse(valueSet[0], out d)) || !(Double.TryParse(valueSet[1], out d)))
                     {
-                        e.IsValid = false;                        
+                        e.IsValid = false;
                     }
                     else if (Convert.ToDouble(valueSet[0]) > Convert.ToDouble(valueSet[1]))
                     {
