@@ -40,25 +40,19 @@ namespace Marv.Controls
             {
                 this.Visibility = Visibility.Collapsed;
             }
+            else
+            {
+                this.Visibility = Visibility.Visible;
+            }
 
             if (e.NewItems != null)
             {
                 foreach (var newItem in e.NewItems)
                 {
                     var notification = newItem as INotification;
-
                     notification.Closed += notification_Closed;
                     notification.Open();
                 }
-            }
-
-            if (this.Notifications.Count == 0)
-            {
-                this.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                this.Visibility = Visibility.Visible;
             }
         }
 
