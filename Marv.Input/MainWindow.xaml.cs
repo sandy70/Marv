@@ -41,97 +41,65 @@ namespace Marv.Input
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         public LineEvidence LineEvidence;
-        private ScatterSeries plotScatter;
-        private ScatterSeries inputScatter;
+        private ScatterSeries minScatter;
+        private ScatterSeries meanScatter;
+        private ScatterSeries maxScatter;
 
         public PlotModel DataPlotModel
         {
-            get
-            {
-                return (PlotModel) GetValue(DataPlotModelProperty);
-            }
-            set
-            {
-                SetValue(DataPlotModelProperty, value);
-            }
+            get { return (PlotModel) GetValue(DataPlotModelProperty); }
+            set { SetValue(DataPlotModelProperty, value); }
         }
 
         public int EndYear
         {
-            get
-            {
-                return (int) GetValue(EndYearProperty);
-            }
+            get { return (int) GetValue(EndYearProperty); }
 
-            set
-            {
-                SetValue(EndYearProperty, value);
-            }
+            set { SetValue(EndYearProperty, value); }
         }
 
         public Graph Graph
         {
-            get
-            {
-                return (Graph) GetValue(GraphProperty);
-            }
+            get { return (Graph) GetValue(GraphProperty); }
 
-            set
-            {
-                SetValue(GraphProperty, value);
-            }
+            set { SetValue(GraphProperty, value); }
         }
 
         public ObservableCollection<dynamic> InputRows
         {
-            get
-            {
-                return (ObservableCollection<dynamic>) GetValue(InputRowsProperty);
-            }
+            get { return (ObservableCollection<dynamic>) GetValue(InputRowsProperty); }
 
-            set
-            {
-                SetValue(InputRowsProperty, value);
-            }
+            set { SetValue(InputRowsProperty, value); }
         }
 
         public bool IsInputToolbarEnabled
         {
-            get
-            {
-                return (bool) GetValue(IsInputToolbarEnabledProperty);
-            }
-            set
-            {
-                SetValue(IsInputToolbarEnabledProperty, value);
-            }
+            get { return (bool) GetValue(IsInputToolbarEnabledProperty); }
+            set { SetValue(IsInputToolbarEnabledProperty, value); }
         }
+
+        public enum LineType
+        {
+            Mean,
+            Min,
+            Max
+        };
+
+        public LineType PlotLineType { get; set; }
 
         public bool IsYearPlot { get; set; }
 
         public ObservableCollection<INotification> Notifications
         {
-            get
-            {
-                return (ObservableCollection<INotification>) GetValue(NotificationsProperty);
-            }
-            set
-            {
-                SetValue(NotificationsProperty, value);
-            }
+            get { return (ObservableCollection<INotification>) GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
         }
 
         public int StartYear
         {
-            get
-            {
-                return (int) GetValue(StartYearProperty);
-            }
+            get { return (int) GetValue(StartYearProperty); }
 
-            set
-            {
-                SetValue(StartYearProperty, value);
-            }
+            set { SetValue(StartYearProperty, value); }
         }
 
         public MainWindow()
@@ -182,13 +150,12 @@ namespace Marv.Input
             });
         }
 
-        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, LineSeries series3, double index)
+        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
         {
             if ((!entry.ToString().Contains(":")))
             {
                 var value = Convert.ToDouble(entry);
                 series1.Points.Add(new ScatterPoint(index, value));
-                series3.Points.Add(new DataPoint(index, value));
             }
             else if (entry.ToString().Split(":".ToArray()).Length == 2)
             {
@@ -197,11 +164,10 @@ namespace Marv.Input
                 var value2 = Convert.ToDouble(valueSet[1]);
                 series2.Items.Add(new HighLowItem(index, value1, value2,
                     value1, value2));
-                series3.Points.Add(new DataPoint(index, (value1 + value2) / 2));
             }
         }
 
-        
+
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             var row = new Dynamic();
@@ -394,18 +360,15 @@ namespace Marv.Input
         {
             if (this.InputGridView.SelectedCells.Count == 1)
             {
-                inputScatter = new ScatterSeries();
-                inputScatter.MarkerFill = OxyColors.Green;
+                meanScatter = new ScatterSeries();
+                meanScatter.MarkerFill = OxyColors.Green;
                 var inputCandleStick = new CandleStickSeries();
                 inputCandleStick.Color = OxyColors.Green;
-                var inputLine = new LineSeries();
-                inputLine.MarkerFill = OxyColors.Green;
-                var plotScatter = new ScatterSeries();
-                this.plotScatter = plotScatter;
-                this.plotScatter.MarkerFill = OxyColors.Blue;
-                var plotLine = new LineSeries();
-                plotLine.MarkerFill = OxyColors.Blue;
-                this.DataPlotModel = new PlotModel();
+                minScatter = new ScatterSeries();
+                minScatter.MarkerFill = OxyColors.Blue;
+                maxScatter = new ScatterSeries();
+                maxScatter.MarkerFill = OxyColors.Red;
+                DataPlotModel = new PlotModel();
 
                 var model = new CellModel(this.InputGridView.SelectedCells[0]);
                 if (model.IsColumnSectionId)
@@ -429,7 +392,7 @@ namespace Marv.Input
                         }
                         if (!String.IsNullOrEmpty(entry))
                         {
-                            AddPointsToPlot(entry, inputScatter, inputCandleStick, inputLine, Convert.ToDouble(rowIndex));
+                            AddPointsToPlot(entry, meanScatter, inputCandleStick, Convert.ToDouble(rowIndex));
                         }
                     }
                 }
@@ -444,60 +407,89 @@ namespace Marv.Input
 
                         if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
                         {
-                            AddPointsToPlot(entry, inputScatter, inputCandleStick, inputLine, Convert.ToDouble(year));
+                            AddPointsToPlot(entry, meanScatter, inputCandleStick, Convert.ToDouble(year));
                         }
                     }
                 }
 
-            
+
 
                 this.DataPlotModel.MouseDown += (s, e) =>
                 {
+                    var scatter = meanScatter;
+                    if (PlotLineType == LineType.Max)
+                    {
+                        scatter = maxScatter;
+                    }
+                    else if (PlotLineType == LineType.Min)
+                    {
+                        scatter = minScatter;
+                    }
+                    
                     if (e.ChangedButton == OxyMouseButton.Left)
                     {
                         var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
                         point.X = (int) point.X;
-                        plotLine.Points.Add(point);
-                        this.plotScatter.Points.Add(new ScatterPoint(point.X, point.Y));
+                        scatter.Points.Add(new ScatterPoint(point.X, point.Y));
                         this.DataPlotModel.InvalidatePlot(true);
                     }
                     else if (e.ChangedButton == OxyMouseButton.Right)
                     {
-                        var series4Count = this.plotScatter.Points.Count;
-                        var series5Count = plotLine.Points.Count;
-                        if (series4Count > 0 && series5Count > 0)
+                        var seriesCount = scatter.Points.Count;
+                        
+                        if (seriesCount > 0)
                         {
-                            plotLine.Points.RemoveAt(series5Count - 1);
-                            this.plotScatter.Points.RemoveAt(series4Count - 1);
+                            scatter.Points.RemoveAt(seriesCount - 1);
                         }
 
                     }
                     this.DataPlotModel.InvalidatePlot(true);
                 };
+
                 
-                this.DataPlotModel.Series.Add(inputLine);
-                this.DataPlotModel.Series.Add(inputScatter);
+                this.DataPlotModel.Series.Add(meanScatter);
                 this.DataPlotModel.Series.Add(inputCandleStick);
-                this.DataPlotModel.Series.Add(plotLine);
-                this.DataPlotModel.Series.Add(this.plotScatter);
+                this.DataPlotModel.Series.Add(maxScatter);
+                this.DataPlotModel.Series.Add(minScatter);
                 this.DataPlotModel.InvalidatePlot(true);
             }
-            
+
         }
 
         private void InterpolateButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (this.DataPlotModel != null && meanScatter.Points.Count > 1)
+            {
+                var interpolateList = new System.Collections.Generic.List<ScatterPoint>();
+                var oldPoint = meanScatter.Points[0];
+                for (int i = 1; i < meanScatter.Points.Count; i++)
+                {
+                    var newPoint = meanScatter.Points[i];
+                    var pointSpacing = newPoint.X - oldPoint.X;
+                    if ((pointSpacing) > 1)
+                    {
+                        var slope = (newPoint.Y - oldPoint.Y) / (pointSpacing);
+                        for (int j = 1; j < pointSpacing; j++)
+                        {
+                            var addPoint = new ScatterPoint(oldPoint.X + j, newPoint.Y - (slope * (newPoint.X - (oldPoint.X + j))));
+                            interpolateList.Add(addPoint);
+                        }
+                    }
+                    oldPoint = newPoint;
+
+                }
+                meanScatter.Points.AddRange(interpolateList);
+                this.DataPlotModel.InvalidatePlot(true);
+                UploadToGrid(meanScatter);
+            }
         }
 
-        private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
+        private void UploadToGrid(ScatterSeries scatter)
         {
-            if (this.DataPlotModel != null)
-            {
-                if (IsYearPlot)
+            if (IsYearPlot)
                 {
                     var year = this.DataPlotModel.Title;
-                    foreach (var point in plotScatter.Points)
+                    foreach (var point in scatter.Points)
                     {
                         if (point.X > 0 && point.X <= this.InputRows.Count)
                         {
@@ -509,8 +501,8 @@ namespace Marv.Input
                 {
                     var section = this.DataPlotModel.Title;
                     var sectionIndex = Convert.ToInt32(section.Substring(8));
-                    Console.Write(sectionIndex);
-                    foreach (var point in plotScatter.Points)
+                   
+                    foreach (var point in scatter.Points)
                     {
                         var columns = this.InputGridView.Columns;
                         if (point.X >= Convert.ToInt32(columns[1].Header) && point.X <= Convert.ToInt32(columns[columns.Count - 1].Header));
@@ -519,6 +511,14 @@ namespace Marv.Input
                         }
                     }
                 }
+        }
+    
+
+    private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataPlotModel != null)
+            {
+                UploadToGrid(minScatter);
             }
         }
 
@@ -528,6 +528,8 @@ namespace Marv.Input
             this.Graph = await Graph.ReadAsync(Settings.Default.FileName);
             this.Graph.Belief = null;
             IsYearPlot = true;
+            PlotLineType = LineType.Mean;
+            
 
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.ClearAllButton.Click += this.ClearAllButton_Click;
@@ -541,6 +543,9 @@ namespace Marv.Input
             this.UploadFromPlot.Click += UploadFromPlot_Click;
             this.InterpolateButton.Click += InterpolateButton_Click;
 
+            this.MeanButton.Checked += MeanButton_Checked;
+            this.MinButton.Checked += MinButton_Checked;
+            this.MaxButton.Checked += MaxButton_Checked;
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
 
@@ -560,6 +565,21 @@ namespace Marv.Input
 
             this.VertexControl.CommandExecuted += this.VertexControl_CommandExecuted;
             this.VertexControl.EvidenceEntered += this.VertexControl_EvidenceEntered;
+        }
+
+        private void MeanButton_Checked(object sender, RoutedEventArgs e)
+        {
+            PlotLineType = LineType.Mean;
+        }
+
+        private void MinButton_Checked(object sender, RoutedEventArgs e)
+        {
+            PlotLineType = LineType.Min;
+        }
+
+        private void MaxButton_Checked(object sender, RoutedEventArgs e)
+        {
+            PlotLineType = LineType.Max;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
