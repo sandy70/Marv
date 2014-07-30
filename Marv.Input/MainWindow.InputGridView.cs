@@ -68,21 +68,6 @@ namespace Marv.Input
 
                     this.LineEvidence.SectionEvidences.Add(newSectionEvidence);
                 }
-                else
-                {
-                    var newSectionEvidence = new SectionEvidence
-                    {
-                        Id = newStr,
-                    };
-
-                    foreach (var year in this.LineEvidence.Years)
-                    {
-                        newSectionEvidence.YearEvidences.Add(new YearEvidence {Year = year});
-                    }
-
-                    this.LineEvidence.SectionEvidences.Add(newSectionEvidence);
-                }
-
 
                 return;
             }
@@ -95,14 +80,6 @@ namespace Marv.Input
             selectedVertex.UpdateEvidence();
 
             this.SetCell(cellModel, selectedVertex);
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence[this.Graph.SelectedVertex.Key] = vertexData;
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence.Remove(this.Graph.SelectedVertex.Key);
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -128,10 +105,6 @@ namespace Marv.Input
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
             }
-                else if (Convert.ToDouble(e.NewValue.ToString()) < 0)
-                {
-                    e.IsValid = false;
-                }
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -145,11 +118,6 @@ namespace Marv.Input
             var graphEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
 
             this.Graph.SetEvidence(graphEvidence);
-            {
-                sectionEvidence.YearEvidences.Add(new YearEvidence {Year = cellModel.Year});
-            }
-
-            this.Graph.SetEvidence(sectionEvidence.YearEvidences[cellModel.Year].GraphEvidence);
             this.Graph.Run();
         }
 
