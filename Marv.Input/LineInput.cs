@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Marv.Common;
 using Marv.Common.Graph;
-using System.Linq;
 
 namespace Marv.Input
 {
     public class LineInput : NotifyPropertyChanged
     {
-        private Dictionary<string, int, string, VertexEvidence> evidence = new Dictionary<string,int,string,VertexEvidence>();
+        private Dictionary<string, int, string, VertexEvidence> evidence = new Dictionary<string, int, string, VertexEvidence>();
         private Guid graphGuid;
 
         public Dictionary<string, int, string, VertexEvidence> Evidence

@@ -94,16 +94,16 @@
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="CopyAcrossAll"                                                  
+                                <telerik:RadButton Name="CopyAcrossAll"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Copies value across entire grid.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="InterpolateButton"                                                  
+                                <telerik:RadButton Name="InterpolateButton"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Interpolates values in plot.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Interpolate.png" />
                                 </telerik:RadButton>
@@ -201,27 +201,27 @@
                             <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
 
                                 <RadioButton Name="MinButton"
-                                                   Content="Miniumn"
-                                                   Margin="2" />
+                                             Content="Miniumn"
+                                             Margin="2" />
 
                                 <RadioButton Name="MaxButton"
-                                                   Content="Maximum"
-                                                   Margin="2" />
-                                
-                                <RadioButton Name="MeanButton"
-                                                   IsChecked="True"
-                                                   Content="Mean"
-                                                   Margin="2" />
+                                             Content="Maximum"
+                                             Margin="2" />
 
-                                <telerik:RadButton Name="UploadFromPlot"                                                  
+                                <RadioButton Name="MeanButton"
+                                             IsChecked="True"
+                                             Content="Mean"
+                                             Margin="2" />
+
+                                <telerik:RadButton Name="UploadFromPlot"
                                                    Height="30" Width="30"
-                                                   IsEnabled= "{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
                                                    ToolTip="Uploads plot data into input data.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
                                 </telerik:RadButton>
-                                
+
                             </telerik:RadToolBar>
-                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" Grid.Row="1"/>
+                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" Grid.Row="1" />
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>

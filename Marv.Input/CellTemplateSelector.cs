@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
 using Marv.Common.Graph;
 using Telerik.Windows.Controls.GridView;
-using System.Linq;
 
 namespace Marv.Input
 {

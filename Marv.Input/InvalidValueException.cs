@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Marv.Input
 {
@@ -17,13 +13,13 @@ namespace Marv.Input
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public InvalidValueException() { }
-        public InvalidValueException(string message) : base(message) { }
-        public InvalidValueException(string message, Exception inner) : base(message, inner) { }
+        public InvalidValueException() {}
+        public InvalidValueException(string message) : base(message) {}
+        public InvalidValueException(string message, Exception inner) : base(message, inner) {}
 
         protected InvalidValueException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context) { }
+            : base(info, context) {}
     }
 }
