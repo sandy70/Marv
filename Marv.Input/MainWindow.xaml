@@ -101,13 +101,6 @@
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
                                 </telerik:RadButton>
 
-                                <telerik:RadButton Name="InterpolateButton"
-                                                   Height="30" Width="30"
-                                                   IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                   ToolTip="Interpolates values in plot.">
-                                    <Image Source="/Marv.Common;component/Resources/Icons/Interpolate.png" />
-                                </telerik:RadButton>
-
                             </telerik:RadToolBar>
 
                             <!-- Input Grid View -->
@@ -208,9 +201,9 @@
                                              Content="Maximum"
                                              Margin="2" />
 
-                                <RadioButton Name="MeanButton"
+                                <RadioButton Name="MedianButton"
                                              IsChecked="True"
-                                             Content="Mean"
+                                             Content="Median"
                                              Margin="2" />
 
                                 <telerik:RadButton Name="UploadFromPlot"
@@ -221,7 +214,7 @@
                                 </telerik:RadButton>
 
                             </telerik:RadToolBar>
-                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" Grid.Row="1" />
+                            <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" IsLegendVisible="True" Grid.Row="1"/>
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
