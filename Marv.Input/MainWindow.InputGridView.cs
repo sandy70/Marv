@@ -99,7 +99,7 @@ namespace Marv.Input
             var evidenceString = e.NewValue as string;
             var vertexEvidence = EvidenceStringFactory.Create(evidenceString).Parse(this.Graph.SelectedVertex.States, evidenceString);
 
-            if (vertexEvidence == null)
+            if (vertexEvidence == null && evidenceString != string.Empty)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
