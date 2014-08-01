@@ -99,11 +99,10 @@ namespace Marv.Input
             var evidenceString = e.NewValue as string;
             var vertexEvidence = EvidenceStringFactory.Create(evidenceString).Parse(this.Graph.SelectedVertex.States, evidenceString);
 
-            if (vertexEvidence == null && evidenceString != string.Empty)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
+            if (vertexEvidence != null || evidenceString == string.Empty) { return; }
+            e.IsValid = false;
+            e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+   
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -122,13 +121,13 @@ namespace Marv.Input
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete || e.Key == Key.Back)
+            if (e.Key != Key.Delete && e.Key != Key.Back) { return; }
+            
+            foreach (var cellInfo in this.InputGridView.SelectedCells)
             {
-                foreach (var cellInfo in this.InputGridView.SelectedCells)
-                {
-                    this.SetCell(cellInfo.ToModel(), null);
-                }
+                this.SetCell(cellInfo.ToModel(), null);
             }
+            
         }
 
         private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
