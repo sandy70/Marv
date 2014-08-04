@@ -1,10 +1,32 @@
-﻿namespace Marv.Common
+﻿using System;
+
+namespace Marv.Common
 {
     public class TriangularDistribution
     {
         public double Max { get; set; }
         public double Min { get; set; }
         public double Mode { get; set; }
+
+        public double Cdf(double x)
+        {
+            if (x < this.Min)
+            {
+                return 0;
+            }
+
+            if (this.Min <= x && x <= this.Mode)
+            {
+                return Math.Pow(x - this.Min, 2) / (this.Max - this.Min) / (this.Mode - this.Min);
+            }
+
+            if (this.Mode <= x && x <= this.Max)
+            {
+                return 1 - Math.Pow(this.Max - x, 2) / (this.Max - this.Min) / (this.Max - this.Mode);
+            }
+
+            return 1;
+        }
 
         public double Pdf(double x)
         {
