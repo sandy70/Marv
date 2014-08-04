@@ -8,66 +8,31 @@ namespace Marv.Common.Graph
     {
         public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
-            if (str.Length <= 0) return null;
-
-            var evidence = new Dictionary<string, double>();
-
             var parts = str
                 .Trim()
                 .Split(":".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            if (parts.Count() != 2) return null;
+            var values = new double[parts.Length];
 
-            double minValue;
-            double maxValue;
-
-            if (Double.TryParse(parts[0], out minValue) && Double.TryParse(parts[1], out maxValue))
+            for (var i = 0; i < parts.Length; i++)
             {
-                // If min and max are reversed, then swap.
-                if (minValue > maxValue)
-                {
-                    var temp = minValue;
-                    minValue = maxValue;
-                    maxValue = temp;
-                }
-
-                foreach (var state in states)
-                {
-                    evidence[state.Key] = 0;
-
-                    if (maxValue < state.Min)
-                    {
-                        // do nothing
-                    }
-                    else if (minValue > state.Max)
-                    {
-                        // do nothing
-                    }
-                    else
-                    {
-                        if (state.Min <= minValue && minValue <= state.Max)
-                        {
-                            evidence[state.Key] = (state.Max - minValue) / (state.Max - state.Min);
-                        }
-
-                        if (state.Min <= maxValue && maxValue <= state.Max)
-                        {
-                            evidence[state.Key] = (maxValue - state.Min) / (state.Max - state.Min);
-                        }
-
-                        if (minValue <= state.Min && maxValue >= state.Max)
-                        {
-                            evidence[state.Key] = 1;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                return null;
+                // Return null if any of these cannot be parsed
+                if (!double.TryParse(parts[i], out values[i])) values = null;
             }
 
-            return evidence.Normalized();
+            if (values == null || values.Length != 2) return null;
+
+            // If values are in reverse order then swap
+            if (values[0] > values[1])
+            {
+                var temp = values[0];
+                values[0] = values[1];
+                values[1] = temp;
+            }
+
+            var dist = new UniformDistribution(values[0], values[1]);
+
+            return states.Parse(dist);
         }
     }
 }
