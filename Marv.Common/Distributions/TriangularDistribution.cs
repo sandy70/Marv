@@ -2,7 +2,7 @@
 
 namespace Marv.Common
 {
-    public class TriangularDistribution
+    public class TriangularDistribution : IDistribution
     {
         private readonly double max;
         private readonly double min;

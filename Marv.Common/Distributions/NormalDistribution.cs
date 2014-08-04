@@ -18,7 +18,7 @@ namespace Marv.Common
     /// Class NormalDist represents the normal (Gaussian) probability distribution
     /// with a specifed mean and variance.
     /// </summary>
-    public class NormalDistribution
+    public class NormalDistribution : IDistribution
     {
         private static readonly double[] a = {2.2352520354606839287e00, 1.6102823106855587881e02, 1.0676894854603709582e03, 1.8154981253343561249e04, 6.5682337918207449113e-2};
 

@@ -82,6 +82,7 @@
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="EvidenceStringType.cs" />
+    <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
