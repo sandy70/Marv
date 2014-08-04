@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Marv.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -45,16 +46,26 @@ namespace Marv.Input
         private ScatterSeries modeScatter;
         private LineSeries modeLine;
 
-        private void UploadToGrid(ScatterSeries scatter)
+        private void UploadToGrid()
         {
+            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0) { return; }
+            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count) { return; }
+            var tempMax = maxScatter;
+            var tempMode = modeScatter;
+            var tempMin = minScatter;
+            SortScatter(tempMax);
+            SortScatter(tempMode);
+            SortScatter(tempMin);
+
             if (IsYearPlot)
             {
                 var year = this.DataPlotModel.Title;
-                foreach (var point in scatter.Points)
+                for (var i = 0; i < modeScatter.Points.Count; i++ )
                 {
-                    if (point.X > 0 && point.X <= this.InputRows.Count)
+                    var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
+                    if (tempMode.Points[i].X > 0 && tempMode.Points[i].X <= this.InputRows.Count)
                     {
-                        SetCell(new CellModel(this.InputRows[(int)point.X - 1], year), point.Y.ToString());
+                        SetCell(new CellModel(this.InputRows[(int)tempMode.Points[i].X - 1], year), evidenceString);
 
                     }
                 }
@@ -64,15 +75,26 @@ namespace Marv.Input
                 var section = this.DataPlotModel.Title;
                 var sectionIndex = Convert.ToInt32(section.Substring(8));
 
-                foreach (var point in scatter.Points)
+                for (var i = 0; i < modeScatter.Points.Count; i++ )
                 {
                     var columns = this.InputGridView.Columns;
-                    if (point.X >= Convert.ToInt32(columns[1].Header) && point.X <= Convert.ToInt32(columns[columns.Count - 1].Header)) ;
+                    var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
+                    if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header)) ;
                     {
-                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], point.X.ToString()), point.Y.ToString());
+                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString()), evidenceString);
                     }
                 }
             }
+        }
+
+        private static void SortScatter(ScatterSeries scatter)
+        {
+            scatter.Points.Sort(
+                delegate(ScatterPoint p1, ScatterPoint p2)
+                {
+                    return p1.X.CompareTo(p2.X);
+                }
+                );    
         }
 
         private void AddPlotInfo(string title, string xAxis)

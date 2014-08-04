@@ -493,7 +493,7 @@ namespace Marv.Input
         {
             if (DataPlotModel != null)
             {
-                UploadToGrid(inputScatter);
+                UploadToGrid();
             }
         }
     }
