@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -14,12 +13,12 @@ namespace Marv.Common.Graph
                 return new NullEvidenceString();
             }
 
-            if (evidenceString.Contains("TRI"))
+            if (evidenceString.ToLowerInvariant().Contains("tri"))
             {
                 return new TriEvidenceString();
             }
 
-            if (evidenceString.Contains("NORM"))
+            if (evidenceString.ToLowerInvariant().Contains("norm"))
             {
                 return new NormEvidenceString();
             }
