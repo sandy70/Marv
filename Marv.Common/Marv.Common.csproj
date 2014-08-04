@@ -108,6 +108,7 @@
     <Compile Include="Types\Sequence.cs" />
     <Compile Include="Types\Model.cs" />
     <Compile Include="Types\ModelCollection.cs" />
+    <Compile Include="Distributions\UniformDistribution.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ValueChangedArgs.cs" />
     <Compile Include="ValueEventArgs.cs" />
