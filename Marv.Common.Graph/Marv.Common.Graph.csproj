@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.Vertex.cs" />
+    <Compile Include="EvidenceString\TriEvidenceString.cs" />
     <Compile Include="VertexClearCommand.cs" />
     <Compile Include="VertexEvidence.cs" />
     <Compile Include="EvidenceString\DistributionEvidenceString.cs" />

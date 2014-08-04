@@ -11,6 +11,11 @@ namespace Marv.Common.Graph
                 return new NullEvidenceString();
             }
 
+            if (evidenceString.Contains("TRI"))
+            {
+                return new TriEvidenceString();
+            }
+
             if (evidenceString.Contains(','))
             {
                 return new DistributionEvidenceString();
