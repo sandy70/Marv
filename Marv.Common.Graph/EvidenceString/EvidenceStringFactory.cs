@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Marv.Common.Graph
 {
@@ -9,6 +11,16 @@ namespace Marv.Common.Graph
             if (evidenceString == null)
             {
                 return new NullEvidenceString();
+            }
+
+            if (evidenceString.ToLowerInvariant().Contains("tri"))
+            {
+                return new TriEvidenceString();
+            }
+
+            if (evidenceString.ToLowerInvariant().Contains("norm"))
+            {
+                return new NormEvidenceString();
             }
 
             if (evidenceString.Contains(','))
@@ -22,6 +34,24 @@ namespace Marv.Common.Graph
             }
 
             return new StateEvidenceString();
+        }
+
+        public static double[] ParseParams(string str)
+        {
+            // Gets the values between ( and )
+            var parts = Regex.Match(str, @"\(([^)]*)\)").Groups[1].Value
+                .Trim()
+                .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            var values = new double[parts.Count()];
+
+            for (var i = 0; i < parts.Length; i++)
+            {
+                // Return null if any of these cannot be parsed
+                if (!double.TryParse(parts[i], out values[i])) return null;
+            }
+
+            return values;
         }
     }
 }

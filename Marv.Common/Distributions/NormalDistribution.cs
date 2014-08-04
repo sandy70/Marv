@@ -18,7 +18,7 @@ namespace Marv.Common
     /// Class NormalDist represents the normal (Gaussian) probability distribution
     /// with a specifed mean and variance.
     /// </summary>
-    public class NormalDistribution
+    public class NormalDistribution : IDistribution
     {
         private static readonly double[] a = {2.2352520354606839287e00, 1.6102823106855587881e02, 1.0676894854603709582e03, 1.8154981253343561249e04, 6.5682337918207449113e-2};
 
@@ -173,7 +173,7 @@ namespace Marv.Common
         /// probability that the value of a random variable having this normal density is
         /// less than or equal to <c>x</c>.
         /// </remarks>
-        public double CDF(double x)
+        public double Cdf(double x)
         {
             // This algorithm is ported from dcdflib:
             // Cody, W.D. (1993). "ALGORITHM 715: SPECFUN - A Portabel FORTRAN
@@ -273,7 +273,7 @@ namespace Marv.Common
         /// </summary>
         /// <param name="x">A position on the x-axis.</param>
         /// <returns>The probability density function evaluated at <c>x</c>.</returns>
-        public double PDF(double x)
+        public double Pdf(double x)
         {
             var y = (x - mean_);
             var xMinusMuSqr = y*y;
