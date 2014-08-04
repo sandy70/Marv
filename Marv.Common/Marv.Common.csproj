@@ -86,6 +86,7 @@
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
+    <Compile Include="Distributions\TriangularDistribution.cs" />
     <Compile Include="Types\IKey.cs" />
     <Compile Include="Types\List.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="GridFloatHeader.cs" />
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="MetaObject.cs" />
-    <Compile Include="NormalDistribution.cs" />
+    <Compile Include="Distributions\NormalDistribution.cs" />
     <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
