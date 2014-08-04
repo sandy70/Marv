@@ -173,7 +173,7 @@ namespace Marv.Common
         /// probability that the value of a random variable having this normal density is
         /// less than or equal to <c>x</c>.
         /// </remarks>
-        public double CDF(double x)
+        public double Cdf(double x)
         {
             // This algorithm is ported from dcdflib:
             // Cody, W.D. (1993). "ALGORITHM 715: SPECFUN - A Portabel FORTRAN
@@ -273,7 +273,7 @@ namespace Marv.Common
         /// </summary>
         /// <param name="x">A position on the x-axis.</param>
         /// <returns>The probability density function evaluated at <c>x</c>.</returns>
-        public double PDF(double x)
+        public double Pdf(double x)
         {
             var y = (x - mean_);
             var xMinusMuSqr = y*y;
