@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 
 namespace Marv.Common.Graph
 {
@@ -9,33 +6,16 @@ namespace Marv.Common.Graph
     {
         public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
-            var evidence = new Dictionary<string, double>();
+            var values = EvidenceStringFactory.ParseParams(str);
 
-            // Gets the values between ( and )
-            var parts = Regex.Match(str, @"\(([^)]*)\)").Groups[1].Value
-                .Trim()
-                .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (values == null || values.Length != 3) return null;
 
-            // we need exactly 3 parts
-            if (parts.Count() != 3) return evidence;
+            // Check if params are in correct order.
+            if (!(values[0] < values[1] && values[1] < values[2])) return null;
 
-            double min, mod, max;
+            var dist = new TriangularDistribution(values[0], values[1], values[2]);
 
-            if (!double.TryParse(parts[0], out min)) return evidence;
-            if (!double.TryParse(parts[1], out mod)) return evidence;
-            if (!double.TryParse(parts[2], out max)) return evidence;
-
-            // If the parameters are not in the right order
-            if (!(min < mod && mod < max)) return evidence;
-
-            var triangularDistribution = new TriangularDistribution(min, mod, max);
-
-            foreach (var state in states)
-            {
-                evidence[state.Key] = triangularDistribution.Cdf(state.Max) - triangularDistribution.Cdf(state.Min);
-            }
-
-            return evidence.Normalized();
+            return states.Parse(dist);
         }
     }
 }
