@@ -8,8 +8,8 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
-        private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
-        private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
+        private readonly List<GridViewCellClipboardEventArgs> _cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
+        private readonly Dictionary<GridViewCellClipboardEventArgs, object> _oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
 
         public void SetCell(CellModel cellModel, Vertex vertex)
         {
@@ -132,18 +132,18 @@ namespace Marv.Input
 
         private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
+            foreach (var cellClipboardEventArg in this._cellClipboardEventArgs)
             {
-                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string, this.oldValues[cellClipboardEventArg] as string);
+                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string, this._oldValues[cellClipboardEventArg] as string);
             }
 
-            cellClipboardEventArgs.Clear();
+            _cellClipboardEventArgs.Clear();
         }
 
         private void InputGridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
-            this.cellClipboardEventArgs.Add(e);
-            this.oldValues[e] = e.Cell.ToModel().Data;
+            this._cellClipboardEventArgs.Add(e);
+            this._oldValues[e] = e.Cell.ToModel().Data;
         }
     }
 }
