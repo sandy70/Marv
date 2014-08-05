@@ -33,6 +33,9 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
+        public static readonly DependencyProperty IsLogarithmicProperty =
+            DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
+
         private readonly NotificationTimed notificationBadCurrentCell = new NotificationTimed
         {
             Name = "Warning!",
@@ -62,6 +65,12 @@ namespace Marv.Input
             get { return (ObservableCollection<dynamic>) GetValue(InputRowsProperty); }
 
             set { SetValue(InputRowsProperty, value); }
+        }
+
+        public bool IsLogarithmic
+        {
+            get { return (bool) GetValue(IsLogarithmicProperty); }
+            set { SetValue(IsLogarithmicProperty, value); }
         }
 
         public bool IsInputToolbarEnabled
@@ -326,7 +335,7 @@ namespace Marv.Input
             this.UploadFromPlot.Click += UploadFromPlot_Click;
 
 
-            this.MedianButton.Checked += MedianButton_Checked;
+            this.ModeButton.Checked += ModeButton_Checked;
             this.MinButton.Checked += MinButton_Checked;
             this.MaxButton.Checked += MaxButton_Checked;
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
@@ -354,9 +363,9 @@ namespace Marv.Input
             PlotLineType = LineType.Max;
         }
 
-        private void MedianButton_Checked(object sender, RoutedEventArgs e)
+        private void ModeButton_Checked(object sender, RoutedEventArgs e)
         {
-            PlotLineType = LineType.Median;
+            PlotLineType = LineType.Mode;
         }
 
         private void MinButton_Checked(object sender, RoutedEventArgs e)
@@ -484,7 +493,11 @@ namespace Marv.Input
         {
             if (DataPlotModel != null)
             {
-                UploadToGrid(_inputScatter);
+<<<<<<< HEAD
+                UploadToGrid();
+=======
+                UploadToGrid(inputScatter);
+>>>>>>> 4e4b83a884187e1033bf8d33f8804752e7207c27
             }
         }
     }

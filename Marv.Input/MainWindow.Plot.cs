@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Marv.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -22,33 +23,50 @@ namespace Marv.Input
             }
         }
 
+        public enum PlotAxis
+        {
+            XAxis,
+            YAxis
+        }
+
         public enum LineType
         {
-            Median,
+            Mode,
             Min,
             Max
         };
 
-        public LineType PlotLineType = LineType.Median;
+        public LineType PlotLineType = LineType.Mode;
 
-        private ScatterSeries _maxScatter;
-        private ScatterSeries _inputScatter;
-        private ScatterSeries _minScatter;
-        private LineSeries _minLine;
-        private LineSeries _maxLine;
-        private ScatterSeries _medianScatter;
-        private LineSeries _medianLine;
+        private ScatterSeries maxScatter;
+        private ScatterSeries inputScatter;
+        private ScatterSeries minScatter;
+        private LineSeries minLine;
+        private LineSeries maxLine;
+        private ScatterSeries modeScatter;
+        private LineSeries modeLine;
 
-        private void UploadToGrid(ScatterSeries scatter)
+        private void UploadToGrid()
         {
+            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0) { return; }
+            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count) { return; }
+            var tempMax = maxScatter;
+            var tempMode = modeScatter;
+            var tempMin = minScatter;
+            SortScatter(tempMax);
+            SortScatter(tempMode);
+            SortScatter(tempMin);
+
             if (IsYearPlot)
             {
                 var year = this.DataPlotModel.Title;
-                foreach (var point in scatter.Points)
+                for (var i = 0; i < modeScatter.Points.Count; i++ )
                 {
-                    if (point.X > 0 && point.X <= this.InputRows.Count)
+                    var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
+                    if (tempMode.Points[i].X > 0 && tempMode.Points[i].X <= this.InputRows.Count)
                     {
-                        SetCell(new CellModel(this.InputRows[(int)point.X - 1], year), point.Y.ToString());
+                        SetCell(new CellModel(this.InputRows[(int)tempMode.Points[i].X - 1], year), evidenceString);
+
                     }
                 }
             }
@@ -57,15 +75,26 @@ namespace Marv.Input
                 var section = this.DataPlotModel.Title;
                 var sectionIndex = Convert.ToInt32(section.Substring(8));
 
-                foreach (var point in scatter.Points)
+                for (var i = 0; i < modeScatter.Points.Count; i++ )
                 {
                     var columns = this.InputGridView.Columns;
-                    if (point.X >= Convert.ToInt32(columns[1].Header) && point.X <= Convert.ToInt32(columns[columns.Count - 1].Header)) ;
+                    var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
+                    if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header)) ;
                     {
-                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], point.X.ToString()), point.Y.ToString());
+                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString()), evidenceString);
                     }
                 }
             }
+        }
+
+        private static void SortScatter(ScatterSeries scatter)
+        {
+            scatter.Points.Sort(
+                delegate(ScatterPoint p1, ScatterPoint p2)
+                {
+                    return p1.X.CompareTo(p2.X);
+                }
+                );    
         }
 
         private void AddPlotInfo(string title, string xAxis)
@@ -77,16 +106,53 @@ namespace Marv.Input
                 Position = AxisPosition.Bottom,
                 Title = xAxis
             });
-
-            this.DataPlotModel.Axes.Add(new LinearAxis
+            if (!IsLogarithmic)
             {
-                Position = AxisPosition.Left,
-                Title = "Input Data"
-            });
+                this.DataPlotModel.Axes.Add(new LinearAxis
+                {
+                    Position = AxisPosition.Left,
+                    Title = "Input Data"
+                });
+            }
+            else
+            {
+                this.DataPlotModel.Axes.Add(new LogarithmicAxis
+                {
+                    Position = AxisPosition.Left,
+                    Title = "Input Data"
+                });
+            }
+        }
+
+
+        private void CheckForLogarithmicScale()
+        {
+            if (IsLogarithmic) { return; }
+            var oldState = this.Graph.SelectedVertex.States[0];
+            foreach (var state in this.Graph.SelectedVertex.States)
+            {
+                if (oldState == state) { continue; }
+                if (state.Max != (oldState.Max * 10)) { return; }
+                oldState = state;                                                        
+            }
+            IsLogarithmic = true;
         }
 
         private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
         {
+            if (entry.ToString().Contains(","))
+            {
+                var probSet = entry.ToString().Split(",".ToArray());
+                CheckForLogarithmicScale();
+                foreach (var state in this.Graph.SelectedVertex.States)
+                {
+                    var probItem = new HighLowItem(index, state.Min, state.Max,
+                        state.Min, state.Max);
+                   
+                    series2.Items.Add(probItem);
+                }
+                return;
+            }
             if ((!entry.ToString().Contains(":")))
             {
                 var value = Convert.ToDouble(entry);
@@ -105,34 +171,33 @@ namespace Marv.Input
         private void InitializePlot()
         {
             if (this.InputGridView.SelectedCells.Count != 1) { return; }
-            _inputScatter = new ScatterSeries();
-            _inputScatter.MarkerFill = OxyColors.Green;
-            _inputScatter.Title = "Base";
+            inputScatter = new ScatterSeries();
+            inputScatter.MarkerFill = OxyColors.Green;
+            inputScatter.Title = "Base";
             var inputCandleStick = new CandleStickSeries();
             inputCandleStick.Color = OxyColors.Green;
-            _minScatter = new ScatterSeries();
-            _minScatter.Title = "Minimum";
-            _minLine = new LineSeries();
-            _minLine.Color = OxyColors.Blue;
-            _minScatter.MarkerFill = OxyColors.Blue;
-            _maxScatter = new ScatterSeries();
-            _maxScatter.Title = "Maximum";
-            _maxLine = new LineSeries();
-            _maxLine.Color = OxyColors.Red;
-            _maxScatter.MarkerFill = OxyColors.Red;
-            _medianScatter = new ScatterSeries();
-            _medianScatter.Title = "Median";
-            _medianScatter.MarkerFill = OxyColors.Purple;
-            _medianLine = new LineSeries();
-            _medianLine.Color = OxyColors.Purple;
+            minScatter = new ScatterSeries();
+            minScatter.Title = "Minimum";
+            minLine = new LineSeries();
+            minLine.Color = OxyColors.Blue;
+            minScatter.MarkerFill = OxyColors.Blue;
+            maxScatter = new ScatterSeries();
+            maxScatter.Title = "Maximum";
+            maxLine = new LineSeries();
+            maxLine.Color = OxyColors.Red;
+            maxScatter.MarkerFill = OxyColors.Red;
+            modeScatter = new ScatterSeries();
+            modeScatter.Title = "Median";
+            modeScatter.MarkerFill = OxyColors.Purple;
+            modeLine = new LineSeries();
+            modeLine.Color = OxyColors.Purple;
 
             this.DataPlotModel = new PlotModel();
 
             var model = new CellModel(InputGridView.SelectedCells[0]);
             if (model.IsColumnSectionId) { return; }
             if (IsYearPlot)
-            {
-                AddPlotInfo(model.Year.ToString(), "Section ID");
+            {  
                 foreach (var row in this.InputRows)
                 {
                     var rowIndex = this.InputRows.IndexOf(row) + 1;
@@ -147,13 +212,13 @@ namespace Marv.Input
                     }
                     if (!String.IsNullOrEmpty(entry))
                     {
-                        AddPointsToPlot(entry, _inputScatter, inputCandleStick, Convert.ToDouble(rowIndex));
+                        AddPointsToPlot(entry, inputScatter, inputCandleStick, Convert.ToDouble(rowIndex));
                     }
                 }
+                AddPlotInfo(model.Year.ToString(), "Section ID");
             }
             else
-            {
-                AddPlotInfo(model.SectionId, "Year");
+            {                
                 var row = model.Row;
                 foreach (var column in this.InputGridView.Columns)
                 {
@@ -162,21 +227,22 @@ namespace Marv.Input
 
                     if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
                     {
-                        AddPointsToPlot(entry, _inputScatter, inputCandleStick, Convert.ToDouble(year));
+                        AddPointsToPlot(entry, inputScatter, inputCandleStick, Convert.ToDouble(year));
                     }
                 }
+                AddPlotInfo(model.SectionId, "Year");
             }
 
             this.DataPlotModel.MouseDown += (s, e) =>
             {
-                var scatter = _medianScatter;
+                var scatter = modeScatter;
                 if (PlotLineType == LineType.Max)
                 {
-                    scatter = _maxScatter;
+                    scatter = maxScatter;
                 }
                 else if (PlotLineType == LineType.Min)
                 {
-                    scatter = _minScatter;
+                    scatter = minScatter;
                 }
 
                 if (e.ChangedButton == OxyMouseButton.Left)
@@ -203,32 +269,32 @@ namespace Marv.Input
                 }
                 if (PlotLineType == LineType.Max)
                 {
-                    UpdateLine(_maxLine, scatter);
+                    UpdateLine(maxLine, scatter);
                 }
                 else if (PlotLineType == LineType.Min)
                 {
-                    UpdateLine(_minLine, scatter);
+                    UpdateLine(minLine, scatter);
                 }
                 else
                 {
-                    UpdateLine(_medianLine, scatter);
+                    UpdateLine(modeLine, scatter);
                 }
                 this.DataPlotModel.InvalidatePlot(true);
             };
 
 
-            this.DataPlotModel.Series.Add(_inputScatter);
+            this.DataPlotModel.Series.Add(inputScatter);
             this.DataPlotModel.Series.Add(inputCandleStick);
-            this.DataPlotModel.Series.Add(_minLine);
-            this.DataPlotModel.Series.Add(_maxLine);
-            this.DataPlotModel.Series.Add(_medianLine);
-            this.DataPlotModel.Series.Add(_maxScatter);
-            this.DataPlotModel.Series.Add(_minScatter);
-            this.DataPlotModel.Series.Add(_medianScatter);
+            this.DataPlotModel.Series.Add(minLine);
+            this.DataPlotModel.Series.Add(maxLine);
+            this.DataPlotModel.Series.Add(modeLine);
+            this.DataPlotModel.Series.Add(maxScatter);
+            this.DataPlotModel.Series.Add(minScatter);
+            this.DataPlotModel.Series.Add(modeScatter);
 
-            this.DataPlotModel.Axes[0].IsZoomEnabled = false;
-            this.DataPlotModel.Axes[0].IsPanEnabled = false;
-            this.DataPlotModel.Axes[1].IsPanEnabled = false;
+            this.DataPlotModel.Axes[(int)PlotAxis.XAxis].IsZoomEnabled = false;
+            this.DataPlotModel.Axes[(int)PlotAxis.XAxis].IsPanEnabled = false;
+            this.DataPlotModel.Axes[(int)PlotAxis.YAxis].IsPanEnabled = false;
 
             this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 

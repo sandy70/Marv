@@ -201,9 +201,9 @@
                                              Content="Maximum"
                                              Margin="2" />
 
-                                <RadioButton Name="MedianButton"
+                                <RadioButton Name="ModeButton"
                                              IsChecked="True"
-                                             Content="Median"
+                                             Content="Mode"
                                              Margin="2" />
 
                                 <telerik:RadButton Name="UploadFromPlot"
