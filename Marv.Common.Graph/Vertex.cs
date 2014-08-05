@@ -282,6 +282,14 @@ namespace Marv.Common.Graph
             }
         }
 
+        public bool IsLogScale
+        {
+            get
+            {
+                return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon);
+            }
+        }
+
         public State MostProbableState
         {
             get
