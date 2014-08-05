@@ -17,7 +17,7 @@
                 if (value != this.category)
                 {
                     this.category = value;
-                    this.RaisePropertyChanged("Category");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -34,7 +34,7 @@
                 if (value != this._value)
                 {
                     this._value = value;
-                    this.RaisePropertyChanged("Value");
+                    this.RaisePropertyChanged();
                 }
             }
         }
