@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
@@ -8,35 +7,20 @@ namespace Marv.Common.Graph
     {
         public Dictionary<string, double> Parse(IEnumerable<State> states, string str)
         {
-            var evidence = new Dictionary<string, double>();
-
-            var parts = str
-                .Trim()
-                .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-
             var stateList = states as IList<State> ?? states.ToList();
 
-            if (parts.Count() < stateList.Count() || parts.Count() > stateList.Count())
+            var values = EvidenceStringFactory.ParseArray(str);
+
+            if (values == null || values.Length != stateList.Count) return null;
+
+            var evidence = new Dictionary<string, double>();
+
+            for (var i = 0; i < stateList.Count; i++)
             {
-                return null;
+                evidence[stateList[i].Key] = values[i];
             }
 
-            for (var i = 0; i < parts.Count(); i++)
-            {
-                double value;
-
-                if (Double.TryParse(parts[i], out value))
-                {
-                    var stateKey = stateList.ElementAt(i).Key;
-                    evidence[stateKey] = value;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            return evidence;
+            return evidence.Normalized();
         }
     }
 }

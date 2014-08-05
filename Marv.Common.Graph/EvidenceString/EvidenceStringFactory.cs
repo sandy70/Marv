@@ -39,9 +39,13 @@ namespace Marv.Common.Graph
         public static double[] ParseParams(string str)
         {
             // Gets the values between ( and )
-            var parts = Regex.Match(str, @"\(([^)]*)\)").Groups[1].Value
-                .Trim()
-                .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            return EvidenceStringFactory.ParseArray(Regex.Match(str, @"\(([^)]*)\)").Groups[1].Value);
+        }
+
+        public static double[] ParseArray(string str, string delims = ",")
+        {
+            var parts = str.Trim()
+                .Split(delims.ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
             var values = new double[parts.Count()];
 

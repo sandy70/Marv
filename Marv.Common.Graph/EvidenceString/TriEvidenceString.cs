@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Marv.Common.Graph
 {
@@ -10,8 +11,8 @@ namespace Marv.Common.Graph
 
             if (values == null || values.Length != 3) return null;
 
-            // Check if params are in correct order.
-            if (!(values[0] < values[1] && values[1] < values[2])) return null;
+            // Sort values into correct order. Makes the function robust
+            Array.Sort(values);
 
             var dist = new TriangularDistribution(values[0], values[1], values[2]);
 
