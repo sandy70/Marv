@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
@@ -12,7 +11,9 @@ namespace Marv.Common.Graph
 
             var evidence = new Dictionary<string, double>();
 
-            if (states.Count(state => state.Key == str) == 1)
+            var stateList = states as IList<State> ?? states.ToList();
+
+            if (stateList.Any(state => state.Key == str))
             {
                 evidence[str] = 1;
             }
@@ -20,25 +21,13 @@ namespace Marv.Common.Graph
             {
                 double value;
 
-                if (Double.TryParse(str, out value))
+                if (double.TryParse(str, out value))
                 {
-                    var isWithinBounds = false;
-
-                    foreach (var state in states.Where(s => s.Contains(value)))
-                    {
-                        evidence[state.Key] = 1;
-                        isWithinBounds = true;
-                    }
-
-                    if (!isWithinBounds)
-                    {
-                        return null;
-                    }
+                    var dist = new DeltaDistribution(value);
+                    return stateList.Parse(dist);
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
 
             return evidence.Normalized();
