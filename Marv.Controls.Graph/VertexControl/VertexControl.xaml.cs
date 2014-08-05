@@ -137,7 +137,6 @@ namespace Marv.Controls.Graph
             InitializeComponent();
 
             this.Loaded += VertexControl_Loaded;
-            this.Unloaded += VertexControl_Unloaded;
 
             this.EvidenceChanged += VertexControl_EvidenceChanged;
             this.EvidenceStringChanged += VertexControl_EvidenceStringChanged;
@@ -209,16 +208,14 @@ namespace Marv.Controls.Graph
 
         private void VertexControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ClearEvidenceButton.Click += ClearEvidenceButton_Click;
-            this.EvidenceStringTextBox.KeyUp += EvidenceStringTextBox_KeyUp;
-            this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
-        }
-
-        private void VertexControl_Unloaded(object sender, RoutedEventArgs e)
-        {
             this.ClearEvidenceButton.Click -= ClearEvidenceButton_Click;
+            this.ClearEvidenceButton.Click += ClearEvidenceButton_Click;
+
             this.EvidenceStringTextBox.KeyUp -= EvidenceStringTextBox_KeyUp;
+            this.EvidenceStringTextBox.KeyUp += EvidenceStringTextBox_KeyUp;
+
             this.UniformEvidenceButton.Click -= UniformEvidenceButton_Click;
+            this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
         }
 
         public event EventHandler<Command<Vertex>> CommandExecuted;

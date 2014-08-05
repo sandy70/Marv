@@ -81,6 +81,7 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Distributions\DeltaDistribution.cs" />
     <Compile Include="EvidenceStringType.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="InvalidValueException.cs" />
