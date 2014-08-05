@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Marv.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using OxyPlot;
@@ -138,18 +139,32 @@ namespace Marv.Input
             IsLogarithmic = true;
         }
 
-        private void AddPointsToPlot(object entry, ScatterSeries series1, CandleStickSeries series2, double index)
+        private void AddPointsToPlot(object entry, ScatterSeries series1, Dictionary<double, CandleStickSeries> series2, double index)
         {
             if (entry.ToString().Contains(","))
             {
                 var probSet = entry.ToString().Split(",".ToArray());
                 CheckForLogarithmicScale();
+                var i = 0;
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
+                    var probValue = Convert.ToDouble(probSet[i]);      
                     var probItem = new HighLowItem(index, state.Min, state.Max,
                         state.Min, state.Max);
-                   
-                    series2.Items.Add(probItem);
+                    if (series2.Keys.Contains(probValue))
+                    {
+                        series2[probValue].Items.Add(probItem);
+                    }
+                    else
+                    {
+                        var newSeries = new CandleStickSeries();
+                        if (probValue.Equals(0)) { newSeries.Color = OxyColors.LightGray; }
+                        else{ newSeries.Color = OxyColors.Green; }
+                        newSeries.Items.Add(probItem);
+                        newSeries.Color.ChangeSaturation(-(probValue*10));
+                        series2.Add(probValue, newSeries);
+                    }
+                    i++;
                 }
                 return;
             }
@@ -163,7 +178,7 @@ namespace Marv.Input
                 var valueSet = entry.ToString().Split(":".ToArray());
                 var value1 = Convert.ToDouble(valueSet[0]);
                 var value2 = Convert.ToDouble(valueSet[1]);
-                series2.Items.Add(new HighLowItem(index, value1, value2,
+                series2[1].Items.Add(new HighLowItem(index, value1, value2,
                     value1, value2));
             }
         }
@@ -176,6 +191,8 @@ namespace Marv.Input
             inputScatter.Title = "Base";
             var inputCandleStick = new CandleStickSeries();
             inputCandleStick.Color = OxyColors.Green;
+            var candleStickSet = new Dictionary<double, CandleStickSeries>();
+            candleStickSet.Add(1, inputCandleStick);
             minScatter = new ScatterSeries();
             minScatter.Title = "Minimum";
             minLine = new LineSeries();
@@ -212,7 +229,7 @@ namespace Marv.Input
                     }
                     if (!String.IsNullOrEmpty(entry))
                     {
-                        AddPointsToPlot(entry, inputScatter, inputCandleStick, Convert.ToDouble(rowIndex));
+                        AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(rowIndex));
                     }
                 }
                 AddPlotInfo(model.Year.ToString(), "Section ID");
@@ -227,7 +244,7 @@ namespace Marv.Input
 
                     if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
                     {
-                        AddPointsToPlot(entry, inputScatter, inputCandleStick, Convert.ToDouble(year));
+                        AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(year));
                     }
                 }
                 AddPlotInfo(model.SectionId, "Year");
@@ -284,7 +301,10 @@ namespace Marv.Input
 
 
             this.DataPlotModel.Series.Add(inputScatter);
-            this.DataPlotModel.Series.Add(inputCandleStick);
+            foreach (var series in candleStickSet.Values)
+            {
+                this.DataPlotModel.Series.Add(series);
+            }
             this.DataPlotModel.Series.Add(minLine);
             this.DataPlotModel.Series.Add(maxLine);
             this.DataPlotModel.Series.Add(modeLine);
@@ -294,7 +314,7 @@ namespace Marv.Input
 
             this.DataPlotModel.Axes[(int)PlotAxis.XAxis].IsZoomEnabled = false;
             this.DataPlotModel.Axes[(int)PlotAxis.XAxis].IsPanEnabled = false;
-            this.DataPlotModel.Axes[(int)PlotAxis.YAxis].IsPanEnabled = false;
+            
 
             this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 
