@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using Marv.Common;
@@ -135,7 +136,7 @@ namespace Marv.Input
 
             foreach (var year in this.LineEvidence.Years)
             {
-                row[year.ToString()] = null;
+                row[year.ToString(CultureInfo.CurrentCulture)] = null;
             }
             this.InputRows.Add(row);
             
@@ -272,7 +273,7 @@ namespace Marv.Input
             for (var year = this.StartYear; year <= this.EndYear; year++)
             {
                 this.LineEvidence.SectionEvidences[sectionId].YearEvidences.Add(new YearEvidence {Year = year});
-                row[year.ToString()] = "";
+                row[year.ToString(CultureInfo.CurrentCulture)] = "";
             }
 
             inputRows.Add(row);
@@ -407,11 +408,11 @@ namespace Marv.Input
                     if (yearEvidence.GraphEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
                         var input = yearEvidence.GraphEvidence[this.Graph.SelectedVertex.Key];
-                        row[yearEvidence.Year.ToString()] = input;
+                        row[yearEvidence.Year.ToString(CultureInfo.CurrentCulture)] = input;
                     }
                     else
                     {
-                        row[yearEvidence.Year.ToString()] = "";
+                        row[yearEvidence.Year.ToString(CultureInfo.CurrentCulture)] = "";
                     }
                 }
 

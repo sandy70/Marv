@@ -209,7 +209,7 @@
                                 <telerik:RadButton Name="UploadFromPlot"
                                                    Height="30" Width="30"
                                                    IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                   ToolTip="Uploads plot data into input data.">
+                                                   ToolTip="Uploads distribution into input data.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
                                 </telerik:RadButton>
 
