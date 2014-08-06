@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -28,6 +30,9 @@ namespace Marv.Input
         public static readonly DependencyProperty IsInputToolbarEnabledProperty =
             DependencyProperty.Register("IsInputToolbarEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsLogarithmicProperty =
+            DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
@@ -36,9 +41,6 @@ namespace Marv.Input
 
         public static readonly DependencyProperty SectionNumberProperty =
             DependencyProperty.Register("SectionNumber", typeof (int), typeof (MainWindow), new PropertyMetadata(0));
-
-        public static readonly DependencyProperty IsLogarithmicProperty =
-            DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
         private readonly NotificationTimed notificationBadCurrentCell = new NotificationTimed
         {
@@ -52,48 +54,90 @@ namespace Marv.Input
 
         public int EndYear
         {
-            get { return (int) GetValue(EndYearProperty); }
+            get
+            {
+                return (int) GetValue(EndYearProperty);
+            }
 
-            set { SetValue(EndYearProperty, value); }
+            set
+            {
+                SetValue(EndYearProperty, value);
+            }
         }
 
         public Graph Graph
         {
-            get { return (Graph) GetValue(GraphProperty); }
+            get
+            {
+                return (Graph) GetValue(GraphProperty);
+            }
 
-            set { SetValue(GraphProperty, value); }
+            set
+            {
+                SetValue(GraphProperty, value);
+            }
         }
 
         public ObservableCollection<dynamic> InputRows
         {
-            get { return (ObservableCollection<dynamic>) GetValue(InputRowsProperty); }
+            get
+            {
+                return (ObservableCollection<dynamic>) GetValue(InputRowsProperty);
+            }
 
-            set { SetValue(InputRowsProperty, value); }
-        }
-
-        public bool IsLogarithmic
-        {
-            get { return (bool) GetValue(IsLogarithmicProperty); }
-            set { SetValue(IsLogarithmicProperty, value); }
+            set
+            {
+                SetValue(InputRowsProperty, value);
+            }
         }
 
         public bool IsInputToolbarEnabled
         {
-            get { return (bool) GetValue(IsInputToolbarEnabledProperty); }
-            set { SetValue(IsInputToolbarEnabledProperty, value); }
+            get
+            {
+                return (bool) GetValue(IsInputToolbarEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsInputToolbarEnabledProperty, value);
+            }
+        }
+
+        public bool IsLogarithmic
+        {
+            get
+            {
+                return (bool) GetValue(IsLogarithmicProperty);
+            }
+            set
+            {
+                SetValue(IsLogarithmicProperty, value);
+            }
         }
 
         public ObservableCollection<INotification> Notifications
         {
-            get { return (ObservableCollection<INotification>) GetValue(NotificationsProperty); }
-            set { SetValue(NotificationsProperty, value); }
+            get
+            {
+                return (ObservableCollection<INotification>) GetValue(NotificationsProperty);
+            }
+            set
+            {
+                SetValue(NotificationsProperty, value);
+            }
         }
 
         public int StartYear
         {
-            get { return (int) GetValue(StartYearProperty); }
+            get
+            {
+                return (int) GetValue(StartYearProperty);
+            }
 
-            set { SetValue(StartYearProperty, value); }
+            set
+            {
+                SetValue(StartYearProperty, value);
+            }
         }
 
         public int SectionNumber
@@ -134,10 +178,12 @@ namespace Marv.Input
             }
         }
 
-
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (InputRows == null) { return; }
+            if (InputRows == null)
+            {
+                return;
+            }
 
             var years = this.LineEvidence.Years;
             for (var i = 0; i < SectionNumber; i++)
@@ -153,7 +199,6 @@ namespace Marv.Input
                 }
                 this.InputRows.Add(row);
             }
-
         }
 
         private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
@@ -205,12 +250,18 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
-            
+            if (this.InputGridView.SelectedCells.Count != 1)
+            {
+                return;
+            }
+
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var modelData = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || modelData == null) { return; }
-            
+            if (model.IsColumnSectionId || modelData == null)
+            {
+                return;
+            }
+
             this.InputGridView.SelectAll();
             foreach (var cell in this.InputGridView.SelectedCells)
             {
@@ -219,15 +270,37 @@ namespace Marv.Input
                 {
                     this.SetCell(oldModel, modelData.String);
                 }
-            }                     
+            }
+        }
+
+        public bool IsSelectionSquare()
+        {
+            var rowIndices = new List<int>();
+            var colIndices = new List<int>();
+
+            foreach (var selectedCell in this.InputGridView.SelectedCells)
+            {
+                Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
+                colIndices.AddUnique(selectedCell.Column.DisplayIndex);
+            }
+
+            var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
+
+            return total == this.InputGridView.SelectedCells.Count;
         }
 
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
-            
+            if (this.InputGridView.SelectedCells.Count != 1)
+            {
+                return;
+            }
+
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
-            if (selectedCellModel.IsColumnSectionId) { return; }               
+            if (selectedCellModel.IsColumnSectionId)
+            {
+                return;
+            }
             var vertexEvidence = selectedCellModel.Data as VertexEvidence;
 
             foreach (var column in this.InputGridView.Columns)
@@ -238,16 +311,21 @@ namespace Marv.Input
 
                 this.SetCell(cellModel, vertexEvidence.String);
             }
-            
         }
 
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
-            
+            if (this.InputGridView.SelectedCells.Count != 1)
+            {
+                return;
+            }
+
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (selectedCellModel.IsColumnSectionId) { return; }               
+            if (selectedCellModel.IsColumnSectionId)
+            {
+                return;
+            }
             var selectedCellData = selectedCellModel.Data as VertexEvidence;
 
             foreach (var row in this.InputRows)
@@ -255,7 +333,6 @@ namespace Marv.Input
                 var cellModel = new CellModel(row, selectedCellModel.Header);
                 this.SetCell(cellModel, selectedCellData.String);
             }
-            
         }
 
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
@@ -336,7 +413,6 @@ namespace Marv.Input
             this.UpdateGrid();
         }
 
-
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.AddSectionButton.Click += AddSectionButton_Click;
@@ -379,14 +455,14 @@ namespace Marv.Input
             PlotLineType = LineType.Max;
         }
 
-        private void ModeButton_Checked(object sender, RoutedEventArgs e)
-        {
-            PlotLineType = LineType.Mode;
-        }
-
         private void MinButton_Checked(object sender, RoutedEventArgs e)
         {
             PlotLineType = LineType.Min;
+        }
+
+        private void ModeButton_Checked(object sender, RoutedEventArgs e)
+        {
+            PlotLineType = LineType.Mode;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -510,6 +586,7 @@ namespace Marv.Input
             if (DataPlotModel != null)
             {
                 UploadToGrid();
+                // UploadToGrid(inputScatter);
             }
         }
     }
