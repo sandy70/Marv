@@ -148,9 +148,16 @@ namespace Marv.Input
                 var i = 0;
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
-                    var probValue = probSet[i];      
-                    var probItem = new HighLowItem(index, state.Min, state.Max,
-                        state.Min, state.Max);
+                    var probValue = probSet[i];
+                    var min = state.Min;
+                    var max = state.Max;
+                    if (max.Equals(Double.PositiveInfinity))
+                    {
+                        max = 2*min;
+                    }
+
+                    var probItem = new HighLowItem(index, min, max,
+                        min, max);
                     if (series2.Keys.Contains(probValue))
                     {
                         series2[probValue].Items.Add(probItem);
@@ -193,20 +200,20 @@ namespace Marv.Input
             var candleStickSet = new Dictionary<double, CandleStickSeries>();
             candleStickSet.Add(1, inputCandleStick);
             minScatter = new ScatterSeries();
-            minScatter.Title = "Minimum";
+           
             minLine = new LineSeries();
             minLine.Color = OxyColors.Blue;
             minScatter.MarkerFill = OxyColors.Blue;
             maxScatter = new ScatterSeries();
-            maxScatter.Title = "Maximum";
+            
             maxLine = new LineSeries();
-            maxLine.Color = OxyColors.Red;
-            maxScatter.MarkerFill = OxyColors.Red;
+            maxLine.Color = OxyColors.Blue;
+            maxScatter.MarkerFill = OxyColors.Blue;
             modeScatter = new ScatterSeries();
-            modeScatter.Title = "Median";
-            modeScatter.MarkerFill = OxyColors.Purple;
+            modeScatter.Title = "Belief";
+            modeScatter.MarkerFill = OxyColors.Blue;
             modeLine = new LineSeries();
-            modeLine.Color = OxyColors.Purple;
+            modeLine.Color = OxyColors.Blue;
 
             this.DataPlotModel = new PlotModel();
 
@@ -220,7 +227,7 @@ namespace Marv.Input
                     
                     var entry = row[model.Header];
                     
-                    if (!String.IsNullOrEmpty(entry.ToString()))
+                    if (entry != null && !String.IsNullOrEmpty(entry.ToString()))
                     {
                         AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(rowIndex));
                     }
