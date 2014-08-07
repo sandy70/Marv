@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
-using Marv.Common;
-using Microsoft.CSharp.RuntimeBinder;
+using Marv.Common.Graph;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -80,9 +80,9 @@ namespace Marv.Input
                 {
                     var columns = this.InputGridView.Columns;
                     var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
-                    if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header)) ;
+                    if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header)) 
                     {
-                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString()), evidenceString);
+                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString(CultureInfo.CurrentCulture)), evidenceString);
                     }
                 }
             }
@@ -133,22 +133,22 @@ namespace Marv.Input
             foreach (var state in this.Graph.SelectedVertex.States)
             {
                 if (oldState == state) { continue; }
-                if (state.Max != (oldState.Max * 10)) { return; }
+                if (!state.Max.Equals((oldState.Max * 10))) { return; }
                 oldState = state;                                                        
             }
             IsLogarithmic = true;
         }
 
-        private void AddPointsToPlot(object entry, ScatterSeries series1, Dictionary<double, CandleStickSeries> series2, double index)
-        {
+        private void AddPointsToPlot(VertexEvidence entry, ScatterSeries series1, Dictionary<double, CandleStickSeries> series2, double index)
+        {        
             if (entry.ToString().Contains(","))
             {
-                var probSet = entry.ToString().Split(",".ToArray());
+                var probSet = entry.Evidence;
                 CheckForLogarithmicScale();
                 var i = 0;
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
-                    var probValue = Convert.ToDouble(probSet[i]);      
+                    var probValue = probSet[i];      
                     var probItem = new HighLowItem(index, state.Min, state.Max,
                         state.Min, state.Max);
                     if (series2.Keys.Contains(probValue))
@@ -158,10 +158,9 @@ namespace Marv.Input
                     else
                     {
                         var newSeries = new CandleStickSeries();
-                        if (probValue.Equals(0)) { newSeries.Color = OxyColors.LightGray; }
-                        else{ newSeries.Color = OxyColors.Green; }
-                        newSeries.Items.Add(probItem);
-                        newSeries.Color.ChangeSaturation(-(probValue*10));
+                        newSeries.Color = OxyColors.Green;
+                        newSeries.CandleWidth = 10*probValue;
+                        newSeries.Items.Add(probItem);                        
                         series2.Add(probValue, newSeries);
                     }
                     i++;
@@ -170,7 +169,7 @@ namespace Marv.Input
             }
             if ((!entry.ToString().Contains(":")))
             {
-                var value = Convert.ToDouble(entry);
+                var value = Convert.ToDouble(entry.ToString());
                 series1.Points.Add(new ScatterPoint(index, value));
             }
             else if (entry.ToString().Split(":".ToArray()).Length == 2)
@@ -218,21 +217,15 @@ namespace Marv.Input
                 foreach (var row in this.InputRows)
                 {
                     var rowIndex = this.InputRows.IndexOf(row) + 1;
-                    var entry = string.Empty;
-                    try
-                    {
-                        entry = row[model.Header].String;
-                    }
-                    catch (RuntimeBinderException e)
-                    {
-                        entry = row[model.Header];
-                    }
-                    if (!String.IsNullOrEmpty(entry))
+                    
+                    var entry = row[model.Header];
+                    
+                    if (!String.IsNullOrEmpty(entry.ToString()))
                     {
                         AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(rowIndex));
                     }
                 }
-                AddPlotInfo(model.Year.ToString(), "Section ID");
+                AddPlotInfo(model.Year.ToString(CultureInfo.CurrentCulture), "Section ID");
             }
             else
             {                
@@ -240,9 +233,9 @@ namespace Marv.Input
                 foreach (var column in this.InputGridView.Columns)
                 {
                     var year = column.Header.ToString();
-                    var entry = row[year].ToString();
+                    var entry = row[year] as VertexEvidence;
 
-                    if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry))
+                    if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry.ToString()))
                     {
                         AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(year));
                     }
