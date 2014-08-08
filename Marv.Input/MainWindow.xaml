@@ -176,8 +176,20 @@
                                                    Content="Add Section"
                                                    Margin="2" />
 
+                                <TextBlock TextAlignment="Right" VerticalAlignment="Center"
+                                           Text="Sections" />
+
+                                <telerik:RadNumericUpDown Margin="2"
+                                                          Maximum="100000"
+                                                          Minimum="0"
+                                                          Value="{Binding ElementName=Root, Path=SectionNumber}"
+                                                          NumberDecimalDigits="0"
+                                                          SmallChange="1"
+                                                          LargeChange="5" />
+
 
                             </UniformGrid>
+
                         </Grid>
 
                     </telerik:RadPane>
@@ -215,64 +227,84 @@
 
                             </telerik:RadToolBar>
                             <oxy:PlotView Model="{Binding ElementName=Root, Path=DataPlotModel}" IsLegendVisible="True" Grid.Row="1"/>
+
                         </Grid>
+
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
 
             <telerik:RadSplitContainer InitialPosition="DockedRight"
+                                       Orientation="Vertical"
                                        Width="400">
-                <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Node">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="50" />
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0">
+                <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 200">
+                    <telerik:RadPaneGroup>
+                        <telerik:RadPane Header="Node">
+                            <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
                                     <RowDefinition />
+                                    <RowDefinition Height="50" />
                                 </Grid.RowDefinitions>
 
-                                <!-- Vertex Combo Box -->
-                                <telerik:RadComboBox CanAutocompleteSelectItems="True"
-                                                     CanKeyboardNavigationSelectItems="True"
-                                                     DisplayMemberPath="Name"
-                                                     IsEditable="True"
-                                                     IsFilteringEnabled="True"
-                                                     IsSynchronizedWithCurrentItem="False"
-                                                     ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
-                                                     Margin="5"
-                                                     OpenDropDownOnFocus="True"
-                                                     SelectedIndex="0"
-                                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                                     TextSearchMode="Contains" />
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="81*"/>
+                                        <ColumnDefinition Width="313*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
 
-                                <!-- Vertex Control -->
-                                <marv:VertexControl Name="VertexControl"
-                                                    Grid.Row="1"
-                                                    IsEditable="True"
-                                                    IsEvidenceVisible="True"
-                                                    IsInputVisible="True"
-                                                    IsToolbarVisible="False"
-                                                    IsValueVisible="False"
-                                                    Margin="5"
-                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                    Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}" />
-                            </Grid>
+                                    <!-- Vertex Combo Box -->
+                                    <telerik:RadComboBox CanAutocompleteSelectItems="True"
+                                                         CanKeyboardNavigationSelectItems="True"
+                                                         DisplayMemberPath="Name"
+                                                         IsEditable="True"
+                                                         IsFilteringEnabled="True"
+                                                         IsSynchronizedWithCurrentItem="False"
+                                                         ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                                         Margin="5"
+                                                         OpenDropDownOnFocus="True"
+                                                         SelectedIndex="0"
+                                                         SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                                                         TextSearchMode="Contains" Grid.ColumnSpan="2" />
 
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
+                                    <!-- Vertex Control -->
+                                    <marv:VertexControl Name="VertexControl"
+                                                        Grid.Row="1"
+                                                        IsEditable="True"
+                                                        IsEvidenceVisible="True"
+                                                        IsInputVisible="True"
+                                                        IsToolbarVisible="False"
+                                                        IsValueVisible="False"
+                                                        Margin="5"
+                                                        Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                        Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource NullToVisibility}}" Grid.ColumnSpan="2" />
+                                </Grid>
+
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </telerik:RadPane>
-                </telerik:RadPaneGroup>
-            </telerik:RadSplitContainer>
+                        </telerik:RadPane>
+                    </telerik:RadPaneGroup>
+                </telerik:RadSplitContainer>
+                <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10">
+                    <telerik:RadPaneGroup>
+                        <telerik:RadPane Header="Status">
+                            <StatusBar DockPanel.Dock="Bottom">
+                                <StatusBarItem>
+                                    <telerik:RadProgressBar Name ="LoadingBar"></telerik:RadProgressBar>
+                                </StatusBarItem>
+                            </StatusBar>
+                        </telerik:RadPane>
+                    </telerik:RadPaneGroup>
+                </telerik:RadSplitContainer>
+            </telerik:RadSplitContainer>           
         </telerik:RadDocking>
 
         <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -282,5 +314,9 @@
                 <DropShadowEffect Opacity="0.5" />
             </marv:NotificationControl.Effect>
         </marv:NotificationControl>
+
     </Grid>
+
+
+
 </Window>

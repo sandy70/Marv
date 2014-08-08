@@ -34,6 +34,9 @@ namespace Marv.Input
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
+        public static readonly DependencyProperty SectionNumberProperty =
+            DependencyProperty.Register("SectionNumber", typeof (int), typeof (MainWindow), new PropertyMetadata(0));
+
         public static readonly DependencyProperty IsLogarithmicProperty =
             DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
@@ -93,6 +96,13 @@ namespace Marv.Input
             set { SetValue(StartYearProperty, value); }
         }
 
+        public int SectionNumber
+        {
+            get { return (int)GetValue(SectionNumberProperty); }
+
+            set { SetValue(SectionNumberProperty, value); }
+        }
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -128,18 +138,22 @@ namespace Marv.Input
         private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) { return; }
-            
-            var row = new Dynamic();
-            var sectionId = "Section " + (this.InputRows.Count + 1);
-            row[CellModel.SectionIdHeader] = sectionId;
-            this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
 
-            foreach (var year in this.LineEvidence.Years)
+            var years = this.LineEvidence.Years;
+            for (var i = 0; i < SectionNumber; i++)
             {
-                row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                var row = new Dynamic();
+                var sectionId = "Section " + (this.InputRows.Count + 1);
+                row[CellModel.SectionIdHeader] = sectionId;
+                this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
+
+                foreach (var year in years)
+                {
+                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                }
+                this.InputRows.Add(row);
             }
-            this.InputRows.Add(row);
-            
+
         }
 
         private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
@@ -287,6 +301,7 @@ namespace Marv.Input
             {
                 column.Width = 70;
             }
+            this.InputGridView.Columns[0].Width = 90;
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
