@@ -413,7 +413,7 @@ namespace Marv.Input
             this.UpdateGrid();
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.AddSectionButton.Click += AddSectionButton_Click;
             this.ClearAllButton.Click += this.ClearAllButton_Click;
@@ -425,7 +425,6 @@ namespace Marv.Input
             this.CopyAcrossRows.Click += CopyAcrossRows_Click;
             this.CopyAcrossAll.Click += CopyAcrossAll_Click;
             this.UploadFromPlot.Click += UploadFromPlot_Click;
-
 
             this.ModeButton.Checked += ModeButton_Checked;
             this.MinButton.Checked += MinButton_Checked;
