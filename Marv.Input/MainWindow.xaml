@@ -298,7 +298,7 @@
                         <telerik:RadPane Header="Status">
                             <StatusBar DockPanel.Dock="Bottom">
                                 <StatusBarItem>
-                                    <telerik:RadProgressBar Name ="LoadingBar"></telerik:RadProgressBar>
+                                    <ProgressBar Name ="LoadingBar" Minimum="0" Height="10" Width="100" Visibility="Hidden" ></ProgressBar>
                                 </StatusBarItem>
                             </StatusBar>
                         </telerik:RadPane>
