@@ -11,15 +11,9 @@ namespace Marv.Common
             if (!list.Contains(item)) list.Add(item);
         }
 
-            }
-        }
-
         public static void AddUnique<T>(this IList<T> list, IEnumerable<T> items)
         {
-            foreach (var item in items)
-            {
-                list.AddUnique(item);
-            }
+            foreach (var item in items) list.AddUnique(item);
         }
 
         public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> source)
