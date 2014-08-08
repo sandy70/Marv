@@ -13,6 +13,11 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        
         <telerik:RadDocking>
             <telerik:RadDocking.DocumentHost>
                 <telerik:RadSplitContainer>
@@ -293,18 +298,9 @@
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
-                <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10">
-                    <telerik:RadPaneGroup>
-                        <telerik:RadPane Header="Status">
-                            <StatusBar DockPanel.Dock="Bottom">
-                                <StatusBarItem>
-                                    <ProgressBar Name ="LoadingBar" Minimum="0" Height="10" Width="100" Visibility="Hidden" ></ProgressBar>
-                                </StatusBarItem>
-                            </StatusBar>
-                        </telerik:RadPane>
-                    </telerik:RadPaneGroup>
-                </telerik:RadSplitContainer>
-            </telerik:RadSplitContainer>           
+            </telerik:RadSplitContainer>
+
+
         </telerik:RadDocking>
 
         <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -315,8 +311,11 @@
             </marv:NotificationControl.Effect>
         </marv:NotificationControl>
 
+        <StatusBar Grid.Row="1">
+            <StatusBarItem VerticalContentAlignment="Stretch">
+                <ProgressBar Name ="LoadingBar" Width="256" Margin="2"
+                             Minimum="0"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
-
-
-
 </Window>

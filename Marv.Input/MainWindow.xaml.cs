@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows;
@@ -182,50 +183,69 @@ namespace Marv.Input
 
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (InputRows == null)
-            var progress = new Progress<int>();
-            LoadingBar.Visibility = Visibility.Visible;
-            LoadingBar.Value = LoadingBar.Minimum;
-            LoadingBar.Maximum = SectionNumber - 1;
-            progress.ProgressChanged += (o, ev) =>
+            if (InputRows == null) return;
+
+            this.LoadingBar.Maximum = this.SectionNumber;
+
+            var progress = new Progress<int>(i =>
             {
-                LoadingBar.Value = ev;
-                
-            };
-            
-            await AddSectionTask(this.SectionNumber, progress);
-
-            
-        }
-
-        private async Task AddSectionTask(int sectionNumber, IProgress<int> progress)
-        {
-            var years = this.LineEvidence.Years;
-            var inputRows = this.InputRows;
-            await Task.Run(() =>
-            {
-                
-
-                for (var i = 0; i < sectionNumber; i++)
-                {
-                    var row = new Dynamic();
-                    var sectionId = "Section " + (inputRows.Count + 1);
-                    row[CellModel.SectionIdHeader] = sectionId;
-                    this.LineEvidence.SectionEvidences.Add(new SectionEvidence { Id = sectionId });
-
-                    foreach (var year in years)
-                    {
-                        row[year.ToString(CultureInfo.CurrentCulture)] = null;
-                    }
-                    inputRows.Add(row);
-                    progress.Report(i);
-                } 
+                this.LoadingBar.Value = i;
             });
-          
+
+            var inputRows = this.InputRows;
+            var sectionEvidences = this.LineEvidence.SectionEvidences;
+            var years = this.LineEvidence.Years;
+            var nSections = this.SectionNumber;
+
+            await Task.Run(() => this.DoWork(inputRows, sectionEvidences, years, nSections, progress));
+
+            Console.WriteLine("AddSectionButton_Click");
         }
 
-        
+        private void DoWork(ObservableCollection<dynamic> inputRows, List<SectionEvidence, string> sectionEvidences, List<int> years, int nSections, IProgress<int> progress)
+        {
+            for (int i = 0; i < nSections; i++)
+            {
+                var row = new Dynamic();
+                var sectionId = "Section " + (inputRows.Count + 1);
+                row[CellModel.SectionIdHeader] = sectionId;
+                sectionEvidences.Add(new SectionEvidence { Id = sectionId });
 
+                foreach (var year in years)
+                {
+                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                }
+
+                inputRows.Add(row);
+
+                Thread.Sleep(10);
+                progress.Report(i);
+            }
+        }
+
+        private void AddSectionTask(int[] years, int sectionNumber, IProgress<int> progress)
+        {
+            var inputRows = new ObservableCollection<Dynamic>();
+            var sectionEvidences = new List<SectionEvidence>();
+
+            for (var i = 0; i < sectionNumber; i++)
+            {
+                var row = new Dynamic();
+                var sectionId = "Section " + (inputRows.Count + 1);
+                row[CellModel.SectionIdHeader] = sectionId;
+                sectionEvidences.Add(new SectionEvidence { Id = sectionId });
+
+                foreach (var year in years)
+                {
+                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                }
+
+                Console.WriteLine("AddSectionTask");
+
+                inputRows.Add(row);
+                progress.Report(i);
+            }
+        }
 
         private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
         {
