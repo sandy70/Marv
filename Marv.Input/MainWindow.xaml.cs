@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -178,28 +180,52 @@ namespace Marv.Input
             }
         }
 
-        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null)
+            var progress = new Progress<int>();
+            LoadingBar.Visibility = Visibility.Visible;
+            LoadingBar.Value = LoadingBar.Minimum;
+            LoadingBar.Maximum = SectionNumber - 1;
+            progress.ProgressChanged += (o, ev) =>
             {
-                return;
-            }
+                LoadingBar.Value = ev;
+                
+            };
+            
+            await AddSectionTask(this.SectionNumber, progress);
 
-            var years = this.LineEvidence.Years;
-            for (var i = 0; i < SectionNumber; i++)
-            {
-                var row = new Dynamic();
-                var sectionId = "Section " + (this.InputRows.Count + 1);
-                row[CellModel.SectionIdHeader] = sectionId;
-                this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
-
-                foreach (var year in years)
-                {
-                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
-                }
-                this.InputRows.Add(row);
-            }
+            
         }
+
+        private async Task AddSectionTask(int sectionNumber, IProgress<int> progress)
+        {
+            var years = this.LineEvidence.Years;
+            var inputRows = this.InputRows;
+            await Task.Run(() =>
+            {
+                
+
+                for (var i = 0; i < sectionNumber; i++)
+                {
+                    var row = new Dynamic();
+                    var sectionId = "Section " + (inputRows.Count + 1);
+                    row[CellModel.SectionIdHeader] = sectionId;
+                    this.LineEvidence.SectionEvidences.Add(new SectionEvidence { Id = sectionId });
+
+                    foreach (var year in years)
+                    {
+                        row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                    }
+                    inputRows.Add(row);
+                    progress.Report(i);
+                } 
+            });
+          
+        }
+
+        
+
 
         private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
         {
