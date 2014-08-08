@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows.Threading;
 using System.Windows;
 using Marv.Common;
@@ -138,36 +139,18 @@ namespace Marv.Input
         }
 
 
-        private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) { return; }
-            var progress = new Progress<int>();
-            LoadingBar.Visibility = Visibility.Visible;
-            LoadingBar.Value = LoadingBar.Minimum;
-            LoadingBar.Maximum = SectionNumber - 1;
-            progress.ProgressChanged += (o, ev) =>
+            var bw = new BackgroundWorker();
+            bw.WorkerReportsProgress = true;
+            bw.DoWork += (ob, eve) =>
             {
-                LoadingBar.Value = ev;
-                
-            };
-            
-            await AddSectionTask(this.SectionNumber, progress);
-
-            
-        }
-
-        private async Task AddSectionTask(int sectionNumber, IProgress<int> progress)
-        {
-            var years = this.LineEvidence.Years;
-            var inputRows = this.InputRows;
-            await Task.Run(() =>
-            {
-                
-
-                for (var i = 0; i < sectionNumber; i++)
+                var years = this.LineEvidence.Years;
+                for (var i = 0; i < SectionNumber; i++)
                 {
                     var row = new Dynamic();
-                    var sectionId = "Section " + (inputRows.Count + 1);
+                    var sectionId = "Section " + (InputRows.Count + 1);
                     row[CellModel.SectionIdHeader] = sectionId;
                     this.LineEvidence.SectionEvidences.Add(new SectionEvidence { Id = sectionId });
 
@@ -175,13 +158,25 @@ namespace Marv.Input
                     {
                         row[year.ToString(CultureInfo.CurrentCulture)] = null;
                     }
-                    inputRows.Add(row);
-                    progress.Report(i);
+                    InputRows.Add(row);
+                    
                 } 
-
-            });
-          
+            };
+            bw.RunWorkerAsync();
+            
+            LoadingBar.Visibility = Visibility.Visible;
+            LoadingBar.Value = LoadingBar.Minimum;
+            LoadingBar.Maximum = SectionNumber - 1;
+            bw.ProgressChanged += (o, ev) =>
+            {
+                
+            };
+                       
         }
+
+       
+          
+        
 
         
 
