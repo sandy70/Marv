@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
+using Marv.Common.Graph;
 
 namespace Marv.Input
 {
@@ -97,7 +98,7 @@ namespace Marv.Input
             if (e.Cell.ToModel().IsColumnSectionId) return;
 
             var evidenceString = e.NewValue as string;
-            var vertexEvidence = EvidenceStringFactory.Create(evidenceString).Parse(this.Graph.SelectedVertex.States, evidenceString);
+            var vertexEvidence = this.Graph.SelectedVertex.States.Parse(evidenceString);
 
             if (vertexEvidence != null || evidenceString == string.Empty) return;
 

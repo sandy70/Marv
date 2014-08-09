@@ -61,20 +61,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.Vertex.cs" />
-    <Compile Include="EvidenceString\TriEvidenceString.cs" />
-    <Compile Include="EvidenceString\NormEvidenceString.cs" />
     <Compile Include="VertexClearCommand.cs" />
     <Compile Include="VertexEvidence.cs" />
-    <Compile Include="EvidenceString\DistributionEvidenceString.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
-    <Compile Include="EvidenceString\IEvidenceStringParser.cs" />
-    <Compile Include="EvidenceString\EvidenceStringFactory.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
-    <Compile Include="EvidenceString\NullEvidenceString.cs" />
     <Compile Include="VertexCommandArgs.cs" />
     <Compile Include="VertexCommand\VertexCommands.cs" />
     <Compile Include="VertexCommand\VertexExpandCommand.cs" />
@@ -83,9 +77,7 @@
     <Compile Include="NetworkStructure.cs" />
     <Compile Include="NetworkStructureVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EvidenceString\RangeEvidenceString.cs" />
     <Compile Include="State.cs" />
-    <Compile Include="EvidenceString\StateEvidenceString.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="VertexCommand\VertexCommand.cs" />
     <Compile Include="VertexValueUndefinedException.cs" />

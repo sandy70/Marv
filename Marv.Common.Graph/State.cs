@@ -10,10 +10,7 @@
 
         public double Belief
         {
-            get
-            {
-                return this.belief;
-            }
+            get { return this.belief; }
 
             set
             {
@@ -24,10 +21,7 @@
 
         public double Evidence
         {
-            get
-            {
-                return this.evidence;
-            }
+            get { return this.evidence; }
 
             set
             {
@@ -36,12 +30,20 @@
             }
         }
 
+        public double InitialBelief
+        {
+            get { return this.initialBelief; }
+
+            set
+            {
+                this.initialBelief = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public double Max
         {
-            get
-            {
-                return this.max;
-            }
+            get { return this.max; }
 
             set
             {
@@ -55,10 +57,7 @@
 
         public double Min
         {
-            get
-            {
-                return this.min;
-            }
+            get { return this.min; }
 
             set
             {
@@ -67,20 +66,6 @@
                     this.min = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public double InitialBelief
-        {
-            get
-            {
-                return this.initialBelief;
-            }
-
-            set
-            {
-                this.initialBelief = value;
-                this.RaisePropertyChanged();
             }
         }
 

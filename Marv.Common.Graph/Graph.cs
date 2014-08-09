@@ -29,14 +29,21 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return new Dictionary<string, string, double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.Belief));
+                return new Dictionary<string, string, double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.States.GetBelief()));
             }
 
             set
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    vertex.Belief = value == null ? null : value[vertex.Key];
+                    if (value == null)
+                    {
+                        vertex.States.SetBelief(0);
+                    }
+                    else
+                    {
+                        vertex.States.SetBelief(value[vertex.Key].Values);
+                    }
                 }
 
                 this.RaisePropertyChanged();
@@ -102,7 +109,7 @@ namespace Marv.Common.Graph
 
                 foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
                 {
-                    graphEvidence[vertex.Key] = vertex.Evidence;
+                    graphEvidence[vertex.Key] = vertex.States.GetEvidence();
                 }
 
                 return graphEvidence;
@@ -112,7 +119,14 @@ namespace Marv.Common.Graph
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    vertex.Evidence = value == null ? null : value[vertex.Key];
+                    if (value == null)
+                    {
+                        vertex.States.SetEvidence(0);
+                    }
+                    else
+                    {
+                        vertex.States.SetEvidence(value[vertex.Key].Values);
+                    }
                 }
             }
         }
@@ -346,7 +360,7 @@ namespace Marv.Common.Graph
 
                         value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
-                        sourceVertex.Evidence = null;
+                        sourceVertex.States.SetEvidence(0);
                         sourceVertex.UpdateEvidenceString();
                     }
                     catch (SmileException exception)
@@ -482,7 +496,7 @@ namespace Marv.Common.Graph
             {
                 if (vertex.IsEvidenceEntered)
                 {
-                    this.networkStructure.SetEvidence(vertex.Key, vertex.Evidence.Select(kvp => kvp.Value).ToArray());
+                    this.networkStructure.SetEvidence(vertex.Key, vertex.States.Select(state => state.Evidence).ToArray());
                 }
             }
 
@@ -510,12 +524,12 @@ namespace Marv.Common.Graph
                         }
                     }
 
-                    vertex.Evidence = evidence;
+                    vertex.States.SetEvidence(evidence.ToArray());
                     vertex.EvidenceString = graphEvidence[vertex.Key].String;
                 }
                 else
                 {
-                    vertex.Evidence = null;
+                    vertex.States.SetEvidence(0);
                     vertex.EvidenceString = null;
                 }
             }

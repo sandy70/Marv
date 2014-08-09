@@ -7,6 +7,13 @@
 
         public UniformDistribution(double theMin, double theMax)
         {
+            if (theMin > theMax)
+            {
+                var temp = theMin;
+                theMin = theMax;
+                theMax = temp;
+            }
+
             this.min = theMin;
             this.max = theMax;
         }

@@ -36,24 +36,6 @@ namespace Marv.Common.Graph
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
-        public Dictionary<string, double> Belief
-        {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.Belief);
-            }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.Belief = value == null ? 0 : value[state.Key];
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public ObservableCollection<Command<Vertex>> Commands
         {
             get
@@ -124,24 +106,6 @@ namespace Marv.Common.Graph
                 {
                     this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
                 }
-            }
-        }
-
-        public Dictionary<string, double> Evidence
-        {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.Evidence);
-            }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.Evidence = (value == null) || !value.ContainsKey(state.Key) ? 0 : value[state.Key];
-                }
-
-                this.RaisePropertyChanged();
             }
         }
 
@@ -429,7 +393,7 @@ namespace Marv.Common.Graph
         {
             return new VertexEvidence
             {
-                Evidence = this.Evidence.Select(kvp => kvp.Value).ToArray(),
+                Evidence = this.States.Select(state => state.Evidence).ToArray(),
                 String = this.EvidenceString
             };
         }
@@ -487,14 +451,14 @@ namespace Marv.Common.Graph
 
         public void UpdateEvidence()
         {
-            this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this.States, this.EvidenceString).Normalized();
+            this.States.SetEvidence(this.EvidenceString);
         }
 
         public void UpdateEvidenceString()
         {
-            if (this.Evidence.Sum(kvp => kvp.Value) > 0)
+            if (this.States.Sum(state => state.Evidence) > 0)
             {
-                this.EvidenceString = this.Evidence.String("{0:F2}");
+                this.EvidenceString = this.States.Select(state => state.Evidence).String("{0:F2}");
             }
             else
             {

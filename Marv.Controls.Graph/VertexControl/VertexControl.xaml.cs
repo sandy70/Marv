@@ -180,7 +180,7 @@ namespace Marv.Controls.Graph
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.Evidence = null;
+            this.Vertex.States.SetEvidence(0);
             this.RaiseEvidenceChanged();
         }
 
@@ -197,7 +197,7 @@ namespace Marv.Controls.Graph
 
         private void VertexControl_EvidenceChanged(object sender, Vertex e)
         {
-            this.Vertex.Evidence = this.Vertex.Evidence.Normalized();
+            this.Vertex.States.SetEvidence(this.Vertex.States.GetEvidence().Normalized().ToArray());
             this.Vertex.UpdateEvidenceString();
         }
 

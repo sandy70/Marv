@@ -333,6 +333,11 @@ namespace Marv.Common
                 .Concat(last);
         }
 
+        public static string String<T>(this IEnumerable<T> items, string format = "{0}")
+        {
+            return items.Select(item => System.String.Format(format, item)).String();
+        }
+
         public static string String(this IEnumerable<string> strings)
         {
             var str = "";
