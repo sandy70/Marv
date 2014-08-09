@@ -332,7 +332,7 @@ namespace Marv.Controls.Graph
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Evidence = null;
+            this.Graph.Vertices.ClearEvidence();
             this.RaiseEvidenceEntered();
         }
 

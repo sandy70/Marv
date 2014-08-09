@@ -193,14 +193,13 @@ namespace Marv.Input
             });
 
             var inputRows = this.InputRows;
-            var sectionEvidences = this.LineEvidence.SectionEvidences;
             var years = this.LineEvidence.Years;
             var nSections = this.SectionNumber;
 
-            await Task.Run(() => this.AddSections(inputRows, sectionEvidences, years, nSections, progress));
+            await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
         }
 
-        private void AddSections(ObservableCollection<dynamic> inputRows, List<SectionEvidence, string> sectionEvidences, List<int> years, int nSections, IProgress<int> progress)
+        private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)
         {
             for (int i = 0; i < nSections; i++)
             {
@@ -214,7 +213,9 @@ namespace Marv.Input
                 }
 
                 inputRows.Add(row);
+
                 progress.Report(i);
+                Thread.Sleep(1);
             }
         }
 
@@ -227,7 +228,7 @@ namespace Marv.Input
             {
                 foreach (var year in this.LineEvidence.Years)
                 {
-                    var graphEvidence = sectionEvidence.YearEvidences[year].GraphEvidence;
+                    var graphEvidence = sectionEvidence.YearEvidences[year].VertexEvidences;
 
                     if (graphEvidence.ContainsKey(vertex.Key))
                     {
@@ -273,19 +274,20 @@ namespace Marv.Input
             }
 
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
-            var modelData = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || modelData == null)
+            var vertexEvidence = model.Data as VertexEvidence;
+
+            if (model.IsColumnSectionId || vertexEvidence == null)
             {
                 return;
             }
 
-            this.InputGridView.SelectAll();
-            foreach (var cell in this.InputGridView.SelectedCells)
+            foreach (var row in this.InputRows)
             {
-                var oldModel = new CellModel(cell);
-                if (!oldModel.IsColumnSectionId)
+                foreach (var column in this.InputGridView.Columns)
                 {
-                    this.SetCell(oldModel, modelData.String);
+                    var oldModel = new CellModel(row, column.Header as string);
+
+                    if (!oldModel.IsColumnSectionId) this.SetCell(oldModel, vertexEvidence.String);
                 }
             }
         }
@@ -388,8 +390,8 @@ namespace Marv.Input
 
             this.InputRows = inputRows;
             this.IsInputToolbarEnabled = true;
-            this.Graph.Belief = null;
-            this.Graph.Vertices.SetEvidence(0);
+            this.Graph.Vertices.SetBelief(0);
+            this.Graph.Vertices.ClearEvidence();
 
             foreach (var column in this.InputGridView.Columns)
             {
@@ -443,6 +445,7 @@ namespace Marv.Input
             this.CopyAcrossRows.Click += CopyAcrossRows_Click;
             this.CopyAcrossAll.Click += CopyAcrossAll_Click;
             this.UploadFromPlot.Click += UploadFromPlot_Click;
+            this.RunButton.Click += RunButton_Click;
 
             this.ModeButton.Checked += ModeButton_Checked;
             this.MinButton.Checked += MinButton_Checked;
@@ -458,13 +461,25 @@ namespace Marv.Input
             this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
             this.InputGridView.CellValidating += InputGridView_CellValidating;
 
+
+            this.InputGridView.Pasted -= InputGridView_Pasted;
             this.InputGridView.Pasted += InputGridView_Pasted;
+
             this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
 
             this.InputGridView.KeyDown += InputGridView_KeyDown;
             this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
+        }
+
+        void RunButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.InputGridView.SelectedCells.Count != 1) return;
+
+            var cellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void MaxButton_Checked(object sender, RoutedEventArgs e)
@@ -511,16 +526,17 @@ namespace Marv.Input
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionEvidence.Id;
 
-                foreach (var yearEvidence in sectionEvidence.YearEvidences)
+                foreach (var year in this.LineEvidence.Years)
                 {
-                    if (yearEvidence.GraphEvidence.ContainsKey(this.Graph.SelectedVertex.Key))
+                    var vertexEvidences = sectionEvidence.YearEvidences[year].VertexEvidences;
+
+                    if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
-                        var input = yearEvidence.GraphEvidence[this.Graph.SelectedVertex.Key];
-                        row[yearEvidence.Year.ToString(CultureInfo.CurrentCulture)] = input;
+                        row[year.ToString()] = vertexEvidences[this.Graph.SelectedVertex.Key];
                     }
                     else
                     {
-                        row[yearEvidence.Year.ToString(CultureInfo.CurrentCulture)] = "";
+                        row[year.ToString()] = null;
                     }
                 }
 
@@ -584,15 +600,15 @@ namespace Marv.Input
 
                     if (cellModel.IsColumnSectionId) continue;
 
-                    var graphEvidence = LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
+                    var vertexEvidences = LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
 
-                    if (graphEvidence.ContainsKey(Graph.SelectedVertex.Key))
+                    if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
                     {
-                        cellModel.Data = graphEvidence[Graph.SelectedVertex.Key];
+                        cellModel.Data = vertexEvidences[Graph.SelectedVertex.Key];
                     }
                     else
                     {
-                        cellModel.Data = "";
+                        cellModel.Data = null;
                     }
                 }
             }

@@ -6,16 +6,9 @@ namespace Marv.Common.Graph
 {
     public class VertexEvidence
     {
-        public string String { get; private set; }
-        public double[] Values { get; private set; }
-
-        public VertexEvidence() {}
-
-        public VertexEvidence(IEnumerable<double> values, string str)
-        {
-            this.Values = values.ToArray();
-            this.String = str;
-        }
+        public string String { get; set; }
+        public double[] Values { get; set; }
+        public double[] Beliefs { get; set; }
 
         public static List<double> ParseValues(string str)
         {

@@ -328,7 +328,12 @@ namespace Marv.Common.Graph
 
         public VertexEvidence GetEvidence()
         {
-            return new VertexEvidence(this.States.GetEvidence(), this.EvidenceString);
+            return new VertexEvidence
+            {
+                Beliefs = this.States.GetBelief().ToArray(),
+                String = this.EvidenceString,
+                Values = this.States.GetEvidence().ToArray()
+            };
         }
 
         // Do not remove! This is for Marv.Matlab
@@ -344,14 +349,7 @@ namespace Marv.Common.Graph
 
         public void UpdateEvidenceString()
         {
-            if (this.States.Sum(state => state.Evidence) > 0)
-            {
-                this.EvidenceString = this.States.Select(state => state.Evidence).String("{0:F2}");
-            }
-            else
-            {
-                this.EvidenceString = null;
-            }
+            this.EvidenceString = this.IsEvidenceEntered ? this.States.Select(state => state.Evidence).String("{0:F2}") : null;
         }
 
         public void UpdateMostProbableState()

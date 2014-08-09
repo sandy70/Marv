@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Marv.Common.Graph;
 using Telerik.Windows;
@@ -11,24 +12,23 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
 
-        public void SetCell(CellModel cellModel, string vertexKey, VertexEvidence evidence)
-        {
-            if (cellModel == null || cellModel.IsColumnSectionId) return;
-
-            cellModel.Data = evidence;
-
-            this.LineEvidence
-                .SectionEvidences[cellModel.SectionId]
-                .YearEvidences[cellModel.Year]
-                .GraphEvidence[vertexKey] = evidence;
-        }
-
-        public void SetCell(CellModel cellModel, string str)
+        public void SetCell(CellModel cellModel, string newStr, string oldStr = null)
         {
             if (cellModel.IsColumnSectionId)
             {
-                this.LineEvidence.SectionEvidences.ReplaceKey(cellModel.SectionId, str);
-                cellModel.Data = str;
+                if(!string.IsNullOrWhiteSpace(newStr))
+                {
+                    if (!string.IsNullOrWhiteSpace(oldStr))
+                    {
+                        this.LineEvidence.SectionEvidences.ReplaceKey(oldStr, newStr);
+                    }
+                    else
+                    {
+                        this.LineEvidence.SectionEvidences.Add(newStr);
+                    }
+                }
+
+                cellModel.Data = newStr;
                 return;
             }
 
@@ -36,9 +36,18 @@ namespace Marv.Input
 
             if (selectedVertex == null) return;
 
-            var values = this.Graph.SelectedVertex.States.Parse(str);
+            var values = selectedVertex.States.Parse(newStr);
 
-            this.SetCell(cellModel, selectedVertex.Key, new VertexEvidence(values, str));
+            var evidence = values == null ? null : new VertexEvidence { Values = values.ToArray(), String = newStr};
+
+            cellModel.Data = evidence;
+            
+            this.LineEvidence
+                .SectionEvidences[cellModel.SectionId]
+                .YearEvidences[cellModel.Year]
+                .VertexEvidences[selectedVertex.Key] = evidence;
+
+            this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -48,7 +57,7 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.SetCell(e.Cell.ToModel(), e.NewData as string);
+            this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
             this.Graph.Run();
         }
 
@@ -73,9 +82,9 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId) return;
 
-            var graphEvidence = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].GraphEvidence;
+            var vertexEvidences = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
 
-            this.Graph.SetEvidence(graphEvidence);
+            this.Graph.SetEvidence(vertexEvidences);
             this.Graph.Run();
         }
 
@@ -96,7 +105,7 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
+                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string, oldValues[cellClipboardEventArg] as string);
             }
 
             cellClipboardEventArgs.Clear();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Marv.Common;
+using Marv.Common.Graph;
 using Newtonsoft.Json;
 
 namespace Marv.Input
@@ -10,8 +11,8 @@ namespace Marv.Input
     public class LineEvidence
     {
         private readonly List<SectionEvidence, string> sectionEvidences = new List<SectionEvidence, string>();
+        private bool isYearsChanged;
         private List<int> years;
-        private bool isYearsChanged = false;
 
         public Guid GraphGuid { get; set; }
 
@@ -29,7 +30,7 @@ namespace Marv.Input
                 {
                     UpdateYears();
                 }
-                
+
                 return years;
             }
         }

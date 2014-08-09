@@ -25,31 +25,6 @@ namespace Marv.Common.Graph
         private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
-        public Dictionary<string, string, double> Belief
-        {
-            get
-            {
-                return new Dictionary<string, string, double>(this.Vertices.ToDictionary(vertex => vertex.Key, vertex => vertex.States.GetBelief()));
-            }
-
-            set
-            {
-                foreach (var vertex in this.Vertices)
-                {
-                    if (value == null)
-                    {
-                        vertex.States.SetBelief(0);
-                    }
-                    else
-                    {
-                        vertex.States.SetBelief(value[vertex.Key].Values);
-                    }
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string DefaultGroup
         {
             get
@@ -101,36 +76,6 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, VertexEvidence> Evidence
-        {
-            get
-            {
-                var graphEvidence = new Dictionary<string, VertexEvidence>();
-
-                foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
-                {
-                    graphEvidence[vertex.Key] = vertex.GetData();
-                }
-
-                return graphEvidence;
-            }
-
-            set
-            {
-                foreach (var vertex in this.Vertices)
-                {
-                    if (value == null)
-                    {
-                        vertex.States.SetEvidence(0);
-                    }
-                    else
-                    {
-                        vertex.States.SetEvidence(value[vertex.Key].Values);
-                    }
-                }
-            }
-        }
-
         public Guid Guid
         {
             get
@@ -145,19 +90,6 @@ namespace Marv.Common.Graph
                     this.guid = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public Dictionary<string, string, double> InitialBelief
-        {
-            set
-            {
-                foreach (var vertex in this.Vertices)
-                {
-                    vertex.InitialBelief = value == null ? null : value[vertex.Key];
-                }
-
-                this.RaisePropertyChanged();
             }
         }
 
@@ -318,7 +250,7 @@ namespace Marv.Common.Graph
 
         public static Task<Graph> ReadAsync(string fileName)
         {
-            return Task.Run(() => Read(fileName));
+            return Task.Run(() => Graph.Read(fileName));
         }
 
         public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
@@ -340,7 +272,7 @@ namespace Marv.Common.Graph
             if (graphEvidence != null)
             {
                 // Set the given evidence
-                this.Evidence = graphEvidence;
+                //this.Evidence = graphEvidence;
 
                 // Collect more vertices to ignore
                 verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
@@ -360,8 +292,8 @@ namespace Marv.Common.Graph
 
                         value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
-                        sourceVertex.States.SetEvidence(0);
-                        sourceVertex.UpdateEvidenceString();
+                        sourceVertex.States.ClearEvidence();
+                        sourceVertex.EvidenceString = null;
                     }
                     catch (SmileException exception)
                     {
@@ -446,12 +378,6 @@ namespace Marv.Common.Graph
             return subGraph;
         }
 
-        public Vertex GetVertex(string vertexKey)
-        {
-            // Do not remove! This is for Marv.Matlab
-            return this.Vertices[vertexKey];
-        }
-
         public Dictionary<string, string, double> ReadValueCsv(string fileName)
         {
             var graphValue = new Dictionary<string, string, double>();
@@ -496,7 +422,7 @@ namespace Marv.Common.Graph
             {
                 if (vertex.IsEvidenceEntered)
                 {
-                    this.networkStructure.SetEvidence(vertex.Key, vertex.States.Select(state => state.Evidence).ToArray());
+                    this.networkStructure.SetEvidence(vertex.Key, vertex.States.GetEvidence());
                 }
             }
 
@@ -505,10 +431,14 @@ namespace Marv.Common.Graph
 
         public void SetEvidence(Dictionary<string, VertexEvidence> vertexEvidences)
         {
+            this.Vertices.ClearEvidence();
+
             foreach (var vertexKey in vertexEvidences.Keys)
             {
                 var vertex = this.Vertices[vertexKey];
-                vertex.EvidenceString = vertexEvidences[vertexKey].String;
+                var vertexEvidence = vertexEvidences[vertexKey];
+
+                vertex.EvidenceString = vertexEvidence == null ? null : vertexEvidences[vertexKey].String;
                 vertex.UpdateStateEvidences();
             }
         }
@@ -534,6 +464,14 @@ namespace Marv.Common.Graph
         public void Write()
         {
             this.networkStructure.Write(this);
+        }
+
+        public void Run(SectionEvidence sectionEvidence)
+        {
+            foreach (var yearEvidence in sectionEvidence.YearEvidences)
+            {
+                this.networkStructure.Run(yearEvidence.VertexEvidences);
+            }
         }
     }
 }

@@ -158,7 +158,8 @@ namespace Marv.Controls.Graph
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.States.SetEvidence(0);
+            this.Vertex.States.ClearEvidence();
+            this.Vertex.UpdateEvidenceString();
             this.RaiseEvidenceEntered();
         }
 
@@ -170,7 +171,7 @@ namespace Marv.Controls.Graph
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.States.SetEvidence(1.0 / this.Vertex.States.Count);
+            this.Vertex.States.ClearEvidence();
             this.RaiseEvidenceEntered();
         }
 

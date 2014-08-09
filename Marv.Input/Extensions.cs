@@ -18,7 +18,5 @@ namespace Marv.Input
         {
             return new CellModel(cellInfo);
         }
-
-        
     }
 }

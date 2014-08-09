@@ -23,6 +23,12 @@ namespace Marv.Controls.Graph
                 graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup);
             }
 
+            if (command == VertexCommands.Clear)
+            {
+                graphControl.Graph.Vertices.ClearEvidence();
+                graphControl.Graph.Run();
+            }
+
             graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
         }
 

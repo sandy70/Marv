@@ -1,7 +1,6 @@
-﻿using Marv.Common;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Marv.Input
+namespace Marv.Common.Graph
 {
     public class SectionEvidence : IKey<string>
     {
@@ -11,15 +10,9 @@ namespace Marv.Input
         [JsonIgnore]
         public string Key
         {
-            get
-            {
-                return this.Id;
-            }
+            get { return this.Id; }
 
-            set
-            {
-                this.Id = value;
-            }
+            set { this.Id = value; }
         }
     }
 }

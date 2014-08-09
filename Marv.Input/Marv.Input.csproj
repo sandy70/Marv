@@ -135,12 +135,9 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="LineEvidence.cs" />
-    <Compile Include="LineInput.cs" />
     <Compile Include="MainWindow.Plot.cs" />
-    <Compile Include="SectionEvidence.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="VertexEvidenceProgress.cs" />
-    <Compile Include="YearEvidence.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

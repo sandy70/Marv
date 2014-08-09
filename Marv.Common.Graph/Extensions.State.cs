@@ -5,6 +5,11 @@ namespace Marv.Common.Graph
 {
     public static partial class Extensions
     {
+        public static void ClearEvidence(this IEnumerable<State> states)
+        {
+            foreach (var state in states) state.Evidence = 0;
+        }
+
         public static Dictionary<string, double> GetBelief(this IEnumerable<State> states)
         {
             return states.ToDictionary(state => state.Key, state => state.Belief);
@@ -84,17 +89,12 @@ namespace Marv.Common.Graph
 
             if (values == null)
             {
-                stateList.SetEvidence(0);
+                stateList.ClearEvidence();
             }
             else
             {
                 stateList.SetEvidence(values);
             }
-        }
-
-        public static void SetEvidence(this IEnumerable<State> states, double evidence)
-        {
-            foreach (var state in states) state.Evidence = evidence;
         }
 
         public static void SetEvidence(this IEnumerable<State> states, State aState)
@@ -106,7 +106,7 @@ namespace Marv.Common.Graph
 
         public static void SetEvidence(this IEnumerable<State> states, IEnumerable<double> evidences)
         {
-            states.SetProperty(evidences, (state, evidence) => state.Evidence = evidence);
+            states.SetProperty(evidences.Normalized(), (state, evidence) => state.Evidence = evidence);
         }
     }
 }

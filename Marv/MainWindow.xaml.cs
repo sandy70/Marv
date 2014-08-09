@@ -215,16 +215,16 @@ namespace Marv
                 {
                     if (this.GraphValues.ContainsKey(this.SelectedYear))
                     {
-                        this.Graph.Belief = this.GraphValues[this.SelectedYear];
+                        //this.Graph.Belief = this.GraphValues[this.SelectedYear];
                     }
                     else
                     {
-                        this.Graph.Belief = null;
+                        this.Graph.Vertices.SetBelief(0);
                     }
                 }
                 else
                 {
-                    this.Graph.Belief = null;
+                    this.Graph.Vertices.SetBelief(0);
                 }
             }
         }

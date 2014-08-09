@@ -216,6 +216,19 @@ namespace Marv.Common
             return normalized;
         }
 
+        public static IEnumerable<double> Normalized(this IEnumerable<double> values)
+        {
+            var valueList = values as IList<double> ?? values.ToList();
+            var sum = valueList.Sum();
+
+            for (var i = 0; i < valueList.Count; i++)
+            {
+                valueList[i] /= sum;
+            }
+
+            return valueList;
+        }
+
         public static List<string> ParseBlocks(this string str)
         {
             var startChar = '{';

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -28,6 +29,16 @@ namespace Marv.Common
             }
         }
 
+        public void Add(TKey key)
+        {
+            var newValue = Utils.Create<TValue>();
+
+            if (newValue != null) newValue.Key = key;
+            else throw new InvalidValueException(String.Format("Cannot create objects of type {0}", typeof (TValue)));
+
+            this.Add(newValue);
+        }
+
         public bool ContainsKey(TKey key)
         {
             return this.dictionary.ContainsKey(key);
@@ -35,8 +46,6 @@ namespace Marv.Common
 
         public void ReplaceKey(TKey oldKey, TKey newKey)
         {
-            if (!this.ContainsKey(oldKey)) throw new InvalidValueException("The old key does not exist in this collection!");
-
             var oldValue = this[oldKey];
             this.Remove(oldValue);
             
