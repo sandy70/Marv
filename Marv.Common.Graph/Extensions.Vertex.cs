@@ -38,6 +38,11 @@ namespace Marv.Common.Graph
             return vertex.Mean(newValue) - vertex.Mean(oldValue);
         }
 
+        public static void SetEvidence(this IEnumerable<Vertex> vertices, double value)
+        {
+            foreach (var vertex in vertices) vertex.States.SetEvidence(value);
+        }
+
         public static double StandardDeviation(this Vertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);

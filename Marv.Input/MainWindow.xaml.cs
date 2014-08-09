@@ -197,50 +197,21 @@ namespace Marv.Input
             var years = this.LineEvidence.Years;
             var nSections = this.SectionNumber;
 
-            await Task.Run(() => this.DoWork(inputRows, sectionEvidences, years, nSections, progress));
-
-            Console.WriteLine("AddSectionButton_Click");
+            await Task.Run(() => this.AddSections(inputRows, sectionEvidences, years, nSections, progress));
         }
 
-        private void DoWork(ObservableCollection<dynamic> inputRows, List<SectionEvidence, string> sectionEvidences, List<int> years, int nSections, IProgress<int> progress)
+        private void AddSections(ObservableCollection<dynamic> inputRows, List<SectionEvidence, string> sectionEvidences, List<int> years, int nSections, IProgress<int> progress)
         {
             for (int i = 0; i < nSections; i++)
             {
                 var row = new Dynamic();
                 var sectionId = "Section " + (inputRows.Count + 1);
                 row[CellModel.SectionIdHeader] = sectionId;
-                sectionEvidences.Add(new SectionEvidence { Id = sectionId });
 
                 foreach (var year in years)
                 {
-                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
+                    row[year.ToString()] = null;
                 }
-
-                inputRows.Add(row);
-
-                Thread.Sleep(10);
-                progress.Report(i);
-            }
-        }
-
-        private void AddSectionTask(int[] years, int sectionNumber, IProgress<int> progress)
-        {
-            var inputRows = new ObservableCollection<Dynamic>();
-            var sectionEvidences = new List<SectionEvidence>();
-
-            for (var i = 0; i < sectionNumber; i++)
-            {
-                var row = new Dynamic();
-                var sectionId = "Section " + (inputRows.Count + 1);
-                row[CellModel.SectionIdHeader] = sectionId;
-                sectionEvidences.Add(new SectionEvidence { Id = sectionId });
-
-                foreach (var year in years)
-                {
-                    row[year.ToString(CultureInfo.CurrentCulture)] = null;
-                }
-
-                Console.WriteLine("AddSectionTask");
 
                 inputRows.Add(row);
                 progress.Report(i);
@@ -418,12 +389,13 @@ namespace Marv.Input
             this.InputRows = inputRows;
             this.IsInputToolbarEnabled = true;
             this.Graph.Belief = null;
-            this.Graph.SetEvidence(null);
+            this.Graph.Vertices.SetEvidence(0);
 
             foreach (var column in this.InputGridView.Columns)
             {
                 column.Width = 70;
             }
+
             this.InputGridView.Columns[0].Width = 90;
         }
 
@@ -445,7 +417,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.SetCell(cellModel, vertex);
+            this.SetCell(cellModel, vertex.EvidenceString);
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)

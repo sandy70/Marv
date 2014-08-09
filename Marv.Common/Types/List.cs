@@ -33,6 +33,17 @@ namespace Marv.Common
             return this.dictionary.ContainsKey(key);
         }
 
+        public void ReplaceKey(TKey oldKey, TKey newKey)
+        {
+            if (!this.ContainsKey(oldKey)) throw new InvalidValueException("The old key does not exist in this collection!");
+
+            var oldValue = this[oldKey];
+            this.Remove(oldValue);
+            
+            oldValue.Key = newKey;
+            this.Add(oldValue);
+        }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);

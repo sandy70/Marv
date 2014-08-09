@@ -3,7 +3,6 @@ using System.Windows.Input;
 using Marv.Common.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
-using Marv.Common.Graph;
 
 namespace Marv.Input
 {
@@ -12,63 +11,24 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> cellClipboardEventArgs = new List<GridViewCellClipboardEventArgs>();
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldValues = new Dictionary<GridViewCellClipboardEventArgs, object>();
 
-        public void SetCell(CellModel cellModel, Vertex vertex)
+        public void SetCell(CellModel cellModel, string vertexKey, VertexEvidence evidence)
         {
             if (cellModel == null || cellModel.IsColumnSectionId) return;
 
-            if (vertex == null) return;
+            cellModel.Data = evidence;
 
-            if (vertex.IsEvidenceEntered)
-            {
-                var vertexData = vertex.GetData();
-
-                cellModel.Data = vertexData;
-
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence[vertex.Key] = vertexData;
-            }
-            else
-            {
-                cellModel.Data = null;
-
-                this.LineEvidence
-                    .SectionEvidences[cellModel.SectionId]
-                    .YearEvidences[cellModel.Year]
-                    .GraphEvidence.Remove(vertex.Key);
-            }
+            this.LineEvidence
+                .SectionEvidences[cellModel.SectionId]
+                .YearEvidences[cellModel.Year]
+                .GraphEvidence[vertexKey] = evidence;
         }
 
-        public void SetCell(CellModel cellModel, string newStr, string oldStr = null)
+        public void SetCell(CellModel cellModel, string str)
         {
             if (cellModel.IsColumnSectionId)
             {
-                cellModel.Data = newStr;
-
-                if (oldStr != null)
-                {
-                    var oldSectionEvidence = this.LineEvidence.SectionEvidences[oldStr];
-                    var oldSectionEvidenceIndex = this.LineEvidence.SectionEvidences.IndexOf(oldSectionEvidence);
-                    this.LineEvidence.SectionEvidences.Remove(oldSectionEvidence);
-                    oldSectionEvidence.Id = newStr;
-                    this.LineEvidence.SectionEvidences.Insert(oldSectionEvidenceIndex, oldSectionEvidence);
-                }
-                else
-                {
-                    var newSectionEvidence = new SectionEvidence
-                    {
-                        Id = newStr,
-                    };
-
-                    foreach (var year in this.LineEvidence.Years)
-                    {
-                        newSectionEvidence.YearEvidences.Add(new YearEvidence {Year = year});
-                    }
-
-                    this.LineEvidence.SectionEvidences.Add(newSectionEvidence);
-                }
-
+                this.LineEvidence.SectionEvidences.ReplaceKey(cellModel.SectionId, str);
+                cellModel.Data = str;
                 return;
             }
 
@@ -76,10 +36,9 @@ namespace Marv.Input
 
             if (selectedVertex == null) return;
 
-            selectedVertex.EvidenceString = newStr;
-            selectedVertex.UpdateEvidence();
+            var values = this.Graph.SelectedVertex.States.Parse(str);
 
-            this.SetCell(cellModel, selectedVertex);
+            this.SetCell(cellModel, selectedVertex.Key, new VertexEvidence(values, str));
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -89,7 +48,7 @@ namespace Marv.Input
 
         private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
+            this.SetCell(e.Cell.ToModel(), e.NewData as string);
             this.Graph.Run();
         }
 
@@ -137,7 +96,7 @@ namespace Marv.Input
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
             {
-                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string, this.oldValues[cellClipboardEventArg] as string);
+                this.SetCell(cellClipboardEventArg.Cell.ToModel(), cellClipboardEventArg.Value as string);
             }
 
             cellClipboardEventArgs.Clear();

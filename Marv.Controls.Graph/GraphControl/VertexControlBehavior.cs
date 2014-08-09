@@ -11,9 +11,6 @@ namespace Marv.Controls.Graph
             base.OnAttached();
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
-
-            this.AssociatedObject.EvidenceChanged += (o, e) => this.RaiseEvidenceEntered();
-            this.AssociatedObject.EvidenceEntered += (o, e) => this.RaiseEvidenceEntered();
         }
 
         private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)

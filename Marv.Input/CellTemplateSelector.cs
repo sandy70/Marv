@@ -21,9 +21,9 @@ namespace Marv.Input
 
             var evidence = cellModel.Data as VertexEvidence;
 
-            if (evidence == null || evidence.Evidence == null) return null;
+            if (evidence == null || evidence.Values == null) return null;
 
-            cell.Tag = evidence.Evidence.Select((val, i) => new ScatterPoint {XValue = i, YValue = val}).ToList();
+            cell.Tag = evidence.Values.Select((val, i) => new ScatterPoint {XValue = i, YValue = val}).ToList();
             return this.VertexEvidenceTemplate;
         }
     }

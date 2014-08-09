@@ -143,12 +143,12 @@ namespace Marv.Input
         {        
             if (entry.ToString().Contains(","))
             {
-                var probSet = entry.Evidence;
+                var probSet = entry.Values;
                 CheckForLogarithmicScale();
                 var i = 0;
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
-                    var probValue = probSet[i];
+                    var probValue = probSet.ElementAt(i);
                     var min = state.Min;
                     var max = state.Max;
                     if (max.Equals(Double.PositiveInfinity))

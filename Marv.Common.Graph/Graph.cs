@@ -101,15 +101,15 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, string, double> Evidence
+        public Dictionary<string, VertexEvidence> Evidence
         {
             get
             {
-                var graphEvidence = new Dictionary<string, string, double>();
+                var graphEvidence = new Dictionary<string, VertexEvidence>();
 
                 foreach (var vertex in this.Vertices.Where(vertex => vertex.IsEvidenceEntered))
                 {
-                    graphEvidence[vertex.Key] = vertex.States.GetEvidence();
+                    graphEvidence[vertex.Key] = vertex.GetData();
                 }
 
                 return graphEvidence;
@@ -321,7 +321,7 @@ namespace Marv.Common.Graph
             return Task.Run(() => Read(fileName));
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, string, double> graphEvidence = null)
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
@@ -503,35 +503,13 @@ namespace Marv.Common.Graph
             this.UpdateBelief();
         }
 
-        public void SetEvidence(Dictionary<string, VertexEvidence> graphEvidence)
+        public void SetEvidence(Dictionary<string, VertexEvidence> vertexEvidences)
         {
-            foreach (var vertex in this.Vertices)
+            foreach (var vertexKey in vertexEvidences.Keys)
             {
-                if (graphEvidence != null && graphEvidence.ContainsKey(vertex.Key))
-                {
-                    var evidenceArray = graphEvidence[vertex.Key].Evidence;
-                    var evidence = new Dictionary<string, double>();
-
-                    if (evidenceArray == null)
-                    {
-                        evidence = null;
-                    }
-                    else
-                    {
-                        foreach (var state in vertex.States)
-                        {
-                            evidence[state.Key] = evidenceArray[vertex.States.IndexOf(state)];
-                        }
-                    }
-
-                    vertex.States.SetEvidence(evidence.ToArray());
-                    vertex.EvidenceString = graphEvidence[vertex.Key].String;
-                }
-                else
-                {
-                    vertex.States.SetEvidence(0);
-                    vertex.EvidenceString = null;
-                }
+                var vertex = this.Vertices[vertexKey];
+                vertex.EvidenceString = vertexEvidences[vertexKey].String;
+                vertex.UpdateStateEvidences();
             }
         }
 
@@ -543,7 +521,7 @@ namespace Marv.Common.Graph
 
             foreach (var vertexKey in belief.Keys)
             {
-                this.Vertices[vertexKey].SetBelief(belief[vertexKey]);
+                this.Vertices[vertexKey].States.SetBelief(belief[vertexKey]);
             }
         }
 

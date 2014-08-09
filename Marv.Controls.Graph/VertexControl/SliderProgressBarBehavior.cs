@@ -19,11 +19,11 @@ namespace Marv.Controls.Graph
 
             if (Math.Abs(e - 100) < Utils.Epsilon)
             {
-                vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
+                vertexControl.Vertex.States.SetEvidence(this.AssociatedObject.DataContext as State);
             }
 
             vertexControl.Vertex.UpdateEvidenceString();
-            vertexControl.RaiseEvidenceChanged();
+            vertexControl.RaiseEvidenceEntered();
         }
     }
 }

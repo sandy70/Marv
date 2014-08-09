@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Marv.Common.Graph
 {
     public class VertexEvidence
     {
-        public double[] Evidence { get; set; }
-        public string String { get; set; }
+        public string String { get; private set; }
+        public double[] Values { get; private set; }
 
         public VertexEvidence() {}
 
-        public VertexEvidence(double[] evidence, string str)
+        public VertexEvidence(IEnumerable<double> values, string str)
         {
-            this.Evidence = evidence;
+            this.Values = values.ToArray();
             this.String = str;
-        }
-
-        public override string ToString()
-        {
-            return this.String;
         }
 
         public static List<double> ParseValues(string str)
@@ -34,6 +30,11 @@ namespace Marv.Common.Graph
             }
 
             return values;
+        }
+
+        public override string ToString()
+        {
+            return this.String;
         }
     }
 }
