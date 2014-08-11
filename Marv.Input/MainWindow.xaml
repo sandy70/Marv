@@ -297,9 +297,11 @@
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Status">
                             <StatusBar DockPanel.Dock="Bottom">
+                                <TextBlock Name="PercentBlock" TextWrapping="Wrap"></TextBlock>
                                 <StatusBarItem>
-                                    <ProgressBar Name ="LoadingBar" Minimum="0" Height="10" Width="100" Visibility="Hidden" ></ProgressBar>
+                                    <ProgressBar Name ="LoadingBar" Minimum="0" Height="10" Width="100" Visibility="Hidden" ></ProgressBar>  
                                 </StatusBarItem>
+                                <TextBlock Name="LoadingBlock" TextWrapping="Wrap"></TextBlock>
                             </StatusBar>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

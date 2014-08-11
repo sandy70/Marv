@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Threading;
@@ -139,46 +141,51 @@ namespace Marv.Input
         }
 
 
-        private void AddSectionButton_Click(object sender, RoutedEventArgs e)
+        private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (InputRows == null) { return; }
-            var bw = new BackgroundWorker();
-            bw.WorkerReportsProgress = true;
-            bw.DoWork += (ob, eve) =>
-            {
-                var years = this.LineEvidence.Years;
-                for (var i = 0; i < SectionNumber; i++)
-                {
-                    var row = new Dynamic();
-                    var sectionId = "Section " + (InputRows.Count + 1);
-                    row[CellModel.SectionIdHeader] = sectionId;
-                    this.LineEvidence.SectionEvidences.Add(new SectionEvidence { Id = sectionId });
+            if (InputRows == null) return;
 
-                    foreach (var year in years)
-                    {
-                        row[year.ToString(CultureInfo.CurrentCulture)] = null;
-                    }
-                    InputRows.Add(row);
-                    
-                } 
-            };
-            bw.RunWorkerAsync();
-            
-            LoadingBar.Visibility = Visibility.Visible;
-            LoadingBar.Value = LoadingBar.Minimum;
-            LoadingBar.Maximum = SectionNumber - 1;
-            bw.ProgressChanged += (o, ev) =>
+            this.LoadingBar.Maximum = this.SectionNumber;
+            this.LoadingBar.Visibility = Visibility.Visible;
+            this.LoadingBlock.Text = "Loading...";
+            this.PercentBlock.Text = "0 %";
+            var progress = new Progress<int>(i =>
             {
-                
-            };
-                       
+                this.LoadingBar.Value = i;
+                var percent = (i*100) / SectionNumber;
+                this.PercentBlock.Text = percent.ToString(CultureInfo.CurrentCulture) + " %";
+            });
+
+            var inputRows = this.InputRows;
+            var years = this.LineEvidence.Years;
+            var nSections = this.SectionNumber;
+
+            await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
+            this.LoadingBar.Visibility = Visibility.Hidden;
+            this.LoadingBar.Value = this.LoadingBar.Minimum;
+            this.LoadingBlock.Text = "";
+            this.PercentBlock.Text = "";
         }
 
-       
-          
-        
+        private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)
+        {
+            for (int i = 0; i < nSections; i++)
+            {
+                var row = new Dynamic();
+                var sectionId = "Section " + (inputRows.Count + 1);
+                row[CellModel.SectionIdHeader] = sectionId;
 
-        
+                foreach (var year in years)
+                {
+                    row[year.ToString()] = null;
+                }
+
+                inputRows.Add(row);
+
+                progress.Report(i);
+                Thread.Sleep(1);
+            }
+        }
 
 
         private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
