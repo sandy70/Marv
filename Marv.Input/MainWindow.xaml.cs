@@ -31,6 +31,9 @@ namespace Marv.Input
         public static readonly DependencyProperty InputRowsProperty =
             DependencyProperty.Register("InputRows", typeof (ObservableCollection<dynamic>), typeof (MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty IsInputGridEnabledProperty =
+            DependencyProperty.Register("IsInputGridEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsInputToolbarEnabledProperty =
             DependencyProperty.Register("IsInputToolbarEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
@@ -68,6 +71,12 @@ namespace Marv.Input
             get { return (Graph) GetValue(GraphProperty); }
 
             set { SetValue(GraphProperty, value); }
+        }
+
+        public bool IsInputGridEnabled
+        {
+            get { return (bool) GetValue(IsInputGridEnabledProperty); }
+            set { SetValue(IsInputGridEnabledProperty, value); }
         }
 
         public ObservableCollection<dynamic> InputRows
@@ -144,16 +153,12 @@ namespace Marv.Input
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) return;
-
-            this.LoadingBar.Maximum = this.SectionNumber;
-            this.LoadingBar.Visibility = Visibility.Visible;
-            this.LoadingBlock.Text = "Loading...";
-            this.PercentBlock.Text = "0 %";
+            this.IsInputGridEnabled = false;
+            var sectionNote = new NotificationIndeterminate();
+            this.StatusControlBar.Notifications.Add(sectionNote);
             var progress = new Progress<int>(i =>
-            {
-                this.LoadingBar.Value = i;
-                var percent = (i*100) / SectionNumber;
-                this.PercentBlock.Text = percent.ToString(CultureInfo.CurrentCulture) + " %";
+            {               
+                sectionNote.Value = (i*100) / SectionNumber;                
             });
 
             var inputRows = this.InputRows;
@@ -161,10 +166,8 @@ namespace Marv.Input
             var nSections = this.SectionNumber;
 
             await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
-            this.LoadingBar.Visibility = Visibility.Hidden;
-            this.LoadingBar.Value = this.LoadingBar.Minimum;
-            this.LoadingBlock.Text = "";
-            this.PercentBlock.Text = "";
+            this.StatusControlBar.Notifications.Remove(sectionNote);
+            this.IsInputGridEnabled = true;
         }
 
         private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)

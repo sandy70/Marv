@@ -86,7 +86,7 @@ namespace Marv.Common
                 return this.isIndeterminate;
             }
 
-            protected set
+            set
             {
                 if (value != this.isIndeterminate)
                 {
@@ -103,7 +103,7 @@ namespace Marv.Common
                 return this._value;
             }
 
-            protected set
+            set
             {
                 if (value != this._value)
                 {

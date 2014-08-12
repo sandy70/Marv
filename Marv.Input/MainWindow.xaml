@@ -296,13 +296,8 @@
                 <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10">
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Status">
-                            <StatusBar DockPanel.Dock="Bottom">
-                                <TextBlock Name="PercentBlock" TextWrapping="Wrap"></TextBlock>
-                                <StatusBarItem>
-                                    <ProgressBar Name ="LoadingBar" Minimum="0" Height="10" Width="100" Visibility="Hidden" ></ProgressBar>  
-                                </StatusBarItem>
-                                <TextBlock Name="LoadingBlock" TextWrapping="Wrap"></TextBlock>
-                            </StatusBar>
+                            <local:StatusControl x:Name="StatusControlBar"  DockPanel.Dock="Bottom">
+                            </local:StatusControl>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
