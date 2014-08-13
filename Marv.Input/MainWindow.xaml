@@ -14,11 +14,10 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="32" />
+            <RowDefinition Height ="970"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        <telerik:RadDocking>
+        <telerik:RadDocking Grid.Row="0">
             <telerik:RadDocking.DocumentHost>
                 <telerik:RadSplitContainer>
                     <telerik:RadPaneGroup>
@@ -126,6 +125,7 @@
                                                  ShowGroupPanel="False"
                                                  SelectionMode="Extended"
                                                  SelectionUnit="Cell"
+                                                 IsEnabled ="{Binding ElementName=Root, Path=IsInputGridEnabled}"
                                                  RowIndicatorVisibility="Collapsed"
                                                  ItemsSource="{Binding ElementName=Root, Path=InputRows}" Grid.ColumnSpan="2">
 
@@ -304,20 +304,13 @@
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
- <telerik:RadPaneGroup>
-                        <telerik:RadPane Header="Status">
-                            <local:StatusControl x:Name="StatusControlBar"  DockPanel.Dock="Bottom">
-                            </local:StatusControl>
-                        </telerik:RadPane>
-                    </telerik:RadPaneGroup>
 
 
-           </telerik:RadSplitContainer>
 
 
         </telerik:RadDocking>
 
-        <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
+        <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="0"
                                   Margin="16"
                                   Notifications="{Binding ElementName=Root, Path=Notifications}">
             <marv:NotificationControl.Effect>
@@ -325,5 +318,13 @@
             </marv:NotificationControl.Effect>
         </marv:NotificationControl>
 
+        <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10" Grid.Row="1">
+            <telerik:RadPaneGroup>
+                <telerik:RadPane Header="Status">
+                    <local:StatusControl x:Name="StatusControlBar"  >
+                    </local:StatusControl>
+                </telerik:RadPane>
+            </telerik:RadPaneGroup>
+        </telerik:RadSplitContainer>
     </Grid>
 </Window>
