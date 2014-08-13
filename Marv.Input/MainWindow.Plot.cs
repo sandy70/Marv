@@ -266,7 +266,7 @@ namespace Marv.Input
                 {
                     var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
 
-                    if (DoesPointExist((int)point.X, scatter))
+                    if (DoesPointExist((int)point.X, point.Y, scatter) && isCorrectPointPosition((int)point.X, point.Y))
                     {
                         point.X = (int)point.X;
                         scatter.Points.Add(new ScatterPoint(point.X, point.Y));
@@ -335,16 +335,57 @@ namespace Marv.Input
                 );
         }
 
-        private static bool DoesPointExist(int xCoord, ScatterSeries series)
+        private bool DoesPointExist(int xCoord, double yCoord, ScatterSeries series)
         {
             foreach (var point in series.Points)
             {
                 if (xCoord == (int)point.X || xCoord <= 0)
                 {
                     return false;
+                }                  
+            }
+            return true;
+        }
+
+        private bool isCorrectPointPosition(int xCoord, double yCoord)
+        {
+            if (PlotLineType == LineType.Mode)
+            {
+                foreach (var maxP in maxScatter.Points)
+                {
+                    if (xCoord == (int)maxP.X && yCoord > maxP.Y) { return false; }
+                }
+                foreach (var minP in minScatter.Points)
+                {
+                    if (xCoord == (int)minP.X && yCoord < minP.Y) { return false; }
+                }
+            }
+            else if (PlotLineType == LineType.Min)
+            {
+                foreach (var maxP in maxScatter.Points)
+                {
+                    if (xCoord == (int)maxP.X && yCoord > maxP.Y) { return false; }
+                }
+                foreach (var modeP in modeScatter.Points)
+                {
+                    if (xCoord == (int)modeP.X && yCoord > modeP.Y) { return false; }
+                }
+            }
+            else
+            {
+                foreach (var minP in minScatter.Points)
+                {
+                    if (xCoord == (int)minP.X && yCoord < minP.Y) { return false; }
+                }
+                foreach (var modeP in modeScatter.Points)
+                {
+                    if (xCoord == (int)modeP.X && yCoord < modeP.Y) { return false; }
                 }
             }
             return true;
         }
+        
+
+        
     }
 }

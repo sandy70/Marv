@@ -1,0 +1,44 @@
+﻿<StatusBar x:Class="Marv.Input.StatusControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Name="StatusRoot"
+             VerticalContentAlignment="Stretch"
+             d:DesignHeight="30" d:DesignWidth="400">
+    <StatusBar.Resources>
+        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+    </StatusBar.Resources>
+    
+    <UniformGrid>
+        <TextBlock Name="PercentBlock" 
+                   TextWrapping="Wrap" 
+                   Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"
+                   Text="{Binding ElementName=StatusRoot, Path=SelectedNotification.Value}"
+                   ></TextBlock>
+        <StatusBarItem>
+            <ProgressBar Name ="LoadingBar" Minimum="0" Width="100"  
+                         Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"></ProgressBar>
+        </StatusBarItem>
+        <TextBlock Name="LoadingBlock" 
+                   TextWrapping="Wrap" 
+                   Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"
+                   Text="{Binding ElementName=StatusRoot, Path=SelectedNotification.Description}"
+                   ></TextBlock>
+        <TextBlock Name="CurrentNoteBlock" 
+                   TextWrapping="Wrap" 
+                   Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"></TextBlock>
+        <telerik:RadButton Name="ForwardButton"
+                           Height="20" Width="20"
+                           Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"
+                           ToolTip="Moves forward to next notification."
+                           ></telerik:RadButton>
+        <telerik:RadButton Name="BackButton"
+                           Height="20" Width="20"
+                           Visibility="{Binding ElementName=StatusRoot, Path=IsItemVisible, Converter={StaticResource BooleanToVisibility}}"
+                           ToolTip="Moves backward to previous notification."
+                           ></telerik:RadButton>
+    </UniformGrid>
+</StatusBar>

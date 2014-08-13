@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows.Threading;
 using System.Windows;
 using Marv.Common;
@@ -29,6 +31,9 @@ namespace Marv.Input
 
         public static readonly DependencyProperty InputRowsProperty =
             DependencyProperty.Register("InputRows", typeof (ObservableCollection<dynamic>), typeof (MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty IsInputGridEnabledProperty =
+            DependencyProperty.Register("IsInputGridEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsInputToolbarEnabledProperty =
             DependencyProperty.Register("IsInputToolbarEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
@@ -79,6 +84,12 @@ namespace Marv.Input
             {
                 SetValue(GraphProperty, value);
             }
+        }
+
+        public bool IsInputGridEnabled
+        {
+            get { return (bool) GetValue(IsInputGridEnabledProperty); }
+            set { SetValue(IsInputGridEnabledProperty, value); }
         }
 
         public ObservableCollection<dynamic> InputRows
@@ -184,19 +195,22 @@ namespace Marv.Input
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) return;
-
-            this.LoadingBar.Maximum = this.SectionNumber;
-
+            this.IsInputGridEnabled = false;
+            var sectionNote = new NotificationIndeterminate();
+            this.StatusControlBar.Notifications.Add(sectionNote);
             var progress = new Progress<int>(i =>
-            {
-                this.LoadingBar.Value = i;
+            {               
+                sectionNote.Value = (i*100) / SectionNumber;                
             });
+
 
             var inputRows = this.InputRows;
             var years = this.LineEvidence.Years;
             var nSections = this.SectionNumber;
 
             await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
+            this.StatusControlBar.Notifications.Remove(sectionNote);
+            this.IsInputGridEnabled = true;
         }
 
         private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)
