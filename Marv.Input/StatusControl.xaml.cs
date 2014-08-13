@@ -34,6 +34,9 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedNotificationProperty =
             DependencyProperty.Register("SelectedNotification", typeof (Notification), typeof (StatusControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty SelectedNotficationIndexProperty =
+            DependencyProperty.Register("SelectedNotificationIndex", typeof (int), typeof (StatusControl), new PropertyMetadata(0));
+
         public bool IsItemVisible
         {
             get { return (bool)GetValue(IsItemVisibleProperty); }
@@ -50,6 +53,12 @@ namespace Marv.Input
         {
             get { return GetValue(SelectedNotificationProperty) as Notification; }
             set { SetValue(SelectedNotificationProperty, value); }
+        }
+
+        public int SelectedNotificationIndex
+        {
+            get { return (int) GetValue(SelectedNotficationIndexProperty); }
+            set { SetValue(SelectedNotficationIndexProperty, value); }
         }
 
         public StatusControl()
@@ -76,7 +85,7 @@ namespace Marv.Input
             {
                 this.SelectedNotification = Notifications.Last();
                 this.IsItemVisible = true;
-                CurrentNoteBlock.Text = this.Notifications.IndexOf(this.SelectedNotification) + "/" + this.Notifications.Count;
+                this.SelectedNotificationIndex = Notifications.IndexOf(this.SelectedNotification) + 1;
             }
         }
 
@@ -84,14 +93,14 @@ namespace Marv.Input
         {
             if (this.SelectedNotification == this.Notifications.Last()) { return; }
             this.SelectedNotification = this.Notifications[this.Notifications.IndexOf(this.SelectedNotification) + 1];
-            CurrentNoteBlock.Text = this.Notifications.IndexOf(this.SelectedNotification) + "/" + this.Notifications.Count;
+            this.SelectedNotificationIndex = Notifications.IndexOf(this.SelectedNotification) + 1;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedNotification == Notifications.First()) { return; }
             this.SelectedNotification = this.Notifications[this.Notifications.IndexOf(this.SelectedNotification) - 1];
-            CurrentNoteBlock.Text = this.Notifications.IndexOf(this.SelectedNotification) + "/" + this.Notifications.Count;
+            this.SelectedNotificationIndex = Notifications.IndexOf(this.SelectedNotification) + 1;
         }
         
     }

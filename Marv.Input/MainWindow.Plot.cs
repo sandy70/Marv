@@ -49,8 +49,8 @@ namespace Marv.Input
 
         private void UploadToGrid()
         {
-            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0) { return; }
-            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count) { return; }
+            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0) return; 
+            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count) return; 
             var tempMax = maxScatter;
             var tempMode = modeScatter;
             var tempMin = minScatter;
@@ -128,12 +128,12 @@ namespace Marv.Input
 
         private void CheckForLogarithmicScale()
         {
-            if (IsLogarithmic) { return; }
+            if (IsLogarithmic) return; 
             var oldState = this.Graph.SelectedVertex.States[0];
             foreach (var state in this.Graph.SelectedVertex.States)
             {
-                if (oldState == state) { continue; }
-                if (!state.Max.Equals((oldState.Max * 10))) { return; }
+                if (oldState == state) continue; 
+                if (!state.Max.Equals((oldState.Max * 10))) return; 
                 oldState = state;                                                        
             }
             IsLogarithmic = true;
@@ -151,11 +151,8 @@ namespace Marv.Input
                     var probValue = probSet[i];
                     var min = state.Min;
                     var max = state.Max;
-                    if (max.Equals(Double.PositiveInfinity))
-                    {
-                        max = 2*min;
-                    }
-
+                    if (max.Equals(Double.PositiveInfinity)) max = 2 * min;
+                   
                     var probItem = new HighLowItem(index, min, max,
                         min, max);
                     if (series2.Keys.Contains(probValue))
@@ -191,7 +188,7 @@ namespace Marv.Input
 
         private void InitializePlot()
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
+            if (this.InputGridView.SelectedCells.Count != 1) return; 
             inputScatter = new ScatterSeries();
             inputScatter.MarkerFill = OxyColors.Green;
             inputScatter.Title = "Base";
@@ -253,14 +250,9 @@ namespace Marv.Input
             this.DataPlotModel.MouseDown += (s, e) =>
             {
                 var scatter = modeScatter;
-                if (PlotLineType == LineType.Max)
-                {
-                    scatter = maxScatter;
-                }
-                else if (PlotLineType == LineType.Min)
-                {
-                    scatter = minScatter;
-                }
+
+                if (PlotLineType == LineType.Max) scatter = maxScatter;
+                else if (PlotLineType == LineType.Min) scatter = minScatter;
 
                 if (e.ChangedButton == OxyMouseButton.Left)
                 {
@@ -278,24 +270,12 @@ namespace Marv.Input
                 {
                     var seriesCount = scatter.Points.Count;
 
-                    if (seriesCount > 0)
-                    {
-                        scatter.Points.RemoveAt(seriesCount - 1);
-                    }
-
+                    if (seriesCount > 0) scatter.Points.RemoveAt(seriesCount - 1);
                 }
-                if (PlotLineType == LineType.Max)
-                {
-                    UpdateLine(maxLine, scatter);
-                }
-                else if (PlotLineType == LineType.Min)
-                {
-                    UpdateLine(minLine, scatter);
-                }
-                else
-                {
-                    UpdateLine(modeLine, scatter);
-                }
+                if (PlotLineType == LineType.Max) UpdateLine(maxLine, scatter);
+                else if (PlotLineType == LineType.Min) UpdateLine(minLine, scatter);
+                else  UpdateLine(modeLine, scatter);
+               
                 this.DataPlotModel.InvalidatePlot(true);
             };
 
@@ -341,10 +321,7 @@ namespace Marv.Input
         {
             foreach (var point in series.Points)
             {
-                if (xCoord == (int)point.X || xCoord <= 0)
-                {
-                    return false;
-                }                  
+                if (xCoord == (int)point.X || xCoord <= 0) return false;               
             }
             return true;
         }

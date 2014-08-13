@@ -5,8 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Windows.Threading;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
@@ -131,10 +129,7 @@ namespace Marv.Input
 
             if (mainWindow == null) return;
 
-            if (mainWindow.EndYear < mainWindow.StartYear)
-            {
-                mainWindow.StartYear = mainWindow.EndYear;
-            }
+            if (mainWindow.EndYear < mainWindow.StartYear) mainWindow.StartYear = mainWindow.EndYear;          
         }
 
         private static void ChangedStartYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -143,10 +138,7 @@ namespace Marv.Input
 
             if (mainWindow == null) return;
 
-            if (mainWindow.StartYear > mainWindow.EndYear)
-            {
-                mainWindow.EndYear = mainWindow.StartYear;
-            }
+            if (mainWindow.StartYear > mainWindow.EndYear) mainWindow.EndYear = mainWindow.StartYear;
         }
 
 
@@ -155,10 +147,11 @@ namespace Marv.Input
             if (InputRows == null) return;
             this.IsInputGridEnabled = false;
             var sectionNote = new NotificationIndeterminate();
+            sectionNote.Description = "Loading Sections...";
             this.StatusControlBar.Notifications.Add(sectionNote);
             var progress = new Progress<int>(i =>
             {               
-                sectionNote.Value = (i*100) / SectionNumber;                
+                sectionNote.Value = (i*100) / SectionNumber;
             });
 
             var inputRows = this.InputRows;
@@ -209,15 +202,9 @@ namespace Marv.Input
                 }
             }
 
-            if (sum == 0)
-            {
-                return VertexEvidenceProgress.None;
-            }
+            if (sum == 0) return VertexEvidenceProgress.None;
 
-            if (sum < total)
-            {
-                return VertexEvidenceProgress.Partial;
-            }
+            if (sum < total) return VertexEvidenceProgress.Partial;           
 
             return VertexEvidenceProgress.Full;
         }
@@ -240,11 +227,11 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
+            if (this.InputGridView.SelectedCells.Count != 1) return; 
             
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var modelData = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || modelData == null) { return; }
+            if (model.IsColumnSectionId || modelData == null) return;
             
             this.InputGridView.SelectAll();
             foreach (var cell in this.InputGridView.SelectedCells)
@@ -259,10 +246,10 @@ namespace Marv.Input
 
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
+            if (this.InputGridView.SelectedCells.Count != 1) return;
             
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
-            if (selectedCellModel.IsColumnSectionId) { return; }               
+            if (selectedCellModel.IsColumnSectionId) return;              
             var vertexEvidence = selectedCellModel.Data as VertexEvidence;
 
             foreach (var column in this.InputGridView.Columns)
@@ -278,11 +265,11 @@ namespace Marv.Input
 
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) { return; }
+            if (this.InputGridView.SelectedCells.Count != 1) return; 
             
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (selectedCellModel.IsColumnSectionId) { return; }               
+            if (selectedCellModel.IsColumnSectionId) return;                
             var selectedCellData = selectedCellModel.Data as VertexEvidence;
 
             foreach (var row in this.InputRows)
@@ -532,20 +519,14 @@ namespace Marv.Input
                     {
                         cellModel.Data = graphEvidence[Graph.SelectedVertex.Key];
                     }
-                    else
-                    {
-                        cellModel.Data = "";
-                    }
+                    else cellModel.Data = "";
                 }
             }
         }
 
         private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
         {
-            if (DataPlotModel != null)
-            {
-                UploadToGrid();
-            }
+            if (DataPlotModel != null) UploadToGrid();
         }
     }
 }

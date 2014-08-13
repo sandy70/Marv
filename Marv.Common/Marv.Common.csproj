@@ -121,6 +121,12 @@
     <Resource Include="Resources\Icons\CopyIntoAll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Icons\Back2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icons\Forward.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Resources\Icons\Interpolate.png" />
     <Resource Include="Resources\Icons\Upload.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
