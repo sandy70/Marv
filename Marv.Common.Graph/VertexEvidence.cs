@@ -1,16 +1,28 @@
-﻿namespace Marv.Common.Graph
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Marv.Common.Graph
 {
     public class VertexEvidence
     {
-        public double[] Evidence { get; set; }
         public string String { get; set; }
+        public double[] Values { get; set; }
+        public double[] Beliefs { get; set; }
 
-        public VertexEvidence() {}
-
-        public VertexEvidence(double[] evidence, string str)
+        public static List<double> ParseValues(string str)
         {
-            this.Evidence = evidence;
-            this.String = str;
+            var values = new List<double>();
+
+            var parts = str.Trim().Split("(),: ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var part in parts)
+            {
+                double value;
+                if (double.TryParse(part, out value)) values.Add(value);
+            }
+
+            return values;
         }
 
         public override string ToString()

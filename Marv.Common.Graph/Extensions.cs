@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
@@ -25,19 +26,17 @@ namespace Marv.Common.Graph
             return edges.Any(edge => edge.Source == source && edge.Target == target);
         }
 
-        public static Dictionary<string, double> Parse(this IEnumerable<State> states, IDistribution dist)
+        public static void SetProperty<TObject, TValue>(this IEnumerable<TObject> objects, IEnumerable<TValue> values, Action<TObject, TValue> action)
         {
-            var evidence = new Dictionary<string, double>();
+            var stateList = objects as IList<TObject> ?? objects.ToList();
+            var valueList = values as IList<TValue> ?? values.ToList();
 
-            foreach (var state in states)
+            if (stateList.Count() != valueList.Count()) throw new InvalidValueException("Number of objects should be equal to the number of values provided.");
+
+            for (var i = 0; i < stateList.Count(); i++)
             {
-                // if max is inf then use min * 2;
-                var max = state.Max == double.PositiveInfinity ? state.Min * 2 : state.Max;
-
-                evidence[state.Key] = dist.Cdf(max) - dist.Cdf(state.Min);
+                action(stateList[i], valueList[i]);
             }
-
-            return evidence.Normalized();
         }
     }
 }

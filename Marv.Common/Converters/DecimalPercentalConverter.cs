@@ -27,41 +27,16 @@ namespace Marv.Common
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (string.IsNullOrEmpty(value.ToString()))
-            {
-                return 0;
-            }
+            var str = value.ToString();
 
-            var trimmedValue = value.ToString().TrimEnd(new char[] { '%' });
+            if (string.IsNullOrEmpty(str)) return 0;
 
-            if (targetType == typeof(double))
-            {
-                double result;
+            var trimmedValue = str.TrimEnd("%".ToCharArray());
 
-                if (double.TryParse(trimmedValue, out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return value;
-                }
-            }
+            if (targetType != typeof (decimal) && targetType != typeof(double)) return value;
 
-            if (targetType == typeof(decimal))
-            {
-                decimal result;
-                if (decimal.TryParse(trimmedValue, out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return value;
-                }
-            }
-
-            return value;
+            var result = 0.0;
+            return double.TryParse(trimmedValue, out result) ? result : value;
         }
     }
 }

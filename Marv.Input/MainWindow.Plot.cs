@@ -125,10 +125,10 @@ namespace Marv.Input
             }
         }
 
-
         private void CheckForLogarithmicScale()
         {
             if (IsLogarithmic) { return; }
+
             var oldState = this.Graph.SelectedVertex.States[0];
             foreach (var state in this.Graph.SelectedVertex.States)
             {
@@ -143,12 +143,12 @@ namespace Marv.Input
         {        
             if (entry.ToString().Contains(","))
             {
-                var probSet = entry.Evidence;
+                var probSet = entry.Values;
                 CheckForLogarithmicScale();
                 var i = 0;
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
-                    var probValue = probSet[i];
+                    var probValue = probSet.ElementAt(i);
                     var min = state.Min;
                     var max = state.Max;
                     if (max.Equals(Double.PositiveInfinity))
@@ -299,7 +299,6 @@ namespace Marv.Input
                 this.DataPlotModel.InvalidatePlot(true);
             };
 
-
             this.DataPlotModel.Series.Add(inputScatter);
             foreach (var series in candleStickSet.Values)
             {
@@ -319,7 +318,6 @@ namespace Marv.Input
             this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 
             this.DataPlotModel.InvalidatePlot(true);
-            
         }
 
         private static void UpdateLine(LineSeries line, ScatterSeries scatter)

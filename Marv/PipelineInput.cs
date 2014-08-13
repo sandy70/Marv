@@ -81,12 +81,12 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
+                        //var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
 
-                        if (evidence != null)
-                        {
-                            graphEvidence[vertexKey] = evidence;
-                        }
+                        //if (evidence != null)
+                        //{
+                        //    graphEvidence[vertexKey] = evidence;
+                        //}
                     }
                     else if (evidenceType == "Space")
                     {
@@ -110,12 +110,12 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
+                        //var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
 
-                        if (evidence != null)
-                        {
-                            graphEvidence[vertexKey] = evidence;
-                        }
+                        //if (evidence != null)
+                        //{
+                        //    graphEvidence[vertexKey] = evidence;
+                        //}
                     }
                 }
 

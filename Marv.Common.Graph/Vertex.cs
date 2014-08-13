@@ -36,30 +36,9 @@ namespace Marv.Common.Graph
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
-        public Dictionary<string, double> Belief
-        {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.Belief);
-            }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.Belief = value == null ? 0 : value[state.Key];
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public ObservableCollection<Command<Vertex>> Commands
         {
-            get
-            {
-                return this.commands;
-            }
+            get { return this.commands; }
 
             set
             {
@@ -74,10 +53,7 @@ namespace Marv.Common.Graph
         // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
         public Dictionary<string, string, EdgeConnectorPositions> ConnectorPositions
         {
-            get
-            {
-                return this.connectorPositions;
-            }
+            get { return this.connectorPositions; }
 
             set
             {
@@ -91,10 +67,7 @@ namespace Marv.Common.Graph
 
         public string Description
         {
-            get
-            {
-                return this.description;
-            }
+            get { return this.description; }
 
             set
             {
@@ -108,10 +81,7 @@ namespace Marv.Common.Graph
 
         public Point DisplayPosition
         {
-            get
-            {
-                return this.displayPosition;
-            }
+            get { return this.displayPosition; }
 
             set
             {
@@ -127,30 +97,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, double> Evidence
-        {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.Evidence);
-            }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.Evidence = (value == null) || !value.ContainsKey(state.Key) ? 0 : value[state.Key];
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string EvidenceString
         {
-            get
-            {
-                return this.evidenceString;
-            }
+            get { return this.evidenceString; }
 
             set
             {
@@ -161,10 +110,7 @@ namespace Marv.Common.Graph
 
         public ObservableCollection<string> Groups
         {
-            get
-            {
-                return this.groups;
-            }
+            get { return this.groups; }
 
             set
             {
@@ -175,10 +121,7 @@ namespace Marv.Common.Graph
 
         public string HeaderOfGroup
         {
-            get
-            {
-                return this.headerOfGroup;
-            }
+            get { return this.headerOfGroup; }
             set
             {
                 this.headerOfGroup = value;
@@ -188,10 +131,7 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, double> InitialBelief
         {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.InitialBelief);
-            }
+            get { return this.States.ToDictionary(state => state.Key, state => state.InitialBelief); }
 
             set
             {
@@ -206,10 +146,7 @@ namespace Marv.Common.Graph
 
         public string InputVertexKey
         {
-            get
-            {
-                return this.inputVertexKey;
-            }
+            get { return this.inputVertexKey; }
 
             set
             {
@@ -223,18 +160,12 @@ namespace Marv.Common.Graph
 
         public bool IsEvidenceEntered
         {
-            get
-            {
-                return this.States.Sum(state => state.Evidence) > 0;
-            }
+            get { return this.States.Sum(state => state.Evidence) > 0; }
         }
 
         public bool IsExpanded
         {
-            get
-            {
-                return this.isExpanded;
-            }
+            get { return this.isExpanded; }
 
             set
             {
@@ -248,10 +179,7 @@ namespace Marv.Common.Graph
 
         public bool IsHeader
         {
-            get
-            {
-                return this.isHeader;
-            }
+            get { return this.isHeader; }
 
             set
             {
@@ -262,10 +190,7 @@ namespace Marv.Common.Graph
 
         public bool IsLocked
         {
-            get
-            {
-                return this.isLocked;
-            }
+            get { return this.isLocked; }
 
             set
             {
@@ -282,12 +207,14 @@ namespace Marv.Common.Graph
             }
         }
 
+        public bool IsLogScale
+        {
+            get { return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon); }
+        }
+
         public State MostProbableState
         {
-            get
-            {
-                return this.mostProbableState;
-            }
+            get { return this.mostProbableState; }
 
             set
             {
@@ -301,10 +228,7 @@ namespace Marv.Common.Graph
 
         public Point Position
         {
-            get
-            {
-                return this.position;
-            }
+            get { return this.position; }
 
             set
             {
@@ -318,10 +242,7 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, Point> PositionForGroup
         {
-            get
-            {
-                return this.positionsForGroup;
-            }
+            get { return this.positionsForGroup; }
 
             set
             {
@@ -335,10 +256,7 @@ namespace Marv.Common.Graph
 
         public string SelectedGroup
         {
-            get
-            {
-                return this.selectedGroup;
-            }
+            get { return this.selectedGroup; }
 
             set
             {
@@ -352,10 +270,7 @@ namespace Marv.Common.Graph
 
         public ModelCollection<State> States
         {
-            get
-            {
-                return this.states;
-            }
+            get { return this.states; }
 
             set
             {
@@ -385,10 +300,7 @@ namespace Marv.Common.Graph
 
         public VertexType Type
         {
-            get
-            {
-                return this.type;
-            }
+            get { return this.type; }
 
             set
             {
@@ -402,10 +314,7 @@ namespace Marv.Common.Graph
 
         public string Units
         {
-            get
-            {
-                return this.units;
-            }
+            get { return this.units; }
 
             set
             {
@@ -417,12 +326,13 @@ namespace Marv.Common.Graph
             }
         }
 
-        public VertexEvidence GetData()
+        public VertexEvidence GetEvidence()
         {
             return new VertexEvidence
             {
-                Evidence = this.Evidence.Select(kvp => kvp.Value).ToArray(),
-                String = this.EvidenceString
+                Beliefs = this.States.GetBelief().ToArray(),
+                String = this.EvidenceString,
+                Values = this.States.GetEvidence().ToArray()
             };
         }
 
@@ -432,71 +342,24 @@ namespace Marv.Common.Graph
             return this.States.Select(state => state.Belief).ToArray();
         }
 
-        public void SelectState(int index)
-        {
-            for (var i = 0; i < this.States.Count; i++)
-            {
-                this.States[i].Belief = i == index ? 1 : 0;
-            }
-        }
-
-        public void SetBelief(double[] belief)
-        {
-            if (belief.Length != this.States.Count)
-            {
-                var message = String.Format("The length of belief array [{0}] should be <= number of states in this vertex [{1}:{2}].", belief.Length, this.Key, this.States.Count);
-                throw new InvalidValueException(message);
-            }
-
-            for (var i = 0; i < belief.Length; i++)
-            {
-                this.States[i].Belief = belief[i];
-            }
-        }
-
-        public void SetEvidence(State aState)
-        {
-            foreach (var state in this.States)
-            {
-                state.Evidence = state == aState ? 1 : 0;
-            }
-        }
-
-        public void SetEvidenceUniform()
-        {
-            var value = 1.0 / this.States.Count;
-
-            foreach (var state in this.States)
-            {
-                state.Evidence = value;
-            }
-        }
-
         public override string ToString()
         {
             return String.Format("[{0}:{1}]", this.Key, this.Name);
         }
 
-        public void UpdateEvidence()
-        {
-            this.Evidence = EvidenceStringFactory.Create(this.EvidenceString).Parse(this.States, this.EvidenceString).Normalized();
-        }
-
         public void UpdateEvidenceString()
         {
-            if (this.Evidence.Sum(kvp => kvp.Value) > 0)
-            {
-                this.EvidenceString = this.Evidence.String("{0:F2}");
-            }
-            else
-            {
-                this.EvidenceString = null;
-            }
+            this.EvidenceString = this.IsEvidenceEntered ? this.States.Select(state => state.Evidence).String("{0:F2}") : null;
         }
 
         public void UpdateMostProbableState()
         {
             this.MostProbableState = this.States.MaxBy(state => state.Belief);
+        }
+
+        public void UpdateStateEvidences()
+        {
+            this.States.SetEvidence(this.EvidenceString);
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

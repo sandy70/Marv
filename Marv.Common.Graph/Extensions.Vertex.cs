@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv.Common.Graph
@@ -35,6 +36,20 @@ namespace Marv.Common.Graph
             CheckVertexStatisticComputable(vertex, oldValue);
 
             return vertex.Mean(newValue) - vertex.Mean(oldValue);
+        }
+
+        public static void SetBelief(this IEnumerable<Vertex> vertices, double value)
+        {
+            foreach (var vertex in vertices) vertex.States.SetBelief(value);
+        }
+
+        public static void ClearEvidence(this IEnumerable<Vertex> vertices)
+        {
+            foreach (var vertex in vertices)
+            {
+                vertex.States.ClearEvidence();
+                vertex.EvidenceString = null;
+            }
         }
 
         public static double StandardDeviation(this Vertex vertex, double[] newValue, double[] oldValue = null)

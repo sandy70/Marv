@@ -216,6 +216,19 @@ namespace Marv.Common
             return normalized;
         }
 
+        public static IEnumerable<double> Normalized(this IEnumerable<double> values)
+        {
+            var valueList = values as IList<double> ?? values.ToList();
+            var sum = valueList.Sum();
+
+            for (var i = 0; i < valueList.Count; i++)
+            {
+                valueList[i] /= sum;
+            }
+
+            return valueList;
+        }
+
         public static List<string> ParseBlocks(this string str)
         {
             var startChar = '{';
@@ -331,6 +344,11 @@ namespace Marv.Common
             }
             return pointList.Take(1)
                 .Concat(last);
+        }
+
+        public static string String<T>(this IEnumerable<T> items, string format = "{0}")
+        {
+            return items.Select(item => System.String.Format(format, item)).String();
         }
 
         public static string String(this IEnumerable<string> strings)

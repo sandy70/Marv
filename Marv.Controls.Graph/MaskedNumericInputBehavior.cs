@@ -19,7 +19,7 @@ namespace Marv.Controls.Graph
 
             if (vertexControl == null) return;
 
-            vertexControl.RaiseEvidenceChanged();
+            vertexControl.RaiseEvidenceEntered();
         }
     }
 }

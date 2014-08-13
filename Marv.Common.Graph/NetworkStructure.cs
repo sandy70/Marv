@@ -159,16 +159,39 @@ namespace Marv.Common.Graph
             this.network.SetEvidence(vertexKey, stateIndex);
         }
 
-        public void SetEvidence(string vertexKey, double[] evidence)
+        public void SetEvidence(string vertexKey, IEnumerable<double> evidence)
         {
-            this.network.SetSoftEvidence(vertexKey, evidence);
+            if (evidence == null)
+            {
+                try
+                {
+                    this.network.ClearEvidence(vertexKey);
+                }
+                catch
+                {
+                    // do nothing
+                }
+
+                return;
+            }
+
+            this.network.SetSoftEvidence(vertexKey, evidence.ToArray());
         }
 
-        public void SetEvidence(Dictionary<string, double[]> graphEvidence)
+        public void Run(Dictionary<string, VertexEvidence> vertexEvidences)
         {
-            foreach (var vertexKey in graphEvidence.Keys)
+            this.ClearEvidence();
+
+            foreach (var vertexKey in vertexEvidences.Keys)
             {
-                this.SetEvidence(vertexKey, graphEvidence[vertexKey]);
+                this.SetEvidence(vertexKey, vertexEvidences[vertexKey].Values);
+            }
+
+            foreach (var kvp in this.GetBelief())
+            {
+                if (!vertexEvidences.ContainsKey(kvp.Key)) vertexEvidences[kvp.Key] = new VertexEvidence();
+
+                vertexEvidences[kvp.Key].Beliefs = kvp.Value;
             }
         }
 

@@ -8,18 +8,12 @@ namespace Marv.Common
     {
         public static void AddUnique<T>(this IList<T> list, T item)
         {
-            if (!list.Contains(item))
-            {
-                list.Add(item);
-            }
+            if (!list.Contains(item)) list.Add(item);
         }
 
         public static void AddUnique<T>(this IList<T> list, IEnumerable<T> items)
         {
-            foreach (var item in items)
-            {
-                list.AddUnique(item);
-            }
+            foreach (var item in items) list.AddUnique(item);
         }
 
         public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> source)
@@ -58,6 +52,11 @@ namespace Marv.Common
             } while (hasRemainingItems);
         }
 
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
+        {
+            return source.Except(item.Yield());
+        }
+
         public static int MaxIndex<T>(this IEnumerable<T> sequence) where T : IComparable<T>
         {
             var maxIndex = -1;
@@ -74,11 +73,6 @@ namespace Marv.Common
                 index++;
             }
             return maxIndex;
-        }
-
-        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
-        {
-            return source.Except(item.Yield<T>());
         }
 
         public static IEnumerable<T> Yield<T>(this T item)

@@ -22,7 +22,7 @@ namespace Marv.Common
                 if (value != this.xValue)
                 {
                     this.xValue = value;
-                    this.RaisePropertyChanged("XValue");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace Marv.Common
                 if (value != this.yValue)
                 {
                     this.yValue = value;
-                    this.RaisePropertyChanged("YValue");
+                    this.RaisePropertyChanged();
                 }
             }
         }

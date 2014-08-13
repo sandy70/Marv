@@ -13,6 +13,11 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        
         <telerik:RadDocking>
             <telerik:RadDocking.DocumentHost>
                 <telerik:RadSplitContainer>
@@ -100,6 +105,12 @@
                                                    ToolTip="Copies value across entire grid.">
                                     <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
                                 </telerik:RadButton>
+                                
+                                <telerik:RadButton Name="RunButton"
+                                                   Height="30" Width="30">
+                                    <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
+                              </telerik:RadButton>
+                                                   
 
                             </telerik:RadToolBar>
 
@@ -110,7 +121,7 @@
                                                  CanUserReorderColumns="False"
                                                  CanUserSortColumns="False"
                                                  ClipboardCopyMode="Cells"
-                                                 ClipboardPasteMode="AllSelectedCells"
+                                                 ClipboardPasteMode="Cells"
                                                  IsFilteringAllowed="False"
                                                  ShowGroupPanel="False"
                                                  SelectionMode="Extended"
@@ -293,15 +304,17 @@
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
-                <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10">
-                    <telerik:RadPaneGroup>
+ <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Status">
                             <local:StatusControl x:Name="StatusControlBar"  DockPanel.Dock="Bottom">
                             </local:StatusControl>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
-                </telerik:RadSplitContainer>
-            </telerik:RadSplitContainer>           
+
+
+           </telerik:RadSplitContainer>
+
+
         </telerik:RadDocking>
 
         <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -313,7 +326,4 @@
         </marv:NotificationControl>
 
     </Grid>
-
-
-
 </Window>

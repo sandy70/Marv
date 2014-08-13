@@ -27,12 +27,12 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.Lock && vertex.IsLocked)
             {
-                vertexControl.RaiseEvidenceChanged();
+                vertexControl.RaiseEvidenceEntered();
             }
 
             if (command == VertexCommands.Clear)
             {
-                vertexControl.RaiseEvidenceChanged();
+                vertexControl.RaiseEvidenceEntered();
             }
         }
     }
