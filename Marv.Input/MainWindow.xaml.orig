@@ -14,10 +14,18 @@
 
     <Grid>
         <Grid.RowDefinitions>
+<<<<<<< HEAD
+            <RowDefinition />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        
+        <telerik:RadDocking>
+=======
             <RowDefinition Height ="970"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
         <telerik:RadDocking Grid.Row="0">
+>>>>>>> Finished StatusBar and began work on encryption.
             <telerik:RadDocking.DocumentHost>
                 <telerik:RadSplitContainer>
                     <telerik:RadPaneGroup>
@@ -304,11 +312,21 @@
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
-            </telerik:RadSplitContainer>
+<<<<<<< HEAD
+ <telerik:RadPaneGroup>
+                        <telerik:RadPane Header="Status">
+                            <local:StatusControl x:Name="StatusControlBar"  DockPanel.Dock="Bottom">
+                            </local:StatusControl>
+                        </telerik:RadPane>
+                    </telerik:RadPaneGroup>
 
 
+           </telerik:RadSplitContainer>
 
 
+=======
+            </telerik:RadSplitContainer>           
+>>>>>>> Finished StatusBar and began work on encryption.
         </telerik:RadDocking>
 
         <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="0"

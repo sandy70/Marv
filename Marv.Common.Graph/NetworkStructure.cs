@@ -17,7 +17,7 @@ namespace Marv.Common.Graph
 
         public string FileName;
 
-        public void Decrypt(string path)
+        public static void Decrypt(string path)
         {
             var pathStream = new FileStream(path, FileMode.OpenOrCreate);
             var rMCrypto = new RijndaelManaged();
@@ -27,9 +27,30 @@ namespace Marv.Common.Graph
             var cryptStream = new CryptoStream(pathStream,
             rMCrypto.CreateDecryptor(Key, IV),
             CryptoStreamMode.Read);
-            var sReader = new StreamReader(cryptStream);
+            
+            var lineList = new List<String>();
+            try
+            {
+                var sReader = new StreamReader(cryptStream);
+            
+                while (!sReader.EndOfStream)
+                {
+                    lineList.Add(sReader.ReadLine());
+                }
+                sReader.Close();
+            }
+            catch (CryptographicException e)
+            { 
+                return;
+            }
+           
+            
             var sWriter = new StreamWriter(path);
-            sWriter.WriteLine(sReader.ReadLine());
+            foreach (var line in lineList)
+            {
+                sWriter.WriteLine(line);
+            }
+            sWriter.Close();
 
         }
 
@@ -344,7 +365,7 @@ namespace Marv.Common.Graph
                 networkStructureVertex.Properties.Remove("isheaderofgroup");
             }
 
-            this.Write(path);
+            this.EncryptWrite(path);
         }
     }
 }
