@@ -14,9 +14,10 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height ="970"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition />
+            <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
+        
         <telerik:RadDocking Grid.Row="0">
             <telerik:RadDocking.DocumentHost>
                 <telerik:RadSplitContainer>
@@ -305,27 +306,11 @@
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
             </telerik:RadSplitContainer>
-
-
-
-
         </telerik:RadDocking>
 
-        <marv:NotificationControl HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="0"
-                                  Margin="16"
-                                  Notifications="{Binding ElementName=Root, Path=Notifications}">
-            <marv:NotificationControl.Effect>
-                <DropShadowEffect Opacity="0.5" />
-            </marv:NotificationControl.Effect>
-        </marv:NotificationControl>
-
-        <telerik:RadSplitContainer telerik:ProportionalStackPanel.RelativeSize="400, 10" Grid.Row="1">
-            <telerik:RadPaneGroup>
-                <telerik:RadPane Header="Status">
-                    <local:StatusControl x:Name="StatusControlBar"  >
-                    </local:StatusControl>
-                </telerik:RadPane>
-            </telerik:RadPaneGroup>
-        </telerik:RadSplitContainer>
+        <local:StatusControl x:Name="StatusControlBar"
+                                Grid.Row="1"
+                                Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}">
+        </local:StatusControl>
     </Grid>
 </Window>

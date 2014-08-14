@@ -40,7 +40,7 @@ namespace Marv.Input
             DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty NotificationsProperty =
-            DependencyProperty.Register("Notifications", typeof (ObservableCollection<INotification>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
+            DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
 
         public static readonly DependencyProperty StartYearProperty =
             DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
@@ -48,11 +48,13 @@ namespace Marv.Input
         public static readonly DependencyProperty SectionNumberProperty =
             DependencyProperty.Register("SectionNumber", typeof (int), typeof (MainWindow), new PropertyMetadata(0));
 
-        private readonly NotificationTimed notificationBadCurrentCell = new NotificationTimed
+        private readonly Notification notificationBadCurrentCell = new Notification
         {
             Name = "Warning!",
             Description = "No section/year selected for input.",
-            IsMuteable = true
+            IsIndeterminate = true,
+            IsMuteable = true,
+            IsTimed = true
         };
 
         public bool IsYearPlot = true;
@@ -127,12 +129,13 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<INotification> Notifications
+        public NotificationCollection Notifications
         {
             get
             {
-                return (ObservableCollection<INotification>) GetValue(NotificationsProperty);
+                return (NotificationCollection) GetValue(NotificationsProperty);
             }
+
             set
             {
                 SetValue(NotificationsProperty, value);
@@ -187,22 +190,28 @@ namespace Marv.Input
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) return;
+            
             this.IsInputGridEnabled = false;
-            var sectionNote = new NotificationIndeterminate();
-            sectionNote.Description = "Loading Sections...";
-            this.StatusControlBar.Notifications.Add(sectionNote);
+            
+            var notification = new Notification
+            {
+                Description = "Loading Sections..."
+            };
+
+            this.Notifications.Add(notification);
+            
             var progress = new Progress<int>(i =>
             {               
-                sectionNote.Value = (i*100) / SectionNumber;
+                notification.Value = (i*100) / SectionNumber;
             });
-
 
             var inputRows = this.InputRows;
             var years = this.LineEvidence.Years;
             var nSections = this.SectionNumber;
 
             await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
-            this.StatusControlBar.Notifications.Remove(sectionNote);
+
+            this.Notifications.Remove(notification);
             this.IsInputGridEnabled = true;
         }
 
@@ -270,13 +279,9 @@ namespace Marv.Input
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
             if (this.InputGridView.SelectedCells.Count != 1) return; 
-            {
-                return;
-            }
 
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var vertexEvidence = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || modelData == null) return;
 
             if (model.IsColumnSectionId || vertexEvidence == null)
             {
@@ -313,15 +318,10 @@ namespace Marv.Input
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
             if (this.InputGridView.SelectedCells.Count != 1) return;
-            {
-                return;
-            }
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
             if (selectedCellModel.IsColumnSectionId) return;              
-            {
-                return;
-            }
+
             var vertexEvidence = selectedCellModel.Data as VertexEvidence;
 
             foreach (var column in this.InputGridView.Columns)
@@ -337,16 +337,11 @@ namespace Marv.Input
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
             if (this.InputGridView.SelectedCells.Count != 1) return; 
-            {
-                return;
-            }
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
             if (selectedCellModel.IsColumnSectionId) return;                
-            {
-                return;
-            }
+            
             var selectedCellData = selectedCellModel.Data as VertexEvidence;
 
             foreach (var row in this.InputRows)
@@ -360,10 +355,11 @@ namespace Marv.Input
         {
             if (this.Graph == null)
             {
-                this.Notifications.Push(new NotificationIndeterminate
+                this.Notifications.Push(new Notification
                 {
                     Name = "No network available!",
-                    Description = "You cannot create and input if no network is opened."
+                    Description = "You cannot create and input if no network is opened.",
+                    IsIndeterminate = true
                 });
 
                 return;
@@ -409,7 +405,7 @@ namespace Marv.Input
 
             if (this.InputGridView.CurrentCell == null)
             {
-                this.Notifications.Push(this.notificationBadCurrentCell);
+                this.Notifications.Add(this.notificationBadCurrentCell);
                 return;
             }
 
@@ -417,7 +413,7 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId)
             {
-                this.Notifications.Push(this.notificationBadCurrentCell);
+                this.Notifications.Add(this.notificationBadCurrentCell);
                 return;
             }
 

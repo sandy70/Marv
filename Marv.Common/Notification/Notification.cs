@@ -18,13 +18,49 @@ namespace Marv.Common
         event EventHandler Closed;
     }
 
-    public abstract class Notification : Model, INotification
+    public class Notification : Model, INotification
     {
         private double _value = 100;
         private string description;
+        private TimeSpan duration = TimeSpan.FromSeconds(3);
         private bool isIndeterminate;
         private bool isMuteable;
         private bool isMuted;
+        private bool isTimed;
+
+        public TimeSpan Duration
+        {
+            get
+            {
+                return this.duration;
+            }
+
+            set
+            {
+                if (value != this.duration)
+                {
+                    this.duration = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsTimed
+        {
+            get
+            {
+                return this.isTimed;
+            }
+
+            set
+            {
+                if (value != this.isTimed)
+                {
+                    this.isTimed = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
 
         public bool IsMuteable
         {
@@ -121,6 +157,6 @@ namespace Marv.Common
             }
         }
 
-        public abstract void Open();
+        public void Open() {}
     }
 }
