@@ -27,7 +27,7 @@ namespace Marv.Common
             }
         }
 
-        public override void Open()
+        public void Open()
         {
             Logger.Trace("");
 

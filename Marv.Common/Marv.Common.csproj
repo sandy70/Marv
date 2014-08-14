@@ -90,6 +90,7 @@
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />
     <Compile Include="Types\IKey.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
     <Compile Include="Notification\Notification.cs" />
-    <Compile Include="Notification\NotificationIndeterminate.cs" />
     <Compile Include="Notification\NotificationTimed.cs" />
     <Compile Include="ObjectDataBase\Odb.cs" />
     <Compile Include="ObjectDataBase\OdbDataNotFoundException.cs" />
@@ -124,8 +124,8 @@
     <Resource Include="Resources\Icons\CopyIntoAll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Icons\Back2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Resource Include="Resources\Icons\Back.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\Forward.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -177,9 +177,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\Expand.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Icons\Back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\Close.png">
