@@ -269,16 +269,26 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return; 
+<<<<<<< HEAD
+            if (this.InputGridView.SelectedCells.Count != 1)
             {
                 return;
             }
 
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var vertexEvidence = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || modelData == null) return;
 
             if (model.IsColumnSectionId || vertexEvidence == null)
+=======
+            if (this.InputGridView.SelectedCells.Count != 1) return; 
+            
+            var model = new CellModel(this.InputGridView.SelectedCells[0]);
+            var modelData = model.Data as VertexEvidence;
+            if (model.IsColumnSectionId || modelData == null) return;
+            
+            this.InputGridView.SelectAll();
+            foreach (var cell in this.InputGridView.SelectedCells)
+>>>>>>> Finished StatusBar and began work on encryption.
             {
                 return;
             }
@@ -312,16 +322,23 @@ namespace Marv.Input
 
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+<<<<<<< HEAD
+            if (this.InputGridView.SelectedCells.Count != 1)
             {
                 return;
             }
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
-            if (selectedCellModel.IsColumnSectionId) return;              
+            if (selectedCellModel.IsColumnSectionId)
             {
                 return;
             }
+=======
+            if (this.InputGridView.SelectedCells.Count != 1) return;
+            
+            var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+            if (selectedCellModel.IsColumnSectionId) return;              
+>>>>>>> Finished StatusBar and began work on encryption.
             var vertexEvidence = selectedCellModel.Data as VertexEvidence;
 
             foreach (var column in this.InputGridView.Columns)
@@ -336,17 +353,25 @@ namespace Marv.Input
 
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return; 
+<<<<<<< HEAD
+            if (this.InputGridView.SelectedCells.Count != 1)
             {
                 return;
             }
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (selectedCellModel.IsColumnSectionId) return;                
+            if (selectedCellModel.IsColumnSectionId)
             {
                 return;
             }
+=======
+            if (this.InputGridView.SelectedCells.Count != 1) return; 
+            
+            var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            if (selectedCellModel.IsColumnSectionId) return;                
+>>>>>>> Finished StatusBar and began work on encryption.
             var selectedCellData = selectedCellModel.Data as VertexEvidence;
 
             foreach (var row in this.InputRows)
@@ -608,14 +633,29 @@ namespace Marv.Input
                     {
                         cellModel.Data = vertexEvidences[Graph.SelectedVertex.Key];
                     }
+<<<<<<< HEAD
+                    else
+                    {
+                        cellModel.Data = null;
+                    }
+=======
                     else cellModel.Data = "";
+>>>>>>> Finished StatusBar and began work on encryption.
                 }
             }
         }
 
         private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< HEAD
+            if (DataPlotModel != null)
+            {
+                UploadToGrid();
+                // UploadToGrid(inputScatter);
+            }
+=======
             if (DataPlotModel != null) UploadToGrid();
+>>>>>>> Finished StatusBar and began work on encryption.
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Smile;
 
 namespace Marv.Common.Graph
@@ -15,6 +16,43 @@ namespace Marv.Common.Graph
         private readonly Network network = new Network();
 
         public string FileName;
+
+        public static void Decrypt(string path)
+        {
+            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
+            var rMCrypto = new RijndaelManaged();
+
+            byte[] Key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            byte[] IV = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            var cryptStream = new CryptoStream(pathStream,
+            rMCrypto.CreateDecryptor(Key, IV),
+            CryptoStreamMode.Read);
+            
+            var lineList = new List<String>();
+            try
+            {
+                var sReader = new StreamReader(cryptStream);
+            
+                while (!sReader.EndOfStream)
+                {
+                    lineList.Add(sReader.ReadLine());
+                }
+                sReader.Close();
+            }
+            catch (CryptographicException e)
+            { 
+                return;
+            }
+           
+            
+            var sWriter = new StreamWriter(path);
+            foreach (var line in lineList)
+            {
+                sWriter.WriteLine(line);
+            }
+            sWriter.Close();
+
+        }
 
         public static NetworkStructure Read(string path)
         {
@@ -210,6 +248,54 @@ namespace Marv.Common.Graph
             this.Write(this.FileName, graph);
         }
 
+        public void EncryptWrite(string path)
+        {
+            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
+            var rMCrypto = new RijndaelManaged();
+
+            byte[] Key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            byte[] IV = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+
+            var cryptStream = new CryptoStream(pathStream,
+            rMCrypto.CreateEncryptor(Key, IV),
+            CryptoStreamMode.Write);
+            using (var writer = new StreamWriter(cryptStream))
+            {
+                writer.WriteLine("net");
+                writer.WriteLine("{");
+
+                foreach (var prop in this.Properties)
+                {
+                    writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                }
+
+                writer.WriteLine("}");
+
+                foreach (var node in this.Vertices)
+                {
+                    writer.WriteLine();
+                    writer.WriteLine("node {0}", node.Key);
+                    writer.WriteLine("{");
+
+                    foreach (var prop in node.Properties)
+                    {
+                        writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                    }
+
+                    writer.WriteLine("}");
+                }
+
+                writer.WriteLine();
+
+                foreach (var line in this.Footer)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        writer.WriteLine(line);
+                    }
+                }
+            }
+        }
         public void Write(string path)
         {
             using (var writer = new StreamWriter(path))
@@ -279,7 +365,7 @@ namespace Marv.Common.Graph
                 networkStructureVertex.Properties.Remove("isheaderofgroup");
             }
 
-            this.Write(path);
+            this.EncryptWrite(path);
         }
     }
 }

@@ -189,6 +189,7 @@ namespace Marv.Common.Graph
 
         public static Graph Read(string fileName)
         {
+            //NetworkStructure.Decrypt(fileName);
             var graph = new Graph
             {
                 networkStructure = NetworkStructure.Read(fileName)
