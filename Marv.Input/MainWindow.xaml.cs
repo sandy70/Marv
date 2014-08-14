@@ -276,7 +276,7 @@ namespace Marv.Input
 
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var vertexEvidence = model.Data as VertexEvidence;
-            if (model.IsColumnSectionId || model.Data == null) return;
+            if (model.IsColumnSectionId || modelData == null) return;
 
             if (model.IsColumnSectionId || vertexEvidence == null)
             {
@@ -616,7 +616,6 @@ namespace Marv.Input
         private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
         {
             if (DataPlotModel != null) UploadToGrid();
-                // UploadToGrid(inputScatter);
         }
     }
 }
