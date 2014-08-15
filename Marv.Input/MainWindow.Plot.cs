@@ -239,7 +239,7 @@ namespace Marv.Input
                     var year = column.Header.ToString();
                     var entry = row[year] as VertexEvidence;
 
-                    if (year != CellModel.SectionIdHeader && !String.IsNullOrEmpty(entry.ToString()))
+                    if (year != CellModel.SectionIdHeader && entry != null && !String.IsNullOrEmpty(entry.ToString()))
                     {
                         AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(year));
                     }
