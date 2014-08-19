@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
@@ -12,17 +13,7 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
-        public PlotModel DataPlotModel
-        {
-            get
-            {
-                return (PlotModel)GetValue(DataPlotModelProperty);
-            }
-            set
-            {
-                SetValue(DataPlotModelProperty, value);
-            }
-        }
+
 
         public enum PlotAxis
         {
@@ -107,7 +98,8 @@ namespace Marv.Input
                 Position = AxisPosition.Bottom,
                 Title = xAxis
             });
-            if (!IsLogarithmic)
+
+            if (this.Graph.SelectedVertex.IsLogScale)
             {
                 this.DataPlotModel.Axes.Add(new LinearAxis
                 {
@@ -125,27 +117,13 @@ namespace Marv.Input
             }
         }
 
-        private void CheckForLogarithmicScale()
-        {
-            if (IsLogarithmic) return; 
-
-            var oldState = this.Graph.SelectedVertex.States[0];
-            foreach (var state in this.Graph.SelectedVertex.States)
-            {
-                if (oldState == state) continue; 
-                if (!state.Max.Equals((oldState.Max * 10))) return; 
-                oldState = state;                                                        
-            }
-            IsLogarithmic = true;
-        }
-
         private void AddPointsToPlot(VertexEvidence entry, ScatterSeries series1, Dictionary<double, CandleStickSeries> series2, double index)
         {        
             if (entry.ToString().Contains(","))
             {
                 var probSet = entry.Values;
-                CheckForLogarithmicScale();
                 var i = 0;
+
                 foreach (var state in this.Graph.SelectedVertex.States)
                 {
                     var probValue = probSet.ElementAt(i);
@@ -361,8 +339,5 @@ namespace Marv.Input
             }
             return true;
         }
-        
-
-        
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -42,11 +41,11 @@ namespace Marv.Input
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
 
-        public static readonly DependencyProperty StartYearProperty =
-            DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
-
         public static readonly DependencyProperty SectionNumberProperty =
             DependencyProperty.Register("SectionNumber", typeof (int), typeof (MainWindow), new PropertyMetadata(0));
+
+        public static readonly DependencyProperty StartYearProperty =
+            DependencyProperty.Register("StartYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedStartYear));
 
         private readonly Notification notificationBadCurrentCell = new Notification
         {
@@ -58,7 +57,21 @@ namespace Marv.Input
         };
 
         public bool IsYearPlot = true;
+
         public LineEvidence LineEvidence;
+
+        public PlotModel DataPlotModel
+        {
+            get
+            {
+                return (PlotModel) GetValue(DataPlotModelProperty);
+            }
+
+            set
+            {
+                SetValue(DataPlotModelProperty, value);
+            }
+        }
 
         public int EndYear
         {
@@ -86,12 +99,6 @@ namespace Marv.Input
             }
         }
 
-        public bool IsInputGridEnabled
-        {
-            get { return (bool) GetValue(IsInputGridEnabledProperty); }
-            set { SetValue(IsInputGridEnabledProperty, value); }
-        }
-
         public ObservableCollection<dynamic> InputRows
         {
             get
@@ -102,6 +109,18 @@ namespace Marv.Input
             set
             {
                 SetValue(InputRowsProperty, value);
+            }
+        }
+
+        public bool IsInputGridEnabled
+        {
+            get
+            {
+                return (bool) GetValue(IsInputGridEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsInputGridEnabledProperty, value);
             }
         }
 
@@ -142,6 +161,19 @@ namespace Marv.Input
             }
         }
 
+        public int SectionNumber
+        {
+            get
+            {
+                return (int) GetValue(SectionNumberProperty);
+            }
+
+            set
+            {
+                SetValue(SectionNumberProperty, value);
+            }
+        }
+
         public int StartYear
         {
             get
@@ -153,13 +185,6 @@ namespace Marv.Input
             {
                 SetValue(StartYearProperty, value);
             }
-        }
-
-        public int SectionNumber
-        {
-            get { return (int)GetValue(SectionNumberProperty); }
-
-            set { SetValue(SectionNumberProperty, value); }
         }
 
         public MainWindow()
@@ -175,7 +200,7 @@ namespace Marv.Input
 
             if (mainWindow == null) return;
 
-            if (mainWindow.EndYear < mainWindow.StartYear) mainWindow.StartYear = mainWindow.EndYear;          
+            if (mainWindow.EndYear < mainWindow.StartYear) mainWindow.StartYear = mainWindow.EndYear;
         }
 
         private static void ChangedStartYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -187,23 +212,36 @@ namespace Marv.Input
             if (mainWindow.StartYear > mainWindow.EndYear) mainWindow.EndYear = mainWindow.StartYear;
         }
 
+        public bool IsSelectionSquare()
+        {
+            var rowIndices = new List<int>();
+            var colIndices = new List<int>();
+
+            foreach (var selectedCell in this.InputGridView.SelectedCells)
+            {
+                Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
+                colIndices.AddUnique(selectedCell.Column.DisplayIndex);
+            }
+
+            var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
+
+            return total == this.InputGridView.SelectedCells.Count;
+        }
+
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) return;
-            
+
             this.IsInputGridEnabled = false;
-            
+
             var notification = new Notification
             {
                 Description = "Loading Sections..."
             };
 
             this.Notifications.Add(notification);
-            
-            var progress = new Progress<int>(i =>
-            {               
-                notification.Value = (i*100) / SectionNumber;
-            });
+
+            var progress = new Progress<int>(i => { notification.Value = (i * 100) / SectionNumber; });
 
             var inputRows = this.InputRows;
             var years = this.LineEvidence.Years;
@@ -217,7 +255,7 @@ namespace Marv.Input
 
         private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)
         {
-            for (int i = 0; i < nSections; i++)
+            for (var i = 0; i < nSections; i++)
             {
                 var row = new Dynamic();
                 var sectionId = "Section " + (inputRows.Count + 1);
@@ -255,7 +293,7 @@ namespace Marv.Input
 
             if (sum == 0) return VertexEvidenceProgress.None;
 
-            if (sum < total) return VertexEvidenceProgress.Partial;           
+            if (sum < total) return VertexEvidenceProgress.Partial;
 
             return VertexEvidenceProgress.Full;
         }
@@ -278,7 +316,7 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return; 
+            if (this.InputGridView.SelectedCells.Count != 1) return;
 
             var model = new CellModel(this.InputGridView.SelectedCells[0]);
             var vertexEvidence = model.Data as VertexEvidence;
@@ -299,28 +337,12 @@ namespace Marv.Input
             }
         }
 
-        public bool IsSelectionSquare()
-        {
-            var rowIndices = new List<int>();
-            var colIndices = new List<int>();
-
-            foreach (var selectedCell in this.InputGridView.SelectedCells)
-            {
-                Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
-                colIndices.AddUnique(selectedCell.Column.DisplayIndex);
-            }
-
-            var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
-
-            return total == this.InputGridView.SelectedCells.Count;
-        }
-
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
             if (this.InputGridView.SelectedCells.Count != 1) return;
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
-            if (selectedCellModel.IsColumnSectionId) return;              
+            if (selectedCellModel.IsColumnSectionId) return;
 
             var vertexEvidence = selectedCellModel.Data as VertexEvidence;
 
@@ -336,12 +358,12 @@ namespace Marv.Input
 
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return; 
+            if (this.InputGridView.SelectedCells.Count != 1) return;
 
             var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (selectedCellModel.IsColumnSectionId) return;                
-            
+            if (selectedCellModel.IsColumnSectionId) return;
+
             var selectedCellData = selectedCellModel.Data as VertexEvidence;
 
             foreach (var row in this.InputRows)
@@ -471,15 +493,6 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }
 
-        void RunButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
-
-            var cellModel = this.InputGridView.SelectedCells[0].ToModel();
-
-            this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
-        }
-
         private void MaxButton_Checked(object sender, RoutedEventArgs e)
         {
             PlotLineType = LineType.Max;
@@ -558,6 +571,15 @@ namespace Marv.Input
         private void PlotButton_Click(object sender, RoutedEventArgs e)
         {
             InitializePlot();
+        }
+
+        private void RunButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.InputGridView.SelectedCells.Count != 1) return;
+
+            var cellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
