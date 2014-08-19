@@ -22,11 +22,7 @@ namespace Marv.Common.Graph
 
         public static IEnumerable<double> Parse(this IEnumerable<State> states, IDistribution dist)
         {
-            return states.Select(state =>
-            {
-                var max = double.IsPositiveInfinity(state.Max) ? state.Min * 2 : state.Max;
-                return dist.Cdf(max) - dist.Cdf(state.Min);
-            });
+            return states.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));
         }
 
         public static IEnumerable<double> Parse(this IEnumerable<State> states, string str)
