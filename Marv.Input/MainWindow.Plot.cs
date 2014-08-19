@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
+using Marv.Common;
 using Marv.Common.Graph;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -101,7 +102,7 @@ namespace Marv.Input
 
             if (this.Graph.SelectedVertex.IsLogScale)
             {
-                this.DataPlotModel.Axes.Add(new LinearAxis
+                this.DataPlotModel.Axes.Add(new LogarithmicAxis
                 {
                     Position = AxisPosition.Left,
                     Title = "Input Data"
@@ -109,7 +110,7 @@ namespace Marv.Input
             }
             else
             {
-                this.DataPlotModel.Axes.Add(new LogarithmicAxis
+                this.DataPlotModel.Axes.Add(new LinearAxis
                 {
                     Position = AxisPosition.Left,
                     Title = "Input Data"
@@ -117,50 +118,43 @@ namespace Marv.Input
             }
         }
 
-        private void AddPointsToPlot(VertexEvidence entry, ScatterSeries series1, Dictionary<double, CandleStickSeries> series2, double index)
+        private void AddPointsToPlot(VertexEvidence evidence, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
         {        
-            if (entry.ToString().Contains(","))
+            if (evidence.String.Contains(","))
             {
-                var probSet = entry.Values;
-                var i = 0;
-
-                foreach (var state in this.Graph.SelectedVertex.States)
+                this.Graph.SelectedVertex.States.ForEach((state, i) =>
                 {
-                    var probValue = probSet.ElementAt(i);
-                    var min = state.Min;
-                    var max = state.Max;
-                    if (max.Equals(Double.PositiveInfinity)) max = 2 * min;
-                   
-                    var probItem = new HighLowItem(index, min, max,
-                        min, max);
-                    if (series2.Keys.Contains(probValue))
+                    var max = state.SafeMax;
+                    var min = state.SafeMin;
+
+                    var value = evidence.Values[i];
+
+                    var highLowItem = new HighLowItem(index, min, max, min, max);
+
+                    if (!candleStickSeries.ContainsKey(value))
                     {
-                        series2[probValue].Items.Add(probItem);
+                        candleStickSeries[value] = new CandleStickSeries
+                        {
+                            Color = OxyColors.Green,
+                            CandleWidth = 10 * value
+                        };
                     }
-                    else
-                    {
-                        var newSeries = new CandleStickSeries();
-                        newSeries.Color = OxyColors.Green;
-                        newSeries.CandleWidth = 10*probValue;
-                        newSeries.Items.Add(probItem);                        
-                        series2.Add(probValue, newSeries);
-                    }
-                    i++;
-                }
+
+                    candleStickSeries[value].Items.Add(highLowItem);
+                });
+
                 return;
             }
-            if ((!entry.ToString().Contains(":")))
+
+            var values = VertexEvidence.ParseValues(evidence.String);
+
+            if (evidence.String.Contains(":") && values.Count == 2)
             {
-                var value = Convert.ToDouble(entry.ToString());
-                series1.Points.Add(new ScatterPoint(index, value));
+                candleStickSeries[1].Items.Add(new HighLowItem(index, values[0], values[1], values[0], values[1]));
             }
-            else if (entry.ToString().Split(":".ToArray()).Length == 2)
+            else if (values.Count == 1)
             {
-                var valueSet = entry.ToString().Split(":".ToArray());
-                var value1 = Convert.ToDouble(valueSet[0]);
-                var value2 = Convert.ToDouble(valueSet[1]);
-                series2[1].Items.Add(new HighLowItem(index, value1, value2,
-                    value1, value2));
+                scatterSeries.Points.Add(new ScatterPoint(index, values[0]));
             }
         }
 
