@@ -16,9 +16,9 @@ namespace Marv.Common
             foreach (var item in items) list.AddUnique(item);
         }
 
-        public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> source)
+        public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> items)
         {
-            var it = source.GetEnumerator();
+            var it = items.GetEnumerator();
             var hasRemainingItems = false;
             var isFirst = true;
             var item = default(T);
@@ -35,9 +35,9 @@ namespace Marv.Common
             } while (hasRemainingItems);
         }
 
-        public static IEnumerable<T> AllButLastN<T>(this IEnumerable<T> source, int n)
+        public static IEnumerable<T> AllButLastN<T>(this IEnumerable<T> items, int n)
         {
-            var it = source.GetEnumerator();
+            var it = items.GetEnumerator();
             var hasRemainingItems = false;
             var cache = new Queue<T>(n + 1);
 
@@ -52,9 +52,15 @@ namespace Marv.Common
             } while (hasRemainingItems);
         }
 
-        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> items, T item)
         {
-            return source.Except(item.Yield());
+            return items.Except(item.Yield());
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action)
+        {
+            var i = 0;
+            foreach (var item in items) action(item, i++);
         }
 
         public static int MaxIndex<T>(this IEnumerable<T> sequence) where T : IComparable<T>
