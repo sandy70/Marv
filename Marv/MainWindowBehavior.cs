@@ -128,10 +128,11 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            var notification = new NotificationIndeterminate
+            var notification = new Notification
             {
                 Name = "Reading Network",
-                Description = "Reading network from file " + window.NetworkFileName
+                Description = "Reading network from file " + window.NetworkFileName,
+                IsIndeterminate = true
             };
 
             window.Notifications.Push(notification);
@@ -139,13 +140,8 @@ namespace Marv
             // Read source graph
             window.Graph = await Graph.ReadAsync(window.NetworkFileName);
 
-            // Set display graph
-            // window.DisplayGraph = window.Graph.GetSubGraph(window.Graph.DefaultGroup);
-
             // Close notification
-            notification.Close();
-
-            Console.WriteLine(window.Graph.Vertices[0].Belief.ToJson());
+            window.Notifications.Remove(notification);
         }
 
         private void ChartControlCloseButton_Click(object sender, RoutedEventArgs e)
@@ -391,10 +387,11 @@ namespace Marv
             var startYear = (int) multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
-            var notification = new NotificationIndeterminate
+            var notification = new Notification
             {
                 Name = "Running Model",
-                Description = "Running model for location: " + locationName
+                Description = "Running model for location: " + locationName,
+                IsIndeterminate = true
             };
 
             window.Notifications.Push(notification);
