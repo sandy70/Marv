@@ -63,6 +63,20 @@ namespace Marv.Common
             foreach (var item in items) action(item, i++);
         }
 
+        public static int IndexOf<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if (items == null) throw new ArgumentNullException("items");
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            var retVal = 0;
+            foreach (var item in items)
+            {
+                if (predicate(item)) return retVal;
+                retVal++;
+            }
+            return -1;
+        }
+
         public static int MaxIndex<T>(this IEnumerable<T> sequence) where T : IComparable<T>
         {
             var maxIndex = -1;
