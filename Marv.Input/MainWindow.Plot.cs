@@ -3,11 +3,19 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using Telerik.Charting;
+using Telerik.Windows.Controls.ChartView;
+using Axis = OxyPlot.Axes.Axis;
+using DataPoint = OxyPlot.DataPoint;
+using LinearAxis = OxyPlot.Axes.LinearAxis;
+using LineSeries = OxyPlot.Series.LineSeries;
+using LogarithmicAxis = OxyPlot.Axes.LogarithmicAxis;
 using ScatterPoint = OxyPlot.Series.ScatterPoint;
 
 namespace Marv.Input
@@ -119,7 +127,9 @@ namespace Marv.Input
         }
 
         private void AddPointsToPlot(VertexEvidence evidence, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
-        {        
+        {
+            if (evidence == null || string.IsNullOrWhiteSpace(evidence.String)) return;
+
             if (evidence.String.Contains(","))
             {
                 this.Graph.SelectedVertex.States.ForEach((state, i) =>
@@ -169,15 +179,17 @@ namespace Marv.Input
             var candleStickSet = new Dictionary<double, CandleStickSeries>();
             candleStickSet.Add(1, inputCandleStick);
             minScatter = new ScatterSeries();
-           
+            minScatter.MarkerFill = OxyColors.Blue;
+
             minLine = new LineSeries();
             minLine.Color = OxyColors.Blue;
-            minScatter.MarkerFill = OxyColors.Blue;
+            
             maxScatter = new ScatterSeries();
+            maxScatter.MarkerFill = OxyColors.Blue;
             
             maxLine = new LineSeries();
             maxLine.Color = OxyColors.Blue;
-            maxScatter.MarkerFill = OxyColors.Blue;
+            
             modeScatter = new ScatterSeries();
             modeScatter.Title = "Belief";
             modeScatter.MarkerFill = OxyColors.Blue;
@@ -186,38 +198,22 @@ namespace Marv.Input
 
             this.DataPlotModel = new PlotModel();
 
-            var model = new CellModel(InputGridView.SelectedCells[0]);
-            if (model.IsColumnSectionId) { return; }
-            if (IsYearPlot)
-            {  
-                foreach (var row in this.InputRows)
-                {
-                    var rowIndex = this.InputRows.IndexOf(row) + 1;
-                    
-                    var entry = row[model.Header];
-                    
-                    if (entry != null && !String.IsNullOrEmpty(entry.ToString()))
-                    {
-                        AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(rowIndex));
-                    }
-                }
-                AddPlotInfo(model.Year.ToString(CultureInfo.CurrentCulture), "Section ID");
-            }
-            else
-            {                
-                var row = model.Row;
-                foreach (var column in this.InputGridView.Columns)
-                {
-                    var year = column.Header.ToString();
-                    var entry = row[year] as VertexEvidence;
+            var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-                    if (year != CellModel.SectionIdHeader && entry != null && !String.IsNullOrEmpty(entry.ToString()))
-                    {
-                        AddPointsToPlot(entry, inputScatter, candleStickSet, Convert.ToDouble(year));
-                    }
-                }
-                AddPlotInfo(model.SectionId, "Year");
-            }
+            if (sourceCellModel.IsColumnSectionId) return;
+
+            var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
+
+            cellModels.ForEach((cellModel, i) =>
+            {
+                var index = this.IsYearPlot ? i + 1 : Convert.ToDouble(cellModel.Year);
+                this.AddPointsToPlot(cellModel.Data as VertexEvidence, inputScatter, candleStickSet, index);
+            });
+
+            var title = this.IsYearPlot ? sourceCellModel.Year.ToString() : sourceCellModel.SectionId;
+            var xLabel = this.IsYearPlot ? CellModel.SectionIdHeader : "Year";
+
+            this.AddPlotInfo(title, xLabel);
 
             this.DataPlotModel.MouseDown += (s, e) =>
             {
@@ -270,15 +266,69 @@ namespace Marv.Input
             this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 
             this.DataPlotModel.InvalidatePlot(true);
+
+
+            ///////////////////////////
+            var count = 0;
+            var finalCount = cellModels.Count();
+
+            foreach (var cellModel in cellModels)
+            {
+                this.AnchorSeries.DataPoints.Add(new Telerik.Charting.CategoricalDataPoint { Category = cellModel.SectionId, Value = null });
+
+                if (count == 0 || count == finalCount - 1)
+                {
+                    this.MaxSeries.DataPoints.Add(new Telerik.Charting.CategoricalDataPoint { Category = cellModel.SectionId, Value = 10 });
+                    this.ModeSeries.DataPoints.Add(new Telerik.Charting.CategoricalDataPoint { Category = cellModel.SectionId, Value = 5 });
+                    this.MinSeries.DataPoints.Add(new Telerik.Charting.CategoricalDataPoint { Category = cellModel.SectionId, Value = 1 });
+                }
+
+                count++;
+            }
+
+            this.Chart.MouseDown -= Chart_MouseDown;
+            this.Chart.MouseDown += Chart_MouseDown;
+
+            this.TrackBallBehavior.TrackInfoUpdated += TrackBallBehavior_TrackInfoUpdated;
+        }
+
+        void TrackBallBehavior_TrackInfoUpdated(object sender, TrackBallInfoEventArgs e)
+        {
+            Console.WriteLine(e.Context.TouchLocation);
+        }
+
+        void Chart_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var data = this.Chart.ConvertPointToData(position);
+            var index = this.AnchorSeries.DataPoints.IndexOf<CategoricalDataPoint>(point => point.Category == data.FirstValue);
+            int insertIndex = -1;
+
+            foreach (var maxPoint in this.MaxSeries.DataPoints)
+            {
+                var maxPointIndex = this.AnchorSeries.DataPoints.IndexOf<CategoricalDataPoint>(point => point.Category == maxPoint.Category);
+
+                if (maxPointIndex >= index)
+                {
+                    insertIndex = this.MaxSeries.DataPoints.IndexOf(maxPoint);
+                    break;
+                }
+            }
+
+            this.MaxSeries.DataPoints.Insert(insertIndex, new CategoricalDataPoint {Category = data.FirstValue, Value = data.SecondValue as double?});
+
+            Console.WriteLine(data.FirstValue + ", " + data.SecondValue + ", " + index + ", " + insertIndex);
         }
 
         private static void UpdateLine(LineSeries line, ScatterSeries scatter)
         {
             line.Points.Clear();
+
             foreach (var point in scatter.Points)
             {
                 line.Points.Add(new DataPoint(point.X, point.Y));
             }
+
             line.Points.Sort(
                 delegate(DataPoint p1, DataPoint p2)
                 {
