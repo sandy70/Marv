@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Marv.Common;
 using Telerik.Windows.Controls;
@@ -9,6 +8,16 @@ namespace Marv.Input
 {
     public static class Extensions
     {
+        public static IEnumerable<CellModel> ToCellModels(this IEnumerable<dynamic> rows, string header)
+        {
+            return rows.Select(row => new CellModel(row, header));
+        }
+
+        public static IEnumerable<CellModel> ToCellModels(this GridViewColumnCollection columns, Dynamic row)
+        {
+            return columns.Select<GridViewColumn, CellModel>(col => new CellModel(row, col.Header as string));
+        }
+
         public static CellModel ToModel(this GridViewCell cell)
         {
             return new CellModel(cell);
