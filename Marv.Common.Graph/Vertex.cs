@@ -38,7 +38,10 @@ namespace Marv.Common.Graph
 
         public ObservableCollection<Command<Vertex>> Commands
         {
-            get { return this.commands; }
+            get
+            {
+                return this.commands;
+            }
 
             set
             {
@@ -53,7 +56,10 @@ namespace Marv.Common.Graph
         // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
         public Dictionary<string, string, EdgeConnectorPositions> ConnectorPositions
         {
-            get { return this.connectorPositions; }
+            get
+            {
+                return this.connectorPositions;
+            }
 
             set
             {
@@ -67,7 +73,10 @@ namespace Marv.Common.Graph
 
         public string Description
         {
-            get { return this.description; }
+            get
+            {
+                return this.description;
+            }
 
             set
             {
@@ -81,7 +90,10 @@ namespace Marv.Common.Graph
 
         public Point DisplayPosition
         {
-            get { return this.displayPosition; }
+            get
+            {
+                return this.displayPosition;
+            }
 
             set
             {
@@ -99,7 +111,10 @@ namespace Marv.Common.Graph
 
         public string EvidenceString
         {
-            get { return this.evidenceString; }
+            get
+            {
+                return this.evidenceString;
+            }
 
             set
             {
@@ -110,7 +125,10 @@ namespace Marv.Common.Graph
 
         public ObservableCollection<string> Groups
         {
-            get { return this.groups; }
+            get
+            {
+                return this.groups;
+            }
 
             set
             {
@@ -121,7 +139,10 @@ namespace Marv.Common.Graph
 
         public string HeaderOfGroup
         {
-            get { return this.headerOfGroup; }
+            get
+            {
+                return this.headerOfGroup;
+            }
             set
             {
                 this.headerOfGroup = value;
@@ -131,7 +152,10 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, double> InitialBelief
         {
-            get { return this.States.ToDictionary(state => state.Key, state => state.InitialBelief); }
+            get
+            {
+                return this.States.ToDictionary(state => state.Key, state => state.InitialBelief);
+            }
 
             set
             {
@@ -146,7 +170,10 @@ namespace Marv.Common.Graph
 
         public string InputVertexKey
         {
-            get { return this.inputVertexKey; }
+            get
+            {
+                return this.inputVertexKey;
+            }
 
             set
             {
@@ -160,12 +187,18 @@ namespace Marv.Common.Graph
 
         public bool IsEvidenceEntered
         {
-            get { return this.States.Sum(state => state.Evidence) > 0; }
+            get
+            {
+                return this.States.Sum(state => state.Evidence) > 0;
+            }
         }
 
         public bool IsExpanded
         {
-            get { return this.isExpanded; }
+            get
+            {
+                return this.isExpanded;
+            }
 
             set
             {
@@ -179,7 +212,10 @@ namespace Marv.Common.Graph
 
         public bool IsHeader
         {
-            get { return this.isHeader; }
+            get
+            {
+                return this.isHeader;
+            }
 
             set
             {
@@ -190,7 +226,10 @@ namespace Marv.Common.Graph
 
         public bool IsLocked
         {
-            get { return this.isLocked; }
+            get
+            {
+                return this.isLocked;
+            }
 
             set
             {
@@ -209,12 +248,18 @@ namespace Marv.Common.Graph
 
         public bool IsLogScale
         {
-            get { return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon); }
+            get
+            {
+                return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon);
+            }
         }
 
         public State MostProbableState
         {
-            get { return this.mostProbableState; }
+            get
+            {
+                return this.mostProbableState;
+            }
 
             set
             {
@@ -228,7 +273,10 @@ namespace Marv.Common.Graph
 
         public Point Position
         {
-            get { return this.position; }
+            get
+            {
+                return this.position;
+            }
 
             set
             {
@@ -242,7 +290,10 @@ namespace Marv.Common.Graph
 
         public Dictionary<string, Point> PositionForGroup
         {
-            get { return this.positionsForGroup; }
+            get
+            {
+                return this.positionsForGroup;
+            }
 
             set
             {
@@ -254,9 +305,28 @@ namespace Marv.Common.Graph
             }
         }
 
+        public double SafeMax
+        {
+            get
+            {
+                return this.States.Min(state => state.SafeMax);
+            }
+        }
+
+        public double SafeMin
+        {
+            get
+            {
+                return this.States.Min(state => state.SafeMin);
+            }
+        }
+
         public string SelectedGroup
         {
-            get { return this.selectedGroup; }
+            get
+            {
+                return this.selectedGroup;
+            }
 
             set
             {
@@ -270,7 +340,10 @@ namespace Marv.Common.Graph
 
         public ModelCollection<State> States
         {
-            get { return this.states; }
+            get
+            {
+                return this.states;
+            }
 
             set
             {
@@ -300,7 +373,10 @@ namespace Marv.Common.Graph
 
         public VertexType Type
         {
-            get { return this.type; }
+            get
+            {
+                return this.type;
+            }
 
             set
             {
@@ -314,7 +390,10 @@ namespace Marv.Common.Graph
 
         public string Units
         {
-            get { return this.units; }
+            get
+            {
+                return this.units;
+            }
 
             set
             {
