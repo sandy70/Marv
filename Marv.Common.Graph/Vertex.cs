@@ -250,7 +250,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon);
+                return this.States.Any(state => state.Min != 0 && state.Max >= state.Min * 9.99);
             }
         }
 
@@ -309,7 +309,7 @@ namespace Marv.Common.Graph
         {
             get
             {
-                return this.States.Min(state => state.SafeMax);
+                return this.States.Max(state => state.SafeMax);
             }
         }
 
@@ -413,6 +413,47 @@ namespace Marv.Common.Graph
                 String = this.EvidenceString,
                 Values = this.States.GetEvidence().ToArray()
             };
+        }
+
+        public VertexEvidenceType GetEvidenceType(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str)) return VertexEvidenceType.Invalid;
+
+            // Check if string is the label of any of the states.
+            if (this.States.Any(state => state.Key == str))
+            {
+                return VertexEvidenceType.State;
+            }
+
+            var paramValues = VertexEvidence.ParseValues(str);
+
+            // Check for functions
+            if (str.ToLowerInvariant().Contains("tri") && paramValues.Count == 3)
+            {
+                return VertexEvidenceType.Triangular;
+            }
+
+            if (str.ToLowerInvariant().Contains("norm") && paramValues.Count == 2)
+            {
+                return VertexEvidenceType.Normal;
+            }
+
+            if (str.Contains(":") && paramValues.Count == 2)
+            {
+                return VertexEvidenceType.Range;
+            }
+
+            if (str.Contains(",") && paramValues.Count == this.States.Count)
+            {
+                return VertexEvidenceType.Distribution;
+            }
+
+            if (paramValues.Count == 1)
+            {
+                return VertexEvidenceType.Number;
+            }
+
+            return VertexEvidenceType.Invalid;
         }
 
         // Do not remove! This is for Marv.Matlab
