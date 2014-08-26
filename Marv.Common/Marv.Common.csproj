@@ -94,6 +94,8 @@
     <Compile Include="NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />
+    <Compile Include="Spline\CubicSpline.cs" />
+    <Compile Include="Spline\TriDiagonalMatrix.cs" />
     <Compile Include="Types\IKey.cs" />
     <Compile Include="Types\List.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
