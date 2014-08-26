@@ -365,7 +365,7 @@ namespace Marv.Common.Graph
                 networkStructureVertex.Properties.Remove("isheaderofgroup");
             }
 
-            this.EncryptWrite(path);
+            this.Write(path);
         }
     }
 }

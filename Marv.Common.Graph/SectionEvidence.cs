@@ -12,7 +12,10 @@ namespace Marv.Common.Graph
         {
             get { return this.Id; }
 
-            set { this.Id = value; }
+            set
+            {
+                this.Id = value;
+            }
         }
     }
 }

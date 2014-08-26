@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Marv.Common.Graph
 {
     public class VertexEvidence
     {
+        public double[] Beliefs { get; set; }
         public string String { get; set; }
         public double[] Values { get; set; }
-        public double[] Beliefs { get; set; }
 
         public static List<double> ParseValues(string str)
         {

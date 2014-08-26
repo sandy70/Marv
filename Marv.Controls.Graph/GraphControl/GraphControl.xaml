@@ -60,7 +60,6 @@
                                    ToolTip="Runs the evidence into the network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadButton>
-                
             </ToolBar>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
