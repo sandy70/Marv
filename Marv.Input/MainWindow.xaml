@@ -13,6 +13,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="BarSeriesStyle" TargetType="Border">
+                <Setter Property="Background" Value="Red" />
+                <Setter Property="Opacity" Value="0.5" />
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -230,43 +234,71 @@
                                                        ToolTip="Uploads distribution into input data.">
                                         <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
                                     </telerik:RadButton>
-
+                                    
+                                    <telerik:RadToggleButton Content="Edit"
+                                                             IsChecked="{Binding ElementName=Root, Path=IsChartEditing}" />
                                 </telerik:RadToolBar>
 
                                 <oxy:PlotView Grid.Row="1"
                                               IsLegendVisible="True"
                                               Model="{Binding ElementName=Root, Path=DataPlotModel}"
-                                              Visibility="Collapsed"/>
-                                
+                                              Visibility="Collapsed" />
+
                                 <telerik:RadCartesianChart Name="Chart"
-                                                           Grid.Row="1">
-                                    <telerik:RadCartesianChart.Behaviors>
-                                        <telerik:ChartTrackBallBehavior x:Name="TrackBallBehavior"
-                                                                        ShowTrackInfo="True"
-                                                                        ShowIntersectionPoints="True"/>
-                                    </telerik:RadCartesianChart.Behaviors>
-                                    
+                                                           Grid.Row="1"
+                                                           Margin="4"
+                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
                                     <telerik:RadCartesianChart.HorizontalAxis>
                                         <telerik:CategoricalAxis />
                                     </telerik:RadCartesianChart.HorizontalAxis>
-                                    
-                                    <telerik:RadCartesianChart.VerticalAxis>
-                                        <telerik:LinearAxis Maximum="10"
-                                                            Minimum="0" />
-                                    </telerik:RadCartesianChart.VerticalAxis>
-                                    
-                                    <telerik:RadCartesianChart.TrackBallInfoStyle>
-                                        <Style TargetType="{x:Type telerik:TrackBallInfoControl}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </Style>
-                                    </telerik:RadCartesianChart.TrackBallInfoStyle>
-                                    
+
+                                    <telerik:RadCartesianChart.SeriesProvider>
+                                        <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=BaseDistributionPoints}">
+                                            <telerik:ChartSeriesProvider.SeriesDescriptors>
+                                                <telerik:CategoricalSeriesDescriptor>
+                                                    <telerik:CategoricalSeriesDescriptor.Style>
+                                                        <Style TargetType="telerik:BarSeries">
+                                                            <Setter Property="ItemsSource" Value="{Binding}" />
+                                                            <Setter Property="CategoryBinding" Value="Category" />
+                                                            <Setter Property="ValueBinding" Value="Value" />
+                                                            <Setter Property="CombineMode" Value="Stack" />
+
+                                                            <Setter Property="PointTemplate">
+                                                                <Setter.Value>
+                                                                    <DataTemplate>
+                                                                        <Border Background="Green"
+                                                                                Opacity="{Binding DataItem.Probability}" />
+                                                                    </DataTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </telerik:CategoricalSeriesDescriptor.Style>
+                                                </telerik:CategoricalSeriesDescriptor>
+                                            </telerik:ChartSeriesProvider.SeriesDescriptors>
+                                        </telerik:ChartSeriesProvider>
+                                    </telerik:RadCartesianChart.SeriesProvider>
+
                                     <telerik:RadCartesianChart.Series>
-                                        <telerik:LineSeries Name="AnchorSeries" />
-                                        <telerik:LineSeries Name="MaxSeries" />
-                                        <telerik:LineSeries Name="ModeSeries" />
-                                        <telerik:LineSeries Name="MinSeries" />
+                                        <!-- Anchoring Series -->
+                                        <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
+                                                            ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
+
+                                        <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
+                                                             ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
+
+                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                                            ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
+                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
+
+                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                                            ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
+                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
+
+                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                                            ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
+                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
                                     </telerik:RadCartesianChart.Series>
+
                                 </telerik:RadCartesianChart>
                             </Grid>
                         </telerik:RadPane>

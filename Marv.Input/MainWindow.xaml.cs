@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using OxyPlot;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
@@ -35,8 +36,8 @@ namespace Marv.Input
         public static readonly DependencyProperty IsInputToolbarEnabledProperty =
             DependencyProperty.Register("IsInputToolbarEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsLogarithmicProperty =
-            DependencyProperty.Register("IsLogarithmic", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsLogScaleProperty =
+            DependencyProperty.Register("IsLogScale", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
@@ -136,15 +137,15 @@ namespace Marv.Input
             }
         }
 
-        public bool IsLogarithmic
+        public bool IsLogScale
         {
             get
             {
-                return (bool) GetValue(IsLogarithmicProperty);
+                return (bool) GetValue(IsLogScaleProperty);
             }
             set
             {
-                SetValue(IsLogarithmicProperty, value);
+                SetValue(IsLogScaleProperty, value);
             }
         }
 
@@ -423,6 +424,8 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
+            this.InputGridView.CancelEdit();
+
             this.Graph.Run();
 
             if (this.InputGridView.CurrentCell == null)
@@ -440,6 +443,7 @@ namespace Marv.Input
             }
 
             this.SetCell(cellModel, vertex.EvidenceString);
+            this.UpdateChart();
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
@@ -451,6 +455,15 @@ namespace Marv.Input
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateGrid();
+
+            this.VerticalAxis = this.Graph.SelectedVertex.IsLogScale ? (CartesianAxis)this.logarightmicAxis : this.linearAxis;
+
+            var numericalAxis = this.VerticalAxis as NumericalAxis;
+            numericalAxis.Minimum = this.Graph.SelectedVertex.SafeMin;
+            numericalAxis.Maximum = this.Graph.SelectedVertex.SafeMax;
+
+            this.InitializeChart();
+            this.UpdateChart();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -466,12 +479,17 @@ namespace Marv.Input
             this.CopyAcrossAll.Click += CopyAcrossAll_Click;
             this.UploadFromPlot.Click += UploadFromPlot_Click;
             this.RunButton.Click += RunButton_Click;
-
             this.ModeButton.Checked += ModeButton_Checked;
             this.MinButton.Checked += MinButton_Checked;
             this.MaxButton.Checked += MaxButton_Checked;
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
+
+            this.Chart.MouseDown -= Chart_MouseDown;
+            this.Chart.MouseDown += Chart_MouseDown;
+
+            this.Chart.MouseMove -= Chart_MouseMove;
+            this.Chart.MouseMove += Chart_MouseMove;
 
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
@@ -492,6 +510,10 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }
+
+        
+
+        
 
         private void MaxButton_Checked(object sender, RoutedEventArgs e)
         {
