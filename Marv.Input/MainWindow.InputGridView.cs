@@ -47,7 +47,7 @@ namespace Marv.Input
                 .YearEvidences[cellModel.Year]
                 .VertexEvidences[selectedVertex.Key] = evidence;
 
-            this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
+            // this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -59,19 +59,21 @@ namespace Marv.Input
         {
             this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
             this.Graph.Run();
+
+            this.UpdateChart();
         }
 
         private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             if (e.Cell.ToModel().IsColumnSectionId) return;
 
-            var evidenceString = e.NewValue as string;
-            var vertexEvidence = this.Graph.SelectedVertex.States.Parse(evidenceString);
+            var vertexEvidenceType = this.Graph.SelectedVertex.GetEvidenceType(e.NewValue as string);
 
-            if (vertexEvidence != null || evidenceString == string.Empty) return;
-
-            e.IsValid = false;
-            e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            if (vertexEvidenceType == VertexEvidenceType.Invalid)
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            }
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
