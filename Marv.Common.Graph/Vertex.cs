@@ -425,6 +425,12 @@ namespace Marv.Common.Graph
                 return VertexEvidenceType.State;
             }
 
+            double value;
+            if (double.TryParse(str, out value))
+            {
+                return VertexEvidenceType.Number;
+            }
+
             var paramValues = VertexEvidence.ParseValues(str);
 
             // Check for functions
@@ -446,11 +452,6 @@ namespace Marv.Common.Graph
             if (str.Contains(",") && paramValues.Count == this.States.Count)
             {
                 return VertexEvidenceType.Distribution;
-            }
-
-            if (paramValues.Count == 1)
-            {
-                return VertexEvidenceType.Number;
             }
 
             return VertexEvidenceType.Invalid;
