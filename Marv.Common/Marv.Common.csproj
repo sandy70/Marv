@@ -85,11 +85,12 @@
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
     <Compile Include="Distributions\DeltaDistribution.cs" />
-    <Compile Include="EvidenceStringType.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
+    <Compile Include="IKeyed.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="KeyedCollection.cs" />
     <Compile Include="NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />
