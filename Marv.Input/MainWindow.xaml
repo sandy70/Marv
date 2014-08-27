@@ -256,7 +256,8 @@
                                     
                                     <telerik:RadCartesianChart.HorizontalAxis>
                                         <telerik:CategoricalAxis PlotMode="OnTicksPadded" 
-                                                                 ShowLabels="False" />
+                                                                 ShowLabels="False" 
+                                                                 Title="{Binding ElementName=Root, Path=XTitle}" />
                                     </telerik:RadCartesianChart.HorizontalAxis>
 
                                     <telerik:RadCartesianChart.SeriesProvider>

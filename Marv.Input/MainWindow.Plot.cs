@@ -64,6 +64,9 @@ namespace Marv.Input
         public static readonly DependencyProperty VerticalAxisProperty =
             DependencyProperty.Register("VerticalAxis", typeof (CartesianAxis), typeof (MainWindow), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty XTitleProperty =
+            DependencyProperty.Register("XTitle", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
+
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
@@ -184,6 +187,18 @@ namespace Marv.Input
             set
             {
                 SetValue(VerticalAxisProperty, value);
+            }
+        }
+
+        public string XTitle
+        {
+            get
+            {
+                return (string) GetValue(XTitleProperty);
+            }
+            set
+            {
+                SetValue(XTitleProperty, value);
             }
         }
 
@@ -331,6 +346,8 @@ namespace Marv.Input
 
         private void InitializeChart()
         {
+            this.XTitle = this.IsYearPlot ? "Sections" : "Years";
+
             this.MaxPoints = new ObservableCollection<CategoricalDataPoint>();
             this.ModePoints = new ObservableCollection<CategoricalDataPoint>();
             this.MinPoints = new ObservableCollection<CategoricalDataPoint>();
