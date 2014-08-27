@@ -253,8 +253,10 @@
                                                                          ZoomMode="None" 
                                                                          PanMode="Horizontal" />
                                     </telerik:RadCartesianChart.Behaviors>
+                                    
                                     <telerik:RadCartesianChart.HorizontalAxis>
-                                        <telerik:CategoricalAxis />
+                                        <telerik:CategoricalAxis PlotMode="OnTicksPadded" 
+                                                                 ShowLabels="False" />
                                     </telerik:RadCartesianChart.HorizontalAxis>
 
                                     <telerik:RadCartesianChart.SeriesProvider>
