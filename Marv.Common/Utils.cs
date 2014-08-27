@@ -1,15 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace Marv.Common
 {
     public static class Utils
     {
-        public const double Epsilon = 10E-06;
-
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
             if (value.CompareTo(minValue) < 0) value = minValue;
@@ -20,20 +18,22 @@ namespace Marv.Common
 
         public static T Create<T>()
         {
-            System.Reflection.ConstructorInfo constructor = (typeof(T)).GetConstructor(System.Type.EmptyTypes);
+            var constructor = (typeof (T)).GetConstructor(Type.EmptyTypes);
 
             if (ReferenceEquals(constructor, null))
             {
                 //there is no default constructor
                 return default(T);
             }
-            else
-            {
-                //there is a default constructor
-                //you can invoke it like so:
-                return (T)constructor.Invoke(new object[0]);
-                //return constructor.Invoke(new object[0]) as T; //If T is class
-            }
+            //there is a default constructor
+            //you can invoke it like so:
+            return (T) constructor.Invoke(new object[0]);
+            //return constructor.Invoke(new object[0]) as T; //If T is class
+        }
+
+        public static double Distance(Point p1, Point p2)
+        {
+            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
         }
 
         public static double Distance(Point p1, Point p2, Point p)
@@ -63,7 +63,7 @@ namespace Marv.Common
             var green = Math.Min(fourValue - 0.5, -fourValue + 3.5);
             var blue = Math.Min(fourValue + 0.5, -fourValue + 2.5);
 
-            return Color.FromScRgb(1, (float)red.Clamp(0, 1), (float)green.Clamp(0, 1), (float)blue.Clamp(0, 1));
+            return Color.FromScRgb(1, (float) red.Clamp(0, 1), (float) green.Clamp(0, 1), (float) blue.Clamp(0, 1));
         }
 
         public static double ParseDouble(this string str)
@@ -118,5 +118,7 @@ namespace Marv.Common
         {
             return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
+
+        public const double Epsilon = 10E-06;
     }
 }
