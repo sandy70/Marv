@@ -511,10 +511,6 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }
 
-        
-
-        
-
         private void MaxButton_Checked(object sender, RoutedEventArgs e)
         {
             PlotLineType = LineType.Max;

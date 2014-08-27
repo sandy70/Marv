@@ -548,6 +548,8 @@ namespace Marv.Input
         {
             var data = this.Chart.ConvertPointToData(position);
 
+            if (data == null || data.FirstValue == null || data.SecondValue == null) return;
+
             var userPoint = new CategoricalDataPoint
             {
                 Category = data.FirstValue as string,
