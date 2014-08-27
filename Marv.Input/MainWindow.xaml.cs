@@ -485,11 +485,11 @@ namespace Marv.Input
             this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
             this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
 
-            this.Chart.MouseDown -= Chart_MouseDown;
-            this.Chart.MouseDown += Chart_MouseDown;
+            //this.Chart.MouseDown -= Chart_MouseDown;
+            //this.Chart.MouseDown += Chart_MouseDown;
 
-            this.Chart.MouseMove -= Chart_MouseMove;
-            this.Chart.MouseMove += Chart_MouseMove;
+            //this.Chart.MouseMove -= Chart_MouseMove;
+            //this.Chart.MouseMove += Chart_MouseMove;
 
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;

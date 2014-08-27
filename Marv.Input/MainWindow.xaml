@@ -243,93 +243,9 @@
                                               IsLegendVisible="True"
                                               Model="{Binding ElementName=Root, Path=DataPlotModel}"
                                               Visibility="Collapsed" />
-
-                                <telerik:RadCartesianChart Name="Chart"
-                                                           Grid.Row="1"
-                                                           Margin="4"
-                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
-                                    <telerik:RadCartesianChart.Behaviors>
-                                        <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"
-                                                                         ZoomMode="None" 
-                                                                         PanMode="Horizontal" />
-                                    </telerik:RadCartesianChart.Behaviors>
-                                    
-                                    <telerik:RadCartesianChart.HorizontalAxis>
-                                        <telerik:CategoricalAxis PlotMode="OnTicksPadded" 
-                                                                 ShowLabels="False" 
-                                                                 Title="{Binding ElementName=Root, Path=XTitle}" />
-                                    </telerik:RadCartesianChart.HorizontalAxis>
-
-                                    <telerik:RadCartesianChart.SeriesProvider>
-                                        <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=BaseDistributionPoints}">
-                                            <telerik:ChartSeriesProvider.SeriesDescriptors>
-                                                <telerik:CategoricalSeriesDescriptor>
-                                                    <telerik:CategoricalSeriesDescriptor.Style>
-                                                        <Style TargetType="telerik:BarSeries">
-                                                            <Setter Property="ItemsSource" Value="{Binding}" />
-                                                            <Setter Property="CategoryBinding" Value="Category" />
-                                                            <Setter Property="ValueBinding" Value="Value" />
-                                                            <Setter Property="CombineMode" Value="Stack" />
-
-                                                            <Setter Property="PointTemplate">
-                                                                <Setter.Value>
-                                                                    <DataTemplate>
-                                                                        <Border Background="Green"
-                                                                                Opacity="{Binding DataItem.Probability}" />
-                                                                    </DataTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Style>
-                                                    </telerik:CategoricalSeriesDescriptor.Style>
-                                                </telerik:CategoricalSeriesDescriptor>
-                                            </telerik:ChartSeriesProvider.SeriesDescriptors>
-                                        </telerik:ChartSeriesProvider>
-                                    </telerik:RadCartesianChart.SeriesProvider>
-
-                                    <telerik:RadCartesianChart.Series>
-                                        <!-- Anchoring Series -->
-                                        <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                            ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
-
-                                        <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
-                                                             ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
-
-                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                              ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
-                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
-                                            <telerik:SplineSeries.PointTemplate>
-                                                <DataTemplate>
-                                                    <Polygon Points="0,4 4,-4 -4,-4 0,4"
-                                                             Stroke="Green" Fill="Green" />
-                                                </DataTemplate>
-                                            </telerik:SplineSeries.PointTemplate>
-                                        </telerik:SplineSeries>
-
-                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                              ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
-                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
-                                            <telerik:SplineSeries.PointTemplate>
-                                                <DataTemplate>
-                                                    <Ellipse Height="8" Width="8"
-                                                             Stroke="Green" Fill="Green" />
-                                                </DataTemplate>
-                                            </telerik:SplineSeries.PointTemplate>
-                                        </telerik:SplineSeries>
-
-                                        <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                              ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
-                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
-                                            <telerik:SplineSeries.PointTemplate>
-                                                <DataTemplate>
-                                                    <Polygon Points="0,-4 -4,4 4,4 0,-4"
-                                                             Stroke="Green" Fill="Green" />
-                                                </DataTemplate>
-                                            </telerik:SplineSeries.PointTemplate>
-                                        </telerik:SplineSeries>
-
-                                    </telerik:RadCartesianChart.Series>
-
-                                </telerik:RadCartesianChart>
+                                
+                                <local:EvidenceChart Grid.Row="1"
+                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

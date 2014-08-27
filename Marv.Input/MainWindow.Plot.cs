@@ -315,20 +315,20 @@ namespace Marv.Input
             }
         }
 
-        private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var position = e.GetPosition(this.Chart);
-            this.UpdateUserSeries(position);
-        }
+        //private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    var position = e.GetPosition(this.Chart);
+        //    this.UpdateUserSeries(position);
+        //}
 
-        private void Chart_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var position = e.GetPosition(this.Chart);
-                this.UpdateUserSeries(position);
-            }
-        }
+        //private void Chart_MouseMove(object sender, MouseEventArgs e)
+        //{
+        //    if (e.LeftButton == MouseButtonState.Pressed)
+        //    {
+        //        var position = e.GetPosition(this.Chart);
+        //        this.UpdateUserSeries(position);
+        //    }
+        //}
 
         private bool DoesPointExist(int xCoord, double yCoord, ScatterSeries series)
         {
@@ -561,49 +561,49 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateUserSeries(Point position)
-        {
-            var data = this.Chart.ConvertPointToData(position);
+        //private void UpdateUserSeries(Point position)
+        //{
+        //    var data = this.Chart.ConvertPointToData(position);
 
-            if (data == null || data.FirstValue == null || data.SecondValue == null) return;
+        //    if (data == null || data.FirstValue == null || data.SecondValue == null) return;
 
-            var userPoint = new CategoricalDataPoint
-            {
-                Category = data.FirstValue as string,
-                Value = (double) data.SecondValue
-            };
+        //    var userPoint = new CategoricalDataPoint
+        //    {
+        //        Category = data.FirstValue as string,
+        //        Value = (double) data.SecondValue
+        //    };
 
-            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
+        //    var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var nearestSeries = this.GetNearestSeries(userPoint);
+        //    var nearestSeries = this.GetNearestSeries(userPoint);
 
-            var isPointExisting = false;
+        //    var isPointExisting = false;
 
-            foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
-            {
-                point.Value = (double) data.SecondValue;
-                isPointExisting = true;
-            }
+        //    foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
+        //    {
+        //        point.Value = (double) data.SecondValue;
+        //        isPointExisting = true;
+        //    }
 
-            if (!isPointExisting)
-            {
-                var nearestPointAnchorIndex = 0;
+        //    if (!isPointExisting)
+        //    {
+        //        var nearestPointAnchorIndex = 0;
 
-                foreach (var nearestPoint in nearestSeries)
-                {
-                    nearestPointAnchorIndex = this.GetAnchorIndex(nearestPoint);
+        //        foreach (var nearestPoint in nearestSeries)
+        //        {
+        //            nearestPointAnchorIndex = this.GetAnchorIndex(nearestPoint);
 
-                    if (nearestPointAnchorIndex > userPointAnchorIndex)
-                    {
-                        break;
-                    }
-                }
+        //            if (nearestPointAnchorIndex > userPointAnchorIndex)
+        //            {
+        //                break;
+        //            }
+        //        }
 
-                var userPointInsertIndex = nearestSeries.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
+        //        var userPointInsertIndex = nearestSeries.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
 
-                nearestSeries.Insert(userPointInsertIndex, userPoint);
-            }
-        }
+        //        nearestSeries.Insert(userPointInsertIndex, userPoint);
+        //    }
+        //}
 
         private void UploadToGrid()
         {
