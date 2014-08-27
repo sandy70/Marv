@@ -234,7 +234,7 @@
                                                        ToolTip="Uploads distribution into input data.">
                                         <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
                                     </telerik:RadButton>
-                                    
+
                                     <telerik:RadToggleButton Content="Edit"
                                                              IsChecked="{Binding ElementName=Root, Path=IsChartEditing}" />
                                 </telerik:RadToolBar>
@@ -248,6 +248,11 @@
                                                            Grid.Row="1"
                                                            Margin="4"
                                                            VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
+                                    <telerik:RadCartesianChart.Behaviors>
+                                        <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"
+                                                                         ZoomMode="None" 
+                                                                         PanMode="Horizontal" />
+                                    </telerik:RadCartesianChart.Behaviors>
                                     <telerik:RadCartesianChart.HorizontalAxis>
                                         <telerik:CategoricalAxis />
                                     </telerik:RadCartesianChart.HorizontalAxis>
@@ -287,16 +292,38 @@
                                                              ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
 
                                         <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                            ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
-                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
+                                                              ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
+                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
+                                            <telerik:SplineSeries.PointTemplate>
+                                                <DataTemplate>
+                                                    <Polygon Points="0,4 4,-4 -4,-4 0,4"
+                                                             Stroke="Green" Fill="Green" />
+                                                </DataTemplate>
+                                            </telerik:SplineSeries.PointTemplate>
+                                        </telerik:SplineSeries>
 
                                         <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                            ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
-                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
+                                                              ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
+                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
+                                            <telerik:SplineSeries.PointTemplate>
+                                                <DataTemplate>
+                                                    <Ellipse Height="8" Width="8"
+                                                             Stroke="Green" Fill="Green" />
+                                                </DataTemplate>
+                                            </telerik:SplineSeries.PointTemplate>
+                                        </telerik:SplineSeries>
 
                                         <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                                            ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
-                                                            Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}"/>
+                                                              ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
+                                                              Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
+                                            <telerik:SplineSeries.PointTemplate>
+                                                <DataTemplate>
+                                                    <Polygon Points="0,-4 -4,4 4,4 0,-4"
+                                                             Stroke="Green" Fill="Green" />
+                                                </DataTemplate>
+                                            </telerik:SplineSeries.PointTemplate>
+                                        </telerik:SplineSeries>
+
                                     </telerik:RadCartesianChart.Series>
 
                                 </telerik:RadCartesianChart>

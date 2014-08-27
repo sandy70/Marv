@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
+using MoreLinq;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -207,6 +208,28 @@ namespace Marv.Input
                 );
         }
 
+        public ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
+        {
+            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
+
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            return series.MinBy(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+
+                return Math.Abs(spline.Eval(new[] {(float) userPointAnchorIndex})[0] - userPoint.Value.Value);
+            });
+        }
+
         private void AddPlotInfo(string title, string xAxis)
         {
             this.DataPlotModel.Title = title;
@@ -241,7 +264,7 @@ namespace Marv.Input
 
             if (evidence.String.Contains(","))
             {
-                Common.Extensions.ForEach(this.Graph.SelectedVertex.States, (state, i) =>
+                this.Graph.SelectedVertex.States.ForEach((state, i) =>
                 {
                     var max = state.SafeMax;
                     var min = state.SafeMin;
@@ -299,6 +322,11 @@ namespace Marv.Input
                 if (xCoord == (int) point.X || xCoord <= 0) return false;
             }
             return true;
+        }
+
+        private int GetAnchorIndex(CategoricalDataPoint point)
+        {
+            return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
         }
 
         private void InitializeChart()
@@ -362,9 +390,9 @@ namespace Marv.Input
 
             var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
 
-            Common.Extensions.ForEach(cellModels, (cellModel, i) =>
+            cellModels.ForEach((cellModel, i) =>
             {
-                var index = this.IsYearPlot ? i + 1 : Convert.ToDouble((int) cellModel.Year);
+                var index = this.IsYearPlot ? i + 1 : Convert.ToDouble(cellModel.Year);
                 this.AddPointsToPlot(cellModel.Data as VertexEvidence, this.inputScatter, candleStickSet, index);
             });
 
@@ -495,7 +523,7 @@ namespace Marv.Input
                     {
                         var maxProb = vertexEvidence.Values.Max();
 
-                        Common.Extensions.ForEach(this.Graph.SelectedVertex.States, (state, i) =>
+                        this.Graph.SelectedVertex.States.ForEach((state, i) =>
                         {
                             if (this.BaseDistributionPoints.Count < i + 1)
                             {
@@ -526,25 +554,13 @@ namespace Marv.Input
                 Value = (double) data.SecondValue
             };
 
-            var userPointAnchorIndex = Common.Extensions.IndexOf(this.AnchorPoints, point => point.Category.Equals(userPoint.Category));
+            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var maxSpline = new CubicSpline(this.MaxPoints.Select(x => (float)this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(x.Category))).ToArray(), this.MaxPoints.Select(x => (float) x.Value).ToArray());
-            var modeSpline = new CubicSpline(this.ModePoints.Select(x => (float)this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(x.Category))).ToArray(), this.ModePoints.Select(x => (float)x.Value).ToArray());
-            var minSpline = new CubicSpline(this.MinPoints.Select(x => (float)this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(x.Category))).ToArray(), this.MinPoints.Select(x => (float)x.Value).ToArray());
-
-            var maxDiff = Math.Abs(maxSpline.Eval(new[] {(float) userPointAnchorIndex})[0] - userPoint.Value.Value);
-            var modeDiff = Math.Abs(modeSpline.Eval(new[] { (float)userPointAnchorIndex })[0] - userPoint.Value.Value);
-            var minDiff = Math.Abs(minSpline.Eval(new[] { (float)userPointAnchorIndex })[0] - userPoint.Value.Value);
-
-            ObservableCollection<CategoricalDataPoint> nearestPoints = null;
-
-            if (maxDiff < modeDiff && maxDiff < minDiff) nearestPoints = this.MaxPoints;
-            if (modeDiff < maxDiff && modeDiff < minDiff) nearestPoints = this.ModePoints;
-            if (minDiff < maxDiff && minDiff < modeDiff) nearestPoints = this.MinPoints;
+            var nearestSeries = this.GetNearestSeries(userPoint);
 
             var isPointExisting = false;
 
-            foreach (var point in nearestPoints.Where(point => point.Category.Equals(userPoint.Category)))
+            foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
             {
                 point.Value = (double) data.SecondValue;
                 isPointExisting = true;
@@ -554,9 +570,9 @@ namespace Marv.Input
             {
                 var nearestPointAnchorIndex = 0;
 
-                foreach (var nearestPoint in nearestPoints)
+                foreach (var nearestPoint in nearestSeries)
                 {
-                    nearestPointAnchorIndex = Common.Extensions.IndexOf(this.AnchorPoints, point => point.Category.Equals(nearestPoint.Category));
+                    nearestPointAnchorIndex = this.GetAnchorIndex(nearestPoint);
 
                     if (nearestPointAnchorIndex > userPointAnchorIndex)
                     {
@@ -564,9 +580,9 @@ namespace Marv.Input
                     }
                 }
 
-                var userPointInsertIndex = Common.Extensions.IndexOf(nearestPoints, point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
+                var userPointInsertIndex = nearestSeries.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
 
-                nearestPoints.Insert(userPointInsertIndex, userPoint);
+                nearestSeries.Insert(userPointInsertIndex, userPoint);
             }
         }
 
