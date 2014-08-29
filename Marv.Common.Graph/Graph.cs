@@ -25,6 +25,19 @@ namespace Marv.Common.Graph
         private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
+        public Dict<string, VertexData> Data
+        {
+            set
+            {
+                foreach (var vertexKey in value.Keys)
+                {
+                    this.Vertices[vertexKey].Data = value[vertexKey];
+                }
+
+                this.RaisePropertyChanged();
+            }
+        }
+
         public string DefaultGroup
         {
             get
@@ -254,7 +267,7 @@ namespace Marv.Common.Graph
             return Task.Run(() => Graph.Read(fileName));
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
+        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
@@ -430,7 +443,7 @@ namespace Marv.Common.Graph
             this.UpdateBelief();
         }
 
-        public void SetEvidence(Dictionary<string, VertexEvidence> vertexEvidences)
+        public void SetEvidence(Dict<string, VertexData> vertexEvidences)
         {
             this.Vertices.ClearEvidence();
 

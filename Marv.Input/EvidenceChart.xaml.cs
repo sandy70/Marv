@@ -198,6 +198,8 @@ namespace Marv.Input
 
             if (control.CellModels == null) return;
 
+            control.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
+
             foreach (var cellModel in control.CellModels)
             {
                 control.AnchorPoints.Add(new CategoricalDataPoint {Category = cellModel.SectionId, Value = null});
@@ -213,6 +215,7 @@ namespace Marv.Input
 
             control.InitializeVerticalAxis();
             control.InitializeEvidenceLines();
+            control.UpdateBasePoints();
         }
 
         private void InitializeEvidenceLines()
@@ -253,14 +256,16 @@ namespace Marv.Input
 
         private void UpdateBasePoints()
         {
+            if (this.CellModels == null) return;
+
             foreach (var cellModel in this.CellModels)
             {
-                var vertexEvidence = cellModel.Data as VertexEvidence;
+                var vertexEvidence = cellModel.Data as VertexData;
 
                 if (vertexEvidence == null) continue;
 
                 var vertexEvidenceType = this.Vertex.GetEvidenceType(vertexEvidence.String);
-                var paramValues = VertexEvidence.ParseValues(vertexEvidence.String);
+                var paramValues = VertexData.ParseValues(vertexEvidence.String);
 
                 switch (vertexEvidenceType)
                 {

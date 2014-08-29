@@ -216,7 +216,7 @@ namespace Marv.Common.Graph
             this.network.SetSoftEvidence(vertexKey, evidence.ToArray());
         }
 
-        public void Run(Dictionary<string, VertexEvidence> vertexEvidences)
+        public void Run(Dictionary<string, VertexData> vertexEvidences)
         {
             this.ClearEvidence();
 
@@ -227,7 +227,7 @@ namespace Marv.Common.Graph
 
             foreach (var kvp in this.GetBelief())
             {
-                if (!vertexEvidences.ContainsKey(kvp.Key)) vertexEvidences[kvp.Key] = new VertexEvidence();
+                if (!vertexEvidences.ContainsKey(kvp.Key)) vertexEvidences[kvp.Key] = new VertexData();
 
                 vertexEvidences[kvp.Key].Beliefs = kvp.Value;
             }

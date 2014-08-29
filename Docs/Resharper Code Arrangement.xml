@@ -156,8 +156,8 @@ II.2.12 <HandlesEvent />
     <Entry>
       <Match>
 	<Or>
-	          	<Kind Is="property"/>
-		<Kind Is="indexer"/>
+	   <Kind Is="property"/>
+     <Kind Is="indexer"/>
 	</Or>
       </Match>
      <Sort>

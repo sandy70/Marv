@@ -19,7 +19,7 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId) return null;
 
-            var evidence = cellModel.Data as VertexEvidence;
+            var evidence = cellModel.Data as VertexData;
 
             if (evidence == null || evidence.Values == null) return null;
 

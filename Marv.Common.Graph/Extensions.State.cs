@@ -37,7 +37,7 @@ namespace Marv.Common.Graph
                 return stateList.Select(state => state.Key == str ? 1.0 : 0.0);
             }
 
-            var paramValues = VertexEvidence.ParseValues(str);
+            var paramValues = VertexData.ParseValues(str);
 
             // Check for functions
             if (str.ToLowerInvariant().Contains("tri") && paramValues.Count == 3)

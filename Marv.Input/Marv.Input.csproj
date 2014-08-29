@@ -146,6 +146,9 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="InvalidValueException.cs" />
+    <Compile Include="LineDataControl.xaml.cs">
+      <DependentUpon>LineDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LineEvidence.cs" />
     <Compile Include="MainWindow.Plot.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
@@ -155,6 +158,10 @@
     </Compile>
     <Compile Include="VertexEvidenceProgress.cs" />
     <Page Include="EvidenceChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LineDataControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

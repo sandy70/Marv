@@ -84,6 +84,9 @@
     <Compile Include="CorLas\CorLAS.cs" />
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
+    <Compile Include="Types\Dict\Dict.cs" />
+    <Compile Include="Types\Dict\Dict.IDictionary.cs" />
+    <Compile Include="Types\Dict\DictEnumerator.cs" />
     <Compile Include="Distributions\DeltaDistribution.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="IKeyed.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="Distributions\TriangularDistribution.cs" />
     <Compile Include="Spline\CubicSpline.cs" />
     <Compile Include="Spline\TriDiagonalMatrix.cs" />
+    <Compile Include="Types\Dict\Kvp.cs" />
     <Compile Include="Types\IKey.cs" />
     <Compile Include="Types\List.cs" />
     <Compile Include="Types\SelectableCollection.cs" />

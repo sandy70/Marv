@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using MoreLinq;
@@ -49,8 +48,11 @@ namespace Marv.Input
         public static readonly DependencyProperty BaseRangePointsProperty =
             DependencyProperty.Register("BaseRangePoints", typeof (ObservableCollection<RangeDataPoint>), typeof (MainWindow), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty IsChartEditingProperty =
-            DependencyProperty.Register("IsChartEditing", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty ChartCellModelsProperty =
+            DependencyProperty.Register("ChartCellModels", typeof (IEnumerable<CellModel>), typeof (MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty IsChartEditEnabledProperty =
+            DependencyProperty.Register("IsChartEditEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
 
         public static readonly DependencyProperty MaxPointsProperty =
             DependencyProperty.Register("MaxPoints", typeof (ObservableCollection<CategoricalDataPoint>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<CategoricalDataPoint>()));
@@ -70,8 +72,6 @@ namespace Marv.Input
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
-        public LineType PlotLineType = LineType.Mode;
-
         private ScatterSeries inputScatter;
         private LineSeries maxLine;
         private ScatterSeries maxScatter;
@@ -79,6 +79,7 @@ namespace Marv.Input
         private ScatterSeries minScatter;
         private LineSeries modeLine;
         private ScatterSeries modeScatter;
+        public LineType PlotLineType = LineType.Mode;
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
@@ -129,15 +130,27 @@ namespace Marv.Input
             }
         }
 
-        public bool IsChartEditing
+        public IEnumerable<CellModel> ChartCellModels
         {
             get
             {
-                return (bool) GetValue(IsChartEditingProperty);
+                return (IEnumerable<CellModel>) GetValue(ChartCellModelsProperty);
             }
             set
             {
-                SetValue(IsChartEditingProperty, value);
+                SetValue(ChartCellModelsProperty, value);
+            }
+        }
+
+        public bool IsChartEditEnabled
+        {
+            get
+            {
+                return (bool) GetValue(IsChartEditEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsChartEditEnabledProperty, value);
             }
         }
 
@@ -223,28 +236,6 @@ namespace Marv.Input
                 );
         }
 
-        public ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
-        {
-            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
-
-            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
-            {
-                this.MaxPoints,
-                this.ModePoints,
-                this.MinPoints
-            };
-
-            return series.MinBy(s =>
-            {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
-
-                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
-
-                return Math.Abs(spline.Eval(new[] {(float) userPointAnchorIndex})[0] - userPoint.Value.Value);
-            });
-        }
-
         private void AddPlotInfo(string title, string xAxis)
         {
             this.DataPlotModel.Title = title;
@@ -273,18 +264,18 @@ namespace Marv.Input
             }
         }
 
-        private void AddPointsToPlot(VertexEvidence evidence, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
+        private void AddPointsToPlot(VertexData data, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
         {
-            if (evidence == null || string.IsNullOrWhiteSpace(evidence.String)) return;
+            if (data == null || string.IsNullOrWhiteSpace(data.String)) return;
 
-            if (evidence.String.Contains(","))
+            if (data.String.Contains(","))
             {
                 this.Graph.SelectedVertex.States.ForEach((state, i) =>
                 {
                     var max = state.SafeMax;
                     var min = state.SafeMin;
 
-                    var value = evidence.Values[i];
+                    var value = data.Values[i];
 
                     var highLowItem = new HighLowItem(index, min, max, min, max);
 
@@ -303,9 +294,9 @@ namespace Marv.Input
                 return;
             }
 
-            var values = VertexEvidence.ParseValues(evidence.String);
+            var values = VertexData.ParseValues(data.String);
 
-            if (evidence.String.Contains(":") && values.Count == 2)
+            if (data.String.Contains(":") && values.Count == 2)
             {
                 candleStickSeries[1].Items.Add(new HighLowItem(index, values[0], values[1], values[0], values[1]));
             }
@@ -373,192 +364,201 @@ namespace Marv.Input
 
         private void InitializePlot()
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
-            inputScatter = new ScatterSeries();
-            inputScatter.MarkerFill = OxyColors.Green;
-            inputScatter.Title = "Base";
-            var inputCandleStick = new CandleStickSeries();
-            inputCandleStick.Color = OxyColors.Green;
-            var candleStickSet = new Dictionary<double, CandleStickSeries>();
-            candleStickSet.Add(1, inputCandleStick);
-            minScatter = new ScatterSeries();
-            minScatter.MarkerFill = OxyColors.Blue;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
+            //inputScatter = new ScatterSeries();
+            //inputScatter.MarkerFill = OxyColors.Green;
+            //inputScatter.Title = "Base";
+            //var inputCandleStick = new CandleStickSeries();
+            //inputCandleStick.Color = OxyColors.Green;
+            //var candleStickSet = new Dictionary<double, CandleStickSeries>();
+            //candleStickSet.Add(1, inputCandleStick);
+            //minScatter = new ScatterSeries();
+            //minScatter.MarkerFill = OxyColors.Blue;
 
-            minLine = new LineSeries();
-            minLine.Color = OxyColors.Blue;
+            //minLine = new LineSeries();
+            //minLine.Color = OxyColors.Blue;
 
-            maxScatter = new ScatterSeries();
-            maxScatter.MarkerFill = OxyColors.Blue;
+            //maxScatter = new ScatterSeries();
+            //maxScatter.MarkerFill = OxyColors.Blue;
 
-            maxLine = new LineSeries();
-            maxLine.Color = OxyColors.Blue;
+            //maxLine = new LineSeries();
+            //maxLine.Color = OxyColors.Blue;
 
-            modeScatter = new ScatterSeries();
-            modeScatter.Title = "Belief";
-            modeScatter.MarkerFill = OxyColors.Blue;
-            modeLine = new LineSeries();
-            modeLine.Color = OxyColors.Blue;
+            //modeScatter = new ScatterSeries();
+            //modeScatter.Title = "Belief";
+            //modeScatter.MarkerFill = OxyColors.Blue;
+            //modeLine = new LineSeries();
+            //modeLine.Color = OxyColors.Blue;
 
-            this.DataPlotModel = new PlotModel();
+            //this.DataPlotModel = new PlotModel();
 
-            var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
+            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (sourceCellModel.IsColumnSectionId) return;
+            //if (sourceCellModel.IsColumnSectionId) return;
 
-            var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
+            //var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
 
-            cellModels.ForEach((cellModel, i) =>
-            {
-                var index = this.IsYearPlot ? i + 1 : Convert.ToDouble(cellModel.Year);
-                this.AddPointsToPlot(cellModel.Data as VertexEvidence, this.inputScatter, candleStickSet, index);
-            });
+            //cellModels.ForEach((cellModel, i) =>
+            //{
+            //    var index = this.IsYearPlot ? i + 1 : Convert.ToDouble(cellModel.Year);
+            //    this.AddPointsToPlot(cellModel.Data as VertexData, this.inputScatter, candleStickSet, index);
+            //});
 
-            var title = this.IsYearPlot ? sourceCellModel.Year.ToString() : sourceCellModel.SectionId;
-            var xLabel = this.IsYearPlot ? CellModel.SectionIdHeader : "Year";
+            //var title = this.IsYearPlot ? sourceCellModel.Year.ToString() : sourceCellModel.SectionId;
+            //var xLabel = this.IsYearPlot ? CellModel.SectionIdHeader : "Year";
 
-            this.AddPlotInfo(title, xLabel);
+            //this.AddPlotInfo(title, xLabel);
 
-            this.DataPlotModel.MouseDown += (s, e) =>
-            {
-                var scatter = modeScatter;
+            //this.DataPlotModel.MouseDown += (s, e) =>
+            //{
+            //    var scatter = modeScatter;
 
-                if (PlotLineType == LineType.Max) scatter = maxScatter;
-                else if (PlotLineType == LineType.Min) scatter = minScatter;
+            //    if (PlotLineType == LineType.Max) scatter = maxScatter;
+            //    else if (PlotLineType == LineType.Min) scatter = minScatter;
 
-                if (e.ChangedButton == OxyMouseButton.Left)
-                {
-                    var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
+            //    if (e.ChangedButton == OxyMouseButton.Left)
+            //    {
+            //        var point = Axis.InverseTransform(e.Position, this.DataPlotModel.DefaultXAxis, this.DataPlotModel.DefaultYAxis);
 
-                    if (DoesPointExist((int) point.X, point.Y, scatter) && isCorrectPointPosition((int) point.X, point.Y))
-                    {
-                        point.X = (int) point.X;
-                        scatter.Points.Add(new ScatterPoint(point.X, point.Y));
+            //        if (DoesPointExist((int) point.X, point.Y, scatter) && isCorrectPointPosition((int) point.X, point.Y))
+            //        {
+            //            point.X = (int) point.X;
+            //            scatter.Points.Add(new ScatterPoint(point.X, point.Y));
 
-                        this.DataPlotModel.InvalidatePlot(true);
-                    }
-                }
-                else if (e.ChangedButton == OxyMouseButton.Right)
-                {
-                    var seriesCount = scatter.Points.Count;
+            //            this.DataPlotModel.InvalidatePlot(true);
+            //        }
+            //    }
+            //    else if (e.ChangedButton == OxyMouseButton.Right)
+            //    {
+            //        var seriesCount = scatter.Points.Count;
 
-                    if (seriesCount > 0) scatter.Points.RemoveAt(seriesCount - 1);
-                }
-                if (PlotLineType == LineType.Max) UpdateLine(maxLine, scatter);
-                else if (PlotLineType == LineType.Min) UpdateLine(minLine, scatter);
-                else UpdateLine(modeLine, scatter);
+            //        if (seriesCount > 0) scatter.Points.RemoveAt(seriesCount - 1);
+            //    }
+            //    if (PlotLineType == LineType.Max) UpdateLine(maxLine, scatter);
+            //    else if (PlotLineType == LineType.Min) UpdateLine(minLine, scatter);
+            //    else UpdateLine(modeLine, scatter);
 
-                this.DataPlotModel.InvalidatePlot(true);
-            };
+            //    this.DataPlotModel.InvalidatePlot(true);
+            //};
 
-            this.DataPlotModel.Series.Add(inputScatter);
-            foreach (var series in candleStickSet.Values)
-            {
-                this.DataPlotModel.Series.Add(series);
-            }
-            this.DataPlotModel.Series.Add(minLine);
-            this.DataPlotModel.Series.Add(maxLine);
-            this.DataPlotModel.Series.Add(modeLine);
-            this.DataPlotModel.Series.Add(maxScatter);
-            this.DataPlotModel.Series.Add(minScatter);
-            this.DataPlotModel.Series.Add(modeScatter);
+            //this.DataPlotModel.Series.Add(inputScatter);
+            //foreach (var series in candleStickSet.Values)
+            //{
+            //    this.DataPlotModel.Series.Add(series);
+            //}
+            //this.DataPlotModel.Series.Add(minLine);
+            //this.DataPlotModel.Series.Add(maxLine);
+            //this.DataPlotModel.Series.Add(modeLine);
+            //this.DataPlotModel.Series.Add(maxScatter);
+            //this.DataPlotModel.Series.Add(minScatter);
+            //this.DataPlotModel.Series.Add(modeScatter);
 
-            this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsZoomEnabled = false;
-            this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsPanEnabled = false;
+            //this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsZoomEnabled = false;
+            //this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsPanEnabled = false;
 
 
-            this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
+            //this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 
-            this.DataPlotModel.InvalidatePlot(true);
+            //this.DataPlotModel.InvalidatePlot(true);
 
             //////////////////////////////
         }
 
+        private void UpdateChartCellModels()
+        {
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
+
+            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            //this.ChartCellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
+        }
+
         private void UpdateChart()
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
 
-            var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
+            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
+            //var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
 
-            this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-            this.BaseDistributionPoints = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
-            this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
-            this.BaseRangePoints = new ObservableCollection<RangeDataPoint>();
+            //this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
+            //this.BaseDistributionPoints = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            //this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
+            //this.BaseRangePoints = new ObservableCollection<RangeDataPoint>();
 
-            foreach (var cellModel in cellModels)
-            {
-                this.AnchorPoints.Add(new CategoricalDataPoint {Category = cellModel.SectionId, Value = null});
+            //foreach (var cellModel in cellModels)
+            //{
+            //    this.AnchorPoints.Add(new CategoricalDataPoint {Category = cellModel.SectionId, Value = null});
 
-                var vertexEvidence = cellModel.Data as VertexEvidence;
+            //    var vertexEvidence = cellModel.Data as VertexData;
 
-                if (vertexEvidence == null) continue;
+            //    if (vertexEvidence == null) continue;
 
-                var vertexEvidenceType = this.Graph.SelectedVertex.GetEvidenceType(vertexEvidence.String);
-                var paramValues = VertexEvidence.ParseValues(vertexEvidence.String);
+            //    var vertexEvidenceType = this.Graph.SelectedVertex.GetEvidenceType(vertexEvidence.String);
+            //    var paramValues = VertexData.ParseValues(vertexEvidence.String);
 
-                switch (vertexEvidenceType)
-                {
-                    case VertexEvidenceType.Number:
-                    {
-                        this.BaseNumberPoints.Add(new CategoricalDataPoint
-                        {
-                            Category = cellModel.SectionId,
-                            Value = paramValues[0]
-                        });
+            //    switch (vertexEvidenceType)
+            //    {
+            //        case VertexEvidenceType.Number:
+            //        {
+            //            this.BaseNumberPoints.Add(new CategoricalDataPoint
+            //            {
+            //                Category = cellModel.SectionId,
+            //                Value = paramValues[0]
+            //            });
 
-                        break;
-                    }
+            //            break;
+            //        }
 
-                    case VertexEvidenceType.Range:
-                    {
-                        paramValues.Sort();
+            //        case VertexEvidenceType.Range:
+            //        {
+            //            paramValues.Sort();
 
-                        while (this.BaseDistributionPoints.Count < 2)
-                        {
-                            this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
-                        }
+            //            while (this.BaseDistributionPoints.Count < 2)
+            //            {
+            //                this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+            //            }
 
-                        this.BaseDistributionPoints[0].Add(new ProbabilityDataPoint
-                        {
-                            Category = cellModel.SectionId,
-                            Value = paramValues[0],
-                            Probability = 0
-                        });
+            //            this.BaseDistributionPoints[0].Add(new ProbabilityDataPoint
+            //            {
+            //                Category = cellModel.SectionId,
+            //                Value = paramValues[0],
+            //                Probability = 0
+            //            });
 
-                        this.BaseDistributionPoints[1].Add(new ProbabilityDataPoint
-                        {
-                            Category = cellModel.SectionId,
-                            Value = paramValues[1],
-                            Probability = 1
-                        });
+            //            this.BaseDistributionPoints[1].Add(new ProbabilityDataPoint
+            //            {
+            //                Category = cellModel.SectionId,
+            //                Value = paramValues[1],
+            //                Probability = 1
+            //            });
 
-                        break;
-                    }
+            //            break;
+            //        }
 
-                    case VertexEvidenceType.Distribution:
-                    {
-                        var maxProb = vertexEvidence.Values.Max();
+            //        case VertexEvidenceType.Distribution:
+            //        {
+            //            var maxProb = vertexEvidence.Values.Max();
 
-                        this.Graph.SelectedVertex.States.ForEach((state, i) =>
-                        {
-                            if (this.BaseDistributionPoints.Count < i + 1)
-                            {
-                                this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
-                            }
+            //            this.Graph.SelectedVertex.States.ForEach((state, i) =>
+            //            {
+            //                if (this.BaseDistributionPoints.Count < i + 1)
+            //                {
+            //                    this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+            //                }
 
-                            this.BaseDistributionPoints[i].Add(new ProbabilityDataPoint
-                            {
-                                Category = cellModel.SectionId,
-                                Value = state.SafeMax - state.SafeMin,
-                                Probability = vertexEvidence.Values[i] / maxProb
-                            });
-                        });
+            //                this.BaseDistributionPoints[i].Add(new ProbabilityDataPoint
+            //                {
+            //                    Category = cellModel.SectionId,
+            //                    Value = state.SafeMax - state.SafeMin,
+            //                    Probability = vertexEvidence.Values[i] / maxProb
+            //                });
+            //            });
 
-                        break;
-                    }
-                }
-            }
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         //private void UpdateUserSeries(Point position)
@@ -635,12 +635,12 @@ namespace Marv.Input
 
                 for (var i = 0; i < modeScatter.Points.Count; i++)
                 {
-                    var columns = this.InputGridView.Columns;
-                    var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
-                    if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header))
-                    {
-                        SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString(CultureInfo.CurrentCulture)), evidenceString);
-                    }
+                    //var columns = this.InputGridView.Columns;
+                    //var evidenceString = "TRI(" + tempMin.Points[i].Y + "," + tempMode.Points[i].Y + "," + tempMax.Points[i].Y + ")";
+                    //if (tempMode.Points[i].X >= Convert.ToInt32(columns[1].Header) && tempMode.Points[i].X <= Convert.ToInt32(columns[columns.Count - 1].Header))
+                    //{
+                    //    SetCell(new CellModel(this.InputRows[sectionIndex - 1], tempMode.Points[i].X.ToString(CultureInfo.CurrentCulture)), evidenceString);
+                    //}
                 }
             }
         }
@@ -699,6 +699,28 @@ namespace Marv.Input
                 }
             }
             return true;
+        }
+
+        public ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
+        {
+            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
+
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            return series.MinBy(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+
+                return Math.Abs(spline.Eval(new[] {(float) userPointAnchorIndex})[0] - userPoint.Value.Value);
+            });
         }
     }
 }

@@ -31,6 +31,16 @@ namespace Marv.Common
             //return constructor.Invoke(new object[0]) as T; //If T is class
         }
 
+        public static T Max<T>(T a, T b) where T : IComparable
+        {
+            return a.CompareTo(b) > 0 ? a : b;
+        }
+
+        public static T Min<T>(T a, T b) where T : IComparable
+        {
+            return a.CompareTo(b) < 0 ? a : b;
+        }
+
         public static double Distance(Point p1, Point p2)
         {
             return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));

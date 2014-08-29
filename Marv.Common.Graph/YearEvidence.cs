@@ -5,7 +5,7 @@ namespace Marv.Common.Graph
 {
     public class YearEvidence : IKey<int>
     {
-        public readonly Dictionary<string, VertexEvidence> VertexEvidences = new Dictionary<string, VertexEvidence>();
+        public readonly Dictionary<string, VertexData> VertexEvidences = new Dictionary<string, VertexData>();
         public int Year { get; set; }
 
         [JsonIgnore]

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using OxyPlot;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
-    public partial class MainWindow
+    public partial class MainWindow : INotifyPropertyChanged
     {
         public static readonly DependencyProperty DataPlotModelProperty =
             DependencyProperty.Register("DataPlotModel", typeof (PlotModel), typeof (MainWindow), new PropertyMetadata(null));
@@ -57,9 +57,8 @@ namespace Marv.Input
             IsTimed = true
         };
 
+        private Dict<string, int, string, VertexData> lineData;
         public bool IsYearPlot = true;
-
-        public LineEvidence LineEvidence;
 
         public PlotModel DataPlotModel
         {
@@ -149,6 +148,22 @@ namespace Marv.Input
             }
         }
 
+        public Dict<string, int, string, VertexData> LineData
+        {
+            get
+            {
+                return this.lineData;
+            }
+
+            set
+            {
+                if (value.Equals(this.lineData)) return;
+
+                this.lineData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public NotificationCollection Notifications
         {
             get
@@ -195,6 +210,8 @@ namespace Marv.Input
             this.Loaded += MainWindow_Loaded;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private static void ChangedEndYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mainWindow = d as MainWindow;
@@ -213,22 +230,6 @@ namespace Marv.Input
             if (mainWindow.StartYear > mainWindow.EndYear) mainWindow.EndYear = mainWindow.StartYear;
         }
 
-        public bool IsSelectionSquare()
-        {
-            var rowIndices = new List<int>();
-            var colIndices = new List<int>();
-
-            foreach (var selectedCell in this.InputGridView.SelectedCells)
-            {
-                Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
-                colIndices.AddUnique(selectedCell.Column.DisplayIndex);
-            }
-
-            var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
-
-            return total == this.InputGridView.SelectedCells.Count;
-        }
-
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (InputRows == null) return;
@@ -242,19 +243,26 @@ namespace Marv.Input
 
             this.Notifications.Add(notification);
 
-            var progress = new Progress<int>(i => { notification.Value = (i * 100) / SectionNumber; });
+            var progress = new Progress<int>(i => { notification.Value = (float) (i * 100) / SectionNumber; });
 
             var inputRows = this.InputRows;
-            var years = this.LineEvidence.Years;
+            var startYear = this.StartYear;
+            var endYear = this.EndYear;
             var nSections = this.SectionNumber;
 
-            await Task.Run(() => this.AddSections(inputRows, years, nSections, progress));
+            await Task.Run(() => this.AddSections(inputRows, startYear, endYear, nSections, progress));
 
             this.Notifications.Remove(notification);
             this.IsInputGridEnabled = true;
+
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
+
+            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            //this.ChartCellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
         }
 
-        private void AddSections(ObservableCollection<dynamic> inputRows, List<int> years, int nSections, IProgress<int> progress)
+        private void AddSections(ObservableCollection<dynamic> inputRows, int startYear, int endYear, int nSections, IProgress<int> progress)
         {
             for (var i = 0; i < nSections; i++)
             {
@@ -262,7 +270,7 @@ namespace Marv.Input
                 var sectionId = "Section " + (inputRows.Count + 1);
                 row[CellModel.SectionIdHeader] = sectionId;
 
-                foreach (var year in years)
+                for (var year = startYear; year <= endYear; year++)
                 {
                     row[year.ToString()] = null;
                 }
@@ -274,189 +282,165 @@ namespace Marv.Input
             }
         }
 
-        private VertexEvidenceProgress CheckVertexEvidenceProgress(Vertex vertex)
-        {
-            var total = this.LineEvidence.SectionEvidences.Count * this.LineEvidence.Years.Count();
-            var sum = 0;
-
-            foreach (var sectionEvidence in this.LineEvidence.SectionEvidences)
-            {
-                foreach (var year in this.LineEvidence.Years)
-                {
-                    var graphEvidence = sectionEvidence.YearEvidences[year].VertexEvidences;
-
-                    if (graphEvidence.ContainsKey(vertex.Key))
-                    {
-                        sum++;
-                    }
-                }
-            }
-
-            if (sum == 0) return VertexEvidenceProgress.None;
-
-            if (sum < total) return VertexEvidenceProgress.Partial;
-
-            return VertexEvidenceProgress.Full;
-        }
-
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
         {
-            this.InputGridView.SelectAll();
+            //this.InputGridView.SelectAll();
 
-            foreach (var cell in this.InputGridView.SelectedCells)
-            {
-                var cellModel = cell.ToModel();
+            //foreach (var cell in this.InputGridView.SelectedCells)
+            //{
+            //    var cellModel = cell.ToModel();
 
-                if (cellModel.IsColumnSectionId) continue;
+            //    if (cellModel.IsColumnSectionId) continue;
 
-                this.SetCell(cellModel, "");
-            }
+            //    this.SetCell(cellModel, "");
+            //}
 
-            this.InputGridView.UnselectAll();
+            //this.InputGridView.UnselectAll();
         }
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
 
-            var model = new CellModel(this.InputGridView.SelectedCells[0]);
-            var vertexEvidence = model.Data as VertexEvidence;
+            //var model = new CellModel(this.InputGridView.SelectedCells[0]);
+            //var vertexEvidence = model.Data as VertexData;
 
-            if (model.IsColumnSectionId || vertexEvidence == null)
-            {
-                return;
-            }
+            //if (model.IsColumnSectionId || vertexEvidence == null)
+            //{
+            //    return;
+            //}
 
-            foreach (var row in this.InputRows)
-            {
-                foreach (var column in this.InputGridView.Columns)
-                {
-                    var oldModel = new CellModel(row, column.Header as string);
+            //foreach (var row in this.InputRows)
+            //{
+            //    foreach (var column in this.InputGridView.Columns)
+            //    {
+            //        var oldModel = new CellModel(row, column.Header as string);
 
-                    if (!oldModel.IsColumnSectionId) this.SetCell(oldModel, vertexEvidence.String);
-                }
-            }
+            //        if (!oldModel.IsColumnSectionId) this.SetCell(oldModel, vertexEvidence.String);
+            //    }
+            //}
         }
 
         private void CopyAcrossColumns_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
 
-            var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
-            if (selectedCellModel.IsColumnSectionId) return;
+            //var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+            //if (selectedCellModel.IsColumnSectionId) return;
 
-            var vertexEvidence = selectedCellModel.Data as VertexEvidence;
+            //var vertexEvidence = selectedCellModel.Data as VertexData;
 
-            foreach (var column in this.InputGridView.Columns)
-            {
-                var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+            //foreach (var column in this.InputGridView.Columns)
+            //{
+            //    var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
 
-                if (cellModel.IsColumnSectionId) continue;
+            //    if (cellModel.IsColumnSectionId) continue;
 
-                this.SetCell(cellModel, vertexEvidence.String);
-            }
+            //    this.SetCell(cellModel, vertexEvidence.String);
+            //}
         }
 
         private void CopyAcrossRows_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
 
-            var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
+            //var selectedCellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            if (selectedCellModel.IsColumnSectionId) return;
+            //if (selectedCellModel.IsColumnSectionId) return;
 
-            var selectedCellData = selectedCellModel.Data as VertexEvidence;
+            //var selectedCellData = selectedCellModel.Data as VertexData;
 
-            foreach (var row in this.InputRows)
-            {
-                var cellModel = new CellModel(row, selectedCellModel.Header);
-                this.SetCell(cellModel, selectedCellData.String);
-            }
+            //foreach (var row in this.InputRows)
+            //{
+            //    var cellModel = new CellModel(row, selectedCellModel.Header);
+            //    this.SetCell(cellModel, selectedCellData.String);
+            //}
         }
 
         private void CreateInputButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.Graph == null)
-            {
-                this.Notifications.Push(new Notification
-                {
-                    Name = "No network available!",
-                    Description = "You cannot create and input if no network is opened.",
-                    IsIndeterminate = true
-                });
+            //if (this.Graph == null)
+            //{
+            //    this.Notifications.Push(new Notification
+            //    {
+            //        Name = "No network available!",
+            //        Description = "You cannot create and input if no network is opened.",
+            //        IsIndeterminate = true
+            //    });
 
-                return;
-            }
+            //    return;
+            //}
 
-            var inputRows = new ObservableCollection<dynamic>();
-            var row = new Dynamic();
+            //var inputRows = new ObservableCollection<dynamic>();
+            //var row = new Dynamic();
 
-            const string sectionId = "Section 1";
-            row[CellModel.SectionIdHeader] = sectionId;
+            //const string sectionId = "Section 1";
+            //row[CellModel.SectionIdHeader] = sectionId;
 
-            this.LineEvidence = new LineEvidence
-            {
-                GraphGuid = this.Graph.Guid
-            };
+            //this.LineEvidence = new LineEvidence
+            //{
+            //    GraphGuid = this.Graph.Guid
+            //};
 
-            this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
+            //this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
 
-            for (var year = this.StartYear; year <= this.EndYear; year++)
-            {
-                this.LineEvidence.SectionEvidences[sectionId].YearEvidences.Add(new YearEvidence {Year = year});
-                row[year.ToString(CultureInfo.CurrentCulture)] = "";
-            }
+            //for (var year = this.StartYear; year <= this.EndYear; year++)
+            //{
+            //    this.LineEvidence.SectionEvidences[sectionId].YearEvidences.Add(new YearEvidence {Year = year});
+            //    row[year.ToString(CultureInfo.CurrentCulture)] = "";
+            //}
 
-            inputRows.Add(row);
+            //inputRows.Add(row);
 
-            this.InputRows = inputRows;
-            this.IsInputToolbarEnabled = true;
-            this.Graph.Vertices.SetBelief(0);
-            this.Graph.Vertices.ClearEvidence();
+            //this.InputRows = inputRows;
+            //this.IsInputToolbarEnabled = true;
+            //this.Graph.Vertices.SetBelief(0);
+            //this.Graph.Vertices.ClearEvidence();
 
-            foreach (var column in this.InputGridView.Columns)
-            {
-                column.Width = 70;
-            }
+            //foreach (var column in this.InputGridView.Columns)
+            //{
+            //    column.Width = 70;
+            //}
 
-            this.InputGridView.Columns[0].Width = 90;
+            //this.InputGridView.Columns[0].Width = 90;
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.InputGridView.CancelEdit();
+            //this.InputGridView.CancelEdit();
 
-            this.Graph.Run();
+            //this.Graph.Run();
 
-            if (this.InputGridView.CurrentCell == null)
-            {
-                this.Notifications.Add(this.notificationBadCurrentCell);
-                return;
-            }
+            //if (this.InputGridView.CurrentCell == null)
+            //{
+            //    this.Notifications.Add(this.notificationBadCurrentCell);
+            //    return;
+            //}
 
-            var cellModel = this.InputGridView.CurrentCell.ToModel();
+            //var cellModel = this.InputGridView.CurrentCell.ToModel();
 
-            if (cellModel.IsColumnSectionId)
-            {
-                this.Notifications.Add(this.notificationBadCurrentCell);
-                return;
-            }
+            //if (cellModel.IsColumnSectionId)
+            //{
+            //    this.Notifications.Add(this.notificationBadCurrentCell);
+            //    return;
+            //}
 
-            this.SetCell(cellModel, vertex.EvidenceString);
-            this.UpdateChart();
+            //this.SetCell(cellModel, vertex.EvidenceString);
+            //this.UpdateChart();
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
-            this.LineEvidence = new LineEvidence();
-            this.UpdateGrid();
+            //this.LineEvidence = new LineEvidence();
+            this.LineData = new Dict<string, int, string, VertexData>();
+            this.LineData["Section 1"] = new Dict<int, string, VertexData>();
         }
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateGrid();
 
-            this.VerticalAxis = this.Graph.SelectedVertex.IsLogScale ? (CartesianAxis)this.logarightmicAxis : this.linearAxis;
+            this.VerticalAxis = this.Graph.SelectedVertex.IsLogScale ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
 
             var numericalAxis = this.VerticalAxis as NumericalAxis;
             numericalAxis.Minimum = this.Graph.SelectedVertex.SafeMin;
@@ -495,18 +479,18 @@ namespace Marv.Input
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
 
-            this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
-            this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
-            this.InputGridView.CellValidating += InputGridView_CellValidating;
+            //this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
+            //this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
+            //this.InputGridView.CellValidating += InputGridView_CellValidating;
 
 
-            this.InputGridView.Pasted -= InputGridView_Pasted;
-            this.InputGridView.Pasted += InputGridView_Pasted;
+            //this.InputGridView.Pasted -= InputGridView_Pasted;
+            //this.InputGridView.Pasted += InputGridView_Pasted;
 
-            this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
+            //this.InputGridView.PastingCellClipboardContent += InputGridView_PastingCellClipboardContent;
 
-            this.InputGridView.KeyDown += InputGridView_KeyDown;
-            this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
+            //this.InputGridView.KeyDown += InputGridView_KeyDown;
+            //this.InputGridView.CurrentCellChanged += InputGridView_CurrentCellChanged;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }
@@ -536,54 +520,54 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == false) return;
 
-            this.LineEvidence = Utils.ReadJson<LineEvidence>(dialog.FileName);
+            //this.LineEvidence = Utils.ReadJson<LineEvidence>(dialog.FileName);
 
-            var isCorrectInput = true;
+            //var isCorrectInput = true;
 
-            if (this.LineEvidence.GraphGuid != this.Graph.Guid)
-            {
-                RadWindow.Confirm("This input was not created for the loaded network. Do you still want to open it?",
-                    (o1, e1) => isCorrectInput = e1.DialogResult.Value);
-            }
+            //if (this.LineEvidence.GraphGuid != this.Graph.Guid)
+            //{
+            //    RadWindow.Confirm("This input was not created for the loaded network. Do you still want to open it?",
+            //        (o1, e1) => isCorrectInput = e1.DialogResult.Value);
+            //}
 
-            if (!isCorrectInput) return;
+            //if (!isCorrectInput) return;
 
-            var inputRows = new ObservableCollection<dynamic>();
+            //var inputRows = new ObservableCollection<dynamic>();
 
-            foreach (var sectionEvidence in this.LineEvidence.SectionEvidences)
-            {
-                var row = new Dynamic();
-                row[CellModel.SectionIdHeader] = sectionEvidence.Id;
+            //foreach (var sectionEvidence in this.LineEvidence.SectionEvidences)
+            //{
+            //    var row = new Dynamic();
+            //    row[CellModel.SectionIdHeader] = sectionEvidence.Id;
 
-                foreach (var year in this.LineEvidence.Years)
-                {
-                    var vertexEvidences = sectionEvidence.YearEvidences[year].VertexEvidences;
+            //    foreach (var year in this.LineEvidence.Years)
+            //    {
+            //        var vertexEvidences = sectionEvidence.YearEvidences[year].VertexEvidences;
 
-                    if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
-                    {
-                        row[year.ToString()] = vertexEvidences[this.Graph.SelectedVertex.Key];
-                    }
-                    else
-                    {
-                        row[year.ToString()] = null;
-                    }
-                }
+            //        if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
+            //        {
+            //            row[year.ToString()] = vertexEvidences[this.Graph.SelectedVertex.Key];
+            //        }
+            //        else
+            //        {
+            //            row[year.ToString()] = null;
+            //        }
+            //    }
 
-                inputRows.Add(row);
-            }
+            //    inputRows.Add(row);
+            //}
 
-            this.InputRows = inputRows;
+            //this.InputRows = inputRows;
 
-            var item = this.InputGridView.Items[0];
-            var column = this.InputGridView.Columns[1];
-            var cellToEdit = new GridViewCellInfo(item, column, this.InputGridView);
+            //var item = this.InputGridView.Items[0];
+            //var column = this.InputGridView.Columns[1];
+            //var cellToEdit = new GridViewCellInfo(item, column, this.InputGridView);
 
-            this.InputGridView.IsSynchronizedWithCurrentItem = true;
-            this.InputGridView.SelectedItem = item;
-            this.InputGridView.CurrentItem = item;
-            this.InputGridView.CurrentCellInfo = cellToEdit;
-            this.IsInputToolbarEnabled = true;
-            this.Graph.Run();
+            //this.InputGridView.IsSynchronizedWithCurrentItem = true;
+            //this.InputGridView.SelectedItem = item;
+            //this.InputGridView.CurrentItem = item;
+            //this.InputGridView.CurrentCellInfo = cellToEdit;
+            //this.IsInputToolbarEnabled = true;
+            //this.Graph.Run();
         }
 
         private void PlotButton_Click(object sender, RoutedEventArgs e)
@@ -593,11 +577,11 @@ namespace Marv.Input
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.InputGridView.SelectedCells.Count != 1) return;
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
 
-            var cellModel = this.InputGridView.SelectedCells[0].ToModel();
+            //var cellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
+            //this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -612,7 +596,7 @@ namespace Marv.Input
             if (dialog.FileName != null)
             {
                 // User Formatting.None to save space. These files are not intended to be human readable.
-                this.LineEvidence.WriteJson(dialog.FileName, Formatting.None);
+                //this.LineEvidence.WriteJson(dialog.FileName, Formatting.None);
             }
         }
 
@@ -632,26 +616,51 @@ namespace Marv.Input
 
             foreach (var row in this.InputRows)
             {
-                foreach (var column in InputGridView.Columns)
-                {
-                    var cellModel = new CellModel(row, column.Header as string);
+                //foreach (var column in InputGridView.Columns)
+                //{
+                //    var cellModel = new CellModel(row, column.Header as string);
 
-                    if (cellModel.IsColumnSectionId) continue;
+                //    if (cellModel.IsColumnSectionId) continue;
 
-                    var vertexEvidences = LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
+                //    //var vertexEvidences = LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
 
-                    if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
-                    {
-                        cellModel.Data = vertexEvidences[Graph.SelectedVertex.Key];
-                    }
-                    else cellModel.Data = "";
-                }
+                //    //if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
+                //    //{
+                //    //    cellModel.Data = vertexEvidences[Graph.SelectedVertex.Key];
+                //    //}
+                //    //else cellModel.Data = "";
+                //}
             }
         }
 
         private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
         {
             if (DataPlotModel != null) UploadToGrid();
+        }
+
+        public bool IsSelectionSquare()
+        {
+            var rowIndices = new List<int>();
+            var colIndices = new List<int>();
+
+            //foreach (var selectedCell in this.InputGridView.SelectedCells)
+            //{
+            //    Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
+            //    colIndices.AddUnique(selectedCell.Column.DisplayIndex);
+            //}
+
+            //var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
+
+            //return total == this.InputGridView.SelectedCells.Count;
+            return true;
+        }
+
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

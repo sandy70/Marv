@@ -20,11 +20,11 @@ namespace Marv.Input
                 {
                     if (!string.IsNullOrWhiteSpace(oldStr))
                     {
-                        this.LineEvidence.SectionEvidences.ReplaceKey(oldStr, newStr);
+                        this.LineData.ChangeKey(oldStr, newStr);
                     }
                     else
                     {
-                        this.LineEvidence.SectionEvidences.Add(newStr);
+                        this.LineData[newStr] = new Common.Dict<int, string, VertexData>();
                     }
                 }
 
@@ -38,43 +38,20 @@ namespace Marv.Input
 
             var values = selectedVertex.States.Parse(newStr);
 
-            var evidence = values == null ? null : new VertexEvidence { Values = values.ToArray(), String = newStr};
+            var evidence = values == null ? null : new VertexData { Values = values.ToArray(), String = newStr};
 
             cellModel.Data = evidence;
             
-            this.LineEvidence
-                .SectionEvidences[cellModel.SectionId]
-                .YearEvidences[cellModel.Year]
-                .VertexEvidences[selectedVertex.Key] = evidence;
+            this.LineData[cellModel.SectionId][cellModel.Year][selectedVertex.Key] = evidence;
 
             // this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
         private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
-            e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
+            //e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
         }
 
-        private void InputGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
-        {
-            this.SetCell(e.Cell.ToModel(), e.NewData as string, e.OldData as string);
-            this.Graph.Run();
-
-            this.UpdateChart();
-        }
-
-        private void InputGridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
-        {
-            if (e.Cell.ToModel().IsColumnSectionId) return;
-
-            var vertexEvidenceType = this.Graph.SelectedVertex.GetEvidenceType(e.NewValue as string);
-
-            if (vertexEvidenceType == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
-        }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
@@ -84,10 +61,11 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId) return;
 
-            var vertexEvidences = this.LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
-
+            var vertexEvidences = this.LineData[cellModel.SectionId][cellModel.Year];
             this.Graph.SetEvidence(vertexEvidences);
             this.Graph.Run();
+
+            this.UpdateChartCellModels();
         }
 
         private void InputGridView_KeyDown(object sender, KeyEventArgs e)
@@ -97,10 +75,10 @@ namespace Marv.Input
                 return;
             }
 
-            foreach (var cellInfo in this.InputGridView.SelectedCells)
-            {
-                this.SetCell(cellInfo.ToModel(), null);
-            }
+            //foreach (var cellInfo in this.InputGridView.SelectedCells)
+            //{
+            //    this.SetCell(cellInfo.ToModel(), null);
+            //}
         }
 
         private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)

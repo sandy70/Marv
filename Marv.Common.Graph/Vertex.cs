@@ -36,6 +36,21 @@ namespace Marv.Common.Graph
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
+        public VertexData Data
+        {
+            set
+            {
+                this.States.ForEach((state, i) =>
+                {
+                    state.Evidence = value.Values == null ? 0 : value.Values[i];
+                });
+
+                this.EvidenceString = value.String;
+
+                this.RaisePropertyChanged();
+            }
+        }
+
         public ObservableCollection<Command<Vertex>> Commands
         {
             get
@@ -405,9 +420,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public VertexEvidence GetEvidence()
+        public VertexData GetEvidence()
         {
-            return new VertexEvidence
+            return new VertexData
             {
                 Beliefs = this.States.GetBelief().ToArray(),
                 String = this.EvidenceString,
@@ -426,12 +441,12 @@ namespace Marv.Common.Graph
             }
 
             double value;
-            if (double.TryParse(str, out value))
+            if (double.TryParse(str, out value) && this.SafeMin <= value && value <= this.SafeMax)
             {
                 return VertexEvidenceType.Number;
             }
 
-            var paramValues = VertexEvidence.ParseValues(str);
+            var paramValues = VertexData.ParseValues(str);
 
             // Check for functions
             if (str.ToLowerInvariant().Contains("tri") && paramValues.Count == 3)

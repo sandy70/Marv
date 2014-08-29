@@ -117,70 +117,18 @@
                                 </telerik:RadToolBar>
 
                                 <!-- Input Grid View -->
-                                <telerik:RadGridView Grid.Row="1"
-                                                     Name="InputGridView"
-                                                     AutoGenerateColumns="True"
-                                                     CanUserReorderColumns="False"
-                                                     CanUserSortColumns="False"
-                                                     ClipboardCopyMode="Cells"
-                                                     ClipboardPasteMode="Cells"
-                                                     IsFilteringAllowed="False"
-                                                     ShowGroupPanel="False"
-                                                     SelectionMode="Extended"
-                                                     SelectionUnit="Cell"
-                                                     IsEnabled="{Binding ElementName=Root, Path=IsInputGridEnabled}"
-                                                     RowIndicatorVisibility="Collapsed"
-                                                     ItemsSource="{Binding ElementName=Root, Path=InputRows}" Grid.ColumnSpan="2">
-
-                                    <telerik:RadGridView.Resources>
-                                        <local:CellTemplateSelector x:Key="CellTemplateSelector">
-                                            <local:CellTemplateSelector.VertexEvidenceTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Vertical">
-                                                        <telerik:RadColumnSparkline ItemsSource="{Binding Tag, RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}}"
-                                                                                    XValuePath="XValue"
-                                                                                    YValuePath="YValue"
-                                                                                    Height="20"
-                                                                                    Width="60" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </local:CellTemplateSelector.VertexEvidenceTemplate>
-
-                                            <local:CellTemplateSelector.VertexEvidenceStringTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Tag, RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}}" />
-                                                </DataTemplate>
-                                            </local:CellTemplateSelector.VertexEvidenceStringTemplate>
-                                        </local:CellTemplateSelector>
-                                    </telerik:RadGridView.Resources>
-                                </telerik:RadGridView>
+                                <local:LineDataControl x:Name="LineDataControl"
+                                                       Grid.Row="1"
+                                                       Grid.ColumnSpan="2"
+                                                       CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
+                                                       LineData="{Binding ElementName=Root, Path=LineData}"
+                                                       Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"/>
 
                                 <!-- Input Grid View Buttons -->
                                 <UniformGrid Grid.Row="2"
                                              Rows="1" Grid.ColumnSpan="2">
-                                    <TextBlock Margin="2"
-                                               TextAlignment="Right" VerticalAlignment="Center"
-                                               Text="Start Year" />
 
-                                    <telerik:RadNumericUpDown Margin="2"
-                                                              Maximum="2050"
-                                                              Minimum="1950"
-                                                              Value="{Binding ElementName=Root, Path=StartYear}"
-                                                              NumberDecimalDigits="0"
-                                                              SmallChange="1"
-                                                              LargeChange="5" />
-
-                                    <TextBlock Margin="2"
-                                               TextAlignment="Right" VerticalAlignment="Center"
-                                               Text="End Year" />
-
-                                    <telerik:RadNumericUpDown Margin="2"
-                                                              Maximum="2050"
-                                                              Minimum="1950"
-                                                              Value="{Binding ElementName=Root, Path=EndYear}"
-                                                              NumberDecimalDigits="0"
-                                                              SmallChange="1"
-                                                              LargeChange="5" />
+                                    
 
                                     <telerik:RadButton Name="CreateInputButton"
                                                        Content="Create"
@@ -236,7 +184,7 @@
                                     </telerik:RadButton>
 
                                     <telerik:RadToggleButton Content="Edit"
-                                                             IsChecked="{Binding ElementName=Root, Path=IsChartEditing}" />
+                                                             IsChecked="{Binding ElementName=Root, Path=IsChartEditEnabled}" />
                                 </telerik:RadToolBar>
 
                                 <oxy:PlotView Grid.Row="1"
@@ -245,7 +193,11 @@
                                               Visibility="Collapsed" />
                                 
                                 <local:EvidenceChart Grid.Row="1"
-                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                     CellModels="{Binding ElementName=Root, Path=ChartCellModels}"
+                                                     IsEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
+                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                     XTitle="{Binding ElementName=Root, Path=XTitle}"/>
+                                
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
