@@ -121,32 +121,15 @@ namespace Marv.Input
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
-            e.Column.Width = 64;
         }
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             var cellModel = e.Cell.ToModel();
+            var oldString = e.OldData as string;
+            var newString = e.NewData as string;
 
-            if (cellModel.IsColumnSectionId)
-            {
-                cellModel.Data = e.NewData as string;
-                this.LineData.Sections.ChangeKey(e.OldData as string, e.NewData as string);
-            }
-            else
-            {
-                var distribution = this.Vertex.States.Parse(e.NewData as string).ToArray();
-
-                var vertexData = this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
-                vertexData.Evidence = distribution;
-                vertexData.String = e.NewData as string;
-
-                cellModel.Data = vertexData;
-
-                this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
-            }
-
-            this.RaiseCellChanged(cellModel);
+            this.SetCell(cellModel, newString, oldString);
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -248,6 +231,37 @@ namespace Marv.Input
             }
         }
 
+        private void SetCell(CellModel cellModel, string newString, string oldString = null)
+        {
+            if (cellModel.IsColumnSectionId)
+            {
+                if (oldString == null)
+                {
+                    this.LineData.Sections[newString] = new Dict<int, string, VertexData>();
+                }
+                else
+                {
+                    this.LineData.Sections.ChangeKey(oldString, newString);
+                }
+
+                cellModel.Data = newString;
+            }
+            else
+            {
+                var distribution = this.Vertex.States.Parse(newString).ToArray();
+
+                var vertexData = this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
+                vertexData.Evidence = distribution;
+                vertexData.String = newString;
+
+                cellModel.Data = vertexData;
+
+                this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+            }
+
+            this.RaiseCellChanged(cellModel);
+        }
+
         private void UpdateRows()
         {
             if (this.LineData == null || this.Vertex == null)
@@ -284,6 +298,15 @@ namespace Marv.Input
             if (this.PropertyChanged != null && propertyName != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void SetSelectedCells(VertexData vertexData)
+        {
+            foreach (var cell in this.GridView.SelectedCells)
+            {
+                var cellModel = cell.ToModel();
+                this.SetCell(cellModel, vertexData.String);
             }
         }
 

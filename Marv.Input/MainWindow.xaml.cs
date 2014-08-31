@@ -424,6 +424,8 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
+            this.LineDataControl.SetSelectedCells(vertex.GetEvidence());
+
             //this.InputGridView.CancelEdit();
 
             //this.Graph.Run();

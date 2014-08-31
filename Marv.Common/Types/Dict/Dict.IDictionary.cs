@@ -38,8 +38,13 @@ namespace Marv.Common
 
         public bool Remove(TKey key)
         {
-            var oldKvp = this.dictionary[key];
-            return this.Remove(oldKvp);
+            if (this.dictionary.ContainsKey(key))
+            {
+                var oldKvp = this.dictionary[key];
+                return this.Remove(oldKvp);
+            }
+
+            return false;
         }
 
         public bool TryGetValue(TKey key, out TValue value)

@@ -30,6 +30,11 @@ namespace Marv.Input
 
                     this.endYear = value;
                     this.RaisePropertyChanged();
+
+                    if (this.EndYear < this.StartYear)
+                    {
+                        this.StartYear = this.EndYear;
+                    }
                 }
             }
         }
@@ -83,6 +88,11 @@ namespace Marv.Input
 
                     this.startYear = value;
                     this.RaisePropertyChanged();
+
+                    if (this.StartYear > this.EndYear)
+                    {
+                        this.EndYear = this.StartYear;
+                    }
                 }
             }
         }
@@ -135,7 +145,10 @@ namespace Marv.Input
                     }
                     else
                     {
-                        this.Sections[sectionId][year] = new Dict<string, VertexData>();
+                        if (!this.Sections[sectionId].ContainsKey(year))
+                        {
+                            this.Sections[sectionId][year] = new Dict<string, VertexData>();
+                        }
                     }
                 }
             }
