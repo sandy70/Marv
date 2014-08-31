@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
+using Microsoft.Win32;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
@@ -19,6 +20,9 @@ namespace Marv.Input
 
         public static readonly DependencyProperty EndYearProperty =
             DependencyProperty.Register("EndYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(2010, ChangedEndYear));
+
+        public static readonly DependencyProperty FileNameProperty =
+            DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (Dict<string, int, string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
@@ -53,6 +57,18 @@ namespace Marv.Input
             set
             {
                 SetValue(EndYearProperty, value);
+            }
+        }
+
+        public string FileName
+        {
+            get
+            {
+                return (string) GetValue(FileNameProperty);
+            }
+            set
+            {
+                SetValue(FileNameProperty, value);
             }
         }
 
@@ -270,6 +286,33 @@ namespace Marv.Input
 
             this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
             this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
+
+            this.OpenButton.Click -= OpenButton_Click;
+            this.OpenButton.Click += OpenButton_Click;
+
+            this.SaveButton.Click -= SaveButton_Click;
+            this.SaveButton.Click += SaveButton_Click;
+        }
+
+        void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "MARV Input File|*.input",
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                this.FileName = dialog.FileName;
+
+                this.LineData = Utils.ReadJson<Dict<string, int, string, VertexData>>(this.FileName);
+
+                var newStartYear = this.LineData.Values.Min(sectionData => sectionData.Keys.Min());
+                var newEndYear = this.LineData.Values.Max(sectionData => sectionData.Keys.Max());
+
+                this.UpdateRows(newStartYear, newEndYear, newStartYear, newEndYear);
+            }
         }
 
         private void LineData_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -294,6 +337,29 @@ namespace Marv.Input
                     var index = this.LineData.IndexOf(kvp);
                     this.InsertSection(kvp.Key, index);
                 }
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.FileName == null)
+            {
+                var dialog = new SaveFileDialog
+                {
+                    Filter = "MARV Input Files|*.input",
+                };
+
+                var result = dialog.ShowDialog();
+
+                if (result == true)
+                {
+                    this.FileName = dialog.FileName;
+                }
+            }
+
+            if (this.FileName != null)
+            {
+                this.LineData.WriteJson(this.FileName);
             }
         }
 

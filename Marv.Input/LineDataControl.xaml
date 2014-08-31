@@ -9,18 +9,23 @@
              d:DesignHeight="300" d:DesignWidth="600"
              Name="Root">
     <UserControl.Resources>
-        <local:CellTemplateSelector x:Key="CellTemplateSelector">
-            <local:CellTemplateSelector.Template>
-                <DataTemplate>
-                    <telerik:RadColumnSparkline ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                                XValuePath="XValue"
-                                                YValuePath="YValue"
-                                                Height="20"
-                                                Width="60" />
-                </DataTemplate>
-            </local:CellTemplateSelector.Template>
-        </local:CellTemplateSelector>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <local:CellTemplateSelector x:Key="CellTemplateSelector">
+                <local:CellTemplateSelector.Template>
+                    <DataTemplate>
+                        <telerik:RadColumnSparkline ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
+                                                    XValuePath="XValue"
+                                                    YValuePath="YValue"
+                                                    Height="20"
+                                                    Width="60" />
+                    </DataTemplate>
+                </local:CellTemplateSelector.Template>
+            </local:CellTemplateSelector>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
@@ -30,7 +35,15 @@
         </Grid.RowDefinitions>
 
         <ToolBarTray Grid.Row="0">
-            <ToolBar>
+            <ToolBar Height="32">
+                <telerik:RadButton Name="OpenButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="SaveButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                </telerik:RadButton>
+
                 <telerik:RadButton Name="AddSectionButton"
                                    Content="Add Section" />
 

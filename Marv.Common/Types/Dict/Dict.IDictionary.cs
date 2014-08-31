@@ -15,7 +15,11 @@ namespace Marv.Common
             }
             else
             {
-                this.Add(new Kvp<TKey, TValue> {Key = key, Value = value});
+                this.Add(new Kvp<TKey, TValue>
+                {
+                    Key = key,
+                    Value = value
+                });
             }
         }
 
