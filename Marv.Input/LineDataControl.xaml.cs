@@ -163,6 +163,11 @@ namespace Marv.Input
             control.InitializeRows();
         }
 
+        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
+        }
+
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             var cellModel = e.Cell.ToModel();
@@ -254,6 +259,9 @@ namespace Marv.Input
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
+            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
+
             this.GridView.CellEditEnded -= GridView_CellEditEnded;
             this.GridView.CellEditEnded += GridView_CellEditEnded;
 

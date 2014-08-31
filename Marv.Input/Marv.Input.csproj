@@ -144,7 +144,6 @@
       <DependentUpon>EvidenceChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="GridViewCellToScatterPointConverter.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>

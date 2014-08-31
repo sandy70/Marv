@@ -47,12 +47,6 @@ namespace Marv.Input
             // this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
         }
 
-        private void InputGridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
-        {
-            //e.Column.CellTemplateSelector = this.InputGridView.FindResource("CellTemplateSelector") as CellTemplateSelector;
-        }
-
-
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell == null) return;
