@@ -21,7 +21,6 @@ namespace Marv.Common.Graph
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
-        private NetworkStructure networkStructure;
         private Vertex selectedVertex;
         private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
 
@@ -166,6 +165,8 @@ namespace Marv.Common.Graph
             }
         }
 
+        public NetworkStructure NetworkStructure { get; private set; }
+
         public Vertex SelectedVertex
         {
             get
@@ -205,15 +206,15 @@ namespace Marv.Common.Graph
             //NetworkStructure.Decrypt(fileName);
             var graph = new Graph
             {
-                networkStructure = NetworkStructure.Read(fileName)
+                NetworkStructure = NetworkStructure.Read(fileName)
             };
 
-            graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
-            graph.Guid = Guid.Parse(graph.networkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
-            graph.Name = graph.networkStructure.ParseUserProperty("key", "");
+            graph.DefaultGroup = graph.NetworkStructure.ParseUserProperty("defaultgroup", "all");
+            graph.Guid = Guid.Parse(graph.NetworkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
+            graph.Name = graph.NetworkStructure.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var structureVertex in graph.networkStructure.Vertices)
+            foreach (var structureVertex in graph.NetworkStructure.Vertices)
             {
                 var vertex = new Vertex
                 {
@@ -248,7 +249,7 @@ namespace Marv.Common.Graph
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.networkStructure.Vertices)
+            foreach (var srcVertex in graph.NetworkStructure.Vertices)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -264,7 +265,7 @@ namespace Marv.Common.Graph
 
         public static Task<Graph> ReadAsync(string fileName)
         {
-            return Task.Run(() => Graph.Read(fileName));
+            return Task.Run(() => Read(fileName));
         }
 
         public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
@@ -275,7 +276,7 @@ namespace Marv.Common.Graph
             var value = new Dictionary<string, string, double>();
 
             // Clear all evidence to begin with
-            this.networkStructure.ClearEvidence();
+            this.NetworkStructure.ClearEvidence();
 
             // Collect vertices to ignore
             var verticesToIgnore = new List<Vertex>
@@ -299,9 +300,9 @@ namespace Marv.Common.Graph
                     try
                     {
                         var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.networkStructure.SetEvidence(sourceVertex.Key, stateIndex);
+                        this.NetworkStructure.SetEvidence(sourceVertex.Key, stateIndex);
 
-                        var graphValue = this.networkStructure.GetBelief();
+                        var graphValue = this.NetworkStructure.GetBelief();
                         var targetVertexValue = graphValue[targetVertex.Key];
 
                         value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
@@ -400,7 +401,10 @@ namespace Marv.Common.Graph
             {
                 var vertexValue = new Dictionary<string, double>();
 
-                var parts = line.Split(new[] {','});
+                var parts = line.Split(new[]
+                {
+                    ','
+                });
 
                 var vertexKey = parts[0];
 
@@ -430,17 +434,25 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
-            this.networkStructure.ClearEvidence();
+            this.NetworkStructure.ClearEvidence();
 
             foreach (var vertex in this.Vertices)
             {
                 if (vertex.IsEvidenceEntered)
                 {
-                    this.networkStructure.SetEvidence(vertex.Key, vertex.States.GetEvidence());
+                    this.NetworkStructure.SetEvidence(vertex.Key, vertex.States.GetEvidence());
                 }
             }
 
             this.UpdateBelief();
+        }
+
+        public void Run(SectionEvidence sectionEvidence)
+        {
+            foreach (var yearEvidence in sectionEvidence.YearEvidences)
+            {
+                this.NetworkStructure.Run(yearEvidence.VertexEvidences);
+            }
         }
 
         public void SetEvidence(Dict<string, VertexData> vertexEvidences)
@@ -459,9 +471,9 @@ namespace Marv.Common.Graph
 
         public void UpdateBelief()
         {
-            this.networkStructure.Run();
+            this.NetworkStructure.Run();
 
-            var belief = this.networkStructure.GetBelief();
+            var belief = this.NetworkStructure.GetBelief();
 
             foreach (var vertexKey in belief.Keys)
             {
@@ -477,15 +489,7 @@ namespace Marv.Common.Graph
 
         public void Write()
         {
-            this.networkStructure.Write(this);
-        }
-
-        public void Run(SectionEvidence sectionEvidence)
-        {
-            foreach (var yearEvidence in sectionEvidence.YearEvidences)
-            {
-                this.networkStructure.Run(yearEvidence.VertexEvidences);
-            }
+            this.NetworkStructure.Write(this);
         }
     }
 }

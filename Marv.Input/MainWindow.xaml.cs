@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,7 +156,10 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.lineData)) return;
+                if (value.Equals(this.lineData))
+                {
+                    return;
+                }
 
                 this.lineData = value;
                 this.RaisePropertyChanged();
@@ -216,23 +218,38 @@ namespace Marv.Input
         {
             var mainWindow = d as MainWindow;
 
-            if (mainWindow == null) return;
+            if (mainWindow == null)
+            {
+                return;
+            }
 
-            if (mainWindow.EndYear < mainWindow.StartYear) mainWindow.StartYear = mainWindow.EndYear;
+            if (mainWindow.EndYear < mainWindow.StartYear)
+            {
+                mainWindow.StartYear = mainWindow.EndYear;
+            }
         }
 
         private static void ChangedStartYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mainWindow = d as MainWindow;
 
-            if (mainWindow == null) return;
+            if (mainWindow == null)
+            {
+                return;
+            }
 
-            if (mainWindow.StartYear > mainWindow.EndYear) mainWindow.EndYear = mainWindow.StartYear;
+            if (mainWindow.StartYear > mainWindow.EndYear)
+            {
+                mainWindow.EndYear = mainWindow.StartYear;
+            }
         }
 
         private async void AddSectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (InputRows == null) return;
+            if (InputRows == null)
+            {
+                return;
+            }
 
             this.IsInputGridEnabled = false;
 
@@ -450,6 +467,12 @@ namespace Marv.Input
             this.UpdateChart();
         }
 
+        private void LineDataControl_CellChanged(object sender, CellModel cellModel)
+        {
+            this.Graph.NetworkStructure.Run(this.LineData[cellModel.SectionId]);
+            this.Graph.Data = this.LineDataControl.CurrentGraphData;
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.AddSectionButton.Click += AddSectionButton_Click;
@@ -479,10 +502,12 @@ namespace Marv.Input
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
             this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
 
-            //this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
-            //this.InputGridView.CellEditEnded += InputGridView_CellEditEnded;
-            //this.InputGridView.CellValidating += InputGridView_CellValidating;
+            this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
+            this.LineDataControl.CellChanged += LineDataControl_CellChanged;
 
+            //this.InputGridView.AutoGeneratingColumn += InputGridView_AutoGeneratingColumn;
+            //this.InputGridView.CellChanged += InputGridView_CellEditEnded;
+            //this.InputGridView.CellValidating += InputGridView_CellValidating;
 
             //this.InputGridView.Pasted -= InputGridView_Pasted;
             //this.InputGridView.Pasted += InputGridView_Pasted;
@@ -518,7 +543,10 @@ namespace Marv.Input
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() == false) return;
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
 
             //this.LineEvidence = Utils.ReadJson<LineEvidence>(dialog.FileName);
 
@@ -591,7 +619,10 @@ namespace Marv.Input
                 Filter = "Input|*.input",
             };
 
-            if (dialog.ShowDialog() == false) return;
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
 
             if (dialog.FileName != null)
             {
@@ -612,7 +643,10 @@ namespace Marv.Input
 
         private void UpdateGrid()
         {
-            if (this.InputRows == null || this.Graph.SelectedVertex == null) return;
+            if (this.InputRows == null || this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
 
             foreach (var row in this.InputRows)
             {
@@ -635,7 +669,10 @@ namespace Marv.Input
 
         private void UploadFromPlot_Click(object sender, RoutedEventArgs e)
         {
-            if (DataPlotModel != null) UploadToGrid();
+            if (DataPlotModel != null)
+            {
+                UploadToGrid();
+            }
         }
 
         public bool IsSelectionSquare()

@@ -308,7 +308,7 @@ namespace Marv.Input
 
                     case VertexEvidenceType.Distribution:
                     {
-                        var maxProb = vertexEvidence.Values.Max();
+                        var maxProb = vertexEvidence.Evidence.Max();
 
                         this.Vertex.States.ForEach((state, i) =>
                         {
@@ -321,7 +321,7 @@ namespace Marv.Input
                             {
                                 Category = cellModel.SectionId,
                                 Value = state.SafeMax - state.SafeMin,
-                                Probability = vertexEvidence.Values[i] / maxProb
+                                Probability = vertexEvidence.Evidence[i] / maxProb
                             });
                         });
 

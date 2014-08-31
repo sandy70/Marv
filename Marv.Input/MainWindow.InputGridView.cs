@@ -38,7 +38,7 @@ namespace Marv.Input
 
             var values = selectedVertex.States.Parse(newStr);
 
-            var evidence = values == null ? null : new VertexData { Values = values.ToArray(), String = newStr};
+            var evidence = values == null ? null : new VertexData { Evidence = values.ToArray(), String = newStr};
 
             cellModel.Data = evidence;
             

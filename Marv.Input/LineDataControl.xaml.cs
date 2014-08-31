@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -48,6 +49,7 @@ namespace Marv.Input
             {
                 return (int) GetValue(EndYearProperty);
             }
+
             set
             {
                 SetValue(EndYearProperty, value);
@@ -120,7 +122,10 @@ namespace Marv.Input
         {
             var control = d as LineDataControl;
 
-            if (control.EndYear < control.StartYear) control.EndYear = control.StartYear;
+            if (control.EndYear < control.StartYear)
+            {
+                control.EndYear = control.StartYear;
+            }
 
             var newEndYear = (int) e.NewValue;
             var oldEndYear = (int) e.OldValue;
@@ -141,7 +146,10 @@ namespace Marv.Input
         {
             var control = d as LineDataControl;
 
-            if (control.StartYear > control.EndYear) control.EndYear = control.StartYear;
+            if (control.StartYear > control.EndYear)
+            {
+                control.EndYear = control.StartYear;
+            }
 
             var newStartYear = (int) e.NewValue;
             var oldStartYear = (int) e.OldValue;
@@ -169,18 +177,23 @@ namespace Marv.Input
                 var distribution = this.Vertex.States.Parse(e.NewData as string).ToArray();
 
                 var vertexData = this.LineData[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
-                vertexData.Values = distribution;
+                vertexData.Evidence = distribution;
                 vertexData.String = e.NewData as string;
 
                 cellModel.Data = vertexData;
 
                 this.CurrentGraphData = this.LineData[cellModel.SectionId][cellModel.Year];
             }
+
+            this.RaiseCellChanged(cellModel);
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            if (e.Cell.ToModel().IsColumnSectionId) return;
+            if (e.Cell.ToModel().IsColumnSectionId)
+            {
+                return;
+            }
 
             var vertexEvidenceType = this.Vertex.GetEvidenceType(e.NewValue as string);
 
@@ -193,7 +206,10 @@ namespace Marv.Input
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell == null || this.LineData == null) return;
+            if (e.NewCell == null || this.LineData == null)
+            {
+                return;
+            }
 
             var cellModel = e.NewCell.ToModel();
 
@@ -214,7 +230,10 @@ namespace Marv.Input
 
         private void InsertSection(string sectionId, int index = -1)
         {
-            if (this.LineData == null || this.Vertex == null) return;
+            if (this.LineData == null || this.Vertex == null)
+            {
+                return;
+            }
 
             var row = new Dynamic();
 
@@ -225,7 +244,10 @@ namespace Marv.Input
                 row[year.ToString()] = this.LineData[sectionId][year][this.Vertex.Key];
             }
 
-            if (index == -1) index = this.Rows.Count;
+            if (index == -1)
+            {
+                index = this.Rows.Count;
+            }
 
             this.Rows.Insert(index, row);
         }
@@ -269,7 +291,12 @@ namespace Marv.Input
 
         private void UpdateRows(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
         {
-            if (this.LineData == null || this.Vertex == null) return;
+            this.Rows = new ObservableCollection<Dynamic>();
+
+            if (this.LineData == null || this.Vertex == null)
+            {
+                return;
+            }
 
             var endYear = Utils.Max(newEndYear, oldEndYear);
             var startYear = Utils.Min(newStartYear, oldStartYear);
@@ -295,6 +322,14 @@ namespace Marv.Input
             }
         }
 
+        public void RaiseCellChanged(CellModel cellModel)
+        {
+            if (this.CellChanged != null)
+            {
+                this.CellChanged(this, cellModel);
+            }
+        }
+
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -302,5 +337,7 @@ namespace Marv.Input
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event EventHandler<CellModel> CellChanged;
     }
 }

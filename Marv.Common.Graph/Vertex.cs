@@ -36,21 +36,6 @@ namespace Marv.Common.Graph
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
-        public VertexData Data
-        {
-            set
-            {
-                this.States.ForEach((state, i) =>
-                {
-                    state.Evidence = value.Values == null ? 0 : value.Values[i];
-                });
-
-                this.EvidenceString = value.String;
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public ObservableCollection<Command<Vertex>> Commands
         {
             get
@@ -86,6 +71,22 @@ namespace Marv.Common.Graph
             }
         }
 
+        public VertexData Data
+        {
+            set
+            {
+                this.States.ForEach((state, i) =>
+                {
+                    state.Belief = value.Beliefs == null ? 0 : value.Beliefs[i];
+                    state.Evidence = value.Evidence == null ? 0 : value.Evidence[i];
+                });
+
+                this.EvidenceString = value.String;
+
+                this.RaisePropertyChanged();
+            }
+        }
+
         public string Description
         {
             get
@@ -112,7 +113,10 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value == this.displayPosition) return;
+                if (value == this.displayPosition)
+                {
+                    return;
+                }
 
                 this.displayPosition = value;
                 this.RaisePropertyChanged();
@@ -375,7 +379,10 @@ namespace Marv.Common.Graph
                 this.states = value;
                 this.RaisePropertyChanged();
 
-                if (this.States == null) return;
+                if (this.States == null)
+                {
+                    return;
+                }
 
                 this.States.CollectionChanged += this.States_CollectionChanged;
 
@@ -420,19 +427,49 @@ namespace Marv.Common.Graph
             }
         }
 
+        private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (State state in e.NewItems)
+                {
+                    state.PropertyChanged += state_PropertyChanged;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (State state in e.OldItems)
+                {
+                    state.PropertyChanged -= state_PropertyChanged;
+                }
+            }
+        }
+
+        private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Belief")
+            {
+                this.UpdateMostProbableState();
+            }
+        }
+
         public VertexData GetEvidence()
         {
             return new VertexData
             {
                 Beliefs = this.States.GetBelief().ToArray(),
                 String = this.EvidenceString,
-                Values = this.States.GetEvidence().ToArray()
+                Evidence = this.States.GetEvidence().ToArray()
             };
         }
 
         public VertexEvidenceType GetEvidenceType(string str)
         {
-            if (string.IsNullOrWhiteSpace(str)) return VertexEvidenceType.Invalid;
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return VertexEvidenceType.Invalid;
+            }
 
             // Check if string is the label of any of the states.
             if (this.States.Any(state => state.Key == str))
@@ -496,33 +533,6 @@ namespace Marv.Common.Graph
         public void UpdateStateEvidences()
         {
             this.States.SetEvidence(this.EvidenceString);
-        }
-
-        private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (State state in e.NewItems)
-                {
-                    state.PropertyChanged += state_PropertyChanged;
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (State state in e.OldItems)
-                {
-                    state.PropertyChanged -= state_PropertyChanged;
-                }
-            }
-        }
-
-        private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Belief")
-            {
-                this.UpdateMostProbableState();
-            }
         }
     }
 }

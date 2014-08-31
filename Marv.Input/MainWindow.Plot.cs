@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using Marv.Common;
@@ -12,7 +11,6 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
-using Axis = OxyPlot.Axes.Axis;
 using DataPoint = OxyPlot.DataPoint;
 using LinearAxis = Telerik.Windows.Controls.ChartView.LinearAxis;
 using LineSeries = OxyPlot.Series.LineSeries;
@@ -266,30 +264,34 @@ namespace Marv.Input
 
         private void AddPointsToPlot(VertexData data, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
         {
-            if (data == null || string.IsNullOrWhiteSpace(data.String)) return;
+            if (data == null || string.IsNullOrWhiteSpace(data.String))
+            {
+                return;
+            }
 
             if (data.String.Contains(","))
             {
-                this.Graph.SelectedVertex.States.ForEach((state, i) =>
-                {
-                    var max = state.SafeMax;
-                    var min = state.SafeMin;
-
-                    var value = data.Values[i];
-
-                    var highLowItem = new HighLowItem(index, min, max, min, max);
-
-                    if (!candleStickSeries.ContainsKey(value))
+                Common.Extensions.ForEach(this.Graph.SelectedVertex.States,
+                    (state, i) =>
                     {
-                        candleStickSeries[value] = new CandleStickSeries
-                        {
-                            Color = OxyColors.Green,
-                            CandleWidth = 10 * value
-                        };
-                    }
+                        var max = state.SafeMax;
+                        var min = state.SafeMin;
 
-                    candleStickSeries[value].Items.Add(highLowItem);
-                });
+                        var value = data.Evidence[i];
+
+                        var highLowItem = new HighLowItem(index, min, max, min, max);
+
+                        if (!candleStickSeries.ContainsKey(value))
+                        {
+                            candleStickSeries[value] = new CandleStickSeries
+                            {
+                                Color = OxyColors.Green,
+                                CandleWidth = 10 * value
+                            };
+                        }
+
+                        candleStickSeries[value].Items.Add(highLowItem);
+                    });
 
                 return;
             }
@@ -325,14 +327,17 @@ namespace Marv.Input
         {
             foreach (var point in series.Points)
             {
-                if (xCoord == (int) point.X || xCoord <= 0) return false;
+                if (xCoord == (int) point.X || xCoord <= 0)
+                {
+                    return false;
+                }
             }
             return true;
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
-            return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
+            return Common.Extensions.IndexOf(this.AnchorPoints, anchorPoint => anchorPoint.Category.Equals(point.Category));
         }
 
         private void InitializeChart()
@@ -343,7 +348,10 @@ namespace Marv.Input
             this.ModePoints = new ObservableCollection<CategoricalDataPoint>();
             this.MinPoints = new ObservableCollection<CategoricalDataPoint>();
 
-            if (this.InputRows == null) return;
+            if (this.InputRows == null)
+            {
+                return;
+            }
 
             var first = this.InputRows.First()[CellModel.SectionIdHeader] as string;
             var last = this.InputRows.Last()[CellModel.SectionIdHeader] as string;
@@ -352,14 +360,38 @@ namespace Marv.Input
             var minValue = this.Graph.SelectedVertex.SafeMin == 0 ? 1 : this.Graph.SelectedVertex.SafeMin * 1.1;
             var modeValue = (maxValue + minValue) / 2;
 
-            this.MaxPoints.Add(new CategoricalDataPoint {Category = first, Value = maxValue});
-            this.MaxPoints.Add(new CategoricalDataPoint {Category = last, Value = maxValue});
+            this.MaxPoints.Add(new CategoricalDataPoint
+            {
+                Category = first,
+                Value = maxValue
+            });
+            this.MaxPoints.Add(new CategoricalDataPoint
+            {
+                Category = last,
+                Value = maxValue
+            });
 
-            this.ModePoints.Add(new CategoricalDataPoint {Category = first, Value = modeValue});
-            this.ModePoints.Add(new CategoricalDataPoint {Category = last, Value = modeValue});
+            this.ModePoints.Add(new CategoricalDataPoint
+            {
+                Category = first,
+                Value = modeValue
+            });
+            this.ModePoints.Add(new CategoricalDataPoint
+            {
+                Category = last,
+                Value = modeValue
+            });
 
-            this.MinPoints.Add(new CategoricalDataPoint {Category = first, Value = minValue});
-            this.MinPoints.Add(new CategoricalDataPoint {Category = last, Value = minValue});
+            this.MinPoints.Add(new CategoricalDataPoint
+            {
+                Category = first,
+                Value = minValue
+            });
+            this.MinPoints.Add(new CategoricalDataPoint
+            {
+                Category = last,
+                Value = minValue
+            });
         }
 
         private void InitializePlot()
@@ -442,7 +474,7 @@ namespace Marv.Input
             //};
 
             //this.DataPlotModel.Series.Add(inputScatter);
-            //foreach (var series in candleStickSet.Values)
+            //foreach (var series in candleStickSet.Evidence)
             //{
             //    this.DataPlotModel.Series.Add(series);
             //}
@@ -456,21 +488,11 @@ namespace Marv.Input
             //this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsZoomEnabled = false;
             //this.DataPlotModel.Axes[(int) PlotAxis.XAxis].IsPanEnabled = false;
 
-
             //this.DataPlotModel.LegendPlacement = LegendPlacement.Outside;
 
             //this.DataPlotModel.InvalidatePlot(true);
 
             //////////////////////////////
-        }
-
-        private void UpdateChartCellModels()
-        {
-            //if (this.InputGridView.SelectedCells.Count != 1) return;
-
-            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
-
-            //this.ChartCellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
         }
 
         private void UpdateChart()
@@ -538,7 +560,7 @@ namespace Marv.Input
 
             //        case VertexEvidenceType.Distribution:
             //        {
-            //            var maxProb = vertexEvidence.Values.Max();
+            //            var maxProb = vertexEvidence.Evidence.Max();
 
             //            this.Graph.SelectedVertex.States.ForEach((state, i) =>
             //            {
@@ -551,7 +573,7 @@ namespace Marv.Input
             //                {
             //                    Category = cellModel.SectionId,
             //                    Value = state.SafeMax - state.SafeMin,
-            //                    Probability = vertexEvidence.Values[i] / maxProb
+            //                    Probability = vertexEvidence.Evidence[i] / maxProb
             //                });
             //            });
 
@@ -559,6 +581,15 @@ namespace Marv.Input
             //        }
             //    }
             //}
+        }
+
+        private void UpdateChartCellModels()
+        {
+            //if (this.InputGridView.SelectedCells.Count != 1) return;
+
+            //var sourceCellModel = this.InputGridView.SelectedCells[0].ToModel();
+
+            //this.ChartCellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
         }
 
         //private void UpdateUserSeries(Point position)
@@ -607,8 +638,14 @@ namespace Marv.Input
 
         private void UploadToGrid()
         {
-            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0) return;
-            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count) return;
+            if (minScatter.Points.Count == 0 || modeScatter.Points.Count == 0 || maxScatter.Points.Count == 0)
+            {
+                return;
+            }
+            if (minScatter.Points.Count != maxScatter.Points.Count || modeScatter.Points.Count != maxScatter.Points.Count || minScatter.Points.Count != modeScatter.Points.Count)
+            {
+                return;
+            }
             var tempMax = maxScatter;
             var tempMode = modeScatter;
             var tempMin = minScatter;
@@ -719,7 +756,10 @@ namespace Marv.Input
 
                 var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
 
-                return Math.Abs(spline.Eval(new[] {(float) userPointAnchorIndex})[0] - userPoint.Value.Value);
+                return Math.Abs(spline.Eval(new[]
+                {
+                    (float) userPointAnchorIndex
+                })[0] - userPoint.Value.Value);
             });
         }
     }

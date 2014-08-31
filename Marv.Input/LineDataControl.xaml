@@ -13,31 +13,36 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <telerik:RadToolBar Grid.Row="0">
-            <TextBlock Margin="2"
-                       TextAlignment="Right" VerticalAlignment="Center"
-                       Text="Start Year" />
+        <ToolBarTray Grid.Row="0">
+            <ToolBar>
+                <telerik:RadButton Name="AddSectionButton"
+                                   Content="Add Section" />
 
-            <telerik:RadNumericUpDown Margin="2"
-                                      Maximum="2050"
-                                      Minimum="1950"
-                                      Value="{Binding ElementName=Root, Path=StartYear}"
-                                      NumberDecimalDigits="0"
-                                      SmallChange="1"
-                                      LargeChange="5" />
+                <TextBlock Margin="2"
+                           TextAlignment="Right" VerticalAlignment="Center"
+                           Text="Start Year" />
 
-            <TextBlock Margin="2"
-                       TextAlignment="Right" VerticalAlignment="Center"
-                       Text="End Year" />
+                <telerik:RadNumericUpDown Margin="2"
+                                          Maximum="2050"
+                                          Minimum="1950"
+                                          Value="{Binding ElementName=Root, Path=StartYear}"
+                                          NumberDecimalDigits="0"
+                                          SmallChange="1"
+                                          LargeChange="5" />
 
-            <telerik:RadNumericUpDown Margin="2"
-                                      Maximum="2050"
-                                      Minimum="1950"
-                                      Value="{Binding ElementName=Root, Path=EndYear}"
-                                      NumberDecimalDigits="0"
-                                      SmallChange="1"
-                                      LargeChange="5" />
-        </telerik:RadToolBar>
+                <TextBlock Margin="2"
+                           TextAlignment="Right" VerticalAlignment="Center"
+                           Text="End Year" />
+
+                <telerik:RadNumericUpDown Margin="2"
+                                          Maximum="2050"
+                                          Minimum="1950"
+                                          Value="{Binding ElementName=Root, Path=EndYear}"
+                                          NumberDecimalDigits="0"
+                                          SmallChange="1"
+                                          LargeChange="5" />
+            </ToolBar>
+        </ToolBarTray>
 
         <telerik:RadGridView Name="GridView"
                              Grid.Row="1"

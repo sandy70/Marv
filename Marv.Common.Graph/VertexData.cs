@@ -7,7 +7,7 @@ namespace Marv.Common.Graph
     {
         public double[] Beliefs { get; set; }
         public string String { get; set; }
-        public double[] Values { get; set; }
+        public double[] Evidence { get; set; }
 
         public static List<double> ParseValues(string str)
         {

@@ -9,11 +9,10 @@ namespace Marv.Common.Graph
 {
     public class NetworkStructure
     {
+        private readonly Network network = new Network();
         public readonly List<string> Footer = new List<string>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         public readonly List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
-
-        private readonly Network network = new Network();
 
         public string FileName;
 
@@ -22,17 +21,23 @@ namespace Marv.Common.Graph
             var pathStream = new FileStream(path, FileMode.OpenOrCreate);
             var rMCrypto = new RijndaelManaged();
 
-            byte[] Key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
-            byte[] IV = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            byte[] Key =
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
+            };
+            byte[] IV =
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
+            };
             var cryptStream = new CryptoStream(pathStream,
-            rMCrypto.CreateDecryptor(Key, IV),
-            CryptoStreamMode.Read);
-            
+                rMCrypto.CreateDecryptor(Key, IV),
+                CryptoStreamMode.Read);
+
             var lineList = new List<String>();
             try
             {
                 var sReader = new StreamReader(cryptStream);
-            
+
                 while (!sReader.EndOfStream)
                 {
                     lineList.Add(sReader.ReadLine());
@@ -40,18 +45,16 @@ namespace Marv.Common.Graph
                 sReader.Close();
             }
             catch (CryptographicException e)
-            { 
+            {
                 return;
             }
-           
-            
+
             var sWriter = new StreamWriter(path);
             foreach (var line in lineList)
             {
                 sWriter.WriteLine(line);
             }
             sWriter.Close();
-
         }
 
         public static NetworkStructure Read(string path)
@@ -69,9 +72,16 @@ namespace Marv.Common.Graph
                 // Parse the node section
                 if (fileLines[i].StartsWith("node"))
                 {
-                    var parts = fileLines[i].Split(new[] {' '}, 2).ToList();
+                    var parts = fileLines[i].Split(new[]
+                    {
+                        ' '
+                    },
+                        2).ToList();
 
-                    var node = new NetworkStructureVertex {Key = parts[1]};
+                    var node = new NetworkStructureVertex
+                    {
+                        Key = parts[1]
+                    };
 
                     structure.Vertices.Add(node);
 
@@ -84,7 +94,12 @@ namespace Marv.Common.Graph
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        parts = fileLines[i].Split(new[] {'=', ';'}, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        parts = fileLines[i].Split(new[]
+                        {
+                            '=', ';'
+                        },
+                            2,
+                            StringSplitOptions.RemoveEmptyEntries).ToList();
                         node.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
@@ -102,7 +117,12 @@ namespace Marv.Common.Graph
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        var parts = fileLines[i].Split(new[] {'=', ';'}, 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var parts = fileLines[i].Split(new[]
+                        {
+                            '=', ';'
+                        },
+                            2,
+                            StringSplitOptions.RemoveEmptyEntries).ToList();
                         structure.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
@@ -128,6 +148,25 @@ namespace Marv.Common.Graph
             return structure;
         }
 
+        private void Run(Dict<string, VertexData> graphData)
+        {
+            this.ClearEvidence();
+
+            foreach (var vertexKey in graphData.Keys)
+            {
+                this.SetEvidence(vertexKey, graphData[vertexKey].Evidence);
+            }
+
+            this.Run();
+
+            var beliefs = this.GetBelief();
+
+            foreach (var vertexKey in beliefs.Keys)
+            {
+                graphData[vertexKey].Beliefs = beliefs[vertexKey];
+            }
+        }
+
         public void ClearEvidence()
         {
             this.network.ClearAllEvidence();
@@ -136,6 +175,61 @@ namespace Marv.Common.Graph
         public void ClearEvidence(string vertexKey)
         {
             this.network.ClearEvidence(vertexKey);
+        }
+
+        public void EncryptWrite(string path)
+        {
+            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
+            var rMCrypto = new RijndaelManaged();
+
+            byte[] Key =
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
+            };
+            byte[] IV =
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
+            };
+
+            var cryptStream = new CryptoStream(pathStream,
+                rMCrypto.CreateEncryptor(Key, IV),
+                CryptoStreamMode.Write);
+            using (var writer = new StreamWriter(cryptStream))
+            {
+                writer.WriteLine("net");
+                writer.WriteLine("{");
+
+                foreach (var prop in this.Properties)
+                {
+                    writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                }
+
+                writer.WriteLine("}");
+
+                foreach (var node in this.Vertices)
+                {
+                    writer.WriteLine();
+                    writer.WriteLine("node {0}", node.Key);
+                    writer.WriteLine("{");
+
+                    foreach (var prop in node.Properties)
+                    {
+                        writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                    }
+
+                    writer.WriteLine("}");
+                }
+
+                writer.WriteLine();
+
+                foreach (var line in this.Footer)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        writer.WriteLine(line);
+                    }
+                }
+            }
         }
 
         public Dictionary<string, double[]> GetBelief()
@@ -192,6 +286,34 @@ namespace Marv.Common.Graph
             this.network.UpdateBeliefs();
         }
 
+        public void Run(Dict<int, string, VertexData> sectionData)
+        {
+            foreach (var year in sectionData.Keys)
+            {
+                this.Run(sectionData[year]);
+            }
+        }
+
+        public void Run(Dictionary<string, VertexData> vertexEvidences)
+        {
+            this.ClearEvidence();
+
+            foreach (var vertexKey in vertexEvidences.Keys)
+            {
+                this.SetEvidence(vertexKey, vertexEvidences[vertexKey].Evidence);
+            }
+
+            foreach (var kvp in this.GetBelief())
+            {
+                if (!vertexEvidences.ContainsKey(kvp.Key))
+                {
+                    vertexEvidences[kvp.Key] = new VertexData();
+                }
+
+                vertexEvidences[kvp.Key].Beliefs = kvp.Value;
+            }
+        }
+
         public void SetEvidence(string vertexKey, int stateIndex)
         {
             this.network.SetEvidence(vertexKey, stateIndex);
@@ -216,23 +338,6 @@ namespace Marv.Common.Graph
             this.network.SetSoftEvidence(vertexKey, evidence.ToArray());
         }
 
-        public void Run(Dictionary<string, VertexData> vertexEvidences)
-        {
-            this.ClearEvidence();
-
-            foreach (var vertexKey in vertexEvidences.Keys)
-            {
-                this.SetEvidence(vertexKey, vertexEvidences[vertexKey].Values);
-            }
-
-            foreach (var kvp in this.GetBelief())
-            {
-                if (!vertexEvidences.ContainsKey(kvp.Key)) vertexEvidences[kvp.Key] = new VertexData();
-
-                vertexEvidences[kvp.Key].Beliefs = kvp.Value;
-            }
-        }
-
         public void SetTable(string vertexKey, double[,] table)
         {
             this.network.SetNodeTable(vertexKey, table);
@@ -248,54 +353,6 @@ namespace Marv.Common.Graph
             this.Write(this.FileName, graph);
         }
 
-        public void EncryptWrite(string path)
-        {
-            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
-            var rMCrypto = new RijndaelManaged();
-
-            byte[] Key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
-            byte[] IV = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
-
-            var cryptStream = new CryptoStream(pathStream,
-            rMCrypto.CreateEncryptor(Key, IV),
-            CryptoStreamMode.Write);
-            using (var writer = new StreamWriter(cryptStream))
-            {
-                writer.WriteLine("net");
-                writer.WriteLine("{");
-
-                foreach (var prop in this.Properties)
-                {
-                    writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
-                }
-
-                writer.WriteLine("}");
-
-                foreach (var node in this.Vertices)
-                {
-                    writer.WriteLine();
-                    writer.WriteLine("node {0}", node.Key);
-                    writer.WriteLine("{");
-
-                    foreach (var prop in node.Properties)
-                    {
-                        writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
-                    }
-
-                    writer.WriteLine("}");
-                }
-
-                writer.WriteLine();
-
-                foreach (var line in this.Footer)
-                {
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        writer.WriteLine(line);
-                    }
-                }
-            }
-        }
         public void Write(string path)
         {
             using (var writer = new StreamWriter(path))
