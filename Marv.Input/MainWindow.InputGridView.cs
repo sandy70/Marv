@@ -20,11 +20,11 @@ namespace Marv.Input
                 {
                     if (!string.IsNullOrWhiteSpace(oldStr))
                     {
-                        this.LineData.ChangeKey(oldStr, newStr);
+                        this.LineData.Sections.ChangeKey(oldStr, newStr);
                     }
                     else
                     {
-                        this.LineData[newStr] = new Common.Dict<int, string, VertexData>();
+                        this.LineData.Sections[newStr] = new Common.Dict<int, string, VertexData>();
                     }
                 }
 
@@ -42,9 +42,9 @@ namespace Marv.Input
 
             cellModel.Data = evidence;
             
-            this.LineData[cellModel.SectionId][cellModel.Year][selectedVertex.Key] = evidence;
+            this.LineData.Sections[cellModel.SectionId][cellModel.Year][selectedVertex.Key] = evidence;
 
-            // this.Graph.Run(LineEvidence.SectionEvidences[cellModel.SectionId]);
+            // this.Graph.Run(LineData.SectionEvidences[cellModel.SectionId]);
         }
 
         private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -55,7 +55,7 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId) return;
 
-            var vertexEvidences = this.LineData[cellModel.SectionId][cellModel.Year];
+            var vertexEvidences = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
             this.Graph.SetEvidence(vertexEvidences);
             this.Graph.Run();
 

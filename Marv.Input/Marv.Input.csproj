@@ -148,7 +148,7 @@
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LineEvidence.cs" />
+    <Compile Include="LineData.cs" />
     <Compile Include="MainWindow.Plot.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="Settings.cs" />

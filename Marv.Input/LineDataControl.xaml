@@ -25,6 +25,8 @@
                     </DataTemplate>
                 </local:CellTemplateSelector.Template>
             </local:CellTemplateSelector>
+            
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -54,7 +56,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=StartYear}"
+                                          Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5" />
@@ -66,7 +68,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=EndYear}"
+                                          Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5" />

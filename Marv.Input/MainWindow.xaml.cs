@@ -56,7 +56,7 @@ namespace Marv.Input
             IsTimed = true
         };
 
-        private Dict<string, int, string, VertexData> lineData;
+        private LineData lineData;
         public bool IsYearPlot = true;
 
         public PlotModel DataPlotModel
@@ -147,7 +147,7 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, int, string, VertexData> LineData
+        public LineData LineData
         {
             get
             {
@@ -394,16 +394,16 @@ namespace Marv.Input
             //const string sectionId = "Section 1";
             //row[CellModel.SectionIdHeader] = sectionId;
 
-            //this.LineEvidence = new LineEvidence
+            //this.LineData = new LineData
             //{
             //    GraphGuid = this.Graph.Guid
             //};
 
-            //this.LineEvidence.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
+            //this.LineData.SectionEvidences.Add(new SectionEvidence {Id = sectionId});
 
             //for (var year = this.StartYear; year <= this.EndYear; year++)
             //{
-            //    this.LineEvidence.SectionEvidences[sectionId].YearEvidences.Add(new YearEvidence {Year = year});
+            //    this.LineData.SectionEvidences[sectionId].YearEvidences.Add(new YearEvidence {Year = year});
             //    row[year.ToString(CultureInfo.CurrentCulture)] = "";
             //}
 
@@ -448,9 +448,9 @@ namespace Marv.Input
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
-            //this.LineEvidence = new LineEvidence();
-            this.LineData = new Dict<string, int, string, VertexData>();
-            this.LineData["Section 1"] = new Dict<int, string, VertexData>();
+            //this.LineData = new LineData();
+            this.LineData = new LineData();
+            this.LineData.Sections["Section 1"] = new Dict<int, string, VertexData>();
         }
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
@@ -469,7 +469,7 @@ namespace Marv.Input
 
         private void LineDataControl_CellChanged(object sender, CellModel cellModel)
         {
-            this.Graph.NetworkStructure.Run(this.LineData[cellModel.SectionId]);
+            this.Graph.NetworkStructure.Run(this.LineData.Sections[cellModel.SectionId]);
             this.Graph.Data = this.LineDataControl.CurrentGraphData;
         }
 
@@ -548,11 +548,11 @@ namespace Marv.Input
                 return;
             }
 
-            //this.LineEvidence = Utils.ReadJson<LineEvidence>(dialog.FileName);
+            //this.LineData = Utils.ReadJson<LineData>(dialog.FileName);
 
             //var isCorrectInput = true;
 
-            //if (this.LineEvidence.GraphGuid != this.Graph.Guid)
+            //if (this.LineData.GraphGuid != this.Graph.Guid)
             //{
             //    RadWindow.Confirm("This input was not created for the loaded network. Do you still want to open it?",
             //        (o1, e1) => isCorrectInput = e1.DialogResult.Value);
@@ -562,12 +562,12 @@ namespace Marv.Input
 
             //var inputRows = new ObservableCollection<dynamic>();
 
-            //foreach (var sectionEvidence in this.LineEvidence.SectionEvidences)
+            //foreach (var sectionEvidence in this.LineData.SectionEvidences)
             //{
             //    var row = new Dynamic();
             //    row[CellModel.SectionIdHeader] = sectionEvidence.Id;
 
-            //    foreach (var year in this.LineEvidence.Years)
+            //    foreach (var year in this.LineData.Years)
             //    {
             //        var vertexEvidences = sectionEvidence.YearEvidences[year].VertexEvidences;
 
@@ -609,7 +609,7 @@ namespace Marv.Input
 
             //var cellModel = this.InputGridView.SelectedCells[0].ToModel();
 
-            //this.Graph.Run(this.LineEvidence.SectionEvidences[cellModel.SectionId]);
+            //this.Graph.Run(this.LineData.SectionEvidences[cellModel.SectionId]);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -627,7 +627,7 @@ namespace Marv.Input
             if (dialog.FileName != null)
             {
                 // User Formatting.None to save space. These files are not intended to be human readable.
-                //this.LineEvidence.WriteJson(dialog.FileName, Formatting.None);
+                //this.LineData.WriteJson(dialog.FileName, Formatting.None);
             }
         }
 
@@ -656,7 +656,7 @@ namespace Marv.Input
 
                 //    if (cellModel.IsColumnSectionId) continue;
 
-                //    //var vertexEvidences = LineEvidence.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
+                //    //var vertexEvidences = LineData.SectionEvidences[cellModel.SectionId].YearEvidences[cellModel.Year].VertexEvidences;
 
                 //    //if (vertexEvidences.ContainsKey(this.Graph.SelectedVertex.Key))
                 //    //{

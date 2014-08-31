@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -18,17 +17,11 @@ namespace Marv.Input
         public static readonly DependencyProperty CurrentGraphDataProperty =
             DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty EndYearProperty =
-            DependencyProperty.Register("EndYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(2010, ChangedEndYear));
-
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (Dict<string, int, string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
-
-        public static readonly DependencyProperty StartYearProperty =
-            DependencyProperty.Register("StartYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(2010, ChangedStartYear));
+            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
@@ -47,19 +40,6 @@ namespace Marv.Input
             }
         }
 
-        public int EndYear
-        {
-            get
-            {
-                return (int) GetValue(EndYearProperty);
-            }
-
-            set
-            {
-                SetValue(EndYearProperty, value);
-            }
-        }
-
         public string FileName
         {
             get
@@ -72,12 +52,13 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, int, string, VertexData> LineData
+        public LineData LineData
         {
             get
             {
-                return (Dict<string, int, string, VertexData>) GetValue(LineDataProperty);
+                return (LineData) GetValue(LineDataProperty);
             }
+
             set
             {
                 SetValue(LineDataProperty, value);
@@ -98,18 +79,6 @@ namespace Marv.Input
                     this.rows = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public int StartYear
-        {
-            get
-            {
-                return (int) GetValue(StartYearProperty);
-            }
-            set
-            {
-                SetValue(StartYearProperty, value);
             }
         }
 
@@ -134,54 +103,25 @@ namespace Marv.Input
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private static void ChangedEndYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataControl;
-
-            if (control.EndYear < control.StartYear)
-            {
-                control.EndYear = control.StartYear;
-            }
-
-            var newEndYear = (int) e.NewValue;
-            var oldEndYear = (int) e.OldValue;
-
-            control.UpdateRows(control.StartYear, newEndYear, control.StartYear, oldEndYear);
-        }
-
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
 
-            control.InitializeRows();
+            control.LineData.DataChanged += control.LineData_DataChanged;
 
-            control.LineData.CollectionChanged += control.LineData_CollectionChanged;
-        }
-
-        private static void ChangedStartYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataControl;
-
-            if (control.StartYear > control.EndYear)
-            {
-                control.EndYear = control.StartYear;
-            }
-
-            var newStartYear = (int) e.NewValue;
-            var oldStartYear = (int) e.OldValue;
-
-            control.UpdateRows(newStartYear, control.EndYear, oldStartYear, control.EndYear);
+            control.UpdateRows();
         }
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
-            control.InitializeRows();
+            control.UpdateRows();
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
+            e.Column.Width = 64;
         }
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
@@ -191,19 +131,19 @@ namespace Marv.Input
             if (cellModel.IsColumnSectionId)
             {
                 cellModel.Data = e.NewData as string;
-                this.LineData.ChangeKey(e.OldData as string, e.NewData as string);
+                this.LineData.Sections.ChangeKey(e.OldData as string, e.NewData as string);
             }
             else
             {
                 var distribution = this.Vertex.States.Parse(e.NewData as string).ToArray();
 
-                var vertexData = this.LineData[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
+                var vertexData = this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
                 vertexData.Evidence = distribution;
                 vertexData.String = e.NewData as string;
 
                 cellModel.Data = vertexData;
 
-                this.CurrentGraphData = this.LineData[cellModel.SectionId][cellModel.Year];
+                this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
             }
 
             this.RaiseCellChanged(cellModel);
@@ -241,36 +181,7 @@ namespace Marv.Input
             }
 
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.CurrentGraphData = this.LineData[cellModel.SectionId][cellModel.Year];
-        }
-
-        private void InitializeRows()
-        {
-            this.UpdateRows(this.StartYear, this.EndYear, this.StartYear, this.EndYear);
-        }
-
-        private void InsertSection(string sectionId, int index = -1)
-        {
-            if (this.LineData == null || this.Vertex == null)
-            {
-                return;
-            }
-
-            var row = new Dynamic();
-
-            row[CellModel.SectionIdHeader] = sectionId;
-
-            for (var year = this.StartYear; year <= this.EndYear; year++)
-            {
-                row[year.ToString()] = this.LineData[sectionId][year][this.Vertex.Key];
-            }
-
-            if (index == -1)
-            {
-                index = this.Rows.Count;
-            }
-
-            this.Rows.Insert(index, row);
+            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
@@ -294,7 +205,12 @@ namespace Marv.Input
             this.SaveButton.Click += SaveButton_Click;
         }
 
-        void OpenButton_Click(object sender, RoutedEventArgs e)
+        private void LineData_DataChanged(object sender, EventArgs e)
+        {
+            this.UpdateRows();
+        }
+
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
@@ -305,38 +221,7 @@ namespace Marv.Input
             if (dialog.ShowDialog() == true)
             {
                 this.FileName = dialog.FileName;
-
-                this.LineData = Utils.ReadJson<Dict<string, int, string, VertexData>>(this.FileName);
-
-                var newStartYear = this.LineData.Values.Min(sectionData => sectionData.Keys.Min());
-                var newEndYear = this.LineData.Values.Max(sectionData => sectionData.Keys.Max());
-
-                this.UpdateRows(newStartYear, newEndYear, newStartYear, newEndYear);
-            }
-        }
-
-        private void LineData_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var kvp = item as Kvp<string, Dict<int, string, VertexData>>;
-
-                    var row = this.Rows.FirstOrDefault(r => r[CellModel.SectionIdHeader] == kvp.Key);
-
-                    this.Rows.Remove(row);
-                }
-            }
-
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var kvp = item as Kvp<string, Dict<int, string, VertexData>>;
-                    var index = this.LineData.IndexOf(kvp);
-                    this.InsertSection(kvp.Key, index);
-                }
+                this.LineData = Utils.ReadJson<LineData>(this.FileName);
             }
         }
 
@@ -363,33 +248,23 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateRows(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
+        private void UpdateRows()
         {
-            this.Rows = new ObservableCollection<Dynamic>();
-
             if (this.LineData == null || this.Vertex == null)
             {
                 return;
             }
 
-            var endYear = Utils.Max(newEndYear, oldEndYear);
-            var startYear = Utils.Min(newStartYear, oldStartYear);
+            this.Rows = new ObservableCollection<Dynamic>();
 
-            foreach (var sectionId in this.LineData.Keys)
+            foreach (var sectionId in this.LineData.Sections.Keys)
             {
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionId;
 
-                for (var year = startYear; year <= endYear; year++)
+                for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
                 {
-                    if (year < newStartYear || newEndYear < year)
-                    {
-                        this.LineData[sectionId][year] = null;
-                    }
-                    else
-                    {
-                        row[year.ToString()] = this.LineData[sectionId][year][this.Vertex.Key];
-                    }
+                    row[year.ToString()] = this.LineData.Sections[sectionId][year][this.Vertex.Key];
                 }
 
                 this.Rows.Add(row);
