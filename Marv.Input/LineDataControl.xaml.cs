@@ -308,7 +308,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.Rows = new ObservableCollection<Dynamic>();
+            var newRows = new ObservableCollection<Dynamic>();
 
             foreach (var sectionId in this.LineData.Sections.Keys)
             {
@@ -320,8 +320,10 @@ namespace Marv.Input
                     row[year.ToString()] = this.LineData.Sections[sectionId][year][this.Vertex.Key];
                 }
 
-                this.Rows.Add(row);
+                newRows.Add(row);
             }
+
+            this.Rows = newRows;
         }
 
         public void RaiseCellChanged(CellModel cellModel)
