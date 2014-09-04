@@ -9,6 +9,7 @@ using Marv.Common.Graph;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
+using System.Collections.Generic;
 
 namespace Marv.Input
 {
@@ -137,7 +138,7 @@ namespace Marv.Input
         {
             var nSection = 1;
 
-            for (var i = 0; i < this.SectionsToAddCount; i++)
+            var keys = Enumerable.Range(0, this.SectionsToAddCount).Select(i =>
             {
                 var sectionId = "Section " + nSection;
 
@@ -147,8 +148,10 @@ namespace Marv.Input
                     sectionId = "Section " + nSection;
                 }
 
-                this.LineData.Sections[sectionId] = new Dict<int, string, VertexData>();
-            }
+                return sectionId;
+            });
+
+            this.LineData.AddSections(keys);
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)

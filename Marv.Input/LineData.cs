@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using Marv.Common;
 using Marv.Common.Graph;
 
@@ -12,6 +12,7 @@ namespace Marv.Input
 
         private int endYear = 2010;
         private Guid guid;
+        private bool isSectionsAdding;
         private Dict<string, int, string, VertexData> sections = new Dict<string, int, string, VertexData>();
         private int startYear = 2010;
 
@@ -119,7 +120,10 @@ namespace Marv.Input
                 }
             }
 
-            this.RaiseDataChanged();
+            if (!this.isSectionsAdding)
+            {
+                this.RaiseDataChanged();
+            }
         }
 
         private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
@@ -144,6 +148,23 @@ namespace Marv.Input
                     }
                 }
             }
+
+            this.RaiseDataChanged();
+        }
+
+        public void AddSections(IEnumerable<string> keys)
+        {
+            this.isSectionsAdding = true;
+
+            foreach (var key in keys)
+            {
+                if (!this.Sections.ContainsKey(key))
+                {
+                    this.Sections[key] = new Dict<int, string, VertexData>();
+                }
+            }
+
+            this.isSectionsAdding = false;
 
             this.RaiseDataChanged();
         }
