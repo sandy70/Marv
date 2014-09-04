@@ -23,6 +23,9 @@ namespace Marv.Input
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
+        public static readonly DependencyProperty SectionsToAddCountProperty =
+            DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
+
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
 
@@ -82,6 +85,18 @@ namespace Marv.Input
             }
         }
 
+        public int SectionsToAddCount
+        {
+            get
+            {
+                return (int) GetValue(SectionsToAddCountProperty);
+            }
+            set
+            {
+                SetValue(SectionsToAddCountProperty, value);
+            }
+        }
+
         public Vertex Vertex
         {
             get
@@ -116,6 +131,24 @@ namespace Marv.Input
         {
             var control = d as LineDataControl;
             control.UpdateRows();
+        }
+
+        private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var nSection = 1;
+
+            for (var i = 0; i < this.SectionsToAddCount; i++)
+            {
+                var sectionId = "Section " + nSection;
+
+                while (this.LineData.Sections.ContainsKey(sectionId))
+                {
+                    nSection++;
+                    sectionId = "Section " + nSection;
+                }
+
+                this.LineData.Sections[sectionId] = new Dict<int, string, VertexData>();
+            }
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -180,6 +213,9 @@ namespace Marv.Input
 
             this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
             this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
+
+            this.AddSectionsButton.Click -= AddSectionsButton_Click;
+            this.AddSectionsButton.Click += AddSectionsButton_Click;
 
             this.OpenButton.Click -= OpenButton_Click;
             this.OpenButton.Click += OpenButton_Click;

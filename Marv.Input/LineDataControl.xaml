@@ -13,7 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <local:CellTemplateSelector x:Key="CellTemplateSelector">
                 <local:CellTemplateSelector.Template>
                     <DataTemplate>
@@ -25,7 +25,7 @@
                     </DataTemplate>
                 </local:CellTemplateSelector.Template>
             </local:CellTemplateSelector>
-            
+
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -46,8 +46,27 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="AddSectionButton"
-                                   Content="Add Section" />
+                <telerik:RadButton Name="AddSectionsButton">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="2"
+                                   MinWidth="48"
+                                   Text="Add"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center" />
+
+                        <telerik:RadNumericUpDown LargeChange="10" SmallChange="1"
+                                                  Maximum="10000"
+                                                  Minimum="1"
+                                                  NumberDecimalDigits="0"
+                                                  Value="{Binding ElementName=Root, Path=SectionsToAddCount, Mode=TwoWay}" />
+
+                        <TextBlock Margin="2"
+                                   MinWidth="48"
+                                   Text="Sections"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </telerik:RadButton>
 
                 <TextBlock Margin="2"
                            TextAlignment="Right" VerticalAlignment="Center"
