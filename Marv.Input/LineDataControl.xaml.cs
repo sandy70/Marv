@@ -287,10 +287,10 @@ namespace Marv.Input
             }
             else
             {
-                var distribution = this.Vertex.States.Parse(newString).ToArray();
+                var distribution = this.Vertex.States.Parse(newString);
 
                 var vertexData = this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
-                vertexData.Evidence = distribution;
+                vertexData.Evidence = distribution == null ? null : distribution.ToArray();
                 vertexData.String = newString;
 
                 cellModel.Data = vertexData;
