@@ -12,7 +12,6 @@ namespace Marv.Input
 
         private int endYear = 2010;
         private Guid guid;
-        private bool isSectionsAdding;
         private Dict<string, int, string, VertexData> sections = new Dict<string, int, string, VertexData>();
         private int startYear = 2010;
 
@@ -30,7 +29,7 @@ namespace Marv.Input
                 this.endYear = value;
                 this.RaisePropertyChanged();
 
-                this.UpdateSections(this.StartYear, oldEndYear, this.StartYear, this.endYear);
+                this.UpdateSections(this.StartYear, this.EndYear, this.StartYear, oldEndYear);
 
                 if (this.EndYear < this.StartYear)
                 {
@@ -87,7 +86,7 @@ namespace Marv.Input
                 this.startYear = value;
                 this.RaisePropertyChanged();
 
-                this.UpdateSections(value, this.endYear, this.startYear, this.endYear);
+                this.UpdateSections(this.StartYear, this.EndYear, oldStartYear, this.endYear);
 
                 if (this.StartYear > this.EndYear)
                 {
@@ -149,8 +148,6 @@ namespace Marv.Input
 
         public void AddSections(IEnumerable<string> keys)
         {
-            this.isSectionsAdding = true;
-
             foreach (var key in keys)
             {
                 if (!this.Sections.ContainsKey(key))
@@ -158,8 +155,6 @@ namespace Marv.Input
                     this.Sections[key] = new Dict<int, string, VertexData>();
                 }
             }
-
-            this.isSectionsAdding = false;
 
             this.RaiseDataChanged();
         }

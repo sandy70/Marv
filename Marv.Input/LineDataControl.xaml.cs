@@ -20,6 +20,9 @@ namespace Marv.Input
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty IsGridViewEnabledProperty =
+            DependencyProperty.Register("IsGridViewEnabled", typeof (bool), typeof (LineDataControl), new PropertyMetadata(false));
+
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
@@ -52,6 +55,18 @@ namespace Marv.Input
             set
             {
                 SetValue(FileNameProperty, value);
+            }
+        }
+
+        public bool IsGridViewEnabled
+        {
+            get
+            {
+                return (bool) GetValue(IsGridViewEnabledProperty);
+            }
+            set
+            {
+                SetValue(IsGridViewEnabledProperty, value);
             }
         }
 
@@ -122,9 +137,11 @@ namespace Marv.Input
         {
             var control = d as LineDataControl;
 
-            control.LineData.DataChanged += control.LineData_DataChanged;
+            control.IsGridViewEnabled = true;
 
             control.UpdateRows();
+
+            control.LineData.DataChanged += control.LineData_DataChanged;
         }
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -202,6 +219,16 @@ namespace Marv.Input
             this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
+        private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
+        {
+            foreach (var item in e.Items)
+            {
+                var row = item as Dynamic;
+                var sectionId = row[CellModel.SectionIdHeader] as string;
+                this.LineData.Sections[sectionId] = null;
+            }
+        }
+
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
@@ -227,16 +254,6 @@ namespace Marv.Input
 
             this.SaveButton.Click -= SaveButton_Click;
             this.SaveButton.Click += SaveButton_Click;
-        }
-
-        void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
-        {
-            foreach (var item in e.Items)
-            {
-                var row = item as Dynamic;
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.Sections[sectionId] = null;
-            }
         }
 
         private void LineData_DataChanged(object sender, EventArgs e)

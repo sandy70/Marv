@@ -45,8 +45,12 @@
                 <telerik:RadButton Name="SaveButton">
                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                 </telerik:RadButton>
+            </ToolBar>
 
-                <telerik:RadButton Name="AddSectionsButton">
+            <ToolBar Height="32"
+                     IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}">
+                <telerik:RadButton Name="AddSectionsButton"
+                                   Padding="0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="2"
                                    MinWidth="48"
@@ -58,6 +62,7 @@
                                                   Maximum="10000"
                                                   Minimum="1"
                                                   NumberDecimalDigits="0"
+                                                  Padding="0"
                                                   Value="{Binding ElementName=Root, Path=SectionsToAddCount, Mode=TwoWay}" />
 
                         <TextBlock Margin="2"
@@ -103,6 +108,7 @@
                              ClipboardCopyMode="Cells"
                              ClipboardPasteMode="Cells"
                              FrozenColumnCount="1"
+                             IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"
                              ShowGroupPanel="False"
                              SelectionMode="Extended"
