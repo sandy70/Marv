@@ -425,27 +425,6 @@ namespace Marv.Input
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
             this.LineDataControl.SetSelectedCells(vertex.GetEvidence());
-
-            //this.InputGridView.CancelEdit();
-
-            //this.Graph.Run();
-
-            //if (this.InputGridView.CurrentCell == null)
-            //{
-            //    this.Notifications.Add(this.notificationBadCurrentCell);
-            //    return;
-            //}
-
-            //var cellModel = this.InputGridView.CurrentCell.ToModel();
-
-            //if (cellModel.IsColumnSectionId)
-            //{
-            //    this.Notifications.Add(this.notificationBadCurrentCell);
-            //    return;
-            //}
-
-            //this.SetCell(cellModel, vertex.EvidenceString);
-            //this.UpdateChart();
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
@@ -472,7 +451,7 @@ namespace Marv.Input
         private void LineDataControl_CellChanged(object sender, CellModel cellModel)
         {
             this.Graph.NetworkStructure.Run(this.LineData.Sections[cellModel.SectionId]);
-            this.Graph.Data = this.LineDataControl.CurrentGraphData;
+            this.LineDataControl.UpdateCurrentGraphData();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -545,10 +524,7 @@ namespace Marv.Input
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() == false)
-            {
-                return;
-            }
+            if (dialog.ShowDialog() == false) {}
 
             //this.LineData = Utils.ReadJson<LineData>(dialog.FileName);
 

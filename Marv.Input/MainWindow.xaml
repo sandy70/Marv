@@ -121,7 +121,7 @@
                                                        Grid.Row="1"
                                                        Grid.ColumnSpan="2"
                                                        CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
-                                                       LineData="{Binding ElementName=Root, Path=LineData}"
+                                                       LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                        Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"/>
 
                                 <!-- Input Grid View Buttons -->

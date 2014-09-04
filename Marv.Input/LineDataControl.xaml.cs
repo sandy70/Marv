@@ -9,7 +9,6 @@ using Marv.Common.Graph;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
-using System.Collections.Generic;
 
 namespace Marv.Input
 {
@@ -289,11 +288,12 @@ namespace Marv.Input
             {
                 var distribution = this.Vertex.States.Parse(newString);
 
-                var vertexData = this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key];
+                var vertexData = new VertexData();
                 vertexData.Evidence = distribution == null ? null : distribution.ToArray();
                 vertexData.String = newString;
 
                 cellModel.Data = vertexData;
+                this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
 
                 this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
             }
@@ -349,6 +349,12 @@ namespace Marv.Input
                 var cellModel = cell.ToModel();
                 this.SetCell(cellModel, vertexData.String);
             }
+        }
+
+        public void UpdateCurrentGraphData()
+        {
+            var cellModel = this.GridView.GetSelectionAnchorCell().ToModel();
+            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
         public event EventHandler<CellModel> CellChanged;
