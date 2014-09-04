@@ -216,6 +216,9 @@ namespace Marv.Input
             this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
             this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
 
+            this.GridView.Deleted -= GridView_Deleted;
+            this.GridView.Deleted += GridView_Deleted;
+
             this.AddSectionsButton.Click -= AddSectionsButton_Click;
             this.AddSectionsButton.Click += AddSectionsButton_Click;
 
@@ -224,6 +227,16 @@ namespace Marv.Input
 
             this.SaveButton.Click -= SaveButton_Click;
             this.SaveButton.Click += SaveButton_Click;
+        }
+
+        void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
+        {
+            foreach (var item in e.Items)
+            {
+                var row = item as Dynamic;
+                var sectionId = row[CellModel.SectionIdHeader] as string;
+                this.LineData.Sections[sectionId] = null;
+            }
         }
 
         private void LineData_DataChanged(object sender, EventArgs e)

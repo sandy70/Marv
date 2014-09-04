@@ -119,11 +119,6 @@ namespace Marv.Input
                     }
                 }
             }
-
-            if (!this.isSectionsAdding)
-            {
-                this.RaiseDataChanged();
-            }
         }
 
         private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
