@@ -24,17 +24,16 @@ namespace Marv.Input
 
             set
             {
-                if (value != this.endYear)
+                var oldEndYear = this.EndYear;
+
+                this.endYear = value;
+                this.RaisePropertyChanged();
+
+                this.UpdateSections(this.StartYear, oldEndYear, this.StartYear, this.endYear);
+
+                if (this.EndYear < this.StartYear)
                 {
-                    this.UpdateSections(this.StartYear, value, this.StartYear, this.endYear);
-
-                    this.endYear = value;
-                    this.RaisePropertyChanged();
-
-                    if (this.EndYear < this.StartYear)
-                    {
-                        this.StartYear = this.EndYear;
-                    }
+                    this.StartYear = this.EndYear;
                 }
             }
         }
@@ -82,17 +81,16 @@ namespace Marv.Input
 
             set
             {
-                if (value != this.startYear)
+                var oldStartYear = this.StartYear;
+
+                this.startYear = value;
+                this.RaisePropertyChanged();
+
+                this.UpdateSections(value, this.endYear, this.startYear, this.endYear);
+
+                if (this.StartYear > this.EndYear)
                 {
-                    this.UpdateSections(value, this.endYear, this.startYear, this.endYear);
-
-                    this.startYear = value;
-                    this.RaisePropertyChanged();
-
-                    if (this.StartYear > this.EndYear)
-                    {
-                        this.EndYear = this.StartYear;
-                    }
+                    this.EndYear = this.StartYear;
                 }
             }
         }
@@ -102,32 +100,24 @@ namespace Marv.Input
             this.Sections.CollectionChanged += Sections_CollectionChanged;
         }
 
-        private void Section_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            this.UpdateYears();
-        }
-
         private void Sections_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var sectionKvp = item as Kvp<string, Dict<int, string, VertexData>>;
-                    sectionKvp.Value.CollectionChanged -= Section_CollectionChanged;
-                }
-            }
-
             if (e.NewItems != null)
             {
                 foreach (var item in e.NewItems)
                 {
-                    var sectionKvp = item as Kvp<string, Dict<int, string, VertexData>>;
-                    sectionKvp.Value.CollectionChanged += Section_CollectionChanged;
+                    var kvp = item as Kvp<string, Dict<int, string, VertexData>>;
+                    var yearData = kvp.Value;
+
+                    for (var year = this.StartYear; year <= this.EndYear; year++)
+                    {
+                        if (!yearData.ContainsKey(year))
+                        {
+                            yearData[year] = new Dict<string, VertexData>();
+                        }
+                    }
                 }
             }
-
-            this.UpdateYears();
         }
 
         private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
@@ -154,20 +144,6 @@ namespace Marv.Input
             }
 
             this.RaiseDataChanged();
-        }
-
-        private void UpdateYears()
-        {
-            foreach (var section in this.Sections.Values)
-            {
-                if (section.Keys.Count == 0)
-                {
-                    section[DefaultYear] = new Dict<string, VertexData>();
-                }
-            }
-
-            this.EndYear = this.Sections.Values.Max(section => section.Keys.Max());
-            this.StartYear = this.Sections.Values.Min(section => section.Keys.Min());
         }
 
         public void RaiseDataChanged()
