@@ -25,6 +25,9 @@ namespace Marv.Input
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null, ChangedVertex));
 
+        public static readonly DependencyProperty VerticalAxisProperty =
+            DependencyProperty.Register("VerticalAxis", typeof (CartesianAxis), typeof (LineDataChart), new PropertyMetadata(null));
+
         public static readonly DependencyProperty XTitleProperty =
             DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
@@ -185,6 +188,18 @@ namespace Marv.Input
             set
             {
                 SetValue(VertexProperty, value);
+            }
+        }
+
+        public CartesianAxis VerticalAxis
+        {
+            get
+            {
+                return (CartesianAxis) GetValue(VerticalAxisProperty);
+            }
+            set
+            {
+                SetValue(VerticalAxisProperty, value);
             }
         }
 

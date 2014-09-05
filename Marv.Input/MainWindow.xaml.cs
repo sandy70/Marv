@@ -456,23 +456,6 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AddSectionButton.Click += AddSectionButton_Click;
-            this.ClearAllButton.Click += this.ClearAllButton_Click;
-            this.CreateInputButton.Click += CreateInputButton_Click;
-            this.OpenButton.Click += OpenButton_Click;
-            this.SaveButton.Click += SaveButton_Click;
-            this.PlotButton.Click += PlotButton_Click;
-            this.CopyAcrossColumns.Click += CopyAcrossColumns_Click;
-            this.CopyAcrossRows.Click += CopyAcrossRows_Click;
-            this.CopyAcrossAll.Click += CopyAcrossAll_Click;
-            this.UploadFromPlot.Click += UploadFromPlot_Click;
-            this.RunButton.Click += RunButton_Click;
-            this.ModeButton.Checked += ModeButton_Checked;
-            this.MinButton.Checked += MinButton_Checked;
-            this.MaxButton.Checked += MaxButton_Checked;
-            this.TypePlotButtonYear.Checked += TypePlotButtonYear_Checked;
-            this.TypePlotButtonSection.Checked += TypePlotButtonSection_Checked;
-
             //this.Chart.MouseDown -= Chart_MouseDown;
             //this.Chart.MouseDown += Chart_MouseDown;
 

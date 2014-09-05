@@ -41,163 +41,25 @@
                 <telerik:RadSplitContainer Orientation="Vertical">
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Input">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <!-- Input Grid View Toolbar -->
-                                <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
-
-                                    <telerik:RadButton Name="OpenButton"
-                                                       Height="30" Width="30"
-                                                       ToolTip="Opens input file and populates input.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="SaveButton"
-                                                       Height="30" Width="30"
-                                                       ToolTip="Saves input to input file.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="ClearAllButton"
-                                                       Height="30" Width="30"
-                                                       ToolTip="Deletes all input.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="PlotButton"
-                                                       Height="30" Width="30"
-                                                       IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                       ToolTip="Plots input values.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Plot.png" />
-                                    </telerik:RadButton>
-
-                                    <RadioButton Name="TypePlotButtonYear"
-                                                 Content="Plot By Year"
-                                                 IsChecked="True"
-                                                 GroupName="PlotXAxis" />
-
-                                    <RadioButton Name="TypePlotButtonSection"
-                                                 Content="Plot By Section"
-                                                 GroupName="PlotXAxis" />
-
-                                    <telerik:RadButton Name="CopyAcrossColumns"
-                                                       Height="30" Width="30"
-                                                       IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                       ToolTip="Copies value across columns.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossColumns.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="CopyAcrossRows"
-                                                       Height="30" Width="30"
-                                                       IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                       ToolTip="Copies value across rows.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRows.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="CopyAcrossAll"
-                                                       Height="30" Width="30"
-                                                       IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                       ToolTip="Copies value across entire grid.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/CopyIntoAll.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadButton Name="RunButton"
-                                                       Height="30" Width="30">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
-                                    </telerik:RadButton>
-                                </telerik:RadToolBar>
-
-                                <!-- Input Grid View -->
-                                <local:LineDataControl x:Name="LineDataControl"
-                                                       Grid.Row="1"
-                                                       Grid.ColumnSpan="2"
-                                                       CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
-                                                       LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
-                                                       Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"/>
-
-                                <!-- Input Grid View Buttons -->
-                                <UniformGrid Grid.Row="2"
-                                             Rows="1" Grid.ColumnSpan="2">
-
-                                    
-
-                                    <telerik:RadButton Name="CreateInputButton"
-                                                       Content="Create"
-                                                       Margin="2" />
-
-                                    <telerik:RadButton Name="AddSectionButton"
-                                                       Content="Add Section"
-                                                       Margin="2" />
-
-                                    <TextBlock TextAlignment="Right" VerticalAlignment="Center"
-                                               Text="Sections" />
-
-                                    <telerik:RadNumericUpDown Margin="2"
-                                                              Maximum="100000"
-                                                              Minimum="0"
-                                                              Value="{Binding ElementName=Root, Path=SectionNumber}"
-                                                              NumberDecimalDigits="0"
-                                                              SmallChange="1"
-                                                              LargeChange="5" />
-                                </UniformGrid>
-                            </Grid>
+                            <!-- Input Grid View -->
+                            <local:LineDataControl x:Name="LineDataControl"
+                                                   CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
+                                                   LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
+                                                   Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="DataPlot">
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <telerik:RadToolBar Grid.Row="0" Grid.ColumnSpan="2">
-
-                                    <RadioButton Name="MinButton"
-                                                 Content="Miniumn"
-                                                 Margin="2" />
-
-                                    <RadioButton Name="MaxButton"
-                                                 Content="Maximum"
-                                                 Margin="2" />
-
-                                    <RadioButton Name="ModeButton"
-                                                 IsChecked="True"
-                                                 Content="Mode"
-                                                 Margin="2" />
-
-                                    <telerik:RadButton Name="UploadFromPlot"
-                                                       Height="30" Width="30"
-                                                       IsEnabled="{Binding ElementName=Root, Path=IsInputToolbarEnabled}"
-                                                       ToolTip="Uploads distribution into input data.">
-                                        <Image Source="/Marv.Common;component/Resources/Icons/Upload.png" />
-                                    </telerik:RadButton>
-
-                                    <telerik:RadToggleButton Content="Edit"
-                                                             IsChecked="{Binding ElementName=Root, Path=IsChartEditEnabled}" />
-                                </telerik:RadToolBar>
-
-                                <oxy:PlotView Grid.Row="1"
-                                              IsLegendVisible="True"
+                                <oxy:PlotView IsLegendVisible="True"
                                               Model="{Binding ElementName=Root, Path=DataPlotModel}"
                                               Visibility="Collapsed" />
-                                
-                                <local:EvidenceChart Grid.Row="1"
-                                                     CellModels="{Binding ElementName=Root, Path=ChartCellModels}"
+
+                                <local:LineDataChart CellModels="{Binding ElementName=Root, Path=ChartCellModels}"
                                                      IsEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     XTitle="{Binding ElementName=Root, Path=XTitle}"/>
-                                
+                                                     XTitle="{Binding ElementName=Root, Path=XTitle}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

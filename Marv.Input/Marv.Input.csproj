@@ -140,8 +140,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CellModel.cs" />
-    <Compile Include="EvidenceChart.xaml.cs">
-      <DependentUpon>EvidenceChart.xaml</DependentUpon>
+    <Compile Include="LineDataChart.xaml.cs">
+      <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="InvalidValueException.cs" />
@@ -156,7 +156,7 @@
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="VertexEvidenceProgress.cs" />
-    <Page Include="EvidenceChart.xaml">
+    <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
