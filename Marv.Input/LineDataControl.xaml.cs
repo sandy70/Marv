@@ -29,6 +29,12 @@ namespace Marv.Input
         public static readonly DependencyProperty SectionsToAddCountProperty =
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
+        public static readonly DependencyProperty SelectedSectionIdProperty =
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedYearProperty =
+            DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue));
+
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
 
@@ -109,6 +115,30 @@ namespace Marv.Input
             set
             {
                 SetValue(SectionsToAddCountProperty, value);
+            }
+        }
+
+        public string SelectedSectionId
+        {
+            get
+            {
+                return (string) GetValue(SelectedSectionIdProperty);
+            }
+            set
+            {
+                SetValue(SelectedSectionIdProperty, value);
+            }
+        }
+
+        public int SelectedYear
+        {
+            get
+            {
+                return (int) GetValue(SelectedYearProperty);
+            }
+            set
+            {
+                SetValue(SelectedYearProperty, value);
             }
         }
 
@@ -211,10 +241,12 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId)
             {
+                this.SelectedSectionId = cellModel.SectionId;
                 this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
                 return;
             }
 
+            this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
             this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
