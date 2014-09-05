@@ -11,19 +11,22 @@ using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
-    public partial class EvidenceChart : INotifyPropertyChanged
+    public partial class LineDataChart : INotifyPropertyChanged
     {
         public static readonly DependencyProperty CellModelsProperty =
-            DependencyProperty.Register("CellModels", typeof (IEnumerable<CellModel>), typeof (EvidenceChart), new PropertyMetadata(null, ChangedCellModels));
+            DependencyProperty.Register("CellModels", typeof (IEnumerable<CellModel>), typeof (LineDataChart), new PropertyMetadata(null, ChangedCellModels));
 
         public static readonly DependencyProperty IsEditEnabledProperty =
-            DependencyProperty.Register("IsEditEnabled", typeof (bool), typeof (EvidenceChart), new PropertyMetadata(false));
+            DependencyProperty.Register("IsEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty LineDataProperty =
+            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null));
 
         public static readonly DependencyProperty VertexProperty =
-            DependencyProperty.Register("Vertex", typeof (Vertex), typeof (EvidenceChart), new PropertyMetadata(null, ChangedVertex));
+            DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null, ChangedVertex));
 
         public static readonly DependencyProperty XTitleProperty =
-            DependencyProperty.Register("XTitle", typeof (string), typeof (EvidenceChart), new PropertyMetadata(null));
+            DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
@@ -110,6 +113,18 @@ namespace Marv.Input
             }
         }
 
+        public LineData LineData
+        {
+            get
+            {
+                return (LineData) GetValue(LineDataProperty);
+            }
+            set
+            {
+                SetValue(LineDataProperty, value);
+            }
+        }
+
         public ObservableCollection<CategoricalDataPoint> MaxPoints
         {
             get
@@ -185,7 +200,7 @@ namespace Marv.Input
             }
         }
 
-        public EvidenceChart()
+        public LineDataChart()
         {
             InitializeComponent();
         }
@@ -194,15 +209,21 @@ namespace Marv.Input
 
         private static void ChangedCellModels(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as EvidenceChart;
+            var control = d as LineDataChart;
 
-            if (control.CellModels == null) return;
+            if (control.CellModels == null)
+            {
+                return;
+            }
 
             control.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
 
             foreach (var cellModel in control.CellModels)
             {
-                control.AnchorPoints.Add(new CategoricalDataPoint {Category = cellModel.SectionId, Value = null});
+                control.AnchorPoints.Add(new CategoricalDataPoint
+                {
+                    Category = cellModel.SectionId, Value = null
+                });
             }
 
             control.UpdateBasePoints();
@@ -211,7 +232,7 @@ namespace Marv.Input
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as EvidenceChart;
+            var control = d as LineDataChart;
 
             control.InitializeVerticalAxis();
             control.InitializeEvidenceLines();
@@ -224,7 +245,10 @@ namespace Marv.Input
             this.ModePoints = new ObservableCollection<CategoricalDataPoint>();
             this.MinPoints = new ObservableCollection<CategoricalDataPoint>();
 
-            if (this.AnchorPoints == null || this.Vertex == null) return;
+            if (this.AnchorPoints == null || this.Vertex == null)
+            {
+                return;
+            }
 
             var first = this.AnchorPoints.First().Category as string;
             var last = this.AnchorPoints.Last().Category as string;
@@ -233,19 +257,40 @@ namespace Marv.Input
             var minValue = this.Vertex.SafeMin == 0 ? 1 : this.Vertex.SafeMin * 1.1;
             var modeValue = (maxValue + minValue) / 2;
 
-            this.MaxPoints.Add(new CategoricalDataPoint {Category = first, Value = maxValue});
-            this.MaxPoints.Add(new CategoricalDataPoint {Category = last, Value = maxValue});
+            this.MaxPoints.Add(new CategoricalDataPoint
+            {
+                Category = first, Value = maxValue
+            });
+            this.MaxPoints.Add(new CategoricalDataPoint
+            {
+                Category = last, Value = maxValue
+            });
 
-            this.ModePoints.Add(new CategoricalDataPoint {Category = first, Value = modeValue});
-            this.ModePoints.Add(new CategoricalDataPoint {Category = last, Value = modeValue});
+            this.ModePoints.Add(new CategoricalDataPoint
+            {
+                Category = first, Value = modeValue
+            });
+            this.ModePoints.Add(new CategoricalDataPoint
+            {
+                Category = last, Value = modeValue
+            });
 
-            this.MinPoints.Add(new CategoricalDataPoint {Category = first, Value = minValue});
-            this.MinPoints.Add(new CategoricalDataPoint {Category = last, Value = minValue});
+            this.MinPoints.Add(new CategoricalDataPoint
+            {
+                Category = first, Value = minValue
+            });
+            this.MinPoints.Add(new CategoricalDataPoint
+            {
+                Category = last, Value = minValue
+            });
         }
 
         private void InitializeVerticalAxis()
         {
-            if (this.Vertex == null) return;
+            if (this.Vertex == null)
+            {
+                return;
+            }
 
             this.VerticalAxis = this.Vertex.IsLogScale ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
 
@@ -256,13 +301,19 @@ namespace Marv.Input
 
         private void UpdateBasePoints()
         {
-            if (this.CellModels == null) return;
+            if (this.CellModels == null)
+            {
+                return;
+            }
 
             foreach (var cellModel in this.CellModels)
             {
                 var vertexEvidence = cellModel.Data as VertexData;
 
-                if (vertexEvidence == null) continue;
+                if (vertexEvidence == null)
+                {
+                    continue;
+                }
 
                 var vertexEvidenceType = this.Vertex.GetEvidenceType(vertexEvidence.String);
                 var paramValues = VertexData.ParseValues(vertexEvidence.String);
