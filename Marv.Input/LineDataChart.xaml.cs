@@ -25,6 +25,9 @@ namespace Marv.Input
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty SectionIdProperty =
+            DependencyProperty.Register("SectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
+
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null, ChangedVertex));
 
@@ -33,6 +36,9 @@ namespace Marv.Input
 
         public static readonly DependencyProperty XTitleProperty =
             DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty YearProperty =
+            DependencyProperty.Register("Year", typeof (int), typeof (LineDataChart), new PropertyMetadata(int.MinValue));
 
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
@@ -194,6 +200,18 @@ namespace Marv.Input
             }
         }
 
+        public string SectionId
+        {
+            get
+            {
+                return (string) GetValue(SectionIdProperty);
+            }
+            set
+            {
+                SetValue(SectionIdProperty, value);
+            }
+        }
+
         public Vertex Vertex
         {
             get
@@ -227,6 +245,18 @@ namespace Marv.Input
             set
             {
                 SetValue(XTitleProperty, value);
+            }
+        }
+
+        public int Year
+        {
+            get
+            {
+                return (int) GetValue(YearProperty);
+            }
+            set
+            {
+                SetValue(YearProperty, value);
             }
         }
 
