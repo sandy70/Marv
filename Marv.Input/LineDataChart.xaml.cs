@@ -289,6 +289,11 @@ namespace Marv.Input
             }
         }
 
+        private void Chart_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.UpdateLineData();
+        }
+
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
             return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
@@ -389,6 +394,9 @@ namespace Marv.Input
 
             this.Chart.MouseMove -= Chart_MouseMove;
             this.Chart.MouseMove += Chart_MouseMove;
+
+            this.Chart.MouseUp -= Chart_MouseUp;
+            this.Chart.MouseUp += Chart_MouseUp;
         }
 
         private void UpdateBasePoints()
@@ -419,10 +427,10 @@ namespace Marv.Input
 
                 var vertexData = this.LineData.Sections[sectionId][year][this.Vertex.Key];
 
-                var vertexEvidenceType = this.Vertex.GetEvidenceType(vertexData.String);
-                var paramValues = VertexData.ParseValues(vertexData.String);
+                var vertexEvidenceInfo = this.Vertex.GetEvidenceInfo(vertexData.String);
+                var paramValues = VertexData.ParseEvidenceParams(vertexData.String);
 
-                switch (vertexEvidenceType)
+                switch (vertexEvidenceInfo.Type)
                 {
                     case VertexEvidenceType.Number:
                     {
@@ -533,6 +541,45 @@ namespace Marv.Input
 
                 nearestSeries.Insert(userPointInsertIndex, userPoint);
             }
+        }
+
+        protected void UpdateLineData()
+        {
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            var splines = series.Select(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+            });
+
+            this.AnchorPoints.ForEach((point, i) =>
+            {
+                var values = splines.Select(spline => spline.Eval(new[]
+                {
+                    (float) i
+                })[0]).ToArray();
+
+                var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
+
+                var sectionId = this.IsXAxisSections ? point.Category as string : this.SectionId;
+                var year = this.IsXAxisSections ? this.Year : (int)point.Category;
+
+                var vertexData = new VertexData();
+                vertexData.Evidence = this.Vertex.Parse(evidenceString).ToArray();
+                vertexData.String = evidenceString;
+
+                this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;
+            });
+
+            this.LineData.RaiseDataChanged();
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)

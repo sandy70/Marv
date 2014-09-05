@@ -66,38 +66,38 @@
                 <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
                                      ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
 
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
                                       ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
                                       Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
+                    <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Polygon Points="0,4 4,-4 -4,-4 0,4"
                                      Stroke="Green" Fill="Green" />
                         </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
+                    </telerik:LineSeries.PointTemplate>
+                </telerik:LineSeries>
 
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
                                       ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
                                       Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
+                    <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Ellipse Height="8" Width="8"
                                      Stroke="Green" Fill="Green" />
                         </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
+                    </telerik:LineSeries.PointTemplate>
+                </telerik:LineSeries>
 
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
                                       ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
                                       Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
+                    <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Polygon Points="0,-4 -4,4 4,4 0,-4"
                                      Stroke="Green" Fill="Green" />
                         </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
+                    </telerik:LineSeries.PointTemplate>
+                </telerik:LineSeries>
             </telerik:RadCartesianChart.Series>
 
             <telerik:RadCartesianChart.SeriesProvider>

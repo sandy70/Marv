@@ -427,6 +427,11 @@ namespace Marv.Common.Graph
             }
         }
 
+        private IEnumerable<double> Parse(IDistribution dist)
+        {
+            return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));
+        }
+
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -464,55 +469,118 @@ namespace Marv.Common.Graph
             };
         }
 
-        public VertexEvidenceType GetEvidenceType(string str)
+        public VertexEvidenceInfo GetEvidenceInfo(string s)
         {
-            if (string.IsNullOrWhiteSpace(str))
+            if (string.IsNullOrWhiteSpace(s))
             {
-                return VertexEvidenceType.Invalid;
+                return new VertexEvidenceInfo
+                {
+                    Type = VertexEvidenceType.Invalid
+                };
             }
 
             // Check if string is the label of any of the states.
-            if (this.States.Any(state => state.Key == str))
+            if (this.States.Any(state => state.Key == s))
             {
-                return VertexEvidenceType.State;
+                return new VertexEvidenceInfo
+                {
+                    Type = VertexEvidenceType.State
+                };
             }
 
             double value;
-            if (double.TryParse(str, out value) && this.SafeMin <= value && value <= this.SafeMax)
+            if (double.TryParse(s, out value) && this.SafeMin <= value && value <= this.SafeMax)
             {
-                return VertexEvidenceType.Number;
+                return new VertexEvidenceInfo
+                {
+                    Params = new List<double>
+                    {
+                        value
+                    },
+                    Type = VertexEvidenceType.Number
+                };
             }
 
-            var paramValues = VertexData.ParseValues(str);
+            var evidenceParams = VertexData.ParseEvidenceParams(s);
+            var evidenceType = VertexEvidenceType.Invalid;
 
             // Check for functions
-            if (str.ToLowerInvariant().Contains("tri") && paramValues.Count == 3)
+            if (s.ToLowerInvariant().Contains("tri") && evidenceParams.Count == 3)
             {
-                return VertexEvidenceType.Triangular;
+                evidenceParams.Sort();
+                evidenceType = VertexEvidenceType.Triangular;
             }
 
-            if (str.ToLowerInvariant().Contains("norm") && paramValues.Count == 2)
+            if (s.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
             {
-                return VertexEvidenceType.Normal;
+                evidenceType = VertexEvidenceType.Normal;
             }
 
-            if (str.Contains(":") && paramValues.Count == 2)
+            if (s.Contains(":") && evidenceParams.Count == 2)
             {
-                return VertexEvidenceType.Range;
+                evidenceParams.Sort();
+                evidenceType = VertexEvidenceType.Range;
             }
 
-            if (str.Contains(",") && paramValues.Count == this.States.Count)
+            if (s.Contains(",") && evidenceParams.Count == this.States.Count)
             {
-                return VertexEvidenceType.Distribution;
+                evidenceType = VertexEvidenceType.Distribution;
             }
 
-            return VertexEvidenceType.Invalid;
+            return new VertexEvidenceInfo
+            {
+                Params = evidenceParams,
+                Type = evidenceType
+            };
         }
 
         // Do not remove! This is for Marv.Matlab
         public double[] GetValue()
         {
             return this.States.Select(state => state.Belief).ToArray();
+        }
+
+        public IEnumerable<double> Parse(string anEvidenceString)
+        {
+            var evidenceInfo = this.GetEvidenceInfo(anEvidenceString);
+
+            switch (evidenceInfo.Type)
+            {
+                case VertexEvidenceType.Normal:
+                {
+                    return this.Parse(new NormalDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
+                }
+
+                case VertexEvidenceType.Triangular:
+                {
+                    return this.Parse(new TriangularDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1], evidenceInfo.Params[2]));
+                }
+
+                case VertexEvidenceType.Range:
+                {
+                    return this.Parse(new UniformDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
+                }
+
+                case VertexEvidenceType.Number:
+                {
+                    return this.Parse(new DeltaDistribution(evidenceInfo.Params[0]));
+                }
+
+                case VertexEvidenceType.Distribution:
+                {
+                    return evidenceInfo.Params;
+                }
+
+                case VertexEvidenceType.State:
+                {
+                    return this.States.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0);
+                }
+
+                default:
+                {
+                    return null;
+                }
+            }
         }
 
         public override string ToString()

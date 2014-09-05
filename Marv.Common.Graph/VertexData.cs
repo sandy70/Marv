@@ -9,7 +9,7 @@ namespace Marv.Common.Graph
         public string String { get; set; }
         public double[] Evidence { get; set; }
 
-        public static List<double> ParseValues(string str)
+        public static List<double> ParseEvidenceParams(string str)
         {
             if (string.IsNullOrWhiteSpace(str))
             {

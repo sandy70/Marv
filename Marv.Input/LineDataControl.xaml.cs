@@ -221,9 +221,9 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidenceType = this.Vertex.GetEvidenceType(e.NewValue as string);
+            var vertexEvidenceInfo = this.Vertex.GetEvidenceInfo(e.NewValue as string);
 
-            if (vertexEvidenceType == VertexEvidenceType.Invalid)
+            if (vertexEvidenceInfo.Type == VertexEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
