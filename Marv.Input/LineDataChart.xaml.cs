@@ -19,6 +19,9 @@ namespace Marv.Input
         public static readonly DependencyProperty IsEditEnabledProperty =
             DependencyProperty.Register("IsEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsXAxisSectionsProperty =
+            DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true));
+
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null));
 
@@ -113,6 +116,18 @@ namespace Marv.Input
             set
             {
                 SetValue(IsEditEnabledProperty, value);
+            }
+        }
+
+        public bool IsXAxisSections
+        {
+            get
+            {
+                return (bool) GetValue(IsXAxisSectionsProperty);
+            }
+            set
+            {
+                SetValue(IsXAxisSectionsProperty, value);
             }
         }
 

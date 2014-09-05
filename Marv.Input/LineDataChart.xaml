@@ -30,6 +30,7 @@
                 
                 <telerik:RadRadioButton Name="SectionsRadioButton"
                                         Content="Sections"
+                                        IsChecked="{Binding ElementName=Root, Path=IsXAxisSections}"
                                         Width="64"/>
                 
                 <telerik:RadRadioButton Name="YearsRadioButton"
