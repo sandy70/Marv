@@ -5,7 +5,7 @@
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                            mc:Ignorable="d"
-                           d:DesignHeight="300" d:DesignWidth="300"
+                           d:DesignHeight="300" d:DesignWidth="600"
                            Name="Root">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -25,16 +25,20 @@
         <ToolBarTray Grid.Row="0"
                      Height="Auto">
             <ToolBar>
-                <TextBlock VerticalAlignment="Center"
-                           Text="X-Axis: " />
+                <telerik:RadToggleButton Content="Edit Evidence"
+                                         IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled}"
+                                         Width="100" />
                 
-                <telerik:RadRadioButton Name="SectionsRadioButton"
-                                        Content="Sections"
+                <TextBlock VerticalAlignment="Center"
+                           Text="X-Axis: "
+                           TextAlignment="Right"
+                           Width="64" />
+                
+                <telerik:RadRadioButton Content="Sections"
                                         IsChecked="{Binding ElementName=Root, Path=IsXAxisSections}"
                                         Width="64"/>
                 
-                <telerik:RadRadioButton Name="YearsRadioButton"
-                                        Content="Years"
+                <telerik:RadRadioButton Content="Years"
                                         Width="64"/>
             </ToolBar>
         </ToolBarTray>
@@ -52,6 +56,48 @@
                                          ShowLabels="False"
                                          Title="{Binding ElementName=Root, Path=XTitle}" />
             </telerik:RadCartesianChart.HorizontalAxis>
+
+            <telerik:RadCartesianChart.Series>
+                <!-- Anchoring Series -->
+                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
+                                    ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
+
+                <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
+                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
+
+                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                      ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
+                                      Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
+                    <telerik:SplineSeries.PointTemplate>
+                        <DataTemplate>
+                            <Polygon Points="0,4 4,-4 -4,-4 0,4"
+                                     Stroke="Green" Fill="Green" />
+                        </DataTemplate>
+                    </telerik:SplineSeries.PointTemplate>
+                </telerik:SplineSeries>
+
+                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                      ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
+                                      Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
+                    <telerik:SplineSeries.PointTemplate>
+                        <DataTemplate>
+                            <Ellipse Height="8" Width="8"
+                                     Stroke="Green" Fill="Green" />
+                        </DataTemplate>
+                    </telerik:SplineSeries.PointTemplate>
+                </telerik:SplineSeries>
+
+                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
+                                      ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
+                                      Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}">
+                    <telerik:SplineSeries.PointTemplate>
+                        <DataTemplate>
+                            <Polygon Points="0,-4 -4,4 4,4 0,-4"
+                                     Stroke="Green" Fill="Green" />
+                        </DataTemplate>
+                    </telerik:SplineSeries.PointTemplate>
+                </telerik:SplineSeries>
+            </telerik:RadCartesianChart.Series>
 
             <telerik:RadCartesianChart.SeriesProvider>
                 <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=BaseDistributionPoints}">
@@ -78,48 +124,6 @@
                     </telerik:ChartSeriesProvider.SeriesDescriptors>
                 </telerik:ChartSeriesProvider>
             </telerik:RadCartesianChart.SeriesProvider>
-
-            <telerik:RadCartesianChart.Series>
-                <!-- Anchoring Series -->
-                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
-                                    ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
-
-                <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
-                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
-
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                      ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
-                                      Visibility="{Binding ElementName=Root, Path=IsEditEnabled, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
-                        <DataTemplate>
-                            <Polygon Points="0,4 4,-4 -4,-4 0,4"
-                                     Stroke="Green" Fill="Green" />
-                        </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
-
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                      ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
-                                      Visibility="{Binding ElementName=Root, Path=IsEditEnabled, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
-                        <DataTemplate>
-                            <Ellipse Height="8" Width="8"
-                                     Stroke="Green" Fill="Green" />
-                        </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
-
-                <telerik:SplineSeries CategoryBinding="Category" ValueBinding="Value"
-                                      ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
-                                      Visibility="{Binding ElementName=Root, Path=IsChartEditing, Converter={StaticResource BooleanToVisibility}}">
-                    <telerik:SplineSeries.PointTemplate>
-                        <DataTemplate>
-                            <Polygon Points="0,-4 -4,4 4,4 0,-4"
-                                     Stroke="Green" Fill="Green" />
-                        </DataTemplate>
-                    </telerik:SplineSeries.PointTemplate>
-                </telerik:SplineSeries>
-
-            </telerik:RadCartesianChart.Series>
-        </telerik:RadCartesianChart></Grid>
+        </telerik:RadCartesianChart>
+    </Grid>
 </UserControl>

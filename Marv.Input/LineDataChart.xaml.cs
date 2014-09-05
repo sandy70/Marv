@@ -16,8 +16,8 @@ namespace Marv.Input
         public static readonly DependencyProperty CellModelsProperty =
             DependencyProperty.Register("CellModels", typeof (IEnumerable<CellModel>), typeof (LineDataChart), new PropertyMetadata(null, ChangedCellModels));
 
-        public static readonly DependencyProperty IsEditEnabledProperty =
-            DependencyProperty.Register("IsEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
+            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsXAxisSectionsProperty =
             DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
@@ -113,15 +113,15 @@ namespace Marv.Input
             }
         }
 
-        public bool IsEditEnabled
+        public bool IsEvidenceEditEnabled
         {
             get
             {
-                return (bool) GetValue(IsEditEnabledProperty);
+                return (bool) GetValue(IsEvidenceEditEnabledProperty);
             }
             set
             {
-                SetValue(IsEditEnabledProperty, value);
+                SetValue(IsEvidenceEditEnabledProperty, value);
             }
         }
 
@@ -287,12 +287,13 @@ namespace Marv.Input
             }
 
             control.UpdateBasePoints();
-            control.InitializeEvidenceLines();
+            control.InitializeEvidence();
         }
 
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
+            control.InitializeEvidence();
             control.UpdateBasePoints();
         }
 
@@ -301,11 +302,11 @@ namespace Marv.Input
             var control = d as LineDataChart;
 
             control.InitializeVerticalAxis();
-            control.InitializeEvidenceLines();
+            control.InitializeEvidence();
             control.UpdateBasePoints();
         }
 
-        private void InitializeEvidenceLines()
+        private void InitializeEvidence()
         {
             this.MaxPoints = new ObservableCollection<CategoricalDataPoint>();
             this.ModePoints = new ObservableCollection<CategoricalDataPoint>();
@@ -327,6 +328,7 @@ namespace Marv.Input
             {
                 Category = first, Value = maxValue
             });
+
             this.MaxPoints.Add(new CategoricalDataPoint
             {
                 Category = last, Value = maxValue
@@ -336,6 +338,7 @@ namespace Marv.Input
             {
                 Category = first, Value = modeValue
             });
+
             this.ModePoints.Add(new CategoricalDataPoint
             {
                 Category = last, Value = modeValue
@@ -345,6 +348,7 @@ namespace Marv.Input
             {
                 Category = first, Value = minValue
             });
+
             this.MinPoints.Add(new CategoricalDataPoint
             {
                 Category = last, Value = minValue
@@ -383,7 +387,7 @@ namespace Marv.Input
             foreach (var category in categories)
             {
                 var sectionId = this.IsXAxisSections ? category as string : this.SectionId;
-                var year = this.IsXAxisSections ? this.Year : (int)category;
+                var year = this.IsXAxisSections ? this.Year : (int) category;
 
                 this.AnchorPoints.Add(new CategoricalDataPoint
                 {

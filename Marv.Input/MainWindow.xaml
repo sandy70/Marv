@@ -59,7 +59,7 @@
                                               Visibility="Collapsed" />
 
                                 <local:LineDataChart CellModels="{Binding ElementName=Root, Path=ChartCellModels}"
-                                                     IsEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
+                                                     IsEvidenceEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
