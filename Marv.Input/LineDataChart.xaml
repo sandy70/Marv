@@ -43,7 +43,8 @@
             </ToolBar>
         </ToolBarTray>
         
-        <telerik:RadCartesianChart Grid.Row="1"
+        <telerik:RadCartesianChart Name="Chart"
+                                   Grid.Row="1"
                                    VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
             <telerik:RadCartesianChart.Behaviors>
                 <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"

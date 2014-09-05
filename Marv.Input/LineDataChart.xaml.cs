@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
+using MoreLinq;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 
@@ -13,9 +16,6 @@ namespace Marv.Input
 {
     public partial class LineDataChart : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty CellModelsProperty =
-            DependencyProperty.Register("CellModels", typeof (IEnumerable<CellModel>), typeof (LineDataChart), new PropertyMetadata(null, ChangedCellModels));
-
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
             DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
@@ -98,18 +98,6 @@ namespace Marv.Input
                     this.baseNumberPoints = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public IEnumerable<CellModel> CellModels
-        {
-            get
-            {
-                return (IEnumerable<CellModel>) GetValue(CellModelsProperty);
-            }
-            set
-            {
-                SetValue(CellModelsProperty, value);
             }
         }
 
@@ -263,38 +251,18 @@ namespace Marv.Input
         public LineDataChart()
         {
             InitializeComponent();
+
+            this.Loaded -= LineDataChart_Loaded;
+            this.Loaded += LineDataChart_Loaded;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private static void ChangedCellModels(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataChart;
-
-            if (control.CellModels == null)
-            {
-                return;
-            }
-
-            control.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-
-            foreach (var cellModel in control.CellModels)
-            {
-                control.AnchorPoints.Add(new CategoricalDataPoint
-                {
-                    Category = cellModel.SectionId, Value = null
-                });
-            }
-
-            control.UpdateBasePoints();
-            control.InitializeEvidence();
-        }
-
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
-            control.InitializeEvidence();
             control.UpdateBasePoints();
+            control.InitializeEvidence();
         }
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -302,8 +270,53 @@ namespace Marv.Input
             var control = d as LineDataChart;
 
             control.InitializeVerticalAxis();
-            control.InitializeEvidence();
             control.UpdateBasePoints();
+            control.InitializeEvidence();
+        }
+
+        private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            this.UpdateEvidence(position);
+        }
+
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var position = e.GetPosition(this.Chart);
+                this.UpdateEvidence(position);
+            }
+        }
+
+        private int GetAnchorIndex(CategoricalDataPoint point)
+        {
+            return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
+        }
+
+        private ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
+        {
+            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
+
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            return series.MinBy(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+
+                return Math.Abs(spline.Eval(new[]
+                {
+                    (float) userPointAnchorIndex
+                })[0] - userPoint.Value.Value);
+            });
         }
 
         private void InitializeEvidence()
@@ -367,6 +380,15 @@ namespace Marv.Input
             var numericalAxis = this.VerticalAxis as NumericalAxis;
             numericalAxis.Minimum = this.Vertex.SafeMin;
             numericalAxis.Maximum = this.Vertex.SafeMax;
+        }
+
+        private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Chart.MouseDown -= Chart_MouseDown;
+            this.Chart.MouseDown += Chart_MouseDown;
+
+            this.Chart.MouseMove -= Chart_MouseMove;
+            this.Chart.MouseMove += Chart_MouseMove;
         }
 
         private void UpdateBasePoints()
@@ -463,6 +485,53 @@ namespace Marv.Input
                         break;
                     }
                 }
+            }
+        }
+
+        private void UpdateEvidence(Point position)
+        {
+            var data = this.Chart.ConvertPointToData(position);
+
+            if (data == null || data.FirstValue == null || data.SecondValue == null)
+            {
+                return;
+            }
+
+            var userPoint = new CategoricalDataPoint
+            {
+                Category = data.FirstValue as string,
+                Value = (double) data.SecondValue
+            };
+
+            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
+
+            var nearestSeries = this.GetNearestSeries(userPoint);
+
+            var isPointExisting = false;
+
+            foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
+            {
+                point.Value = (double) data.SecondValue;
+                isPointExisting = true;
+            }
+
+            if (!isPointExisting)
+            {
+                var nearestPointAnchorIndex = 0;
+
+                foreach (var nearestPoint in nearestSeries)
+                {
+                    nearestPointAnchorIndex = this.GetAnchorIndex(nearestPoint);
+
+                    if (nearestPointAnchorIndex > userPointAnchorIndex)
+                    {
+                        break;
+                    }
+                }
+
+                var userPointInsertIndex = nearestSeries.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
+
+                nearestSeries.Insert(userPointInsertIndex, userPoint);
             }
         }
 

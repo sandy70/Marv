@@ -601,7 +601,7 @@ namespace Marv.Input
         //    var userPoint = new CategoricalDataPoint
         //    {
         //        Category = data.FirstValue as string,
-        //        Value = (double) data.SecondValue
+        //        Value = (double)data.SecondValue
         //    };
 
         //    var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
@@ -612,7 +612,7 @@ namespace Marv.Input
 
         //    foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
         //    {
-        //        point.Value = (double) data.SecondValue;
+        //        point.Value = (double)data.SecondValue;
         //        isPointExisting = true;
         //    }
 
