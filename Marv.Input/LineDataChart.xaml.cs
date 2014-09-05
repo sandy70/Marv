@@ -20,13 +20,13 @@ namespace Marv.Input
             DependencyProperty.Register("IsEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsXAxisSectionsProperty =
-            DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true));
+            DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
 
         public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null));
+            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty SectionIdProperty =
-            DependencyProperty.Register("SectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
+            DependencyProperty.Register("SectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null, ChangedVertex));
@@ -38,7 +38,7 @@ namespace Marv.Input
             DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
         public static readonly DependencyProperty YearProperty =
-            DependencyProperty.Register("Year", typeof (int), typeof (LineDataChart), new PropertyMetadata(int.MinValue));
+            DependencyProperty.Register("Year", typeof (int), typeof (LineDataChart), new PropertyMetadata(int.MinValue, ChangedLineData));
 
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
@@ -290,6 +290,12 @@ namespace Marv.Input
             control.InitializeEvidenceLines();
         }
 
+        private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataChart;
+            control.UpdateBasePoints();
+        }
+
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
@@ -361,22 +367,34 @@ namespace Marv.Input
 
         private void UpdateBasePoints()
         {
-            if (this.CellModels == null)
+            if (this.LineData == null ||
+                this.SectionId == null ||
+                this.Year < 0 ||
+                !this.LineData.Sections.ContainsKey(this.SectionId))
             {
                 return;
             }
 
-            foreach (var cellModel in this.CellModels)
+            this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
+            this.BaseDistributionPoints = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+
+            var categories = this.IsXAxisSections ? this.LineData.Sections.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
+
+            foreach (var category in categories)
             {
-                var vertexEvidence = cellModel.Data as VertexData;
+                var sectionId = this.IsXAxisSections ? category as string : this.SectionId;
+                var year = this.IsXAxisSections ? this.Year : (int)category;
 
-                if (vertexEvidence == null)
+                this.AnchorPoints.Add(new CategoricalDataPoint
                 {
-                    continue;
-                }
+                    Category = category,
+                    Value = null
+                });
 
-                var vertexEvidenceType = this.Vertex.GetEvidenceType(vertexEvidence.String);
-                var paramValues = VertexData.ParseValues(vertexEvidence.String);
+                var vertexData = this.LineData.Sections[sectionId][year][this.Vertex.Key];
+
+                var vertexEvidenceType = this.Vertex.GetEvidenceType(vertexData.String);
+                var paramValues = VertexData.ParseValues(vertexData.String);
 
                 switch (vertexEvidenceType)
                 {
@@ -384,7 +402,7 @@ namespace Marv.Input
                     {
                         this.BaseNumberPoints.Add(new CategoricalDataPoint
                         {
-                            Category = cellModel.SectionId,
+                            Category = category,
                             Value = paramValues[0]
                         });
 
@@ -402,14 +420,14 @@ namespace Marv.Input
 
                         this.BaseDistributionPoints[0].Add(new ProbabilityDataPoint
                         {
-                            Category = cellModel.SectionId,
+                            Category = category,
                             Value = paramValues[0],
                             Probability = 0
                         });
 
                         this.BaseDistributionPoints[1].Add(new ProbabilityDataPoint
                         {
-                            Category = cellModel.SectionId,
+                            Category = category,
                             Value = paramValues[1],
                             Probability = 1
                         });
@@ -418,8 +436,10 @@ namespace Marv.Input
                     }
 
                     case VertexEvidenceType.Distribution:
+                    case VertexEvidenceType.Normal:
+                    case VertexEvidenceType.Triangular:
                     {
-                        var maxProb = vertexEvidence.Evidence.Max();
+                        var maxProb = vertexData.Evidence.Max();
 
                         this.Vertex.States.ForEach((state, i) =>
                         {
@@ -430,9 +450,9 @@ namespace Marv.Input
 
                             this.BaseDistributionPoints[i].Add(new ProbabilityDataPoint
                             {
-                                Category = cellModel.SectionId,
+                                Category = category,
                                 Value = state.SafeMax - state.SafeMin,
-                                Probability = vertexEvidence.Evidence[i] / maxProb
+                                Probability = vertexData.Evidence[i] / maxProb
                             });
                         });
 

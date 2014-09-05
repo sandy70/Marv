@@ -45,7 +45,9 @@
                             <local:LineDataControl x:Name="LineDataControl"
                                                    CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
-                                                   Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                   SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
+                                                   Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -58,8 +60,11 @@
 
                                 <local:LineDataChart CellModels="{Binding ElementName=Root, Path=ChartCellModels}"
                                                      IsEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
+                                                     LineData="{Binding ElementName=Root, Path=LineData}"
+                                                     SectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     XTitle="{Binding ElementName=Root, Path=XTitle}" />
+                                                     XTitle="{Binding ElementName=Root, Path=XTitle}"
+                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

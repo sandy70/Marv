@@ -11,6 +11,11 @@ namespace Marv.Common.Graph
 
         public static List<double> ParseValues(string str)
         {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return null;
+            }
+
             var values = new List<double>();
 
             var parts = str.Trim().Split("(),: ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);

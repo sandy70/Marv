@@ -450,6 +450,8 @@ namespace Marv.Input
 
         private void LineDataControl_CellChanged(object sender, CellModel cellModel)
         {
+            if (cellModel.IsColumnSectionId) return;
+
             this.Graph.NetworkStructure.Run(this.LineData.Sections[cellModel.SectionId]);
             this.LineDataControl.UpdateCurrentGraphData();
         }

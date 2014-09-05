@@ -238,10 +238,10 @@ namespace Marv.Input
             }
 
             var cellModel = e.NewCell.ToModel();
+            this.SelectedSectionId = cellModel.SectionId;
 
             if (cellModel.IsColumnSectionId)
             {
-                this.SelectedSectionId = cellModel.SectionId;
                 this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
                 return;
             }
