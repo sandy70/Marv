@@ -53,7 +53,7 @@ namespace Marv.Input
 
             int result;
             this.IsColumnSectionId = !Int32.TryParse(this.Header, out result);
-            this.Year = !this.IsColumnSectionId ? result : -1;
+            this.Year = !this.IsColumnSectionId ? result : int.MinValue;
         }
 
         public CellModel(GridViewCellInfo cellInfo) : this(cellInfo.Item as Dynamic, cellInfo.Column.Header as string) {}
