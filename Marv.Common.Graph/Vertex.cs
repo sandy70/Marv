@@ -9,7 +9,7 @@ using MoreLinq;
 
 namespace Marv
 {
-    public class Vertex : Model
+    public class Vertex : NotifyPropertyChanged, IKeyed
     {
         private ObservableCollection<Command<Vertex>> commands = new ObservableCollection<Command<Vertex>>
         {
@@ -28,11 +28,13 @@ namespace Marv
         private bool isExpanded;
         private bool isHeader;
         private bool isLocked = true;
+        private string key;
         private State mostProbableState;
+        private string name;
         private Point position;
         private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
         private string selectedGroup;
-        private ModelCollection<State> states;
+        private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
@@ -290,6 +292,25 @@ namespace Marv
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value.Equals(this.name))
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public Point Position
         {
             get
@@ -357,7 +378,7 @@ namespace Marv
             }
         }
 
-        public ModelCollection<State> States
+        public ObservableCollection<State> States
         {
             get
             {
@@ -424,6 +445,25 @@ namespace Marv
                     this.units = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
             }
         }
 

@@ -6,7 +6,7 @@ namespace Marv
 {
     public static partial class Extensions
     {
-        public static void AddUnique(this ModelCollection<Edge> edges, Vertex source, Vertex target, EdgeConnectorPositions connectorPostions = null)
+        public static void AddUnique(this ICollection<Edge> edges, Vertex source, Vertex target, EdgeConnectorPositions connectorPostions = null)
         {
             var newEdge = new Edge(source, target)
             {

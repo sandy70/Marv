@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,13 +17,13 @@ namespace Marv
 
         private string defaultGroup;
         private Graph displayGraph;
-        private ModelCollection<Edge> edges = new ModelCollection<Edge>();
+        private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
         private Guid guid;
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Vertex selectedVertex;
-        private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
+        private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
         public Dict<string, VertexData> Data
         {
@@ -71,7 +72,7 @@ namespace Marv
             }
         }
 
-        public ModelCollection<Edge> Edges
+        public ObservableCollection<Edge> Edges
         {
             get
             {
@@ -184,7 +185,7 @@ namespace Marv
             }
         }
 
-        public ModelCollection<Vertex> Vertices
+        public KeyedCollection<Vertex> Vertices
         {
             get
             {

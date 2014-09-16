@@ -1,10 +1,11 @@
 ﻿namespace Marv
 {
-    public class State : Model
+    public class State : NotifyPropertyChanged, IKeyed
     {
         private double belief;
         private double evidence;
         private double initialBelief;
+        private string key;
         private double max;
         private double min;
 
@@ -97,6 +98,20 @@
             get
             {
                 return double.IsNegativeInfinity(this.Min) ? this.Max * 2 : this.Min;
+            }
+        }
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                this.key = value;
+                this.RaisePropertyChanged();
             }
         }
 

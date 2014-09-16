@@ -19,6 +19,14 @@ namespace Marv
             }
         }
 
+        public IEnumerable<T> this[IEnumerable<string> keys]
+        {
+            get
+            {
+                return keys.Select(aKey => this[aKey]);
+            }
+        }
+
         public string Key
         {
             get

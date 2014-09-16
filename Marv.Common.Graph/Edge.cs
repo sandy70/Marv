@@ -3,7 +3,7 @@ using Telerik.Windows.Diagrams.Core;
 
 namespace Marv
 {
-    public class Edge : Model, IEdge<Vertex>, ILink<Vertex>
+    public class Edge : NotifyPropertyChanged, IEdge<Vertex>, ILink<Vertex>
     {
         private EdgeConnectorPositions connectorPositions = new EdgeConnectorPositions();
         private Vertex source;
