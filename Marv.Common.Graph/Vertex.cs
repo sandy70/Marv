@@ -88,6 +88,15 @@ namespace Marv
 
                 this.RaisePropertyChanged();
             }
+            get
+            {
+                return new VertexData
+                {
+                    Beliefs = this.States.GetBelief().ToArray(),
+                    String = this.EvidenceString,
+                    Evidence = this.States.GetEvidence().ToArray()
+                };
+            }
         }
 
         public string Description
@@ -487,11 +496,6 @@ namespace Marv
             }
         }
 
-        private IEnumerable<double> Parse(IDistribution dist)
-        {
-            return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));
-        }
-
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -519,111 +523,35 @@ namespace Marv
             }
         }
 
-        public VertexData GetEvidence()
+        public IEnumerable<double> ParseEvidence(IDistribution dist)
         {
-            return new VertexData
-            {
-                Beliefs = this.States.GetBelief().ToArray(),
-                String = this.EvidenceString,
-                Evidence = this.States.GetEvidence().ToArray()
-            };
+            return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));
         }
 
-        public VertexEvidenceInfo GetEvidenceInfo(string s)
+        public IEnumerable<double> ParseEvidence(string anEvidenceString)
         {
-            if (string.IsNullOrWhiteSpace(s))
-            {
-                return new VertexEvidenceInfo
-                {
-                    Type = VertexEvidenceType.Invalid
-                };
-            }
-
-            // Check if string is the label of any of the states.
-            if (this.States.Any(state => state.Key == s))
-            {
-                return new VertexEvidenceInfo
-                {
-                    Type = VertexEvidenceType.State
-                };
-            }
-
-            double value;
-            if (double.TryParse(s, out value) && this.SafeMin <= value && value <= this.SafeMax)
-            {
-                return new VertexEvidenceInfo
-                {
-                    Params = new List<double>
-                    {
-                        value
-                    },
-                    Type = VertexEvidenceType.Number
-                };
-            }
-
-            var evidenceParams = VertexData.ParseEvidenceParams(s);
-            var evidenceType = VertexEvidenceType.Invalid;
-
-            // Check for functions
-            if (s.ToLowerInvariant().Contains("tri") && evidenceParams.Count == 3)
-            {
-                evidenceParams.Sort();
-                evidenceType = VertexEvidenceType.Triangular;
-            }
-
-            if (s.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
-            {
-                evidenceType = VertexEvidenceType.Normal;
-            }
-
-            if (s.Contains(":") && evidenceParams.Count == 2)
-            {
-                evidenceParams.Sort();
-                evidenceType = VertexEvidenceType.Range;
-            }
-
-            if (s.Contains(",") && evidenceParams.Count == this.States.Count)
-            {
-                evidenceType = VertexEvidenceType.Distribution;
-            }
-
-            return new VertexEvidenceInfo
-            {
-                Params = evidenceParams,
-                Type = evidenceType
-            };
-        }
-
-        // Do not remove! This is for Marv.Matlab
-        public double[] GetValue()
-        {
-            return this.States.Select(state => state.Belief).ToArray();
-        }
-
-        public IEnumerable<double> Parse(string anEvidenceString)
-        {
-            var evidenceInfo = this.GetEvidenceInfo(anEvidenceString);
+            var evidenceInfo = this.ParseEvidenceInfo(anEvidenceString);
 
             switch (evidenceInfo.Type)
             {
                 case VertexEvidenceType.Normal:
                 {
-                    return this.Parse(new NormalDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
+                    return this.ParseEvidence(new NormalDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
                 }
 
                 case VertexEvidenceType.Triangular:
                 {
-                    return this.Parse(new TriangularDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1], evidenceInfo.Params[2]));
+                    return this.ParseEvidence(new TriangularDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1], evidenceInfo.Params[2]));
                 }
 
                 case VertexEvidenceType.Range:
                 {
-                    return this.Parse(new UniformDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
+                    return this.ParseEvidence(new UniformDistribution(evidenceInfo.Params[0], evidenceInfo.Params[1]));
                 }
 
                 case VertexEvidenceType.Number:
                 {
-                    return this.Parse(new DeltaDistribution(evidenceInfo.Params[0]));
+                    return this.ParseEvidence(new DeltaDistribution(evidenceInfo.Params[0]));
                 }
 
                 case VertexEvidenceType.Distribution:
@@ -641,6 +569,71 @@ namespace Marv
                     return null;
                 }
             }
+        }
+
+        public VertexEvidenceInfo ParseEvidenceInfo(string anEvidenceString)
+        {
+            if (string.IsNullOrWhiteSpace(anEvidenceString))
+            {
+                return new VertexEvidenceInfo
+                {
+                    Type = VertexEvidenceType.Invalid
+                };
+            }
+
+            // Check if string is the label of any of the states.
+            if (this.States.Any(state => state.Key == anEvidenceString))
+            {
+                return new VertexEvidenceInfo
+                {
+                    Type = VertexEvidenceType.State
+                };
+            }
+
+            double value;
+            if (double.TryParse(anEvidenceString, out value) && this.SafeMin <= value && value <= this.SafeMax)
+            {
+                return new VertexEvidenceInfo
+                {
+                    Params = new List<double>
+                    {
+                        value
+                    },
+                    Type = VertexEvidenceType.Number
+                };
+            }
+
+            var evidenceParams = VertexData.ParseEvidenceParams(anEvidenceString);
+            var evidenceType = VertexEvidenceType.Invalid;
+
+            // Check for functions
+            if (anEvidenceString.ToLowerInvariant().Contains("tri") && evidenceParams.Count == 3)
+            {
+                evidenceParams.Sort();
+                evidenceType = VertexEvidenceType.Triangular;
+            }
+
+            if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
+            {
+                evidenceType = VertexEvidenceType.Normal;
+            }
+
+            if (anEvidenceString.Contains(":") && evidenceParams.Count == 2)
+            {
+                evidenceParams.Sort();
+                evidenceType = VertexEvidenceType.Range;
+            }
+
+            if (anEvidenceString.Contains(",") && evidenceParams.Count == this.States.Count)
+            {
+                evidenceType = VertexEvidenceType.Distribution;
+            }
+
+            return new VertexEvidenceInfo
+            {
+                Params = evidenceParams,
+                Type = evidenceType
+            };
         }
 
         public override string ToString()

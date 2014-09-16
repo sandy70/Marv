@@ -332,7 +332,7 @@ namespace Marv.Input
 
             //    if (vertexEvidence == null) continue;
 
-            //    var vertexEvidenceType = this.Graph.SelectedVertex.GetEvidenceInfo(vertexEvidence.String);
+            //    var vertexEvidenceType = this.Graph.SelectedVertex.ParseEvidenceInfo(vertexEvidence.String);
             //    var paramValues = VertexData.ParseEvidenceParams(vertexEvidence.String);
 
             //    switch (vertexEvidenceType)

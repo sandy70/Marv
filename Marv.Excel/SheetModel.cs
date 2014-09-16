@@ -235,7 +235,7 @@ namespace Marv_Excel
 
                     if (value != null)
                     {
-                        //var evidence = EvidenceStringFactory.Create(value.ToString()).Parse(vertex.States, value.ToString());
+                        //var evidence = EvidenceStringFactory.Create(value.ToString()).ParseEvidence(vertex.States, value.ToString());
                         // sheetModel.LineEvidence[sectionId, year, vertexKey] = evidence;
                     }
                     else

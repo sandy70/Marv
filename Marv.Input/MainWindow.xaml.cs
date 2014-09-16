@@ -423,7 +423,7 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.LineDataControl.SetSelectedCells(vertex.GetEvidence());
+            this.LineDataControl.SetSelectedCells(vertex.Data);
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Marv.Graph> e)

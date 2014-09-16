@@ -426,7 +426,7 @@ namespace Marv.Input
 
                 var vertexData = this.LineData.Sections[sectionId][year][this.Vertex.Key];
 
-                var vertexEvidenceInfo = this.Vertex.GetEvidenceInfo(vertexData.String);
+                var vertexEvidenceInfo = this.Vertex.ParseEvidenceInfo(vertexData.String);
                 var paramValues = VertexData.ParseEvidenceParams(vertexData.String);
 
                 switch (vertexEvidenceInfo.Type)
@@ -572,7 +572,7 @@ namespace Marv.Input
                 var year = this.IsXAxisSections ? this.Year : (int)point.Category;
 
                 var vertexData = new VertexData();
-                vertexData.Evidence = this.Vertex.Parse(evidenceString).ToArray();
+                vertexData.Evidence = this.Vertex.ParseEvidence(evidenceString).ToArray();
                 vertexData.String = evidenceString;
 
                 this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;

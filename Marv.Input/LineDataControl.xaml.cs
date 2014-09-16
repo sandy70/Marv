@@ -220,7 +220,7 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidenceInfo = this.Vertex.GetEvidenceInfo(e.NewValue as string);
+            var vertexEvidenceInfo = this.Vertex.ParseEvidenceInfo(e.NewValue as string);
 
             if (vertexEvidenceInfo.Type == VertexEvidenceType.Invalid)
             {

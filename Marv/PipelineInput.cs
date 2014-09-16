@@ -80,7 +80,7 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        //var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
+                        //var evidence = EvidenceStringFactory.Create(evidenceString).ParseEvidence(vertex.States, evidenceString);
 
                         //if (evidence != null)
                         //{
@@ -109,7 +109,7 @@ namespace Marv
                         var vertexKey = this.sheet.GetValue<string>(1, colIndex);
                         var vertex = graph.Vertices[vertexKey];
 
-                        //var evidence = EvidenceStringFactory.Create(evidenceString).Parse(vertex.States, evidenceString);
+                        //var evidence = EvidenceStringFactory.Create(evidenceString).ParseEvidence(vertex.States, evidenceString);
 
                         //if (evidence != null)
                         //{
