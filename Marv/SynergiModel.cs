@@ -1,10 +1,9 @@
-﻿using Marv;
+﻿using System.Collections.Generic;
 using Marv.LineAndSectionOverviewService;
-using System.Collections.Generic;
 
 namespace Marv
 {
-    public class SynergiModel : Model
+    public class SynergiModel : NotifyPropertyChanged
     {
         private SelectableCollection<LineSummaryDTO> lines;
         private string password = "Password01";

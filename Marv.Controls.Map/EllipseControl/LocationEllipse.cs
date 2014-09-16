@@ -1,9 +1,8 @@
-﻿using Marv;
-using Marv.Map;
+﻿using Marv.Map;
 
 namespace Marv.Controls.Map
 {
-    public class LocationEllipse : Model
+    public class LocationEllipse : NotifyPropertyChanged
     {
         private Location center;
         private double radius;
@@ -20,7 +19,7 @@ namespace Marv.Controls.Map
                 if (value != this.center)
                 {
                     this.center = value;
-                    this.RaisePropertyChanged("Center");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -35,7 +34,7 @@ namespace Marv.Controls.Map
             set
             {
                 this.radius = value;
-                this.RaisePropertyChanged("Radius");
+                this.RaisePropertyChanged();
             }
         }
     }
