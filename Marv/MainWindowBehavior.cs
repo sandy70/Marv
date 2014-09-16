@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Marv;
-using Marv.Graph;
 using Marv.Map;
 using Marv.Controls.Map;
 using Marv.LineAndSectionOverviewService;
@@ -138,7 +137,7 @@ namespace Marv
             window.Notifications.Push(notification);
 
             // Read source graph
-            window.Graph = await Graph.ReadAsync(window.NetworkFileName);
+            window.Graph = await Marv.ReadAsync(window.NetworkFileName);
 
             // Close notification
             window.Notifications.Remove(notification);

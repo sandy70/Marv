@@ -1,4 +1,4 @@
-﻿namespace Marv.Graph
+﻿namespace Marv
 {
     public class VertexClearCommand : Command<Vertex>
     {

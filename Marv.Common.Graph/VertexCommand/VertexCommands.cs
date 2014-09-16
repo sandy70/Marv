@@ -1,4 +1,4 @@
-﻿namespace Marv.Graph
+﻿namespace Marv
 {
     public static class VertexCommands
     {

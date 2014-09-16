@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Marv;
-using Marv.Graph;
 
 namespace Marv.Input
 {

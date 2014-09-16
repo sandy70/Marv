@@ -2,7 +2,7 @@
 using System.IO.Ports;
 using System.Linq;
 using System.Windows.Threading;
-using Marv.Graph;
+using Marv;
 
 namespace Marv
 {

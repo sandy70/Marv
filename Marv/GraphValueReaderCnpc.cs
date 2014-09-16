@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Marv;
-using Marv.Graph;
 
 namespace Marv
 {
@@ -11,7 +10,7 @@ namespace Marv
 
         public string InputDir { get; set; }
 
-        public Graph SourceGraph { get; set; }
+        public Marv SourceGraph { get; set; }
 
         public Dictionary<int, string, string, double> Read(string lineKey, string locationKey)
         {

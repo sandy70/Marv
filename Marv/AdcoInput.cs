@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Marv;
-using Marv.Graph;
 using Marv.Map;
 using OfficeOpenXml;
 using Smile;
@@ -66,7 +65,7 @@ namespace Marv
             }
         }
 
-        public static Dictionary<string, string, double> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
+        public static Dictionary<string, string, double> GetGraphEvidence(Marv graph, string fileName, string pipeName, string locationName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {

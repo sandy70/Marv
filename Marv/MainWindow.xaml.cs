@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Caching;
 using MapControl;
 using Marv;
-using Marv.Graph;
 using Marv.Controls.Map;
 using NLog;
 using OfficeOpenXml;
@@ -49,7 +48,7 @@ namespace Marv
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public static Dictionary<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
+        public static Dictionary<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Marv graph = null)
         {
             logger.Info("Computing belief for line {0}.", multiLocation.Name);
 
@@ -129,7 +128,7 @@ namespace Marv
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<Dictionary<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
+        public static Task<Dictionary<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Marv graph)
         {
             return Task.Run(() => { return CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph); });
         }

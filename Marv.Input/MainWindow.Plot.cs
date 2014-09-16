@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Marv;
-using Marv.Graph;
 using MoreLinq;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -270,27 +268,26 @@ namespace Marv.Input
 
             if (data.String.Contains(","))
             {
-                Marv.Extensions.ForEach(this.Graph.SelectedVertex.States,
-                    (state, i) =>
+                this.Graph.SelectedVertex.States.ForEach((state, i) =>
+                {
+                    var max = state.SafeMax;
+                    var min = state.SafeMin;
+
+                    var value = data.Evidence[i];
+
+                    var highLowItem = new HighLowItem(index, min, max, min, max);
+
+                    if (!candleStickSeries.ContainsKey(value))
                     {
-                        var max = state.SafeMax;
-                        var min = state.SafeMin;
-
-                        var value = data.Evidence[i];
-
-                        var highLowItem = new HighLowItem(index, min, max, min, max);
-
-                        if (!candleStickSeries.ContainsKey(value))
+                        candleStickSeries[value] = new CandleStickSeries
                         {
-                            candleStickSeries[value] = new CandleStickSeries
-                            {
-                                Color = OxyColors.Green,
-                                CandleWidth = 10 * value
-                            };
-                        }
+                            Color = OxyColors.Green,
+                            CandleWidth = 10 * value
+                        };
+                    }
 
-                        candleStickSeries[value].Items.Add(highLowItem);
-                    });
+                    candleStickSeries[value].Items.Add(highLowItem);
+                });
 
                 return;
             }
@@ -321,7 +318,7 @@ namespace Marv.Input
 
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
-            return Marv.Extensions.IndexOf(this.AnchorPoints, anchorPoint => anchorPoint.Category.Equals(point.Category));
+            return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
         }
 
         private void InitializeChart()

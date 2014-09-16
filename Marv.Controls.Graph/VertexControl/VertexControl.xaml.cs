@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Input;
 using Marv;
-using Marv.Graph;
 
 namespace Marv.Controls.Graph
 {

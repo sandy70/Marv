@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv;
-using Marv.Graph;
 
 namespace Marv.Controls.Graph
 {
@@ -18,7 +17,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Marv.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
+            DependencyProperty.Register("Graph", typeof (Marv.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -67,11 +66,11 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public Marv.Graph.Graph Graph
+        public Marv.Graph Graph
         {
             get
             {
-                return (Marv.Graph.Graph) this.GetValue(GraphProperty);
+                return (Marv.Graph) this.GetValue(GraphProperty);
             }
 
             set
@@ -184,9 +183,9 @@ namespace Marv.Controls.Graph
 
             if (control == null || control.Graph == null) return;
 
-            var oldGraph = e.OldValue as Marv.Graph.Graph;
+            var oldGraph = e.OldValue as Marv.Graph;
 
-            control.RaiseGraphChanged(e.NewValue as Marv.Graph.Graph, oldGraph);
+            control.RaiseGraphChanged(e.NewValue as Marv.Graph, oldGraph);
 
             if (oldGraph != null)
             {
@@ -260,7 +259,7 @@ namespace Marv.Controls.Graph
 
         public void Open(string fileName)
         {
-            this.Graph = Marv.Graph.Graph.Read(fileName);
+            this.Graph = Marv.Graph.Read(fileName);
             this.Graph.Run();
         }
 
@@ -280,11 +279,11 @@ namespace Marv.Controls.Graph
             this.Open(openFileDialog.FileName);
         }
 
-        public void RaiseGraphChanged(Marv.Graph.Graph newGraph, Marv.Graph.Graph oldGraph)
+        public void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
         {
             if (this.GraphChanged != null)
             {
-                this.GraphChanged(this, new ValueChangedArgs<Marv.Graph.Graph>
+                this.GraphChanged(this, new ValueChangedArgs<Marv.Graph>
                 {
                     NewValue = newGraph,
                     OldValue = oldGraph
@@ -386,6 +385,6 @@ namespace Marv.Controls.Graph
 
         public event EventHandler<Vertex> SelectionChanged;
 
-        public event EventHandler<ValueChangedArgs<Marv.Graph.Graph>> GraphChanged;
+        public event EventHandler<ValueChangedArgs<Marv.Graph>> GraphChanged;
     }
 }

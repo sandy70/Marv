@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv;
-using Marv.Graph;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;

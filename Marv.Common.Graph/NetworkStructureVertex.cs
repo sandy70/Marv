@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
-namespace Marv.Graph
+namespace Marv
 {
     public class NetworkStructureVertex
     {

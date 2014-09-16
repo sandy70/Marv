@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Marv;
-using Marv.Graph;
 using Marv.Map;
 using Marv.Controls;
 
@@ -77,7 +76,7 @@ namespace Marv
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001, OnSelectedYearChanged));
 
         public static readonly DependencyProperty GraphProperty =
-        DependencyProperty.Register("Graph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("Graph", typeof(Marv), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001));
@@ -209,9 +208,9 @@ namespace Marv
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public Graph Graph
+        public Marv Graph
         {
-            get { return (Graph)GetValue(GraphProperty); }
+            get { return (Marv)GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
         }
 

@@ -1,22 +1,13 @@
-﻿using NLog;
-using QuickGraph;
+﻿using QuickGraph;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Graph
+namespace Marv
 {
     public class Edge : Model, IEdge<Vertex>, ILink<Vertex>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         private EdgeConnectorPositions connectorPositions = new EdgeConnectorPositions();
         private Vertex source;
         private Vertex target;
-
-        public Edge(Vertex source, Vertex target)
-        {
-            this.Source = source;
-            this.Target = target;
-        }
 
         public EdgeConnectorPositions ConnectorPositions
         {
@@ -35,28 +26,10 @@ namespace Marv.Graph
             }
         }
 
-        object ILink.Source
+        public Edge(Vertex source, Vertex target)
         {
-            get
-            {
-                return this.Source;
-            }
-            set
-            {
-                this.Source = value as Vertex;
-            }
-        }
-
-        object ILink.Target
-        {
-            get
-            {
-                return this.Target;
-            }
-            set
-            {
-                this.Target = value as Vertex;
-            }
+            this.Source = source;
+            this.Target = target;
         }
 
         public Vertex Source
@@ -90,6 +63,30 @@ namespace Marv.Graph
                     this.target = value;
                     this.RaisePropertyChanged("Target");
                 }
+            }
+        }
+
+        object ILink.Source
+        {
+            get
+            {
+                return this.Source;
+            }
+            set
+            {
+                this.Source = value as Vertex;
+            }
+        }
+
+        object ILink.Target
+        {
+            get
+            {
+                return this.Target;
+            }
+            set
+            {
+                this.Target = value as Vertex;
             }
         }
 

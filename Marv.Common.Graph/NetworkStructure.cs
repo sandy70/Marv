@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Smile;
 
-namespace Marv.Graph
+namespace Marv
 {
     public class NetworkStructure
     {

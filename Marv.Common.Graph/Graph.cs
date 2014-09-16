@@ -8,7 +8,7 @@ using NLog;
 using QuickGraph.Algorithms.RankedShortestPath;
 using Smile;
 
-namespace Marv.Graph
+namespace Marv
 {
     public partial class Graph : Model
     {

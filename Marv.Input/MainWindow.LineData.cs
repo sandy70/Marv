@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Marv;
-using Marv.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 

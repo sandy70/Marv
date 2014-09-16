@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using Marv.Graph;
+using Marv;
 
 namespace Marv_Excel
 {
