@@ -379,7 +379,7 @@ namespace Marv.Input
             //{
             //    this.Notifications.Push(new Notification
             //    {
-            //        Name = "No network available!",
+            //        Key = "No network available!",
             //        Description = "You cannot create and input if no network is opened.",
             //        IsIndeterminate = true
             //    });

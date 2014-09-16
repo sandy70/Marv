@@ -11,7 +11,7 @@ using Smile;
 
 namespace Marv
 {
-    public partial class Graph : Model
+    public partial class Graph : NotifyPropertyChanged
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -21,6 +21,7 @@ namespace Marv
         private Guid guid;
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
+        private string key;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
@@ -149,6 +150,25 @@ namespace Marv
             }
         }
 
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public Dictionary<string, string> Loops
         {
             get
@@ -212,7 +232,7 @@ namespace Marv
 
             graph.DefaultGroup = graph.NetworkStructure.ParseUserProperty("defaultgroup", "all");
             graph.Guid = Guid.Parse(graph.NetworkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
-            graph.Name = graph.NetworkStructure.ParseUserProperty("key", "");
+            graph.Key = graph.NetworkStructure.ParseUserProperty("key", "");
 
             // Add all the vertices
             foreach (var structureVertex in graph.NetworkStructure.Vertices)
@@ -264,9 +284,12 @@ namespace Marv
             return graph;
         }
 
-        public static Task<Graph> ReadAsync(string fileName)
+        public void ClearEvidence()
         {
-            return Task.Run(() => Read(fileName));
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.ClearEvidence();
+            }
         }
 
         public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
@@ -445,7 +468,14 @@ namespace Marv
                 }
             }
 
-            this.UpdateBelief();
+            this.NetworkStructure.Run();
+
+            var belief = this.NetworkStructure.GetBelief();
+
+            foreach (var vertexKey in belief.Keys)
+            {
+                this.Vertices[vertexKey].States.SetBelief(belief[vertexKey]);
+            }
         }
 
         public void SetEvidence(Dict<string, VertexData> vertexEvidences)
@@ -459,18 +489,6 @@ namespace Marv
 
                 vertex.EvidenceString = vertexEvidence == null ? null : vertexEvidences[vertexKey].String;
                 vertex.UpdateStateEvidences();
-            }
-        }
-
-        public void UpdateBelief()
-        {
-            this.NetworkStructure.Run();
-
-            var belief = this.NetworkStructure.GetBelief();
-
-            foreach (var vertexKey in belief.Keys)
-            {
-                this.Vertices[vertexKey].States.SetBelief(belief[vertexKey]);
             }
         }
 

@@ -262,7 +262,7 @@ namespace Marv_Excel
                 },
                 ColumnHeaders = new List<string>
                 {
-                    "Section Name",
+                    "Section Key",
                     "Latitude",
                     "Longitude"
                 },

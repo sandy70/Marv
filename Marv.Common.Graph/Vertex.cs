@@ -523,6 +523,14 @@ namespace Marv
             }
         }
 
+        public void ClearEvidence()
+        {
+            foreach (var state in this.States)
+            {
+                state.Evidence = 0;
+            }
+        }
+
         public IEnumerable<double> ParseEvidence(IDistribution dist)
         {
             return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));

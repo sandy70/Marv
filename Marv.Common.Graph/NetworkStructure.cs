@@ -399,7 +399,7 @@ namespace Marv
             {
                 "defaultgroup=" + graph.DefaultGroup,
                 "guid=" + graph.Guid,
-                "key=" + graph.Name,
+                "key=" + graph.Key,
             };
 
             this.Properties["HR_Desc"] = userProperties.String().Enquote();

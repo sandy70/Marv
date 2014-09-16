@@ -94,7 +94,7 @@
                             <telerik:RadComboBox Grid.Row="0"
                                                  CanAutocompleteSelectItems="True"
                                                  CanKeyboardNavigationSelectItems="True"
-                                                 DisplayMemberPath="Name"
+                                                 DisplayMemberPath="Key"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
                                                  IsSynchronizedWithCurrentItem="False"
