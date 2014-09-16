@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.MaskedInput;
-using Marv.Common;
+using Marv;
 using NLog;
 
 namespace Marv.Controls

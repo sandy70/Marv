@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 using MoreLinq;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -15,7 +15,6 @@ using DataPoint = OxyPlot.DataPoint;
 using LinearAxis = Telerik.Windows.Controls.ChartView.LinearAxis;
 using LineSeries = OxyPlot.Series.LineSeries;
 using LogarithmicAxis = Telerik.Windows.Controls.ChartView.LogarithmicAxis;
-using ScatterPoint = OxyPlot.Series.ScatterPoint;
 
 namespace Marv.Input
 {
@@ -215,9 +214,9 @@ namespace Marv.Input
 
         private static void SortScatter(ScatterSeries scatter)
         {
-            scatter.Points.Sort(
-                delegate(ScatterPoint p1, ScatterPoint p2) { return p1.X.CompareTo(p2.X); }
-                );
+            //scatter.Points.Sort(
+            //    delegate(ScatterPoint p1, ScatterPoint p2) { return p1.X.CompareTo(p2.X); }
+            //    );
         }
 
         private static void UpdateLine(LineSeries line, ScatterSeries scatter)
@@ -271,7 +270,7 @@ namespace Marv.Input
 
             if (data.String.Contains(","))
             {
-                Common.Extensions.ForEach(this.Graph.SelectedVertex.States,
+                Marv.Extensions.ForEach(this.Graph.SelectedVertex.States,
                     (state, i) =>
                     {
                         var max = state.SafeMax;
@@ -304,7 +303,7 @@ namespace Marv.Input
             }
             else if (values.Count == 1)
             {
-                scatterSeries.Points.Add(new ScatterPoint(index, values[0]));
+                //scatterSeries.Points.Add(new Telerik.Charting.ScatterPoint(index, values[0]));
             }
         }
 
@@ -322,7 +321,7 @@ namespace Marv.Input
 
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
-            return Common.Extensions.IndexOf(this.AnchorPoints, anchorPoint => anchorPoint.Category.Equals(point.Category));
+            return Marv.Extensions.IndexOf(this.AnchorPoints, anchorPoint => anchorPoint.Category.Equals(point.Category));
         }
 
         private void InitializeChart()

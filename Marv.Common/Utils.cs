@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using Newtonsoft.Json;
 
-namespace Marv.Common
+namespace Marv
 {
     public static class Utils
     {

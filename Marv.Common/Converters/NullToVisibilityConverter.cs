@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv.Common
+namespace Marv
 {
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class NullToVisibilityConverter : DependencyObject, IValueConverter

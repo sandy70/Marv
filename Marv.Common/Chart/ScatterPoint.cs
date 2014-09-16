@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Marv.Common
+namespace Marv
 {
     public class ScatterPoint : Model
     {

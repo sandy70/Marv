@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Marv.Common
+namespace Marv
 {
     public class NotifyPropertyChanged : INotifyPropertyChanged
     {

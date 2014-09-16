@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Marv.Common
+namespace Marv
 {
     public class List<TValue, TKey> : ObservableCollection<TValue> where TValue : class, IKey<TKey>
     {

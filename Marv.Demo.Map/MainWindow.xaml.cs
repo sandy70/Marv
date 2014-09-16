@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Marv.Common.Map;
+using Marv.Map;
 
 namespace Marv.Demo.Map
 {

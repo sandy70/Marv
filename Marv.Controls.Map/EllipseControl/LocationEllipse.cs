@@ -1,5 +1,5 @@
-﻿using Marv.Common;
-using Marv.Common.Map;
+﻿using Marv;
+using Marv.Map;
 
 namespace Marv.Controls.Map
 {

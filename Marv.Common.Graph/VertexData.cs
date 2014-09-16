@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public class VertexData
     {

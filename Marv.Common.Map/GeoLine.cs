@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Marv.Common.Map
+namespace Marv.Map
 {
     public class GeoLine : ModelCollection<GeoPoint>
     {

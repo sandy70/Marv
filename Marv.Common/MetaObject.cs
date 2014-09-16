@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Marv.Common
+namespace Marv
 {
     internal sealed class MetaObject<T> : DynamicMetaObject
     {

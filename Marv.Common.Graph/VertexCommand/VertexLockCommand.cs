@@ -1,4 +1,4 @@
-﻿namespace Marv.Common.Graph
+﻿namespace Marv.Graph
 {
     public class VertexLockCommand : Command<Vertex>
     {

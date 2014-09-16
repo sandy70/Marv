@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Marv.Common
+namespace Marv
 {
     public class EffectiveFlawData
     {

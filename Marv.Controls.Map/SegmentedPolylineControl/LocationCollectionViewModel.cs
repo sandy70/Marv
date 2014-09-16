@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
-using Marv.Common.Map;
+using Marv.Map;
 
 namespace Marv.Controls.Map
 {

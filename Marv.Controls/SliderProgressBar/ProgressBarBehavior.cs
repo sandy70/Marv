@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using Marv.Common;
+using Marv;
 using Telerik.Windows.Controls;
 
 namespace Marv.Controls

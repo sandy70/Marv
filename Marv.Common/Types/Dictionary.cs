@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Marv.Common
+namespace Marv
 {
     public class Dictionary<T1, T2, TValue> : Dictionary<T1, Dictionary<T2, TValue>>
     {

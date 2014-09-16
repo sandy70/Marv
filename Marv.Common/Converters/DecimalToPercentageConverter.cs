@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Marv.Common
+namespace Marv
 {
     [ValueConversion(typeof(double), typeof(double))]
     public class DecimalToPercentageConverter : IValueConverter

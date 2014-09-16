@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Marv.Common
+namespace Marv
 {
     [ValueConversion(typeof(IEnumerable<int>), typeof(string))]
     public class IEnumerableIntToStringConverter : IValueConverter

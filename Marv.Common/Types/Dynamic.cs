@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Marv.Common
+namespace Marv
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {

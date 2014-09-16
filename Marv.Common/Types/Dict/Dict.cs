@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
-namespace Marv.Common
+namespace Marv
 {
     public partial class Dict<TKey, TValue> : ObservableCollection<Kvp<TKey, TValue>>
     {

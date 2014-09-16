@@ -2,8 +2,8 @@
 using System.Windows;
 using System.Windows.Interactivity;
 using System.Windows.Media;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 using Marv.Controls;
 using Telerik.Windows.Controls.ChartView;
 

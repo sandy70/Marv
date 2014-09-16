@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     [Serializable]
     public class VertexValueUndefindedException : Exception

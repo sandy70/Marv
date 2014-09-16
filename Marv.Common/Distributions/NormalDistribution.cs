@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Marv.Common
+namespace Marv
 {
     /// <summary>
     /// Class NormalDist represents the normal (Gaussian) probability distribution

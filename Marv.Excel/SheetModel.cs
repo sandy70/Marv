@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 using Microsoft.Office.Interop.Excel;
 
 namespace Marv_Excel

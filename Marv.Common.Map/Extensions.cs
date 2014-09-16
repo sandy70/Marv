@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common.Map
+namespace Marv.Map
 {
     public static class Extensions
     {

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Interactivity;
-using Marv.Common;
-using Marv.Common.Map;
+using Marv;
+using Marv.Map;
 using NLog;
 
 namespace Marv

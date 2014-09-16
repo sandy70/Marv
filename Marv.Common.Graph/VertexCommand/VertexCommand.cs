@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public class VertexCommand : Model
     {

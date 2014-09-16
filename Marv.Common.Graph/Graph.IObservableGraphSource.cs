@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public partial class Graph : IObservableGraphSource
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using MoreLinq;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public class Vertex : Model
     {

@@ -1,4 +1,4 @@
-﻿namespace Marv.Common
+﻿namespace Marv
 {
     public class ValueChangedArgs<T>
     {

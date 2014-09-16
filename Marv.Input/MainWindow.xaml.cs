@@ -6,8 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv.Graph;
 using Microsoft.Win32;
 using OxyPlot;
 using Telerik.Windows.Controls;
@@ -24,7 +23,7 @@ namespace Marv.Input
             DependencyProperty.Register("EndYear", typeof (int), typeof (MainWindow), new PropertyMetadata(2000, ChangedEndYear));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof(Graph.Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty InputRowsProperty =
             DependencyProperty.Register("InputRows", typeof (ObservableCollection<dynamic>), typeof (MainWindow), new PropertyMetadata(null));
@@ -85,11 +84,11 @@ namespace Marv.Input
             }
         }
 
-        public Graph Graph
+        public Graph.Graph Graph
         {
             get
             {
-                return (Graph) GetValue(GraphProperty);
+                return (Graph.Graph)GetValue(GraphProperty);
             }
 
             set
@@ -427,7 +426,7 @@ namespace Marv.Input
             this.LineDataControl.SetSelectedCells(vertex.GetEvidence());
         }
 
-        private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
+        private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph.Graph> e)
         {
             //this.LineData = new LineData();
             this.LineData = new LineData();

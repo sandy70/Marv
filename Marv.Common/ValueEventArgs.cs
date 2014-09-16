@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Marv.Common
+namespace Marv
 {
     public class ValueEventArgs<T> : RoutedEventArgs
     {

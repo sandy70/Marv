@@ -2,7 +2,7 @@
 using QuickGraph;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public class Edge : Model, IEdge<Vertex>, ILink<Vertex>
     {

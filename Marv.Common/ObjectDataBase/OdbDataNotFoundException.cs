@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv.Common
+namespace Marv
 {
     [Serializable]
     public class OdbDataNotFoundException : Exception

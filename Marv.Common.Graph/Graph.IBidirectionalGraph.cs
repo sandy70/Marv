@@ -2,7 +2,7 @@
 using System.Linq;
 using QuickGraph;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public partial class Graph : IBidirectionalGraph<Vertex, Edge>
     {

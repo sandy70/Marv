@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace Marv.Common.Map
+namespace Marv.Map
 {
     public class LocationRectConverter : TypeConverter
     {

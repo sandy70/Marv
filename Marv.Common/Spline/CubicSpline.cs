@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv.Common
+namespace Marv
 {
     /// <summary>
     ///     Cubic spline interpolation.

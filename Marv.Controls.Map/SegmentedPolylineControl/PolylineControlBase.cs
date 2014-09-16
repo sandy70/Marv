@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Marv.Common.Map;
+using Marv.Map;
 using NLog;
 
 namespace Marv.Controls.Map

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 
 namespace Marv.Input
 {

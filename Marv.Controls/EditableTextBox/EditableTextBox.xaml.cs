@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Marv.Common;
+using Marv;
 
 namespace Marv.Controls
 {

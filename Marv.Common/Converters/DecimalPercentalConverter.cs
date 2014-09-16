@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace Marv.Common
+namespace Marv
 {
     public class DecimalPercentalConverter : IValueConverter
     {

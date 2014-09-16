@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public static partial class Extensions
     {

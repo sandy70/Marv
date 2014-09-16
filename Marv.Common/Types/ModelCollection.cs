@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace Marv.Common
+namespace Marv
 {
     public class ModelCollection<T> : ObservableCollection<T>, IModel where T : IModel
     {

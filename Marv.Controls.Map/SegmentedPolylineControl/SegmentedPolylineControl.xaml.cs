@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Marv.Common;
-using Marv.Common.Map;
+using Marv;
+using Marv.Map;
 using NLog;
-using Utils = Marv.Common.Map.Utils;
+using Utils = Marv.Map.Utils;
 
 namespace Marv.Controls.Map
 {
@@ -250,7 +250,7 @@ namespace Marv.Controls.Map
 
         public void UpdateSimplifiedPolylineParts()
         {
-            var mapView = Common.Extensions.FindParent<MapView>(this);
+            var mapView = Marv.Extensions.FindParent<MapView>(this);
             var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
             if (this.PolylineParts != null)
             {

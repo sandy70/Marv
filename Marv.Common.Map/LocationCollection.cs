@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 
-namespace Marv.Common.Map
+namespace Marv.Map
 {
     public class LocationCollection : ModelCollection<Location>
     {

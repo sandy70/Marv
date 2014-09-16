@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Marv.Common
+namespace Marv
 {
     [Serializable]
     public class InvalidValueException : Exception

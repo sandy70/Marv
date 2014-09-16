@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Marv.Common.Graph
+namespace Marv.Graph
 {
     public class YearEvidence : IKey<int>
     {

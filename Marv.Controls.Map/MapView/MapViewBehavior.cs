@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Interactivity;
-using Marv.Common;
-using Marv.Common.Map;
-using Utils = Marv.Common.Map.Utils;
+using Marv;
+using Marv.Map;
+using Utils = Marv.Map.Utils;
 
 namespace Marv.Controls.Map
 {

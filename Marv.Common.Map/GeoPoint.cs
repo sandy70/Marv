@@ -1,4 +1,4 @@
-﻿namespace Marv.Common.Map
+﻿namespace Marv.Map
 {
     public class GeoPoint : Model
     {

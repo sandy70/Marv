@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using Marv.Common;
-using Marv.Common.Map;
+using Marv;
+using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -39,7 +39,7 @@ namespace Marv.Controls.Map
             this.AssociatedObject.Ellipse.TouchMove += this.Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
-            var mapView = Common.Extensions.FindParent<MapView>(this.AssociatedObject);
+            var mapView = Marv.Extensions.FindParent<MapView>(this.AssociatedObject);
 
             if (mapView != null)
             {
@@ -50,7 +50,7 @@ namespace Marv.Controls.Map
 
         private void AssociatedObject_TouchDown(object sender, TouchEventArgs e)
         {
-            var mapItemsControl = Common.Extensions.FindParent<MapControl.MapItemsControl>(this.AssociatedObject);
+            var mapItemsControl = Marv.Extensions.FindParent<MapControl.MapItemsControl>(this.AssociatedObject);
 
             if (mapItemsControl != null)
             {
@@ -142,10 +142,10 @@ namespace Marv.Controls.Map
 
         private void SelectLocation(Point position)
         {
-            var map = Common.Extensions.FindParent<MapControl.Map>(this.AssociatedObject);
+            var map = Marv.Extensions.FindParent<MapControl.Map>(this.AssociatedObject);
             var mLocation = map.ViewportPointToLocation(position);
             var location = new Location { Latitude = mLocation.Latitude, Longitude = mLocation.Longitude };
-            var nearestLocation = Common.Map.Extensions.NearestTo(this.AssociatedObject.Locations, location);
+            var nearestLocation = Marv.Map.Extensions.NearestTo(this.AssociatedObject.Locations, location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
 

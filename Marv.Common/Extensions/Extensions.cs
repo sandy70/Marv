@@ -9,7 +9,7 @@ using MoreLinq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
-namespace Marv.Common
+namespace Marv
 {
     public static partial class Extensions
     {

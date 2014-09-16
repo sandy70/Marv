@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common
+namespace Marv
 {
     public partial class Dict<TKey, TValue> : IDictionary<TKey, TValue>
     {

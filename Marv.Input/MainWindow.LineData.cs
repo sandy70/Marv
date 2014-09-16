@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 

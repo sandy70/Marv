@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Threading;
 
-namespace Marv.Common
+namespace Marv
 {
     public class NotificationTimed : Notification
     {

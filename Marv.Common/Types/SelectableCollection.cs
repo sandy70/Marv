@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Marv.Common
+namespace Marv
 {
     public class SelectableCollection<T> : ObservableCollection<T>, IModel where T : class
     {

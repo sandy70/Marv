@@ -4,13 +4,13 @@ using System.IO;
 using System.Threading.Tasks;
 using Caching;
 using MapControl;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 using Marv.Controls.Map;
 using NLog;
 using OfficeOpenXml;
 using Telerik.Windows.Controls;
-using LocationCollection = Marv.Common.Map.LocationCollection;
+using LocationCollection = Marv.Map.LocationCollection;
 
 namespace Marv
 {

@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Marv.Common
+namespace Marv
 {
     public class KeyedCollection<T> : ObservableCollection<T>, IKeyed
     {

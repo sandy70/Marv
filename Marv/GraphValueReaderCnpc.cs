@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
+using Marv.Graph;
 
 namespace Marv
 {

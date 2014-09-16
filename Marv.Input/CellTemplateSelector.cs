@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Marv.Common.Graph;
+using Marv.Graph;
 using Telerik.Charting;
 using Telerik.Windows.Controls.GridView;
 

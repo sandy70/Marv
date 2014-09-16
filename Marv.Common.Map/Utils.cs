@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Marv.Common.Map
+namespace Marv.Map
 {
     public static class Utils
     {

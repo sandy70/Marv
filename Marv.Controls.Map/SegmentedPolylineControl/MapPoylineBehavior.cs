@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using System.Windows.Interactivity;
 using MapControl;
-using Marv.Common;
+using Marv;
 
 namespace Marv.Controls.Map
 {
