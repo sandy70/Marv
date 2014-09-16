@@ -25,26 +25,8 @@ namespace Marv.Input
             Max
         };
 
-        public enum PlotAxis
-        {
-            XAxis,
-            YAxis
-        }
-
         public static readonly DependencyProperty AnchorPointsProperty =
             DependencyProperty.Register("AnchorPoints", typeof (ObservableCollection<CategoricalDataPoint>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<CategoricalDataPoint>()));
-
-        public static readonly DependencyProperty BaseDistributionPointsProperty =
-            DependencyProperty.Register("BaseDistributionPoints", typeof (ObservableCollection<ObservableCollection<ProbabilityDataPoint>>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>()));
-
-        public static readonly DependencyProperty BaseNumberPointsProperty =
-            DependencyProperty.Register("BaseNumberPoints", typeof (ObservableCollection<CategoricalDataPoint>), typeof (MainWindow), new PropertyMetadata(new ObservableCollection<CategoricalDataPoint>()));
-
-        public static readonly DependencyProperty BaseRangePointsProperty =
-            DependencyProperty.Register("BaseRangePoints", typeof (ObservableCollection<RangeDataPoint>), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty ChartCellModelsProperty =
-            DependencyProperty.Register("ChartCellModels", typeof (IEnumerable<CellModel>), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IsChartEditEnabledProperty =
             DependencyProperty.Register("IsChartEditEnabled", typeof (bool), typeof (MainWindow), new PropertyMetadata(false));
@@ -86,54 +68,6 @@ namespace Marv.Input
             set
             {
                 SetValue(AnchorPointsProperty, value);
-            }
-        }
-
-        public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> BaseDistributionPoints
-        {
-            get
-            {
-                return (ObservableCollection<ObservableCollection<ProbabilityDataPoint>>) GetValue(BaseDistributionPointsProperty);
-            }
-            set
-            {
-                SetValue(BaseDistributionPointsProperty, value);
-            }
-        }
-
-        public ObservableCollection<CategoricalDataPoint> BaseNumberPoints
-        {
-            get
-            {
-                return (ObservableCollection<CategoricalDataPoint>) GetValue(BaseNumberPointsProperty);
-            }
-            set
-            {
-                SetValue(BaseNumberPointsProperty, value);
-            }
-        }
-
-        public ObservableCollection<RangeDataPoint> BaseRangePoints
-        {
-            get
-            {
-                return (ObservableCollection<RangeDataPoint>) GetValue(BaseRangePointsProperty);
-            }
-            set
-            {
-                SetValue(BaseRangePointsProperty, value);
-            }
-        }
-
-        public IEnumerable<CellModel> ChartCellModels
-        {
-            get
-            {
-                return (IEnumerable<CellModel>) GetValue(ChartCellModelsProperty);
-            }
-            set
-            {
-                SetValue(ChartCellModelsProperty, value);
             }
         }
 
@@ -215,105 +149,6 @@ namespace Marv.Input
             //scatter.Points.Sort(
             //    delegate(ScatterPoint p1, ScatterPoint p2) { return p1.X.CompareTo(p2.X); }
             //    );
-        }
-
-        private static void UpdateLine(LineSeries line, ScatterSeries scatter)
-        {
-            line.Points.Clear();
-
-            foreach (var point in scatter.Points)
-            {
-                line.Points.Add(new DataPoint(point.X, point.Y));
-            }
-
-            line.Points.Sort(
-                delegate(DataPoint p1, DataPoint p2) { return p1.X.CompareTo(p2.X); }
-                );
-        }
-
-        private void AddPlotInfo(string title, string xAxis)
-        {
-            this.DataPlotModel.Title = title;
-
-            this.DataPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = xAxis
-            });
-
-            if (this.Graph.SelectedVertex.IsLogScale)
-            {
-                this.DataPlotModel.Axes.Add(new OxyPlot.Axes.LogarithmicAxis
-                {
-                    Position = AxisPosition.Left,
-                    Title = "Input Data"
-                });
-            }
-            else
-            {
-                this.DataPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis
-                {
-                    Position = AxisPosition.Left,
-                    Title = "Input Data"
-                });
-            }
-        }
-
-        private void AddPointsToPlot(VertexData data, ScatterSeries scatterSeries, Dictionary<double, CandleStickSeries> candleStickSeries, double index)
-        {
-            if (data == null || string.IsNullOrWhiteSpace(data.String))
-            {
-                return;
-            }
-
-            if (data.String.Contains(","))
-            {
-                this.Graph.SelectedVertex.States.ForEach((state, i) =>
-                {
-                    var max = state.SafeMax;
-                    var min = state.SafeMin;
-
-                    var value = data.Evidence[i];
-
-                    var highLowItem = new HighLowItem(index, min, max, min, max);
-
-                    if (!candleStickSeries.ContainsKey(value))
-                    {
-                        candleStickSeries[value] = new CandleStickSeries
-                        {
-                            Color = OxyColors.Green,
-                            CandleWidth = 10 * value
-                        };
-                    }
-
-                    candleStickSeries[value].Items.Add(highLowItem);
-                });
-
-                return;
-            }
-
-            var values = VertexData.ParseEvidenceParams(data.String);
-
-            if (data.String.Contains(":") && values.Count == 2)
-            {
-                candleStickSeries[1].Items.Add(new HighLowItem(index, values[0], values[1], values[0], values[1]));
-            }
-            else if (values.Count == 1)
-            {
-                //scatterSeries.Points.Add(new Telerik.Charting.ScatterPoint(index, values[0]));
-            }
-        }
-
-        private bool DoesPointExist(int xCoord, double yCoord, ScatterSeries series)
-        {
-            foreach (var point in series.Points)
-            {
-                if (xCoord == (int) point.X || xCoord <= 0)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
@@ -617,87 +452,6 @@ namespace Marv.Input
                     //}
                 }
             }
-        }
-
-        private bool isCorrectPointPosition(int xCoord, double yCoord)
-        {
-            if (PlotLineType == LineType.Mode)
-            {
-                foreach (var maxP in maxScatter.Points)
-                {
-                    if (xCoord == (int) maxP.X && yCoord > maxP.Y)
-                    {
-                        return false;
-                    }
-                }
-                foreach (var minP in minScatter.Points)
-                {
-                    if (xCoord == (int) minP.X && yCoord < minP.Y)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else if (PlotLineType == LineType.Min)
-            {
-                foreach (var maxP in maxScatter.Points)
-                {
-                    if (xCoord == (int) maxP.X && yCoord > maxP.Y)
-                    {
-                        return false;
-                    }
-                }
-                foreach (var modeP in modeScatter.Points)
-                {
-                    if (xCoord == (int) modeP.X && yCoord > modeP.Y)
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                foreach (var minP in minScatter.Points)
-                {
-                    if (xCoord == (int) minP.X && yCoord < minP.Y)
-                    {
-                        return false;
-                    }
-                }
-                foreach (var modeP in modeScatter.Points)
-                {
-                    if (xCoord == (int) modeP.X && yCoord < modeP.Y)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        public ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
-        {
-            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
-
-            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
-            {
-                this.MaxPoints,
-                this.ModePoints,
-                this.MinPoints
-            };
-
-            return series.MinBy(s =>
-            {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
-
-                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
-
-                return Math.Abs(spline.Eval(new[]
-                {
-                    (float) userPointAnchorIndex
-                })[0] - userPoint.Value.Value);
-            });
         }
     }
 }
