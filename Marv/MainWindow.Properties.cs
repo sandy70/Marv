@@ -208,9 +208,9 @@ namespace Marv
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public Marv Graph
+        public Graph Graph
         {
-            get { return (Marv)GetValue(GraphProperty); }
+            get { return (Graph)GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
         }
 

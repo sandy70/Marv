@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Marv
 {
-    public class KeyedCollection<T> : ObservableCollection<T>, IKeyed
+    public class KeyedCollection<T> : ObservableCollection<T>, IKeyed where T : IKeyed
     {
         private readonly Dictionary<string, T> dictionary = new Dictionary<string, T>();
         private string key;

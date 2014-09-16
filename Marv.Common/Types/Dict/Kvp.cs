@@ -1,9 +1,23 @@
 ﻿namespace Marv
 {
-    public class Kvp<TKey, TValue> : NotifyPropertyChanged
+    public class Kvp<TKey, TValue> : NotifyPropertyChanged, IKeyed<TKey>
     {
-        private TValue _value;
         private TKey key;
+        private TValue value;
+
+        public TValue Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                this.value = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public TKey Key
         {
@@ -15,20 +29,6 @@
             set
             {
                 this.key = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public TValue Value
-        {
-            get
-            {
-                return this._value;
-            }
-
-            set
-            {
-                this._value = value;
                 this.RaisePropertyChanged();
             }
         }

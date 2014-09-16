@@ -65,7 +65,7 @@ namespace Marv
             }
         }
 
-        public static Dictionary<string, string, double> GetGraphEvidence(Marv graph, string fileName, string pipeName, string locationName)
+        public static Dictionary<string, string, double> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {

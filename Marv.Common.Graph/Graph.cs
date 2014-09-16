@@ -447,14 +447,6 @@ namespace Marv
             this.UpdateBelief();
         }
 
-        public void Run(SectionEvidence sectionEvidence)
-        {
-            foreach (var yearEvidence in sectionEvidence.YearEvidences)
-            {
-                this.NetworkStructure.Run(yearEvidence.VertexEvidences);
-            }
-        }
-
         public void SetEvidence(Dict<string, VertexData> vertexEvidences)
         {
             this.Vertices.ClearEvidence();

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Interactivity;
-using Marv;
 using Marv.Map;
-using Utils = Marv.Map.Utils;
 
 namespace Marv.Controls.Map
 {
@@ -49,8 +47,8 @@ namespace Marv.Controls.Map
 
             var rect = new LocationRect
             {
-                NorthWest = Utils.Mid(mapView.Center, mapView.Extent.NorthWest),
-                SouthEast = Utils.Mid(mapView.Center, mapView.Extent.SouthEast)
+                NorthWest = Marv.Map.Utils.Mid(mapView.Center, mapView.Extent.NorthWest),
+                SouthEast = Marv.Map.Utils.Mid(mapView.Center, mapView.Extent.SouthEast)
             };
 
             if (this.previousCenter == null)

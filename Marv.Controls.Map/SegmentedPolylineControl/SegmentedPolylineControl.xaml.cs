@@ -231,7 +231,7 @@ namespace Marv.Controls.Map
                     }
                     else
                     {
-                        var mid = Utils.Mid(locationCollection.Last(), location);
+                        var mid = Marv.Map.Utils.Mid(locationCollection.Last(), location);
                         locationCollection.Add(mid);
                         locationCollection = new LocationCollection();
                         locationCollection.Add(mid);
