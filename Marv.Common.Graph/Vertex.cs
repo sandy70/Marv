@@ -28,6 +28,7 @@ namespace Marv
         private bool isExpanded;
         private bool isHeader;
         private bool isLocked = true;
+        private bool isSelected;
         private string key;
         private State mostProbableState;
         private string name;
@@ -272,6 +273,25 @@ namespace Marv
             get
             {
                 return this.States.Any(state => state.Min != 0 && state.Max >= state.Min * 9.99);
+            }
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return this.isSelected;
+            }
+
+            set
+            {
+                if (value.Equals(this.isSelected))
+                {
+                    return;
+                }
+
+                this.isSelected = value;
+                this.RaisePropertyChanged();
             }
         }
 
