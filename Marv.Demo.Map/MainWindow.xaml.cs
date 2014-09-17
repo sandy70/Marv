@@ -5,7 +5,7 @@ using Marv.Map;
 
 namespace Marv.Demo.Map
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (MainWindow), new PropertyMetadata(null));

@@ -15,7 +15,7 @@ namespace Marv.Map
             var dLong = (l2.Longitude - l1.Longitude) / 180 * Math.PI;
 
             var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2)
-                        + Math.Cos(l1.Latitude / 180 * Math.PI) * Math.Cos(l2.Latitude / 180 * Math.PI) * Math.Sin(dLong / 2) * Math.Sin(dLong / 2);
+                    + Math.Cos(l1.Latitude / 180 * Math.PI) * Math.Cos(l2.Latitude / 180 * Math.PI) * Math.Sin(dLong / 2) * Math.Sin(dLong / 2);
 
             var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
@@ -29,7 +29,7 @@ namespace Marv.Map
 
             //Denominator part of the function
             var dr = Math.Pow(radiusE * Math.Cos(l1.Latitude / 180 * Math.PI), 2)
-                            + Math.Pow(radiusP * Math.Sin(l1.Latitude / 180 * Math.PI), 2);
+                     + Math.Pow(radiusP * Math.Sin(l1.Latitude / 180 * Math.PI), 2);
 
             var radius = Math.Sqrt(nr / dr);
 
@@ -51,7 +51,7 @@ namespace Marv.Map
             };
         }
 
-        public async static Task<IEnumerable<Location>> ReadEarthquakesAsync(IProgress<double> progress)
+        public static async Task<IEnumerable<LocationValue>> ReadEarthquakesAsync(IProgress<double> progress)
         {
             var webClient = new WebClient();
 
@@ -61,18 +61,13 @@ namespace Marv.Map
 
             if (xDocument.Root != null)
             {
-                return xDocument.Root.Elements("{http://www.w3.org/2005/Atom}entry")
-                    .Select(entry =>
-                    {
-                        var location = Location.Parse(entry.Element("{http://www.georss.org/georss}point").Value);
-
-                        location.Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3));
-
-                        // location["Date"] = entry.Element("{http://www.w3.org/2005/Atom}updated").Value;
-                        // location["Title"] = entry.Element("{http://www.w3.org/2005/Atom}title").Value;
-
-                        return location;
-                    });
+                return xDocument.Root
+                                .Elements("{http://www.w3.org/2005/Atom}entry")
+                                .Select(entry => new LocationValue
+                                {
+                                    Location = Location.Parse(entry.Element("{http://www.georss.org/georss}point").Value),
+                                    Value = double.Parse(entry.Element("{http://www.w3.org/2005/Atom}title").Value.Substring(2, 3))
+                                });
             }
 
             return null;

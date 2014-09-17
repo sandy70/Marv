@@ -76,7 +76,7 @@ namespace Marv
         DependencyProperty.Register("SelectedYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001, OnSelectedYearChanged));
 
         public static readonly DependencyProperty GraphProperty =
-        DependencyProperty.Register("Graph", typeof(Marv), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("Graph", typeof(Graph), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartYearProperty =
         DependencyProperty.Register("StartYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2001));

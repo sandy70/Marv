@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 
 namespace Marv.Map
 {
-    public class LocationCollection : ModelCollection<Location>
+    public class LocationCollection : KeyedCollection<Location>
     {
-        // ReSharper disable once InconsistentNaming
-        private Dictionary<string, double> _value = new Dictionary<string, double>();
         private LocationRect bounds;
 
         /// <summary>
@@ -30,38 +28,6 @@ namespace Marv.Map
                 }
             }
         }
-
-        public Dictionary<string, double> Value
-        {
-            get
-            {
-                return this._value;
-            }
-
-            set
-            {
-                if (value != this._value)
-                {
-                    this._value = value;
-                    this.RaisePropertyChanged();
-
-                    foreach (var location in this)
-                    {
-                        location.Value = this.Value[location.Name];
-                    }
-
-                    if (this.ValueChanged != null)
-                    {
-                        this.ValueChanged(this, new EventArgs());
-                    }
-                }
-            }
-        }
-
-        public LocationCollection() {}
-
-        public LocationCollection(IEnumerable<Location> locations)
-            : base(locations) {}
 
         /// <summary>
         ///     Reads a LocationCollection from a CSV file. The file is expected to have 3 columns - Section ID, Lat, Lon. The file
@@ -96,23 +62,6 @@ namespace Marv.Map
         }
 
         // Everytime the collection is changed, the bounds are updated.
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-
-            if (e.NewItems != null)
-            {
-                foreach (var newItem in e.NewItems)
-                {
-                    this.UpdateBounds(newItem as Location);
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                this.UpdateBounds();
-            }
-        }
 
         private void UpdateBounds()
         {
@@ -152,6 +101,22 @@ namespace Marv.Map
             }
         }
 
-        public event EventHandler ValueChanged;
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            base.OnCollectionChanged(e);
+
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    this.UpdateBounds(newItem as Location);
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                this.UpdateBounds();
+            }
+        }
     }
 }

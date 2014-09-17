@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Marv.Map
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static LocationRect GetBounds(this IEnumerable<LocationCollection> locationCollections)
         {

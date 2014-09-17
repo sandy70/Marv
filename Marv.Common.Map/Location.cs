@@ -1,10 +1,29 @@
 ﻿namespace Marv.Map
 {
-    public class Location : Model
+    public class Location : NotifyPropertyChanged, IKeyed
     {
-        private double _value;
+        private string key;
         private double latitude;
         private double longitude;
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public double Latitude
         {
@@ -31,20 +50,6 @@
             set
             {
                 this.longitude = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double Value
-        {
-            get
-            {
-                return this._value;
-            }
-
-            set
-            {
-                this._value = value;
                 this.RaisePropertyChanged();
             }
         }

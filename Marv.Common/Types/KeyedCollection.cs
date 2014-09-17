@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Marv
 {
@@ -60,6 +61,11 @@ namespace Marv
                     this.dictionary[keyedItem.Key] = (T) keyedItem;
                 }
             }
+        }
+
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
     }
 }

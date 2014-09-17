@@ -137,7 +137,7 @@ namespace Marv
             window.Notifications.Push(notification);
 
             // Read source graph
-            window.Graph = await Marv.ReadAsync(window.NetworkFileName);
+            window.Graph = Graph.Read(window.NetworkFileName);
 
             // Close notification
             window.Notifications.Remove(notification);
