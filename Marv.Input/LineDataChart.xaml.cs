@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using Marv;
 using MoreLinq;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
@@ -43,8 +41,9 @@ namespace Marv.Input
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
         private ObservableCollection<CategoricalDataPoint> anchorPoints;
-        private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> baseDistributionPoints;
+        private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> baseDistributionSeries;
         private ObservableCollection<CategoricalDataPoint> baseNumberPoints;
+        private ObservableCollection<ObservableCollection<CategoricalDataPoint>> evidenceSeries;
         private ObservableCollection<CategoricalDataPoint> maxPoints;
         private ObservableCollection<CategoricalDataPoint> minPoints;
         private ObservableCollection<CategoricalDataPoint> modePoints;
@@ -66,18 +65,18 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> BaseDistributionPoints
+        public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> BaseDistributionSeries
         {
             get
             {
-                return this.baseDistributionPoints;
+                return this.baseDistributionSeries;
             }
 
             set
             {
-                if (value != this.baseDistributionPoints)
+                if (value != this.baseDistributionSeries)
                 {
-                    this.baseDistributionPoints = value;
+                    this.baseDistributionSeries = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -97,6 +96,25 @@ namespace Marv.Input
                     this.baseNumberPoints = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public ObservableCollection<ObservableCollection<CategoricalDataPoint>> EvidenceSeries
+        {
+            get
+            {
+                return this.evidenceSeries;
+            }
+
+            set
+            {
+                if (value.Equals(this.evidenceSeries))
+                {
+                    return;
+                }
+
+                this.evidenceSeries = value;
+                this.RaisePropertyChanged();
             }
         }
 
@@ -334,8 +352,8 @@ namespace Marv.Input
                 return;
             }
 
-            var first = this.AnchorPoints.First().Category as string;
-            var last = this.AnchorPoints.Last().Category as string;
+            var first = this.AnchorPoints.First().Category;
+            var last = this.AnchorPoints.Last().Category;
 
             var maxValue = this.Vertex.SafeMax * 0.9;
             var minValue = this.Vertex.SafeMin == 0 ? 1 : this.Vertex.SafeMin * 1.1;
@@ -409,8 +427,9 @@ namespace Marv.Input
             }
 
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-            this.BaseDistributionPoints = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
 
+            this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
             var categories = this.IsXAxisSections ? this.LineData.Sections.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
             foreach (var category in categories)
@@ -446,19 +465,19 @@ namespace Marv.Input
                     {
                         paramValues.Sort();
 
-                        while (this.BaseDistributionPoints.Count < 2)
+                        while (this.BaseDistributionSeries.Count < 2)
                         {
-                            this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+                            this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
                         }
 
-                        this.BaseDistributionPoints[0].Add(new ProbabilityDataPoint
+                        this.BaseDistributionSeries[0].Add(new ProbabilityDataPoint
                         {
                             Category = category,
                             Value = paramValues[0],
                             Probability = 0
                         });
 
-                        this.BaseDistributionPoints[1].Add(new ProbabilityDataPoint
+                        this.BaseDistributionSeries[1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
                             Value = paramValues[1],
@@ -476,12 +495,12 @@ namespace Marv.Input
 
                         this.Vertex.States.ForEach((state, i) =>
                         {
-                            if (this.BaseDistributionPoints.Count < i + 1)
+                            if (this.BaseDistributionSeries.Count < i + 1)
                             {
-                                this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+                                this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
                             }
 
-                            this.BaseDistributionPoints[i].Add(new ProbabilityDataPoint
+                            this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
                                 Value = state.SafeMax - state.SafeMin,
@@ -506,7 +525,7 @@ namespace Marv.Input
 
             var userPoint = new CategoricalDataPoint
             {
-                Category = data.FirstValue as string,
+                Category = data.FirstValue,
                 Value = (double) data.SecondValue
             };
 
@@ -569,7 +588,7 @@ namespace Marv.Input
                 var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
 
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SectionId;
-                var year = this.IsXAxisSections ? this.Year : (int)point.Category;
+                var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
                 var vertexData = new VertexData();
                 vertexData.Evidence = this.Vertex.ParseEvidence(evidenceString).ToArray();

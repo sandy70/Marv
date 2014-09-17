@@ -320,7 +320,7 @@ namespace Marv.Input
             //var cellModels = this.IsYearPlot ? this.InputRows.ToCellModels(sourceCellModel.Header) : this.InputGridView.Columns.ToCellModels(sourceCellModel.Row);
 
             //this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-            //this.BaseDistributionPoints = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            //this.baseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
             //this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
             //this.BaseRangePoints = new ObservableCollection<RangeDataPoint>();
 
@@ -352,19 +352,19 @@ namespace Marv.Input
             //        {
             //            paramValues.Sort();
 
-            //            while (this.BaseDistributionPoints.Count < 2)
+            //            while (this.baseDistributionSeries.Count < 2)
             //            {
-            //                this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+            //                this.baseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
             //            }
 
-            //            this.BaseDistributionPoints[0].Add(new ProbabilityDataPoint
+            //            this.baseDistributionSeries[0].Add(new ProbabilityDataPoint
             //            {
             //                Category = cellModel.SectionId,
             //                Value = paramValues[0],
             //                Probability = 0
             //            });
 
-            //            this.BaseDistributionPoints[1].Add(new ProbabilityDataPoint
+            //            this.baseDistributionSeries[1].Add(new ProbabilityDataPoint
             //            {
             //                Category = cellModel.SectionId,
             //                Value = paramValues[1],
@@ -380,12 +380,12 @@ namespace Marv.Input
 
             //            this.Graph.SelectedVertex.States.ForEach((state, i) =>
             //            {
-            //                if (this.BaseDistributionPoints.Count < i + 1)
+            //                if (this.baseDistributionSeries.Count < i + 1)
             //                {
-            //                    this.BaseDistributionPoints.Add(new ObservableCollection<ProbabilityDataPoint>());
+            //                    this.baseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
             //                }
 
-            //                this.BaseDistributionPoints[i].Add(new ProbabilityDataPoint
+            //                this.baseDistributionSeries[i].Add(new ProbabilityDataPoint
             //                {
             //                    Category = cellModel.SectionId,
             //                    Value = state.SafeMax - state.SafeMin,
