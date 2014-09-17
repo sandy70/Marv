@@ -202,6 +202,84 @@ namespace Marv.Input
             this.LineData.AddSections(keys);
         }
 
+        private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.GridView.SelectedCells.Count < 1)
+            {
+                return;
+            }
+
+            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+
+            if (selectedCellModel.IsColumnSectionId)
+            {
+                return;
+            }
+
+            foreach (var row in this.Rows)
+            {
+                foreach (var column in this.GridView.Columns)
+                {
+                    var cellModel = new CellModel(row, column.Header as string);
+
+                    if (cellModel.IsColumnSectionId)
+                    {
+                        continue;
+                    }
+
+                    this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+                }
+            }
+        }
+
+        private void CopyAcrossColButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.GridView.SelectedCells.Count < 1)
+            {
+                return;
+            }
+
+            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+
+            if (selectedCellModel.IsColumnSectionId)
+            {
+                return;
+            }
+
+            foreach (var row in this.Rows)
+            {
+                var cellModel = new CellModel(row, selectedCellModel.Header);
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+            }
+        }
+
+        private void CopyAcrossRowButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.GridView.SelectedCells.Count < 1)
+            {
+                return;
+            }
+
+            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+
+            if (selectedCellModel.IsColumnSectionId)
+            {
+                return;
+            }
+
+            foreach (var column in this.GridView.Columns)
+            {
+                var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+
+                if (cellModel.IsColumnSectionId)
+                {
+                    continue;
+                }
+
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+            }
+        }
+
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
@@ -305,6 +383,15 @@ namespace Marv.Input
             this.AddSectionsButton.Click -= AddSectionsButton_Click;
             this.AddSectionsButton.Click += AddSectionsButton_Click;
 
+            this.CopyAcrossAllButton.Click -= CopyAcrossAllButton_Click;
+            this.CopyAcrossAllButton.Click += CopyAcrossAllButton_Click;
+
+            this.CopyAcrossColButton.Click -= CopyAcrossColButton_Click;
+            this.CopyAcrossColButton.Click += CopyAcrossColButton_Click;
+
+            this.CopyAcrossRowButton.Click -= CopyAcrossRowButton_Click;
+            this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
+
             this.OpenButton.Click -= OpenButton_Click;
             this.OpenButton.Click += OpenButton_Click;
 
@@ -383,8 +470,6 @@ namespace Marv.Input
 
                 this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
             }
-
-            this.RaiseCellChanged(cellModel);
         }
 
         private void UpdateRows()
@@ -412,14 +497,6 @@ namespace Marv.Input
             this.Rows = newRows;
         }
 
-        public void RaiseCellChanged(CellModel cellModel)
-        {
-            if (this.CellChanged != null)
-            {
-                this.CellChanged(this, cellModel);
-            }
-        }
-
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -437,12 +514,9 @@ namespace Marv.Input
             }
         }
 
-        public void UpdateCurrentGraphData()
+        public void UpdateCurrentGraphData(string sectionId, int year)
         {
-            var cellModel = this.GridView.GetSelectionAnchorCell().ToModel();
-            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+            this.CurrentGraphData = this.LineData.Sections[sectionId][year];
         }
-
-        public event EventHandler<CellModel> CellChanged;
     }
 }

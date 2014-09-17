@@ -126,7 +126,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Icons\CopyIntoAll.png">
+    <Resource Include="Resources\Icons\CopyAcrossAll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\Back.png">
@@ -145,10 +145,10 @@
     <Resource Include="Resources\Icons\AutoFit.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Icons\CopyAcrossRows.png">
+    <Resource Include="Resources\Icons\CopyAcrossCol.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Icons\CopyAcrossColumns.png">
+    <Resource Include="Resources\Icons\CopyAcrossRow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\Plot.png">

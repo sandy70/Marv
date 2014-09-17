@@ -83,24 +83,12 @@ namespace Marv.Input
             this.LineData.Sections["Section 1"] = new Dict<int, string, VertexData>();
         }
 
-        private void LineDataControl_CellChanged(object sender, CellModel cellModel)
-        {
-            if (cellModel.IsColumnSectionId)
-            {
-                return;
-            }
-
-            this.Graph.NetworkStructure.Run(this.LineData.Sections[cellModel.SectionId]);
-            this.LineDataControl.UpdateCurrentGraphData();
-        }
+        
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
-
-            this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
-            this.LineDataControl.CellChanged += LineDataControl_CellChanged;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }

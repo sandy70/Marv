@@ -47,6 +47,20 @@
                 </telerik:RadButton>
             </ToolBar>
 
+            <ToolBar Height="32">
+                <telerik:RadButton Name="CopyAcrossColButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="CopyAcrossRowButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRow.png" />
+                </telerik:RadButton>
+
+                <telerik:RadButton Name="CopyAcrossAllButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
+                </telerik:RadButton>
+            </ToolBar>
+
             <ToolBar Height="32"
                      IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}">
                 <telerik:RadButton Name="AddSectionsButton"
