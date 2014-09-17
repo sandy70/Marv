@@ -18,7 +18,7 @@ namespace Marv
         event EventHandler Closed;
     }
 
-    public class Notification : Model, INotification
+    public class Notification : NotifyPropertyChanged, INotification
     {
         private double _value = 100;
         private string description;
@@ -27,6 +27,8 @@ namespace Marv
         private bool isMuteable;
         private bool isMuted;
         private bool isTimed;
+
+        private string name;
 
         public TimeSpan Duration
         {
@@ -59,6 +61,25 @@ namespace Marv
                     this.isTimed = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value.Equals(this.name))
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
             }
         }
 

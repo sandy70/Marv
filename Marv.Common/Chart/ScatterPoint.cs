@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Marv
+﻿namespace Marv
 {
-    public class ScatterPoint : Model
+    public class ScatterPoint : NotifyPropertyChanged
     {
         private double xValue;
+
+        private double? yValue;
 
         public double XValue
         {
@@ -26,8 +22,6 @@ namespace Marv
                 }
             }
         }
-
-        private double? yValue;
 
         public double? YValue
         {

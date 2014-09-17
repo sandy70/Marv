@@ -70,7 +70,6 @@
   <ItemGroup>
     <Compile Include="ChartAxes.cs" />
     <Compile Include="ChartSeries.cs" />
-    <Compile Include="ChartSeriesDescriptorSelector.cs" />
     <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>

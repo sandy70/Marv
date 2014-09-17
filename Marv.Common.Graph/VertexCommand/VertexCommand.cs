@@ -1,17 +1,13 @@
-﻿using System;
-
-namespace Marv
+﻿namespace Marv
 {
-    public class VertexCommand : Model
+    public class VertexCommand : NotifyPropertyChanged
     {
-        public static VertexCommand VertexClearCommand = new VertexCommand
+        public static readonly VertexCommand VertexClearCommand = new VertexCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/Clear.png"
         };
 
         private string imageSource;
-
-        public event EventHandler<Vertex> Executed;
 
         public string ImageSource
         {
@@ -25,16 +21,8 @@ namespace Marv
                 if (value != this.imageSource)
                 {
                     this.imageSource = value;
-                    this.RaisePropertyChanged("ImageSource");
+                    this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public virtual void RaiseExecuted(Vertex vertexViewModel)
-        {
-            if (this.Executed != null)
-            {
-                this.Executed(this, vertexViewModel);
             }
         }
     }

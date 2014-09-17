@@ -1,5 +1,4 @@
-﻿using Marv;
-using System;
+﻿using System;
 using System.Windows.Media;
 using Telerik.Windows.Controls.ChartView;
 
@@ -14,46 +13,10 @@ namespace Marv.Controls
         string XLabel { get; set; }
     }
 
-    public class ChartSeries<T> : ModelCollection<T>, IChartSeries where T : class, IModel
+    public class ChartSeries<T> : KeyedCollection<T> where T : IKeyed
     {
-        private CartesianAxis horizontalAxis;
         private Brush stroke = new SolidColorBrush(Colors.LightBlue);
         private Type type;
-        private CartesianAxis verticalAxis;
-
-        private string xLabel;
-
-        public ChartSeries()
-            : base()
-        {
-            if (this is ChartSeries<ScatterPoint>)
-            {
-                this.HorizontalAxis = ChartAxes.HorizontalLinearAxis;
-                this.VerticalAxis = ChartAxes.VerticalLinearAxis;
-            }
-            else if (this is ChartSeries<CategoricalPoint>)
-            {
-                this.HorizontalAxis = ChartAxes.HorizontalCategoricalAxis;
-                this.VerticalAxis = ChartAxes.VerticalCategoricalAxis;
-            }
-        }
-
-        public CartesianAxis HorizontalAxis
-        {
-            get
-            {
-                return this.horizontalAxis;
-            }
-
-            set
-            {
-                if (value != this.horizontalAxis)
-                {
-                    this.horizontalAxis = value;
-                    this.RaisePropertyChanged("HorizontalAxis");
-                }
-            }
-        }
 
         public Brush Stroke
         {
@@ -67,7 +30,7 @@ namespace Marv.Controls
                 if (value != this.stroke)
                 {
                     this.stroke = value;
-                    this.RaisePropertyChanged("Stroke");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -84,43 +47,7 @@ namespace Marv.Controls
                 if (value != this.type)
                 {
                     this.type = value;
-                    this.RaisePropertyChanged("Type");
-                }
-            }
-        }
-
-        public CartesianAxis VerticalAxis
-        {
-            get
-            {
-                return this.verticalAxis;
-            }
-
-            set
-            {
-                if (value != this.verticalAxis)
-                {
-                    this.verticalAxis = value;
-                    this.RaisePropertyChanged("VerticalAxis");
-                }
-            }
-        }
-
-        public string XLabel
-        {
-            get
-            {
-                return this.xLabel;
-            }
-
-            set
-            {
-                if (value != this.xLabel)
-                {
-                    this.xLabel = value;
-                    this.RaisePropertyChanged("XLabel");
-
-                    this.HorizontalAxis.Title = this.XLabel;
+                    this.RaisePropertyChanged();
                 }
             }
         }

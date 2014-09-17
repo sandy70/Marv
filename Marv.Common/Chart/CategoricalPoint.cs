@@ -1,6 +1,6 @@
 ﻿namespace Marv
 {
-    public class CategoricalPoint : Model
+    public class CategoricalPoint : NotifyPropertyChanged, IKeyed
     {
         private double? _value;
         private object category;
@@ -36,6 +36,14 @@
                     this._value = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        string IKeyed<string>.Key
+        {
+            get
+            {
+                return this.Category as string;
             }
         }
     }

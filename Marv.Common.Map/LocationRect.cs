@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace Marv.Map
 {
     [TypeConverter(typeof(LocationRectConverter))]
-    public class LocationRect : Model
+    public class LocationRect : NotifyPropertyChanged
     {
         private double east;
         private double north;
