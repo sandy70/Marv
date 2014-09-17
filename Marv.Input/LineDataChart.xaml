@@ -75,10 +75,18 @@
                     <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Polygon Points="0,4 4,-4 -4,-4 0,4"
-                                     Stroke="Green" Fill="Green" />
+                                     Stroke="DarkGoldenrod" Fill="DarkGoldenrod" />
                         </DataTemplate>
                     </telerik:LineSeries.PointTemplate>
                 </telerik:LineSeries>
+
+                <telerik:LineSeries Name="MaxSeries"
+                                    CategoryBinding="Category" ValueBinding="Value"
+                                    ItemsSource="{Binding ElementName=Root, Path=MaxPoints}"
+                                    Stroke="Transparent"
+                                    StrokeThickness="32"
+                                    Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
+                                    ZIndex="1000" />
 
                 <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
                                     Effect="{StaticResource DropShadow}"
@@ -89,7 +97,7 @@
                     <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Ellipse Height="8" Width="8"
-                                     Stroke="Green" Fill="Green" />
+                                     Stroke="DarkGoldenrod" Fill="DarkGoldenrod" />
                         </DataTemplate>
                     </telerik:LineSeries.PointTemplate>
                 </telerik:LineSeries>
@@ -103,7 +111,7 @@
                     <telerik:LineSeries.PointTemplate>
                         <DataTemplate>
                             <Polygon Points="0,-4 -4,4 4,4 0,-4"
-                                     Stroke="Green" Fill="Green" />
+                                     Stroke="DarkGoldenrod" Fill="DarkGoldenrod" />
                         </DataTemplate>
                     </telerik:LineSeries.PointTemplate>
                 </telerik:LineSeries>

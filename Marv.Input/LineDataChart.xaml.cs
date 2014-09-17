@@ -13,6 +13,8 @@ namespace Marv.Input
 {
     public partial class LineDataChart : INotifyPropertyChanged
     {
+        private const double Tolerance = 50;
+
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
             DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
@@ -291,6 +293,53 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        protected void UpdateLineData()
+        {
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            var splines = series.Select(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+            });
+
+            this.AnchorPoints.ForEach((point, i) =>
+            {
+                var values = splines.Select(spline => spline.Eval(new[]
+                {
+                    (float) i
+                })[0]).ToArray();
+
+                var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
+
+                var sectionId = this.IsXAxisSections ? point.Category as string : this.SectionId;
+                var year = this.IsXAxisSections ? this.Year : (int) point.Category;
+
+                var vertexData = new VertexData();
+                vertexData.Evidence = this.Vertex.ParseEvidence(evidenceString).ToArray();
+                vertexData.String = evidenceString;
+
+                this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;
+            });
+
+            this.LineData.RaiseDataChanged();
+        }
+
         private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(this.Chart);
@@ -309,6 +358,7 @@ namespace Marv.Input
         private void Chart_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.UpdateLineData();
+            this.UpdateBasePoints();
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
@@ -533,15 +583,9 @@ namespace Marv.Input
 
             var nearestSeries = this.GetNearestSeries(userPoint);
 
-            var isPointExisting = false;
+            var pointsWithinTolerance = nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
 
-            foreach (var point in nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < 50))
-            {
-                point.Value = (double) data.SecondValue;
-                isPointExisting = true;
-            }
-
-            if (!isPointExisting)
+            if (pointsWithinTolerance.Count == 0)
             {
                 var nearestPointAnchorIndex = 0;
 
@@ -559,52 +603,12 @@ namespace Marv.Input
 
                 nearestSeries.Insert(userPointInsertIndex, userPoint);
             }
-        }
-
-        protected void UpdateLineData()
-        {
-            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            else
             {
-                this.MaxPoints,
-                this.ModePoints,
-                this.MinPoints
-            };
-
-            var splines = series.Select(s =>
-            {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
-
-                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
-            });
-
-            this.AnchorPoints.ForEach((point, i) =>
-            {
-                var values = splines.Select(spline => spline.Eval(new[]
+                foreach (var point in pointsWithinTolerance)
                 {
-                    (float) i
-                })[0]).ToArray();
-
-                var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
-
-                var sectionId = this.IsXAxisSections ? point.Category as string : this.SectionId;
-                var year = this.IsXAxisSections ? this.Year : (int) point.Category;
-
-                var vertexData = new VertexData();
-                vertexData.Evidence = this.Vertex.ParseEvidence(evidenceString).ToArray();
-                vertexData.String = evidenceString;
-
-                this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;
-            });
-
-            this.LineData.RaiseDataChanged();
-        }
-
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    point.Value = (double) data.SecondValue;
+                }
             }
         }
     }

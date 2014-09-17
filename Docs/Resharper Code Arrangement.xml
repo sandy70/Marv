@@ -121,7 +121,18 @@ II.2.12 <HandlesEvent />
       </Sort>
     </Entry>
 
- <!--static fields-->
+    <!-- consts -->
+    <Entry>
+      <Match>
+        <Kind Is="constant"/>
+      </Match>
+      <Sort>
+        <Access Order="public internal protected private" />
+        <Name/>
+      </Sort>
+    </Entry>
+
+    <!--static fields-->
     <Entry>
       <Match>
         <And>
@@ -130,10 +141,10 @@ II.2.12 <HandlesEvent />
         </And>
       </Match>
       <Sort>
-        <Access Order="private protected internal public" />
+        <Access Order="public internal protected private" />
         <Name/>
       </Sort>
-     </Entry>
+    </Entry>
     
     <!--instance fields-->
     <Entry>
@@ -146,7 +157,7 @@ II.2.12 <HandlesEvent />
         </And>
       </Match>
       <Sort>
-        <Access Order="private protected internal public" />
+        <Access Order="public internal protected private" />
         <Readonly/>
         <Name/>
       </Sort>
@@ -155,50 +166,50 @@ II.2.12 <HandlesEvent />
     <!--properties, indexers-->
     <Entry>
       <Match>
-	<Or>
-	   <Kind Is="property"/>
-     <Kind Is="indexer"/>
-	</Or>
+      	<Or>
+          <Kind Is="property"/>
+          <Kind Is="indexer"/>
+        </Or>
       </Match>
-     <Sort>
-         <Name/>
+      <Sort>
+       <Name/>
      </Sort>
-    </Entry>
-    
-    <!--Constructors. Place static one first-->
-    <Entry>
-      <Match>
-        <Kind Is="constructor"/>
-      </Match>
-      <Sort>
-        <Static/>
-      </Sort>
-    </Entry>
+   </Entry>
 
-    <!--interface implementations-->
-    <Entry>
-      <Match>
-        <And Weight="100">
-          <Kind Is="member"/>
-          <ImplementsInterface/>
-        </And>
-      </Match>
-      <Sort>
-        <ImplementsInterface Immediate="true"/>
-      </Sort>
-    </Entry>
-    
-<!--all other members-->
-<!-- Static Methods -->
-<Entry>
-  <Match>
-	<And>
-		 <Kind Is="method"/>
-		<Static />
-	</And>
-  </Match>
-  <Sort>
-    <Access Order="private protected internal public" />
+   <!--Constructors. Place static one first-->
+   <Entry>
+    <Match>
+      <Kind Is="constructor"/>
+    </Match>
+    <Sort>
+      <Static/>
+    </Sort>
+  </Entry>
+
+  <!--interface implementations-->
+  <Entry>
+    <Match>
+      <And Weight="100">
+        <Kind Is="member"/>
+        <ImplementsInterface/>
+      </And>
+    </Match>
+    <Sort>
+      <ImplementsInterface Immediate="true"/>
+    </Sort>
+  </Entry>
+
+  <!--all other members-->
+  <!-- Static Methods -->
+  <Entry>
+    <Match>
+     <And>
+       <Kind Is="method"/>
+       <Static />
+     </And>
+   </Match>
+   <Sort>
+    <Access Order="public internal protected private" />
     <Static />
     <Name/>
   </Sort>
@@ -207,29 +218,29 @@ II.2.12 <HandlesEvent />
 <!-- Non-Static Methods -->
 <Entry>
   <Match>
-	<And>
-		 <Kind Is="method"/>
-		<Not>
-			<Static />
-		</Not>
-	</And>
+   <And>
+     <Kind Is="method"/>
+     <Not>
+       <Static />
+     </Not>
+   </And>
+ </Match>
+ <Sort>
+  <Access Order="public internal protected private" />
+  <Static />
+  <Name/>
+</Sort>
+</Entry>
+
+<!--nested types-->
+<Entry>
+  <Match>
+    <Kind Is="type"/>
   </Match>
   <Sort>
-    <Access Order="private protected internal public" />
-    <Static />
     <Name/>
   </Sort>
 </Entry>
-    
-    <!--nested types-->
-    <Entry>
-      <Match>
-        <Kind Is="type"/>
-      </Match>
-      <Sort>
-        <Name/>
-      </Sort>
-    </Entry>
-  </Pattern>
-  
+</Pattern>
+
 </Patterns>
