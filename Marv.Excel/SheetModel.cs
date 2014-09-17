@@ -11,10 +11,10 @@ namespace Marv_Excel
         private List<string> columnHeaders = new List<string>();
         private int endYear;
         private Graph graph;
-        private Dictionary<string, int, string, string, double> lineEvidence = new Dictionary<string, int, string, string, double>();
-        private Dictionary<string, int, string, string, double> lineValue = new Dictionary<string,int,string,string,double>();
-        private Dictionary<int, string, string, double> modelEvidence = new Dictionary<int, string, string, double>();
-        private Dictionary<int, string, string, double> modelValue;
+        private Dict<string, int, string, string, double> lineEvidence = new Dict<string, int, string, string, double>();
+        private Dict<string, int, string, string, double> lineValue = new Dict<string, int, string, string, double>();
+        private Dict<int, string, string, double> modelEvidence = new Dict<int, string, string, double>();
+        private Dict<int, string, string, double> modelValue;
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
         private int startYear;
         private IEnumerable<Vertex> vertices;
@@ -55,7 +55,7 @@ namespace Marv_Excel
             }
         }
 
-        public Dictionary<string, int, string, string, double> LineEvidence
+        public Dict<string, int, string, string, double> LineEvidence
         {
             get
             {
@@ -68,7 +68,7 @@ namespace Marv_Excel
             }
         }
 
-        public Dictionary<string, int, string, string, double> LineValue
+        public Dict<string, int, string, string, double> LineValue
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Marv_Excel
             }
         }
 
-        public Dictionary<int, string, string, double> ModelEvidence
+        public Dict<int, string, string, double> ModelEvidence
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Marv_Excel
             }
         }
 
-        public Dictionary<int, string, string, double> ModelValue
+        public Dict<int, string, string, double> ModelValue
         {
             get
             {
@@ -211,7 +211,7 @@ namespace Marv_Excel
 
                 if (!sheetModel.LineEvidence.ContainsKey(sectionId))
                 {
-                    sheetModel.LineEvidence[sectionId] = new Dictionary<int, string, string, double>();
+                    sheetModel.LineEvidence[sectionId] = new Dict<int, string, string, double>();
                 }
 
                 // Get vertexKey

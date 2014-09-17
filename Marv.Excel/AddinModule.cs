@@ -272,7 +272,7 @@ namespace Marv_Excel
                 Vertices = this.TaskPane.SelectedVertices
             };
 
-            sheetModel.LineValue["One"] = new Dictionary<int, string, string, double>();
+            sheetModel.LineValue["One"] = new Dict<int, string, string, double>();
             sheetModel.Write(this.InputSheet);
         }
     }

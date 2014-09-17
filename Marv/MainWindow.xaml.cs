@@ -31,11 +31,11 @@ namespace Marv
         };
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public Dictionary<LocationCollection, Dictionary<int, string, double>> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dictionary<int, string, double>>();
+        public Dictionary<LocationCollection, Dict<int, string, double>> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dict<int, string, double>>();
 
         public IGraphValueReader GraphValueReader { get; set; }
 
-        public Dictionary<int, string, string, double> GraphValues { get; set; }
+        public Dict<int, string, string, double> GraphValues { get; set; }
 
         public MainWindow()
         {
@@ -48,7 +48,7 @@ namespace Marv
             this.MapView.TileLayer = TileLayers.BingMapsAerial;
         }
 
-        public static Dictionary<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
+        public static Dict<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
         {
             logger.Info("Computing belief for line {0}.", multiLocation.Name);
 
@@ -57,7 +57,7 @@ namespace Marv
             var stateKey = "Fail";
             // var quantity = "Mean";
 
-            var multiLocationValueTimeSeries = new Dictionary<int, string, double>();
+            var multiLocationValueTimeSeries = new Dict<int, string, double>();
             var nCompleted = 0;
             var nLocations = multiLocation.Count;
 
@@ -89,7 +89,7 @@ namespace Marv
 
                 try
                 {
-                    var modelValue = Odb.ReadValueSingle<Dictionary<int, string, string, double>>(fileName, x => true);
+                    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
 
                     foreach (var year in modelValue.Keys)
                     {
@@ -128,7 +128,7 @@ namespace Marv
             return multiLocationValueTimeSeries;
         }
 
-        public static Task<Dictionary<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
+        public static Task<Dict<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
         {
             return Task.Run(() => { return CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph); });
         }
@@ -173,7 +173,7 @@ namespace Marv
                 try
                 {
                     var fileName = GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
-                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<Dictionary<int, string, double>>(fileName, x => true);
+                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<Dict<int, string, double>>(fileName, x => true);
                 }
                 catch (OdbDataNotFoundException)
                 {

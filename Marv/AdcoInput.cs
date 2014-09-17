@@ -65,11 +65,11 @@ namespace Marv
             }
         }
 
-        public static Dictionary<string, string, double> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
+        public static Dict<string, string, double> GetGraphEvidence(Graph graph, string fileName, string pipeName, string locationName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {
-                var graphEvidence = new Dictionary<string, string, double>();
+                var graphEvidence = new Dict<string, string, double>();
                 var nHeaderRows = 3;
                 var sheet = package.Workbook.Worksheets.Single(worksheet => worksheet.Name == "data");
 

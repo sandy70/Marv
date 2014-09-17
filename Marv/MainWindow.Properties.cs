@@ -58,7 +58,7 @@ namespace Marv
         DependencyProperty.Register("IsYearSliderVisible", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
 
         public static readonly DependencyProperty MultiLocationValueTimeSeriesProperty =
-        DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(Dictionary<int, string, double>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("MultiLocationValueTimeSeries", typeof(Dict<int, string, double>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty NetworkFileNameProperty =
         DependencyProperty.Register("NetworkFileName", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
@@ -172,9 +172,9 @@ namespace Marv
             set { SetValue(IsYearSliderVisibleProperty, value); }
         }
 
-        public Dictionary<int, string, double> MultiLocationValueTimeSeries
+        public Dict<int, string, double> MultiLocationValueTimeSeries
         {
-            get { return (Dictionary<int, string, double>)GetValue(MultiLocationValueTimeSeriesProperty); }
+            get { return (Dict<int, string, double>)GetValue(MultiLocationValueTimeSeriesProperty); }
             set { SetValue(MultiLocationValueTimeSeriesProperty, value); }
         }
 

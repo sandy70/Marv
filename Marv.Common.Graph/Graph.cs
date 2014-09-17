@@ -239,7 +239,7 @@ namespace Marv
             {
                 var vertex = new Vertex
                 {
-                    ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    ConnectorPositions = structureVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
                     Description = structureVertex.ParseStringProperty("HR_HTML_Desc"),
                     Groups = structureVertex.ParseGroups(),
                     HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup"),
@@ -292,12 +292,12 @@ namespace Marv
             }
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
             // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
-            var value = new Dictionary<string, string, double>();
+            var value = new Dict<string, string, double>();
 
             // Clear all evidence to begin with
             this.NetworkStructure.ClearEvidence();
@@ -329,7 +329,7 @@ namespace Marv
                         var graphValue = this.NetworkStructure.GetBelief();
                         var targetVertexValue = graphValue[targetVertex.Key];
 
-                        value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
+                        value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
                         sourceVertex.States.ClearEvidence();
                         sourceVertex.EvidenceString = null;
@@ -338,7 +338,7 @@ namespace Marv
                     {
                         Logger.Error(exception.Message);
 
-                        value[sourceVertex.Key, sourceState.Key] = double.NaN;
+                        value[sourceVertex.Key][sourceState.Key] = double.NaN;
                     }
                 }
             }
@@ -401,7 +401,7 @@ namespace Marv
                         {
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
-                                var connectorPostions = srcVertex.ConnectorPositions.GetValueOrNew(group, dstVertex.Key);
+                                var connectorPostions = srcVertex.ConnectorPositions[group][dstVertex.Key];
 
                                 subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
 
@@ -417,13 +417,13 @@ namespace Marv
             return subGraph;
         }
 
-        public Dictionary<string, string, double> ReadValueCsv(string fileName)
+        public Dict<string, string, double> ReadValueCsv(string fileName)
         {
-            var graphValue = new Dictionary<string, string, double>();
+            var graphValue = new Dict<string, string, double>();
 
             foreach (var line in File.ReadLines(fileName))
             {
-                var vertexValue = new Dictionary<string, double>();
+                var vertexValue = new Dict<string, double>();
 
                 var parts = line.Split(new[]
                 {

@@ -259,14 +259,6 @@ namespace Marv.Input
             }
         }
 
-        private void SetCell(CellModel cellModel, VertexData vertexData)
-        {
-            if (cellModel.IsColumnSectionId) return;
-
-            cellModel.Data = vertexData;
-            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
-        }
-
         private void CopyAcrossColButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.GridView.SelectedCells.Count < 1)
@@ -475,6 +467,17 @@ namespace Marv.Input
             {
                 this.LineData.WriteJson(this.FileName);
             }
+        }
+
+        private void SetCell(CellModel cellModel, VertexData vertexData)
+        {
+            if (cellModel.IsColumnSectionId)
+            {
+                return;
+            }
+
+            cellModel.Data = vertexData;
+            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)

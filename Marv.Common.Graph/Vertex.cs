@@ -18,7 +18,7 @@ namespace Marv
             VertexCommands.Clear
         };
 
-        private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
+        private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
         private string evidenceString;
@@ -57,7 +57,7 @@ namespace Marv
         }
 
         // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
-        public Dictionary<string, string, EdgeConnectorPositions> ConnectorPositions
+        public Dict<string, string, EdgeConnectorPositions> ConnectorPositions
         {
             get
             {

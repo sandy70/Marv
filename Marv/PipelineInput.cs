@@ -46,9 +46,9 @@ namespace Marv
             return -1;
         }
 
-        public Dictionary<string, string, double> GetGraphEvidence(Graph graph, string pipeName, string locationName)
+        public Dict<string, string, double> GetGraphEvidence(Graph graph, string pipeName, string locationName)
         {
-            var graphEvidence = new Dictionary<string, string, double>();
+            var graphEvidence = new Dict<string, string, double>();
             var nHeaderRows = 3;
 
             var colIndex = 1;
