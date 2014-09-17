@@ -40,6 +40,7 @@ namespace Marv.Input
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+        private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private ObservableCollection<Dynamic> rows;
 
         public Dict<string, VertexData> CurrentGraphData
@@ -182,6 +183,32 @@ namespace Marv.Input
             control.UpdateRows();
         }
 
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void SetSelectedCells(VertexData vertexData)
+        {
+            foreach (var cell in this.GridView.SelectedCells)
+            {
+                var cellModel = cell.ToModel();
+
+                if (!cellModel.IsColumnSectionId)
+                {
+                    this.SetCell(cellModel, vertexData.String);
+                }
+            }
+        }
+
+        public void UpdateCurrentGraphData(string sectionId, int year)
+        {
+            this.CurrentGraphData = this.LineData.Sections[sectionId][year];
+        }
+
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var nSection = 1;
@@ -227,9 +254,17 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+                    this.SetCell(cellModel, selectedCellModel.Data as VertexData);
                 }
             }
+        }
+
+        private void SetCell(CellModel cellModel, VertexData vertexData)
+        {
+            if (cellModel.IsColumnSectionId) return;
+
+            cellModel.Data = vertexData;
+            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
         }
 
         private void CopyAcrossColButton_Click(object sender, RoutedEventArgs e)
@@ -343,9 +378,9 @@ namespace Marv.Input
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            foreach (var cell in this.pastedCells)
+            foreach (var pastedCell in this.pastedCells)
             {
-                this.SetCell(cell.Cell.ToModel(), cell.Value as string, this.oldData[cell] as string);
+                this.SetCell(pastedCell.Cell.ToModel(), pastedCell.Value as string, this.oldData[pastedCell] as string);
             }
 
             this.pastedCells.Clear();
@@ -467,13 +502,16 @@ namespace Marv.Input
 
                 cellModel.Data = vertexData;
                 this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
-
-                this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
             }
         }
 
         private void UpdateRows()
         {
+            foreach (var selectedCell in this.GridView.SelectedCells)
+            {
+                this.selectionInfos.Add(new Tuple<int, int>(this.Rows.IndexOf(selectedCell.Item as Dynamic), selectedCell.Column.DisplayIndex));
+            }
+
             if (this.LineData == null || this.Vertex == null)
             {
                 return;
@@ -495,28 +533,18 @@ namespace Marv.Input
             }
 
             this.Rows = newRows;
-        }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
+            foreach (var selectionInfo in this.selectionInfos)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                try
+                {
+                    this.GridView.SelectedCells.Add(new GridViewCellInfo(this.Rows[selectionInfo.Item1], this.GridView.Columns[selectionInfo.Item2], this.GridView));
+                }
+                catch
+                {
+                    // do nothing
+                }
             }
-        }
-
-        public void SetSelectedCells(VertexData vertexData)
-        {
-            foreach (var cell in this.GridView.SelectedCells)
-            {
-                var cellModel = cell.ToModel();
-                this.SetCell(cellModel, vertexData.String);
-            }
-        }
-
-        public void UpdateCurrentGraphData(string sectionId, int year)
-        {
-            this.CurrentGraphData = this.LineData.Sections[sectionId][year];
         }
     }
 }

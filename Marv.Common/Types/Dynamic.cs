@@ -41,7 +41,7 @@ namespace Marv
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return this.dictionary.Keys.AsEnumerable();
+            return this.dictionary.Keys;
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)

@@ -295,8 +295,12 @@ namespace Marv.Input
         private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
-            control.UpdateLineData();
-            control.UpdateBasePoints();
+
+            if (!control.IsEvidenceEditEnabled)
+            {
+                control.UpdateLineData();
+                control.UpdateBasePoints();
+            }
         }
 
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -484,13 +488,15 @@ namespace Marv.Input
             if (this.LineData == null ||
                 this.SectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.Sections.ContainsKey(this.SectionId))
+                !this.LineData.Sections.ContainsKey(this.SectionId) ||
+                this.Vertex == null)
             {
                 return;
             }
 
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
             this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
 
             this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SectionId;
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";

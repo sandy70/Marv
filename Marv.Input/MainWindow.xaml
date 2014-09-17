@@ -91,8 +91,8 @@
 
                             <!-- Vertex Combo Box -->
                             <telerik:RadComboBox Grid.Row="0"
-                                                 CanAutocompleteSelectItems="True"
-                                                 CanKeyboardNavigationSelectItems="True"
+                                                 CanAutocompleteSelectItems="False"
+                                                 CanKeyboardNavigationSelectItems="False"
                                                  DisplayMemberPath="Key"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
