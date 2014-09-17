@@ -106,7 +106,6 @@
     <Compile Include="GridFloatReader.cs" />
     <Compile Include="MetaObject.cs" />
     <Compile Include="Distributions\NormalDistribution.cs" />
-    <Compile Include="Types\Dictionary.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\Extensions.Linq.cs" />
     <Compile Include="Notification\Notification.cs" />
