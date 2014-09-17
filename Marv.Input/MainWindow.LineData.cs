@@ -43,37 +43,6 @@ namespace Marv.Input
             }
         }
 
-        private void InputGridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
-        {
-            if (e.NewCell == null)
-            {
-                return;
-            }
-
-            var cellModel = e.NewCell.ToModel();
-
-            if (cellModel.IsColumnSectionId)
-            {
-                return;
-            }
-
-            var vertexEvidences = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
-            this.Graph.SetEvidence(vertexEvidences);
-            this.Graph.Run();
-
-            this.UpdateChartCellModels();
-        }
-
-        private void InputGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Delete && e.Key != Key.Back) {}
-
-            //foreach (var cellInfo in this.InputGridView.SelectedCells)
-            //{
-            //    this.SetCell(cellInfo.ToModel(), null);
-            //}
-        }
-
         private void InputGridView_Pasted(object sender, RadRoutedEventArgs e)
         {
             foreach (var cellClipboardEventArg in this.cellClipboardEventArgs)
