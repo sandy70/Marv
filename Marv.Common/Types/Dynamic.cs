@@ -106,5 +106,10 @@ namespace Marv
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public void Remove(string propertyName)
+        {
+            this.dictionary.Remove(propertyName);
+        }
     }
 }
