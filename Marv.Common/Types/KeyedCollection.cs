@@ -42,6 +42,11 @@ namespace Marv
             }
         }
 
+        public bool ContainsKey(string aKey)
+        {
+            return this.dictionary.ContainsKey(aKey);
+        }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
