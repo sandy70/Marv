@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using Marv;
 using Microsoft.Win32;
+using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
@@ -37,6 +38,8 @@ namespace Marv.Input
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
 
+        private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
+        private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private ObservableCollection<Dynamic> rows;
 
         public Dict<string, VertexData> CurrentGraphData
@@ -260,6 +263,22 @@ namespace Marv.Input
             }
         }
 
+        private void GridView_Pasted(object sender, RadRoutedEventArgs e)
+        {
+            foreach (var cell in this.pastedCells)
+            {
+                this.SetCell(cell.Cell.ToModel(), cell.Value as string, this.oldData[cell] as string);
+            }
+
+            this.pastedCells.Clear();
+        }
+
+        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
+        {
+            this.pastedCells.Add(e);
+            this.oldData[e] = e.Cell.ToModel().Data;
+        }
+
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
@@ -276,6 +295,12 @@ namespace Marv.Input
 
             this.GridView.Deleted -= GridView_Deleted;
             this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.Pasted -= GridView_Pasted;
+            this.GridView.Pasted += GridView_Pasted;
+
+            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
+            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
 
             this.AddSectionsButton.Click -= AddSectionsButton_Click;
             this.AddSectionsButton.Click += AddSectionsButton_Click;

@@ -106,7 +106,7 @@
                              CanUserReorderColumns="False"
                              CanUserSortColumns="False"
                              ClipboardCopyMode="Cells"
-                             ClipboardPasteMode="Cells"
+                             ClipboardPasteMode="AllSelectedCells"
                              FrozenColumnCount="1"
                              IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"
