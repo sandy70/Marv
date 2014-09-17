@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using OxyPlot;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -15,6 +12,12 @@ namespace Marv.Input
 
         public static readonly DependencyProperty NotificationsProperty =
             DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
+
+        public static readonly DependencyProperty SelectedSectionIdProperty =
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null, ChangedSelectedCell));
+
+        public static readonly DependencyProperty SelectedYearProperty =
+            DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
         private LineData lineData;
 
@@ -63,6 +66,30 @@ namespace Marv.Input
             }
         }
 
+        public string SelectedSectionId
+        {
+            get
+            {
+                return (string) GetValue(SelectedSectionIdProperty);
+            }
+            set
+            {
+                SetValue(SelectedSectionIdProperty, value);
+            }
+        }
+
+        public int SelectedYear
+        {
+            get
+            {
+                return (int) GetValue(SelectedYearProperty);
+            }
+            set
+            {
+                SetValue(SelectedYearProperty, value);
+            }
+        }
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -71,6 +98,14 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private static void ChangedSelectedCell(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as MainWindow;
+
+            control.Graph.NetworkStructure.Run(control.LineData.Sections[control.SelectedSectionId]);
+            control.LineDataControl.UpdateCurrentGraphData(control.SelectedSectionId, control.SelectedYear);
+        }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
@@ -83,31 +118,12 @@ namespace Marv.Input
             this.LineData.Sections["Section 1"] = new Dict<int, string, VertexData>();
         }
 
-        
-
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
-        }
-
-        public bool IsSelectionSquare()
-        {
-            var rowIndices = new List<int>();
-            var colIndices = new List<int>();
-
-            //foreach (var selectedCell in this.InputGridView.SelectedCells)
-            //{
-            //    Common.Extensions.AddUnique(rowIndices, this.InputRows.IndexOf(selectedCell.Item as dynamic));
-            //    colIndices.AddUnique(selectedCell.Column.DisplayIndex);
-            //}
-
-            //var total = (rowIndices.Max() - rowIndices.Min() + 1) * (colIndices.Max() - colIndices.Min() + 1);
-
-            //return total == this.InputGridView.SelectedCells.Count;
-            return true;
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)

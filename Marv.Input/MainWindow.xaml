@@ -58,8 +58,7 @@
                                               Model="{Binding ElementName=Root, Path=DataPlotModel}"
                                               Visibility="Collapsed" />
 
-                                <local:LineDataChart IsEvidenceEditEnabled="{Binding ElementName=Root, Path=IsChartEditEnabled}"
-                                                     LineData="{Binding ElementName=Root, Path=LineData}"
+                                <local:LineDataChart LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                      XTitle="{Binding ElementName=Root, Path=XTitle}"
