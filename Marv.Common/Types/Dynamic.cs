@@ -8,7 +8,7 @@ namespace Marv
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
-        private readonly Dictionary<string, object> dictionary = new Dictionary<string, object>();
+        private readonly Dict<string, object> dictionary = new Dict<string, object>();
 
         public object this[string name]
         {
