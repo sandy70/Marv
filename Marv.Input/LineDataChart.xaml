@@ -144,5 +144,13 @@
                 </telerik:ChartSeriesProvider>
             </telerik:RadCartesianChart.SeriesProvider>
         </telerik:RadCartesianChart>
+        
+        <TextBlock Grid.Row="1"
+                   Margin="10"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   IsHitTestVisible="False"
+                   Text="{Binding ElementName=Root, Path=Title}" />
     </Grid>
 </UserControl>

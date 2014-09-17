@@ -16,7 +16,7 @@ namespace Marv.Input
         private const double Tolerance = 50;
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
-            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
+            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false, ChangedEvidenceEditEnabled));
 
         public static readonly DependencyProperty IsXAxisSectionsProperty =
             DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
@@ -26,6 +26,9 @@ namespace Marv.Input
 
         public static readonly DependencyProperty SectionIdProperty =
             DependencyProperty.Register("SectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null, ChangedVertex));
@@ -219,6 +222,18 @@ namespace Marv.Input
             }
         }
 
+        public string Title
+        {
+            get
+            {
+                return (string) GetValue(TitleProperty);
+            }
+            set
+            {
+                SetValue(TitleProperty, value);
+            }
+        }
+
         public Vertex Vertex
         {
             get
@@ -276,6 +291,13 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataChart;
+            control.UpdateLineData();
+            control.UpdateBasePoints();
+        }
 
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -343,7 +365,7 @@ namespace Marv.Input
         private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(this.Chart);
-            this.UpdateEvidence(position);
+            this.UpdateEvidence(position, e.ChangedButton == MouseButton.Right);
         }
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
@@ -353,12 +375,6 @@ namespace Marv.Input
                 var position = e.GetPosition(this.Chart);
                 this.UpdateEvidence(position);
             }
-        }
-
-        private void Chart_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            this.UpdateLineData();
-            this.UpdateBasePoints();
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
@@ -461,9 +477,6 @@ namespace Marv.Input
 
             this.Chart.MouseMove -= Chart_MouseMove;
             this.Chart.MouseMove += Chart_MouseMove;
-
-            this.Chart.MouseUp -= Chart_MouseUp;
-            this.Chart.MouseUp += Chart_MouseUp;
         }
 
         private void UpdateBasePoints()
@@ -479,6 +492,7 @@ namespace Marv.Input
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
             this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
 
+            this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SectionId;
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
             var categories = this.IsXAxisSections ? this.LineData.Sections.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
@@ -564,7 +578,7 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateEvidence(Point position)
+        private void UpdateEvidence(Point position, bool removePoints = false)
         {
             var data = this.Chart.ConvertPointToData(position);
 
@@ -584,6 +598,16 @@ namespace Marv.Input
             var nearestSeries = this.GetNearestSeries(userPoint);
 
             var pointsWithinTolerance = nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
+
+            if (removePoints)
+            {
+                foreach (var point in pointsWithinTolerance)
+                {
+                    nearestSeries.Remove(point);
+                }
+
+                return;
+            }
 
             if (pointsWithinTolerance.Count == 0)
             {
