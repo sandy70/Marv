@@ -126,10 +126,18 @@ namespace Marv.Input
             this.LineData.Sections["Section 1"] = new Dict<int, string, VertexData>();
         }
 
+        private void LineDataControl_NotificationIssued(object sender, Notification notification)
+        {
+            this.Notifications.Add(notification);
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
+
+            this.LineDataControl.NotificationIssued -= LineDataControl_NotificationIssued;
+            this.LineDataControl.NotificationIssued += LineDataControl_NotificationIssued;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
         }

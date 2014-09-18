@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 using Telerik.Windows;
@@ -201,6 +203,14 @@ namespace Marv.Input
                 {
                     this.SetCell(cellModel, vertexData.String);
                 }
+            }
+        }
+
+        protected void RaiseNotificationIssued(Notification notification)
+        {
+            if (this.NotificationIssued != null)
+            {
+                this.NotificationIssued(this, notification);
             }
         }
 
@@ -444,13 +454,41 @@ namespace Marv.Input
             }
         }
 
-        private void RunAllButton_Click(object sender, RoutedEventArgs e)
+        private void RunAll(NetworkStructure networkStructure, Dict<string, int, string, VertexData> sectionData, IProgress<double> progress = null)
         {
-            foreach (var sectionId in this.LineData.Sections.Keys)
+            var total = sectionData.Keys.Count;
+            var count = 0;
+
+            foreach (var sectionId in sectionData.Keys)
             {
-                Console.WriteLine("Running: " + sectionId);
-                this.Graph.NetworkStructure.Run(this.LineData.Sections[sectionId]);
+                networkStructure.Run(sectionData[sectionId]);
+
+                count++;
+
+                if (progress != null)
+                {
+                    progress.Report((double) count / total);
+                }
+
+                Thread.Sleep(1);
             }
+        }
+
+        private async void RunAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            var networkStructure = this.Graph.NetworkStructure;
+            var sectionData = this.LineData.Sections;
+
+            var notification = new Notification
+            {
+                Description = "Running Model"
+            };
+
+            this.RaiseNotificationIssued(notification);
+
+            var progress = new Progress<double>(p => notification.Value = p * 100);
+
+            await Task.Run(() => this.RunAll(networkStructure, sectionData, progress));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -556,5 +594,7 @@ namespace Marv.Input
                 }
             }
         }
+
+        public event EventHandler<Notification> NotificationIssued;
     }
 }
