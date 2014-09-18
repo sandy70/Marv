@@ -468,7 +468,7 @@ namespace Marv
                 }
             }
 
-            this.NetworkStructure.Run();
+            this.NetworkStructure.UpdateBeliefs();
 
             var belief = this.NetworkStructure.GetBelief();
 

@@ -157,7 +157,7 @@ namespace Marv
                 this.SetEvidence(vertexKey, graphData[vertexKey].Evidence);
             }
 
-            this.Run();
+            this.UpdateBeliefs();
 
             var beliefs = this.GetBelief();
 
@@ -234,8 +234,6 @@ namespace Marv
 
         public Dictionary<string, double[]> GetBelief()
         {
-            this.Run();
-
             var graphValue = new Dictionary<string, double[]>();
 
             foreach (var vertex in this.Vertices)
@@ -281,7 +279,7 @@ namespace Marv
             return defaultValue;
         }
 
-        public void Run()
+        public void UpdateBeliefs()
         {
             this.network.UpdateBeliefs();
         }
