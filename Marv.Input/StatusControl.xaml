@@ -46,7 +46,7 @@
                                     Value="{Binding ElementName=Root, Path=SelectedNotification.Value}" />
 
             <TextBlock HorizontalAlignment="Center"
-                       Text="{Binding ElementName=Root, Path=SelectedNotification.Value, StringFormat={}{0}%}"
+                       Text="{Binding ElementName=Root, Path=SelectedNotification.Value, StringFormat={}{0:F2}%}"
                        TextWrapping="Wrap" 
                        Visibility="{Binding ElementName=Root, Path=SelectedNotification.IsIndeterminate, Converter={StaticResource BooleanToVisibilityReversed}}"/>
         </Grid>
