@@ -20,6 +20,9 @@ namespace Marv.Input
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty GraphProperty =
+            DependencyProperty.Register("Graph", typeof (Graph), typeof (LineDataControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty IsGridViewEnabledProperty =
             DependencyProperty.Register("IsGridViewEnabled", typeof (bool), typeof (LineDataControl), new PropertyMetadata(false));
 
@@ -64,6 +67,18 @@ namespace Marv.Input
             set
             {
                 SetValue(FileNameProperty, value);
+            }
+        }
+
+        public Graph Graph
+        {
+            get
+            {
+                return (Graph) GetValue(GraphProperty);
+            }
+            set
+            {
+                SetValue(GraphProperty, value);
             }
         }
 
