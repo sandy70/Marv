@@ -5,25 +5,7 @@
         private string key;
         private double latitude;
         private double longitude;
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                if (value.Equals(this.key))
-                {
-                    return;
-                }
-
-                this.key = value;
-                this.RaisePropertyChanged();
-            }
-        }
+        private double value;
 
         public double Latitude
         {
@@ -50,6 +32,44 @@
             set
             {
                 this.longitude = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double Value
+        {
+            get
+            {
+                return this.value;
+            }
+
+            set
+            {
+                if (value.Equals(this.value))
+                {
+                    return;
+                }
+
+                this.value = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
                 this.RaisePropertyChanged();
             }
         }

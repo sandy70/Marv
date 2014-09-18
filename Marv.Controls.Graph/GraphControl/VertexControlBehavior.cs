@@ -1,5 +1,4 @@
 ﻿using System.Windows.Interactivity;
-using Marv;
 
 namespace Marv.Controls.Graph
 {
@@ -24,19 +23,9 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.Clear)
             {
-                graphControl.Graph.Vertices.ClearEvidence();
+                graphControl.Graph.ClearEvidence();
                 graphControl.Graph.Run();
             }
-
-            graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
-        }
-
-        private void RaiseEvidenceEntered()
-        {
-            var vertexControl = this.AssociatedObject;
-            var graphControl = vertexControl.FindParent<GraphControl>();
-
-            graphControl.RaiseEvidenceEntered(vertexControl.Vertex);
         }
     }
 }

@@ -361,7 +361,7 @@ namespace Marv.Input
 
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.Graph.Data = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+            this.Graph.SetData(this.LineData.Sections[cellModel.SectionId][cellModel.Year]);
         }
 
         private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)

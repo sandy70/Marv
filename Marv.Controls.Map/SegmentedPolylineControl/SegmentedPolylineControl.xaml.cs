@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Marv;
 using Marv.Map;
 using NLog;
-using Utils = Marv.Map.Utils;
 
 namespace Marv.Controls.Map
 {
@@ -30,6 +28,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty PolylinePartsProperty =
             DependencyProperty.Register("PolylineParts", typeof (IEnumerable<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty SelectedLocationProperty =
+            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
             DependencyProperty.Register("SimplifiedPolylineParts", typeof (IEnumerable<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
@@ -39,13 +40,7 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty ValueLevelsProperty =
             DependencyProperty.Register("ValueLevels", typeof (Sequence<double>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
-        public SegmentedPolylineControl()
-        {
-            this.InitializeComponent();
-            this.ValueLevels = new Sequence<double> {0.00, 0.25, 0.5, 0.75, 1.00};
-        }
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public Brush DisabledStroke
         {
@@ -119,6 +114,18 @@ namespace Marv.Controls.Map
             }
         }
 
+        public Location SelectedLocation
+        {
+            get
+            {
+                return (Location) GetValue(SelectedLocationProperty);
+            }
+            set
+            {
+                SetValue(SelectedLocationProperty, value);
+            }
+        }
+
         public IEnumerable<LocationCollection> SimplifiedPolylineParts
         {
             get
@@ -155,6 +162,15 @@ namespace Marv.Controls.Map
             }
         }
 
+        public SegmentedPolylineControl()
+        {
+            this.InitializeComponent();
+            this.ValueLevels = new Sequence<double>
+            {
+                0.00, 0.25, 0.5, 0.75, 1.00
+            };
+        }
+
         private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
@@ -180,37 +196,6 @@ namespace Marv.Controls.Map
                     Latitude = control.NameLocation.Latitude,
                     Longitude = control.NameLongitude
                 };
-            }
-        }
-
-        private void Locations_ValueChanged(object sender, EventArgs e)
-        {
-            logger.Trace("");
-            this.UpdatePolylineParts();
-            this.UpdateSimplifiedPolylineParts();
-        }
-
-        protected override void OnChangedLocations()
-        {
-            base.OnChangedLocations();
-
-            if (this.Locations != null)
-            {
-                this.CursorLocation = Enumerable.First<Location>(this.Locations);
-                this.Locations.ValueChanged += this.Locations_ValueChanged;
-                this.UpdatePolylineParts();
-            }
-
-            this.UpdateSimplifiedPolylineParts();
-        }
-
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property.Name == "IsEnabled")
-            {
-                this.UpdateSimplifiedPolylineParts();
             }
         }
 
@@ -241,7 +226,10 @@ namespace Marv.Controls.Map
                 }
                 else
                 {
-                    if (locationCollection != null) locationCollection.Add(location);
+                    if (locationCollection != null)
+                    {
+                        locationCollection.Add(location);
+                    }
                 }
                 oldBinIndex = newBinIndex;
             }
@@ -250,15 +238,15 @@ namespace Marv.Controls.Map
 
         public void UpdateSimplifiedPolylineParts()
         {
-            var mapView = Marv.Extensions.FindParent<MapView>(this);
+            var mapView = this.FindParent<MapView>();
             var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
             if (this.PolylineParts != null)
             {
                 foreach (var locationCollection in this.PolylineParts)
                 {
                     var simplifiedLocationCollection = new LocationCollectionViewModel(locationCollection.ToPoints(mapView)
-                        .Reduce(this.Tolerance)
-                        .ToLocations(mapView));
+                                                                                                         .Reduce(this.Tolerance)
+                                                                                                         .ToLocations(mapView));
                     if (this.IsEnabled)
                     {
                         simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(locationCollection[1].Value);
@@ -271,6 +259,29 @@ namespace Marv.Controls.Map
                 }
             }
             this.SimplifiedPolylineParts = simplifiedLocationCollections;
+        }
+
+        protected override void OnChangedLocations()
+        {
+            base.OnChangedLocations();
+
+            if (this.Locations != null)
+            {
+                this.CursorLocation = this.Locations.First();
+                this.UpdatePolylineParts();
+            }
+
+            this.UpdateSimplifiedPolylineParts();
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property.Name == "IsEnabled")
+            {
+                this.UpdateSimplifiedPolylineParts();
+            }
         }
     }
 }

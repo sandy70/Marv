@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Marv;
 using Marv.Map;
 using Marv.Controls;
 
@@ -16,7 +15,7 @@ namespace Marv
         DependencyProperty.Register("ChartSeries", typeof(ModelCollection<IChartSeries>), typeof(MainWindow), new PropertyMetadata(new ModelCollection<IChartSeries>()));
 
         public static readonly DependencyProperty EarthquakesProperty =
-        DependencyProperty.Register("Earthquakes", typeof(ModelCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("Earthquakes", typeof(KeyedCollection<Location>), typeof(MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty EndYearProperty =
         DependencyProperty.Register("EndYear", typeof(int), typeof(MainWindow), new PropertyMetadata(2010));
@@ -67,7 +66,7 @@ namespace Marv
         DependencyProperty.Register("Notifications", typeof(ObservableCollection<INotification>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<INotification>()));
 
         public static readonly DependencyProperty PolylinesProperty =
-        DependencyProperty.Register("Polylines", typeof(ModelCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
+        DependencyProperty.Register("Polylines", typeof(KeyedCollection<LocationCollection>), typeof(MainWindow), new PropertyMetadata(null, OnChangedPolylines));
 
         public static readonly DependencyProperty RiskValueToBrushMapProperty =
         DependencyProperty.Register("RiskValueToBrushMap", typeof(RiskValueToBrushMap), typeof(MainWindow), new PropertyMetadata(new RiskValueToBrushMap()));
@@ -84,7 +83,7 @@ namespace Marv
         public static readonly DependencyProperty SynergiModelProperty =
         DependencyProperty.Register("SynergiModel", typeof(SynergiModel), typeof(MainWindow), new PropertyMetadata(new SynergiModel()));
 
-        public event EventHandler<ModelCollection<LocationCollection>> PolylinesChanged;
+        public event EventHandler<KeyedCollection<LocationCollection>> PolylinesChanged;
 
         public event EventHandler<double> SelectedYearChanged;
 
@@ -100,9 +99,9 @@ namespace Marv
             set { SetValue(ChartSeriesProperty, value); }
         }
 
-        public ModelCollection<Location> Earthquakes
+        public KeyedCollection<Location> Earthquakes
         {
-            get { return (ModelCollection<Location>)GetValue(EarthquakesProperty); }
+            get { return (KeyedCollection<Location>)GetValue(EarthquakesProperty); }
             set { SetValue(EarthquakesProperty, value); }
         }
 
@@ -190,9 +189,9 @@ namespace Marv
             set { SetValue(NotificationsProperty, value); }
         }
 
-        public ModelCollection<LocationCollection> Polylines
+        public KeyedCollection<LocationCollection> Polylines
         {
-            get { return (ModelCollection<LocationCollection>)GetValue(PolylinesProperty); }
+            get { return (KeyedCollection<LocationCollection>)GetValue(PolylinesProperty); }
             set { SetValue(PolylinesProperty, value); }
         }
 

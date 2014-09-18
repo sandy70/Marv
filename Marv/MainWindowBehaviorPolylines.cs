@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Interactivity;
-using Marv;
 using Marv.Map;
 using NLog;
 
@@ -10,7 +8,7 @@ namespace Marv
 {
     public class MainWindowBehaviorPolylines : Behavior<MainWindow>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         protected override void OnAttached()
         {
@@ -23,7 +21,7 @@ namespace Marv
         {
             var window = this.AssociatedObject;
 
-            window.Polylines = new ModelCollection<LocationCollection>();
+            window.Polylines = new KeyedCollection<LocationCollection>();
 
             try
             {
@@ -32,8 +30,8 @@ namespace Marv
 
                 window.Polylines.Add(polylines["BU-498"]);
 
-                window.Polylines.Select("BU-498");
-                window.Polylines["BU-498"].Select("50");
+                //window.Polylines.Select("BU-498");
+                //window.Polylines["BU-498"].Select("50");
 
                 window.MapView.ZoomTo(window.Polylines.GetBounds());
 
@@ -42,7 +40,7 @@ namespace Marv
             }
             catch (IOException exp)
             {
-                logger.Warn(exp.Message);
+                Logger.Warn(exp.Message);
 
                 var notification = new NotificationTimed
                 {
@@ -54,14 +52,17 @@ namespace Marv
             }
         }
 
-        private void AssociatedObject_PolylinesChanged(object sender, ModelCollection<LocationCollection> e)
+        private void AssociatedObject_PolylinesChanged(object sender, KeyedCollection<LocationCollection> e)
         {
             var window = this.AssociatedObject;
 
-            if (window.Polylines == null || window.Polylines.Count <= 0) return;
+            if (window.Polylines == null || window.Polylines.Count <= 0)
+            {
+                return;
+            }
 
             // Calculate start year
-            window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation.Properties["StartYear"]);
+            //window.StartYear = window.Polylines.Min(multiLocation => (int)multiLocation.Properties["StartYear"]);
             window.SelectedYear = window.StartYear;
         }
     }

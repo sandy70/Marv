@@ -5,7 +5,7 @@ namespace Marv
 {
     public class VertexData
     {
-        public double[] Beliefs { get; set; }
+        public double[] Belief { get; set; }
         public string String { get; set; }
         public double[] Evidence { get; set; }
 

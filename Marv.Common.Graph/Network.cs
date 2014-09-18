@@ -30,7 +30,7 @@ namespace Marv
 
             foreach (var vertexKey in graphData.Keys)
             {
-                if (graphData[vertexKey].Evidence != null)
+                if (graphData[vertexKey].Evidence != null && graphData[vertexKey].Evidence.Sum() > 0)
                 {
                     this.SetSoftEvidence(vertexKey, graphData[vertexKey].Evidence);
                 }
@@ -42,7 +42,7 @@ namespace Marv
 
             foreach (var vertexKey in beliefs.Keys)
             {
-                graphData[vertexKey].Beliefs = beliefs[vertexKey];
+                graphData[vertexKey].Belief = beliefs[vertexKey];
             }
         }
 
@@ -60,7 +60,7 @@ namespace Marv
                         foreach (var targetVertexKey in loops.Keys)
                         {
                             var sourceVertexKey = loops[targetVertexKey];
-                            sectionData[year][targetVertexKey].Evidence = sectionData[lastYear][sourceVertexKey].Beliefs;
+                            sectionData[year][targetVertexKey].Evidence = sectionData[lastYear][sourceVertexKey].Belief;
                         }
                     }
                 }

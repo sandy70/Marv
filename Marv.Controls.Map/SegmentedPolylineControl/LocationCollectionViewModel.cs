@@ -20,7 +20,7 @@ namespace Marv.Controls.Map
                 if (value != this.stroke)
                 {
                     this.stroke = value;
-                    this.RaisePropertyChanged("Stroke");
+                    this.RaisePropertyChanged();
                 }
             }
         }

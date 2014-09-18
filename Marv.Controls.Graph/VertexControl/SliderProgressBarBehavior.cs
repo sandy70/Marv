@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Interactivity;
-using Marv;
 
 namespace Marv.Controls.Graph
 {
@@ -18,10 +18,10 @@ namespace Marv.Controls.Graph
 
             if (Math.Abs(e - 100) < Utils.Epsilon)
             {
-                vertexControl.Vertex.States.SetEvidence(this.AssociatedObject.DataContext as State);
+                vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }
 
-            vertexControl.Vertex.States.SetEvidence(vertexControl.Vertex.States.GetEvidence().Normalized());
+            vertexControl.Vertex.Evidence = vertexControl.Vertex.Evidence.Normalized().ToArray();
             vertexControl.Vertex.UpdateEvidenceString();
             vertexControl.RaiseEvidenceEntered();
         }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Marv;
 
 namespace Marv.Controls.Graph
 {
@@ -181,19 +179,14 @@ namespace Marv.Controls.Graph
         {
             var control = d as GraphControl;
 
-            if (control == null || control.Graph == null) return;
+            if (control == null || control.Graph == null)
+            {
+                return;
+            }
 
             var oldGraph = e.OldValue as Marv.Graph;
 
             control.RaiseGraphChanged(e.NewValue as Marv.Graph, oldGraph);
-
-            if (oldGraph != null)
-            {
-                oldGraph.PropertyChanged -= control.Graph_PropertyChanged;
-            }
-
-            control.Graph.PropertyChanged -= control.Graph_PropertyChanged;
-            control.Graph.PropertyChanged += control.Graph_PropertyChanged;
 
             if (control.Graph.Vertices.Count > 0)
             {
@@ -231,14 +224,6 @@ namespace Marv.Controls.Graph
             this.DiagramPart.IsManipulationAdornerVisible = true;
         }
 
-        public void Graph_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedVertex")
-            {
-                this.RaiseSelectionChanged(this.Graph.SelectedVertex);
-            }
-        }
-
         public void InitializeAutoSave()
         {
             var timer = new DispatcherTimer
@@ -260,7 +245,6 @@ namespace Marv.Controls.Graph
         public void Open(string fileName)
         {
             this.Graph = Marv.Graph.Read(fileName);
-            this.Graph.Run();
         }
 
         public void Open()
@@ -296,26 +280,6 @@ namespace Marv.Controls.Graph
             if (this.EvidenceEntered != null)
             {
                 this.EvidenceEntered(this, vertex);
-            }
-        }
-
-        internal void RaiseSelectionChanged(Vertex vertex)
-        {
-            if (this.SelectionChanged != null)
-            {
-                this.SelectionChanged(this, vertex);
-            }
-        }
-
-        internal void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
-        {
-            if (this.VertexCommandExecuted != null)
-            {
-                this.VertexCommandExecuted(this, new VertexCommandArgs
-                {
-                    Command = command,
-                    Vertex = vertex
-                });
             }
         }
 
@@ -357,33 +321,34 @@ namespace Marv.Controls.Graph
             this.RunButton.Click -= RunButton_Click;
             this.RunButton.Click += RunButton_Click;
 
-            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
-            this.OpenNetworkButton.Click += OpenNetworkButton_Click;
+            this.OpenButton.Click -= this.OpenButton_Click;
+            this.OpenButton.Click += this.OpenButton_Click;
 
-            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
-            this.SaveNetworkButton.Click += SaveNetworkButton_Click;
+            this.SaveButton.Click -= this.SaveButton_Click;
+            this.SaveButton.Click += this.SaveButton_Click;
         }
 
-        private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             this.Open();
         }
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Run();
+            var network = Network.Read(this.Graph.NetworkStructure.FileName);
+            var graphData = this.Graph.GetData();
+
+            network.Run(graphData);
+
+            this.Graph.SetData(graphData);
         }
 
-        private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Write();
         }
 
         public event EventHandler<Vertex> EvidenceEntered;
-
-        public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
-
-        public event EventHandler<Vertex> SelectionChanged;
 
         public event EventHandler<ValueChangedArgs<Marv.Graph>> GraphChanged;
     }

@@ -305,7 +305,14 @@ namespace Marv
 
         public void UpdateBeliefs()
         {
-            this.network.UpdateBeliefs();
+            try
+            {
+                this.network.UpdateBeliefs();
+            }
+            catch (SmileException)
+            {
+                // Do nothing
+            }
         }
 
         public void Write()
@@ -405,7 +412,7 @@ namespace Marv
 
             foreach (var vertexKey in beliefs.Keys)
             {
-                graphData[vertexKey].Beliefs = beliefs[vertexKey];
+                graphData[vertexKey].Belief = beliefs[vertexKey];
             }
         }
     }

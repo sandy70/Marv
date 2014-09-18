@@ -134,9 +134,9 @@ namespace Marv
             return this.sheet.GetValue<TResult>(rowIndex, this.GetColumnIndex(columnName));
         }
 
-        public ModelCollection<LocationCollection> ReadPipelines()
+        public KeyedCollection<LocationCollection> ReadPipelines()
         {
-            var multiLocations = new ModelCollection<LocationCollection>();
+            var multiLocations = new KeyedCollection<LocationCollection>();
             var nHeaderRows = 3;
             var pipelineStartRowIndices = new List<int>();
             var rowIndex = nHeaderRows + 1;
@@ -167,7 +167,7 @@ namespace Marv
                 multiLocation.Name = this.GetValue(pipelineStartRowIndex, pipelineNameColumn) as string;
                 multiLocation.Key = multiLocation.Name;
 
-                multiLocation.Properties["StartYear"] = Convert.ToInt32(this.GetValue(pipelineStartRowIndex, "START"));
+                //multiLocation.Properties["StartYear"] = Convert.ToInt32(this.GetValue(pipelineStartRowIndex, "START"));
 
                 for (rowIndex = pipelineStartRowIndex; rowIndex < pipelineEndRowIndex; rowIndex++)
                 {
@@ -176,7 +176,7 @@ namespace Marv
                         Key = this.GetValue(rowIndex, "section inlet").ToString(),
                         Latitude = (double) this.GetValue(rowIndex, "Latitude"),
                         Longitude = (double) this.GetValue(rowIndex, "Longitude"),
-                        Name = this.GetValue(rowIndex, "section inlet").ToString()
+                        //Name = this.GetValue(rowIndex, "section inlet").ToString()
                     });
                 }
 

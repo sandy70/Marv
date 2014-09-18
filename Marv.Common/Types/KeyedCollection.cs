@@ -28,6 +28,10 @@ namespace Marv
             }
         }
 
+        public KeyedCollection() {}
+     
+        public KeyedCollection(IEnumerable<T> items) : base(items) {}
+
         public string Key
         {
             get

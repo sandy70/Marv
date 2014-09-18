@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.IO;
 
 namespace Marv.Map
@@ -8,6 +8,7 @@ namespace Marv.Map
     public class LocationCollection : KeyedCollection<Location>
     {
         private LocationRect bounds;
+        private string name;
 
         /// <summary>
         ///     The geographic bounds of this collection of Locations. Bounds is updated everytime the collection changes.
@@ -28,6 +29,29 @@ namespace Marv.Map
                 }
             }
         }
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value.Equals(this.name))
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public LocationCollection() {}
+
+        public LocationCollection(IEnumerable<Location> locations) : base(locations) {}
 
         /// <summary>
         ///     Reads a LocationCollection from a CSV file. The file is expected to have 3 columns - Section ID, Lat, Lon. The file
@@ -61,8 +85,25 @@ namespace Marv.Map
             return locationCollection;
         }
 
-        // Everytime the collection is changed, the bounds are updated.
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            base.OnCollectionChanged(e);
 
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    this.UpdateBounds(newItem as Location);
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                this.UpdateBounds();
+            }
+        }
+
+        // Everytime the collection is changed, the bounds are updated.
         private void UpdateBounds()
         {
             this.Bounds = null;
@@ -98,24 +139,6 @@ namespace Marv.Map
                     this.Bounds.South = Math.Min(this.Bounds.South, location.Latitude);
                     this.Bounds.West = Math.Min(this.Bounds.West, location.Longitude);
                 }
-            }
-        }
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-
-            if (e.NewItems != null)
-            {
-                foreach (var newItem in e.NewItems)
-                {
-                    this.UpdateBounds(newItem as Location);
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                this.UpdateBounds();
             }
         }
     }

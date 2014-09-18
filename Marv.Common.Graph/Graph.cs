@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using NLog;
 using QuickGraph.Algorithms.RankedShortestPath;
@@ -25,19 +24,6 @@ namespace Marv
         private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
-
-        public Dict<string, VertexData> Data
-        {
-            set
-            {
-                foreach (var vertexKey in value.Keys)
-                {
-                    this.Vertices[vertexKey].Data = value[vertexKey];
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
 
         public string DefaultGroup
         {
@@ -281,7 +267,6 @@ namespace Marv
             }
 
             graph.UpdateDisplayGraph(graph.DefaultGroup);
-            graph.Run();
 
             return graph;
         }
@@ -292,6 +277,18 @@ namespace Marv
             {
                 vertex.ClearEvidence();
             }
+        }
+
+        public Dict<string, VertexData> GetData()
+        {
+            var graphData = new Dict<string, VertexData>();
+
+            foreach (var vertex in this.Vertices)
+            {
+                graphData[vertex.Key] = vertex.Data;
+            }
+
+            return graphData;
         }
 
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
@@ -460,37 +457,19 @@ namespace Marv
 
         public void Run()
         {
-            this.NetworkStructure.ClearEvidence();
+            var network = Network.Read(this.NetworkStructure.FileName);
+            var graphData = this.GetData();
 
-            foreach (var vertex in this.Vertices)
-            {
-                if (vertex.IsEvidenceEntered)
-                {
-                    this.NetworkStructure.SetEvidence(vertex.Key, vertex.States.GetEvidence());
-                }
-            }
+            network.Run(graphData);
 
-            this.NetworkStructure.UpdateBeliefs();
-
-            var belief = this.NetworkStructure.GetBelief();
-
-            foreach (var vertexKey in belief.Keys)
-            {
-                this.Vertices[vertexKey].States.SetBelief(belief[vertexKey]);
-            }
+            this.SetData(graphData);
         }
 
-        public void SetEvidence(Dict<string, VertexData> vertexEvidences)
+        public void SetData(Dict<string, VertexData> value)
         {
-            this.Vertices.ClearEvidence();
-
-            foreach (var vertexKey in vertexEvidences.Keys)
+            foreach (var vertexKey in value.Keys)
             {
-                var vertex = this.Vertices[vertexKey];
-                var vertexEvidence = vertexEvidences[vertexKey];
-
-                vertex.EvidenceString = vertexEvidence == null ? null : vertexEvidences[vertexKey].String;
-                vertex.UpdateStateEvidences();
+                this.Vertices[vertexKey].Data = value[vertexKey];
             }
         }
 

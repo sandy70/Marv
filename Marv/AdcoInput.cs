@@ -184,7 +184,7 @@ namespace Marv
             return sheet.GetValue<TResult>(rowIndex, sheet.GetColumnIndex(columnName));
         }
 
-        public static ModelCollection<LocationCollection> Read(string fileName)
+        public static KeyedCollection<LocationCollection> Read(string fileName)
         {
             using (var package = new ExcelPackage(new FileInfo(fileName)))
             {

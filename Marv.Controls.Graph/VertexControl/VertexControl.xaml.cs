@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Marv;
@@ -164,7 +165,8 @@ namespace Marv.Controls.Graph
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.Vertex.States.SetEvidence(this.Vertex.EvidenceString);
+            var evidence = this.Vertex.ParseEvidence(this.Vertex.EvidenceString);
+            this.Vertex.Evidence = evidence.ToArray();
             this.RaiseEvidenceEntered();
         }
 

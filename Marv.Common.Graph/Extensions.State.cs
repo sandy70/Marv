@@ -10,11 +10,6 @@ namespace Marv
             foreach (var state in states) state.Evidence = 0;
         }
 
-        public static Dictionary<string, double> GetBelief(this IEnumerable<State> states)
-        {
-            return states.ToDictionary(state => state.Key, state => state.Belief);
-        }
-
         public static IEnumerable<double> GetEvidence(this IEnumerable<State> states)
         {
             return states.Select(state => state.Evidence);
@@ -71,38 +66,6 @@ namespace Marv
         public static void SetBelief(this IEnumerable<State> states, double belief)
         {
             foreach (var state in states) state.Belief = belief;
-        }
-
-        public static void SetBelief(this IEnumerable<State> states, IEnumerable<double> beliefs)
-        {
-            states.SetProperty(beliefs, (state, belief) => state.Belief = belief);
-        }
-
-        public static void SetEvidence(this IEnumerable<State> states, string str)
-        {
-            var stateList = states as IList<State> ?? states.ToList();
-            var values = stateList.Parse(str);
-
-            if (values == null)
-            {
-                stateList.ClearEvidence();
-            }
-            else
-            {
-                stateList.SetEvidence(values);
-            }
-        }
-
-        public static void SetEvidence(this IEnumerable<State> states, State aState)
-        {
-            var stateList = states as IList<State> ?? states.ToList();
-
-            stateList.SetEvidence(stateList.Select(state => state == aState ? 1.0 : 0.0));
-        }
-
-        public static void SetEvidence(this IEnumerable<State> states, IEnumerable<double> evidences)
-        {
-            states.SetProperty(evidences.Normalized(), (state, evidence) => state.Evidence = evidence);
         }
     }
 }
