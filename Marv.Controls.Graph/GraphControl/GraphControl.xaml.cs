@@ -245,6 +245,7 @@ namespace Marv.Controls.Graph
         public void Open(string fileName)
         {
             this.Graph = Marv.Graph.Read(fileName);
+            this.Graph.Run();
         }
 
         public void Open()
@@ -335,12 +336,10 @@ namespace Marv.Controls.Graph
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            var network = Network.Read(this.Graph.NetworkStructure.FileName);
-            var graphData = this.Graph.GetData();
-
-            network.Run(graphData);
-
-            this.Graph.SetData(graphData);
+            if (this.Graph != null)
+            {
+                this.Graph.Run();
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

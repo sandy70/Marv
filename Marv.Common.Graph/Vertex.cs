@@ -96,7 +96,7 @@ namespace Marv
                 return new VertexData
                 {
                     Belief = this.Belief,
-                    Evidence = this.Evidence,
+                    Evidence = this.Evidence.ToArray(),
                     String = this.EvidenceString
                 };
             }
@@ -152,7 +152,7 @@ namespace Marv
             }
         }
 
-        public double[] Evidence
+        public IEnumerable<double> Evidence
         {
             get
             {
@@ -161,7 +161,7 @@ namespace Marv
 
             set
             {
-                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value[i]);
+                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value.ElementAt(i));
 
                 this.RaisePropertyChanged();
             }

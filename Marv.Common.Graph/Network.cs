@@ -36,13 +36,19 @@ namespace Marv
                 }
             }
 
-            this.UpdateBeliefs();
-
-            var beliefs = this.GetBeliefs();
-
-            foreach (var vertexKey in beliefs.Keys)
+            try
             {
-                graphData[vertexKey].Belief = beliefs[vertexKey];
+                this.UpdateBeliefs();
+                var beliefs = this.GetBeliefs();
+
+                foreach (var vertexKey in beliefs.Keys)
+                {
+                    graphData[vertexKey].Belief = beliefs[vertexKey];
+                }
+            }
+            catch (Smile.SmileException exp)
+            {
+                // do nothing
             }
         }
 

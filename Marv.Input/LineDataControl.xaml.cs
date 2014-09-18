@@ -33,7 +33,7 @@ namespace Marv.Input
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedCell));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedSectionId));
 
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
@@ -180,6 +180,15 @@ namespace Marv.Input
             control.LineData.DataChanged += control.LineData_DataChanged;
         }
 
+        private static async void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataControl;
+
+            await control.RunSelectedSectionAsync();
+
+            control.Graph.Data = control.LineData.Sections[control.SelectedSectionId][control.SelectedYear];
+        }
+
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
@@ -316,15 +325,20 @@ namespace Marv.Input
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
+            e.Column.MaxWidth = 100;
         }
 
-        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+        private async void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             var cellModel = e.Cell.ToModel();
             var oldString = e.OldData as string;
             var newString = e.NewData as string;
 
             this.SetCell(cellModel, newString, oldString);
+
+            await this.RunSelectedSectionAsync();
+
+            this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -361,7 +375,7 @@ namespace Marv.Input
 
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.Graph.SetData(this.LineData.Sections[cellModel.SectionId][cellModel.Year]);
+            this.Graph.Data = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
         private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
@@ -455,21 +469,6 @@ namespace Marv.Input
             }
         }
 
-        private void RunSelectedSection(Network network, Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops)
-        {
-            network.Run(sectionData, loops);
-        }
-
-        private async static void ChangedSelectedCell(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataControl;
-            var loops = control.Graph.Loops;
-            var network = Network.Read(control.Graph.NetworkStructure.FileName);
-            var sectionData = control.LineData.Sections[control.SelectedSectionId];
-
-            await Task.Run(() => control.RunSelectedSection(network, sectionData, loops));
-        }
-
         private void RunAll(Network network, Dict<string, int, string, VertexData> lineData, Dictionary<string, string> loops, IProgress<double> progress = null)
         {
             var total = lineData.Keys.Count;
@@ -506,6 +505,22 @@ namespace Marv.Input
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
             await Task.Run(() => this.RunAll(network, lineData, loops, progress));
+
+            this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
+        }
+
+        private void RunSection(Network network, Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops)
+        {
+            network.Run(sectionData, loops);
+        }
+
+        private Task RunSelectedSectionAsync()
+        {
+            var loops = this.Graph.Loops;
+            var network = Network.Read(this.Graph.NetworkStructure.FileName);
+            var sectionData = this.LineData.Sections[this.SelectedSectionId];
+
+            return Task.Run(() => this.RunSection(network, sectionData, loops));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

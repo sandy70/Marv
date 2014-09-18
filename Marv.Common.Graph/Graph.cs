@@ -25,6 +25,29 @@ namespace Marv
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
+        public Dict<string, VertexData> Data
+        {
+            get
+            {
+                var graphData = new Dict<string, VertexData>();
+
+                foreach (var vertex in this.Vertices)
+                {
+                    graphData[vertex.Key] = vertex.Data;
+                }
+
+                return graphData;
+            }
+
+            set
+            {
+                foreach (var vertexKey in value.Keys)
+                {
+                    this.Vertices[vertexKey].Data = value[vertexKey];
+                }
+            }
+        }
+
         public string DefaultGroup
         {
             get
@@ -279,18 +302,6 @@ namespace Marv
             }
         }
 
-        public Dict<string, VertexData> GetData()
-        {
-            var graphData = new Dict<string, VertexData>();
-
-            foreach (var vertex in this.Vertices)
-            {
-                graphData[vertex.Key] = vertex.Data;
-            }
-
-            return graphData;
-        }
-
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
@@ -458,19 +469,11 @@ namespace Marv
         public void Run()
         {
             var network = Network.Read(this.NetworkStructure.FileName);
-            var graphData = this.GetData();
+            var graphData = this.Data;
 
             network.Run(graphData);
 
-            this.SetData(graphData);
-        }
-
-        public void SetData(Dict<string, VertexData> value)
-        {
-            foreach (var vertexKey in value.Keys)
-            {
-                this.Vertices[vertexKey].Data = value[vertexKey];
-            }
+            this.Data = graphData;
         }
 
         public void UpdateDisplayGraph(string group)
