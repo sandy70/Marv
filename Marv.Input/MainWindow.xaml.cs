@@ -104,7 +104,15 @@ namespace Marv.Input
             var control = d as MainWindow;
 
             control.Graph.NetworkStructure.Run(control.LineData.Sections[control.SelectedSectionId]);
-            control.LineDataControl.UpdateGraphData(control.SelectedSectionId, control.SelectedYear);
+            control.Graph.Data = control.LineData.Sections[control.SelectedSectionId][control.SelectedYear];
+        }
+
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
@@ -124,14 +132,6 @@ namespace Marv.Input
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
-        }
-
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

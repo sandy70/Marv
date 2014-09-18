@@ -204,11 +204,6 @@ namespace Marv.Input
             }
         }
 
-        public void UpdateGraphData(string sectionId, int year)
-        {
-            this.Graph.Data = this.LineData.Sections[sectionId][year];
-        }
-
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var nSection = 1;
