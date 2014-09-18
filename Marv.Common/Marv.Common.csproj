@@ -125,6 +125,9 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Icons\RunAll.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Icons\CopyAcrossAll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
