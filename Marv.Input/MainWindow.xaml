@@ -44,6 +44,7 @@
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
                                                    CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
+                                                   Graph="{Binding ElementName=Root, Path=Graph}"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
