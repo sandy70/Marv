@@ -47,7 +47,7 @@
                                                    Graph="{Binding ElementName=Root, Path=Graph}"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

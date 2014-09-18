@@ -35,11 +35,11 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedSectionIdProperty =
             DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
+
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue));
-
-        public static readonly DependencyProperty VertexProperty =
-            DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
@@ -148,6 +148,18 @@ namespace Marv.Input
             }
         }
 
+        public Vertex SelectedVertex
+        {
+            get
+            {
+                return (Vertex) GetValue(SelectedVertexProperty);
+            }
+            set
+            {
+                SetValue(SelectedVertexProperty, value);
+            }
+        }
+
         public int SelectedYear
         {
             get
@@ -157,18 +169,6 @@ namespace Marv.Input
             set
             {
                 SetValue(SelectedYearProperty, value);
-            }
-        }
-
-        public Vertex Vertex
-        {
-            get
-            {
-                return (Vertex) GetValue(VertexProperty);
-            }
-            set
-            {
-                SetValue(VertexProperty, value);
             }
         }
 
@@ -343,7 +343,7 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidenceInfo = this.Vertex.ParseEvidenceInfo(e.NewValue as string);
+            var vertexEvidenceInfo = this.SelectedVertex.ParseEvidenceInfo(e.NewValue as string);
 
             if (vertexEvidenceInfo.Type == VertexEvidenceType.Invalid)
             {
@@ -492,7 +492,7 @@ namespace Marv.Input
             }
 
             cellModel.Data = vertexData;
-            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
+            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)
@@ -512,14 +512,14 @@ namespace Marv.Input
             }
             else
             {
-                var distribution = this.Vertex.States.Parse(newString);
+                var distribution = this.SelectedVertex.States.Parse(newString);
 
                 var vertexData = new VertexData();
                 vertexData.Evidence = distribution == null ? null : distribution.ToArray();
                 vertexData.String = newString;
 
                 cellModel.Data = vertexData;
-                this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.Vertex.Key] = vertexData;
+                this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
             }
         }
 
@@ -530,7 +530,7 @@ namespace Marv.Input
                 this.selectionInfos.Add(new Tuple<int, int>(this.Rows.IndexOf(selectedCell.Item as Dynamic), selectedCell.Column.DisplayIndex));
             }
 
-            if (this.LineData == null || this.Vertex == null)
+            if (this.LineData == null || this.SelectedVertex == null)
             {
                 return;
             }
@@ -544,7 +544,7 @@ namespace Marv.Input
 
                 for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
                 {
-                    row[year.ToString()] = this.LineData.Sections[sectionId][year][this.Vertex.Key];
+                    row[year.ToString()] = this.LineData.Sections[sectionId][year][this.SelectedVertex.Key];
                 }
 
                 newRows.Add(row);
