@@ -43,6 +43,10 @@
                 <telerik:RadButton Name="SaveButton">
                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                 </telerik:RadButton>
+
+                <telerik:RadButton Name="RunAllButton">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                </telerik:RadButton>
             </ToolBar>
 
             <ToolBar Height="32">
