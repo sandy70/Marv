@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Marv;
 
 namespace Marv.Input
 {
     public class LineData : NotifyPropertyChanged
     {
-        public static int DefaultYear = 2010;
+        public const int DefaultYear = 2010;
+        public const string FileExtension = "marv-linedata";
+        public const string FileDescription = "MARV Pipeline Data";
 
-        private int endYear = 2010;
+        private int endYear = DefaultYear;
         private Guid guid;
         private Dict<string, int, string, VertexData> sections = new Dict<string, int, string, VertexData>();
-        private int startYear = 2010;
+        private int startYear = DefaultYear;
 
         public int EndYear
         {
@@ -99,6 +100,27 @@ namespace Marv.Input
             this.Sections.CollectionChanged += Sections_CollectionChanged;
         }
 
+        public void AddSections(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+            {
+                if (!this.Sections.ContainsKey(key))
+                {
+                    this.Sections[key] = new Dict<int, string, VertexData>();
+                }
+            }
+
+            this.RaiseDataChanged();
+        }
+
+        public void RaiseDataChanged()
+        {
+            if (this.DataChanged != null)
+            {
+                this.DataChanged(this, new EventArgs());
+            }
+        }
+
         private void Sections_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -143,27 +165,6 @@ namespace Marv.Input
             }
 
             this.RaiseDataChanged();
-        }
-
-        public void AddSections(IEnumerable<string> keys)
-        {
-            foreach (var key in keys)
-            {
-                if (!this.Sections.ContainsKey(key))
-                {
-                    this.Sections[key] = new Dict<int, string, VertexData>();
-                }
-            }
-
-            this.RaiseDataChanged();
-        }
-
-        public void RaiseDataChanged()
-        {
-            if (this.DataChanged != null)
-            {
-                this.DataChanged(this, new EventArgs());
-            }
         }
 
         public event EventHandler DataChanged;

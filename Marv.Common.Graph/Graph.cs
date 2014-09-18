@@ -169,6 +169,8 @@ namespace Marv
             }
         }
 
+        // Dictionary<targetVertexKey, sourceVertexKey>
+        // Beliefs from sourceVertexKey should go into targetVertexKey
         public Dictionary<string, string> Loops
         {
             get
@@ -263,7 +265,7 @@ namespace Marv
 
                 if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
                 {
-                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
+                    graph.Loops[vertex.Key] = vertex.InputVertexKey;
                 }
 
                 graph.Vertices.Add(vertex);

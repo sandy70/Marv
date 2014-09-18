@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace Marv.Input
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedCell));
 
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
@@ -443,7 +444,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "MARV Input File|*.input",
+                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -454,14 +455,29 @@ namespace Marv.Input
             }
         }
 
-        private void RunAll(Network network, Dict<string, int, string, VertexData> sectionData, IProgress<double> progress = null)
+        private void RunSelectedSection(Network network, Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops)
         {
-            var total = sectionData.Keys.Count;
+            network.Run(sectionData, loops);
+        }
+
+        private async static void ChangedSelectedCell(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataControl;
+            var loops = control.Graph.Loops;
+            var network = Network.Read(control.Graph.NetworkStructure.FileName);
+            var sectionData = control.LineData.Sections[control.SelectedSectionId];
+
+            await Task.Run(() => control.RunSelectedSection(network, sectionData, loops));
+        }
+
+        private void RunAll(Network network, Dict<string, int, string, VertexData> lineData, Dictionary<string, string> loops, IProgress<double> progress = null)
+        {
+            var total = lineData.Keys.Count;
             var count = 0;
 
-            foreach (var sectionId in sectionData.Keys)
+            foreach (var sectionId in lineData.Keys)
             {
-                network.Run(sectionData[sectionId]);
+                network.Run(lineData[sectionId], loops);
 
                 count++;
 
@@ -476,8 +492,9 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var networkStructure = Network.Read(this.Graph.NetworkStructure.FileName);
-            var sectionData = this.LineData.Sections;
+            var loops = this.Graph.Loops;
+            var network = Network.Read(this.Graph.NetworkStructure.FileName);
+            var lineData = this.LineData.Sections;
 
             var notification = new Notification
             {
@@ -488,7 +505,7 @@ namespace Marv.Input
 
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
-            await Task.Run(() => this.RunAll(networkStructure, sectionData, progress));
+            await Task.Run(() => this.RunAll(network, lineData, loops, progress));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -497,7 +514,7 @@ namespace Marv.Input
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = "MARV Input Files|*.input",
+                    Filter = LineData.FileDescription + "|" + LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -510,6 +527,11 @@ namespace Marv.Input
 
             if (this.FileName != null)
             {
+                if (Path.GetExtension(this.FileName) != LineData.FileExtension)
+                {
+                    this.FileName = this.FileName + "." + LineData.FileExtension;
+                }
+
                 this.LineData.WriteJson(this.FileName);
             }
         }

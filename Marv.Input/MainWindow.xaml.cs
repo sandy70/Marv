@@ -14,7 +14,7 @@ namespace Marv.Input
             DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null, ChangedSelectedCell));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
@@ -98,16 +98,6 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private static void ChangedSelectedCell(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as MainWindow;
-
-            var network = Network.Read(control.Graph.NetworkStructure.FileName);
-            network.Run(control.LineData.Sections[control.SelectedSectionId]);
-
-            control.Graph.Data = control.LineData.Sections[control.SelectedSectionId][control.SelectedYear];
-        }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Marv
 {
@@ -45,11 +46,28 @@ namespace Marv
             }
         }
 
-        public void Run(Dict<int, string, VertexData> sectionData)
+        public void Run(Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops = null)
         {
+            var firstYear = sectionData.Keys.First();
+            var lastYear = firstYear;
+
             foreach (var year in sectionData.Keys)
             {
+                if (loops != null)
+                {
+                    if (year != firstYear)
+                    {
+                        foreach (var targetVertexKey in loops.Keys)
+                        {
+                            var sourceVertexKey = loops[targetVertexKey];
+                            sectionData[year][targetVertexKey].Evidence = sectionData[lastYear][sourceVertexKey].Beliefs;
+                        }
+                    }
+                }
+
                 this.Run(sectionData[year]);
+
+                lastYear = year;
             }
         }
     }
