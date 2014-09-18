@@ -417,6 +417,9 @@ namespace Marv.Input
             this.OpenButton.Click -= OpenButton_Click;
             this.OpenButton.Click += OpenButton_Click;
 
+            this.RunAllButton.Click -= RunAllButton_Click;
+            this.RunAllButton.Click += RunAllButton_Click;
+
             this.SaveButton.Click -= SaveButton_Click;
             this.SaveButton.Click += SaveButton_Click;
         }
@@ -438,6 +441,15 @@ namespace Marv.Input
             {
                 this.FileName = dialog.FileName;
                 this.LineData = Utils.ReadJson<LineData>(this.FileName);
+            }
+        }
+
+        private void RunAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var sectionId in this.LineData.Sections.Keys)
+            {
+                Console.WriteLine("Running: " + sectionId);
+                this.Graph.NetworkStructure.Run(this.LineData.Sections[sectionId]);
             }
         }
 
