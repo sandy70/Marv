@@ -8,25 +8,6 @@ namespace Marv
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private TimeSpan duration = TimeSpan.FromSeconds(3);
-
-        public TimeSpan Duration
-        {
-            get
-            {
-                return this.duration;
-            }
-
-            set
-            {
-                if (value != this.duration)
-                {
-                    this.duration = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public void Open()
         {
             Logger.Trace("");
