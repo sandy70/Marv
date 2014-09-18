@@ -20,7 +20,7 @@ namespace Marv
 
     public class Notification : NotifyPropertyChanged, INotification
     {
-        private double _value = 100;
+        private double _value;
         private string description;
         private TimeSpan duration = TimeSpan.FromSeconds(3);
         private bool isIndeterminate;
