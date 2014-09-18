@@ -104,7 +104,7 @@ namespace Marv.Input
             var control = d as MainWindow;
 
             control.Graph.NetworkStructure.Run(control.LineData.Sections[control.SelectedSectionId]);
-            control.LineDataControl.UpdateCurrentGraphData(control.SelectedSectionId, control.SelectedYear);
+            control.LineDataControl.UpdateGraphData(control.SelectedSectionId, control.SelectedYear);
         }
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)

@@ -45,7 +45,7 @@
                 </telerik:RadButton>
 
                 <telerik:RadButton Name="RunAllButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
+                    <Image Source="/Marv.Common;component/Resources/Icons/RunAll.png" />
                 </telerik:RadButton>
             </ToolBar>
 

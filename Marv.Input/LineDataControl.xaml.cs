@@ -14,9 +14,6 @@ namespace Marv.Input
 {
     public partial class LineDataControl : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty CurrentGraphDataProperty =
-            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
@@ -45,18 +42,6 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private ObservableCollection<Dynamic> rows;
-
-        public Dict<string, VertexData> CurrentGraphData
-        {
-            get
-            {
-                return (Dict<string, VertexData>) GetValue(CurrentGraphDataProperty);
-            }
-            set
-            {
-                SetValue(CurrentGraphDataProperty, value);
-            }
-        }
 
         public string FileName
         {
@@ -219,9 +204,9 @@ namespace Marv.Input
             }
         }
 
-        public void UpdateCurrentGraphData(string sectionId, int year)
+        public void UpdateGraphData(string sectionId, int year)
         {
-            this.CurrentGraphData = this.LineData.Sections[sectionId][year];
+            this.Graph.Data = this.LineData.Sections[sectionId][year];
         }
 
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
@@ -370,7 +355,7 @@ namespace Marv.Input
 
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+            this.Graph.Data = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
         private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
