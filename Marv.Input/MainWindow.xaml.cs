@@ -103,7 +103,9 @@ namespace Marv.Input
         {
             var control = d as MainWindow;
 
-            control.Graph.NetworkStructure.Run(control.LineData.Sections[control.SelectedSectionId]);
+            var network = Network.Read(control.Graph.NetworkStructure.FileName);
+            network.Run(control.LineData.Sections[control.SelectedSectionId]);
+
             control.Graph.Data = control.LineData.Sections[control.SelectedSectionId][control.SelectedYear];
         }
 

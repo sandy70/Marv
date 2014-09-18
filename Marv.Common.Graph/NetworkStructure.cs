@@ -9,12 +9,13 @@ namespace Marv
 {
     public class NetworkStructure
     {
-        private readonly Network network = new Network();
         public readonly List<string> Footer = new List<string>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         public readonly List<NetworkStructureVertex> Vertices = new List<NetworkStructureVertex>();
 
         public string FileName;
+        private readonly object _lock = new object();
+        private readonly Network network = new Network();
 
         public static void Decrypt(string path)
         {
@@ -25,10 +26,12 @@ namespace Marv
             {
                 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
             };
+
             byte[] IV =
             {
                 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
             };
+
             var cryptStream = new CryptoStream(pathStream,
                 rMCrypto.CreateDecryptor(Key, IV),
                 CryptoStreamMode.Read);
@@ -148,25 +151,6 @@ namespace Marv
             return structure;
         }
 
-        private void Run(Dict<string, VertexData> graphData)
-        {
-            this.ClearEvidence();
-
-            foreach (var vertexKey in graphData.Keys)
-            {
-                this.SetEvidence(vertexKey, graphData[vertexKey].Evidence);
-            }
-
-            this.UpdateBeliefs();
-
-            var beliefs = this.GetBelief();
-
-            foreach (var vertexKey in beliefs.Keys)
-            {
-                graphData[vertexKey].Beliefs = beliefs[vertexKey];
-            }
-        }
-
         public void ClearEvidence()
         {
             this.network.ClearAllEvidence();
@@ -234,14 +218,17 @@ namespace Marv
 
         public Dictionary<string, double[]> GetBelief()
         {
-            var graphValue = new Dictionary<string, double[]>();
-
-            foreach (var vertex in this.Vertices)
+            lock (this._lock)
             {
-                graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
-            }
+                var graphValue = new Dictionary<string, double[]>();
 
-            return graphValue;
+                foreach (var vertex in this.Vertices)
+                {
+                    graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
+                }
+
+                return graphValue;
+            }
         }
 
         public double[,] GetTable(string vertexKey)
@@ -279,36 +266,11 @@ namespace Marv
             return defaultValue;
         }
 
-        public void UpdateBeliefs()
-        {
-            this.network.UpdateBeliefs();
-        }
-
         public void Run(Dict<int, string, VertexData> sectionData)
         {
             foreach (var year in sectionData.Keys)
             {
                 this.Run(sectionData[year]);
-            }
-        }
-
-        public void Run(Dictionary<string, VertexData> vertexEvidences)
-        {
-            this.ClearEvidence();
-
-            foreach (var vertexKey in vertexEvidences.Keys)
-            {
-                this.SetEvidence(vertexKey, vertexEvidences[vertexKey].Evidence);
-            }
-
-            foreach (var kvp in this.GetBelief())
-            {
-                if (!vertexEvidences.ContainsKey(kvp.Key))
-                {
-                    vertexEvidences[kvp.Key] = new VertexData();
-                }
-
-                vertexEvidences[kvp.Key].Beliefs = kvp.Value;
             }
         }
 
@@ -339,6 +301,11 @@ namespace Marv
         public void SetTable(string vertexKey, double[,] table)
         {
             this.network.SetNodeTable(vertexKey, table);
+        }
+
+        public void UpdateBeliefs()
+        {
+            this.network.UpdateBeliefs();
         }
 
         public void Write()
@@ -421,6 +388,25 @@ namespace Marv
             }
 
             this.Write(path);
+        }
+
+        private void Run(Dict<string, VertexData> graphData)
+        {
+            this.ClearEvidence();
+
+            foreach (var vertexKey in graphData.Keys)
+            {
+                this.SetEvidence(vertexKey, graphData[vertexKey].Evidence);
+            }
+
+            this.UpdateBeliefs();
+
+            var beliefs = this.GetBelief();
+
+            foreach (var vertexKey in beliefs.Keys)
+            {
+                graphData[vertexKey].Beliefs = beliefs[vertexKey];
+            }
         }
     }
 }

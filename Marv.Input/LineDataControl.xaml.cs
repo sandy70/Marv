@@ -454,14 +454,14 @@ namespace Marv.Input
             }
         }
 
-        private void RunAll(NetworkStructure networkStructure, Dict<string, int, string, VertexData> sectionData, IProgress<double> progress = null)
+        private void RunAll(Network network, Dict<string, int, string, VertexData> sectionData, IProgress<double> progress = null)
         {
             var total = sectionData.Keys.Count;
             var count = 0;
 
             foreach (var sectionId in sectionData.Keys)
             {
-                networkStructure.Run(sectionData[sectionId]);
+                network.Run(sectionData[sectionId]);
 
                 count++;
 
@@ -476,7 +476,7 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var networkStructure = this.Graph.NetworkStructure;
+            var networkStructure = Network.Read(this.Graph.NetworkStructure.FileName);
             var sectionData = this.LineData.Sections;
 
             var notification = new Notification
