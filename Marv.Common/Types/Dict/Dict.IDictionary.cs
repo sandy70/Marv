@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Marv
 {
@@ -12,6 +12,8 @@ namespace Marv
             {
                 var oldKvp = this.dictionary[key];
                 oldKvp.Value = value;
+
+                this.Values.Replace(oldKvp.Value, value);
             }
             else
             {
@@ -20,6 +22,9 @@ namespace Marv
                     Key = key,
                     Value = value
                 });
+
+                this.Keys.Add(key);
+                this.Values.Add(value);
             }
         }
 
@@ -28,11 +33,11 @@ namespace Marv
             return this.dictionary.ContainsKey(key);
         }
 
-        public ICollection<TKey> Keys
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys
         {
             get
             {
-                return this.Select<Kvp<TKey, TValue>, TKey>(kvp => kvp.Key).ToList();
+                return this.keys;
             }
         }
 
@@ -41,6 +46,10 @@ namespace Marv
             if (this.dictionary.ContainsKey(key))
             {
                 var oldKvp = this.dictionary[key];
+
+                this.Keys.Remove(oldKvp.Key);
+                this.Values.Remove(oldKvp.Value);
+
                 return this.Remove(oldKvp);
             }
 
@@ -58,11 +67,11 @@ namespace Marv
             return isSuccess;
         }
 
-        public ICollection<TValue> Values
+        ICollection<TValue> IDictionary<TKey, TValue>.Values
         {
             get
             {
-                return this.Select<Kvp<TKey, TValue>, TValue>(kvp => kvp.Value).ToList();
+                return this.values;
             }
         }
 

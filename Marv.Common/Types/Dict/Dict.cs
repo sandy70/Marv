@@ -7,6 +7,24 @@ namespace Marv
     public partial class Dict<TKey, TValue> : ObservableCollection<Kvp<TKey, TValue>>
     {
         private readonly Dictionary<TKey, Kvp<TKey, TValue>> dictionary = new Dictionary<TKey, Kvp<TKey, TValue>>();
+        private readonly ObservableCollection<TKey> keys = new ObservableCollection<TKey>();
+        private readonly ObservableCollection<TValue> values = new ObservableCollection<TValue>();
+
+        public ObservableCollection<TKey> Keys
+        {
+            get
+            {
+                return this.keys;
+            }
+        }
+
+        public ObservableCollection<TValue> Values
+        {
+            get
+            {
+                return this.values;
+            }
+        }
 
         public TValue this[TKey key]
         {
@@ -33,6 +51,14 @@ namespace Marv
             }
         }
 
+        public void ChangeKey(TKey oldKey, TKey newKey)
+        {
+            var oldKvp = this.dictionary[oldKey];
+            this.dictionary.Remove(oldKey);
+            oldKvp.Key = newKey;
+            this.dictionary[newKey] = oldKvp;
+        }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -54,14 +80,6 @@ namespace Marv
             }
 
             base.OnCollectionChanged(e);
-        }
-
-        public void ChangeKey(TKey oldKey, TKey newKey)
-        {
-            var oldKvp = this.dictionary[oldKey];
-            this.dictionary.Remove(oldKey);
-            oldKvp.Key = newKey;
-            this.dictionary[newKey] = oldKvp;
         }
     }
 

@@ -8,12 +8,18 @@ namespace Marv
     {
         public static void AddUnique<T>(this IList<T> list, T item)
         {
-            if (!list.Contains(item)) list.Add(item);
+            if (!list.Contains(item))
+            {
+                list.Add(item);
+            }
         }
 
         public static void AddUnique<T>(this IList<T> list, IEnumerable<T> items)
         {
-            foreach (var item in items) list.AddUnique(item);
+            foreach (var item in items)
+            {
+                list.AddUnique(item);
+            }
         }
 
         public static IEnumerable<T> AllButLast<T>(this IEnumerable<T> items)
@@ -28,11 +34,15 @@ namespace Marv
                 hasRemainingItems = it.MoveNext();
                 if (hasRemainingItems)
                 {
-                    if (!isFirst) yield return item;
+                    if (!isFirst)
+                    {
+                        yield return item;
+                    }
                     item = it.Current;
                     isFirst = false;
                 }
-            } while (hasRemainingItems);
+            }
+            while (hasRemainingItems);
         }
 
         public static IEnumerable<T> AllButLastN<T>(this IEnumerable<T> items, int n)
@@ -47,9 +57,12 @@ namespace Marv
                 {
                     cache.Enqueue(it.Current);
                     if (cache.Count > n)
+                    {
                         yield return cache.Dequeue();
+                    }
                 }
-            } while (hasRemainingItems);
+            }
+            while (hasRemainingItems);
         }
 
         public static IEnumerable<T> Except<T>(this IEnumerable<T> items, T item)
@@ -60,18 +73,30 @@ namespace Marv
         public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action)
         {
             var i = 0;
-            foreach (var item in items) action(item, i++);
+            foreach (var item in items)
+            {
+                action(item, i++);
+            }
         }
 
         public static int IndexOf<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
-            if (items == null) throw new ArgumentNullException("items");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (items == null)
+            {
+                throw new ArgumentNullException("items");
+            }
+            if (predicate == null)
+            {
+                throw new ArgumentNullException("predicate");
+            }
 
             var retVal = 0;
             foreach (var item in items)
             {
-                if (predicate(item)) return retVal;
+                if (predicate(item))
+                {
+                    return retVal;
+                }
                 retVal++;
             }
             return -1;
@@ -93,6 +118,19 @@ namespace Marv
                 index++;
             }
             return maxIndex;
+        }
+
+        public static bool Replace<T>(this IList<T> items, T oldItem, T newItem)
+        {
+            var oldItemIndex = items.IndexOf(oldItem);
+            var result = items.Remove(oldItem);
+
+            if (result)
+            {
+                items.Insert(oldItemIndex, newItem);
+            }
+
+            return result;
         }
 
         public static IEnumerable<T> Yield<T>(this T item)
