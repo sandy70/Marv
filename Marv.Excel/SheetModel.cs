@@ -25,6 +25,7 @@ namespace Marv_Excel
             {
                 return columnHeaders;
             }
+
             set
             {
                 columnHeaders = value;
@@ -240,7 +241,7 @@ namespace Marv_Excel
                     }
                     else
                     {
-                        var vertexEvidence = new Dictionary<string, double>();
+                        var vertexEvidence = new Dict<string, double>();
                         var isEvidenceNull = true;
 
                         foreach (var state in vertex.States)
@@ -262,7 +263,7 @@ namespace Marv_Excel
 
                         if (!isEvidenceNull)
                         {
-                            sheetModel.LineEvidence[sectionId, year, vertexKey] = vertexEvidence;
+                            sheetModel.LineEvidence[sectionId][year][vertexKey] = vertexEvidence;
                         }
                     }
 
@@ -280,7 +281,7 @@ namespace Marv_Excel
         {
             foreach (var sectionId in this.LineEvidence.Keys)
             {
-                this.LineValue[sectionId] = this.Graph.Run(this.LineEvidence[sectionId], this.startYear, this.EndYear);
+                //this.LineValue[sectionId] = this.Graph.Run(this.LineEvidence[sectionId], this.startYear, this.EndYear);
             }
         }
 

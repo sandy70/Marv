@@ -5,6 +5,8 @@
         private double? _value;
         private object category;
 
+        private int name;
+
         public object Category
         {
             get
@@ -19,6 +21,25 @@
                     this.category = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public int Name
+        {
+            get
+            {
+                return this.name;
+            }
+
+            set
+            {
+                if (value.Equals(this.name))
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
             }
         }
 

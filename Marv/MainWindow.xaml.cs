@@ -81,43 +81,43 @@ namespace Marv
 
             foreach (var location in multiLocation)
             {
-                var excelCol = 1;
+                //var excelCol = 1;
 
-                excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
+                //excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
 
-                var fileName = GetFileNameForModelValue(multiLocation.Name, location.Name);
+                //var fileName = GetFileNameForModelValue(multiLocation.Name, location.Name);
 
-                try
-                {
-                    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
+                //try
+                //{
+                //    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
 
-                    foreach (var year in modelValue.Keys)
-                    {
-                        excelWorkSheet.SetValue(1, ++excelCol, year);
+                //    foreach (var year in modelValue.Keys)
+                //    {
+                //        excelWorkSheet.SetValue(1, ++excelCol, year);
 
-                        var graphValue = modelValue[year];
-                        var vertexValue = graphValue[vertexKey];
-                        var stateValue = vertexValue[stateKey];
+                //        var graphValue = modelValue[year];
+                //        var vertexValue = graphValue[vertexKey];
+                //        var stateValue = vertexValue[stateKey];
 
-                        if (!multiLocationValueTimeSeries.ContainsKey(year))
-                        {
-                            multiLocationValueTimeSeries[year] = new Dictionary<string, double>();
-                        }
+                //        if (!multiLocationValueTimeSeries.ContainsKey(year))
+                //        {
+                //            multiLocationValueTimeSeries[year] = new Dictionary<string, double>();
+                //        }
 
-                        multiLocationValueTimeSeries[year][location.Name] = stateValue;
+                //        multiLocationValueTimeSeries[year][location.Name] = stateValue;
 
-                        // var extractedValue = graph.GetMean(vertexKey, vertexValue);
-                        // var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
-                        var extractedValue = stateValue;
-                        excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
-                    }
-                }
-                catch (OdbDataNotFoundException)
-                {
-                    logger.Info("Belief not found for point {0}.", location);
-                }
+                //        // var extractedValue = graph.GetMean(vertexKey, vertexValue);
+                //        // var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
+                //        var extractedValue = stateValue;
+                //        excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
+                //    }
+                //}
+                //catch (OdbDataNotFoundException)
+                //{
+                //    logger.Info("Belief not found for point {0}.", location);
+                //}
 
-                logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
+                //logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
             }
 
             excelPackage.Save();
@@ -145,12 +145,12 @@ namespace Marv
 
         public void ReadGraphValues()
         {
-            var multiLocation = this.Polylines.SelectedItem;
-            var location = multiLocation.SelectedItem;
+            //var multiLocation = this.Polylines.SelectedItem;
+            //var location = multiLocation.SelectedItem;
 
             try
             {
-                this.GraphValues = this.GraphValueReader.Read(multiLocation.Name, location.Name);
+                //this.GraphValues = this.GraphValueReader.Read(multiLocation.Name, location.Name);
             }
             catch (GraphValueNotFoundException exception)
             {
@@ -230,31 +230,31 @@ namespace Marv
 
         public void UpdateMultiLocationValues()
         {
-            foreach (var multiLocation in this.Polylines)
-            {
-                if ((int) multiLocation.Properties["StartYear"] > this.SelectedYear)
-                {
-                    multiLocation.IsEnabled = false;
-                }
-                else
-                {
-                    multiLocation.IsEnabled = true;
+            //foreach (var multiLocation in this.Polylines)
+            //{
+            //    if ((int) multiLocation.Properties["StartYear"] > this.SelectedYear)
+            //    {
+            //        multiLocation.IsEnabled = false;
+            //    }
+            //    else
+            //    {
+            //        multiLocation.IsEnabled = true;
 
-                    if (this.Polylines.SelectedItem.IsEnabled == false)
-                    {
-                        // this.Polylines.Select(multiLocation);
-                    }
+            //        if (this.Polylines.SelectedItem.IsEnabled == false)
+            //        {
+            //            // this.Polylines.Select(multiLocation);
+            //        }
 
-                    try
-                    {
-                        multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        logger.Warn("Belief not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
-                    }
-                }
-            }
+            //        try
+            //        {
+            //            multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
+            //        }
+            //        catch (KeyNotFoundException)
+            //        {
+            //            logger.Warn("Belief not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
+            //        }
+            //    }
+            //}
         }
     }
 }

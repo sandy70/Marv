@@ -182,15 +182,15 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocation = window.Polylines.SelectedItem;
+            //var multiLocation = window.Polylines.SelectedItem;
 
-            var multiLocationName = multiLocation.Name;
-            var locationName = multiLocation.SelectedItem.Name;
+            //var multiLocationName = multiLocation.Name;
+            //var locationName = multiLocation.SelectedItem.Name;
 
-            var startYear = (int) multiLocation.Properties["StartYear"];
+            //var startYear = (int) multiLocation.Properties["StartYear"];
             var endYear = window.EndYear;
 
-            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+            //await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
         }
 
         private async void NetworkComputeValue_Click(object sender, RadRoutedEventArgs e)
@@ -251,9 +251,9 @@ namespace Marv
         {
             var window = this.AssociatedObject;
             var graph = window.Graph;
-            var multiLocation = window.Polylines.SelectedItem;
+           // var multiLocation = window.Polylines.SelectedItem;
 
-            window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);
+            //window.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = await MainWindow.CalculateMultiLocationValueTimeSeriesAndWriteAsync(multiLocation, graph);
             window.UpdateMultiLocationValues();
         }
 
@@ -264,26 +264,26 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocation = window.Polylines.SelectedItem;
-            var multiLocationName = multiLocation.Name;
+            //var multiLocation = window.Polylines.SelectedItem;
+            //var multiLocationName = multiLocation.Name;
 
-            var startYear = (int) multiLocation.Properties["StartYear"];
-            var endYear = window.EndYear;
+            //var startYear = (int) multiLocation.Properties["StartYear"];
+            //var endYear = window.EndYear;
 
-            var nCompleted = 0;
-            var nLocations = multiLocation.Count;
+            //var nCompleted = 0;
+            //var nLocations = multiLocation.Count;
 
-            await Task.Run(() =>
-            {
-                foreach (var location in multiLocation)
-                {
-                    var locationName = location.Name;
+            //await Task.Run(() =>
+            //{
+            //    foreach (var location in multiLocation)
+            //    {
+            //        var locationName = location.Name;
 
-                    MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+            //        MainWindow.RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
-                    Logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
-                }
-            });
+            //        Logger.Info("Ran model and wrote for point {0} on line {1} ({2} of {3})", locationName, multiLocationName, ++nCompleted, nLocations);
+            //    }
+            //});
         }
 
         private void SectionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -378,24 +378,24 @@ namespace Marv
             var networkFileName = window.NetworkFileName;
             var inputFileName = window.InputFileName;
 
-            var multiLocation = window.Polylines.SelectedItem;
+            //var multiLocation = window.Polylines.SelectedItem;
 
-            var multiLocationName = multiLocation.Name;
-            var locationName = multiLocation.SelectedItem.Name;
+            //var multiLocationName = multiLocation.Name;
+            //var locationName = multiLocation.SelectedItem.Name;
 
-            var startYear = (int) multiLocation.Properties["StartYear"];
-            var endYear = window.EndYear;
+            //var startYear = (int) multiLocation.Properties["StartYear"];
+            //var endYear = window.EndYear;
 
-            var notification = new Notification
-            {
-                Name = "Running Model",
-                Description = "Running model for location: " + locationName,
-                IsIndeterminate = true
-            };
+            //var notification = new Notification
+            //{
+            //    Name = "Running Model",
+            //    Description = "Running model for location: " + locationName,
+            //    IsIndeterminate = true
+            //};
 
-            window.Notifications.Push(notification);
+            //window.Notifications.Push(notification);
 
-            await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
+            //await MainWindow.RunAndWriteAsync(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear);
 
             notification.Close();
 

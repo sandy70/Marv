@@ -16,14 +16,14 @@
     </UserControl.Resources>
 
     <!-- Notification Listbox -->
-    <surface:SurfaceListBox Background="LightGray"
+    <ListBox Background="LightGray"
                             HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding Notifications, ElementName=Root}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                             Visibility="{Binding ElementName=Root, Path=Notifications.Count, Converter={StaticResource IntToVisibility}}">
-        <surface:SurfaceListBox.ItemContainerStyle>
-            <Style TargetType="{x:Type surface:SurfaceListBoxItem}">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
                 <Style.Triggers>
                     <EventTrigger RoutedEvent="Loaded">
                         <EventTrigger.Actions>
@@ -49,9 +49,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-        </surface:SurfaceListBox.ItemContainerStyle>
+        </ListBox.ItemContainerStyle>
 
-        <surface:SurfaceListBox.ItemTemplate>
+        <ListBox.ItemTemplate>
             <DataTemplate>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -118,6 +118,6 @@
                               Visibility="{Binding IsMuteable, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
-        </surface:SurfaceListBox.ItemTemplate>
-    </surface:SurfaceListBox>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

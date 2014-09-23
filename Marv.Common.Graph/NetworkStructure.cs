@@ -218,17 +218,14 @@ namespace Marv
 
         public Dictionary<string, double[]> GetBelief()
         {
-            lock (this._lock)
+            var graphValue = new Dictionary<string, double[]>();
+
+            foreach (var vertex in this.Vertices)
             {
-                var graphValue = new Dictionary<string, double[]>();
-
-                foreach (var vertex in this.Vertices)
-                {
-                    graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
-                }
-
-                return graphValue;
+                graphValue[vertex.Key] = this.network.GetNodeValue(vertex.Key);
             }
+
+            return graphValue;
         }
 
         public double[,] GetTable(string vertexKey)
