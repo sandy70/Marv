@@ -469,30 +469,10 @@ namespace Marv.Input
             }
         }
 
-        private void RunAll(Network network, Dict<string, int, string, VertexData> lineData, Dictionary<string, string> loops, IProgress<double> progress = null)
-        {
-            var total = lineData.Keys.Count;
-            var count = 0;
-
-            foreach (var sectionId in lineData.Keys)
-            {
-                network.Run(lineData[sectionId], loops);
-
-                count++;
-
-                if (progress != null)
-                {
-                    progress.Report((double) count / total);
-                }
-
-                Thread.Sleep(1);
-            }
-        }
-
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
             var loops = this.Graph.Loops;
-            var network = Network.Read(this.Graph.Network.FileName);
+            var network = this.Graph.Network;
             var lineData = this.LineData.Sections;
 
             var notification = new Notification
@@ -504,23 +484,18 @@ namespace Marv.Input
 
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
-            await Task.Run(() => this.RunAll(network, lineData, loops, progress));
+            await Task.Run(() => network.Run(lineData, loops, progress));
 
             this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
-        }
-
-        private void RunSection(Network network, Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops)
-        {
-            network.Run(sectionData, loops);
         }
 
         private Task RunSelectedSectionAsync()
         {
             var loops = this.Graph.Loops;
-            var network = Network.Read(this.Graph.Network.FileName);
+            var network = this.Graph.Network;
             var sectionData = this.LineData.Sections[this.SelectedSectionId];
 
-            return Task.Run(() => this.RunSection(network, sectionData, loops));
+            return Task.Run(() => network.Run(sectionData, loops));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

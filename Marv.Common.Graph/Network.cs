@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using Smile;
 
 namespace Marv
@@ -312,23 +313,22 @@ namespace Marv
             }
         }
 
-        public void SetEvidence(string vertexKey, IEnumerable<double> evidence)
+        public void Run(Dict<string, int, string, VertexData> lineData, Dictionary<string, string> loops, IProgress<double> progress = null)
         {
-            if (evidence == null)
+            var total = lineData.Keys.Count;
+            var count = 0;
+
+            foreach (var sectionId in lineData.Keys)
             {
-                try
-                {
-                    this.ClearEvidence(vertexKey);
-                }
-                catch
-                {
-                    // do nothing
-                }
+                this.Run(lineData[sectionId], loops);
 
-                return;
+                count++;
+
+                if (progress != null)
+                {
+                    progress.Report((double) count / total);
+                }
             }
-
-            this.SetSoftEvidence(vertexKey, evidence.ToArray());
         }
 
         public void Write()
