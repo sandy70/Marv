@@ -197,7 +197,7 @@ namespace Marv
             }
         }
 
-        public NetworkStructure NetworkStructure { get; private set; }
+        public Network Network { get; private set; }
 
         public Vertex SelectedVertex
         {
@@ -235,18 +235,18 @@ namespace Marv
 
         public static Graph Read(string fileName)
         {
-            //NetworkStructure.Decrypt(fileName);
+            //Network.Decrypt(fileName);
             var graph = new Graph
             {
-                NetworkStructure = NetworkStructure.Read(fileName)
+                Network = Network.Read(fileName)
             };
 
-            graph.DefaultGroup = graph.NetworkStructure.ParseUserProperty("defaultgroup", "all");
-            graph.Guid = Guid.Parse(graph.NetworkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
-            graph.Key = graph.NetworkStructure.ParseUserProperty("key", "");
+            graph.DefaultGroup = graph.Network.ParseUserProperty("defaultgroup", "all");
+            graph.Guid = Guid.Parse(graph.Network.ParseUserProperty("guid", Guid.NewGuid().ToString()));
+            graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var structureVertex in graph.NetworkStructure.Vertices)
+            foreach (var structureVertex in graph.Network.Vertices)
             {
                 var vertex = new Vertex
                 {
@@ -281,7 +281,7 @@ namespace Marv
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.NetworkStructure.Vertices)
+            foreach (var srcVertex in graph.Network.Vertices)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -310,7 +310,7 @@ namespace Marv
             var value = new Dict<string, string, double>();
 
             // Clear all evidence to begin with
-            this.NetworkStructure.ClearEvidence();
+            this.Network.ClearEvidence();
 
             // Collect vertices to ignore
             var verticesToIgnore = new List<Vertex>
@@ -334,9 +334,9 @@ namespace Marv
                     try
                     {
                         var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.NetworkStructure.SetEvidence(sourceVertex.Key, stateIndex);
+                        this.Network.SetEvidence(sourceVertex.Key, stateIndex);
 
-                        var graphValue = this.NetworkStructure.GetBelief();
+                        var graphValue = this.Network.GetBeliefs();
                         var targetVertexValue = graphValue[targetVertex.Key];
 
                         value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
@@ -468,7 +468,7 @@ namespace Marv
 
         public void Run()
         {
-            var network = Network.Read(this.NetworkStructure.FileName);
+            var network = Network.Read(this.Network.FileName);
             var graphData = this.Data;
 
             network.Run(graphData);
@@ -484,7 +484,7 @@ namespace Marv
 
         public void Write()
         {
-            this.NetworkStructure.Write(this);
+            this.Network.Write(this);
         }
     }
 }

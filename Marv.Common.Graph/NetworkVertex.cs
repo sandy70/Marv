@@ -6,11 +6,11 @@ using System.Windows;
 
 namespace Marv
 {
-    public class NetworkStructureVertex
+    public class NetworkVertex : IKeyed
     {
-        public readonly List<NetworkStructureVertex> Children = new List<NetworkStructureVertex>();
-        public string Key = "";
+        public readonly List<NetworkVertex> Children = new List<NetworkVertex>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        public string Key { get; set; }
 
         public ObservableCollection<string> ParseGroups()
         {
@@ -20,7 +20,10 @@ namespace Marv
             {
                 var groupsValueString = this.Properties["groups"];
 
-                var parts = groupsValueString.Split(new[] {'"', ','}, StringSplitOptions.RemoveEmptyEntries);
+                var parts = groupsValueString.Split(new[]
+                {
+                    '"', ','
+                }, StringSplitOptions.RemoveEmptyEntries);
 
                 groups = new ObservableCollection<string>(parts);
 
@@ -48,11 +51,23 @@ namespace Marv
             return false;
         }
 
+        public T ParseJson<T>(string propertyName) where T : new()
+        {
+            if (this.Properties.ContainsKey(propertyName))
+            {
+                return this.Properties[propertyName].Dequote().ParseJson<T>();
+            }
+            return new T();
+        }
+
         public Point ParsePosition()
         {
             var posValueString = this.Properties["position"];
 
-            var parts = posValueString.Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries);
+            var parts = posValueString.Split(new[]
+            {
+                '(', ')', ' '
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             var position = new Point
             {
@@ -109,7 +124,10 @@ namespace Marv
                 if (subtype.Equals("interval"))
                 {
                     var stateStrings = this.Properties["state_values"]
-                        .Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries)
+                        .Split(new[]
+                        {
+                            '(', ')', ' '
+                        }, StringSplitOptions.RemoveEmptyEntries)
                         .ToList();
 
                     var nStatesStrings = stateStrings.Count;
@@ -129,7 +147,10 @@ namespace Marv
                 else if (subtype.Equals("number"))
                 {
                     var stateStrings = this.Properties["state_values"]
-                        .Split(new[] {'(', ')', ' '}, StringSplitOptions.RemoveEmptyEntries)
+                        .Split(new[]
+                        {
+                            '(', ')', ' '
+                        }, StringSplitOptions.RemoveEmptyEntries)
                         .ToList();
 
                     var nStatesStrings = stateStrings.Count;
@@ -215,15 +236,6 @@ namespace Marv
                 return VertexType.Interval;
             }
             return VertexType.Labelled;
-        }
-
-        public T ParseJson<T>(string propertyName) where T : new()
-        {
-            if (this.Properties.ContainsKey(propertyName))
-            {
-                return this.Properties[propertyName].Dequote().ParseJson<T>();
-            }
-            return new T();
         }
     }
 }

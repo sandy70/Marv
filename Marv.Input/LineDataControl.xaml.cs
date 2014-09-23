@@ -492,7 +492,7 @@ namespace Marv.Input
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
             var loops = this.Graph.Loops;
-            var network = Network.Read(this.Graph.NetworkStructure.FileName);
+            var network = Network.Read(this.Graph.Network.FileName);
             var lineData = this.LineData.Sections;
 
             var notification = new Notification
@@ -517,7 +517,7 @@ namespace Marv.Input
         private Task RunSelectedSectionAsync()
         {
             var loops = this.Graph.Loops;
-            var network = Network.Read(this.Graph.NetworkStructure.FileName);
+            var network = Network.Read(this.Graph.Network.FileName);
             var sectionData = this.LineData.Sections[this.SelectedSectionId];
 
             return Task.Run(() => this.RunSection(network, sectionData, loops));
