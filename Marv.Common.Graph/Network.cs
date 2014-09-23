@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Threading;
 using Smile;
 
 namespace Marv
 {
     public class Network : Smile.Network
     {
+        public const string DataFileDescription = "MARV Network Data";
+        public const string DataFileExtension = "marv-networkdata";
+
         public readonly List<string> Footer = new List<string>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
@@ -415,6 +417,11 @@ namespace Marv
 
         public void WriteData(string fileName)
         {
+            if (Path.GetExtension(fileName) != DataFileExtension)
+            {
+                fileName = fileName + "." + DataFileExtension;
+            }
+
             this.GetData().WriteJson(fileName);
         }
     }
