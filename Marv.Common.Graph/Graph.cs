@@ -246,23 +246,23 @@ namespace Marv
             graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var structureVertex in graph.Network.Vertices)
+            foreach (var networkVertex in graph.Network.Vertices)
             {
                 var vertex = new Vertex
                 {
-                    ConnectorPositions = structureVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
-                    Description = structureVertex.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = structureVertex.ParseGroups(),
-                    HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup"),
-                    InputVertexKey = structureVertex.ParseStringProperty("InputNode"),
-                    IsExpanded = structureVertex.ParseIsExpanded(),
-                    Key = structureVertex.Key,
-                    Name = structureVertex.ParseStringProperty("label"),
-                    Position = structureVertex.ParsePosition(),
-                    PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
-                    Units = structureVertex.ParseStringProperty("units"),
-                    States = structureVertex.ParseStates(),
-                    Type = structureVertex.ParseSubType()
+                    ConnectorPositions = networkVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    Description = networkVertex.ParseStringProperty("HR_HTML_Desc"),
+                    Groups = networkVertex.ParseGroups(),
+                    HeaderOfGroup = networkVertex.ParseStringProperty("headerofgroup"),
+                    InputVertexKey = networkVertex.ParseStringProperty("InputNode"),
+                    IsExpanded = networkVertex.ParseIsExpanded(),
+                    Key = networkVertex.Key,
+                    Name = networkVertex.ParseStringProperty("label"),
+                    Position = networkVertex.ParsePosition(),
+                    PositionForGroup = networkVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
+                    Units = networkVertex.ParseStringProperty("units"),
+                    States = networkVertex.ParseStates(),
+                    Type = networkVertex.ParseSubType()
                 };
 
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
