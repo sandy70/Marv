@@ -33,7 +33,7 @@ namespace Marv.Input
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedSectionId));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
@@ -178,15 +178,6 @@ namespace Marv.Input
             control.UpdateRows();
 
             control.LineData.DataChanged += control.LineData_DataChanged;
-        }
-
-        private static async void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataControl;
-
-            await control.RunSelectedSectionAsync();
-
-            control.Graph.Data = control.LineData.Sections[control.SelectedSectionId][control.SelectedYear];
         }
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -357,7 +348,7 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        private async void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell == null || this.LineData == null)
             {
@@ -372,6 +363,8 @@ namespace Marv.Input
                 this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
                 return;
             }
+
+            await this.RunSelectedSectionAsync();
 
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
