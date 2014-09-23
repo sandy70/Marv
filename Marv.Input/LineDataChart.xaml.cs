@@ -24,8 +24,8 @@ namespace Marv.Input
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
 
-        public static readonly DependencyProperty SectionIdProperty =
-            DependencyProperty.Register("SectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
+        public static readonly DependencyProperty SelectedSectionIdProperty =
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null, ChangedSelectedSectionId));
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
@@ -210,15 +210,15 @@ namespace Marv.Input
             }
         }
 
-        public string SectionId
+        public string SelectedSectionId
         {
             get
             {
-                return (string) GetValue(SectionIdProperty);
+                return (string) GetValue(SelectedSectionIdProperty);
             }
             set
             {
-                SetValue(SectionIdProperty, value);
+                SetValue(SelectedSectionIdProperty, value);
             }
         }
 
@@ -310,6 +310,17 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
+        private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataChart;
+
+            if (!control.IsXAxisSections || e.OldValue == null)
+            {
+                control.UpdateBasePoints();
+                control.InitializeEvidence();
+            }
+        }
+
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
@@ -353,7 +364,7 @@ namespace Marv.Input
 
                 var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
 
-                var sectionId = this.IsXAxisSections ? point.Category as string : this.SectionId;
+                var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
                 var vertexData = new VertexData();
@@ -486,9 +497,9 @@ namespace Marv.Input
         private void UpdateBasePoints()
         {
             if (this.LineData == null ||
-                this.SectionId == null ||
+                this.SelectedSectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.Sections.ContainsKey(this.SectionId) ||
+                !this.LineData.Sections.ContainsKey(this.SelectedSectionId) ||
                 this.Vertex == null)
             {
                 return;
@@ -498,13 +509,20 @@ namespace Marv.Input
             this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
             this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
 
-            this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SectionId;
+            foreach (var state in this.Vertex.States)
+            {
+                this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+            }
+
+            this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+
+            this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SelectedSectionId;
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
             var categories = this.IsXAxisSections ? this.LineData.Sections.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
             foreach (var category in categories)
             {
-                var sectionId = this.IsXAxisSections ? category as string : this.SectionId;
+                var sectionId = this.IsXAxisSections ? category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) category;
 
                 this.AnchorPoints.Add(new CategoricalDataPoint
@@ -550,7 +568,7 @@ namespace Marv.Input
                         this.BaseDistributionSeries[1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
-                            Value = paramValues[1],
+                            Value = paramValues[1] - paramValues[0],
                             Probability = 1
                         });
 
@@ -565,12 +583,17 @@ namespace Marv.Input
 
                         this.Vertex.States.ForEach((state, i) =>
                         {
-                            if (this.BaseDistributionSeries.Count < i + 1)
+                            if (i == 0)
                             {
-                                this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+                                this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
+                                {
+                                    Category = category,
+                                    Value = state.SafeMin,
+                                    Probability = 0
+                                });
                             }
 
-                            this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
+                            this.BaseDistributionSeries[i + 1].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
                                 Value = state.SafeMax - state.SafeMin,

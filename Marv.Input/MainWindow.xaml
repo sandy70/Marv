@@ -59,7 +59,7 @@
                                               Visibility="Collapsed" />
 
                                 <local:LineDataChart LineData="{Binding ElementName=Root, Path=LineData}"
-                                                     SectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
+                                                     SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                      XTitle="{Binding ElementName=Root, Path=XTitle}"
                                                      Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
