@@ -110,6 +110,7 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
+            this.LineDataChart.SetSelectedPoint(vertex.Data);
             this.LineDataControl.SetSelectedCells(vertex.Data);
         }
 
