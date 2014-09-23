@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Common", "Marv.Common\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls", "Marv.Controls\Marv.Controls.csproj", "{37506E1A-457B-4186-8C4F-11BA0E7AA78E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Demo.Map", "Marv.Demo.Map\Marv.Demo.Map.csproj", "{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Common.Map", "Marv.Common.Map\Marv.Common.Map.csproj", "{0093C28F-0446-4340-8EC0-9733EDC73AD3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Common.Graph", "Marv.Common.Graph\Marv.Common.Graph.csproj", "{5EC15F8C-655C-4A46-A4CF-7AF1EAC94376}"
@@ -20,8 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Marv.Excel.csproj", "{17D61DC1-D1E3-4420-90B5-89803EDC5469}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Input", "Marv.Input\Marv.Input.csproj", "{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Test", "Marv.Test\Marv.Test.csproj", "{100F8F7E-776A-430E-8F24-5B909EBBA646}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,16 +49,6 @@ Global
 		{37506E1A-457B-4186-8C4F-11BA0E7AA78E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37506E1A-457B-4186-8C4F-11BA0E7AA78E}.Release|x64.ActiveCfg = Release|Any CPU
 		{37506E1A-457B-4186-8C4F-11BA0E7AA78E}.Release|x86.ActiveCfg = Release|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|x64.Build.0 = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Debug|x86.Build.0 = Debug|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Release|x64.ActiveCfg = Release|Any CPU
-		{6FF82F0D-D802-4CFC-AE90-B0F37EA4CE37}.Release|x86.ActiveCfg = Release|Any CPU
 		{0093C28F-0446-4340-8EC0-9733EDC73AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0093C28F-0446-4340-8EC0-9733EDC73AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0093C28F-0446-4340-8EC0-9733EDC73AD3}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -123,14 +109,6 @@ Global
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x64.ActiveCfg = Release|x86
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x86.ActiveCfg = Release|x86
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x86.Build.0 = Release|x86
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Release|Any CPU.Build.0 = Release|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Release|x64.ActiveCfg = Release|Any CPU
-		{100F8F7E-776A-430E-8F24-5B909EBBA646}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
