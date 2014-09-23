@@ -10,11 +10,6 @@ namespace Marv
             foreach (var state in states) state.Evidence = 0;
         }
 
-        public static IEnumerable<double> GetEvidence(this IEnumerable<State> states)
-        {
-            return states.Select(state => state.Evidence);
-        }
-
         public static IEnumerable<double> Parse(this IEnumerable<State> states, IDistribution dist)
         {
             return states.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));

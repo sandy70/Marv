@@ -13,7 +13,7 @@ namespace Marv
                 ConnectorPositions = connectorPostions ?? new EdgeConnectorPositions()
             };
 
-            if (Contains(edges, source, target))
+            if (edges.Contains(source, target))
             {
                 return;
             }
