@@ -70,6 +70,19 @@ namespace Marv
             return items.Except(item.Yield());
         }
 
+        public static T FirstOrNew<T>(this ICollection<T> items, Func<T, bool> predicate)
+        {
+            var firstOrDefault = items.FirstOrDefault();
+
+            if (firstOrDefault == null)
+            {
+                firstOrDefault = Utils.Create<T>();
+                items.Add(firstOrDefault);
+            }
+
+            return firstOrDefault;
+        }
+
         public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action)
         {
             var i = 0;
@@ -118,6 +131,24 @@ namespace Marv
                 index++;
             }
             return maxIndex;
+        }
+
+        public static void Remove<T>(this ICollection<T> items, Func<T, bool> predicate)
+        {
+            var itemsToRemove = items.Where(predicate).ToList();
+
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                items.Remove(itemToRemove);
+            }
+        }
+
+        public static void Remove<T>(this IEnumerable<ICollection<T>> collections, Func<T, bool> predicate)
+        {
+            foreach (var collection in collections)
+            {
+                collection.Remove(predicate);
+            }
         }
 
         public static bool Replace<T>(this IList<T> items, T oldItem, T newItem)
