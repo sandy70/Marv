@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Smile;
 
 namespace Marv
 {
@@ -24,6 +25,19 @@ namespace Marv
             return vertexBeliefs;
         }
 
+        public Dict<string, VertexData> GetData()
+        {
+            var graphData = new Dict<string, VertexData>();
+
+            foreach (var vertexKey in this.GetAllNodeIds())
+            {
+                graphData[vertexKey].Belief = this.GetNodeValue(vertexKey);
+                graphData[vertexKey].Evidence = this.GetSoftEvidence(vertexKey);
+            }
+
+            return graphData;
+        }
+
         public void Run(Dict<string, VertexData> graphData)
         {
             this.ClearAllEvidence();
@@ -46,7 +60,7 @@ namespace Marv
                     graphData[vertexKey].Belief = beliefs[vertexKey];
                 }
             }
-            catch (Smile.SmileException exp)
+            catch (SmileException)
             {
                 // do nothing
             }
@@ -75,6 +89,11 @@ namespace Marv
 
                 lastYear = year;
             }
+        }
+
+        public void WriteData(string fileName)
+        {
+            this.GetData().WriteJson(fileName);
         }
     }
 }
