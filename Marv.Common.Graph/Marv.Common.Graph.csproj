@@ -80,7 +80,6 @@
     <Compile Include="VertexCommand\VertexCommands.cs" />
     <Compile Include="VertexCommand\VertexExpandCommand.cs" />
     <Compile Include="VertexCommand\VertexLockCommand.cs" />
-    <Compile Include="VertexEvidenceInfo.cs" />
     <Compile Include="VertexEvidenceType.cs" />
     <Compile Include="VertexType.cs" />
     <Compile Include="NetworkVertex.cs" />
