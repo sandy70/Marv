@@ -28,6 +28,9 @@ namespace Marv.Input
         public static readonly DependencyProperty LineDataProperty =
             DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
+        public static readonly DependencyProperty NetworkFileNameProperty =
+            DependencyProperty.Register("NetworkFileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedNetworkFileName));
+
         public static readonly DependencyProperty SectionsToAddCountProperty =
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
@@ -43,6 +46,7 @@ namespace Marv.Input
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
+        private Network network;
         private ObservableCollection<Dynamic> rows;
 
         public string FileName
@@ -91,6 +95,18 @@ namespace Marv.Input
             set
             {
                 SetValue(LineDataProperty, value);
+            }
+        }
+
+        public string NetworkFileName
+        {
+            get
+            {
+                return (string) GetValue(NetworkFileNameProperty);
+            }
+            set
+            {
+                SetValue(NetworkFileNameProperty, value);
             }
         }
 
@@ -177,6 +193,16 @@ namespace Marv.Input
             control.UpdateRows();
 
             control.LineData.DataChanged += control.LineData_DataChanged;
+        }
+
+        private static void ChangedNetworkFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataControl;
+
+            if (e.OldValue == null || !e.OldValue.Equals(e.NewValue))
+            {
+                control.network = Network.Read(control.NetworkFileName);
+            }
         }
 
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -463,7 +489,6 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var network = this.Graph.Network;
             var lineData = this.LineData.Sections;
 
             var notification = new Notification
@@ -475,17 +500,15 @@ namespace Marv.Input
 
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
-            await Task.Run(() => network.Run(lineData, progress));
+            await Task.Run(() => this.network.Run(lineData, progress));
 
             this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private Task RunSelectedSectionAsync()
         {
-            var network = this.Graph.Network;
             var sectionData = this.LineData.Sections[this.SelectedSectionId];
-
-            return Task.Run(() => network.Run(sectionData));
+            return Task.Run(() => this.network.Run(sectionData));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

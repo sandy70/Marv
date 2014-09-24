@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Smile;
 
 namespace Marv
 {
-    public class Network : Smile.Network
+    public class Network : Smile.Network, INotifyPropertyChanged
     {
         public const string DataFileDescription = "MARV Network Data";
         public const string DataFileExtension = "marv-networkdata";
@@ -16,11 +18,32 @@ namespace Marv
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
-        public string FileName { get; set; }
+        private string fileName;
+
+        public string FileName
+        {
+            get
+            {
+                return this.fileName;
+            }
+
+            set
+            {
+                if (value.Equals(this.fileName))
+                {
+                    return;
+                }
+
+                this.fileName = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         // Dictionary<targetVertexKey, sourceVertexKey>
         // Beliefs from sourceVertexKey should go into targetVertexKey
         public Dictionary<string, string> Loops { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static void Decrypt(string path)
         {
@@ -435,6 +458,14 @@ namespace Marv
             }
 
             this.GetData().WriteJson(fileName);
+        }
+
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
