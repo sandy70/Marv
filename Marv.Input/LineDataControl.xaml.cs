@@ -227,7 +227,7 @@ namespace Marv.Input
 
                 if (!cellModel.IsColumnSectionId)
                 {
-                    this.SetCell(cellModel, vertexData.String);
+                    this.SetCell(cellModel, vertexData);
                 }
             }
         }
@@ -307,7 +307,7 @@ namespace Marv.Input
             foreach (var row in this.Rows)
             {
                 var cellModel = new CellModel(row, selectedCellModel.Header);
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexData));
             }
         }
 
@@ -334,7 +334,7 @@ namespace Marv.Input
                     continue;
                 }
 
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexData).String);
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexData));
             }
         }
 
@@ -364,9 +364,9 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidenceInfo = this.SelectedVertex.ParseEvidenceInfo(e.NewValue as string);
+            var vertexData = this.SelectedVertex.ParseEvidence(e.NewValue as string);
 
-            if (vertexEvidenceInfo.Type == VertexEvidenceType.Invalid)
+            if (vertexData.EvidenceType == VertexEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
@@ -567,11 +567,7 @@ namespace Marv.Input
             }
             else
             {
-                var distribution = this.SelectedVertex.States.Parse(newString);
-
-                var vertexData = new VertexData();
-                vertexData.Evidence = distribution == null ? null : distribution.ToArray();
-                vertexData.String = newString;
+                var vertexData = this.SelectedVertex.ParseEvidence(newString);
 
                 cellModel.Data = vertexData;
                 this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;

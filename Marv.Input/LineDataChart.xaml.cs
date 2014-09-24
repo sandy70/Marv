@@ -340,7 +340,7 @@ namespace Marv.Input
 
         public void SetSelectedPoint(VertexData vertexData)
         {
-            if (this.BaseNumberPoints.Count == 0)
+            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
             {
                 this.UpdateBasePoints();
             }
@@ -372,7 +372,7 @@ namespace Marv.Input
 
             this.AnchorPoints.ForEach((point, i) =>
             {
-                var values = splines.Select(spline => spline.Eval(new[]
+                var values = splines.Select(spline => (double) spline.Eval(new[]
                 {
                     (float) i
                 })[0]).ToArray();
@@ -382,9 +382,7 @@ namespace Marv.Input
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
-                var vertexData = new VertexData();
-                vertexData.Evidence = this.Vertex.ParseEvidence(evidenceString).ToArray();
-                vertexData.String = evidenceString;
+                var vertexData = this.Vertex.ParseEvidence(evidenceString);
 
                 this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;
             });
@@ -511,10 +509,10 @@ namespace Marv.Input
 
         private void SetPoint(object category, VertexData vertexData)
         {
-            var vertexEvidenceInfo = this.Vertex.ParseEvidenceInfo(vertexData.String);
-            var paramValues = VertexData.ParseEvidenceParams(vertexData.String);
+            var paramValues = vertexData.Params;
+            var type = vertexData.EvidenceType;
 
-            switch (vertexEvidenceInfo.Type)
+            switch (type)
             {
                 case VertexEvidenceType.Number:
                 {
@@ -529,8 +527,6 @@ namespace Marv.Input
 
                 case VertexEvidenceType.Range:
                 {
-                    paramValues.Sort();
-
                     while (this.BaseDistributionSeries.Count < 2)
                     {
                         this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
@@ -557,6 +553,11 @@ namespace Marv.Input
                 case VertexEvidenceType.Normal:
                 case VertexEvidenceType.Triangular:
                 {
+                    if (vertexData.Evidence == null)
+                    {
+                        break;
+                    }
+
                     var maxProb = vertexData.Evidence.Max();
 
                     this.Vertex.States.ForEach((state, i) =>

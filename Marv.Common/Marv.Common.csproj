@@ -84,6 +84,7 @@
     <Compile Include="CorLas\CorLAS.cs" />
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
+    <Compile Include="EventHandler.cs" />
     <Compile Include="Types\Dict\Dict.cs" />
     <Compile Include="Types\Dict\Dict.IDictionary.cs" />
     <Compile Include="Types\Dict\DictEnumerator.cs" />

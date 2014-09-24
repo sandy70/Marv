@@ -165,7 +165,7 @@ namespace Marv.Controls.Graph
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.Vertex.Evidence = this.Vertex.ParseEvidence(this.Vertex.EvidenceString); ;
+            this.Vertex.UpdateData();
             this.RaiseEvidenceEntered();
         }
 
