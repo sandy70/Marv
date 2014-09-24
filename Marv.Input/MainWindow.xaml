@@ -43,7 +43,7 @@
                         <telerik:RadPane Header="Input">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
-                                                   Graph="{Binding ElementName=Root, Path=Graph}"
+                                                   CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"

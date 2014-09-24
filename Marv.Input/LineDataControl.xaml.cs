@@ -16,11 +16,11 @@ namespace Marv.Input
 {
     public partial class LineDataControl : INotifyPropertyChanged
     {
+        public static readonly DependencyProperty CurrentGraphDataProperty =
+            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IsGridViewEnabledProperty =
             DependencyProperty.Register("IsGridViewEnabled", typeof (bool), typeof (LineDataControl), new PropertyMetadata(false));
@@ -49,6 +49,18 @@ namespace Marv.Input
         private Network network;
         private ObservableCollection<Dynamic> rows;
 
+        public Dict<string, VertexData> CurrentGraphData
+        {
+            get
+            {
+                return (Dict<string, VertexData>) GetValue(CurrentGraphDataProperty);
+            }
+            set
+            {
+                SetValue(CurrentGraphDataProperty, value);
+            }
+        }
+
         public string FileName
         {
             get
@@ -58,18 +70,6 @@ namespace Marv.Input
             set
             {
                 SetValue(FileNameProperty, value);
-            }
-        }
-
-        public Graph Graph
-        {
-            get
-            {
-                return (Graph) GetValue(GraphProperty);
-            }
-            set
-            {
-                SetValue(GraphProperty, value);
             }
         }
 
@@ -354,7 +354,7 @@ namespace Marv.Input
 
             await this.RunSelectedSectionAsync();
 
-            this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
+            this.CurrentGraphData = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -393,7 +393,7 @@ namespace Marv.Input
 
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.Graph.Data = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
         }
 
         private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
@@ -502,7 +502,7 @@ namespace Marv.Input
 
             await Task.Run(() => this.network.Run(lineData, progress));
 
-            this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
+            this.CurrentGraphData = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private Task RunSelectedSectionAsync()
