@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
@@ -464,7 +463,6 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var loops = this.Graph.Loops;
             var network = this.Graph.Network;
             var lineData = this.LineData.Sections;
 
@@ -477,18 +475,17 @@ namespace Marv.Input
 
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
-            await Task.Run(() => network.Run(lineData, loops, progress));
+            await Task.Run(() => network.Run(lineData, progress));
 
             this.Graph.Data = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private Task RunSelectedSectionAsync()
         {
-            var loops = this.Graph.Loops;
             var network = this.Graph.Network;
             var sectionData = this.LineData.Sections[this.SelectedSectionId];
 
-            return Task.Run(() => network.Run(sectionData, loops));
+            return Task.Run(() => network.Run(sectionData));
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

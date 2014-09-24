@@ -21,7 +21,6 @@ namespace Marv
         private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private string key;
-        private Dictionary<string, string> loops = new Dictionary<string, string>();
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
@@ -178,25 +177,6 @@ namespace Marv
             }
         }
 
-        // Dictionary<targetVertexKey, sourceVertexKey>
-        // Beliefs from sourceVertexKey should go into targetVertexKey
-        public Dictionary<string, string> Loops
-        {
-            get
-            {
-                return this.loops;
-            }
-
-            set
-            {
-                if (value != this.loops)
-                {
-                    this.loops = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public Network Network { get; private set; }
 
         public Vertex SelectedVertex
@@ -270,11 +250,6 @@ namespace Marv
                 if (string.IsNullOrWhiteSpace(vertex.Units))
                 {
                     vertex.Units = "n/a";
-                }
-
-                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
-                {
-                    graph.Loops[vertex.Key] = vertex.InputVertexKey;
                 }
 
                 graph.Vertices.Add(vertex);

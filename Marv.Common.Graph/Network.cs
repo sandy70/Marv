@@ -18,6 +18,10 @@ namespace Marv
 
         public string FileName { get; set; }
 
+        // Dictionary<targetVertexKey, sourceVertexKey>
+        // Beliefs from sourceVertexKey should go into targetVertexKey
+        public Dictionary<string, string> Loops { get; set; }
+
         public static void Decrypt(string path)
         {
             var pathStream = new FileStream(path, FileMode.OpenOrCreate);
@@ -64,8 +68,9 @@ namespace Marv
         public static Network Read(string path)
         {
             var network = new Network();
-            network.ReadFile(path);
+            network.Loops = new Dictionary<string, string>();
             network.FileName = path;
+            network.ReadFile(path);
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
 
@@ -146,6 +151,13 @@ namespace Marv
                 {
                     var childKey = network.GetNodeId(childHandle);
                     vertex.Children.Add(network.Vertices[childKey]);
+                }
+
+                var inputVertexKey = vertex.ParseStringProperty("InputNode");
+
+                if (!string.IsNullOrWhiteSpace(inputVertexKey))
+                {
+                    network.Loops[vertex.Key] = inputVertexKey;
                 }
             }
 
@@ -290,20 +302,20 @@ namespace Marv
             }
         }
 
-        public void Run(Dict<int, string, VertexData> sectionData, Dictionary<string, string> loops = null)
+        public void Run(Dict<int, string, VertexData> sectionData)
         {
             var firstYear = sectionData.Keys.First();
             var lastYear = firstYear;
 
             foreach (var year in sectionData.Keys)
             {
-                if (loops != null)
+                if (this.Loops != null)
                 {
                     if (year != firstYear)
                     {
-                        foreach (var targetVertexKey in loops.Keys)
+                        foreach (var targetVertexKey in this.Loops.Keys)
                         {
-                            var sourceVertexKey = loops[targetVertexKey];
+                            var sourceVertexKey = this.Loops[targetVertexKey];
                             sectionData[year][targetVertexKey].Evidence = sectionData[lastYear][sourceVertexKey].Belief;
                         }
                     }
@@ -315,14 +327,14 @@ namespace Marv
             }
         }
 
-        public void Run(Dict<string, int, string, VertexData> lineData, Dictionary<string, string> loops, IProgress<double> progress = null)
+        public void Run(Dict<string, int, string, VertexData> lineData, IProgress<double> progress = null)
         {
             var total = lineData.Keys.Count;
             var count = 0;
 
             foreach (var sectionId in lineData.Keys)
             {
-                this.Run(lineData[sectionId], loops);
+                this.Run(lineData[sectionId]);
 
                 count++;
 
