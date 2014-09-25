@@ -42,7 +42,7 @@ namespace Marv
 
             if (this.EvidenceType == VertexEvidenceType.Distribution)
             {
-                return this.Params.String();
+                return this.Params.String("{0:F2}");
             }
 
             if (this.EvidenceType == VertexEvidenceType.Normal)
@@ -67,7 +67,7 @@ namespace Marv
 
             if (this.EvidenceType == VertexEvidenceType.Triangular)
             {
-                return "TRI" + this.Params.String().Enquote('(', ')');
+                return "TRI" + this.Params.String("{0:F2}").Enquote('(', ')');
             }
 
             return null;

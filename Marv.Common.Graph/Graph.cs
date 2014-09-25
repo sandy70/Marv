@@ -457,9 +457,10 @@ namespace Marv
 
         public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
         {
-            foreach (var vertexKey in vertexEvidences.Keys)
+            foreach (var vertex in this.Vertices)
             {
-                this.Vertices[vertexKey].Evidence = vertexEvidences[vertexKey].Evidence;
+                vertex.Evidence = vertexEvidences[vertex.Key].Evidence;
+                vertex.EvidenceString = vertexEvidences[vertex.Key].ToString();
             }
         }
 
