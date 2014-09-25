@@ -24,6 +24,22 @@ namespace Marv
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
+        public Dict<string, double[]> Belief
+        {
+            get
+            {
+                return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Belief);
+            }
+
+            set
+            {
+                foreach (var vertexKey in value.Keys)
+                {
+                    this.Vertices[vertexKey].Belief = value[vertexKey];
+                }
+            }
+        }
+
         public Dict<string, VertexEvidence> Data
         {
             get
@@ -94,6 +110,22 @@ namespace Marv
                 {
                     this.edges = value;
                     this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public Dict<string, VertexEvidence> Evidence
+        {
+            get
+            {
+                return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence);
+            }
+
+            set
+            {
+                foreach (var vertexKey in value.Keys)
+                {
+                    this.Vertices[vertexKey].Evidence = value[vertexKey];
                 }
             }
         }
@@ -443,12 +475,7 @@ namespace Marv
 
         public void Run()
         {
-            var network = Network.Read(this.Network.FileName);
-            var graphData = this.Data;
-
-            network.Run(graphData);
-
-            this.Data = graphData;
+            this.Belief = Network.Read(this.Network.FileName).Run(this.Data);
         }
 
         public void UpdateDisplayGraph(string group)

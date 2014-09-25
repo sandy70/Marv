@@ -384,7 +384,7 @@ namespace Marv.Input
 
                 var vertexData = this.Vertex.ParseEvidence(evidenceString);
 
-                this.LineData.Sections[sectionId][year][this.Vertex.Key] = vertexData;
+                this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key] = vertexData;
             });
 
             this.LineData.RaiseDataChanged();
@@ -590,7 +590,7 @@ namespace Marv.Input
             if (this.LineData == null ||
                 this.SelectedSectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.Sections.ContainsKey(this.SelectedSectionId) ||
+                !this.LineData.SectionEvidences.ContainsKey(this.SelectedSectionId) ||
                 this.Vertex == null)
             {
                 return;
@@ -609,7 +609,7 @@ namespace Marv.Input
 
             this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SelectedSectionId;
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
-            var categories = this.IsXAxisSections ? this.LineData.Sections.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
+            var categories = this.IsXAxisSections ? this.LineData.SectionEvidences.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
             foreach (var category in categories)
             {
@@ -622,7 +622,7 @@ namespace Marv.Input
                     Value = null
                 });
 
-                var vertexData = this.LineData.Sections[sectionId][year][this.Vertex.Key];
+                var vertexData = this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key];
 
                 this.SetPoint(category, vertexData);
             }

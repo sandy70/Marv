@@ -138,7 +138,6 @@ namespace Marv
             {
                 return new VertexEvidence
                 {
-                    Belief = this.Belief,
                     Evidence = this.States.Select(state => state.Evidence).ToArray(),
                     Params = this.evidenceParams,
                     EvidenceType = this.evidenceType,
@@ -149,7 +148,6 @@ namespace Marv
             {
                 this.States.ForEach((state, i) => state.Evidence = value.Evidence == null ? 0 : value.Evidence[i]);
 
-                this.Belief = value.Belief;
                 this.evidenceParams = value.Params;
                 this.evidenceType = value.EvidenceType;
 
@@ -628,14 +626,13 @@ namespace Marv
 
             this.States.ForEach((state, i) => state.Evidence = vertexEvidence.Evidence == null ? 0 : vertexEvidence.Evidence[i]);
 
-            this.Belief = vertexEvidence.Belief;
             this.evidenceParams = vertexEvidence.Params;
             this.evidenceType = vertexEvidence.EvidenceType;
         }
 
         public void UpdateEvidenceString()
         {
-            this.EvidenceString = this.IsEvidenceEntered ? this.States.Select(state => state.Evidence).String("{0:F2}") : null;
+            this.EvidenceString = this.Evidence.ToString();
         }
 
         public void UpdateMostProbableState()

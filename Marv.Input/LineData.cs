@@ -12,7 +12,7 @@ namespace Marv.Input
 
         private int endYear = DefaultYear;
         private Guid guid;
-        private Dict<string, int, string, double[]> sectionBeliefs;
+        private Dict<string, int, string, double[]> sectionBeliefs = new Dict<string,int,string,double[]>();
         private Dict<string, int, string, VertexEvidence> sectionEvidences = new Dict<string, int, string, VertexEvidence>();
         private int startYear = DefaultYear;
 
@@ -117,7 +117,7 @@ namespace Marv.Input
 
         public LineData()
         {
-            this.SectionEvidences.CollectionChanged += Sections_CollectionChanged;
+            this.SectionEvidences.CollectionChanged += this.SectionEvidences_CollectionChanged;
         }
 
         public void AddSections(IEnumerable<string> keys)
@@ -141,20 +141,20 @@ namespace Marv.Input
             }
         }
 
-        private void Sections_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SectionEvidences_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
                 foreach (var item in e.NewItems)
                 {
                     var kvp = item as Kvp<string, Dict<int, string, VertexEvidence>>;
-                    var yearData = kvp.Value;
+                    var yearEvidences = kvp.Value;
 
                     for (var year = this.StartYear; year <= this.EndYear; year++)
                     {
-                        if (!yearData.ContainsKey(year))
+                        if (!yearEvidences.ContainsKey(year))
                         {
-                            yearData[year] = new Dict<string, VertexEvidence>();
+                            yearEvidences[year] = new Dict<string, VertexEvidence>();
                         }
                     }
                 }

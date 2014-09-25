@@ -35,13 +35,13 @@ namespace Marv.Input
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedSectionId));
 
         public static readonly DependencyProperty SelectedVertexProperty =
             DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedVertex));
 
         public static readonly DependencyProperty SelectedYearProperty =
-            DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue));
+            DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue, ChangedSelectedYear));
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
@@ -145,6 +145,7 @@ namespace Marv.Input
             {
                 return (string) GetValue(SelectedSectionIdProperty);
             }
+
             set
             {
                 SetValue(SelectedSectionIdProperty, value);
@@ -205,6 +206,17 @@ namespace Marv.Input
             }
         }
 
+        private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as LineDataControl;
+            control.RunSection(control.SelectedSectionId);
+        }
+
+        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as LineDataControl).RaiseSelectedYearChanged();
+        }
+
         private static void ChangedVertex(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
@@ -240,6 +252,30 @@ namespace Marv.Input
             }
         }
 
+        protected void RaiseSectionBeliefsChanged()
+        {
+            if (this.SectionBeliefsChanged != null)
+            {
+                this.SectionBeliefsChanged(this, new EventArgs());
+            }
+        }
+
+        protected void RaiseSelectedCellChanged()
+        {
+            if (this.SelectedCellChanged != null)
+            {
+                this.SelectedCellChanged(this, new EventArgs());
+            }
+        }
+
+        protected void RaiseSelectedYearChanged()
+        {
+            if (this.SelectedYearChanged != null)
+            {
+                this.SelectedYearChanged(this, new EventArgs());
+            }
+        }
+
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var nSection = 1;
@@ -248,7 +284,7 @@ namespace Marv.Input
             {
                 var sectionId = "Section " + nSection;
 
-                while (this.LineData.Sections.ContainsKey(sectionId))
+                while (this.LineData.SectionEvidences.ContainsKey(sectionId))
                 {
                     nSection++;
                     sectionId = "Section " + nSection;
@@ -344,17 +380,13 @@ namespace Marv.Input
             e.Column.MaxWidth = 100;
         }
 
-        private async void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             var cellModel = e.Cell.ToModel();
             var oldString = e.OldData as string;
             var newString = e.NewData as string;
 
             this.SetCell(cellModel, newString, oldString);
-
-            await this.RunSelectedSectionAsync();
-
-            this.CurrentGraphData = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -373,7 +405,7 @@ namespace Marv.Input
             }
         }
 
-        private async void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
             if (e.NewCell == null || this.LineData == null)
             {
@@ -389,11 +421,10 @@ namespace Marv.Input
                 return;
             }
 
-            await this.RunSelectedSectionAsync();
-
             this.SelectedYear = cellModel.Year;
             this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-            this.CurrentGraphData = this.LineData.Sections[cellModel.SectionId][cellModel.Year];
+
+            this.RaiseSelectedCellChanged();
         }
 
         private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
@@ -402,7 +433,7 @@ namespace Marv.Input
             {
                 var row = item as Dynamic;
                 var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.Sections[sectionId] = null;
+                this.LineData.SectionEvidences[sectionId] = null;
             }
         }
 
@@ -489,7 +520,7 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var lineData = this.LineData.Sections;
+            var lineData = this.LineData.SectionEvidences;
 
             var notification = new Notification
             {
@@ -500,15 +531,15 @@ namespace Marv.Input
 
             var progress = new Progress<double>(p => notification.Value = p * 100);
 
-            await Task.Run(() => this.network.Run(lineData, progress));
+            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(lineData, progress));
 
-            this.CurrentGraphData = this.LineData.Sections[this.SelectedSectionId][this.SelectedYear];
+            this.RaiseSectionBeliefsChanged();
         }
 
-        private Task RunSelectedSectionAsync()
+        private void RunSection(string sectionId)
         {
-            var sectionData = this.LineData.Sections[this.SelectedSectionId];
-            return Task.Run(() => this.network.Run(sectionData));
+            this.LineData.SectionBeliefs[sectionId] = this.network.Run(this.LineData.SectionEvidences[sectionId]);
+            this.RaiseSectionBeliefsChanged();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -547,7 +578,9 @@ namespace Marv.Input
             }
 
             cellModel.Data = vertexEvidence;
-            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
+            this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
+
+            this.RunSection(cellModel.SectionId);
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)
@@ -556,11 +589,11 @@ namespace Marv.Input
             {
                 if (oldString == null)
                 {
-                    this.LineData.Sections[newString] = new Dict<int, string, VertexEvidence>();
+                    this.LineData.SectionEvidences[newString] = new Dict<int, string, VertexEvidence>();
                 }
                 else
                 {
-                    this.LineData.Sections.ChangeKey(oldString, newString);
+                    this.LineData.SectionEvidences.ChangeKey(oldString, newString);
                 }
 
                 cellModel.Data = newString;
@@ -570,7 +603,9 @@ namespace Marv.Input
                 var vertexData = this.SelectedVertex.ParseEvidence(newString);
 
                 cellModel.Data = vertexData;
-                this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
+                this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
+
+                this.RunSection(cellModel.SectionId);
             }
         }
 
@@ -588,14 +623,14 @@ namespace Marv.Input
 
             var newRows = new ObservableCollection<Dynamic>();
 
-            foreach (var sectionId in this.LineData.Sections.Keys)
+            foreach (var sectionId in this.LineData.SectionEvidences.Keys)
             {
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionId;
 
                 for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
                 {
-                    row[year.ToString()] = this.LineData.Sections[sectionId][year][this.SelectedVertex.Key];
+                    row[year.ToString()] = this.LineData.SectionEvidences[sectionId][year][this.SelectedVertex.Key];
                 }
 
                 newRows.Add(row);
@@ -617,5 +652,11 @@ namespace Marv.Input
         }
 
         public event EventHandler<Notification> NotificationIssued;
+
+        public event EventHandler SelectedYearChanged;
+
+        public event EventHandler SectionBeliefsChanged;
+
+        public event EventHandler SelectedCellChanged;
     }
 }

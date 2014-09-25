@@ -164,6 +164,15 @@ namespace Marv
             return result;
         }
 
+        public static Dict<TKey, TElement> ToDict<TSource, TKey, TElement>(this IEnumerable<TSource> items, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+        {
+            var dict = new Dict<TKey, TElement>();
+
+            items.ForEach((item, i) => dict.Add(keySelector(item), elementSelector(item)));
+
+            return dict;
+        }
+
         public static IEnumerable<T> Yield<T>(this T item)
         {
             yield return item;

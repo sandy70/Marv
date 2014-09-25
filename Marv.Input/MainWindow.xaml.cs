@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Telerik.Windows.Controls;
-using Marv;
 
 namespace Marv.Input
 {
@@ -117,12 +117,23 @@ namespace Marv.Input
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
             this.LineData = new LineData();
-            this.LineData.Sections["Section 1"] = new Dict<int, string, VertexEvidence>();
+            this.LineData.SectionEvidences["Section 1"] = new Dict<int, string, VertexEvidence>();
         }
 
         private void LineDataControl_NotificationIssued(object sender, Notification notification)
         {
             this.Notifications.Add(notification);
+        }
+
+        private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
+        {
+            this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
+        }
+
+        private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
+        {
+            this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
+            this.Graph.Evidence = this.LineData.SectionEvidences[this.SelectedSectionId][this.SelectedYear];
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -133,7 +144,14 @@ namespace Marv.Input
             this.LineDataControl.NotificationIssued -= LineDataControl_NotificationIssued;
             this.LineDataControl.NotificationIssued += LineDataControl_NotificationIssued;
 
-            this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
+            this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
+            this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
+
+            this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
+            this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
+
+            this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
     }
 }

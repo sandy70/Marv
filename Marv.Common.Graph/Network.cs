@@ -247,9 +247,9 @@ namespace Marv
             }
         }
 
-        public Dictionary<string, double[]> GetBeliefs()
+        public Dict<string, double[]> GetBeliefs()
         {
-            var vertexBeliefs = new Dictionary<string, double[]>();
+            var vertexBeliefs = new Dict<string, double[]>();
 
             foreach (var nodeKey in this.GetAllNodeIds())
             {
@@ -259,13 +259,12 @@ namespace Marv
             return vertexBeliefs;
         }
 
-        public Dict<string, VertexEvidence> GetData()
+        public Dict<string, VertexEvidence> GetEvidences()
         {
             var graphData = new Dict<string, VertexEvidence>();
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
-                graphData[vertexKey].Belief = this.GetNodeValue(vertexKey);
                 graphData[vertexKey].Evidence = this.GetSoftEvidence(vertexKey);
             }
 
@@ -297,7 +296,7 @@ namespace Marv
             return defaultValue;
         }
 
-        public void Run(Dict<string, VertexEvidence> graphData)
+        public Dict<string, double[]> Run(Dict<string, VertexEvidence> graphData)
         {
             this.ClearAllEvidence();
 
@@ -312,25 +311,22 @@ namespace Marv
             try
             {
                 this.UpdateBeliefs();
-                var beliefs = this.GetBeliefs();
-
-                foreach (var vertexKey in beliefs.Keys)
-                {
-                    graphData[vertexKey].Belief = beliefs[vertexKey];
-                }
+                return this.GetBeliefs();
             }
             catch (SmileException)
             {
-                // do nothing
+                return null;
             }
         }
 
-        public void Run(Dict<int, string, VertexEvidence> sectionData)
+        public Dict<int, string, double[]> Run(Dict<int, string, VertexEvidence> yearEvidences)
         {
-            var firstYear = sectionData.Keys.First();
+            var yearBeliefs = new Dict<int, string, double[]>();
+
+            var firstYear = yearEvidences.Keys.First();
             var lastYear = firstYear;
 
-            foreach (var year in sectionData.Keys)
+            foreach (var year in yearEvidences.Keys)
             {
                 if (this.Loops != null)
                 {
@@ -339,25 +335,29 @@ namespace Marv
                         foreach (var targetVertexKey in this.Loops.Keys)
                         {
                             var sourceVertexKey = this.Loops[targetVertexKey];
-                            sectionData[year][targetVertexKey].Evidence = sectionData[lastYear][sourceVertexKey].Belief;
+                            yearEvidences[year][targetVertexKey].Evidence = yearBeliefs[lastYear][sourceVertexKey];
                         }
                     }
                 }
 
-                this.Run(sectionData[year]);
+                yearBeliefs[year] = this.Run(yearEvidences[year]);
 
                 lastYear = year;
             }
+
+            return yearBeliefs;
         }
 
-        public void Run(Dict<string, int, string, VertexEvidence> lineData, IProgress<double> progress = null)
+        public Dict<string, int, string, double[]> Run(Dict<string, int, string, VertexEvidence> lineData, IProgress<double> progress = null)
         {
+            var sectionBeliefs = new Dict<string, int, string, double[]>();
+
             var total = lineData.Keys.Count;
             var count = 0;
 
             foreach (var sectionId in lineData.Keys)
             {
-                this.Run(lineData[sectionId]);
+                sectionBeliefs[sectionId] = this.Run(lineData[sectionId]);
 
                 count++;
 
@@ -366,6 +366,8 @@ namespace Marv
                     progress.Report((double) count / total);
                 }
             }
+
+            return sectionBeliefs;
         }
 
         public void Write()
@@ -457,7 +459,7 @@ namespace Marv
                 fileName = fileName + "." + DataFileExtension;
             }
 
-            this.GetData().WriteJson(fileName);
+            this.GetEvidences().WriteJson(fileName);
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
