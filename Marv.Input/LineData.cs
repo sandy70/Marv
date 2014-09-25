@@ -7,12 +7,13 @@ namespace Marv.Input
     public class LineData : NotifyPropertyChanged
     {
         public const int DefaultYear = 2010;
-        public const string FileExtension = "marv-linedata";
         public const string FileDescription = "MARV Pipeline Data";
+        public const string FileExtension = "marv-linedata";
 
         private int endYear = DefaultYear;
         private Guid guid;
-        private Dict<string, int, string, VertexEvidence> sections = new Dict<string, int, string, VertexEvidence>();
+        private Dict<string, int, string, double[]> sectionBeliefs;
+        private Dict<string, int, string, VertexEvidence> sectionEvidences = new Dict<string, int, string, VertexEvidence>();
         private int startYear = DefaultYear;
 
         public int EndYear
@@ -55,18 +56,37 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, int, string, VertexEvidence> Sections
+        public Dict<string, int, string, double[]> SectionBeliefs
         {
             get
             {
-                return this.sections;
+                return this.sectionBeliefs;
             }
 
             set
             {
-                if (value != this.sections)
+                if (value.Equals(this.sectionBeliefs))
                 {
-                    this.sections = value;
+                    return;
+                }
+
+                this.sectionBeliefs = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Dict<string, int, string, VertexEvidence> SectionEvidences
+        {
+            get
+            {
+                return this.sectionEvidences;
+            }
+
+            set
+            {
+                if (value != this.sectionEvidences)
+                {
+                    this.sectionEvidences = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -97,16 +117,16 @@ namespace Marv.Input
 
         public LineData()
         {
-            this.Sections.CollectionChanged += Sections_CollectionChanged;
+            this.SectionEvidences.CollectionChanged += Sections_CollectionChanged;
         }
 
         public void AddSections(IEnumerable<string> keys)
         {
             foreach (var key in keys)
             {
-                if (!this.Sections.ContainsKey(key))
+                if (!this.SectionEvidences.ContainsKey(key))
                 {
-                    this.Sections[key] = new Dict<int, string, VertexEvidence>();
+                    this.SectionEvidences[key] = new Dict<int, string, VertexEvidence>();
                 }
             }
 
@@ -143,7 +163,7 @@ namespace Marv.Input
 
         private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
         {
-            foreach (var sectionId in this.Sections.Keys)
+            foreach (var sectionId in this.SectionEvidences.Keys)
             {
                 var startYear = Utils.Min(newStartYear, oldStartYear);
                 var endYear = Utils.Max(newEndYear, oldEndYear);
@@ -152,13 +172,13 @@ namespace Marv.Input
                 {
                     if (year < newStartYear || newEndYear < year)
                     {
-                        this.Sections[sectionId][year] = null;
+                        this.SectionEvidences[sectionId][year] = null;
                     }
                     else
                     {
-                        if (!this.Sections[sectionId].ContainsKey(year))
+                        if (!this.SectionEvidences[sectionId].ContainsKey(year))
                         {
-                            this.Sections[sectionId][year] = new Dict<string, VertexEvidence>();
+                            this.SectionEvidences[sectionId][year] = new Dict<string, VertexEvidence>();
                         }
                     }
                 }
