@@ -22,6 +22,8 @@ namespace Marv
         private string description = "";
         private Point displayPosition;
         private string evidenceString;
+        private double[] evidenceParams;
+        private VertexEvidenceType evidenceType;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
         private string inputVertexKey;
@@ -97,6 +99,8 @@ namespace Marv
                 {
                     Belief = this.Belief,
                     Evidence = this.Evidence.ToArray(),
+                    Params = this.evidenceParams,
+                    EvidenceType = this.evidenceType,
                 };
             }
 
@@ -104,6 +108,8 @@ namespace Marv
             {
                 this.Belief = value.Belief;
                 this.Evidence = value.Evidence;
+                this.evidenceParams = value.Params;
+                this.evidenceType = value.EvidenceType;
 
                 var str = value.ToString();
 
@@ -569,7 +575,10 @@ namespace Marv
                 {
                     Evidence = this.ParseEvidence(new DeltaDistribution(value)),
                     EvidenceType = VertexEvidenceType.Number,
-                    Params = new []{value},
+                    Params = new[]
+                    {
+                        value
+                    },
                 };
             }
 
@@ -629,7 +638,12 @@ namespace Marv
 
         public void UpdateData()
         {
-            this.Data = this.ParseEvidence(this.EvidenceString);
+            var vertexData = this.ParseEvidence(this.EvidenceString);
+
+            this.Belief = vertexData.Belief;
+            this.Evidence = vertexData.Evidence;
+            this.evidenceParams = vertexData.Params;
+            this.evidenceType = vertexData.EvidenceType;
         }
 
         public void UpdateEvidenceString()
