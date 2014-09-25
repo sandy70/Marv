@@ -154,8 +154,8 @@ namespace Marv.Controls.Graph
             {
                 vertexEvidence = new VertexEvidence
                 {
-                    Evidence = this.Vertex.Evidence,
-                    EvidenceType = VertexEvidenceType.Distribution,
+                    Value = this.Vertex.Evidence,
+                    Type = VertexEvidenceType.Distribution,
                     Params = this.Vertex.Evidence
                 };
             }
@@ -176,7 +176,7 @@ namespace Marv.Controls.Graph
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var vertexEvidence = this.Vertex.ParseEvidenceString();
-            this.Vertex.Evidence = vertexEvidence.Evidence;
+            this.Vertex.Evidence = vertexEvidence.Value;
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 

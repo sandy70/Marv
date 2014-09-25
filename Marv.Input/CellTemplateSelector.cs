@@ -23,12 +23,12 @@ namespace Marv.Input
 
             var evidence = cellModel.Data as VertexEvidence;
 
-            if (evidence == null || evidence.Evidence == null)
+            if (evidence == null || evidence.Value == null)
             {
                 return null;
             }
 
-            cell.Tag = evidence.Evidence.Select((y, i) => new ScatterDataPoint
+            cell.Tag = evidence.Value.Select((y, i) => new ScatterDataPoint
             {
                 XValue = i,
                 YValue = y

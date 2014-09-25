@@ -528,7 +528,7 @@ namespace Marv
             {
                 return new VertexEvidence
                 {
-                    EvidenceType = VertexEvidenceType.Invalid
+                    Type = VertexEvidenceType.Invalid
                 };
             }
 
@@ -537,8 +537,8 @@ namespace Marv
             {
                 return new VertexEvidence
                 {
-                    Evidence = this.States.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
-                    EvidenceType = VertexEvidenceType.State,
+                    Value = this.States.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
+                    Type = VertexEvidenceType.State,
                     StateKey = this.States.Where(state => state.Key == anEvidenceString).Select(state => state.Key).First()
                 };
             }
@@ -548,8 +548,8 @@ namespace Marv
             {
                 return new VertexEvidence
                 {
-                    Evidence = this.ParseEvidence(new DeltaDistribution(value)),
-                    EvidenceType = VertexEvidenceType.Number,
+                    Value = this.ParseEvidence(new DeltaDistribution(value)),
+                    Type = VertexEvidenceType.Number,
                     Params = new[]
                     {
                         value
@@ -592,8 +592,8 @@ namespace Marv
 
             return new VertexEvidence
             {
-                Evidence = evidence,
-                EvidenceType = evidenceType,
+                Value = evidence,
+                Type = evidenceType,
                 Params = evidenceParams.ToArray(),
             };
         }

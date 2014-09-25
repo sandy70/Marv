@@ -510,7 +510,7 @@ namespace Marv.Input
         private void SetPoint(object category, VertexEvidence vertexEvidence)
         {
             var paramValues = vertexEvidence.Params;
-            var type = vertexEvidence.EvidenceType;
+            var type = vertexEvidence.Type;
 
             switch (type)
             {
@@ -553,12 +553,12 @@ namespace Marv.Input
                 case VertexEvidenceType.Normal:
                 case VertexEvidenceType.Triangular:
                 {
-                    if (vertexEvidence.Evidence == null)
+                    if (vertexEvidence.Value == null)
                     {
                         break;
                     }
 
-                    var maxProb = vertexEvidence.Evidence.Max();
+                    var maxProb = vertexEvidence.Value.Max();
 
                     this.Vertex.States.ForEach((state, i) =>
                     {
@@ -576,7 +576,7 @@ namespace Marv.Input
                         {
                             Category = category,
                             Value = state.SafeMax - state.SafeMin,
-                            Probability = vertexEvidence.Evidence[i] / maxProb
+                            Probability = vertexEvidence.Value[i] / maxProb
                         });
                     });
 

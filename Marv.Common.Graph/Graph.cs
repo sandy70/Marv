@@ -459,7 +459,7 @@ namespace Marv
         {
             foreach (var vertex in this.Vertices)
             {
-                vertex.Evidence = vertexEvidences[vertex.Key].Evidence;
+                vertex.Evidence = vertexEvidences[vertex.Key].Value;
                 vertex.EvidenceString = vertexEvidences[vertex.Key].ToString();
             }
         }

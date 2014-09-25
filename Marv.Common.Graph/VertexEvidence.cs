@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Marv
 {
     public class VertexEvidence
     {
-        public double[] Evidence { get; set; }
-        public VertexEvidenceType EvidenceType { get; set; }
         public double[] Params { get; set; }
         public string StateKey { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public VertexEvidenceType Type { get; set; }
+        
+        public double[] Value { get; set; }
 
         public static List<double> ParseEvidenceParams(string str)
         {
@@ -40,32 +45,32 @@ namespace Marv
                 return null;
             }
 
-            if (this.EvidenceType == VertexEvidenceType.Distribution)
+            if (this.Type == VertexEvidenceType.Distribution)
             {
                 return this.Params.String("{0:F2}");
             }
 
-            if (this.EvidenceType == VertexEvidenceType.Normal)
+            if (this.Type == VertexEvidenceType.Normal)
             {
                 return "NORM" + this.Params.String().Enquote('(', ')');
             }
 
-            if (this.EvidenceType == VertexEvidenceType.Number)
+            if (this.Type == VertexEvidenceType.Number)
             {
                 return this.Params[0].ToString();
             }
 
-            if (this.EvidenceType == VertexEvidenceType.Range)
+            if (this.Type == VertexEvidenceType.Range)
             {
                 return this.Params[0] + ":" + this.Params[1];
             }
 
-            if (this.EvidenceType == VertexEvidenceType.State)
+            if (this.Type == VertexEvidenceType.State)
             {
                 return this.StateKey;
             }
 
-            if (this.EvidenceType == VertexEvidenceType.Triangular)
+            if (this.Type == VertexEvidenceType.Triangular)
             {
                 return "TRI" + this.Params.String("{0:F2}").Enquote('(', ')');
             }

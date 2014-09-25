@@ -265,7 +265,7 @@ namespace Marv
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
-                graphData[vertexKey].Evidence = this.GetSoftEvidence(vertexKey);
+                graphData[vertexKey].Value = this.GetSoftEvidence(vertexKey);
             }
 
             return graphData;
@@ -325,9 +325,9 @@ namespace Marv
 
             foreach (var vertexKey in graphData.Keys)
             {
-                if (graphData[vertexKey].Evidence != null && graphData[vertexKey].Evidence.Sum() > 0)
+                if (graphData[vertexKey].Value != null && graphData[vertexKey].Value.Sum() > 0)
                 {
-                    this.SetSoftEvidence(vertexKey, graphData[vertexKey].Evidence);
+                    this.SetSoftEvidence(vertexKey, graphData[vertexKey].Value);
                 }
             }
 
@@ -358,7 +358,7 @@ namespace Marv
                         foreach (var targetVertexKey in this.Loops.Keys)
                         {
                             var sourceVertexKey = this.Loops[targetVertexKey];
-                            yearEvidences[year][targetVertexKey].Evidence = yearBeliefs[lastYear][sourceVertexKey];
+                            yearEvidences[year][targetVertexKey].Value = yearBeliefs[lastYear][sourceVertexKey];
                         }
                     }
                 }

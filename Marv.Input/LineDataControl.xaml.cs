@@ -398,7 +398,7 @@ namespace Marv.Input
 
             var vertexData = this.SelectedVertex.ParseEvidenceString(e.NewValue as string);
 
-            if (vertexData.EvidenceType == VertexEvidenceType.Invalid)
+            if (vertexData.Type == VertexEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
@@ -561,7 +561,7 @@ namespace Marv.Input
 
             if (this.FileName != null)
             {
-                if (Path.GetExtension(this.FileName) != LineData.FileExtension)
+                if (Path.GetExtension(this.FileName) != "." + LineData.FileExtension)
                 {
                     this.FileName = this.FileName + "." + LineData.FileExtension;
                 }
