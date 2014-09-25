@@ -27,7 +27,7 @@ namespace Marv
                 return stateList.Select(state => state.Key == str ? 1.0 : 0.0);
             }
 
-            var paramValues = VertexData.ParseEvidenceParams(str);
+            var paramValues = VertexEvidence.ParseEvidenceParams(str);
 
             // Check for functions
             if (str.ToLowerInvariant().Contains("tri") && paramValues.Count == 3)

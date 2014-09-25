@@ -21,8 +21,8 @@ namespace Marv
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
-        private string evidenceString;
         private double[] evidenceParams;
+        private string evidenceString;
         private VertexEvidenceType evidenceType;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
@@ -91,37 +91,6 @@ namespace Marv
             }
         }
 
-        public VertexData Data
-        {
-            get
-            {
-                return new VertexData
-                {
-                    Belief = this.Belief,
-                    Evidence = this.Evidence.ToArray(),
-                    Params = this.evidenceParams,
-                    EvidenceType = this.evidenceType,
-                };
-            }
-
-            set
-            {
-                this.Belief = value.Belief;
-                this.Evidence = value.Evidence;
-                this.evidenceParams = value.Params;
-                this.evidenceType = value.EvidenceType;
-
-                var str = value.ToString();
-
-                if (str != null)
-                {
-                    this.EvidenceString = str;
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string Description
         {
             get
@@ -163,16 +132,33 @@ namespace Marv
             }
         }
 
-        public IEnumerable<double> Evidence
+        public VertexEvidence Evidence
         {
             get
             {
-                return this.States.Select(state => state.Evidence).ToArray();
+                return new VertexEvidence
+                {
+                    Belief = this.Belief,
+                    Evidence = this.States.Select(state => state.Evidence).ToArray(),
+                    Params = this.evidenceParams,
+                    EvidenceType = this.evidenceType,
+                };
             }
 
             set
             {
-                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value.ElementAt(i));
+                this.States.ForEach((state, i) => state.Evidence = value.Evidence == null ? 0 : value.Evidence[i]);
+
+                this.Belief = value.Belief;
+                this.evidenceParams = value.Params;
+                this.evidenceType = value.EvidenceType;
+
+                var str = value.ToString();
+
+                if (str != null)
+                {
+                    this.EvidenceString = str;
+                }
 
                 this.RaisePropertyChanged();
             }
@@ -547,11 +533,11 @@ namespace Marv
             return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin)).Normalized().ToArray();
         }
 
-        public VertexData ParseEvidence(string anEvidenceString)
+        public VertexEvidence ParseEvidence(string anEvidenceString)
         {
             if (string.IsNullOrWhiteSpace(anEvidenceString))
             {
-                return new VertexData
+                return new VertexEvidence
                 {
                     EvidenceType = VertexEvidenceType.Invalid
                 };
@@ -560,7 +546,7 @@ namespace Marv
             // Check if string is the label of any of the states.
             if (this.States.Any(state => state.Key == anEvidenceString))
             {
-                return new VertexData
+                return new VertexEvidence
                 {
                     Evidence = this.States.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
                     EvidenceType = VertexEvidenceType.State,
@@ -571,7 +557,7 @@ namespace Marv
             double value;
             if (double.TryParse(anEvidenceString, out value) && this.SafeMin <= value && value <= this.SafeMax)
             {
-                return new VertexData
+                return new VertexEvidence
                 {
                     Evidence = this.ParseEvidence(new DeltaDistribution(value)),
                     EvidenceType = VertexEvidenceType.Number,
@@ -582,7 +568,7 @@ namespace Marv
                 };
             }
 
-            var evidenceParams = VertexData.ParseEvidenceParams(anEvidenceString);
+            var evidenceParams = VertexEvidence.ParseEvidenceParams(anEvidenceString);
             var evidenceType = VertexEvidenceType.Invalid;
             double[] evidence = null;
 
@@ -615,7 +601,7 @@ namespace Marv
                 evidenceType = VertexEvidenceType.Distribution;
             }
 
-            return new VertexData
+            return new VertexEvidence
             {
                 Evidence = evidence,
                 EvidenceType = evidenceType,
@@ -638,12 +624,13 @@ namespace Marv
 
         public void UpdateData()
         {
-            var vertexData = this.ParseEvidence(this.EvidenceString);
+            var vertexEvidence = this.ParseEvidence(this.EvidenceString);
 
-            this.Belief = vertexData.Belief;
-            this.Evidence = vertexData.Evidence;
-            this.evidenceParams = vertexData.Params;
-            this.evidenceType = vertexData.EvidenceType;
+            this.States.ForEach((state, i) => state.Evidence = vertexEvidence.Evidence == null ? 0 : vertexEvidence.Evidence[i]);
+
+            this.Belief = vertexEvidence.Belief;
+            this.evidenceParams = vertexEvidence.Params;
+            this.evidenceType = vertexEvidence.EvidenceType;
         }
 
         public void UpdateEvidenceString()

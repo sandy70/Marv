@@ -110,14 +110,14 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
         {
-            this.LineDataChart.SetSelectedPoint(vertex.Data);
-            this.LineDataControl.SetSelectedCells(vertex.Data);
+            this.LineDataChart.SetSelectedPoint(vertex.Evidence);
+            this.LineDataControl.SetSelectedCells(vertex.Evidence);
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
             this.LineData = new LineData();
-            this.LineData.Sections["Section 1"] = new Dict<int, string, VertexData>();
+            this.LineData.Sections["Section 1"] = new Dict<int, string, VertexEvidence>();
         }
 
         private void LineDataControl_NotificationIssued(object sender, Notification notification)

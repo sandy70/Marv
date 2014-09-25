@@ -69,7 +69,7 @@
     <Compile Include="Extensions.Vertex.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="VertexClearCommand.cs" />
-    <Compile Include="VertexData.cs" />
+    <Compile Include="VertexEvidence.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
     <Compile Include="Extensions.cs" />

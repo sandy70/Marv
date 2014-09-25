@@ -21,7 +21,7 @@ namespace Marv.Input
                 return null;
             }
 
-            var evidence = cellModel.Data as VertexData;
+            var evidence = cellModel.Data as VertexEvidence;
 
             if (evidence == null || evidence.Evidence == null)
             {

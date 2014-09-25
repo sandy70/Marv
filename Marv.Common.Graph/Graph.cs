@@ -24,15 +24,15 @@ namespace Marv
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
-        public Dict<string, VertexData> Data
+        public Dict<string, VertexEvidence> Data
         {
             get
             {
-                var graphData = new Dict<string, VertexData>();
+                var graphData = new Dict<string, VertexEvidence>();
 
                 foreach (var vertex in this.Vertices)
                 {
-                    graphData[vertex.Key] = vertex.Data;
+                    graphData[vertex.Key] = vertex.Evidence;
                 }
 
                 return graphData;
@@ -42,7 +42,7 @@ namespace Marv
             {
                 foreach (var vertexKey in value.Keys)
                 {
-                    this.Vertices[vertexKey].Data = value[vertexKey];
+                    this.Vertices[vertexKey].Evidence = value[vertexKey];
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace Marv
             }
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexData> graphEvidence = null)
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 

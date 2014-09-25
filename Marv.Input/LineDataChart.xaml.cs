@@ -338,7 +338,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetSelectedPoint(VertexData vertexData)
+        public void SetSelectedPoint(VertexEvidence vertexEvidence)
         {
             if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
             {
@@ -350,7 +350,7 @@ namespace Marv.Input
             this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
             this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
 
-            this.SetPoint(category, vertexData);
+            this.SetPoint(category, vertexEvidence);
         }
 
         protected void UpdateLineData()
@@ -507,10 +507,10 @@ namespace Marv.Input
             this.Chart.MouseMove += Chart_MouseMove;
         }
 
-        private void SetPoint(object category, VertexData vertexData)
+        private void SetPoint(object category, VertexEvidence vertexEvidence)
         {
-            var paramValues = vertexData.Params;
-            var type = vertexData.EvidenceType;
+            var paramValues = vertexEvidence.Params;
+            var type = vertexEvidence.EvidenceType;
 
             switch (type)
             {
@@ -553,12 +553,12 @@ namespace Marv.Input
                 case VertexEvidenceType.Normal:
                 case VertexEvidenceType.Triangular:
                 {
-                    if (vertexData.Evidence == null)
+                    if (vertexEvidence.Evidence == null)
                     {
                         break;
                     }
 
-                    var maxProb = vertexData.Evidence.Max();
+                    var maxProb = vertexEvidence.Evidence.Max();
 
                     this.Vertex.States.ForEach((state, i) =>
                     {
@@ -576,7 +576,7 @@ namespace Marv.Input
                         {
                             Category = category,
                             Value = state.SafeMax - state.SafeMin,
-                            Probability = vertexData.Evidence[i] / maxProb
+                            Probability = vertexEvidence.Evidence[i] / maxProb
                         });
                     });
 

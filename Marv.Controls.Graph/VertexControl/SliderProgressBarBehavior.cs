@@ -21,7 +21,6 @@ namespace Marv.Controls.Graph
                 vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }
 
-            vertexControl.Vertex.Evidence = vertexControl.Vertex.Evidence.Normalized().ToArray();
             vertexControl.Vertex.UpdateEvidenceString();
             vertexControl.RaiseEvidenceEntered();
         }

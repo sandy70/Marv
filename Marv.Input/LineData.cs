@@ -12,7 +12,7 @@ namespace Marv.Input
 
         private int endYear = DefaultYear;
         private Guid guid;
-        private Dict<string, int, string, VertexData> sections = new Dict<string, int, string, VertexData>();
+        private Dict<string, int, string, VertexEvidence> sections = new Dict<string, int, string, VertexEvidence>();
         private int startYear = DefaultYear;
 
         public int EndYear
@@ -55,7 +55,7 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, int, string, VertexData> Sections
+        public Dict<string, int, string, VertexEvidence> Sections
         {
             get
             {
@@ -106,7 +106,7 @@ namespace Marv.Input
             {
                 if (!this.Sections.ContainsKey(key))
                 {
-                    this.Sections[key] = new Dict<int, string, VertexData>();
+                    this.Sections[key] = new Dict<int, string, VertexEvidence>();
                 }
             }
 
@@ -127,14 +127,14 @@ namespace Marv.Input
             {
                 foreach (var item in e.NewItems)
                 {
-                    var kvp = item as Kvp<string, Dict<int, string, VertexData>>;
+                    var kvp = item as Kvp<string, Dict<int, string, VertexEvidence>>;
                     var yearData = kvp.Value;
 
                     for (var year = this.StartYear; year <= this.EndYear; year++)
                     {
                         if (!yearData.ContainsKey(year))
                         {
-                            yearData[year] = new Dict<string, VertexData>();
+                            yearData[year] = new Dict<string, VertexEvidence>();
                         }
                     }
                 }
@@ -158,7 +158,7 @@ namespace Marv.Input
                     {
                         if (!this.Sections[sectionId].ContainsKey(year))
                         {
-                            this.Sections[sectionId][year] = new Dict<string, VertexData>();
+                            this.Sections[sectionId][year] = new Dict<string, VertexEvidence>();
                         }
                     }
                 }

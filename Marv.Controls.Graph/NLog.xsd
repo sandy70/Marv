@@ -411,7 +411,7 @@
           <xs:element name="includeCallSite" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="appInfo" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.NLogViewerParameterInfo" />
-          <xs:element name="includeNLogData" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="includeNLogEvidence" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="includeNdc" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="ndcItemSeparator" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="includeSourceInfo" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -481,7 +481,7 @@
             <xs:documentation>AppInfo field. By default it's the friendly name of the current AppDomain.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="includeNLogData" type="xs:boolean">
+        <xs:attribute name="includeNLogEvidence" type="xs:boolean">
           <xs:annotation>
             <xs:documentation>Indicates whether to include NLog-specific extensions to log4j schema.</xs:documentation>
           </xs:annotation>
@@ -694,7 +694,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="Database">
+  <xs:complexType name="Evidencebase">
     <xs:complexContent>
       <xs:extension base="Target">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -707,11 +707,11 @@
           <xs:element name="connectionStringName" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="connectionString" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbHost" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="dbDatabase" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="uninstall-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
-          <xs:element name="install-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseCommandInfo" />
+          <xs:element name="dbEvidencebase" minOccurs="0" maxOccurs="1" type="Layout" />
+          <xs:element name="uninstall-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.EvidencebaseCommandInfo" />
+          <xs:element name="install-command" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.EvidencebaseCommandInfo" />
           <xs:element name="installConnectionString" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseParameterInfo" />
+          <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.EvidencebaseParameterInfo" />
           <xs:element name="commandText" minOccurs="0" maxOccurs="1" type="Layout" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string">
@@ -721,7 +721,7 @@
         </xs:attribute>
         <xs:attribute name="dbUserName" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database user name. If the ConnectionString is not provided this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
+            <xs:documentation>Evidencebase user name. If the ConnectionString is not provided this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbProvider" type="xs:string">
@@ -741,7 +741,7 @@
         </xs:attribute>
         <xs:attribute name="dbPassword" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database password. If the ConnectionString is not provided this value will be used to construct the "Password=" part of the connection string.</xs:documentation>
+            <xs:documentation>Evidencebase password. If the ConnectionString is not provided this value will be used to construct the "Password=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="connectionStringName" type="xs:string">
@@ -751,17 +751,17 @@
         </xs:attribute>
         <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
+            <xs:documentation>Connection string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBEvidencebase.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbHost" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database host name. If the ConnectionString is not provided this value will be used to construct the "Server=" part of the connection string.</xs:documentation>
+            <xs:documentation>Evidencebase host name. If the ConnectionString is not provided this value will be used to construct the "Server=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="dbDatabase" type="SimpleLayoutAttribute">
+        <xs:attribute name="dbEvidencebase" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database name. If the ConnectionString is not provided this value will be used to construct the "Database=" part of the connection string.</xs:documentation>
+            <xs:documentation>Evidencebase name. If the ConnectionString is not provided this value will be used to construct the "Evidencebase=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="installConnectionString" type="SimpleLayoutAttribute">
@@ -777,22 +777,22 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:simpleType name="System.Data.CommandType">
+  <xs:simpleType name="System.Evidence.CommandType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Text" />
       <xs:enumeration value="StoredProcedure" />
       <xs:enumeration value="TableDirect" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="NLog.Targets.DatabaseCommandInfo">
+  <xs:complexType name="NLog.Targets.EvidencebaseCommandInfo">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="commandType" minOccurs="0" maxOccurs="1" type="System.Data.CommandType" />
+      <xs:element name="commandType" minOccurs="0" maxOccurs="1" type="System.Evidence.CommandType" />
       <xs:element name="connectionString" minOccurs="0" maxOccurs="1" type="Layout" />
       <xs:element name="ignoreFailures" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-      <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.DatabaseParameterInfo" />
+      <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.EvidencebaseParameterInfo" />
       <xs:element name="text" minOccurs="0" maxOccurs="1" type="Layout" />
     </xs:choice>
-    <xs:attribute name="commandType" type="System.Data.CommandType">
+    <xs:attribute name="commandType" type="System.Evidence.CommandType">
       <xs:annotation>
         <xs:documentation>Type of the command.</xs:documentation>
       </xs:annotation>
@@ -813,7 +813,7 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="NLog.Targets.DatabaseParameterInfo">
+  <xs:complexType name="NLog.Targets.EvidencebaseParameterInfo">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="layout" minOccurs="0" maxOccurs="1" type="Layout" />
       <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
@@ -828,22 +828,22 @@
     </xs:attribute>
     <xs:attribute name="name" type="xs:string">
       <xs:annotation>
-        <xs:documentation>Database parameter name.</xs:documentation>
+        <xs:documentation>Evidencebase parameter name.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="precision" type="xs:byte">
       <xs:annotation>
-        <xs:documentation>Database parameter precision.</xs:documentation>
+        <xs:documentation>Evidencebase parameter precision.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="scale" type="xs:byte">
       <xs:annotation>
-        <xs:documentation>Database parameter scale.</xs:documentation>
+        <xs:documentation>Evidencebase parameter scale.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="size" type="xs:integer">
       <xs:annotation>
-        <xs:documentation>Database parameter size.</xs:documentation>
+        <xs:documentation>Evidencebase parameter size.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
@@ -1762,7 +1762,7 @@
           <xs:element name="includeCallSite" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="appInfo" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="NLog.Targets.NLogViewerParameterInfo" />
-          <xs:element name="includeNLogData" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="includeNLogEvidence" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="includeNdc" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="ndcItemSeparator" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="includeSourceInfo" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -1832,7 +1832,7 @@
             <xs:documentation>AppInfo field. By default it's the friendly name of the current AppDomain.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="includeNLogData" type="xs:boolean">
+        <xs:attribute name="includeNLogEvidence" type="xs:boolean">
           <xs:annotation>
             <xs:documentation>Indicates whether to include NLog-specific extensions to log4j schema.</xs:documentation>
           </xs:annotation>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Marv
 {
-    public class VertexData
+    public class VertexEvidence
     {
         public double[] Belief { get; set; }
         public double[] Evidence { get; set; }

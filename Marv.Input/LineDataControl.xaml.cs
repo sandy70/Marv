@@ -17,7 +17,7 @@ namespace Marv.Input
     public partial class LineDataControl : INotifyPropertyChanged
     {
         public static readonly DependencyProperty CurrentGraphDataProperty =
-            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexData>), typeof (LineDataControl), new PropertyMetadata(null));
+            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
@@ -49,11 +49,11 @@ namespace Marv.Input
         private Network network;
         private ObservableCollection<Dynamic> rows;
 
-        public Dict<string, VertexData> CurrentGraphData
+        public Dict<string, VertexEvidence> CurrentGraphData
         {
             get
             {
-                return (Dict<string, VertexData>) GetValue(CurrentGraphDataProperty);
+                return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty);
             }
             set
             {
@@ -219,7 +219,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetSelectedCells(VertexData vertexData)
+        public void SetSelectedCells(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)
             {
@@ -227,7 +227,7 @@ namespace Marv.Input
 
                 if (!cellModel.IsColumnSectionId)
                 {
-                    this.SetCell(cellModel, vertexData);
+                    this.SetCell(cellModel, vertexEvidence);
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, selectedCellModel.Data as VertexData);
+                    this.SetCell(cellModel, selectedCellModel.Data as VertexEvidence);
                 }
             }
         }
@@ -307,7 +307,7 @@ namespace Marv.Input
             foreach (var row in this.Rows)
             {
                 var cellModel = new CellModel(row, selectedCellModel.Header);
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexData));
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
             }
         }
 
@@ -334,7 +334,7 @@ namespace Marv.Input
                     continue;
                 }
 
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexData));
+                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
             }
         }
 
@@ -539,15 +539,15 @@ namespace Marv.Input
             }
         }
 
-        private void SetCell(CellModel cellModel, VertexData vertexData)
+        private void SetCell(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (cellModel.IsColumnSectionId)
             {
                 return;
             }
 
-            cellModel.Data = vertexData;
-            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
+            cellModel.Data = vertexEvidence;
+            this.LineData.Sections[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)
@@ -556,7 +556,7 @@ namespace Marv.Input
             {
                 if (oldString == null)
                 {
-                    this.LineData.Sections[newString] = new Dict<int, string, VertexData>();
+                    this.LineData.Sections[newString] = new Dict<int, string, VertexEvidence>();
                 }
                 else
                 {

@@ -259,9 +259,9 @@ namespace Marv
             return vertexBeliefs;
         }
 
-        public Dict<string, VertexData> GetData()
+        public Dict<string, VertexEvidence> GetData()
         {
-            var graphData = new Dict<string, VertexData>();
+            var graphData = new Dict<string, VertexEvidence>();
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
@@ -297,7 +297,7 @@ namespace Marv
             return defaultValue;
         }
 
-        public void Run(Dict<string, VertexData> graphData)
+        public void Run(Dict<string, VertexEvidence> graphData)
         {
             this.ClearAllEvidence();
 
@@ -325,7 +325,7 @@ namespace Marv
             }
         }
 
-        public void Run(Dict<int, string, VertexData> sectionData)
+        public void Run(Dict<int, string, VertexEvidence> sectionData)
         {
             var firstYear = sectionData.Keys.First();
             var lastYear = firstYear;
@@ -350,7 +350,7 @@ namespace Marv
             }
         }
 
-        public void Run(Dict<string, int, string, VertexData> lineData, IProgress<double> progress = null)
+        public void Run(Dict<string, int, string, VertexEvidence> lineData, IProgress<double> progress = null)
         {
             var total = lineData.Keys.Count;
             var count = 0;
