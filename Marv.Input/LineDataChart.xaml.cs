@@ -382,7 +382,7 @@ namespace Marv.Input
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
-                var vertexData = this.Vertex.ParseEvidence(evidenceString);
+                var vertexData = this.Vertex.ParseEvidenceString(evidenceString);
 
                 this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key] = vertexData;
             });

@@ -108,10 +108,10 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_EvidenceEntered(object sender, Vertex vertex)
+        private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            this.LineDataChart.SetSelectedPoint(vertex.Evidence);
-            this.LineDataControl.SetSelectedCells(vertex.Evidence);
+            this.LineDataChart.SetSelectedPoint(vertexEvidence);
+            this.LineDataControl.SetSelectedCells(vertexEvidence);
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
@@ -133,12 +133,14 @@ namespace Marv.Input
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
             this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
-            this.Graph.Evidence = this.LineData.SectionEvidences[this.SelectedSectionId][this.SelectedYear];
+            this.Graph.SetEvidence(this.LineData.SectionEvidences[this.SelectedSectionId][this.SelectedYear]);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
+            
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
             this.LineDataControl.NotificationIssued -= LineDataControl_NotificationIssued;

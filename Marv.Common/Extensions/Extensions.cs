@@ -220,6 +220,7 @@ namespace Marv
         {
             var valueList = values as IList<double> ?? values.ToList();
             var sum = valueList.Sum();
+            valueList.Select(value => value /= sum);
 
             for (var i = 0; i < valueList.Count; i++)
             {

@@ -40,29 +40,6 @@ namespace Marv
             }
         }
 
-        public Dict<string, VertexEvidence> Data
-        {
-            get
-            {
-                var graphData = new Dict<string, VertexEvidence>();
-
-                foreach (var vertex in this.Vertices)
-                {
-                    graphData[vertex.Key] = vertex.Evidence;
-                }
-
-                return graphData;
-            }
-
-            set
-            {
-                foreach (var vertexKey in value.Keys)
-                {
-                    this.Vertices[vertexKey].Evidence = value[vertexKey];
-                }
-            }
-        }
-
         public string DefaultGroup
         {
             get
@@ -114,7 +91,7 @@ namespace Marv
             }
         }
 
-        public Dict<string, VertexEvidence> Evidence
+        public Dict<string, double[]> Evidence
         {
             get
             {
@@ -475,7 +452,15 @@ namespace Marv
 
         public void Run()
         {
-            this.Belief = Network.Read(this.Network.FileName).Run(this.Data);
+            this.Belief = Network.Read(this.Network.FileName).Run(this.Evidence);
+        }
+
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        {
+            foreach (var vertexKey in vertexEvidences.Keys)
+            {
+                this.Vertices[vertexKey].Evidence = vertexEvidences[vertexKey].Evidence;
+            }
         }
 
         public void UpdateDisplayGraph(string group)

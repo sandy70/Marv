@@ -296,6 +296,29 @@ namespace Marv
             return defaultValue;
         }
 
+        public Dict<string, double[]> Run(Dict<string, double[]> graphData)
+        {
+            this.ClearAllEvidence();
+
+            foreach (var vertexKey in graphData.Keys)
+            {
+                if (graphData[vertexKey] != null && graphData[vertexKey].Sum() > 0)
+                {
+                    this.SetSoftEvidence(vertexKey, graphData[vertexKey]);
+                }
+            }
+
+            try
+            {
+                this.UpdateBeliefs();
+                return this.GetBeliefs();
+            }
+            catch (SmileException)
+            {
+                return null;
+            }
+        }
+
         public Dict<string, double[]> Run(Dict<string, VertexEvidence> graphData)
         {
             this.ClearAllEvidence();

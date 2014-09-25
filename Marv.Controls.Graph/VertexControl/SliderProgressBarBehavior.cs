@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
@@ -21,11 +20,9 @@ namespace Marv.Controls.Graph
                 vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }
 
-            var vertexEvidence = vertexControl.Vertex.Evidence;
-            vertexEvidence.Evidence = vertexEvidence.Evidence.Normalized().ToArray();
-
-            vertexControl.Vertex.Evidence = vertexEvidence;
+            vertexControl.Vertex.Normalize();
             vertexControl.Vertex.UpdateEvidenceString();
+
             vertexControl.RaiseEvidenceEntered();
         }
     }

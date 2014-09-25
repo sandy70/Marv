@@ -276,11 +276,11 @@ namespace Marv.Controls.Graph
             }
         }
 
-        internal void RaiseEvidenceEntered(Vertex vertex = null)
+        internal void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, vertex);
+                this.EvidenceEntered(this, vertexEvidence);
             }
         }
 
@@ -347,7 +347,7 @@ namespace Marv.Controls.Graph
             this.Graph.Write();
         }
 
-        public event EventHandler<Vertex> EvidenceEntered;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
 
         public event EventHandler<ValueChangedArgs<Marv.Graph>> GraphChanged;
     }

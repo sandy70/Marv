@@ -148,11 +148,21 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseEvidenceEntered()
+        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
+            if (vertexEvidence == null)
+            {
+                vertexEvidence = new VertexEvidence
+                {
+                    Evidence = this.Vertex.Evidence,
+                    EvidenceType = VertexEvidenceType.Distribution,
+                    Params = this.Vertex.Evidence
+                };
+            }
+
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, this.Vertex);
+                this.EvidenceEntered(this, vertexEvidence);
             }
         }
 
@@ -165,8 +175,9 @@ namespace Marv.Controls.Graph
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.Vertex.UpdateData();
-            this.RaiseEvidenceEntered();
+            var vertexEvidence = this.Vertex.ParseEvidenceString();
+            this.Vertex.Evidence = vertexEvidence.Evidence;
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -189,6 +200,6 @@ namespace Marv.Controls.Graph
 
         public event EventHandler<Command<Vertex>> CommandExecuted;
 
-        public event EventHandler<Vertex> EvidenceEntered;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
     }
 }
