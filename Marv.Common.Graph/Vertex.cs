@@ -586,7 +586,7 @@ namespace Marv
 
             if (anEvidenceString.Contains(",") && evidenceParams.Count == this.States.Count)
             {
-                evidence = evidenceParams.ToArray();
+                evidence = evidenceParams.Normalized().ToArray();
                 evidenceType = VertexEvidenceType.Distribution;
             }
 
