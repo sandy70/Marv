@@ -629,8 +629,6 @@ namespace Marv.Input
                 cellModel.Data = vertexEvidence;
                 this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
 
-                this.RunSection(cellModel.SectionId);
-
                 this.RaiseEvidenceChanged(cellModel, vertexEvidence);
             }
         }

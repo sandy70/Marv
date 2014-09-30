@@ -385,6 +385,11 @@ namespace Marv.Input
 
             var category = this.IsXAxisSections ? sectionId : year as object;
 
+            if (category == null)
+            {
+                return;
+            }
+
             this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
             this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
 
