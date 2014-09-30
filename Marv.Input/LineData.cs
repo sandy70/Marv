@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -12,7 +13,7 @@ namespace Marv.Input
 
         private int endYear = DefaultYear;
         private Guid guid;
-        private Dict<string, int, string, double[]> sectionBeliefs = new Dict<string,int,string,double[]>();
+        private Dict<string, int, string, double[]> sectionBeliefs = new Dict<string, int, string, double[]>();
         private Dict<string, int, string, VertexEvidence> sectionEvidences = new Dict<string, int, string, VertexEvidence>();
         private int startYear = DefaultYear;
 
@@ -118,6 +119,7 @@ namespace Marv.Input
         public LineData()
         {
             this.SectionEvidences.CollectionChanged += this.SectionEvidences_CollectionChanged;
+            this.SectionEvidences.Keys.CollectionChanged += Keys_CollectionChanged;
         }
 
         public void AddSections(IEnumerable<string> keys)
@@ -138,6 +140,25 @@ namespace Marv.Input
             if (this.DataChanged != null)
             {
                 this.DataChanged(this, new EventArgs());
+            }
+        }
+
+        private void Keys_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    this.SectionBeliefs[item as string] = null;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    this.SectionBeliefs[item as string] = new Dict<int, string, double[]>();
+                }
             }
         }
 
@@ -163,7 +184,7 @@ namespace Marv.Input
 
         private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
         {
-            foreach (var sectionId in this.SectionEvidences.Keys)
+            foreach (var sectionId in this.SectionEvidences.Keys.ToList())
             {
                 var startYear = Utils.Min(newStartYear, oldStartYear);
                 var endYear = Utils.Max(newEndYear, oldEndYear);
