@@ -190,7 +190,7 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            this.LineDataChart.SetSelectedPoint(vertexEvidence);
+            this.LineDataChart.ChangeEvidence(vertexEvidence);
             this.LineDataControl.SetSelectedCells(vertexEvidence);
         }
 
@@ -236,6 +236,9 @@ namespace Marv.Input
 
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
+            this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
+            this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
+
             this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
             this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
 
@@ -253,6 +256,11 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
+        {
+            this.LineDataChart.ChangeEvidence(vertexEvidence, cellModel);
         }
     }
 }

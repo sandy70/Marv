@@ -330,14 +330,17 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
-        public void SetSelectedPoint(VertexEvidence vertexEvidence)
+        public void ChangeEvidence(VertexEvidence vertexEvidence, CellModel cellModel = null)
         {
+            var sectionId = cellModel == null ? this.SelectedSectionId : cellModel.SectionId;
+            var year = cellModel == null ? this.Year : cellModel.Year;
+
             if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
             {
                 this.UpdateBasePoints();
             }
 
-            var category = this.IsXAxisSections ? this.SelectedSectionId : this.Year as object;
+            var category = this.IsXAxisSections ? sectionId : year as object;
 
             this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
             this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));

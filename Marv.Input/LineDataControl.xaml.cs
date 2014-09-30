@@ -244,6 +244,14 @@ namespace Marv.Input
             }
         }
 
+        protected void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
+        {
+            if (this.EvidenceChanged != null)
+            {
+                this.EvidenceChanged(this, cellModel, vertexEvidence);
+            }
+        }
+
         protected void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
@@ -618,12 +626,14 @@ namespace Marv.Input
             }
             else
             {
-                var vertexData = this.SelectedVertex.ParseEvidenceString(newString);
+                var vertexEvidence = this.SelectedVertex.ParseEvidenceString(newString);
 
-                cellModel.Data = vertexData;
-                this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexData;
+                cellModel.Data = vertexEvidence;
+                this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
 
                 this.RunSection(cellModel.SectionId);
+
+                this.RaiseEvidenceChanged(cellModel, vertexEvidence);
             }
         }
 
@@ -668,6 +678,8 @@ namespace Marv.Input
                 }
             }
         }
+
+        public event EventHandler<CellModel, VertexEvidence> EvidenceChanged;
 
         public event EventHandler<Notification> NotificationOpened;
 
