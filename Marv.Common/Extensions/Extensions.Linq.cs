@@ -135,6 +135,11 @@ namespace Marv
 
         public static void Remove<T>(this ICollection<T> items, Func<T, bool> predicate)
         {
+            if (items == null)
+            {
+                return;
+            }
+
             var itemsToRemove = items.Where(predicate).ToList();
 
             foreach (var itemToRemove in itemsToRemove)
@@ -145,6 +150,11 @@ namespace Marv
 
         public static void Remove<T>(this IEnumerable<ICollection<T>> collections, Func<T, bool> predicate)
         {
+            if (collections == null)
+            {
+                return;
+            }
+
             foreach (var collection in collections)
             {
                 collection.Remove(predicate);
