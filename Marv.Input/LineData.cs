@@ -189,20 +189,21 @@ namespace Marv.Input
                 var startYear = Utils.Min(newStartYear, oldStartYear);
                 var endYear = Utils.Max(newEndYear, oldEndYear);
 
+                var yearEvidences = new Dict<int, string, VertexEvidence>();
+
                 for (var year = startYear; year <= endYear; year++)
                 {
-                    if (year < newStartYear || newEndYear < year)
+                    if (this.SectionEvidences[sectionId].ContainsKey(year))
                     {
-                        this.SectionEvidences[sectionId][year] = null;
+                        yearEvidences[year] = this.SectionEvidences[sectionId][year];
                     }
                     else
                     {
-                        if (!this.SectionEvidences[sectionId].ContainsKey(year))
-                        {
-                            this.SectionEvidences[sectionId][year] = new Dict<string, VertexEvidence>();
-                        }
+                        yearEvidences[year] = new Dict<string, VertexEvidence>();
                     }
                 }
+
+                this.SectionEvidences[sectionId] = yearEvidences;
             }
 
             this.RaiseDataChanged();
