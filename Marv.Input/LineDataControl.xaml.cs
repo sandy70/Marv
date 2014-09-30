@@ -244,11 +244,19 @@ namespace Marv.Input
             }
         }
 
-        protected void RaiseNotificationIssued(Notification notification)
+        protected void RaiseNotificationClosed(Notification notification)
         {
-            if (this.NotificationIssued != null)
+            if (this.NotificationClosed != null)
             {
-                this.NotificationIssued(this, notification);
+                this.NotificationClosed(this, notification);
+            }
+        }
+
+        protected void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
             }
         }
 
@@ -537,11 +545,11 @@ namespace Marv.Input
                 Description = "Running Model"
             };
 
-            this.RaiseNotificationIssued(notification);
+            this.RaiseNotificationOpened(notification);
 
-            var progress = new Progress<double>(p => notification.Value = p * 100);
+            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
 
-            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(lineData, progress));
+            this.RaiseNotificationClosed(notification);
 
             this.RaiseSectionBeliefsChanged();
         }
@@ -661,7 +669,9 @@ namespace Marv.Input
             }
         }
 
-        public event EventHandler<Notification> NotificationIssued;
+        public event EventHandler<Notification> NotificationOpened;
+
+        public event EventHandler<Notification> NotificationClosed;
 
         public event EventHandler SelectedYearChanged;
 
