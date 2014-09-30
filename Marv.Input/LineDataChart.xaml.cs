@@ -345,7 +345,7 @@ namespace Marv.Input
             this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
             this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
 
-            this.SetPoint(category, vertexEvidence);
+            this.AddBasePoint(category, vertexEvidence);
         }
 
         public void UpdateBasePoints()
@@ -387,7 +387,85 @@ namespace Marv.Input
 
                 var vertexData = this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key];
 
-                this.SetPoint(category, vertexData);
+                this.AddBasePoint(category, vertexData);
+            }
+        }
+
+        private void AddBasePoint(object category, VertexEvidence vertexEvidence)
+        {
+            var paramValues = vertexEvidence.Params;
+            var type = vertexEvidence.Type;
+
+            switch (type)
+            {
+                case VertexEvidenceType.Number:
+                {
+                    this.BaseNumberPoints.Add(new CategoricalDataPoint
+                    {
+                        Category = category,
+                        Value = paramValues[0]
+                    });
+
+                    break;
+                }
+
+                case VertexEvidenceType.Range:
+                {
+                    while (this.BaseDistributionSeries.Count < 2)
+                    {
+                        this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+                    }
+
+                    this.BaseDistributionSeries[0].Add(new ProbabilityDataPoint
+                    {
+                        Category = category,
+                        Value = paramValues[0],
+                        Probability = 0
+                    });
+
+                    this.BaseDistributionSeries[1].Add(new ProbabilityDataPoint
+                    {
+                        Category = category,
+                        Value = paramValues[1] - paramValues[0],
+                        Probability = 1
+                    });
+
+                    break;
+                }
+
+                case VertexEvidenceType.Distribution:
+                case VertexEvidenceType.Normal:
+                case VertexEvidenceType.Triangular:
+                {
+                    if (vertexEvidence.Value == null)
+                    {
+                        break;
+                    }
+
+                    var maxProb = vertexEvidence.Value.Max();
+
+                    this.Vertex.States.ForEach((state, i) =>
+                    {
+                        if (i == 0)
+                        {
+                            this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
+                            {
+                                Category = category,
+                                Value = state.SafeMin,
+                                Probability = 0
+                            });
+                        }
+
+                        this.BaseDistributionSeries[i + 1].Add(new ProbabilityDataPoint
+                        {
+                            Category = category,
+                            Value = state.SafeMax - state.SafeMin,
+                            Probability = vertexEvidence.Value[i] / maxProb
+                        });
+                    });
+
+                    break;
+                }
             }
         }
 
@@ -510,84 +588,6 @@ namespace Marv.Input
             if (this.PropertyChanged != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private void SetPoint(object category, VertexEvidence vertexEvidence)
-        {
-            var paramValues = vertexEvidence.Params;
-            var type = vertexEvidence.Type;
-
-            switch (type)
-            {
-                case VertexEvidenceType.Number:
-                {
-                    this.BaseNumberPoints.Add(new CategoricalDataPoint
-                    {
-                        Category = category,
-                        Value = paramValues[0]
-                    });
-
-                    break;
-                }
-
-                case VertexEvidenceType.Range:
-                {
-                    while (this.BaseDistributionSeries.Count < 2)
-                    {
-                        this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
-                    }
-
-                    this.BaseDistributionSeries[0].Add(new ProbabilityDataPoint
-                    {
-                        Category = category,
-                        Value = paramValues[0],
-                        Probability = 0
-                    });
-
-                    this.BaseDistributionSeries[1].Add(new ProbabilityDataPoint
-                    {
-                        Category = category,
-                        Value = paramValues[1] - paramValues[0],
-                        Probability = 1
-                    });
-
-                    break;
-                }
-
-                case VertexEvidenceType.Distribution:
-                case VertexEvidenceType.Normal:
-                case VertexEvidenceType.Triangular:
-                {
-                    if (vertexEvidence.Value == null)
-                    {
-                        break;
-                    }
-
-                    var maxProb = vertexEvidence.Value.Max();
-
-                    this.Vertex.States.ForEach((state, i) =>
-                    {
-                        if (i == 0)
-                        {
-                            this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
-                            {
-                                Category = category,
-                                Value = state.SafeMin,
-                                Probability = 0
-                            });
-                        }
-
-                        this.BaseDistributionSeries[i + 1].Add(new ProbabilityDataPoint
-                        {
-                            Category = category,
-                            Value = state.SafeMax - state.SafeMin,
-                            Probability = vertexEvidence.Value[i] / maxProb
-                        });
-                    });
-
-                    break;
-                }
             }
         }
 
