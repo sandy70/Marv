@@ -23,7 +23,7 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
-        private bool isVertexControlVisible = false;
+        private bool isVertexControlVisible = true;
         private LineData lineData;
 
         public Graph Graph
@@ -200,14 +200,22 @@ namespace Marv.Input
             this.LineData.SectionEvidences["Section 1"] = new Dict<int, string, VertexEvidence>();
         }
 
-        private void LineDataControl_NotificationIssued(object sender, Notification notification)
+        private void LineDataControl_NotificationClosed(object sender, Notification notification)
+        {
+            this.Notifications.Remove(notification);
+        }
+
+        private void LineDataControl_NotificationOpened(object sender, Notification notification)
         {
             this.Notifications.Add(notification);
         }
 
         private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
         {
-            this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
+            if (this.SelectedSectionId != null && this.SelectedYear > 0)
+            {
+                this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
+            }
         }
 
         private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
@@ -228,8 +236,11 @@ namespace Marv.Input
 
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
-            this.LineDataControl.NotificationIssued -= LineDataControl_NotificationIssued;
-            this.LineDataControl.NotificationIssued += LineDataControl_NotificationIssued;
+            this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
+            this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
+
+            this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
+            this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
 
             this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
             this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
