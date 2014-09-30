@@ -58,7 +58,7 @@ namespace Marv
 
         #region Private Methods
 
-        private int _lastIndex;
+        private int lastIndex;
 
         /// <summary>
         ///     Throws if Fit has not been called.
@@ -91,17 +91,17 @@ namespace Marv
         /// </summary>
         private int GetNextXIndex(float x)
         {
-            if (x < xOrig[_lastIndex])
+            if (x < xOrig[this.lastIndex])
             {
                 throw new ArgumentException("The X values to evaluate must be sorted.");
             }
 
-            while ((_lastIndex < xOrig.Length - 2) && (x > xOrig[_lastIndex + 1]))
+            while ((this.lastIndex < xOrig.Length - 2) && (x > xOrig[this.lastIndex + 1]))
             {
-                _lastIndex++;
+                this.lastIndex++;
             }
 
-            return _lastIndex;
+            return this.lastIndex;
         }
 
         #endregion
@@ -242,7 +242,7 @@ namespace Marv
 
             var n = x.Length;
             var y = new float[n];
-            _lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
+            this.lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
             for (var i = 0; i < n; i++)
             {
@@ -272,7 +272,7 @@ namespace Marv
 
             var n = x.Length;
             var qPrime = new float[n];
-            _lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
+            this.lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
             for (var i = 0; i < n; i++)
             {
