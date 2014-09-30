@@ -2,33 +2,33 @@
 
 namespace Marv
 {
-    public interface INotification
+    public class Notification : NotifyPropertyChanged
     {
-        string Description { get; set; }
-        bool IsIndeterminate { get; }
-        bool IsMuteable { get; set; }
-        bool IsMuted { get; set; }
-        string Name { get; set; }
-        double Value { get; }
-
-        void Close();
-
-        void Open();
-
-        event EventHandler Closed;
-    }
-
-    public class Notification : NotifyPropertyChanged, INotification
-    {
-        private double _value;
         private string description;
         private TimeSpan duration = TimeSpan.FromSeconds(3);
         private bool isIndeterminate;
         private bool isMuteable;
         private bool isMuted;
         private bool isTimed;
-
         private string name;
+        private double value;
+
+        public string Description
+        {
+            get
+            {
+                return this.description;
+            }
+
+            set
+            {
+                if (value != this.description)
+                {
+                    this.description = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
 
         public TimeSpan Duration
         {
@@ -42,6 +42,57 @@ namespace Marv
                 if (value != this.duration)
                 {
                     this.duration = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsIndeterminate
+        {
+            get
+            {
+                return this.isIndeterminate;
+            }
+
+            set
+            {
+                if (value != this.isIndeterminate)
+                {
+                    this.isIndeterminate = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsMuteable
+        {
+            get
+            {
+                return this.isMuteable;
+            }
+
+            set
+            {
+                if (value != this.isMuteable)
+                {
+                    this.isMuteable = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool IsMuted
+        {
+            get
+            {
+                return this.isMuted;
+            }
+
+            set
+            {
+                if (value != this.isMuted)
+                {
+                    this.isMuted = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -83,101 +134,21 @@ namespace Marv
             }
         }
 
-        public bool IsMuteable
-        {
-            get
-            {
-                return this.isMuteable;
-            }
-
-            set
-            {
-                if (value != this.isMuteable)
-                {
-                    this.isMuteable = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public bool IsMuted
-        {
-            get
-            {
-                return this.isMuted;
-            }
-
-            set
-            {
-                if (value != this.isMuted)
-                {
-                    this.isMuted = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public event EventHandler Closed;
-
-        public string Description
-        {
-            get
-            {
-                return this.description;
-            }
-
-            set
-            {
-                if (value != this.description)
-                {
-                    this.description = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public bool IsIndeterminate
-        {
-            get
-            {
-                return this.isIndeterminate;
-            }
-
-            set
-            {
-                if (value != this.isIndeterminate)
-                {
-                    this.isIndeterminate = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public double Value
         {
             get
             {
-                return this._value;
+                return this.value;
             }
 
             set
             {
-                if (value != this._value)
+                if (value != this.value)
                 {
-                    this._value = value;
+                    this.value = value;
                     this.RaisePropertyChanged();
                 }
             }
         }
-
-        public void Close()
-        {
-            if (this.Closed != null)
-            {
-                this.Closed(this, new EventArgs());
-            }
-        }
-
-        public void Open() {}
     }
 }

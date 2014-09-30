@@ -302,14 +302,6 @@ namespace Marv
             }
         }
 
-        public static void Push(this ObservableCollection<INotification> notifications, INotification notification)
-        {
-            if (!notifications.Contains(notification) && (!notification.IsMuteable || !notification.IsMuted))
-            {
-                notifications.Insert(0, notification);
-            }
-        }
-
         public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
         {
             var pointList = points as IList<Point> ?? points.ToList();

@@ -1,5 +1,4 @@
-﻿using Marv;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
@@ -15,8 +14,13 @@ namespace Marv.Controls
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            var notification = this.AssociatedObject.DataContext as INotification;
-            notification.Close();
+            var control = this.AssociatedObject.FindParent<NotificationControl>();
+            var notification = this.AssociatedObject.DataContext as Notification;
+
+            if (control != null)
+            {
+                control.Notifications.Remove(notification);
+            }
         }
     }
 }
