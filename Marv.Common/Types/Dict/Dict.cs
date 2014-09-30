@@ -57,6 +57,10 @@ namespace Marv
             this.dictionary.Remove(oldKey);
             oldKvp.Key = newKey;
             this.dictionary[newKey] = oldKvp;
+
+            var oldKeyIndex = this.Keys.IndexOf(oldKey);
+            this.Keys.Remove(oldKey);
+            this.Keys.Insert(oldKeyIndex, newKey);
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
