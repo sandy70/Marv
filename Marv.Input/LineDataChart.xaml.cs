@@ -423,15 +423,12 @@ namespace Marv.Input
 
             return series.MinBy(s =>
             {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
+                var xCoords = s.Select(point => (double) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => point.Value.Value);
 
-                var spline = new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+                var spline = new LinearInterpolator(xCoords, yCoords);
 
-                return Math.Abs(spline.Eval(new[]
-                {
-                    (float) userPointAnchorIndex
-                })[0] - userPoint.Value.Value);
+                return Math.Abs(spline.Eval(userPointAnchorIndex) - userPoint.Value.Value);
             });
         }
 
@@ -611,7 +608,7 @@ namespace Marv.Input
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
             var categories = this.IsXAxisSections ? this.LineData.SectionEvidences.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
-            foreach (var category in categories)
+            foreach (var category in categories.ToList())
             {
                 var sectionId = this.IsXAxisSections ? category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) category;
