@@ -20,6 +20,10 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
+        private bool isGraphControlVisible = true;
+        private bool isLineDataChartVisible = true;
+        private bool isLineDataControlVisible = true;
+        private bool isVertexControlVisible = false;
         private LineData lineData;
 
         public Graph Graph
@@ -32,6 +36,82 @@ namespace Marv.Input
             set
             {
                 SetValue(GraphProperty, value);
+            }
+        }
+
+        public bool IsGraphControlVisible
+        {
+            get
+            {
+                return this.isGraphControlVisible;
+            }
+
+            set
+            {
+                if (value.Equals(this.isGraphControlVisible))
+                {
+                    return;
+                }
+
+                this.isGraphControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLineDataChartVisible
+        {
+            get
+            {
+                return this.isLineDataChartVisible;
+            }
+
+            set
+            {
+                if (value.Equals(this.isLineDataChartVisible))
+                {
+                    return;
+                }
+
+                this.isLineDataChartVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLineDataControlVisible
+        {
+            get
+            {
+                return this.isLineDataControlVisible;
+            }
+
+            set
+            {
+                if (value.Equals(this.isLineDataControlVisible))
+                {
+                    return;
+                }
+
+                this.isLineDataControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsVertexControlVisible
+        {
+            get
+            {
+                return this.isVertexControlVisible;
+            }
+
+            set
+            {
+                if (value.Equals(this.isVertexControlVisible))
+                {
+                    return;
+                }
+
+                this.isVertexControlVisible = value;
+                this.RaisePropertyChanged();
             }
         }
 

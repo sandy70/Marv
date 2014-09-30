@@ -40,7 +40,8 @@
                 <!-- InputGrid and Plot -->
                 <telerik:RadSplitContainer Orientation="Vertical">
                     <telerik:RadPaneGroup>
-                        <telerik:RadPane Header="Input">
+                        <telerik:RadPane Header="Input"
+                                         IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
                                                    CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
@@ -53,17 +54,13 @@
                     </telerik:RadPaneGroup>
 
                     <telerik:RadPaneGroup>
-                        <telerik:RadPane Header="DataPlot">
+                        <telerik:RadPane Header="DataPlot"
+                                         IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
-                                <oxy:PlotView IsLegendVisible="True"
-                                              Model="{Binding ElementName=Root, Path=DataPlotModel}"
-                                              Visibility="Collapsed" />
-
                                 <local:LineDataChart x:Name="LineDataChart"
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     XTitle="{Binding ElementName=Root, Path=XTitle}"
                                                      Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
                             </Grid>
                         </telerik:RadPane>
@@ -72,9 +69,8 @@
 
                 <!-- Graph -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Network">
-
-                        <!-- GraphControl -->
+                    <telerik:RadPane Header="Network"
+                                     IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
                         <marv:GraphControl Name="GraphControl"
                                            Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
@@ -84,7 +80,8 @@
 
                 <!-- Vertex -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Node">
+                    <telerik:RadPane Header="Node"
+                                     IsHidden="{Binding ElementName=Root, Path=IsVertexControlVisible, Converter={StaticResource BooleanNot}}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
