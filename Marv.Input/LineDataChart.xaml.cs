@@ -330,24 +330,6 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
-        public void ChangeEvidence(VertexEvidence vertexEvidence, CellModel cellModel = null)
-        {
-            var sectionId = cellModel == null ? this.SelectedSectionId : cellModel.SectionId;
-            var year = cellModel == null ? this.Year : cellModel.Year;
-
-            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
-            {
-                this.UpdateBasePoints();
-            }
-
-            var category = this.IsXAxisSections ? sectionId : year as object;
-
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
-
-            this.AddBasePoint(category, vertexEvidence);
-        }
-
         public void UpdateBasePoints()
         {
             if (this.LineData == null ||
@@ -389,6 +371,24 @@ namespace Marv.Input
 
                 this.AddBasePoint(category, vertexData);
             }
+        }
+
+        public void UpdateEvidence(VertexEvidence vertexEvidence, CellModel cellModel = null)
+        {
+            var sectionId = cellModel == null ? this.SelectedSectionId : cellModel.SectionId;
+            var year = cellModel == null ? this.Year : cellModel.Year;
+
+            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
+            {
+                this.UpdateBasePoints();
+            }
+
+            var category = this.IsXAxisSections ? sectionId : year as object;
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+
+            this.AddBasePoint(category, vertexEvidence);
         }
 
         private void AddBasePoint(object category, VertexEvidence vertexEvidence)

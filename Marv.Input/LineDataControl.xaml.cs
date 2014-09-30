@@ -574,7 +574,7 @@ namespace Marv.Input
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = LineData.FileDescription + "|" + LineData.FileExtension,
+                    Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -605,8 +605,6 @@ namespace Marv.Input
 
             cellModel.Data = vertexEvidence;
             this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
-
-            this.RunSection(cellModel.SectionId);
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)
@@ -651,7 +649,7 @@ namespace Marv.Input
 
             var newRows = new ObservableCollection<Dynamic>();
 
-            foreach (var sectionId in this.LineData.SectionEvidences.Keys)
+            foreach (var sectionId in this.LineData.SectionEvidences.Keys.ToList())
             {
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionId;
