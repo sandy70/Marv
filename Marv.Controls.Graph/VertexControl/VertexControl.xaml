@@ -155,7 +155,8 @@
                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                  Margin="{Binding Source={StaticResource MarginSmallest}}"
                  Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center" />
+                 VerticalAlignment="Center"
+                 MaxWidth="200" />
 
         <Grid Grid.Column="2">
             <Grid.ColumnDefinitions>
