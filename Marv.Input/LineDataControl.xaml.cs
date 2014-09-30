@@ -260,6 +260,14 @@ namespace Marv.Input
             }
         }
 
+        protected void RaiseSectionEvidencesChanged()
+        {
+            if (this.SectionEvidencesChanged != null)
+            {
+                this.SectionEvidencesChanged(this, new EventArgs());
+            }
+        }
+
         protected void RaiseSelectedCellChanged()
         {
             if (this.SelectedCellChanged != null)
@@ -445,6 +453,8 @@ namespace Marv.Input
             }
 
             this.pastedCells.Clear();
+
+            this.RaiseSectionEvidencesChanged();
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
@@ -656,6 +666,8 @@ namespace Marv.Input
         public event EventHandler SelectedYearChanged;
 
         public event EventHandler SectionBeliefsChanged;
+
+        public event EventHandler SectionEvidencesChanged;
 
         public event EventHandler SelectedCellChanged;
     }

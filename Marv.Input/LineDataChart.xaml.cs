@@ -353,6 +353,49 @@ namespace Marv.Input
             this.SetPoint(category, vertexEvidence);
         }
 
+        public void UpdateBasePoints()
+        {
+            if (this.LineData == null ||
+                this.SelectedSectionId == null ||
+                this.Year < 0 ||
+                !this.LineData.SectionEvidences.ContainsKey(this.SelectedSectionId) ||
+                this.Vertex == null)
+            {
+                return;
+            }
+
+            this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
+            this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
+
+            foreach (var state in this.Vertex.States)
+            {
+                this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+            }
+
+            this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+
+            this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SelectedSectionId;
+            this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
+            var categories = this.IsXAxisSections ? this.LineData.SectionEvidences.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
+
+            foreach (var category in categories.ToList())
+            {
+                var sectionId = this.IsXAxisSections ? category as string : this.SelectedSectionId;
+                var year = this.IsXAxisSections ? this.Year : (int) category;
+
+                this.AnchorPoints.Add(new CategoricalDataPoint
+                {
+                    Category = category,
+                    Value = null
+                });
+
+                var vertexData = this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key];
+
+                this.SetPoint(category, vertexData);
+            }
+        }
+
         protected void UpdateLineData()
         {
             var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
@@ -579,49 +622,6 @@ namespace Marv.Input
 
                     break;
                 }
-            }
-        }
-
-        private void UpdateBasePoints()
-        {
-            if (this.LineData == null ||
-                this.SelectedSectionId == null ||
-                this.Year < 0 ||
-                !this.LineData.SectionEvidences.ContainsKey(this.SelectedSectionId) ||
-                this.Vertex == null)
-            {
-                return;
-            }
-
-            this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-            this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
-            this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
-
-            foreach (var state in this.Vertex.States)
-            {
-                this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
-            }
-
-            this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
-
-            this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SelectedSectionId;
-            this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
-            var categories = this.IsXAxisSections ? this.LineData.SectionEvidences.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
-
-            foreach (var category in categories.ToList())
-            {
-                var sectionId = this.IsXAxisSections ? category as string : this.SelectedSectionId;
-                var year = this.IsXAxisSections ? this.Year : (int) category;
-
-                this.AnchorPoints.Add(new CategoricalDataPoint
-                {
-                    Category = category,
-                    Value = null
-                });
-
-                var vertexData = this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key];
-
-                this.SetPoint(category, vertexData);
             }
         }
 

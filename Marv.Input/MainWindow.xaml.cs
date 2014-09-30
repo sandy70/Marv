@@ -130,6 +130,11 @@ namespace Marv.Input
             this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
         }
 
+        private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
+        {
+            this.LineDataChart.UpdateBasePoints();
+        }
+
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
             this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
@@ -140,7 +145,7 @@ namespace Marv.Input
         {
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
-            
+
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
             this.LineDataControl.NotificationIssued -= LineDataControl_NotificationIssued;
@@ -148,6 +153,9 @@ namespace Marv.Input
 
             this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
             this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
+
+            this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
+            this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
 
             this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
