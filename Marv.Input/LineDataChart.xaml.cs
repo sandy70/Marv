@@ -330,14 +330,6 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         public void SetSelectedPoint(VertexEvidence vertexEvidence)
         {
             if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
@@ -394,43 +386,6 @@ namespace Marv.Input
 
                 this.SetPoint(category, vertexData);
             }
-        }
-
-        protected void UpdateLineData()
-        {
-            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
-            {
-                this.MaxPoints,
-                this.ModePoints,
-                this.MinPoints
-            };
-
-            var splines = series.Select(s =>
-            {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
-
-                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
-            });
-
-            this.AnchorPoints.ForEach((point, i) =>
-            {
-                var values = splines.Select(spline => (double) spline.Eval(new[]
-                {
-                    (float) i
-                })[0]).ToArray();
-
-                var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
-
-                var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
-                var year = this.IsXAxisSections ? this.Year : (int) point.Category;
-
-                var vertexData = this.Vertex.ParseEvidenceString(evidenceString);
-
-                this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key] = vertexData;
-            });
-
-            this.LineData.RaiseDataChanged();
         }
 
         private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
@@ -545,6 +500,14 @@ namespace Marv.Input
 
             this.Chart.MouseMove -= Chart_MouseMove;
             this.Chart.MouseMove += Chart_MouseMove;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void SetPoint(object category, VertexEvidence vertexEvidence)
@@ -681,6 +644,43 @@ namespace Marv.Input
                     point.Value = (double) data.SecondValue;
                 }
             }
+        }
+
+        private void UpdateLineData()
+        {
+            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
+            {
+                this.MaxPoints,
+                this.ModePoints,
+                this.MinPoints
+            };
+
+            var splines = series.Select(s =>
+            {
+                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => (float) point.Value.Value);
+
+                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+            });
+
+            this.AnchorPoints.ForEach((point, i) =>
+            {
+                var values = splines.Select(spline => (double) spline.Eval(new[]
+                {
+                    (float) i
+                })[0]).ToArray();
+
+                var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
+
+                var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
+                var year = this.IsXAxisSections ? this.Year : (int) point.Category;
+
+                var vertexData = this.Vertex.ParseEvidenceString(evidenceString);
+
+                this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key] = vertexData;
+            });
+
+            this.LineData.RaiseDataChanged();
         }
     }
 }
