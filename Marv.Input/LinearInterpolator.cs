@@ -31,13 +31,13 @@ namespace Marv.Input
             int xMinIndex;
             int xMaxIndex;
 
-            if (x < this.points.Min(point => point.X))
+            if (x <= this.points.Min(point => point.X))
             {
                 xMaxIndex = 1;
                 xMinIndex = 0;
             }
 
-            else if (this.points.Max(point => point.X) < x)
+            else if (this.points.Max(point => point.X) <= x)
             {
                 xMaxIndex = this.points.Count - 1;
                 xMinIndex = this.points.Count - 2;
