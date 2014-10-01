@@ -64,7 +64,14 @@
                                     ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
 
                 <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
-                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}" />
+                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}">
+                    <telerik:PointSeries.DefaultVisualStyle>
+                        <Style TargetType="Path">
+                            <Setter Property="Fill" Value="YellowGreen" />
+                            <Setter Property="Stroke" Value="YellowGreen" />
+                        </Style>
+                    </telerik:PointSeries.DefaultVisualStyle>
+                </telerik:PointSeries>
 
                 <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
                                     Effect="{StaticResource DropShadow}"
