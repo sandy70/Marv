@@ -546,7 +546,7 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var lineData = this.LineData.SectionEvidences;
+            var sectionEvidences = this.LineData.SectionEvidences;
 
             var notification = new Notification
             {
@@ -555,7 +555,7 @@ namespace Marv.Input
 
             this.RaiseNotificationOpened(notification);
 
-            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
+            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
 
             this.RaiseNotificationClosed(notification);
 
