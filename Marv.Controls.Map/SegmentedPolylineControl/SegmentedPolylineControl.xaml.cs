@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Marv.Map;
-using NLog;
 
 namespace Marv.Controls.Map
 {
@@ -39,8 +37,6 @@ namespace Marv.Controls.Map
 
         public static readonly DependencyProperty ValueLevelsProperty =
             DependencyProperty.Register("ValueLevels", typeof (Sequence<double>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
-
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public Brush DisabledStroke
         {

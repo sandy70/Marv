@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using NLog;
 using QuickGraph.Algorithms.RankedShortestPath;
 using Smile;
 
@@ -12,8 +11,6 @@ namespace Marv
 {
     public partial class Graph : NotifyPropertyChanged
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private string defaultGroup;
         private Graph displayGraph;
         private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
@@ -330,8 +327,6 @@ namespace Marv
                     }
                     catch (SmileException exception)
                     {
-                        Logger.Error(exception.Message);
-
                         value[sourceVertex.Key][sourceState.Key] = double.NaN;
                     }
                 }

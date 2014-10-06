@@ -2,14 +2,11 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using Marv.Map;
-using NLog;
 
 namespace Marv.Controls.Map
 {
     public class PolylineControlBase : UserControl
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         public static readonly DependencyProperty CursorFillProperty =
         DependencyProperty.Register("CursorFill", typeof(Brush), typeof(PolylineControlBase), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
@@ -30,8 +27,6 @@ namespace Marv.Controls.Map
 
         private static void OnSelectedLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            logger.Trace("");
-
             var control = d as PolylineControlBase;
 
             if (control != null)

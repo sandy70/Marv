@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Marv;
-using NLog;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
@@ -13,7 +11,6 @@ namespace Marv.Controls.Graph
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Edge newEdge;
         private Vertex newVertex;
         private Edge oldEdge;
@@ -58,7 +55,6 @@ namespace Marv.Controls.Graph
             else
             {
                 this.newEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-                Logger.Info(this.newEdge);
             }
 
             if (e.Shape == null)
@@ -68,12 +64,6 @@ namespace Marv.Controls.Graph
             else
             {
                 this.newVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
-                Logger.Info(this.newVertex.Key);
-            }
-
-            foreach (var command in base.AssociatedObject.UndoRedoService.UndoStack)
-            {
-                Logger.Info(command.Name);
             }
         }
 
@@ -82,7 +72,6 @@ namespace Marv.Controls.Graph
             if (e.Connection != null)
             {
                 this.oldEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-                Logger.Info(this.oldEdge);
             }
             else
             {
@@ -92,7 +81,6 @@ namespace Marv.Controls.Graph
             if (e.Shape != null)
             {
                 this.oldVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
-                Logger.Info(this.oldVertex.Key);
             }
             else
             {

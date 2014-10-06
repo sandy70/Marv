@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using MoreLinq;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 
@@ -665,18 +664,15 @@ namespace Marv.Input
 
             var splines = series.Select(s =>
             {
-                var xCoords = s.Select(point => (float) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => (float) point.Value.Value);
+                var xCoords = s.Select(point => (double) this.GetAnchorIndex(point));
+                var yCoords = s.Select(point => point.Value.Value);
 
-                return new CubicSpline(xCoords.ToArray(), yCoords.ToArray());
+                return new LinearInterpolator(xCoords.ToArray(), yCoords.ToArray());
             });
 
             this.AnchorPoints.ForEach((point, i) =>
             {
-                var values = splines.Select(spline => (double) spline.Eval(new[]
-                {
-                    (float) i
-                })[0]).ToArray();
+                var values = splines.Select(spline => spline.Eval(i)).ToArray();
 
                 var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
 

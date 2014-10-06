@@ -1,6 +1,5 @@
 ﻿using NDatabase;
 using NDatabase.Exceptions;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +9,6 @@ namespace Marv
 {
     public static class Odb
     {
-        public static Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static IEnumerable<T> ReadValues<T>(string fileName, Func<T, bool> predicate) where T : class
         {
             IEnumerable<T> locationValues = null;
@@ -45,16 +42,12 @@ namespace Marv
                     }
                     catch (InvalidOperationException exp)
                     {
-                        Logger.Error("The file " + fileName + " did not contain any data of type " + typeof(T));
-
                         throw new OdbDataNotFoundException("The file " + fileName + " did not contain any data of type " + typeof(T), exp);
                     }
                 }
             }
             catch (OdbRuntimeException exp)
             {
-                Logger.Error("Something wrong with file {0}. Try deleting and rerunning.", fileName);
-
                 throw new OdbDataNotFoundException("The file " + fileName + " may be corrupted. Try deleting and re-running.", exp);
             }
         }
@@ -72,9 +65,7 @@ namespace Marv
 
             using (var odb = OdbFactory.Open(fileName))
             {
-                Logger.Info("Storing: {0}", anObject);
                 odb.Store(anObject);
-                Logger.Info("Stored: {0}", anObject);
             }
         }
     }
