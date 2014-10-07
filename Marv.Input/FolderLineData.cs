@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -85,25 +86,34 @@ namespace Marv.Input
         {
             foreach (var sectionId in theSectionIds)
             {
-                var beliefFolderName = Path.Combine(this.rootDirPath, "SectionBeliefs", sectionId);
-                var evidenceFolderName = Path.Combine(this.rootDirPath, "SectionEvidences", sectionId);
+                var sectionBelief = new Dict<int, string, double[]>();
+                var sectionEvidence = new Dict<int, string, VertexEvidence>();
 
-                Directory.CreateDirectory(beliefFolderName);
-                Directory.CreateDirectory(evidenceFolderName);
+                for (int year = this.StartYear; year <= this.EndYear; year ++)
+                {
+                    sectionBelief[year] = new Dict<string, double[]>();
+                    sectionEvidence[year] = new Dict<string, VertexEvidence>();
+                }
+
+                var beliefFilePath = Path.Combine(this.rootDirPath, "SectionBeliefs", sectionId +  ".marv-sectionbelief");
+                var evidenceFilePath = Path.Combine(this.rootDirPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
+
+                sectionBelief.WriteJson(beliefFilePath);
+                sectionEvidence.WriteJson(evidenceFilePath);
             }
         }
 
         public void ChangeSectionId(string oldId, string newId)
         {
-            var oldDirName = Path.Combine(this.rootDirPath, BeliefsDirName, oldId);
-            var newDirName = Path.Combine(this.rootDirPath, BeliefsDirName, newId);
+            var oldDirName = Path.Combine(this.rootDirPath, BeliefsDirName, oldId + ".marv-sectionbelief");
+            var newDirName = Path.Combine(this.rootDirPath, BeliefsDirName, newId + ".marv-sectionbelief");
 
-            Directory.Move(oldDirName, newDirName);
+            File.Move(oldDirName, newDirName);
 
-            oldDirName = Path.Combine(this.rootDirPath, EvidencesDirName, oldId);
-            newDirName = Path.Combine(this.rootDirPath, EvidencesDirName, newId);
+            oldDirName = Path.Combine(this.rootDirPath, EvidencesDirName, oldId + ".marv-sectionevidence");
+            newDirName = Path.Combine(this.rootDirPath, EvidencesDirName, newId + ".marv-sectionevidence");
 
-            Directory.Move(oldDirName, newDirName);
+            File.Move(oldDirName, newDirName);
         }
 
         public bool ContainsSection(string sectionId)
@@ -116,36 +126,18 @@ namespace Marv.Input
 
         public Dict<int, string, double[]> GetSectionBelief(string sectionId)
         {
-            var beliefDir = Path.Combine(this.rootDirPath, BeliefsDirName, sectionId);
-            var sectionBelief = new Dict<int, string, double[]>();
-
-            foreach (var fileName in Directory.EnumerateFiles(beliefDir, "*." + Network.BeliefFileExtension))
-            {
-                var year = int.Parse(Path.GetFileNameWithoutExtension(fileName));
-                sectionBelief[year] = Utils.ReadJson<Dict<string, double[]>>(fileName);
-            }
-
-            return sectionBelief;
+            return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
         }
 
         public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
         {
-            var evidenceDir = Path.Combine(this.rootDirPath, EvidencesDirName, sectionId);
-            var sectionEvidence = new Dict<int, string, VertexEvidence>();
-
-            foreach (var fileName in Directory.EnumerateFiles(evidenceDir, "*." + Network.EvidenceFileExtension))
-            {
-                var year = int.Parse(Path.GetFileNameWithoutExtension(fileName));
-                sectionEvidence[year] = Utils.ReadJson<Dict<string, VertexEvidence>>(fileName);
-            }
-
-            return sectionEvidence;
+            return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
         }
 
         public IEnumerable<string> GetSectionIds()
         {
             var evidencesDir = Path.Combine(this.rootDirPath, EvidencesDirName);
-            return Directory.EnumerateDirectories(evidencesDir);
+            return Directory.EnumerateFiles(evidencesDir, "*.marv-sectionevidence").Select(Path.GetFileNameWithoutExtension);
         }
 
         public void RaiseDataChanged()
@@ -158,33 +150,23 @@ namespace Marv.Input
 
         public void RemoveSection(string sectionId)
         {
-            var beliefDir = Path.Combine(this.rootDirPath, BeliefsDirName, sectionId);
-            var evidenceDir = Path.Combine(this.rootDirPath, EvidencesDirName, sectionId);
+            var beliefFilePath = Path.Combine(this.rootDirPath, BeliefsDirName, sectionId + ".marv-sectionbelief");
+            var evidenceFilePath = Path.Combine(this.rootDirPath, EvidencesDirName, sectionId + ".marv-sectionevidence");
 
-            Directory.Delete(beliefDir);
-            Directory.Delete(evidenceDir);
+            File.Delete(beliefFilePath);
+            File.Delete(evidenceFilePath);
         }
 
         public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
         {
-            var beliefDir = Path.Combine(this.rootDirPath, BeliefsDirName, sectionId);
-
-            foreach (var year in sectionBelief.Keys)
-            {
-                var beliefFileName = Path.Combine(beliefDir, year + "." + Network.BeliefFileExtension);
-                sectionBelief[year].WriteJson(beliefFileName);
-            }
+            var beliefFilePath = Path.Combine(this.rootDirPath, BeliefsDirName, sectionId + ".marv-sectionbelief");
+            sectionBelief.WriteJson(beliefFilePath);
         }
 
         public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
         {
-            var evidenceDir = Path.Combine(this.rootDirPath, EvidencesDirName, sectionId);
-
-            foreach (var year in sectionEvidence.Keys)
-            {
-                var evidenceFileName = Path.Combine(evidenceDir, year + "." + Network.EvidenceFileExtension);
-                sectionEvidence[year].WriteJson(evidenceFileName);
-            }
+            var evidenceFilePath = Path.Combine(this.rootDirPath, EvidencesDirName, sectionId + ".marv-sectionevidence");
+            sectionEvidence.WriteJson(evidenceFilePath);
         }
 
         public event EventHandler DataChanged;

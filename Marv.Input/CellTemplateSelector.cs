@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Telerik.Charting;
@@ -14,27 +15,34 @@ namespace Marv.Input
         {
             var cell = container as GridViewCell;
 
-            var cellModel = cell.ToModel();
+            try
+            {
+                var cellModel = cell.ToModel();
 
-            if (cellModel.IsColumnSectionId)
+                if (cellModel.IsColumnSectionId)
+                {
+                    return null;
+                }
+
+                var evidence = cellModel.Data as VertexEvidence;
+
+                if (evidence == null || evidence.Value == null)
+                {
+                    return null;
+                }
+
+                cell.Tag = evidence.Value.Select((y, i) => new ScatterDataPoint
+                {
+                    XValue = i,
+                    YValue = y
+                });
+
+                return this.Template;
+            }
+            catch (NullReferenceException)
             {
                 return null;
             }
-
-            var evidence = cellModel.Data as VertexEvidence;
-
-            if (evidence == null || evidence.Value == null)
-            {
-                return null;
-            }
-
-            cell.Tag = evidence.Value.Select((y, i) => new ScatterDataPoint
-            {
-                XValue = i,
-                YValue = y
-            });
-
-            return this.Template;
         }
     }
 }
