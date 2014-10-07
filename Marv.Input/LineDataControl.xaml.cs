@@ -26,7 +26,7 @@ namespace Marv.Input
             DependencyProperty.Register("IsGridViewEnabled", typeof (bool), typeof (LineDataControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
+            DependencyProperty.Register("LineData", typeof (ILineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty NetworkFileNameProperty =
             DependencyProperty.Register("NetworkFileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedNetworkFileName));
@@ -85,11 +85,11 @@ namespace Marv.Input
             }
         }
 
-        public LineData LineData
+        public ILineData LineData
         {
             get
             {
-                return (LineData) GetValue(LineDataProperty);
+                return (ILineData) GetValue(LineDataProperty);
             }
 
             set
@@ -308,7 +308,7 @@ namespace Marv.Input
             {
                 var sectionId = "Section " + nSection;
 
-                while (this.LineData.SectionEvidences.ContainsKey(sectionId))
+                while (this.LineData.ContainsSection(sectionId))
                 {
                     nSection++;
                     sectionId = "Section " + nSection;
@@ -457,7 +457,7 @@ namespace Marv.Input
             {
                 var row = item as Dynamic;
                 var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.SectionEvidences[sectionId] = null;
+                this.LineData.RemoveSectionEvidence(sectionId);
             }
         }
 
@@ -533,7 +533,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
+                Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -546,7 +546,7 @@ namespace Marv.Input
 
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var sectionEvidences = this.LineData.SectionEvidences;
+            var lineData = this.LineData;
 
             var notification = new Notification
             {
@@ -555,16 +555,39 @@ namespace Marv.Input
 
             this.RaiseNotificationOpened(notification);
 
-            this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
+            await Task.Run(() => this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
+
+            // this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
 
             this.RaiseNotificationClosed(notification);
 
             this.RaiseSectionBeliefsChanged();
         }
 
+        private void RunAllSections(ILineData lineData, IProgress<double> progress)
+        {
+            var sectionIds = lineData.GetSectionIds();
+            var total = sectionIds.Count;
+            var done = 0.0;
+
+            foreach (var sectionId in sectionIds)
+            {
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+                lineData.SetSectionBelief(sectionId, this.network.Run(sectionEvidence));
+
+                done++;
+                progress.Report(done / total);
+            }
+        }
+
         private void RunSection(string sectionId)
         {
-            this.LineData.SectionBeliefs[sectionId] = this.network.Run(this.LineData.SectionEvidences[sectionId]);
+            var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+
+            var sectionBelief = this.network.Run(sectionEvidence);
+
+            this.LineData.SetSectionBelief(sectionId, sectionBelief);
+            
             this.RaiseSectionBeliefsChanged();
         }
 
@@ -574,7 +597,7 @@ namespace Marv.Input
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
+                    Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -587,9 +610,9 @@ namespace Marv.Input
 
             if (this.FileName != null)
             {
-                if (Path.GetExtension(this.FileName) != "." + LineData.FileExtension)
+                if (Path.GetExtension(this.FileName) != "." + Input.LineData.FileExtension)
                 {
-                    this.FileName = this.FileName + "." + LineData.FileExtension;
+                    this.FileName = this.FileName + "." + Input.LineData.FileExtension;
                 }
 
                 this.LineData.WriteJson(this.FileName);
@@ -604,7 +627,7 @@ namespace Marv.Input
             }
 
             cellModel.Data = vertexEvidence;
-            this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
+            this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
         }
 
         private void SetCell(CellModel cellModel, string newString, string oldString = null)
@@ -613,11 +636,11 @@ namespace Marv.Input
             {
                 if (oldString == null)
                 {
-                    this.LineData.SectionEvidences[newString] = new Dict<int, string, VertexEvidence>();
+                    this.LineData.SetSectionEvidence(newString, new Dict<int, string, VertexEvidence>());
                 }
                 else
                 {
-                    this.LineData.SectionEvidences.ChangeKey(oldString, newString);
+                    this.LineData.ChangeSectionId(oldString, newString);
                 }
 
                 cellModel.Data = newString;
@@ -627,7 +650,7 @@ namespace Marv.Input
                 var vertexEvidence = this.SelectedVertex.ParseEvidenceString(newString);
 
                 cellModel.Data = vertexEvidence;
-                this.LineData.SectionEvidences[cellModel.SectionId][cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
 
                 this.RaiseEvidenceChanged(cellModel, vertexEvidence);
             }
@@ -647,14 +670,14 @@ namespace Marv.Input
 
             var newRows = new ObservableCollection<Dynamic>();
 
-            foreach (var sectionId in this.LineData.SectionEvidences.Keys.ToList())
+            foreach (var sectionId in this.LineData.GetSectionIds())
             {
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionId;
 
                 for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
                 {
-                    row[year.ToString()] = this.LineData.SectionEvidences[sectionId][year][this.SelectedVertex.Key];
+                    row[year.ToString()] = this.LineData.GetSectionEvidence(sectionId)[year][this.SelectedVertex.Key];
                 }
 
                 newRows.Add(row);

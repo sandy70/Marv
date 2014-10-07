@@ -21,7 +21,7 @@ namespace Marv.Input
             DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
 
         public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (LineData), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
+            DependencyProperty.Register("LineData", typeof (ILineData), typeof (LineDataChart), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
             DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null, ChangedSelectedSectionId));
@@ -146,12 +146,13 @@ namespace Marv.Input
             }
         }
 
-        public LineData LineData
+        public ILineData LineData
         {
             get
             {
-                return (LineData) GetValue(LineDataProperty);
+                return (ILineData) GetValue(LineDataProperty);
             }
+
             set
             {
                 SetValue(LineDataProperty, value);
@@ -334,7 +335,7 @@ namespace Marv.Input
             if (this.LineData == null ||
                 this.SelectedSectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.SectionEvidences.ContainsKey(this.SelectedSectionId) ||
+                !this.LineData.ContainsSection(this.SelectedSectionId) ||
                 this.Vertex == null)
             {
                 return;
@@ -353,7 +354,7 @@ namespace Marv.Input
 
             this.Title = this.IsXAxisSections ? "Year: " + this.Year : "Section: " + this.SelectedSectionId;
             this.XTitle = this.IsXAxisSections ? "Sections" : "Years";
-            var categories = this.IsXAxisSections ? this.LineData.SectionEvidences.Keys : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
+            var categories = this.IsXAxisSections ? this.LineData.GetSectionIds() : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
 
             foreach (var category in categories.ToList())
             {
@@ -366,7 +367,7 @@ namespace Marv.Input
                     Value = null
                 });
 
-                var vertexData = this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key];
+                var vertexData = this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key];
 
                 this.AddBasePoint(category, vertexData);
             }
@@ -679,9 +680,9 @@ namespace Marv.Input
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
-                var vertexData = this.Vertex.ParseEvidenceString(evidenceString);
+                var vertexEvidence = this.Vertex.ParseEvidenceString(evidenceString);
 
-                this.LineData.SectionEvidences[sectionId][year][this.Vertex.Key] = vertexData;
+                this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
             });
 
             this.LineData.RaiseDataChanged();

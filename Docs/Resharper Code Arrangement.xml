@@ -196,6 +196,7 @@ II.2.12 <HandlesEvent />
     </Match>
     <Sort>
       <ImplementsInterface Immediate="true"/>
+      <Name />
     </Sort>
   </Entry>
 

@@ -11,8 +11,9 @@ namespace Marv
 {
     public class Network : Smile.Network, INotifyPropertyChanged
     {
+        public const string BeliefFileExtension = "marv-networkbelief";
         public const string DataFileDescription = "MARV Network Data";
-        public const string DataFileExtension = "marv-networkdata";
+        public const string EvidenceFileExtension = "marv-networkevidence";
 
         public readonly List<string> Footer = new List<string>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
@@ -265,7 +266,18 @@ namespace Marv
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
-                graphData[vertexKey].Value = this.GetSoftEvidence(vertexKey);
+                var softEvidence = this.GetSoftEvidence(vertexKey);
+                var evidenceIndex = this.IsEvidence(vertexKey) ? this.GetEvidence(vertexKey) : -1;
+
+                if (softEvidence != null)
+                {
+                    graphData[vertexKey].Value = softEvidence;
+                }
+                else if (evidenceIndex >= 0)
+                {
+                    graphData[vertexKey].Value = new double[this.GetOutcomeCount(vertexKey)];
+                    graphData[vertexKey].Value[evidenceIndex] = 1;
+                }
             }
 
             return graphData;
@@ -475,11 +487,21 @@ namespace Marv
             this.Write(path);
         }
 
-        public void WriteData(string fileName)
+        public void WriteBeliefs(string fileName)
         {
-            if (Path.GetExtension(fileName) != DataFileExtension)
+            if (Path.GetExtension(fileName) != BeliefFileExtension)
             {
-                fileName = fileName + "." + DataFileExtension;
+                fileName = fileName + "." + BeliefFileExtension;
+            }
+
+            this.GetBeliefs().WriteJson(fileName);
+        }
+
+        public void WriteEvidences(string fileName)
+        {
+            if (Path.GetExtension(fileName) != EvidenceFileExtension)
+            {
+                fileName = fileName + "." + EvidenceFileExtension;
             }
 
             this.GetEvidences().WriteJson(fileName);

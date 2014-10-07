@@ -24,7 +24,7 @@ namespace Marv.Input
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isVertexControlVisible = true;
-        private LineData lineData;
+        private ILineData lineData;
 
         public Graph Graph
         {
@@ -115,7 +115,7 @@ namespace Marv.Input
             }
         }
 
-        public LineData LineData
+        public ILineData LineData
         {
             get
             {
@@ -197,7 +197,7 @@ namespace Marv.Input
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
             this.LineData = new LineData();
-            this.LineData.SectionEvidences["Section 1"] = new Dict<int, string, VertexEvidence>();
+            this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
         }
 
         private void LineDataControl_NotificationClosed(object sender, Notification notification)
@@ -214,7 +214,7 @@ namespace Marv.Input
         {
             if (this.SelectedSectionId != null && this.SelectedYear > 0)
             {
-                this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
+                this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
             }
         }
 
@@ -225,8 +225,8 @@ namespace Marv.Input
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
-            this.Graph.Belief = this.LineData.SectionBeliefs[this.SelectedSectionId][this.SelectedYear];
-            this.Graph.SetEvidence(this.LineData.SectionEvidences[this.SelectedSectionId][this.SelectedYear]);
+            this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
+            this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
