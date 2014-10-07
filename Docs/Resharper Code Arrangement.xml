@@ -186,20 +186,6 @@ II.2.12 <HandlesEvent />
     </Sort>
   </Entry>
 
-  <!--interface implementations-->
-  <Entry>
-    <Match>
-      <And Weight="100">
-        <Kind Is="member"/>
-        <ImplementsInterface/>
-      </And>
-    </Match>
-    <Sort>
-      <ImplementsInterface Immediate="true"/>
-      <Name />
-    </Sort>
-  </Entry>
-
   <!--all other members-->
   <!-- Static Methods -->
   <Entry>
