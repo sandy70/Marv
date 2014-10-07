@@ -457,7 +457,7 @@ namespace Marv.Input
             {
                 var row = item as Dynamic;
                 var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.RemoveSectionEvidence(sectionId);
+                this.LineData.RemoveSection(sectionId);
             }
         }
 
@@ -566,7 +566,7 @@ namespace Marv.Input
 
         private void RunAllSections(ILineData lineData, IProgress<double> progress)
         {
-            var sectionIds = lineData.GetSectionIds();
+            var sectionIds = lineData.GetSectionIds().ToList();
             var total = sectionIds.Count;
             var done = 0.0;
 

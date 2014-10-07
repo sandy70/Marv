@@ -163,6 +163,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CellModel.cs" />
+    <Compile Include="FolderLineData.cs" />
     <Compile Include="ILineData.cs" />
     <Compile Include="LinearInterpolator.cs" />
     <Compile Include="LineDataChart.xaml.cs">

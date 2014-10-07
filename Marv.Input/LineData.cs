@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -17,6 +16,46 @@ namespace Marv.Input
         private Dict<string, int, string, double[]> sectionBeliefs = new Dict<string, int, string, double[]>();
         private Dict<string, int, string, VertexEvidence> sectionEvidences = new Dict<string, int, string, VertexEvidence>();
         private int startYear = DefaultYear;
+
+        public int EndYear
+        {
+            get
+            {
+                return this.endYear;
+            }
+
+            set
+            {
+                var oldEndYear = this.EndYear;
+
+                this.endYear = value;
+                this.RaisePropertyChanged();
+
+                this.UpdateSections(this.StartYear, this.EndYear, this.StartYear, oldEndYear);
+
+                if (this.EndYear < this.StartYear)
+                {
+                    this.StartYear = this.EndYear;
+                }
+            }
+        }
+
+        public Guid Guid
+        {
+            get
+            {
+                return this.guid;
+            }
+
+            set
+            {
+                if (value != this.guid)
+                {
+                    this.guid = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
 
         public Dict<string, int, string, double[]> SectionBeliefs
         {
@@ -54,116 +93,6 @@ namespace Marv.Input
             }
         }
 
-        public LineData()
-        {
-            this.SectionEvidences.CollectionChanged += this.SectionEvidences_CollectionChanged;
-            this.SectionEvidences.Keys.CollectionChanged += Keys_CollectionChanged;
-        }
-
-        public void AddSections(IEnumerable<string> keys)
-        {
-            foreach (var key in keys)
-            {
-                if (!this.SectionEvidences.ContainsKey(key))
-                {
-                    this.SectionEvidences[key] = new Dict<int, string, VertexEvidence>();
-                }
-            }
-
-            this.RaiseDataChanged();
-        }
-
-        public void ChangeSectionId(string oldId, string newId)
-        {
-            this.SectionBeliefs.ChangeKey(oldId, newId);
-            this.SectionEvidences.ChangeKey(oldId, newId);
-        }
-
-        public bool ContainsSection(string sectionId)
-        {
-            return this.SectionEvidences.ContainsKey(sectionId);
-        }
-
-        public event EventHandler DataChanged;
-
-        public int EndYear
-        {
-            get
-            {
-                return this.endYear;
-            }
-
-            set
-            {
-                var oldEndYear = this.EndYear;
-
-                this.endYear = value;
-                this.RaisePropertyChanged();
-
-                this.UpdateSections(this.StartYear, this.EndYear, this.StartYear, oldEndYear);
-
-                if (this.EndYear < this.StartYear)
-                {
-                    this.StartYear = this.EndYear;
-                }
-            }
-        }
-
-        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
-        {
-            return this.SectionBeliefs[sectionId];
-        }
-
-        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
-        {
-            return this.sectionEvidences[sectionId];
-        }
-
-        public ObservableCollection<string> GetSectionIds()
-        {
-            return this.sectionEvidences.Keys;
-        }
-
-        public Guid Guid
-        {
-            get
-            {
-                return this.guid;
-            }
-
-            set
-            {
-                if (value != this.guid)
-                {
-                    this.guid = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public void RaiseDataChanged()
-        {
-            if (this.DataChanged != null)
-            {
-                this.DataChanged(this, new EventArgs());
-            }
-        }
-
-        public void RemoveSectionEvidence(string sectionId)
-        {
-            this.SectionEvidences[sectionId] = null;
-        }
-
-        public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
-        {
-            this.SectionBeliefs[sectionId] = sectionBelief;
-        }
-
-        public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
-        {
-            this.SectionEvidences[sectionId] = sectionEvidence;
-        }
-
         public int StartYear
         {
             get
@@ -185,6 +114,80 @@ namespace Marv.Input
                     this.EndYear = this.StartYear;
                 }
             }
+        }
+
+        public LineData()
+        {
+            this.SectionEvidences.CollectionChanged += this.SectionEvidences_CollectionChanged;
+            this.SectionEvidences.Keys.CollectionChanged += Keys_CollectionChanged;
+        }
+
+        public static ILineData Read(string filePath)
+        {
+            return Utils.ReadJson<LineData>(filePath);
+        }
+
+        public void AddSections(IEnumerable<string> theSectionIds)
+        {
+            foreach (var key in theSectionIds)
+            {
+                if (!this.SectionEvidences.ContainsKey(key))
+                {
+                    this.SectionEvidences[key] = new Dict<int, string, VertexEvidence>();
+                }
+            }
+
+            this.RaiseDataChanged();
+        }
+
+        public void ChangeSectionId(string oldId, string newId)
+        {
+            this.SectionBeliefs.ChangeKey(oldId, newId);
+            this.SectionEvidences.ChangeKey(oldId, newId);
+        }
+
+        public bool ContainsSection(string sectionId)
+        {
+            return this.SectionEvidences.ContainsKey(sectionId);
+        }
+
+        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
+        {
+            return this.SectionBeliefs[sectionId];
+        }
+
+        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
+        {
+            return this.sectionEvidences[sectionId];
+        }
+
+        public IEnumerable<string> GetSectionIds()
+        {
+            return this.sectionEvidences.Keys;
+        }
+
+        public void RaiseDataChanged()
+        {
+            if (this.DataChanged != null)
+            {
+                this.DataChanged(this, new EventArgs());
+            }
+        }
+
+        public void RemoveSection(string sectionId)
+        {
+            this.SectionBeliefs[sectionId] = null;
+            this.SectionEvidences[sectionId] = null;
+        }
+
+        public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
+        {
+            this.SectionBeliefs[sectionId] = sectionBelief;
+        }
+
+        public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        {
+            this.SectionEvidences[sectionId] = sectionEvidence;
         }
 
         private void Keys_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -252,5 +255,7 @@ namespace Marv.Input
 
             this.RaiseDataChanged();
         }
+
+        public event EventHandler DataChanged;
     }
 }
