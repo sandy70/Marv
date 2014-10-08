@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 
-namespace Marv.Input
+namespace Marv.Common
 {
     public class LinearInterpolator
     {

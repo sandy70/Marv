@@ -17,8 +17,6 @@ namespace Marv
         public InvalidValueException(string message) : base(message) {}
         public InvalidValueException(string message, Exception inner) : base(message, inner) {}
 
-        protected InvalidValueException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context) {}
+        protected InvalidValueException(SerializationInfo info, StreamingContext context) : base(info, context) {}
     }
 }
