@@ -21,9 +21,10 @@ namespace Marv.Input
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible = false;
-        private bool isLineDataControlVisible = false;
-        private bool isVertexControlVisible = true;
+        private bool isLineDataChartVisible;
+        private bool isLineDataControlVisible;
+        private bool isMapViewVisible = true;
+        private bool isVertexControlVisible;
         private ILineData lineData;
 
         public Graph Graph
@@ -92,6 +93,25 @@ namespace Marv.Input
                 }
 
                 this.isLineDataControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsMapViewVisible
+        {
+            get
+            {
+                return this.isMapViewVisible;
+            }
+
+            set
+            {
+                if (value.Equals(this.isMapViewVisible))
+                {
+                    return;
+                }
+
+                this.isMapViewVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -173,12 +193,10 @@ namespace Marv.Input
 
         public MainWindow()
         {
-            StyleManager.ApplicationTheme = new Windows8Theme();
+            StyleManager.ApplicationTheme = new Windows8TouchTheme();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -198,6 +216,11 @@ namespace Marv.Input
         {
             this.LineData = new LineData();
             this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+        }
+
+        private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
+        {
+            this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
         }
 
         private void LineDataControl_NotificationClosed(object sender, Notification notification)
@@ -258,9 +281,6 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
 
-        void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
-        {
-            this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

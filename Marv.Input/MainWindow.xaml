@@ -39,8 +39,11 @@
             <telerik:RadSplitContainer>
                 <!-- Map -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Map">
-                        <marv:MapView />
+                    <telerik:RadPane Header="Map"
+                                     IsHidden="{Binding ElementName=Root, Path=IsMapViewVisible, Converter={StaticResource BooleanNot}}">
+                        <marv:MapView ManipulationMode="Scale,Translate"
+                                      StartExtent="{x:Static marv:Countries.USA}"
+                                      TileLayer="{x:Static marv:TileLayers.MapBoxAerial}" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
                 
@@ -56,7 +59,7 @@
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
+                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
