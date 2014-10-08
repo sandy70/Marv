@@ -26,11 +26,8 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty PolylinePartsProperty =
             DependencyProperty.Register("PolylineParts", typeof (IEnumerable<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedLocationProperty =
-            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
-            DependencyProperty.Register("SimplifiedPolylineParts", typeof (IEnumerable<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SimplifiedPolylineParts", typeof (IEnumerable<LocationCollectionViewModel>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ToleranceProperty =
             DependencyProperty.Register("Tolerance", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(5.0));
@@ -110,24 +107,13 @@ namespace Marv.Controls.Map
             }
         }
 
-        public Location SelectedLocation
+        public IEnumerable<LocationCollectionViewModel> SimplifiedPolylineParts
         {
             get
             {
-                return (Location) GetValue(SelectedLocationProperty);
+                return (IEnumerable<LocationCollectionViewModel>)this.GetValue(SimplifiedPolylinePartsProperty);
             }
-            set
-            {
-                SetValue(SelectedLocationProperty, value);
-            }
-        }
 
-        public IEnumerable<LocationCollection> SimplifiedPolylineParts
-        {
-            get
-            {
-                return (IEnumerable<LocationCollection>) this.GetValue(SimplifiedPolylinePartsProperty);
-            }
             set
             {
                 this.SetValue(SimplifiedPolylinePartsProperty, value);
@@ -236,24 +222,16 @@ namespace Marv.Controls.Map
         {
             var mapView = this.FindParent<MapView>();
             var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
+
             if (this.PolylineParts != null)
             {
-                foreach (var locationCollection in this.PolylineParts)
+                simplifiedLocationCollections.AddRange(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
-                    var simplifiedLocationCollection = new LocationCollectionViewModel(locationCollection.ToPoints(mapView)
-                                                                                                         .Reduce(this.Tolerance)
-                                                                                                         .ToLocations(mapView));
-                    if (this.IsEnabled)
-                    {
-                        simplifiedLocationCollection.Stroke = this.DoubleToBrushMap.Map(locationCollection[1].Value);
-                    }
-                    else
-                    {
-                        simplifiedLocationCollection.Stroke = this.DisabledStroke;
-                    }
-                    simplifiedLocationCollections.Add(simplifiedLocationCollection);
-                }
+                    Locations = locationCollection.ToPoints(mapView).Reduce(this.Tolerance).ToLocations(mapView).ToLocationCollection(), 
+                    Stroke = this.IsEnabled ? this.DoubleToBrushMap.Map(locationCollection[1].Value) : this.DisabledStroke
+                }));
             }
+
             this.SimplifiedPolylineParts = simplifiedLocationCollections;
         }
 

@@ -4,9 +4,29 @@ using Marv.Map;
 
 namespace Marv.Controls.Map
 {
-    public class LocationCollectionViewModel : LocationCollection
+    public class LocationCollectionViewModel : NotifyPropertyChanged
     {
+        private LocationCollection locations;
         private Brush stroke;
+
+        public LocationCollection Locations
+        {
+            get
+            {
+                return this.locations;
+            }
+
+            set
+            {
+                if (value.Equals(this.locations))
+                {
+                    return;
+                }
+
+                this.locations = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public Brush Stroke
         {
@@ -23,11 +43,6 @@ namespace Marv.Controls.Map
                     this.RaisePropertyChanged();
                 }
             }
-        }
-
-        public LocationCollectionViewModel(IEnumerable<Location> locations): base(locations)
-        {
-            
         }
     }
 }

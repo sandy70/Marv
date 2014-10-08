@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 
@@ -48,10 +47,6 @@ namespace Marv.Map
                 this.RaisePropertyChanged();
             }
         }
-
-        public LocationCollection() {}
-
-        public LocationCollection(IEnumerable<Location> locations) : base(locations) {}
 
         /// <summary>
         ///     Reads a LocationCollection from a CSV file. The file is expected to have 3 columns - Section ID, Lat, Lon. The file
