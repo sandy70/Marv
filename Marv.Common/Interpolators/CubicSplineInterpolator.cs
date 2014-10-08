@@ -20,7 +20,7 @@ namespace Marv
     ///         You must provide points in X sort order.
     ///     </para>
     /// </remarks>
-    public class CubicSpline
+    public class CubicSplineInterpolator : IInterpolator
     {
         #region Fields
 
@@ -39,7 +39,7 @@ namespace Marv
         /// <summary>
         ///     Default ctor.
         /// </summary>
-        public CubicSpline() {}
+        public CubicSplineInterpolator() {}
 
         /// <summary>
         ///     Construct and call Fit.
@@ -49,7 +49,7 @@ namespace Marv
         /// <param name="startSlope">Optional slope constraint for the first point. Single.NaN means no constraint.</param>
         /// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
         /// <param name="debug">Turn on console output. Default is false.</param>
-        public CubicSpline(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
+        public CubicSplineInterpolator(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
         {
             Fit(x, y, startSlope, endSlope, debug);
         }
@@ -65,7 +65,10 @@ namespace Marv
         /// </summary>
         private void CheckAlreadyFitted()
         {
-            if (a == null) throw new Exception("Fit must be called before you can evaluate.");
+            if (a == null)
+            {
+                throw new Exception("Fit must be called before you can evaluate.");
+            }
         }
 
         /// <summary>
@@ -80,7 +83,10 @@ namespace Marv
             var dx = xOrig[j + 1] - xOrig[j];
             var t = (x - xOrig[j]) / dx;
             var y = (1 - t) * yOrig[j] + t * yOrig[j + 1] + t * (1 - t) * (a[j] * (1 - t) + b[j] * t); // equation 9
-            if (debug) Console.WriteLine("xs = {0}, j = {1}, t = {2}", x, j, t);
+            if (debug)
+            {
+                Console.WriteLine("xs = {0}, j = {1}, t = {2}", x, j, t);
+            }
             return y;
         }
 
@@ -180,12 +186,21 @@ namespace Marv
                 r[n - 1] = endSlope;
             }
 
-            if (debug) Console.WriteLine("Tri-diagonal matrix:\n{0}", m.ToDisplayString(":0.0000", "  "));
-            if (debug) Console.WriteLine("r: {0}", r.String());
+            if (debug)
+            {
+                Console.WriteLine("Tri-diagonal matrix:\n{0}", m.ToDisplayString(":0.0000", "  "));
+            }
+            if (debug)
+            {
+                Console.WriteLine("r: {0}", r.String());
+            }
 
             // k is the solution to the matrix
             var k = m.Solve(r);
-            if (debug) Console.WriteLine("k = {0}", k.String());
+            if (debug)
+            {
+                Console.WriteLine("k = {0}", k.String());
+            }
 
             // a and b are each spline's coefficients
             this.a = new float[n - 1];
@@ -199,8 +214,14 @@ namespace Marv
                 b[i - 1] = -k[i] * dx1 + dy1; // equation 11 from the article
             }
 
-            if (debug) Console.WriteLine("a: {0}", a.String());
-            if (debug) Console.WriteLine("b: {0}", b.String());
+            if (debug)
+            {
+                Console.WriteLine("a: {0}", a.String());
+            }
+            if (debug)
+            {
+                Console.WriteLine("b: {0}", b.String());
+            }
         }
 
         /// <summary>
@@ -225,6 +246,14 @@ namespace Marv
         #endregion
 
         #region Eval*
+
+        public double Eval(double x)
+        {
+            return this.Eval(new[]
+            {
+                (float) x
+            })[0];
+        }
 
         /// <summary>
         ///     Evaluate the spline at the specified x coordinates.
@@ -289,7 +318,10 @@ namespace Marv
                             + (1 - 2 * t) * (a[j] * (1 - t) + b[j] * t) / dx
                             + t * (1 - t) * (b[j] - a[j]) / dx;
 
-                if (debug) Console.WriteLine("[{0}]: xs = {1}, j = {2}, t = {3}", i, x[i], j, t);
+                if (debug)
+                {
+                    Console.WriteLine("[{0}]: xs = {1}, j = {2}, t = {3}", i, x[i], j, t);
+                }
             }
 
             return qPrime;
@@ -311,7 +343,7 @@ namespace Marv
         /// <returns>The computed y values for each xs.</returns>
         public static float[] Compute(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
         {
-            var spline = new CubicSpline();
+            var spline = new CubicSplineInterpolator();
             return spline.FitAndEval(x, y, xs, startSlope, endSlope, debug);
         }
 
@@ -352,10 +384,10 @@ namespace Marv
             }
 
             // Spline fit both x and y to times
-            var xSpline = new CubicSpline();
+            var xSpline = new CubicSplineInterpolator();
             xs = xSpline.FitAndEval(dists, x, times);
 
-            var ySpline = new CubicSpline();
+            var ySpline = new CubicSplineInterpolator();
             ys = ySpline.FitAndEval(dists, y, times);
         }
 

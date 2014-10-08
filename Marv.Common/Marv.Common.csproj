@@ -81,6 +81,8 @@
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="Interpolators\IInterpolator.cs" />
+    <Compile Include="Interpolators\LinearInterpolator.cs" />
     <Compile Include="Types\Dict\Dict.cs" />
     <Compile Include="Types\Dict\Dict.IDictionary.cs" />
     <Compile Include="Types\Dict\DictEnumerator.cs" />
@@ -94,8 +96,8 @@
     <Compile Include="Notification\NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />
-    <Compile Include="Spline\CubicSpline.cs" />
-    <Compile Include="Spline\TriDiagonalMatrix.cs" />
+    <Compile Include="Interpolators\CubicSplineInterpolator.cs" />
+    <Compile Include="Interpolators\TriDiagonalMatrix.cs" />
     <Compile Include="Types\Dict\Kvp.cs" />
     <Compile Include="Types\SelectableCollection.cs" />
     <Compile Include="Types\Dynamic.cs" />

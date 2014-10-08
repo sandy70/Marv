@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Windows;
 
-namespace Marv.Common
+namespace Marv
 {
-    public class LinearInterpolator
+    public class LinearInterpolator : IInterpolator
     {
         private readonly List<Point> points = new List<Point>();
 
