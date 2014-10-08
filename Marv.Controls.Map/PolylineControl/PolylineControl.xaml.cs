@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
-using Marv;
 using Marv.Map;
 
 namespace Marv.Controls.Map
 {
-    public partial class PolylineControl
+    public partial class PolylineControl : INotifyPropertyChanged
     {
         public static readonly DependencyProperty CursorFillProperty =
             DependencyProperty.Register("CursorFill", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
@@ -24,25 +25,16 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
+        public static readonly DependencyProperty SelectedLocationProperty =
+            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
 
-        public static readonly DependencyProperty SimplifiedLocationsProperty =
-            DependencyProperty.Register("SimplifiedLocations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedLocationProperty =
-            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
-
         public static readonly DependencyProperty StrokeThicknessProperty =
-            DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(5.0));
+            DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(3.0));
 
-        public static readonly RoutedEvent SelectionChangedEvent =
-            EventManager.RegisterRoutedEvent("SelectionChanged", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<Location>>), typeof (PolylineControl));
-
-        public PolylineControl()
-        {
-            this.InitializeComponent();
-        }
+        private IEnumerable<Location> simplifiedLocations;
 
         public Brush CursorFill
         {
@@ -120,11 +112,18 @@ namespace Marv.Controls.Map
         {
             get
             {
-                return (IEnumerable<Location>) this.GetValue(SimplifiedLocationsProperty);
+                return this.simplifiedLocations;
             }
+
             set
             {
-                this.SetValue(SimplifiedLocationsProperty, value);
+                if (value.Equals(this.simplifiedLocations))
+                {
+                    return;
+                }
+
+                this.simplifiedLocations = value;
+                this.RaisePropertyChanged();
             }
         }
 
@@ -144,12 +143,17 @@ namespace Marv.Controls.Map
         {
             get
             {
-                return (double) this.GetValue(StrokeThicknessProperty);
+                return (double) GetValue(StrokeThicknessProperty);
             }
             set
             {
-                this.SetValue(StrokeThicknessProperty, value);
+                SetValue(StrokeThicknessProperty, value);
             }
+        }
+
+        public PolylineControl()
+        {
+            this.InitializeComponent();
         }
 
         private static void ChangedCursorLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -173,48 +177,24 @@ namespace Marv.Controls.Map
             }
         }
 
-        private static void ChangedSelectedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControl;
-
-            if (control != null)
-            {
-                control.RaiseSelectionChanged();
-            }
-        }
-
-        public void RaiseSelectionChanged()
-        {
-            if (this.SelectedLocation != null)
-            {
-                this.RaiseEvent(new ValueEventArgs<Location>
-                {
-                    RoutedEvent = SelectionChangedEvent,
-                    Value = this.SelectedLocation
-                });
-            }
-        }
-
         public void UpdateSimplifiedLocations()
         {
             var mapView = this.FindParent<MapView>();
 
             this.SimplifiedLocations = this.Locations
-                .ToPoints(mapView)
-                .Reduce(5)
-                .ToLocations(mapView);
+                                           .ToPoints(mapView)
+                                           .Reduce(5)
+                                           .ToLocations(mapView);
         }
 
-        public event RoutedEventHandler<ValueEventArgs<Location>> SelectionChanged
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            add
+            if (this.PropertyChanged != null && propertyName != null)
             {
-                this.AddHandler(SelectionChangedEvent, value);
-            }
-            remove
-            {
-                this.RemoveHandler(SelectionChangedEvent, value);
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

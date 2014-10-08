@@ -41,8 +41,7 @@
                                                             StrokeEndLineCap="Round"
                                                             StrokeLineJoin="Round"
                                                             StrokeStartLineCap="Round"
-                                                            StrokeThickness="5">
-                                    </mapcontrol:MapPolyline>
+                                                            StrokeThickness="5" />
 
                                     <!-- This Bigger Dummy Polyline is Location selection -->
                                     <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"

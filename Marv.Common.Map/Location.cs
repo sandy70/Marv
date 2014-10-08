@@ -94,6 +94,7 @@
         {
             return new Location
             {
+                Key = mLocation.Latitude + "," + mLocation.Longitude,
                 Latitude = mLocation.Latitude,
                 Longitude = mLocation.Longitude
             };

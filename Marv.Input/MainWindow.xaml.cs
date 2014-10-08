@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Marv.Map;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -26,6 +27,7 @@ namespace Marv.Input
         private bool isMapViewVisible = true;
         private bool isVertexControlVisible;
         private ILineData lineData;
+        private LocationCollection locations;
 
         public Graph Graph
         {
@@ -154,6 +156,25 @@ namespace Marv.Input
             }
         }
 
+        public LocationCollection Locations
+        {
+            get
+            {
+                return this.locations;
+            }
+
+            set
+            {
+                if (value.Equals(this.locations))
+                {
+                    return;
+                }
+
+                this.locations = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public NotificationCollection Notifications
         {
             get
@@ -254,6 +275,8 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\CNPC\line.csv");
+
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
