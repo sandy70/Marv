@@ -275,7 +275,35 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\CNPC\line.csv");
+            this.LineData = FolderLineData.Read(@"C:\Users\vkha\Data\WestPipeline\WestPipeline.marv-linedata");
+            this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\WestPipeline\line.csv");
+
+            var casingNetworkFiles = new Dict<double, string>
+            {
+                {  8.0, "CASED_PIPELINE_8.net" },
+                {  8.8, "CASED_PIPELINE_88.net" },
+                { 10.0, "CASED_PIPELINE_10.net" },
+                { 11.0, "CASED_PIPELINE_11.net" },
+                { 13.3, "CASED_PIPELINE_133.net" },
+                { 14.3, "CASED_PIPELINE_143.net" },
+            };
+
+            var networkFiles = new Dict<double, string>
+            {
+                {  8.0, "MODEL_modified_08262014a_8.net" },
+                {  8.8, "MODEL_modified_08262014a_88.net.net" },
+                { 10.0, "MODEL_modified_08262014a_10.net.net" },
+                { 11.0, "MODEL_modified_08262014a_11.net.net" },
+                { 13.3, "MODEL_modified_08262014a_133.net.net" },
+                { 14.3, "MODEL_modified_08262014a_143.net.net" },
+            };
+
+            var casingGraphs = new Dict<double, Graph>();
+
+            foreach (var size in casingNetworkFiles.Keys)
+            {
+                casingGraphs[size] = Graph.Read(casingNetworkFiles[size]);
+            }
 
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
@@ -300,8 +328,16 @@ namespace Marv.Input
             this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
 
+            this.PolylineControl.SelectionChanged += PolylineControl_SelectionChanged;
+
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        void PolylineControl_SelectionChanged(object sender, Location location)
+        {
+            var sectionEvidence = this.LineData.GetSectionEvidence(location.Key);
+            Console.WriteLine(sectionEvidence.Count);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -168,7 +168,7 @@ namespace Marv.Controls.Map
             {
                 var location = this.locationStack.Pop();
 
-                this.AssociatedObject.SelectedLocation = location;
+                this.AssociatedObject.RaiseSelectionChanged(location);
 
                 this.locationStack.Clear();
                 this.timer.Stop();

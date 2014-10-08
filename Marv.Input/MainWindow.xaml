@@ -1,7 +1,6 @@
 ﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:local="clr-namespace:Marv.Input"
-        xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -43,18 +42,16 @@
                     <telerik:RadPane Header="Map"
                                      IsHidden="{Binding ElementName=Root, Path=IsMapViewVisible, Converter={StaticResource BooleanNot}}">
                         <marv:MapView ManipulationMode="Scale,Translate"
-                                      StartExtent="{x:Static marv:Countries.USA}"
+                                      StartExtent="{x:Static marv:Countries.China}"
                                       TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
-                                <marv:PolylineControl Locations="{Binding ElementName=Root, Path=Locations}"
-                                                    Stroke="GreenYellow" 
-                                                    StrokeThickness="3" />
-
-
-                            
+                            <marv:PolylineControl Name="PolylineControl"
+                                                  Locations="{Binding ElementName=Root, Path=Locations}"
+                                                  Stroke="GreenYellow"
+                                                  StrokeThickness="3" />
                         </marv:MapView>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
-                
+
                 <!-- InputGrid and Plot -->
                 <telerik:RadSplitContainer Orientation="Vertical">
                     <telerik:RadPaneGroup>
@@ -62,7 +59,6 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
-                                                   CurrentGraphData="{Binding ElementName=Root, Path=Graph.Data, Mode=TwoWay}"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
@@ -79,7 +75,7 @@
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
+                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

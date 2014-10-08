@@ -28,9 +28,6 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControlBase), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
 
-        public static readonly DependencyProperty StrokeThicknessProperty =
-            DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(5.0));
-
         public Brush CursorFill
         {
             get
@@ -115,21 +112,6 @@ namespace Marv.Controls.Map
             }
         }
 
-        public double StrokeThickness
-        {
-            get
-            {
-                return (double) this.GetValue(StrokeThicknessProperty);
-            }
-            set
-            {
-                this.SetValue(StrokeThicknessProperty, value);
-            }
-        }
-
-        // Virtual function will be overridden in derived classes
-        // Do not remove
-
         private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as PolylineControlBase;
@@ -151,6 +133,8 @@ namespace Marv.Controls.Map
             }
         }
 
+        // Virtual function will be overridden in derived classes
+        // Do not remove
         protected virtual void OnChangedLocations() {}
     }
 }

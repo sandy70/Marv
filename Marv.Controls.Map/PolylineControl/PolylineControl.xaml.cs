@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -24,9 +25,6 @@ namespace Marv.Controls.Map
 
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
-
-        public static readonly DependencyProperty SelectedLocationProperty =
-            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
@@ -93,18 +91,6 @@ namespace Marv.Controls.Map
             set
             {
                 this.SetValue(LocationsProperty, value);
-            }
-        }
-
-        public Location SelectedLocation
-        {
-            get
-            {
-                return (Location) this.GetValue(SelectedLocationProperty);
-            }
-            set
-            {
-                this.SetValue(SelectedLocationProperty, value);
             }
         }
 
@@ -177,6 +163,14 @@ namespace Marv.Controls.Map
             }
         }
 
+        public void RaiseSelectionChanged(Location location)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, location);
+            }
+        }
+
         public void UpdateSimplifiedLocations()
         {
             var mapView = this.FindParent<MapView>();
@@ -196,5 +190,7 @@ namespace Marv.Controls.Map
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<Location> SelectionChanged;
     }
 }
