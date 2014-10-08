@@ -21,8 +21,8 @@ namespace Marv.Input
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible = true;
-        private bool isLineDataControlVisible = true;
+        private bool isLineDataChartVisible = false;
+        private bool isLineDataControlVisible = false;
         private bool isVertexControlVisible = true;
         private ILineData lineData;
 

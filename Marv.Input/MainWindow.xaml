@@ -37,6 +37,13 @@
             </telerik:RadDocking.Resources>
 
             <telerik:RadSplitContainer>
+                <!-- Map -->
+                <telerik:RadPaneGroup>
+                    <telerik:RadPane Header="Map">
+                        <marv:MapView />
+                    </telerik:RadPane>
+                </telerik:RadPaneGroup>
+                
                 <!-- InputGrid and Plot -->
                 <telerik:RadSplitContainer Orientation="Vertical">
                     <telerik:RadPaneGroup>

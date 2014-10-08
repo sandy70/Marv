@@ -38,13 +38,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageFileCache, Version=1.12.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="ImageFileCache, Version=2.2.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.1.12.0\lib\net45\ImageFileCache.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.2.0\lib\net45\ImageFileCache.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WPF, Version=1.12.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="MapControl.WPF, Version=2.2.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.1.12.0\lib\net45\MapControl.WPF.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.2.0\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />

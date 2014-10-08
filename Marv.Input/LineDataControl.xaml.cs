@@ -185,22 +185,18 @@ namespace Marv.Input
 
         private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            Console.WriteLine("ChangedLineData");
+
             var control = d as LineDataControl;
 
             control.IsGridViewEnabled = true;
 
-            foreach (var selectedCell in control.GridView.SelectedCells)
-            {
-                control.selectionInfos.Add(new Tuple<int, int>(control.Rows.IndexOf(selectedCell.Item as Dynamic), selectedCell.Column.DisplayIndex));
-            }
-
-            var lineData = control.LineData;
-
-            if (lineData == null || control.SelectedVertex == null)
+            if (control.LineData == null || control.SelectedVertex == null)
             {
                 return;
             }
 
+            var lineData = control.LineData;
             var vertexKey = control.SelectedVertex.Key;
 
             control.Rows = new ObservableCollection<Dynamic>();
