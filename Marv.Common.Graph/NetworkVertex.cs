@@ -55,7 +55,14 @@ namespace Marv
         {
             if (this.Properties.ContainsKey(propertyName))
             {
-                return this.Properties[propertyName].Dequote().ParseJson<T>();
+                try
+                {
+                    return this.Properties[propertyName].Dequote().ParseJson<T>();
+                }
+                catch (Exception)
+                {
+                    return new T();
+                }
             }
             return new T();
         }
@@ -217,7 +224,7 @@ namespace Marv
 
             if (this.Properties.ContainsKey(str))
             {
-                htmlDesc = this.Properties[str].Split("\"".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+                htmlDesc = this.Properties[str].Trim().Dequote();
             }
 
             return htmlDesc;
