@@ -23,8 +23,14 @@ namespace Marv
 
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
-            if (val.CompareTo(min) < 0) return min;
-            if (val.CompareTo(max) > 0) return max;
+            if (val.CompareTo(min) < 0)
+            {
+                return min;
+            }
+            if (val.CompareTo(max) > 0)
+            {
+                return max;
+            }
             return val;
         }
 
@@ -83,7 +89,10 @@ namespace Marv
 
         public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
-            if (depObj == null) yield break;
+            if (depObj == null)
+            {
+                yield break;
+            }
 
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
             {
@@ -120,7 +129,10 @@ namespace Marv
             var parentObject = GetParentObject(child);
 
             //we've reached the end of the tree
-            if (parentObject == null) return null;
+            if (parentObject == null)
+            {
+                return null;
+            }
 
             //check if the parent matches the type we're looking for
             var parent = parentObject as T;
@@ -141,11 +153,23 @@ namespace Marv
             var top = bounds.Top - viewport.Top;
             var bottom = bounds.Bottom - viewport.Bottom;
 
-            if (left > 0 && right > 0) point.X = right + pad;
-            else if (left < 0 && right < 0) point.X = left - pad;
+            if (left > 0 && right > 0)
+            {
+                point.X = right + pad;
+            }
+            else if (left < 0 && right < 0)
+            {
+                point.X = left - pad;
+            }
 
-            if (top < 0 && bottom < 0) point.Y = top - pad;
-            else if (top > 0 && bottom > 0) point.Y = bottom + pad;
+            if (top < 0 && bottom < 0)
+            {
+                point.Y = top - pad;
+            }
+            else if (top > 0 && bottom > 0)
+            {
+                point.Y = bottom + pad;
+            }
 
             return point;
         }
@@ -163,14 +187,20 @@ namespace Marv
         /// </returns>
         public static DependencyObject GetParentObject(this DependencyObject child)
         {
-            if (child == null) return null;
+            if (child == null)
+            {
+                return null;
+            }
 
             // handle content elements separately
             var contentElement = child as ContentElement;
             if (contentElement != null)
             {
                 var parent = ContentOperations.GetParent(contentElement);
-                if (parent != null) return parent;
+                if (parent != null)
+                {
+                    return parent;
+                }
 
                 var fce = contentElement as FrameworkContentElement;
                 return fce != null ? fce.Parent : null;
@@ -182,7 +212,10 @@ namespace Marv
             if (frameworkElement != null)
             {
                 var parent = frameworkElement.Parent;
-                if (parent != null) return parent;
+                if (parent != null)
+                {
+                    return parent;
+                }
             }
 
             // if it's not a ContentElement/FrameworkElement, rely on VisualTreeHelper
@@ -196,7 +229,10 @@ namespace Marv
 
         public static Dictionary<string, double> Normalized(this Dictionary<string, double> evidence)
         {
-            if (evidence == null) return null;
+            if (evidence == null)
+            {
+                return null;
+            }
 
             var normalized = new Dictionary<string, double>();
             var sum = evidence.Sum(kvp => kvp.Value);
@@ -228,6 +264,18 @@ namespace Marv
             }
 
             return valueList;
+        }
+
+        public static object Parse(this string str)
+        {
+            double doubleValue;
+
+            if (double.TryParse(str, out doubleValue))
+            {
+                return doubleValue;
+            }
+
+            return str;
         }
 
         public static List<string> ParseBlocks(this string str)
@@ -321,7 +369,10 @@ namespace Marv
             {
                 var distance = Utils.Distance(first, last, point);
 
-                if (distance < maxDistance) continue;
+                if (distance < maxDistance)
+                {
+                    continue;
+                }
 
                 maxDistance = distance;
                 maxDistancePoint = point;
@@ -330,13 +381,13 @@ namespace Marv
             if (maxDistance > tolerance)
             {
                 return pointList.TakeUntil(x => x == maxDistancePoint)
-                    .Reduce(tolerance)
-                    .Concat(pointList.SkipWhile(x => x != maxDistancePoint)
-                        .Reduce(tolerance)
-                        .Skip(1));
+                                .Reduce(tolerance)
+                                .Concat(pointList.SkipWhile(x => x != maxDistancePoint)
+                                                 .Reduce(tolerance)
+                                                 .Skip(1));
             }
             return pointList.Take(1)
-                .Concat(last);
+                            .Concat(last);
         }
 
         public static string String<T>(this IEnumerable<T> items, string format = "{0}")

@@ -1,11 +1,10 @@
 ﻿namespace Marv.Map
 {
-    public class Location : NotifyPropertyChanged, IKeyed
+    public class Location : Dynamic, IKeyed
     {
         private string key;
         private double latitude;
         private double longitude;
-        private readonly Dict<string, object> properties = new Dict<string,object>();
         private double value;
 
         public string Key
@@ -53,14 +52,6 @@
             {
                 this.longitude = value;
                 this.RaisePropertyChanged();
-            }
-        }
-
-        public Dict<string, object> Properties
-        {
-            get
-            {
-                return this.properties;
             }
         }
 

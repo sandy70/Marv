@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 
 namespace Marv.Map
 {
@@ -50,7 +51,7 @@ namespace Marv.Map
 
         /// <summary>
         ///     Reads a LocationCollection from a CSV file. The file is expected to have 3 columns - Section ID, Lat, Lon. The file
-        ///     is not expected to have a header.
+        ///     is assumed to have a header.
         /// </summary>
         /// <param name="path">Full path of the file to read.</param>
         /// <returns>Contents to the file as LocationCollection.</returns>
@@ -60,21 +61,42 @@ namespace Marv.Map
 
             var lines = File.ReadAllLines(path);
 
-            foreach (var line in lines)
+            var headers = lines.First()
+                               .Trim()
+                               .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines.Skip(1))
             {
                 var parts = line.Trim().Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                if (parts.Length != 3)
+                if (parts.Length != headers.Count())
                 {
                     continue;
                 }
 
-                locationCollection.Add(new Location
+                var location = new Location();
+
+                for (int i = 0; i < headers.Length; i++)
                 {
-                    Key = parts[0],
-                    Latitude = Convert.ToDouble(parts[1]),
-                    Longitude = Convert.ToDouble(parts[2])
-                });
+                    if (headers[i].ToLower() == "latitude")
+                    {
+                        location.Latitude = Convert.ToDouble(parts[i]);
+                    }
+                    else if (headers[i].ToLower() == "longitude")
+                    {
+                        location.Longitude = Convert.ToDouble(parts[i]);
+                    }
+                    else if (headers[i].ToLower() == "section id")
+                    {
+                        location.Key = parts[i];
+                    }
+                    else
+                    {
+                        location[headers[i].ToLower()] = parts[i].Parse();
+                    }
+                }
+
+                locationCollection.Add(location);
             }
 
             return locationCollection;

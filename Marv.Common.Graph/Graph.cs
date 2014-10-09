@@ -30,9 +30,9 @@ namespace Marv
 
             set
             {
-                foreach (var vertexKey in value.Keys)
+                foreach (var vertex in this.Vertices)
                 {
-                    this.Vertices[vertexKey].Belief = value[vertexKey];
+                    vertex.Belief = value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
                 }
             }
         }

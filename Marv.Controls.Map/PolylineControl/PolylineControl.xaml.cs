@@ -26,6 +26,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
 
+        public static readonly DependencyProperty SelectedLocationProperty =
+            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
 
@@ -91,6 +94,18 @@ namespace Marv.Controls.Map
             set
             {
                 this.SetValue(LocationsProperty, value);
+            }
+        }
+
+        public Location SelectedLocation
+        {
+            get
+            {
+                return (Location) GetValue(SelectedLocationProperty);
+            }
+            set
+            {
+                SetValue(SelectedLocationProperty, value);
             }
         }
 
@@ -165,6 +180,8 @@ namespace Marv.Controls.Map
 
         public void RaiseSelectionChanged(Location location)
         {
+            this.SelectedLocation = location;
+
             if (this.SelectionChanged != null)
             {
                 this.SelectionChanged(this, location);

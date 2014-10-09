@@ -46,6 +46,7 @@
                                       TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
                             <marv:PolylineControl Name="PolylineControl"
                                                   Locations="{Binding ElementName=Root, Path=Locations}"
+                                                  SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
                                                   Stroke="GreenYellow"
                                                   StrokeThickness="3" />
                         </marv:MapView>
@@ -62,8 +63,7 @@
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -74,20 +74,34 @@
                                 <local:LineDataChart x:Name="LineDataChart"
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
 
-                <!-- Graph -->
+                <!-- Graph and  timeline -->
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:GraphControl Name="GraphControl"
-                                           Background="WhiteSmoke"
-                                           Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="32" />
+                            </Grid.RowDefinitions>
+                            
+                            <marv:GraphControl Name="GraphControl"
+                                               Grid.Row="0"
+                                               Background="WhiteSmoke"
+                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                            
+                            <telerik:RadSlider Name="YearSlider"
+                                               Grid.Row="1"
+                                               TickFrequency="1"
+                                               Maximum="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                               Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
+                                               Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+                        </Grid>
 
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>

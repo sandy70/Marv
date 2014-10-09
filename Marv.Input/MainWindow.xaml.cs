@@ -21,6 +21,8 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
+        private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
+        private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible;
         private bool isLineDataControlVisible;
@@ -28,31 +30,21 @@ namespace Marv.Input
         private bool isVertexControlVisible;
         private ILineData lineData;
         private LocationCollection locations;
+        private Location selectedLocation;
 
         public Graph Graph
         {
-            get
-            {
-                return (Graph) GetValue(GraphProperty);
-            }
-
-            set
-            {
-                SetValue(GraphProperty, value);
-            }
+            get { return (Graph) GetValue(GraphProperty); }
+            set { SetValue(GraphProperty, value); }
         }
 
         public bool IsGraphControlVisible
         {
-            get
-            {
-                return this.isGraphControlVisible;
-            }
+            get { return this.isGraphControlVisible; }
 
             set
             {
-                if (value.Equals(this.isGraphControlVisible))
-                {
+                if (value.Equals(this.isGraphControlVisible)){
                     return;
                 }
 
@@ -63,15 +55,11 @@ namespace Marv.Input
 
         public bool IsLineDataChartVisible
         {
-            get
-            {
-                return this.isLineDataChartVisible;
-            }
+            get { return this.isLineDataChartVisible; }
 
             set
             {
-                if (value.Equals(this.isLineDataChartVisible))
-                {
+                if (value.Equals(this.isLineDataChartVisible)){
                     return;
                 }
 
@@ -82,15 +70,11 @@ namespace Marv.Input
 
         public bool IsLineDataControlVisible
         {
-            get
-            {
-                return this.isLineDataControlVisible;
-            }
+            get { return this.isLineDataControlVisible; }
 
             set
             {
-                if (value.Equals(this.isLineDataControlVisible))
-                {
+                if (value.Equals(this.isLineDataControlVisible)){
                     return;
                 }
 
@@ -101,15 +85,11 @@ namespace Marv.Input
 
         public bool IsMapViewVisible
         {
-            get
-            {
-                return this.isMapViewVisible;
-            }
+            get { return this.isMapViewVisible; }
 
             set
             {
-                if (value.Equals(this.isMapViewVisible))
-                {
+                if (value.Equals(this.isMapViewVisible)){
                     return;
                 }
 
@@ -120,15 +100,11 @@ namespace Marv.Input
 
         public bool IsVertexControlVisible
         {
-            get
-            {
-                return this.isVertexControlVisible;
-            }
+            get { return this.isVertexControlVisible; }
 
             set
             {
-                if (value.Equals(this.isVertexControlVisible))
-                {
+                if (value.Equals(this.isVertexControlVisible)){
                     return;
                 }
 
@@ -139,15 +115,11 @@ namespace Marv.Input
 
         public ILineData LineData
         {
-            get
-            {
-                return this.lineData;
-            }
+            get { return this.lineData; }
 
             set
             {
-                if (value.Equals(this.lineData))
-                {
+                if (value.Equals(this.lineData)){
                     return;
                 }
 
@@ -158,15 +130,11 @@ namespace Marv.Input
 
         public LocationCollection Locations
         {
-            get
-            {
-                return this.locations;
-            }
+            get { return this.locations; }
 
             set
             {
-                if (value.Equals(this.locations))
-                {
+                if (value.Equals(this.locations)){
                     return;
                 }
 
@@ -177,39 +145,35 @@ namespace Marv.Input
 
         public NotificationCollection Notifications
         {
-            get
-            {
-                return (NotificationCollection) GetValue(NotificationsProperty);
-            }
+            get { return (NotificationCollection) GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
+        }
+
+        public Location SelectedLocation
+        {
+            get { return this.selectedLocation; }
 
             set
             {
-                SetValue(NotificationsProperty, value);
+                if (value.Equals(this.selectedLocation)){
+                    return;
+                }
+
+                this.selectedLocation = value;
+                this.RaisePropertyChanged();
             }
         }
 
         public string SelectedSectionId
         {
-            get
-            {
-                return (string) GetValue(SelectedSectionIdProperty);
-            }
-            set
-            {
-                SetValue(SelectedSectionIdProperty, value);
-            }
+            get { return (string) GetValue(SelectedSectionIdProperty); }
+            set { SetValue(SelectedSectionIdProperty, value); }
         }
 
         public int SelectedYear
         {
-            get
-            {
-                return (int) GetValue(SelectedYearProperty);
-            }
-            set
-            {
-                SetValue(SelectedYearProperty, value);
-            }
+            get { return (int) GetValue(SelectedYearProperty); }
+            set { SetValue(SelectedYearProperty, value); }
         }
 
         public MainWindow()
@@ -221,8 +185,7 @@ namespace Marv.Input
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
+            if (this.PropertyChanged != null && propertyName != null){
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -235,8 +198,10 @@ namespace Marv.Input
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
-            this.LineData = new LineData();
-            this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+            if (this.LineData == null){
+                this.LineData = new LineData();
+                this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+            }
         }
 
         private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
@@ -256,8 +221,7 @@ namespace Marv.Input
 
         private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0)
-            {
+            if (this.SelectedSectionId != null && this.SelectedYear > 0){
                 this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
             }
         }
@@ -277,37 +241,40 @@ namespace Marv.Input
         {
             this.LineData = FolderLineData.Read(@"C:\Users\vkha\Data\WestPipeline\WestPipeline.marv-linedata");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\WestPipeline\line.csv");
+            this.SelectedYear = this.LineData.StartYear;
 
             var casingNetworkFiles = new Dict<double, string>
             {
-                {  8.0, "CASED_PIPELINE_8.net" },
-                {  8.8, "CASED_PIPELINE_88.net" },
-                { 10.0, "CASED_PIPELINE_10.net" },
-                { 11.0, "CASED_PIPELINE_11.net" },
-                { 13.3, "CASED_PIPELINE_133.net" },
-                { 14.3, "CASED_PIPELINE_143.net" },
+                {8.0, "CASED_PIPELINE_8.net"},
+                {8.8, "CASED_PIPELINE_88.net"},
+                {10.0, "CASED_PIPELINE_10.net"},
+                {11.0, "CASED_PIPELINE_11.net"},
+                {13.3, "CASED_PIPELINE_133.net"},
+                {14.3, "CASED_PIPELINE_143.net"},
             };
 
             var networkFiles = new Dict<double, string>
             {
-                {  8.0, "MODEL_modified_08262014a_8.net" },
-                {  8.8, "MODEL_modified_08262014a_88.net.net" },
-                { 10.0, "MODEL_modified_08262014a_10.net.net" },
-                { 11.0, "MODEL_modified_08262014a_11.net.net" },
-                { 13.3, "MODEL_modified_08262014a_133.net.net" },
-                { 14.3, "MODEL_modified_08262014a_143.net.net" },
+                {8.0, "MODEL_modified_08262014a_8.net"},
+                {8.8, "MODEL_modified_08262014a_88.net.net"},
+                {10.0, "MODEL_modified_08262014a_10.net.net"},
+                {11.0, "MODEL_modified_08262014a_11.net.net"},
+                {13.3, "MODEL_modified_08262014a_133.net.net"},
+                {14.3, "MODEL_modified_08262014a_143.net.net"},
             };
 
-            var casingGraphs = new Dict<double, Graph>();
+            foreach (var size in casingNetworkFiles.Keys){
+                this.casingGraphs[size] = Graph.Read(casingNetworkFiles[size]);
+            }
 
-            foreach (var size in casingNetworkFiles.Keys)
-            {
-                casingGraphs[size] = Graph.Read(casingNetworkFiles[size]);
+            foreach (var size in networkFiles.Keys){
+                this.graphs[size] = Graph.Read(networkFiles[size]);
             }
 
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
+            this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
             this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
@@ -328,16 +295,36 @@ namespace Marv.Input
             this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
 
+            this.PolylineControl.SelectionChanged -= PolylineControl_SelectionChanged;
             this.PolylineControl.SelectionChanged += PolylineControl_SelectionChanged;
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+
+            this.YearSlider.ValueChanged -= YearSlider_ValueChanged;
+            this.YearSlider.ValueChanged += YearSlider_ValueChanged;
         }
 
-        void PolylineControl_SelectionChanged(object sender, Location location)
+        private void PolylineControl_SelectionChanged(object sender, Location location)
         {
-            var sectionEvidence = this.LineData.GetSectionEvidence(location.Key);
-            Console.WriteLine(sectionEvidence.Count);
+            var weight = location["weight"];
+            this.Graph = this.casingGraphs[(double) weight];
+
+            this.UpdateGraphValue();
+        }
+
+        private void UpdateGraphValue()
+        {
+            var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
+            var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
+
+            this.Graph.Belief = graphBelief;
+            this.Graph.SetEvidence(graphEvidence);
+        }
+
+        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.UpdateGraphValue();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

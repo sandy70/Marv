@@ -37,11 +37,14 @@ namespace Marv
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public override IEnumerable<string> GetDynamicMemberNames()
         {
             return this.dictionary.Keys;
+        }
+
+        public void Remove(string propertyName)
+        {
+            this.dictionary.Remove(propertyName);
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
@@ -107,9 +110,6 @@ namespace Marv
             }
         }
 
-        public void Remove(string propertyName)
-        {
-            this.dictionary.Remove(propertyName);
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
