@@ -5,7 +5,27 @@
         private string key;
         private double latitude;
         private double longitude;
+        private readonly Dict<string, object> properties = new Dict<string,object>();
         private double value;
+
+        public string Key
+        {
+            get
+            {
+                return this.key;
+            }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public double Latitude
         {
@@ -36,6 +56,14 @@
             }
         }
 
+        public Dict<string, object> Properties
+        {
+            get
+            {
+                return this.properties;
+            }
+        }
+
         public double Value
         {
             get
@@ -51,25 +79,6 @@
                 }
 
                 this.value = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                if (value.Equals(this.key))
-                {
-                    return;
-                }
-
-                this.key = value;
                 this.RaisePropertyChanged();
             }
         }
