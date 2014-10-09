@@ -2,8 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
-using Marv;
+using Caching;
+using MapControl;
 using Marv.Map;
+using Location = Marv.Map.Location;
 
 namespace Marv.Controls.Map
 {
@@ -20,12 +22,6 @@ namespace Marv.Controls.Map
 
         public static readonly RoutedEvent ZoomLevelChangedEvent =
             EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<int>>), typeof (MapView));
-
-        public MapView()
-        {
-            var behaviors = Interaction.GetBehaviors(this);
-            behaviors.Add(new MapViewBehavior());
-        }
 
         public LocationRect Extent
         {
@@ -60,14 +56,55 @@ namespace Marv.Controls.Map
 
         public LocationRect StartExtent
         {
-            get
-            {
-                return (LocationRect) this.GetValue(StartExtentProperty);
-            }
-            set
-            {
-                this.SetValue(StartExtentProperty, value);
-            }
+            get { return (LocationRect) this.GetValue(StartExtentProperty); }
+            set { this.SetValue(StartExtentProperty, value); }
+        }
+
+        public MapView()
+        {
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, "./");
+            var behaviors = Interaction.GetBehaviors(this);
+            behaviors.Add(new MapViewBehavior());
+        }
+
+        public void ZoomTo(LocationRect rect)
+        {
+            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
+        }
+
+        /// <summary>
+        ///     Zoom to most appropriate level to encompass the given rectangle
+        /// </summary>
+        /// <param name="north"></param>
+        /// <param name="east"></param>
+        /// <param name="south"></param>
+        /// <param name="west"></param>
+        public void ZoomToExtent(double north, double east, double south, double west)
+        {
+            var zoom = this.GetBoundsZoomLevel(north, east, south, west);
+            var cx = west + (east - west) / 2;
+            var cy = south + (north - south) / 2;
+
+            zoom = Math.Floor(zoom) - 1;
+
+            this.TargetCenter = new MapControl.Location(cy, cx);
+            this.TargetZoomLevel = zoom;
+        }
+
+        /// <summary>
+        ///     Zoom to most appropriate level to encompass the given rectangle
+        /// </summary>
+        /// <param name="bottomLeft"></param>
+        /// <param name="topRight"></param>
+        public void ZoomToExtent(Location bottomLeft, Location topRight)
+        {
+            this.ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
+        }
+
+        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
+        {
+            base.OnManipulationInertiaStarting(e);
+            e.TranslationBehavior.DesiredDeceleration = 0.001;
         }
 
         /// <summary>
@@ -86,74 +123,22 @@ namespace Marv.Controls.Map
 
             var lngAngle = east - west;
 
-            var latZoomLevel = Math.Floor(Math.Log(this.RenderSize.Height*360/latAngle/GLOBE_HEIGHT)/Math.Log(2));
-            var lngZoomLevel = Math.Floor(Math.Log(this.RenderSize.Width*360/lngAngle/GLOBE_WIDTH)/Math.Log(2)); //0.6931471805599453
+            var latZoomLevel = Math.Floor(Math.Log(this.RenderSize.Height * 360 / latAngle / GLOBE_HEIGHT) / Math.Log(2));
+            var lngZoomLevel = Math.Floor(Math.Log(this.RenderSize.Width * 360 / lngAngle / GLOBE_WIDTH) / Math.Log(2)); //0.6931471805599453
 
             return (latZoomLevel < lngZoomLevel) ? latZoomLevel : lngZoomLevel;
         }
 
-        protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
-        {
-            base.OnManipulationInertiaStarting(e);
-            e.TranslationBehavior.DesiredDeceleration = 0.001;
-        }
-
-        public void ZoomTo(LocationRect rect)
-        {
-            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
-        }
-
-        /// <summary>
-        ///     Zoom to most appropriate level to encompass the given rectangle
-        /// </summary>
-        /// <param name="north"></param>
-        /// <param name="east"></param>
-        /// <param name="south"></param>
-        /// <param name="west"></param>
-        public void ZoomToExtent(double north, double east, double south, double west)
-        {
-            var zoom = this.GetBoundsZoomLevel(north, east, south, west);
-            var cx = west + (east - west)/2;
-            var cy = south + (north - south)/2;
-
-            zoom = Math.Floor(zoom) - 1;
-
-            this.TargetCenter = new MapControl.Location(cy, cx);
-            this.TargetZoomLevel = zoom;
-        }
-
-        /// <summary>
-        ///     Zoom to most appropriate level to encompass the given rectangle
-        /// </summary>
-        /// <param name="bottomLeft"></param>
-        /// <param name="topRight"></param>
-        public void ZoomToExtent(Location bottomLeft, Location topRight)
-        {
-            this.ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
-        }
-
         public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
         {
-            add
-            {
-                this.AddHandler(ViewportMovedEvent, value);
-            }
-            remove
-            {
-                this.RemoveHandler(ViewportMovedEvent, value);
-            }
+            add { this.AddHandler(ViewportMovedEvent, value); }
+            remove { this.RemoveHandler(ViewportMovedEvent, value); }
         }
 
         public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
         {
-            add
-            {
-                this.AddHandler(ZoomLevelChangedEvent, value);
-            }
-            remove
-            {
-                this.RemoveHandler(ZoomLevelChangedEvent, value);
-            }
+            add { this.AddHandler(ZoomLevelChangedEvent, value); }
+            remove { this.RemoveHandler(ZoomLevelChangedEvent, value); }
         }
     }
 }
