@@ -8,10 +8,18 @@ namespace Marv
 {
     public static class Utils
     {
+        public const double Epsilon = 10E-06;
+
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
-            if (value.CompareTo(minValue) < 0) value = minValue;
-            if (value.CompareTo(maxValue) > 0) value = maxValue;
+            if (value.CompareTo(minValue) < 0)
+            {
+                value = minValue;
+            }
+            if (value.CompareTo(maxValue) > 0)
+            {
+                value = maxValue;
+            }
 
             return value;
         }
@@ -29,16 +37,6 @@ namespace Marv
             //you can invoke it like so:
             return (T) constructor.Invoke(new object[0]);
             //return constructor.Invoke(new object[0]) as T; //If T is class
-        }
-
-        public static T Max<T>(T a, T b) where T : IComparable
-        {
-            return a.CompareTo(b) > 0 ? a : b;
-        }
-
-        public static T Min<T>(T a, T b) where T : IComparable
-        {
-            return a.CompareTo(b) < 0 ? a : b;
         }
 
         public static double Distance(Point p1, Point p2)
@@ -76,25 +74,46 @@ namespace Marv
             return Color.FromScRgb(1, (float) red.Clamp(0, 1), (float) green.Clamp(0, 1), (float) blue.Clamp(0, 1));
         }
 
+        public static T Max<T>(T a, T b) where T : IComparable
+        {
+            return a.CompareTo(b) > 0 ? a : b;
+        }
+
+        public static T Min<T>(T a, T b) where T : IComparable
+        {
+            return a.CompareTo(b) < 0 ? a : b;
+        }
+
         public static double ParseDouble(this string str)
         {
-            if (str.Trim().ToLower() == "infinity") return double.PositiveInfinity;
-            if (str.Trim().ToLower() == "-infinity") return double.NegativeInfinity;
+            if (str.Trim().ToLower() == "infinity")
+            {
+                return double.PositiveInfinity;
+            }
+
+            if (str.Trim().ToLower() == "-infinity")
+            {
+                return double.NegativeInfinity;
+            }
+
             return double.Parse(str);
         }
 
         public static T ReadJson<T>(string fileName)
         {
-            var serializer = new JsonSerializer();
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-            serializer.Formatting = Formatting.Indented;
-            serializer.TypeNameHandling = TypeNameHandling.Objects;
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Objects
+            };
 
             using (var streamWriter = new StreamReader(fileName))
             {
-                using (var jsonTextWriter = new JsonTextReader(streamWriter))
+                using (var jsonTextReader = new JsonTextReader(streamWriter))
                 {
-                    return serializer.Deserialize<T>(jsonTextWriter);
+                    jsonTextReader.FloatParseHandling = FloatParseHandling.Double;
+                    return serializer.Deserialize<T>(jsonTextReader);
                 }
             }
         }
@@ -128,7 +147,5 @@ namespace Marv
         {
             return BitConverter.ToInt64(guid.ToByteArray(), 8);
         }
-
-        public const double Epsilon = 10E-06;
     }
 }

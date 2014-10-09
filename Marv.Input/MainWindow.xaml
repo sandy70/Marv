@@ -63,7 +63,8 @@
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                   Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}"/>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -89,18 +90,18 @@
                                 <RowDefinition />
                                 <RowDefinition Height="32" />
                             </Grid.RowDefinitions>
-                            
+
                             <marv:GraphControl Name="GraphControl"
                                                Grid.Row="0"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
-                            
-                            <telerik:RadSlider Name="YearSlider"
-                                               Grid.Row="1"
-                                               TickFrequency="1"
-                                               Maximum="{Binding ElementName=Root, Path=LineData.EndYear}"
-                                               Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
-                                               Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+
+                            <Slider Name="YearSlider"
+                                    Grid.Row="1"
+                                    TickFrequency="1"
+                                    Maximum="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                    Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
+                                    Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                         </Grid>
 
                     </telerik:RadPane>

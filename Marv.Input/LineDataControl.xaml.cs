@@ -185,8 +185,6 @@ namespace Marv.Input
 
         private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("ChangedLineData");
-
             var control = d as LineDataControl;
 
             control.IsGridViewEnabled = true;
@@ -684,9 +682,11 @@ namespace Marv.Input
                 var row = new Dynamic();
                 row[CellModel.SectionIdHeader] = sectionId;
 
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
                 for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
                 {
-                    row[year.ToString()] = lineData.GetSectionEvidence(sectionId)[year][vertexKey];
+                    row[year.ToString()] = sectionEvidence[year][vertexKey];
                 }
 
                 if (progress != null)

@@ -186,7 +186,7 @@ namespace Marv.Input
 
         public MainWindow()
         {
-            StyleManager.ApplicationTheme = new Windows8TouchTheme();
+            StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
         }
@@ -256,22 +256,22 @@ namespace Marv.Input
 
             var casingNetworkFiles = new Dict<double, string>
             {
-                {8.0, "CASED_PIPELINE_8.net"},
-                {8.8, "CASED_PIPELINE_88.net"},
-                {10.0, "CASED_PIPELINE_10.net"},
-                {11.0, "CASED_PIPELINE_11.net"},
-                {13.3, "CASED_PIPELINE_133.net"},
-                {14.3, "CASED_PIPELINE_143.net"},
+                { 8.0, "CASED_PIPELINE_8.net" },
+                { 8.8, "CASED_PIPELINE_88.net" },
+                { 10.0, "CASED_PIPELINE_10.net" },
+                { 11.0, "CASED_PIPELINE_11.net" },
+                { 13.3, "CASED_PIPELINE_133.net" },
+                { 14.3, "CASED_PIPELINE_143.net" },
             };
 
             var networkFiles = new Dict<double, string>
             {
-                {8.0, "MODEL_modified_08262014a_8.net"},
-                {8.8, "MODEL_modified_08262014a_88.net"},
-                {10.0, "MODEL_modified_08262014a_10.net"},
-                {11.0, "MODEL_modified_08262014a_11.net"},
-                {13.3, "MODEL_modified_08262014a_133.net"},
-                {14.3, "MODEL_modified_08262014a_143.net"},
+                { 8.0, "MODEL_modified_08262014a_8.net" },
+                { 8.8, "MODEL_modified_08262014a_88.net" },
+                { 10.0, "MODEL_modified_08262014a_10.net" },
+                { 11.0, "MODEL_modified_08262014a_11.net" },
+                { 13.3, "MODEL_modified_08262014a_133.net" },
+                { 14.3, "MODEL_modified_08262014a_143.net" },
             };
 
             foreach (var size in casingNetworkFiles.Keys)
