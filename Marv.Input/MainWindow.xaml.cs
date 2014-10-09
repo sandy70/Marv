@@ -44,7 +44,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.isGraphControlVisible)){
+                if (value.Equals(this.isGraphControlVisible))
+                {
                     return;
                 }
 
@@ -59,7 +60,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.isLineDataChartVisible)){
+                if (value.Equals(this.isLineDataChartVisible))
+                {
                     return;
                 }
 
@@ -74,7 +76,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.isLineDataControlVisible)){
+                if (value.Equals(this.isLineDataControlVisible))
+                {
                     return;
                 }
 
@@ -89,7 +92,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.isMapViewVisible)){
+                if (value.Equals(this.isMapViewVisible))
+                {
                     return;
                 }
 
@@ -104,7 +108,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.isVertexControlVisible)){
+                if (value.Equals(this.isVertexControlVisible))
+                {
                     return;
                 }
 
@@ -119,7 +124,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.lineData)){
+                if (value.Equals(this.lineData))
+                {
                     return;
                 }
 
@@ -134,7 +140,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.locations)){
+                if (value.Equals(this.locations))
+                {
                     return;
                 }
 
@@ -155,7 +162,8 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.selectedLocation)){
+                if (value.Equals(this.selectedLocation))
+                {
                     return;
                 }
 
@@ -185,7 +193,8 @@ namespace Marv.Input
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (this.PropertyChanged != null && propertyName != null){
+            if (this.PropertyChanged != null && propertyName != null)
+            {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -198,7 +207,8 @@ namespace Marv.Input
 
         private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
         {
-            if (this.LineData == null){
+            if (this.LineData == null)
+            {
                 this.LineData = new LineData();
                 this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
@@ -221,7 +231,8 @@ namespace Marv.Input
 
         private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0){
+            if (this.SelectedSectionId != null && this.SelectedYear > 0)
+            {
                 this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
             }
         }
@@ -256,18 +267,20 @@ namespace Marv.Input
             var networkFiles = new Dict<double, string>
             {
                 {8.0, "MODEL_modified_08262014a_8.net"},
-                {8.8, "MODEL_modified_08262014a_88.net.net"},
-                {10.0, "MODEL_modified_08262014a_10.net.net"},
-                {11.0, "MODEL_modified_08262014a_11.net.net"},
-                {13.3, "MODEL_modified_08262014a_133.net.net"},
-                {14.3, "MODEL_modified_08262014a_143.net.net"},
+                {8.8, "MODEL_modified_08262014a_88.net"},
+                {10.0, "MODEL_modified_08262014a_10.net"},
+                {11.0, "MODEL_modified_08262014a_11.net"},
+                {13.3, "MODEL_modified_08262014a_133.net"},
+                {14.3, "MODEL_modified_08262014a_143.net"},
             };
 
-            foreach (var size in casingNetworkFiles.Keys){
+            foreach (var size in casingNetworkFiles.Keys)
+            {
                 this.casingGraphs[size] = Graph.Read(casingNetworkFiles[size]);
             }
 
-            foreach (var size in networkFiles.Keys){
+            foreach (var size in networkFiles.Keys)
+            {
                 this.graphs[size] = Graph.Read(networkFiles[size]);
             }
 
