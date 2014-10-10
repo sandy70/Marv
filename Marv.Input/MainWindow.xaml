@@ -150,7 +150,7 @@
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 
-        <local:StatusControl Grid.Row="1"
-                             Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />
+        <marv:StatusControl Grid.Row="1"
+                            Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />
     </Grid>
 </Window>

@@ -2,9 +2,8 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
-using Marv;
 
-namespace Marv.Input
+namespace Marv.Controls
 {
     /// <summary>
     ///     Interaction logic for StatusControl.xaml
@@ -27,11 +26,11 @@ namespace Marv.Input
         {
             get
             {
-                return (bool) GetValue(IsItemVisibleProperty);
+                return (bool) this.GetValue(IsItemVisibleProperty);
             }
             set
             {
-                SetValue(IsItemVisibleProperty, value);
+                this.SetValue(IsItemVisibleProperty, value);
             }
         }
 
@@ -39,11 +38,11 @@ namespace Marv.Input
         {
             get
             {
-                return GetValue(NotificationsProperty) as ObservableCollection<Notification>;
+                return this.GetValue(NotificationsProperty) as ObservableCollection<Notification>;
             }
             set
             {
-                SetValue(NotificationsProperty, value);
+                this.SetValue(NotificationsProperty, value);
             }
         }
 
@@ -51,11 +50,11 @@ namespace Marv.Input
         {
             get
             {
-                return GetValue(SelectedNotificationProperty) as Notification;
+                return this.GetValue(SelectedNotificationProperty) as Notification;
             }
             set
             {
-                SetValue(SelectedNotificationProperty, value);
+                this.SetValue(SelectedNotificationProperty, value);
             }
         }
 
@@ -63,18 +62,18 @@ namespace Marv.Input
         {
             get
             {
-                return (int) GetValue(SelectedNotficationIndexProperty);
+                return (int) this.GetValue(SelectedNotficationIndexProperty);
             }
             set
             {
-                SetValue(SelectedNotficationIndexProperty, value);
+                this.SetValue(SelectedNotficationIndexProperty, value);
             }
         }
 
         public StatusControl()
         {
             InitializeComponent();
-            this.Loaded += StatusControl_Loaded;
+            this.Loaded += this.StatusControl_Loaded;
         }
 
         private static void ChangedNotifications(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -89,12 +88,12 @@ namespace Marv.Input
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedNotification == Notifications.First())
+            if (this.SelectedNotification == this.Notifications.First())
             {
                 return;
             }
             this.SelectedNotification = this.Notifications[this.Notifications.IndexOf(this.SelectedNotification) - 1];
-            this.SelectedNotificationIndex = Notifications.IndexOf(this.SelectedNotification) + 1;
+            this.SelectedNotificationIndex = this.Notifications.IndexOf(this.SelectedNotification) + 1;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
@@ -104,12 +103,12 @@ namespace Marv.Input
                 return;
             }
             this.SelectedNotification = this.Notifications[this.Notifications.IndexOf(this.SelectedNotification) + 1];
-            this.SelectedNotificationIndex = Notifications.IndexOf(this.SelectedNotification) + 1;
+            this.SelectedNotificationIndex = this.Notifications.IndexOf(this.SelectedNotification) + 1;
         }
 
         private void Notifications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (Notifications.Count == 0)
+            if (this.Notifications.Count == 0)
             {
                 this.IsItemVisible = false;
                 this.SelectedNotification = null;
@@ -126,16 +125,16 @@ namespace Marv.Input
 
         private void StatusControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.BackButton.Click -= BackButton_Click;
-            this.BackButton.Click += BackButton_Click;
+            this.BackButton.Click -= this.BackButton_Click;
+            this.BackButton.Click += this.BackButton_Click;
 
-            this.ForwardButton.Click -= ForwardButton_Click;
-            this.ForwardButton.Click += ForwardButton_Click;
+            this.ForwardButton.Click -= this.ForwardButton_Click;
+            this.ForwardButton.Click += this.ForwardButton_Click;
 
             if (this.Notifications != null)
             {
-                this.Notifications.CollectionChanged -= Notifications_CollectionChanged;
-                this.Notifications.CollectionChanged += Notifications_CollectionChanged;
+                this.Notifications.CollectionChanged -= this.Notifications_CollectionChanged;
+                this.Notifications.CollectionChanged += this.Notifications_CollectionChanged;
             }
         }
     }

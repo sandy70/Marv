@@ -181,9 +181,6 @@
     <Compile Include="LineData.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="StatusControl.xaml.cs">
-      <DependentUpon>StatusControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="VertexEvidenceProgress.cs" />
     <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
@@ -205,10 +202,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="StatusControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -262,6 +255,10 @@
     <ProjectReference Include="..\Marv.Controls.Map\Marv.Controls.Map.csproj">
       <Project>{7467493d-c8de-47a4-93c6-8f84762360ca}</Project>
       <Name>Marv.Controls.Map</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
+      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
+      <Name>Marv.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
