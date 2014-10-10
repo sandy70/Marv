@@ -80,6 +80,7 @@
     <Compile Include="CorLas\CorLAS.cs" />
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
+    <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />

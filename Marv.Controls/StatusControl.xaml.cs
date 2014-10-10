@@ -34,11 +34,11 @@ namespace Marv.Controls
             }
         }
 
-        public ObservableCollection<Notification> Notifications
+        public NotificationCollection Notifications
         {
             get
             {
-                return this.GetValue(NotificationsProperty) as ObservableCollection<Notification>;
+                return this.GetValue(NotificationsProperty) as NotificationCollection;
             }
             set
             {
@@ -112,12 +112,14 @@ namespace Marv.Controls
             {
                 this.IsItemVisible = false;
                 this.SelectedNotification = null;
+                this.Visibility = Visibility.Collapsed;
             }
             else
             {
                 this.SelectedNotification = this.Notifications.Last();
                 this.IsItemVisible = true;
                 this.SelectedNotificationIndex = this.Notifications.IndexOf(this.SelectedNotification) + 1;
+                this.Visibility = Visibility.Visible;
             }
 
             if (!this.Notifications.Contains(this.SelectedNotification)) this.SelectedNotification = null;
