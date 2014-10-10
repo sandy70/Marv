@@ -17,11 +17,11 @@
 
     <!-- Notification Listbox -->
     <ListBox Background="LightGray"
-                            HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding Notifications, ElementName=Root}"
-                            ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                            Visibility="{Binding ElementName=Root, Path=Notifications.Count, Converter={StaticResource IntToVisibility}}">
+             HorizontalContentAlignment="Stretch"
+             ItemsSource="{Binding Notifications, ElementName=Root}"
+             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             Visibility="{Binding ElementName=Root, Path=Notifications.Count, Converter={StaticResource IntToVisibility}}">
         <ListBox.ItemContainerStyle>
             <Style TargetType="{x:Type ListBoxItem}">
                 <Style.Triggers>
@@ -67,7 +67,7 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="30" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- Title -->
                         <TextBlock Name="TextBlock"
                                    Grid.Column="0"

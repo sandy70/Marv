@@ -90,6 +90,7 @@
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
+    <Compile Include="VisibilityAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox\EditableTextBox.xaml">
