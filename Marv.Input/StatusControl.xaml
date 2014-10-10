@@ -43,7 +43,7 @@
             <telerik:RadProgressBar Minimum="0"
                                     IsIndeterminate="{Binding ElementName=Root, Path=SelectedNotification.IsIndeterminate}"
                                     Width="200"
-                                    Value="{Binding ElementName=Root, Path=SelectedNotification.Value}" />
+                                    Value="{Binding ElementName=Root, Path=SelectedNotification.Value, Converter={StaticResource DecimalToPercentage}}" />
 
             <TextBlock HorizontalAlignment="Center"
                        Text="{Binding ElementName=Root, Path=SelectedNotification.Value, StringFormat={}{0:F2}%}"

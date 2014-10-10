@@ -23,10 +23,7 @@ namespace Marv
 
         public Dict<string, double[]> Belief
         {
-            get
-            {
-                return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Belief);
-            }
+            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Belief); }
 
             set
             {
@@ -39,10 +36,7 @@ namespace Marv
 
         public string DefaultGroup
         {
-            get
-            {
-                return this.defaultGroup;
-            }
+            get { return this.defaultGroup; }
 
             set
             {
@@ -56,10 +50,7 @@ namespace Marv
 
         public Graph DisplayGraph
         {
-            get
-            {
-                return this.displayGraph;
-            }
+            get { return this.displayGraph; }
 
             private set
             {
@@ -73,10 +64,7 @@ namespace Marv
 
         public ObservableCollection<Edge> Edges
         {
-            get
-            {
-                return this.edges;
-            }
+            get { return this.edges; }
 
             set
             {
@@ -90,10 +78,7 @@ namespace Marv
 
         public Dict<string, double[]> Evidence
         {
-            get
-            {
-                return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence);
-            }
+            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence); }
 
             set
             {
@@ -106,10 +91,7 @@ namespace Marv
 
         public Guid Guid
         {
-            get
-            {
-                return this.guid;
-            }
+            get { return this.guid; }
 
             set
             {
@@ -123,10 +105,7 @@ namespace Marv
 
         public bool IsDefaultGroupVisible
         {
-            get
-            {
-                return this.isDefaultGroupVisible;
-            }
+            get { return this.isDefaultGroupVisible; }
 
             set
             {
@@ -140,10 +119,7 @@ namespace Marv
 
         public bool IsExpanded
         {
-            get
-            {
-                return this.isExpanded;
-            }
+            get { return this.isExpanded; }
 
             set
             {
@@ -158,18 +134,12 @@ namespace Marv
 
         public bool IsMostlyExpanded
         {
-            get
-            {
-                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
-            }
+            get { return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2; }
         }
 
         public string Key
         {
-            get
-            {
-                return this.key;
-            }
+            get { return this.key; }
 
             set
             {
@@ -187,10 +157,7 @@ namespace Marv
 
         public Vertex SelectedVertex
         {
-            get
-            {
-                return this.selectedVertex;
-            }
+            get { return this.selectedVertex; }
 
             set
             {
@@ -204,10 +171,7 @@ namespace Marv
 
         public KeyedCollection<Vertex> Vertices
         {
-            get
-            {
-                return this.vertices;
-            }
+            get { return this.vertices; }
 
             set
             {
@@ -468,6 +432,11 @@ namespace Marv
         public void Write()
         {
             this.Network.Write(this);
+        }
+
+        public void Write(string filePath)
+        {
+            this.Network.Write(filePath, this);
         }
     }
 }

@@ -14,36 +14,28 @@ namespace Marv
 
         public T this[string aKey]
         {
-            get
-            {
-                return this.dictionary[aKey];
-            }
+            get { return this.dictionary[aKey]; }
         }
 
         public IEnumerable<T> this[IEnumerable<string> keys]
         {
-            get
-            {
-                return keys.Select(aKey => this[aKey]);
-            }
+            get { return keys.Select(aKey => this[aKey]); }
         }
-
-        public KeyedCollection() {}
-     
-        public KeyedCollection(IEnumerable<T> items) : base(items) {}
 
         public string Key
         {
-            get
-            {
-                return this.key;
-            }
+            get { return this.key; }
 
             set
             {
                 this.key = value;
                 this.OnPropertyChanged(new PropertyChangedEventArgs("Key"));
             }
+        }
+
+        public IEnumerable<string> Keys
+        {
+            get { return this.Select(item => item.Key); }
         }
 
         public bool ContainsKey(string aKey)

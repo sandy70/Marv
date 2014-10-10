@@ -63,11 +63,11 @@ namespace Marv.Map
 
             var headers = lines.First()
                                .Trim()
-                               .Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                               .Split(",".ToArray());
 
             foreach (var line in lines.Skip(1))
             {
-                var parts = line.Trim().Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var parts = line.Trim().Split(",".ToCharArray());
 
                 if (parts.Length != headers.Count())
                 {
@@ -92,7 +92,7 @@ namespace Marv.Map
                     }
                     else
                     {
-                        location[headers[i].ToLower()] = parts[i].Parse();
+                        location[headers[i]] = parts[i].Parse();
                     }
                 }
 

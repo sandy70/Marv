@@ -51,71 +51,38 @@ namespace Marv.Input
 
         public Dict<string, VertexEvidence> CurrentGraphData
         {
-            get
-            {
-                return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty);
-            }
-            set
-            {
-                SetValue(CurrentGraphDataProperty, value);
-            }
+            get { return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty); }
+            set { SetValue(CurrentGraphDataProperty, value); }
         }
 
         public string FileName
         {
-            get
-            {
-                return (string) GetValue(FileNameProperty);
-            }
-            set
-            {
-                SetValue(FileNameProperty, value);
-            }
+            get { return (string) GetValue(FileNameProperty); }
+            set { SetValue(FileNameProperty, value); }
         }
 
         public bool IsGridViewEnabled
         {
-            get
-            {
-                return (bool) GetValue(IsGridViewEnabledProperty);
-            }
-            set
-            {
-                SetValue(IsGridViewEnabledProperty, value);
-            }
+            get { return (bool) GetValue(IsGridViewEnabledProperty); }
+            set { SetValue(IsGridViewEnabledProperty, value); }
         }
 
         public ILineData LineData
         {
-            get
-            {
-                return (ILineData) GetValue(LineDataProperty);
-            }
+            get { return (ILineData) GetValue(LineDataProperty); }
 
-            set
-            {
-                SetValue(LineDataProperty, value);
-            }
+            set { SetValue(LineDataProperty, value); }
         }
 
         public string NetworkFileName
         {
-            get
-            {
-                return (string) GetValue(NetworkFileNameProperty);
-            }
-            set
-            {
-                SetValue(NetworkFileNameProperty, value);
-            }
+            get { return (string) GetValue(NetworkFileNameProperty); }
+            set { SetValue(NetworkFileNameProperty, value); }
         }
 
         public ObservableCollection<Dynamic> Rows
         {
-            get
-            {
-                return this.rows;
-            }
+            get { return this.rows; }
 
             set
             {
@@ -129,51 +96,27 @@ namespace Marv.Input
 
         public int SectionsToAddCount
         {
-            get
-            {
-                return (int) GetValue(SectionsToAddCountProperty);
-            }
-            set
-            {
-                SetValue(SectionsToAddCountProperty, value);
-            }
+            get { return (int) GetValue(SectionsToAddCountProperty); }
+            set { SetValue(SectionsToAddCountProperty, value); }
         }
 
         public string SelectedSectionId
         {
-            get
-            {
-                return (string) GetValue(SelectedSectionIdProperty);
-            }
+            get { return (string) GetValue(SelectedSectionIdProperty); }
 
-            set
-            {
-                SetValue(SelectedSectionIdProperty, value);
-            }
+            set { SetValue(SelectedSectionIdProperty, value); }
         }
 
         public Vertex SelectedVertex
         {
-            get
-            {
-                return (Vertex) GetValue(SelectedVertexProperty);
-            }
-            set
-            {
-                SetValue(SelectedVertexProperty, value);
-            }
+            get { return (Vertex) GetValue(SelectedVertexProperty); }
+            set { SetValue(SelectedVertexProperty, value); }
         }
 
         public int SelectedYear
         {
-            get
-            {
-                return (int) GetValue(SelectedYearProperty);
-            }
-            set
-            {
-                SetValue(SelectedYearProperty, value);
-            }
+            get { return (int) GetValue(SelectedYearProperty); }
+            set { SetValue(SelectedYearProperty, value); }
         }
 
         public LineDataControl()
@@ -186,6 +129,11 @@ namespace Marv.Input
         private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
+
+            if (!control.IsVisible)
+            {
+                return;
+            }
 
             control.IsGridViewEnabled = true;
 

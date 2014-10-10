@@ -173,8 +173,11 @@ namespace Marv.Controls.Map
 
             if (control != null && control.Locations != null)
             {
-                control.CursorLocation = control.Locations.FirstOrDefault();
+                var firstLocation = control.Locations.First();
+
+                control.CursorLocation = firstLocation;
                 control.UpdateSimplifiedLocations();
+                control.RaiseSelectionChanged(firstLocation);
             }
         }
 

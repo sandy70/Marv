@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using Marv.Map;
 using Telerik.Windows.Controls;
@@ -248,9 +250,10 @@ namespace Marv.Input
             this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.LineData = FolderLineData.Read(@"C:\Users\vkha\Data\WestPipeline\WestPipeline.marv-linedata");
+            const string dataDirRoot = @"C:\Users\vkha\Data\WestPipeline";
+            this.LineData = FolderLineData.Read(@"C:\Users\vkha\Data\WestPipeline\LineData\WestPipeline.marv-linedata");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\WestPipeline\line.csv");
             this.SelectedYear = this.LineData.StartYear;
 
@@ -274,15 +277,39 @@ namespace Marv.Input
                 { 14.3, "MODEL_modified_08262014a_143.net" },
             };
 
+            var graphReadingNotification = new Notification
+            {
+                Description = "Reading networks...",
+                Value = 0
+            };
+
+            this.Notifications.Add(graphReadingNotification);
+
+            var total = casingNetworkFiles.Count + networkFiles.Count;
+            var done = 0.0;
+
             foreach (var size in casingNetworkFiles.Keys)
             {
-                this.casingGraphs[size] = Graph.Read(casingNetworkFiles[size]);
+                var fileName = Path.Combine(dataDirRoot, "Networks", casingNetworkFiles[size]);
+                this.casingGraphs[size] = await Task.Run(() => Graph.Read(fileName));
+
+                done++;
+                graphReadingNotification.Value = done / total;
             }
 
             foreach (var size in networkFiles.Keys)
             {
-                this.graphs[size] = Graph.Read(networkFiles[size]);
+                var fileName = Path.Combine(dataDirRoot, "Networks", networkFiles[size]);
+                this.graphs[size] = await Task.Run(() => Graph.Read(fileName));
+
+                done++;
+                graphReadingNotification.Value = done / total;
             }
+
+            this.Notifications.Remove(graphReadingNotification);
+
+            this.UpdateGraph();
+            this.UpdateGraphValue();
 
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
@@ -320,10 +347,23 @@ namespace Marv.Input
 
         private void PolylineControl_SelectionChanged(object sender, Location location)
         {
-            var weight = location["weight"];
-            this.Graph = this.casingGraphs[(double) weight];
-
+            this.UpdateGraph();
             this.UpdateGraphValue();
+        }
+
+        private void UpdateGraph()
+        {
+            var crossing = (this.SelectedLocation["Crossing"] as string).ToLower();
+            var weight = this.SelectedLocation["Weight"];
+
+            if (crossing.Contains("river") || crossing.Contains("rail") || crossing.Contains("highway"))
+            {
+                this.Graph = this.casingGraphs[(double) weight];
+            }
+            else
+            {
+                this.Graph = this.graphs[(double) weight];
+            }
         }
 
         private void UpdateGraphValue()
