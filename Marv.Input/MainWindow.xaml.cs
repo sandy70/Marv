@@ -270,8 +270,8 @@ namespace Marv.Input
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             const string dataDirRoot = @"C:\Users\vkha\Data\WestPipeline";
-            this.LineData = FolderLineData.Read(@"C:\Users\vkha\Data\WestPipeline\LineData\WestPipeline.marv-linedata");
-            this.Locations = LocationCollection.ReadCsv(@"C:\Users\vkha\Data\WestPipeline\line.csv");
+            this.LineData = FolderLineData.Read(Path.Combine(dataDirRoot, @"LineData\WestPipeline.marv-linedata"));
+            this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
             this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
             this.SelectedYear = this.LineData.StartYear;
 
