@@ -211,7 +211,7 @@ namespace Marv
                     Position = networkVertex.ParsePosition(),
                     PositionForGroup = networkVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
                     Units = networkVertex.ParseStringProperty("units"),
-                    States = networkVertex.ParseStates(),
+                    States = networkVertex.States,
                     Type = networkVertex.ParseSubType()
                 };
 

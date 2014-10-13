@@ -10,7 +10,14 @@ namespace Marv
     {
         public readonly List<NetworkVertex> Children = new List<NetworkVertex>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+
+        private ObservableCollection<State> states;
         public string Key { get; set; }
+
+        public ObservableCollection<State> States
+        {
+            get { return this.states ?? (this.states = this.ParseStates()); }
+        }
 
         public ObservableCollection<string> ParseGroups()
         {
@@ -121,103 +128,6 @@ namespace Marv
             return range;
         }
 
-        public ObservableCollection<State> ParseStates()
-        {
-            var states = new ObservableCollection<State>();
-            string subtype;
-
-            if (this.Properties.TryGetValue("subtype", out subtype))
-            {
-                if (subtype.Equals("interval"))
-                {
-                    var stateStrings = this.Properties["state_values"]
-                        .Split(new[]
-                        {
-                            '(', ')', ' '
-                        }, StringSplitOptions.RemoveEmptyEntries)
-                        .ToList();
-
-                    var nStatesStrings = stateStrings.Count;
-
-                    for (var i = 0; i < nStatesStrings - 1; i++)
-                    {
-                        states.Add(new State
-                        {
-                            Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
-
-                            // we use ParseDouble to take care of infinities
-                            Max = stateStrings[i + 1].ParseDouble(),
-                            Min = stateStrings[i].ParseDouble()
-                        });
-                    }
-                }
-                else if (subtype.Equals("number"))
-                {
-                    var stateStrings = this.Properties["state_values"]
-                        .Split(new[]
-                        {
-                            '(', ')', ' '
-                        }, StringSplitOptions.RemoveEmptyEntries)
-                        .ToList();
-
-                    var nStatesStrings = stateStrings.Count;
-
-                    for (var i = 0; i < nStatesStrings; i++)
-                    {
-                        var value = double.Parse(stateStrings[i]);
-
-                        states.Add(new State
-                        {
-                            Key = stateStrings[i],
-                            Min = value,
-                            Max = value
-                        });
-                    }
-                }
-            }
-            else
-            {
-                string statesString;
-                var stateString = "";
-                var stateIndex = 0;
-
-                if (this.Properties.TryGetValue("states", out statesString))
-                {
-                    var isReading = false;
-                    foreach (var c in statesString)
-                    {
-                        if (c == '"')
-                        {
-                            if (isReading)
-                            {
-                                var range = this.ParseStateRange(stateIndex);
-
-                                states.Add(new State
-                                {
-                                    Key = stateString,
-                                    Max = range == null ? 0 : range.Max,
-                                    Min = range == null ? 0 : range.Min,
-                                });
-
-                                stateIndex++;
-                                stateString = "";
-                            }
-
-                            isReading = !isReading;
-                            continue;
-                        }
-
-                        if (isReading)
-                        {
-                            stateString += c;
-                        }
-                    }
-                }
-            }
-
-            return states;
-        }
-
         public string ParseStringProperty(string str)
         {
             var htmlDesc = "";
@@ -243,6 +153,97 @@ namespace Marv
                 return VertexType.Interval;
             }
             return VertexType.Labelled;
+        }
+
+        private ObservableCollection<State> ParseStates()
+        {
+            var theStates = new ObservableCollection<State>();
+            string subtype;
+
+            if (this.Properties.TryGetValue("subtype", out subtype))
+            {
+                if (subtype.Equals("interval"))
+                {
+                    var stateStrings = this.Properties["state_values"]
+                        .Split("() ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
+
+                    var nStatesStrings = stateStrings.Count;
+
+                    for (var i = 0; i < nStatesStrings - 1; i++)
+                    {
+                        theStates.Add(new State
+                        {
+                            Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
+
+                            // we use ParseDouble to take care of infinities
+                            Max = stateStrings[i + 1].ParseDouble(),
+                            Min = stateStrings[i].ParseDouble()
+                        });
+                    }
+                }
+                else if (subtype.Equals("number"))
+                {
+                    var stateStrings = this.Properties["state_values"]
+                        .Split("() ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
+
+                    var nStatesStrings = stateStrings.Count;
+
+                    for (var i = 0; i < nStatesStrings; i++)
+                    {
+                        var value = double.Parse(stateStrings[i]);
+
+                        theStates.Add(new State
+                        {
+                            Key = stateStrings[i],
+                            Min = value,
+                            Max = value
+                        });
+                    }
+                }
+            }
+            else
+            {
+                string statesString;
+                var stateString = "";
+                var stateIndex = 0;
+
+                if (this.Properties.TryGetValue("states", out statesString))
+                {
+                    var isReading = false;
+                    foreach (var c in statesString)
+                    {
+                        if (c == '"')
+                        {
+                            if (isReading)
+                            {
+                                var range = this.ParseStateRange(stateIndex);
+
+                                theStates.Add(new State
+                                {
+                                    Key = stateString,
+                                    Max = range == null ? 0 : range.Max,
+                                    Min = range == null ? 0 : range.Min,
+                                });
+
+                                stateIndex++;
+                                stateString = "";
+                            }
+
+                            isReading = !isReading;
+                            continue;
+                        }
+
+                        if (isReading)
+                        {
+                            stateString += c;
+                        }
+                    }
+                }
+            }
+
+            return theStates;
         }
     }
 }
