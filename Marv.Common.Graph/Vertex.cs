@@ -450,16 +450,6 @@ namespace Marv
             this.Evidence = this.Evidence.Normalized().ToArray();
         }
 
-        public VertexEvidence ParseEvidenceString()
-        {
-            return this.States.ParseEvidenceString(this.EvidenceString);
-        }
-
-        public VertexEvidence ParseEvidenceString(string anEvidenceString)
-        {
-            return this.States.ParseEvidenceString(anEvidenceString);
-        }
-
         public void SetEvidence(State aState)
         {
             foreach (var state in this.States)

@@ -383,7 +383,7 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexData = this.SelectedVertex.ParseEvidenceString(e.NewValue as string);
+            var vertexData = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
             if (vertexData.Type == VertexEvidenceType.Invalid)
             {
@@ -610,7 +610,7 @@ namespace Marv.Input
             }
             else
             {
-                var vertexEvidence = this.SelectedVertex.ParseEvidenceString(newString);
+                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(newString);
 
                 cellModel.Data = vertexEvidence;
                 this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
