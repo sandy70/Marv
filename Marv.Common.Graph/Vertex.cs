@@ -107,7 +107,6 @@ namespace Marv
 
                 this.displayPosition = value;
                 this.RaisePropertyChanged();
-                this.RaiseDisplayPositionChanged();
 
                 if (this.SelectedGroup != null)
                 {
@@ -451,90 +450,14 @@ namespace Marv
             this.Evidence = this.Evidence.Normalized().ToArray();
         }
 
-        public double[] ParseEvidence(IDistribution dist)
-        {
-            return this.States.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin)).Normalized().ToArray();
-        }
-
         public VertexEvidence ParseEvidenceString()
         {
-            return this.ParseEvidenceString(this.EvidenceString);
+            return this.States.ParseEvidenceString(this.EvidenceString);
         }
 
         public VertexEvidence ParseEvidenceString(string anEvidenceString)
         {
-            if (string.IsNullOrWhiteSpace(anEvidenceString))
-            {
-                return new VertexEvidence
-                {
-                    Type = VertexEvidenceType.Invalid
-                };
-            }
-
-            // Check if string is the label of any of the states.
-            if (this.States.Any(state => state.Key == anEvidenceString))
-            {
-                return new VertexEvidence
-                {
-                    Value = this.States.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
-                    Type = VertexEvidenceType.State,
-                    StateKey = this.States.Where(state => state.Key == anEvidenceString).Select(state => state.Key).First()
-                };
-            }
-
-            double value;
-            if (double.TryParse(anEvidenceString, out value) && this.SafeMin <= value && value <= this.SafeMax)
-            {
-                return new VertexEvidence
-                {
-                    Value = this.ParseEvidence(new DeltaDistribution(value)),
-                    Type = VertexEvidenceType.Number,
-                    Params = new[]
-                    {
-                        value
-                    },
-                };
-            }
-
-            var evidenceParams = VertexEvidence.ParseEvidenceParams(anEvidenceString);
-            var evidenceType = VertexEvidenceType.Invalid;
-            double[] evidence = null;
-
-            // Check for functions
-            if (anEvidenceString.ToLowerInvariant().Contains("tri") && evidenceParams.Count == 3)
-            {
-                evidenceParams.Sort();
-
-                evidence = this.ParseEvidence(new TriangularDistribution(evidenceParams[0], evidenceParams[1], evidenceParams[2]));
-                evidenceType = VertexEvidenceType.Triangular;
-            }
-
-            if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
-            {
-                evidence = this.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1]));
-                evidenceType = VertexEvidenceType.Normal;
-            }
-
-            if (anEvidenceString.Contains(":") && evidenceParams.Count == 2)
-            {
-                evidenceParams.Sort();
-
-                evidence = this.ParseEvidence(new UniformDistribution(evidenceParams[0], evidenceParams[1]));
-                evidenceType = VertexEvidenceType.Range;
-            }
-
-            if (anEvidenceString.Contains(",") && evidenceParams.Count == this.States.Count)
-            {
-                evidence = evidenceParams.Normalized().ToArray();
-                evidenceType = VertexEvidenceType.Distribution;
-            }
-
-            return new VertexEvidence
-            {
-                Value = evidence,
-                Type = evidenceType,
-                Params = evidenceParams.ToArray(),
-            };
+            return this.States.ParseEvidenceString(anEvidenceString);
         }
 
         public void SetEvidence(State aState)
@@ -567,14 +490,6 @@ namespace Marv
             this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
-        protected void RaiseDisplayPositionChanged()
-        {
-            if (this.DisplayPositionChanged != null)
-            {
-                this.DisplayPositionChanged(this, this.DisplayPosition);
-            }
-        }
-
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -601,7 +516,5 @@ namespace Marv
                 this.UpdateMostProbableState();
             }
         }
-
-        public event EventHandler<Point> DisplayPositionChanged;
     }
 }
