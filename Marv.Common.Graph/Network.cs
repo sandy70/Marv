@@ -398,6 +398,12 @@ namespace Marv
             return sectionBeliefs;
         }
 
+        public new void SetEvidence(string vertexKey, string evidenceString)
+        {
+            var vertexEvidence = this.Vertices[vertexKey].States.ParseEvidenceString(evidenceString);
+            this.SetSoftEvidence(vertexKey, vertexEvidence.Value);
+        }
+
         public void Write()
         {
             this.Write(this.FileName);
