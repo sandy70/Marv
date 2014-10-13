@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using Marv.Common.Graph;
 using Marv.Map;
 using Telerik.Windows.Controls;
 

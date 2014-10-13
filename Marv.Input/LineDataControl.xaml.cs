@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using Marv.Common.Graph;
 using Microsoft.Win32;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -495,7 +496,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
+                Filter = Common.Graph.LineData.FileDescription + "|*." + Common.Graph.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -559,7 +560,7 @@ namespace Marv.Input
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
+                    Filter = Common.Graph.LineData.FileDescription + "|*." + Common.Graph.LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -572,9 +573,9 @@ namespace Marv.Input
 
             if (this.FileName != null)
             {
-                if (Path.GetExtension(this.FileName) != "." + Input.LineData.FileExtension)
+                if (Path.GetExtension(this.FileName) != "." + Common.Graph.LineData.FileExtension)
                 {
-                    this.FileName = this.FileName + "." + Input.LineData.FileExtension;
+                    this.FileName = this.FileName + "." + Common.Graph.LineData.FileExtension;
                 }
 
                 this.LineData.WriteJson(this.FileName);

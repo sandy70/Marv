@@ -64,6 +64,9 @@
   <ItemGroup>
     <Compile Include="Extensions.State.cs" />
     <Compile Include="Extensions.Vertex.cs" />
+    <Compile Include="FolderLineData.cs" />
+    <Compile Include="ILineData.cs" />
+    <Compile Include="LineData.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="VertexClearCommand.cs" />
     <Compile Include="VertexEvidence.cs" />

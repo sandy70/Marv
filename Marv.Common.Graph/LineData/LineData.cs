@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace Marv.Input
+namespace Marv.Common.Graph
 {
     public class LineData : NotifyPropertyChanged, ILineData
     {
@@ -119,7 +119,7 @@ namespace Marv.Input
         public LineData()
         {
             this.SectionEvidences.CollectionChanged += this.SectionEvidences_CollectionChanged;
-            this.SectionEvidences.Keys.CollectionChanged += Keys_CollectionChanged;
+            this.SectionEvidences.Keys.CollectionChanged += this.Keys_CollectionChanged;
         }
 
         public static ILineData Read(string filePath)

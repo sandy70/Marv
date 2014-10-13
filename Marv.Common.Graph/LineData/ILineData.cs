@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Marv.Input
+namespace Marv.Common.Graph
 {
     public interface ILineData
     {

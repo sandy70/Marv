@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Marv.Common.Graph;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 

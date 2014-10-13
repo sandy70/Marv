@@ -185,8 +185,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CellModel.cs" />
-    <Compile Include="FolderLineData.cs" />
-    <Compile Include="ILineData.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
@@ -194,7 +192,6 @@
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LineData.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="VertexEvidenceProgress.cs" />

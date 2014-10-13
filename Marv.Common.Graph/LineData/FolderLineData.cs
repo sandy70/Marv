@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Marv.Input
+namespace Marv.Common.Graph
 {
     public class FolderLineData : NotifyPropertyChanged, ILineData
     {
