@@ -5,11 +5,6 @@ namespace Marv
 {
     public static partial class Extensions
     {
-        public static void ClearEvidence(this IEnumerable<State> states)
-        {
-            foreach (var state in states) state.Evidence = 0;
-        }
-
         public static IEnumerable<double> Parse(this IEnumerable<State> states, IDistribution dist)
         {
             return states.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin));
@@ -56,11 +51,6 @@ namespace Marv
             }
 
             return null;
-        }
-
-        public static void SetBelief(this IEnumerable<State> states, double belief)
-        {
-            foreach (var state in states) state.Belief = belief;
         }
     }
 }

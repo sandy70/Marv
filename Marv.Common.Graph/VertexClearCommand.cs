@@ -5,7 +5,7 @@
         public override void Excecute(Vertex vertex)
         {
             base.Excecute(vertex);
-            vertex.States.ClearEvidence();
+            vertex.Evidence = null;
             vertex.EvidenceString = null;
         }
     }

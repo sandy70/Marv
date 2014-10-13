@@ -82,9 +82,9 @@ namespace Marv
 
             set
             {
-                foreach (var vertexKey in value.Keys)
+                foreach (var vertex in this.Vertices)
                 {
-                    this.Vertices[vertexKey].Evidence = value[vertexKey];
+                    vertex.Evidence = value != null && value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
                 }
             }
         }
@@ -286,7 +286,7 @@ namespace Marv
 
                         value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
 
-                        sourceVertex.States.ClearEvidence();
+                        sourceVertex.Evidence = null;
                         sourceVertex.EvidenceString = null;
                     }
                     catch (SmileException)

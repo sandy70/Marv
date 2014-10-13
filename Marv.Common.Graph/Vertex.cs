@@ -552,7 +552,14 @@ namespace Marv
 
         public void UpdateEvidenceString()
         {
-            this.EvidenceString = this.Evidence.String("{0:F2}");
+            if (this.Evidence.Sum() > 0)
+            {
+                this.EvidenceString = this.Evidence.String("{0:F2}");
+            }
+            else
+            {
+                this.EvidenceString = null;
+            }
         }
 
         public void UpdateMostProbableState()
