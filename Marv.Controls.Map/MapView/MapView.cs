@@ -10,11 +10,8 @@ namespace Marv.Controls.Map
 {
     public class MapView : MapControl.Map
     {
-        public static readonly DependencyProperty BoundsProperty =
-            DependencyProperty.Register("Bounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty StartExtentProperty =
-            DependencyProperty.Register("StartExtent", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
+        public static readonly DependencyProperty StartBoundsProperty =
+            DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
 
         public static readonly RoutedEvent ViewportMovedEvent =
             EventManager.RegisterRoutedEvent("ViewportMoved", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<Location>>), typeof (MapView));
@@ -44,10 +41,10 @@ namespace Marv.Controls.Map
             set { this.ZoomToBounds(value.SouthWest.ToMapControlLocation(), value.NorthEast.ToMapControlLocation()); }
         }
 
-        public LocationRect StartExtent
+        public LocationRect StartBounds
         {
-            get { return (LocationRect) this.GetValue(StartExtentProperty); }
-            set { this.SetValue(StartExtentProperty, value); }
+            get { return (LocationRect) this.GetValue(StartBoundsProperty); }
+            set { this.SetValue(StartBoundsProperty, value); }
         }
 
         public MapView()

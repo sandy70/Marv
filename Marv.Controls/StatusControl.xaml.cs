@@ -1,13 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 
 namespace Marv.Controls
 {
-    /// <summary>
-    ///     Interaction logic for StatusControl.xaml
-    /// </summary>
     public partial class StatusControl
     {
         public static readonly DependencyProperty IsItemVisibleProperty =
@@ -24,50 +20,26 @@ namespace Marv.Controls
 
         public bool IsItemVisible
         {
-            get
-            {
-                return (bool) this.GetValue(IsItemVisibleProperty);
-            }
-            set
-            {
-                this.SetValue(IsItemVisibleProperty, value);
-            }
+            get { return (bool) this.GetValue(IsItemVisibleProperty); }
+            set { this.SetValue(IsItemVisibleProperty, value); }
         }
 
         public NotificationCollection Notifications
         {
-            get
-            {
-                return this.GetValue(NotificationsProperty) as NotificationCollection;
-            }
-            set
-            {
-                this.SetValue(NotificationsProperty, value);
-            }
+            get { return this.GetValue(NotificationsProperty) as NotificationCollection; }
+            set { this.SetValue(NotificationsProperty, value); }
         }
 
         public Notification SelectedNotification
         {
-            get
-            {
-                return this.GetValue(SelectedNotificationProperty) as Notification;
-            }
-            set
-            {
-                this.SetValue(SelectedNotificationProperty, value);
-            }
+            get { return this.GetValue(SelectedNotificationProperty) as Notification; }
+            set { this.SetValue(SelectedNotificationProperty, value); }
         }
 
         public int SelectedNotificationIndex
         {
-            get
-            {
-                return (int) this.GetValue(SelectedNotficationIndexProperty);
-            }
-            set
-            {
-                this.SetValue(SelectedNotficationIndexProperty, value);
-            }
+            get { return (int) this.GetValue(SelectedNotficationIndexProperty); }
+            set { this.SetValue(SelectedNotficationIndexProperty, value); }
         }
 
         public StatusControl()
@@ -80,7 +52,10 @@ namespace Marv.Controls
         {
             var control = d as StatusControl;
 
-            if (control == null) return;
+            if (control == null)
+            {
+                return;
+            }
 
             control.Notifications.CollectionChanged -= control.Notifications_CollectionChanged;
             control.Notifications.CollectionChanged += control.Notifications_CollectionChanged;
@@ -122,7 +97,10 @@ namespace Marv.Controls
                 this.Visibility = Visibility.Visible;
             }
 
-            if (!this.Notifications.Contains(this.SelectedNotification)) this.SelectedNotification = null;
+            if (!this.Notifications.Contains(this.SelectedNotification))
+            {
+                this.SelectedNotification = null;
+            }
         }
 
         private void StatusControl_Loaded(object sender, RoutedEventArgs e)

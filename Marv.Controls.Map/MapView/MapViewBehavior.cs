@@ -22,9 +22,9 @@ namespace Marv.Controls.Map
             var mapControl = this.AssociatedObject;
             this.previousCenter = mapControl.Center;
 
-            if (mapControl.StartExtent != null)
+            if (mapControl.StartBounds != null)
             {
-                mapControl.Bounds = mapControl.StartExtent;
+                mapControl.Bounds = mapControl.StartBounds;
             }
         }
 
