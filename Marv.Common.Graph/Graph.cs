@@ -247,7 +247,7 @@ namespace Marv
             }
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dict<string, VertexEvidence> graphEvidence = null)
         {
             var targetVertex = this.Vertices[targetVertexKey];
 
@@ -266,7 +266,7 @@ namespace Marv
             if (graphEvidence != null)
             {
                 // Set the given evidence
-                //this.Evidence = graphEvidence;
+                this.SetEvidence(graphEvidence);
 
                 // Collect more vertices to ignore
                 verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
@@ -289,7 +289,7 @@ namespace Marv
                         sourceVertex.States.ClearEvidence();
                         sourceVertex.EvidenceString = null;
                     }
-                    catch (SmileException exception)
+                    catch (SmileException)
                     {
                         value[sourceVertex.Key][sourceState.Key] = double.NaN;
                     }
