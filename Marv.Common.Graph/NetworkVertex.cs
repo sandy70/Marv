@@ -12,6 +12,7 @@ namespace Marv
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
         private ObservableCollection<State> states;
+
         public string Key { get; set; }
 
         public ObservableCollection<State> States

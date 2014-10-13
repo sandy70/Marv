@@ -12,7 +12,6 @@ namespace Marv
     public class Network : Smile.Network, INotifyPropertyChanged
     {
         public const string BeliefFileExtension = "marv-networkbelief";
-        public const string DataFileDescription = "MARV Network Data";
         public const string EvidenceFileExtension = "marv-networkevidence";
 
         public readonly List<string> Footer = new List<string>();
@@ -23,10 +22,7 @@ namespace Marv
 
         public string FileName
         {
-            get
-            {
-                return this.fileName;
-            }
+            get { return this.fileName; }
 
             set
             {
@@ -43,8 +39,6 @@ namespace Marv
         // Dictionary<targetVertexKey, sourceVertexKey>
         // Beliefs from sourceVertexKey should go into targetVertexKey
         public Dictionary<string, string> Loops { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public static void Decrypt(string path)
         {
@@ -283,6 +277,12 @@ namespace Marv
             return graphData;
         }
 
+        public double[] GetIntervals(string vertexKey)
+        {
+            var states = this.Vertices[vertexKey].States;
+            return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
+        }
+
         public string ParseUserProperty(string userPropertyName, string defaultValue)
         {
             if (this.Properties.ContainsKey("HR_Desc"))
@@ -514,5 +514,7 @@ namespace Marv
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

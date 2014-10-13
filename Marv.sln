@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Input", "Marv.Input\Marv.Input.csproj", "{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixPoF", "FixPoF\FixPoF.csproj", "{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,14 +109,6 @@ Global
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x64.ActiveCfg = Release|x86
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x86.ActiveCfg = Release|x86
 		{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}.Release|x86.Build.0 = Release|x86
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Release|x64.ActiveCfg = Release|Any CPU
-		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
