@@ -42,8 +42,8 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Map"
                                      IsHidden="{Binding ElementName=Root, Path=IsMapViewVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:MapView ManipulationMode="Scale,Translate"
-                                      StartExtent="{x:Static marv:Countries.China}"
+                        <marv:MapView Name="MapView" ManipulationMode="Scale,Translate"
+                                      StartExtent="{Binding ElementName=Root, Path=StartExtent}"
                                       TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
                             <marv:PolylineControl Name="PolylineControl"
                                                   Locations="{Binding ElementName=Root, Path=Locations}"

@@ -32,102 +32,54 @@ namespace Marv.Controls.Graph
 
         public bool IsEditable
         {
-            get
-            {
-                return (bool) GetValue(IsEditableProperty);
-            }
+            get { return (bool) GetValue(IsEditableProperty); }
 
-            set
-            {
-                SetValue(IsEditableProperty, value);
-            }
+            set { SetValue(IsEditableProperty, value); }
         }
 
         public bool IsEvidenceVisible
         {
-            get
-            {
-                return (bool) GetValue(IsEvidenceVisibleProperty);
-            }
+            get { return (bool) GetValue(IsEvidenceVisibleProperty); }
 
-            set
-            {
-                SetValue(IsEvidenceVisibleProperty, value);
-            }
+            set { SetValue(IsEvidenceVisibleProperty, value); }
         }
 
         public bool IsInputVisible
         {
-            get
-            {
-                return (bool) GetValue(IsInputVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsInputVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsInputVisibleProperty); }
+            set { SetValue(IsInputVisibleProperty, value); }
         }
 
         public bool IsMostProbableStateVisible
         {
-            get
-            {
-                return (bool) GetValue(IsMostProbableStateVisibleProperty);
-            }
+            get { return (bool) GetValue(IsMostProbableStateVisibleProperty); }
 
-            set
-            {
-                SetValue(IsMostProbableStateVisibleProperty, value);
-            }
+            set { SetValue(IsMostProbableStateVisibleProperty, value); }
         }
 
         public bool IsStatesVisible
         {
-            get
-            {
-                return (bool) GetValue(IsStatesVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsStatesVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsStatesVisibleProperty); }
+            set { SetValue(IsStatesVisibleProperty, value); }
         }
 
         public bool IsToolbarVisible
         {
-            get
-            {
-                return (bool) GetValue(IsToolbarVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsToolbarVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsToolbarVisibleProperty); }
+            set { SetValue(IsToolbarVisibleProperty, value); }
         }
 
         public bool IsValueVisible
         {
-            get
-            {
-                return (bool) GetValue(IsValueVisibleProperty);
-            }
+            get { return (bool) GetValue(IsValueVisibleProperty); }
 
-            set
-            {
-                SetValue(IsValueVisibleProperty, value);
-            }
+            set { SetValue(IsValueVisibleProperty, value); }
         }
 
         public Vertex Vertex
         {
-            get
-            {
-                return (Vertex) GetValue(VertexProperty);
-            }
-            set
-            {
-                SetValue(VertexProperty, value);
-            }
+            get { return (Vertex) GetValue(VertexProperty); }
+            set { SetValue(VertexProperty, value); }
         }
 
         public VertexControl()

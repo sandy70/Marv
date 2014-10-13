@@ -26,37 +26,50 @@
 
         <ToolBarTray Grid.Row="0"
                      IsLocked="False">
+            <ToolBarTray.Resources>
+                <Style TargetType="telerik:RadButton">
+                    <Setter Property="Height" Value="32" />
+                    <Setter Property="Width" Value="32" />
+                </Style>
+
+                <Style TargetType="telerik:RadToggleButton">
+                    <Setter Property="Height" Value="32" />
+                    <Setter Property="Width" Value="32" />
+                </Style>
+            </ToolBarTray.Resources>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0">
 
                 <telerik:RadButton Name="BackButton"
-                                   Height="30" Width="30"
                                    Visibility="{Binding ElementName=Root, Path=Graph.IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}"
                                    IsCancel="True">
                     <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
                 </telerik:RadButton>
 
                 <telerik:RadButton Name="ExpandButton"
-                                   Height="30" Width="30"
                                    ToolTip="Expand network for more information.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
                 </telerik:RadButton>
 
                 <telerik:RadButton Name="AutoFitButton"
-                                   Height="30" Width="30"
                                    ToolTip="Fit network to window.">
                     <Image Source="/Marv.Common;component/Resources/Icons/AutoFit.png" />
                 </telerik:RadButton>
 
+                <telerik:RadToggleButton Name="LayoutButton"
+                                         IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
+                                         ToolTip="Layout Automatically"
+                                         Click="LayoutButton_Click">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
+                </telerik:RadToggleButton>
+
                 <telerik:RadButton Name="ClearEvidenceButton"
-                                   Height="30" Width="30"
                                    ToolTip="Clears the evidence in the network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
 
                 <telerik:RadButton Name="RunButton"
-                                   Height="30" Width="30"
                                    ToolTip="Runs the evidence into the network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadButton>
@@ -64,7 +77,6 @@
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0">
-
                 <telerik:RadButton Name="OpenButton"
                                    Height="30" Width="30"
                                    ToolTip="Opens a preexisting network.">
@@ -135,7 +147,7 @@
                     <Setter Property="Opacity" Value="{Binding Opacity}" />
                     <Setter Property="Padding" Value="0" />
                     <Setter Property="Position" Value="{Binding DisplayPosition, Mode=TwoWay}" />
-                    <Setter Property="IsDraggingEnabled" Value="{Binding IsLocked}" />
+                    <Setter Property="IsDraggingEnabled" Value="{Binding IsDraggingEnabled}" />
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Root, Path=IsVerticesEnabled}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
 

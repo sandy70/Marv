@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Telerik.Windows.Diagrams.Core;
+using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls.Graph
 {
@@ -19,6 +21,9 @@ namespace Marv.Controls.Graph
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
+
+        public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
+            DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoLayoutEnabled));
 
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
@@ -40,131 +45,77 @@ namespace Marv.Controls.Graph
 
         public int AutoSaveDuration
         {
-            get
-            {
-                return (int) this.GetValue(AutoSaveDurationProperty);
-            }
+            get { return (int) this.GetValue(AutoSaveDurationProperty); }
 
-            set
-            {
-                this.SetValue(AutoSaveDurationProperty, value);
-            }
+            set { this.SetValue(AutoSaveDurationProperty, value); }
         }
 
         public Color ConnectionColor
         {
-            get
-            {
-                return (Color) this.GetValue(ConnectionColorProperty);
-            }
+            get { return (Color) this.GetValue(ConnectionColorProperty); }
 
-            set
-            {
-                this.SetValue(ConnectionColorProperty, value);
-            }
+            set { this.SetValue(ConnectionColorProperty, value); }
         }
 
         public Marv.Graph Graph
         {
-            get
-            {
-                return (Marv.Graph) this.GetValue(GraphProperty);
-            }
+            get { return (Marv.Graph) this.GetValue(GraphProperty); }
 
-            set
-            {
-                this.SetValue(GraphProperty, value);
-            }
+            set { this.SetValue(GraphProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
         {
-            get
-            {
-                return (Color) this.GetValue(IncomingConnectionHighlightColorProperty);
-            }
+            get { return (Color) this.GetValue(IncomingConnectionHighlightColorProperty); }
 
-            set
-            {
-                this.SetValue(IncomingConnectionHighlightColorProperty, value);
-            }
+            set { this.SetValue(IncomingConnectionHighlightColorProperty, value); }
+        }
+
+        public bool IsAutoLayoutEnabled
+        {
+            get { return (bool) GetValue(IsAutoLayoutEnabledProperty); }
+            set { SetValue(IsAutoLayoutEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
         {
-            get
-            {
-                return (bool) this.GetValue(IsAutoSaveEnabledProperty);
-            }
+            get { return (bool) this.GetValue(IsAutoSaveEnabledProperty); }
 
-            set
-            {
-                this.SetValue(IsAutoSaveEnabledProperty, value);
-            }
+            set { this.SetValue(IsAutoSaveEnabledProperty, value); }
         }
 
         public bool IsInputVisible
         {
-            get
-            {
-                return (bool) GetValue(IsInputVisibleProperty);
-            }
+            get { return (bool) GetValue(IsInputVisibleProperty); }
 
-            set
-            {
-                SetValue(IsInputVisibleProperty, value);
-            }
+            set { SetValue(IsInputVisibleProperty, value); }
         }
 
         public bool IsNavigationPaneVisible
         {
-            get
-            {
-                return (bool) GetValue(IsNavigationPaneVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsNavigationPaneVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsNavigationPaneVisibleProperty); }
+            set { SetValue(IsNavigationPaneVisibleProperty, value); }
         }
 
         public bool IsVerticesEnabled
         {
-            get
-            {
-                return (bool) GetValue(IsVerticesEnabledProperty);
-            }
+            get { return (bool) GetValue(IsVerticesEnabledProperty); }
 
-            set
-            {
-                SetValue(IsVerticesEnabledProperty, value);
-            }
+            set { SetValue(IsVerticesEnabledProperty, value); }
         }
 
         public Color OutgoingConnectionHighlightColor
         {
-            get
-            {
-                return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty);
-            }
+            get { return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty); }
 
-            set
-            {
-                this.SetValue(OutgoingConnectionHighlightColorProperty, value);
-            }
+            set { this.SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
         public double ShapeOpacity
         {
-            get
-            {
-                return (double) this.GetValue(ShapeOpacityProperty);
-            }
+            get { return (double) this.GetValue(ShapeOpacityProperty); }
 
-            set
-            {
-                this.SetValue(ShapeOpacityProperty, value);
-            }
+            set { this.SetValue(ShapeOpacityProperty, value); }
         }
 
         public GraphControl()
@@ -173,6 +124,22 @@ namespace Marv.Controls.Graph
             InitializeAutoSave();
 
             this.Loaded += GraphControl_Loaded;
+        }
+
+        private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as GraphControl;
+
+            control.AutoLayout();
+
+            if (control.IsAutoLayoutEnabled)
+            {
+                control.DisableVertexDragging();
+            }
+            else
+            {
+                control.EnableVertexDragging();
+            }
         }
 
         private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -196,18 +163,25 @@ namespace Marv.Controls.Graph
 
         public void AutoFit()
         {
-            var timer = new DispatcherTimer
+            this.DiagramPart.AutoFitAsync(new Thickness(10));
+        }
+
+        public void AutoLayout()
+        {
+            if (!this.IsAutoLayoutEnabled)
             {
-                Interval = TimeSpan.FromMilliseconds(300)
+                return;
+            }
+
+            var sugiyamaSettings = new SugiyamaSettings
+            {
+                AnimateTransitions = true,
+                ShapeMargin = new Size(40, 40),
+                Orientation = Orientation.Vertical,
+                VerticalDistance = 100
             };
 
-            timer.Tick += (o, e2) =>
-            {
-                this.DiagramPart.AutoFit();
-                timer.Stop();
-            };
-
-            timer.Start();
+            this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
         }
 
         public void DisableConnectorEditing()
@@ -217,11 +191,27 @@ namespace Marv.Controls.Graph
             this.DiagramPart.IsManipulationAdornerVisible = false;
         }
 
+        public void DisableVertexDragging()
+        {
+            foreach (var vertex in this.Graph.Vertices)
+            {
+                vertex.IsDraggingEnabled = false;
+            }
+        }
+
         public void EnableConnectorEditing()
         {
             this.IsVerticesEnabled = false;
             this.DiagramPart.IsConnectorsManipulationEnabled = true;
             this.DiagramPart.IsManipulationAdornerVisible = true;
+        }
+
+        public void EnableVertexDragging()
+        {
+            foreach (var vertex in this.Graph.Vertices)
+            {
+                vertex.IsDraggingEnabled = true;
+            }
         }
 
         public void InitializeAutoSave()
@@ -303,6 +293,7 @@ namespace Marv.Controls.Graph
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.DisplayGraph.IsExpanded = !this.Graph.DisplayGraph.IsMostlyExpanded;
+            this.AutoLayout();
         }
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
@@ -327,6 +318,11 @@ namespace Marv.Controls.Graph
 
             this.SaveButton.Click -= this.SaveButton_Click;
             this.SaveButton.Click += this.SaveButton_Click;
+        }
+
+        private void LayoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AutoLayout();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

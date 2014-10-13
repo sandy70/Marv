@@ -1,12 +1,20 @@
-﻿using System.Windows.Interactivity;
+﻿using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
 {
     internal class VertexControlBehavior : Behavior<VertexControl>
     {
+        public GraphControl GraphControl;
+        public VertexControl VertexControl;
+
         protected override void OnAttached()
         {
             base.OnAttached();
+
+            this.VertexControl = this.AssociatedObject;
+            this.GraphControl = this.VertexControl.FindParent<GraphControl>();
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
         }
@@ -25,6 +33,10 @@ namespace Marv.Controls.Graph
             {
                 graphControl.Graph.ClearEvidence();
                 graphControl.Graph.Run();
+            }
+            else if (command == VertexCommands.Expand)
+            {
+                this.GraphControl.AutoLayout();
             }
         }
     }

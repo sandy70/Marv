@@ -227,7 +227,7 @@
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <telerik:RadButton Background="{StaticResource BackgroundDark}"
-                                   Height="40" Width="40"
+                                   Height="32" Width="32"
                                    Margin="{Binding Source={StaticResource MarginSmallest}}"
                                    Padding="0">
                     <Image Source="{Binding ImageSource}" />

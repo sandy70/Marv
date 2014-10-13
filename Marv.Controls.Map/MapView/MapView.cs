@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Caching;
@@ -11,8 +10,8 @@ namespace Marv.Controls.Map
 {
     public class MapView : MapControl.Map
     {
-        public static readonly DependencyProperty ExtentProperty =
-            DependencyProperty.Register("Extent", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
+        public static readonly DependencyProperty BoundsProperty =
+            DependencyProperty.Register("Bounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StartExtentProperty =
             DependencyProperty.Register("StartExtent", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
@@ -23,7 +22,7 @@ namespace Marv.Controls.Map
         public static readonly RoutedEvent ZoomLevelChangedEvent =
             EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<int>>), typeof (MapView));
 
-        public LocationRect Extent
+        public LocationRect Bounds
         {
             get
             {
@@ -42,16 +41,7 @@ namespace Marv.Controls.Map
                 };
             }
 
-            set
-            {
-                this.ZoomToExtent
-                    (
-                        south: value.South,
-                        west: value.West,
-                        north: value.North,
-                        east: value.East
-                    );
-            }
+            set { this.ZoomToBounds(value.SouthWest.ToMapControlLocation(), value.NorthEast.ToMapControlLocation()); }
         }
 
         public LocationRect StartExtent
@@ -67,66 +57,10 @@ namespace Marv.Controls.Map
             behaviors.Add(new MapViewBehavior());
         }
 
-        public void ZoomTo(LocationRect rect)
-        {
-            this.ZoomToExtent(rect.North, rect.East, rect.South, rect.West);
-        }
-
-        /// <summary>
-        ///     Zoom to most appropriate level to encompass the given rectangle
-        /// </summary>
-        /// <param name="north"></param>
-        /// <param name="east"></param>
-        /// <param name="south"></param>
-        /// <param name="west"></param>
-        public void ZoomToExtent(double north, double east, double south, double west)
-        {
-            var zoom = this.GetBoundsZoomLevel(north, east, south, west);
-            var cx = west + (east - west) / 2;
-            var cy = south + (north - south) / 2;
-
-            zoom = Math.Floor(zoom) - 1;
-
-            this.TargetCenter = new MapControl.Location(cy, cx);
-            this.TargetZoomLevel = zoom;
-        }
-
-        /// <summary>
-        ///     Zoom to most appropriate level to encompass the given rectangle
-        /// </summary>
-        /// <param name="bottomLeft"></param>
-        /// <param name="topRight"></param>
-        public void ZoomToExtent(Location bottomLeft, Location topRight)
-        {
-            this.ZoomToExtent(topRight.Latitude, topRight.Longitude, topRight.Latitude, bottomLeft.Longitude);
-        }
-
         protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
             base.OnManipulationInertiaStarting(e);
             e.TranslationBehavior.DesiredDeceleration = 0.001;
-        }
-
-        /// <summary>
-        ///     Calculates a suitable zoom level given a boundary.
-        /// </summary>
-        private double GetBoundsZoomLevel(double north, double east, double south, double west)
-        {
-            const int GLOBE_HEIGHT = 256; // Height of a map that displays the entire world when zoomed all the way out
-            const int GLOBE_WIDTH = 256; // Width of a map that displays the entire world when zoomed all the way out
-
-            var latAngle = north - south;
-            if (latAngle < 0)
-            {
-                latAngle += 360;
-            }
-
-            var lngAngle = east - west;
-
-            var latZoomLevel = Math.Floor(Math.Log(this.RenderSize.Height * 360 / latAngle / GLOBE_HEIGHT) / Math.Log(2));
-            var lngZoomLevel = Math.Floor(Math.Log(this.RenderSize.Width * 360 / lngAngle / GLOBE_WIDTH) / Math.Log(2)); //0.6931471805599453
-
-            return (latZoomLevel < lngZoomLevel) ? latZoomLevel : lngZoomLevel;
         }
 
         public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved

@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
+using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls.Graph
 {
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
+        private RadDiagram diagram;
+        private GraphControl graphControl;
         private Edge newEdge;
         private Vertex newVertex;
         private Edge oldEdge;
@@ -20,18 +25,22 @@ namespace Marv.Controls.Graph
         {
             base.OnAttached();
 
-            this.AssociatedObject.CommandExecuted += this.AssociatedObject_CommandExecuted;
-            this.AssociatedObject.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
-            this.AssociatedObject.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
-            this.AssociatedObject.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
-            this.AssociatedObject.ShapeClicked += this.AssociatedObject_ShapeClicked;
+            diagram = this.AssociatedObject;
+            graphControl = diagram.FindParent<GraphControl>();
+
+            this.diagram.CommandExecuted += this.AssociatedObject_CommandExecuted;
+            this.diagram.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
+            this.diagram.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
+            this.diagram.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
+            this.diagram.SelectionChanged += diagram_SelectionChanged;
+            this.diagram.ShapeClicked += this.AssociatedObject_ShapeClicked;
         }
 
         private void AssociatedObject_CommandExecuted(object sender, CommandRoutedEventArgs e)
         {
             if (e.Command.Name == "Add Connection")
             {
-                this.AssociatedObject.Undo();
+                this.diagram.Undo();
             }
             else if ((e.Command.Name == "Change Target" || e.Command.Name == "Change Source"))
             {
@@ -90,18 +99,7 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)
         {
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(500)
-            };
-
-            timer.Tick += (o, e2) =>
-            {
-                this.AssociatedObject.AutoFit();
-                timer.Stop();
-            };
-
-            timer.Start();
+            this.diagram.AutoFitAsync(new Thickness(10));
         }
 
         private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
@@ -113,9 +111,9 @@ namespace Marv.Controls.Graph
             };
 
             // Change color of connections
-            var graphControl = this.AssociatedObject.FindParent<GraphControl>();
+            var graphControl = this.diagram.FindParent<GraphControl>();
 
-            foreach (var conn in this.AssociatedObject.Connections)
+            foreach (var conn in this.diagram.Connections)
             {
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
             }
@@ -130,7 +128,7 @@ namespace Marv.Controls.Graph
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
             }
 
-            this.AssociatedObject.BringToFront(shapeList);
+            this.diagram.BringToFront(shapeList);
 
             var timer = new DispatcherTimer
             {
@@ -139,18 +137,23 @@ namespace Marv.Controls.Graph
 
             timer.Tick += (o, args) =>
             {
-                if (!e.Shape.Bounds.IsInBounds(this.AssociatedObject.Viewport))
+                if (!e.Shape.Bounds.IsInBounds(this.diagram.Viewport))
                 {
-                    var offset = this.AssociatedObject.Viewport.GetOffset(e.Shape.Bounds, 20);
+                    var offset = this.diagram.Viewport.GetOffset(e.Shape.Bounds, 20);
 
                     // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.AssociatedObject.BringIntoView(this.AssociatedObject.Viewport.OffsetRect(offset.X, offset.Y));
+                    this.diagram.BringIntoView(this.diagram.Viewport.OffsetRect(offset.X, offset.Y));
                 }
 
                 timer.Stop();
             };
 
             timer.Start();
+        }
+
+        private void diagram_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.graphControl.AutoLayout();
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Marv
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
         private string inputVertexKey;
+        private bool isDraggingEnabled = true;
         private bool isExpanded;
         private bool isHeader;
         private bool isLocked = true;
@@ -41,10 +42,7 @@ namespace Marv
 
         public double[] Belief
         {
-            get
-            {
-                return this.States.Select(state => state.Belief).ToArray();
-            }
+            get { return this.States.Select(state => state.Belief).ToArray(); }
 
             set
             {
@@ -55,10 +53,7 @@ namespace Marv
 
         public ObservableCollection<Command<Vertex>> Commands
         {
-            get
-            {
-                return this.commands;
-            }
+            get { return this.commands; }
 
             set
             {
@@ -73,10 +68,7 @@ namespace Marv
         // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
         public Dict<string, string, EdgeConnectorPositions> ConnectorPositions
         {
-            get
-            {
-                return this.connectorPositions;
-            }
+            get { return this.connectorPositions; }
 
             set
             {
@@ -90,10 +82,7 @@ namespace Marv
 
         public string Description
         {
-            get
-            {
-                return this.description;
-            }
+            get { return this.description; }
 
             set
             {
@@ -107,10 +96,7 @@ namespace Marv
 
         public Point DisplayPosition
         {
-            get
-            {
-                return this.displayPosition;
-            }
+            get { return this.displayPosition; }
 
             set
             {
@@ -121,6 +107,7 @@ namespace Marv
 
                 this.displayPosition = value;
                 this.RaisePropertyChanged();
+                this.RaiseDisplayPositionChanged();
 
                 if (this.SelectedGroup != null)
                 {
@@ -131,10 +118,7 @@ namespace Marv
 
         public double[] Evidence
         {
-            get
-            {
-                return this.States.Select(state => state.Evidence).ToArray();
-            }
+            get { return this.States.Select(state => state.Evidence).ToArray(); }
 
             set
             {
@@ -145,10 +129,7 @@ namespace Marv
 
         public string EvidenceString
         {
-            get
-            {
-                return this.evidenceString;
-            }
+            get { return this.evidenceString; }
 
             set
             {
@@ -159,10 +140,7 @@ namespace Marv
 
         public ObservableCollection<string> Groups
         {
-            get
-            {
-                return this.groups;
-            }
+            get { return this.groups; }
 
             set
             {
@@ -173,10 +151,7 @@ namespace Marv
 
         public string HeaderOfGroup
         {
-            get
-            {
-                return this.headerOfGroup;
-            }
+            get { return this.headerOfGroup; }
             set
             {
                 this.headerOfGroup = value;
@@ -186,10 +161,7 @@ namespace Marv
 
         public Dictionary<string, double> InitialBelief
         {
-            get
-            {
-                return this.States.ToDictionary(state => state.Key, state => state.InitialBelief);
-            }
+            get { return this.States.ToDictionary(state => state.Key, state => state.InitialBelief); }
 
             set
             {
@@ -204,10 +176,7 @@ namespace Marv
 
         public string InputVertexKey
         {
-            get
-            {
-                return this.inputVertexKey;
-            }
+            get { return this.inputVertexKey; }
 
             set
             {
@@ -219,20 +188,30 @@ namespace Marv
             }
         }
 
+        public bool IsDraggingEnabled
+        {
+            get { return this.isDraggingEnabled; }
+
+            set
+            {
+                if (value.Equals(this.isDraggingEnabled))
+                {
+                    return;
+                }
+
+                this.isDraggingEnabled = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public bool IsEvidenceEntered
         {
-            get
-            {
-                return this.States.Sum(state => state.Evidence) > 0;
-            }
+            get { return this.States.Sum(state => state.Evidence) > 0; }
         }
 
         public bool IsExpanded
         {
-            get
-            {
-                return this.isExpanded;
-            }
+            get { return this.isExpanded; }
 
             set
             {
@@ -246,10 +225,7 @@ namespace Marv
 
         public bool IsHeader
         {
-            get
-            {
-                return this.isHeader;
-            }
+            get { return this.isHeader; }
 
             set
             {
@@ -260,10 +236,7 @@ namespace Marv
 
         public bool IsLocked
         {
-            get
-            {
-                return this.isLocked;
-            }
+            get { return this.isLocked; }
 
             set
             {
@@ -275,25 +248,24 @@ namespace Marv
 
                 if (this.IsLocked == false)
                 {
+                    this.IsDraggingEnabled = false;
                     this.IsExpanded = true;
+                }
+                else
+                {
+                    this.IsDraggingEnabled = true;
                 }
             }
         }
 
         public bool IsLogScale
         {
-            get
-            {
-                return this.States.Any(state => state.Min != 0 && state.Max >= state.Min * 9.99);
-            }
+            get { return this.States.Any(state => state.Min != 0 && state.Max >= state.Min * 9.99); }
         }
 
         public bool IsSelected
         {
-            get
-            {
-                return this.isSelected;
-            }
+            get { return this.isSelected; }
 
             set
             {
@@ -307,12 +279,25 @@ namespace Marv
             }
         }
 
+        public string Key
+        {
+            get { return this.key; }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public State MostProbableState
         {
-            get
-            {
-                return this.mostProbableState;
-            }
+            get { return this.mostProbableState; }
 
             set
             {
@@ -326,10 +311,7 @@ namespace Marv
 
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
 
             set
             {
@@ -345,10 +327,7 @@ namespace Marv
 
         public Point Position
         {
-            get
-            {
-                return this.position;
-            }
+            get { return this.position; }
 
             set
             {
@@ -362,10 +341,7 @@ namespace Marv
 
         public Dictionary<string, Point> PositionForGroup
         {
-            get
-            {
-                return this.positionsForGroup;
-            }
+            get { return this.positionsForGroup; }
 
             set
             {
@@ -379,26 +355,17 @@ namespace Marv
 
         public double SafeMax
         {
-            get
-            {
-                return this.States.Max(state => state.SafeMax);
-            }
+            get { return this.States.Max(state => state.SafeMax); }
         }
 
         public double SafeMin
         {
-            get
-            {
-                return this.States.Min(state => state.SafeMin);
-            }
+            get { return this.States.Min(state => state.SafeMin); }
         }
 
         public string SelectedGroup
         {
-            get
-            {
-                return this.selectedGroup;
-            }
+            get { return this.selectedGroup; }
 
             set
             {
@@ -412,10 +379,7 @@ namespace Marv
 
         public ObservableCollection<State> States
         {
-            get
-            {
-                return this.states;
-            }
+            get { return this.states; }
 
             set
             {
@@ -448,10 +412,7 @@ namespace Marv
 
         public VertexType Type
         {
-            get
-            {
-                return this.type;
-            }
+            get { return this.type; }
 
             set
             {
@@ -465,10 +426,7 @@ namespace Marv
 
         public string Units
         {
-            get
-            {
-                return this.units;
-            }
+            get { return this.units; }
 
             set
             {
@@ -477,25 +435,6 @@ namespace Marv
                     this.units = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                if (value.Equals(this.key))
-                {
-                    return;
-                }
-
-                this.key = value;
-                this.RaisePropertyChanged();
             }
         }
 
@@ -621,6 +560,14 @@ namespace Marv
             this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
+        protected void RaiseDisplayPositionChanged()
+        {
+            if (this.DisplayPositionChanged != null)
+            {
+                this.DisplayPositionChanged(this, this.DisplayPosition);
+            }
+        }
+
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -647,5 +594,7 @@ namespace Marv
                 this.UpdateMostProbableState();
             }
         }
+
+        public event EventHandler<Point> DisplayPositionChanged;
     }
 }

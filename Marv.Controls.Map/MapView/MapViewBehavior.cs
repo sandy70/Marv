@@ -24,7 +24,7 @@ namespace Marv.Controls.Map
 
             if (mapControl.StartExtent != null)
             {
-                mapControl.Extent = mapControl.StartExtent;
+                mapControl.Bounds = mapControl.StartExtent;
             }
         }
 
@@ -47,8 +47,8 @@ namespace Marv.Controls.Map
 
             var rect = new LocationRect
             {
-                NorthWest = Marv.Map.Utils.Mid(mapView.Center, mapView.Extent.NorthWest),
-                SouthEast = Marv.Map.Utils.Mid(mapView.Center, mapView.Extent.SouthEast)
+                NorthWest = Marv.Map.Utils.Mid(mapView.Center, mapView.Bounds.NorthWest),
+                SouthEast = Marv.Map.Utils.Mid(mapView.Center, mapView.Bounds.SouthEast)
             };
 
             if (this.previousCenter == null)
