@@ -60,8 +60,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartAxes.cs" />
-    <Compile Include="ChartSeries.cs" />
     <Compile Include="Converters\BooleanNotConverter.cs" />
     <Compile Include="Converters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\BooleanToColorConverter.cs" />
@@ -102,6 +100,7 @@
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="VisibilityAnimation.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ namespace Marv.Controls.Graph
         {
             var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
 
-            if (Math.Abs(e - 100) < Utils.Epsilon)
+            if (Math.Abs(e - 100) < Marv.Utils.Epsilon)
             {
                 vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }

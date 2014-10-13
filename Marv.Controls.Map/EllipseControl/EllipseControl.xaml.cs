@@ -22,7 +22,7 @@ namespace Marv.Controls.Map
         DependencyProperty.Register("SelectedLocationEllipse", typeof(LocationEllipse), typeof(EllipseControl), new PropertyMetadata(null, OnSelectedLocationEllipseChanged));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(EllipseControl), new PropertyMetadata(null, OnSelectedLocationChanged));
+        DependencyProperty.Register("SelectedLocation", typeof(Location), typeof(EllipseControl), new PropertyMetadata(null));
 
         public EllipseControl()
         {
@@ -69,16 +69,6 @@ namespace Marv.Controls.Map
         {
             var control = d as EllipseControl;
             UpdateLocationEllipsesRadius(control);
-        }
-
-        private static void OnSelectedLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as EllipseControl;
-
-            if (control != null && control.Locations is SelectableCollection<Location>)
-            {
-                (control.Locations as SelectableCollection<Location>).SelectedItem = control.SelectedLocation;
-            }
         }
 
         private static void OnSelectedLocationEllipseChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

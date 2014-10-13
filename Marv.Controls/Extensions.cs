@@ -112,75 +112,7 @@ namespace Marv.Controls
             return VisualTreeHelper.GetParent(child);
         }
 
-        public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
-        {
-            var point = new Point();
 
-            var left = bounds.Left - viewport.Left;
-            var right = bounds.Right - viewport.Right;
-            var top = bounds.Top - viewport.Top;
-            var bottom = bounds.Bottom - viewport.Bottom;
-
-            if (left > 0 && right > 0)
-            {
-                point.X = right + pad;
-            }
-            else if (left < 0 && right < 0)
-            {
-                point.X = left - pad;
-            }
-
-            if (top < 0 && bottom < 0)
-            {
-                point.Y = top - pad;
-            }
-            else if (top > 0 && bottom > 0)
-            {
-                point.Y = bottom + pad;
-            }
-
-            return point;
-        }
-
-        public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
-        {
-            var pointList = points as IList<Point> ?? points.ToList();
-
-            if (pointList.Count <= 2)
-            {
-                return pointList;
-            }
-
-            var first = pointList.First();
-            var last = pointList.Last();
-
-            var maxDistance = double.MinValue;
-            var maxDistancePoint = first;
-
-            foreach (var point in pointList)
-            {
-                var distance = Utils.Distance(first, last, point);
-
-                if (distance < maxDistance)
-                {
-                    continue;
-                }
-
-                maxDistance = distance;
-                maxDistancePoint = point;
-            }
-
-            if (maxDistance > tolerance)
-            {
-                return pointList.TakeUntil(x => x == maxDistancePoint)
-                                .Reduce(tolerance)
-                                .Concat(pointList.SkipWhile(x => x != maxDistancePoint)
-                                                 .Reduce(tolerance)
-                                                 .Skip(1));
-            }
-            return pointList.Take(1)
-                            .Concat(last);
-        }
 
 
     }
