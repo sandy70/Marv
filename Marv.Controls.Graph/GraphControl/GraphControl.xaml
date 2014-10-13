@@ -6,6 +6,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:marv="clr-namespace:Marv;assembly=Marv.Common.Graph"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="600"
              Name="Root">
@@ -153,7 +154,7 @@
 
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate>
+                            <DataTemplate DataType="marv:Vertex">
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsEvidenceVisible="True"
