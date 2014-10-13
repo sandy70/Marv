@@ -480,24 +480,24 @@ namespace Marv
             this.Write(path);
         }
 
-        public void WriteBeliefs(string fileName)
+        public void WriteBeliefs(string filePath)
         {
-            if (Path.GetExtension(fileName) != BeliefFileExtension)
+            if (Path.GetExtension(filePath) != BeliefFileExtension)
             {
-                fileName = fileName + "." + BeliefFileExtension;
+                filePath = filePath + "." + BeliefFileExtension;
             }
 
-            this.GetBeliefs().WriteJson(fileName);
+            this.GetBeliefs().WriteJson(filePath);
         }
 
-        public void WriteEvidences(string fileName)
+        public void WriteEvidences(string filePath)
         {
-            if (Path.GetExtension(fileName) != EvidenceFileExtension)
+            if (Path.GetExtension(filePath) != EvidenceFileExtension)
             {
-                fileName = fileName + "." + EvidenceFileExtension;
+                filePath = filePath + "." + EvidenceFileExtension;
             }
 
-            this.GetEvidences().WriteJson(fileName);
+            this.GetEvidences().WriteJson(filePath);
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
