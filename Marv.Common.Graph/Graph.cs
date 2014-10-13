@@ -29,7 +29,7 @@ namespace Marv
             {
                 foreach (var vertex in this.Vertices)
                 {
-                    vertex.Belief = value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
+                    vertex.Belief = value != null && value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
                 }
             }
         }
