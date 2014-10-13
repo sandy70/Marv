@@ -54,30 +54,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
-    <Compile Include="Converters\BooleanNotConverter.cs" />
-    <Compile Include="Converters\BooleanToBrushConverter.cs" />
-    <Compile Include="Converters\BooleanToColorConverter.cs" />
-    <Compile Include="Converters\BooleanToStringConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Chart\CategoricalPoint.cs" />
     <Compile Include="Chart\ScatterPoint.cs" />
-    <Compile Include="Converters\DecimalPercentalConverter.cs" />
-    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
-    <Compile Include="Converters\DoubleToBrushConverter.cs" />
-    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
-    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
-    <Compile Include="Converters\NullToBooleanConverter.cs" />
-    <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="CorLas\CorLAS.cs" />
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
-    <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />
@@ -89,7 +74,6 @@
     <Compile Include="Types\IKeyed.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="ItemNotFoundException.cs" />
-    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Types\KeyedCollection.cs" />
     <Compile Include="Notification\NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
@@ -115,7 +99,6 @@
     <Compile Include="Distributions\UniformDistribution.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ValueChangedArgs.cs" />
-    <Compile Include="ValueEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
@@ -190,12 +173,6 @@
     </Resource>
     <None Include="Marv.Common.snk" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ResourceDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

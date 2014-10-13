@@ -225,7 +225,7 @@ namespace Marv.Input
             this.LineDataControl.SetSelectedCells(vertexEvidence);
         }
 
-        private void GraphControl_GraphChanged(object sender, ValueChangedArgs<Graph> e)
+        private void GraphControl_GraphChanged(object sender, Graph newGraph, Graph oldGraph)
         {
             if (this.LineData == null)
             {

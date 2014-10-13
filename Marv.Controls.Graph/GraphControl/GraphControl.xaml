@@ -11,7 +11,7 @@
              Name="Root">
 
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <i:Interaction.Behaviors>

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Marv
+namespace Marv.Controls
 {
     [ValueConversion(typeof(bool), typeof(bool))]
     public class BooleanNotConverter : IValueConverter

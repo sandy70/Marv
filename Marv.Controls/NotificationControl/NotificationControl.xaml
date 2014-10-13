@@ -11,7 +11,7 @@
              d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <!-- Notification Listbox -->

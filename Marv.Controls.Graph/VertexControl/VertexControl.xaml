@@ -11,7 +11,7 @@
     <StackPanel.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <marv:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />

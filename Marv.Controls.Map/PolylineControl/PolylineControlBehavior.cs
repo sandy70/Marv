@@ -146,7 +146,7 @@ namespace Marv.Controls.Map
             }
         }
 
-        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
+        private void mapView_ZoomLevelChanged(object sender, int zoom)
         {
             if (this.AssociatedObject.Locations == null)
             {

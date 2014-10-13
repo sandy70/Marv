@@ -32,17 +32,12 @@ namespace Marv.Controls.Map
         {
             var mapView = this.AssociatedObject;
 
-            var zl = (int)Math.Floor(this.AssociatedObject.ZoomLevel);
+            var zl = (int) Math.Floor(this.AssociatedObject.ZoomLevel);
 
             if (zl != this.discreteZoomLevel)
             {
                 this.discreteZoomLevel = zl;
-
-                this.AssociatedObject.RaiseEvent(new ValueEventArgs<int>
-                {
-                    RoutedEvent = MapView.ZoomLevelChangedEvent,
-                    Value = this.discreteZoomLevel
-                });
+                this.AssociatedObject.RaiseZoomLevelChanged(this.discreteZoomLevel);
             }
 
             var rect = new LocationRect
@@ -59,12 +54,7 @@ namespace Marv.Controls.Map
             if (!rect.Contains(this.previousCenter))
             {
                 this.previousCenter = mapView.Center;
-
-                mapView.RaiseEvent(new ValueEventArgs<Location>
-                {
-                    RoutedEvent = MapView.ViewportMovedEvent,
-                    Value = this.previousCenter
-                });
+                mapView.RaiseViewportMoved(this.previousCenter);
             }
         }
     }

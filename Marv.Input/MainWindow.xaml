@@ -11,9 +11,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
                 <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
             <Style x:Key="BarSeriesStyle" TargetType="Border">
                 <Setter Property="Background" Value="Red" />
                 <Setter Property="Opacity" Value="0.5" />

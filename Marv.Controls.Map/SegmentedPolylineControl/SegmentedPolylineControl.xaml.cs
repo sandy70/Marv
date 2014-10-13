@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -38,111 +37,57 @@ namespace Marv.Controls.Map
 
         public Brush DisabledStroke
         {
-            get
-            {
-                return (Brush) this.GetValue(DisabledStrokeProperty);
-            }
-            set
-            {
-                this.SetValue(DisabledStrokeProperty, value);
-            }
+            get { return (Brush) this.GetValue(DisabledStrokeProperty); }
+            set { this.SetValue(DisabledStrokeProperty, value); }
         }
 
         public IDoubleToBrushMap DoubleToBrushMap
         {
-            get
-            {
-                return (IDoubleToBrushMap) this.GetValue(DoubleToBrushMapProperty);
-            }
-            set
-            {
-                this.SetValue(DoubleToBrushMapProperty, value);
-            }
+            get { return (IDoubleToBrushMap) this.GetValue(DoubleToBrushMapProperty); }
+            set { this.SetValue(DoubleToBrushMapProperty, value); }
         }
 
         public double NameLatitude
         {
-            get
-            {
-                return (double) this.GetValue(NameLatitudeProperty);
-            }
-            set
-            {
-                this.SetValue(NameLatitudeProperty, value);
-            }
+            get { return (double) this.GetValue(NameLatitudeProperty); }
+            set { this.SetValue(NameLatitudeProperty, value); }
         }
 
         public Location NameLocation
         {
-            get
-            {
-                return (Location) this.GetValue(NameLocationProperty);
-            }
-            set
-            {
-                this.SetValue(NameLocationProperty, value);
-            }
+            get { return (Location) this.GetValue(NameLocationProperty); }
+            set { this.SetValue(NameLocationProperty, value); }
         }
 
         public double NameLongitude
         {
-            get
-            {
-                return (double) this.GetValue(NameLongitudeProperty);
-            }
-            set
-            {
-                this.SetValue(NameLongitudeProperty, value);
-            }
+            get { return (double) this.GetValue(NameLongitudeProperty); }
+            set { this.SetValue(NameLongitudeProperty, value); }
         }
 
         public IEnumerable<LocationCollection> PolylineParts
         {
-            get
-            {
-                return (IEnumerable<LocationCollection>) this.GetValue(PolylinePartsProperty);
-            }
-            set
-            {
-                this.SetValue(PolylinePartsProperty, value);
-            }
+            get { return (IEnumerable<LocationCollection>) this.GetValue(PolylinePartsProperty); }
+            set { this.SetValue(PolylinePartsProperty, value); }
         }
 
         public IEnumerable<LocationCollectionViewModel> SimplifiedPolylineParts
         {
-            get
-            {
-                return (IEnumerable<LocationCollectionViewModel>)this.GetValue(SimplifiedPolylinePartsProperty);
-            }
+            get { return (IEnumerable<LocationCollectionViewModel>) this.GetValue(SimplifiedPolylinePartsProperty); }
 
-            set
-            {
-                this.SetValue(SimplifiedPolylinePartsProperty, value);
-            }
+            set { this.SetValue(SimplifiedPolylinePartsProperty, value); }
         }
 
         public double Tolerance
         {
-            get
-            {
-                return (double) this.GetValue(ToleranceProperty);
-            }
-            set
-            {
-                this.SetValue(ToleranceProperty, value);
-            }
+            get { return (double) this.GetValue(ToleranceProperty); }
+            set { this.SetValue(ToleranceProperty, value); }
         }
 
         public Sequence<double> ValueLevels
         {
-            get
-            {
-                return (Sequence<double>) this.GetValue(ValueLevelsProperty);
-            }
-            set
-            {
-                this.SetValue(ValueLevelsProperty, value);
-            }
+            get { return (Sequence<double>) this.GetValue(ValueLevelsProperty); }
+            set { this.SetValue(ValueLevelsProperty, value); }
         }
 
         public SegmentedPolylineControl()
@@ -228,7 +173,7 @@ namespace Marv.Controls.Map
             {
                 simplifiedLocationCollections.AddRange(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
-                    Locations = locationCollection.ToPoints(mapView).Reduce(this.Tolerance).ToLocations(mapView).ToLocationCollection(), 
+                    Locations = locationCollection.ToPoints(mapView).Reduce(this.Tolerance).ToLocations(mapView).ToLocationCollection(),
                     Stroke = this.IsEnabled ? this.DoubleToBrushMap.Map(locationCollection[1].Value) : this.DisabledStroke
                 }));
             }

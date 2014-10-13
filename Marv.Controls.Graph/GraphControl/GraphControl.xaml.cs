@@ -258,11 +258,7 @@ namespace Marv.Controls.Graph
         {
             if (this.GraphChanged != null)
             {
-                this.GraphChanged(this, new ValueChangedArgs<Marv.Graph>
-                {
-                    NewValue = newGraph,
-                    OldValue = oldGraph
-                });
+                this.GraphChanged(this, newGraph, oldGraph);
             }
         }
 
@@ -345,6 +341,6 @@ namespace Marv.Controls.Graph
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
 
-        public event EventHandler<ValueChangedArgs<Marv.Graph>> GraphChanged;
+        public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
     }
 }

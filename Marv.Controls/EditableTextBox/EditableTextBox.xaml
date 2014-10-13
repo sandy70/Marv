@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
 

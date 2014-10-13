@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv
+namespace Marv.Controls
 {
     [ValueConversion(typeof(bool), typeof(string))]
     public class BooleanToStringConverter : DependencyObject, IValueConverter

@@ -151,12 +151,12 @@ namespace Marv.Controls.Map
             }
         }
 
-        private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
+        private void mapView_ViewportMoved(object sender, Location location)
         {
             // this.AssociatedObject.UpdateSimplifiedPolylineParts();
         }
 
-        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
+        private void mapView_ZoomLevelChanged(object sender, int zoom)
         {
             this.AssociatedObject.UpdateSimplifiedPolylineParts();
         }

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv
+namespace Marv.Controls
 {
     [ValueConversion(typeof (double), typeof (Visibility))]
     public class DoubleToVisibilityConverter : DependencyObject, IValueConverter

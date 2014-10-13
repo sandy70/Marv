@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Caching;
@@ -12,12 +13,6 @@ namespace Marv.Controls.Map
     {
         public static readonly DependencyProperty StartBoundsProperty =
             DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
-
-        public static readonly RoutedEvent ViewportMovedEvent =
-            EventManager.RegisterRoutedEvent("ViewportMoved", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<Location>>), typeof (MapView));
-
-        public static readonly RoutedEvent ZoomLevelChangedEvent =
-            EventManager.RegisterRoutedEvent("ZoomLevelChanged", RoutingStrategy.Bubble, typeof (RoutedEventHandler<ValueEventArgs<int>>), typeof (MapView));
 
         public LocationRect Bounds
         {
@@ -54,22 +49,30 @@ namespace Marv.Controls.Map
             behaviors.Add(new MapViewBehavior());
         }
 
+        public void RaiseViewportMoved(Location location)
+        {
+            if (this.ViewportMoved != null)
+            {
+                this.ViewportMoved(this, location);
+            }
+        }
+
+        public void RaiseZoomLevelChanged(int zoom)
+        {
+            if (this.ZoomLevelChanged != null)
+            {
+                this.ZoomLevelChanged(this, zoom);
+            }
+        }
+
         protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
             base.OnManipulationInertiaStarting(e);
             e.TranslationBehavior.DesiredDeceleration = 0.001;
         }
 
-        public event RoutedEventHandler<ValueEventArgs<Location>> ViewportMoved
-        {
-            add { this.AddHandler(ViewportMovedEvent, value); }
-            remove { this.RemoveHandler(ViewportMovedEvent, value); }
-        }
+        public event EventHandler<Location> ViewportMoved;
 
-        public event RoutedEventHandler<ValueEventArgs<int>> ZoomLevelChanged
-        {
-            add { this.AddHandler(ZoomLevelChangedEvent, value); }
-            remove { this.RemoveHandler(ZoomLevelChangedEvent, value); }
-        }
+        public event EventHandler<int> ZoomLevelChanged;
     }
 }

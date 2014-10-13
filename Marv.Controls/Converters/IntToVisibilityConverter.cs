@@ -3,13 +3,13 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv
+namespace Marv.Controls
 {
-    [ValueConversion(typeof (object), typeof (bool))]
-    public class NullToBooleanConverter : DependencyObject, IValueConverter
+    [ValueConversion(typeof (int), typeof (Visibility))]
+    public class IntToVisibilityConverter : DependencyObject, IValueConverter
     {
         public static readonly DependencyProperty IsReversedProperty =
-            DependencyProperty.Register("IsReversed", typeof (bool), typeof (NullToBooleanConverter), new PropertyMetadata(false));
+            DependencyProperty.Register("IsReversed", typeof (bool), typeof (IntToVisibilityConverter), new PropertyMetadata(false));
 
         public bool IsReversed
         {
@@ -17,6 +17,7 @@ namespace Marv
             {
                 return (bool) this.GetValue(IsReversedProperty);
             }
+
             set
             {
                 this.SetValue(IsReversedProperty, value);
@@ -25,13 +26,18 @@ namespace Marv
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (value == null) ^ this.IsReversed;
+            var original = (int) value;
+
+            if (original != 0 ^ this.IsReversed)
+            {
+                return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var original = (bool) value;
-            return original ? null : new object();
+            return Binding.DoNothing;
         }
     }
 }

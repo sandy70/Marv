@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Marv
+namespace Marv.Controls
 {
     [ValueConversion(typeof(IEnumerable<int>), typeof(string))]
-    public class IEnumerableIntToStringConverter : IValueConverter
+    public class EnumerableIntToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
