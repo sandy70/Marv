@@ -6,7 +6,7 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Name="Root"
-        Title="MARV - Input Designer"
+        Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
