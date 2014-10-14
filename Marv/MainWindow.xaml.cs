@@ -372,6 +372,11 @@ namespace Marv.Input
 
         private void UpdateGraph()
         {
+            if (this.SelectedLocation == null)
+            {
+                return;
+            }
+
             var crossing = (this.SelectedLocation["Crossing"] as string).ToLower();
             var weight = this.SelectedLocation["Weight"];
 
