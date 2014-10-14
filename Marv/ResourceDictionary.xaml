@@ -1,7 +1,0 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:local="clr-namespace:Marv"
-                    xmlns:properties="clr-namespace:Marv.Properties"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <properties:Settings x:Key="Settings" />
-    <local:RiskValueToBrushMap x:Key="RiskValueToBrushMap" />
-</ResourceDictionary>

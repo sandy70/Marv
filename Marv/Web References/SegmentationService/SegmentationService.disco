@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
-  <contractRef ref="http://localhost/webservices/ProfileService/SegmentationService.asmx?wsdl" docRef="http://localhost/webservices/ProfileService/SegmentationService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
-  <soap address="http://localhost/webservices/ProfileService/SegmentationService.asmx" xmlns:q1="http://synergi.dnv.com/pipeline" binding="q1:SegmentationServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
-  <soap address="http://localhost/webservices/ProfileService/SegmentationService.asmx" xmlns:q2="http://synergi.dnv.com/pipeline" binding="q2:SegmentationServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
-</discovery>

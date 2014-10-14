@@ -1,260 +1,404 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Caching;
-using MapControl;
-using Marv;
-using Marv.Controls.Map;
-using NLog;
-using OfficeOpenXml;
+using System.Windows;
+using Marv.Common.Graph;
+using Marv.Map;
 using Telerik.Windows.Controls;
-using LocationCollection = Marv.Map.LocationCollection;
 
-namespace Marv
+namespace Marv.Input
 {
-    public partial class MainWindow
+    public partial class MainWindow : INotifyPropertyChanged
     {
-        public static VertexCommand VertexBarChartCommand = new VertexCommand
+        public static readonly DependencyProperty GraphProperty =
+            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty NotificationsProperty =
+            DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
+
+        public static readonly DependencyProperty SelectedSectionIdProperty =
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty SelectedYearProperty =
+            DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
+
+        private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
+        private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
+        private bool isGraphControlVisible = true;
+        private bool isLineDataChartVisible;
+        private bool isLineDataControlVisible;
+        private bool isMapViewVisible = true;
+        private bool isVertexControlVisible;
+        private ILineData lineData;
+        private LocationCollection locations;
+        private Location selectedLocation;
+        private LocationRect startExtent;
+
+        public Graph Graph
         {
-            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
-        };
+            get { return (Graph) GetValue(GraphProperty); }
+            set { SetValue(GraphProperty, value); }
+        }
 
-        public static VertexCommand VertexChartCommand = new VertexCommand
+        public bool IsGraphControlVisible
         {
-            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
-        };
+            get { return this.isGraphControlVisible; }
 
-        public static VertexCommand VertexChartPofCommand = new VertexCommand
+            set
+            {
+                if (value.Equals(this.isGraphControlVisible))
+                {
+                    return;
+                }
+
+                this.isGraphControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLineDataChartVisible
         {
-            ImageSource = "/Marv.Common;component/Resources/Icons/Chart.png"
-        };
+            get { return this.isLineDataChartVisible; }
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public Dictionary<LocationCollection, Dict<int, string, double>> MultiLocationValueTimeSeriesForMultiLocation = new Dictionary<LocationCollection, Dict<int, string, double>>();
+            set
+            {
+                if (value.Equals(this.isLineDataChartVisible))
+                {
+                    return;
+                }
 
-        public IGraphValueReader GraphValueReader { get; set; }
+                this.isLineDataChartVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-        public Dict<int, string, string, double> GraphValues { get; set; }
+        public bool IsLineDataControlVisible
+        {
+            get { return this.isLineDataControlVisible; }
+
+            set
+            {
+                if (value.Equals(this.isLineDataControlVisible))
+                {
+                    return;
+                }
+
+                this.isLineDataControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsMapViewVisible
+        {
+            get { return this.isMapViewVisible; }
+
+            set
+            {
+                if (value.Equals(this.isMapViewVisible))
+                {
+                    return;
+                }
+
+                this.isMapViewVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsVertexControlVisible
+        {
+            get { return this.isVertexControlVisible; }
+
+            set
+            {
+                if (value.Equals(this.isVertexControlVisible))
+                {
+                    return;
+                }
+
+                this.isVertexControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ILineData LineData
+        {
+            get { return this.lineData; }
+
+            set
+            {
+                if (value.Equals(this.lineData))
+                {
+                    return;
+                }
+
+                this.lineData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public LocationCollection Locations
+        {
+            get { return this.locations; }
+
+            set
+            {
+                if (value.Equals(this.locations))
+                {
+                    return;
+                }
+
+                this.locations = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public NotificationCollection Notifications
+        {
+            get { return (NotificationCollection) GetValue(NotificationsProperty); }
+            set { SetValue(NotificationsProperty, value); }
+        }
+
+        public Location SelectedLocation
+        {
+            get { return this.selectedLocation; }
+
+            set
+            {
+                if (value.Equals(this.selectedLocation))
+                {
+                    return;
+                }
+
+                this.selectedLocation = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string SelectedSectionId
+        {
+            get { return (string) GetValue(SelectedSectionIdProperty); }
+            set { SetValue(SelectedSectionIdProperty, value); }
+        }
+
+        public int SelectedYear
+        {
+            get { return (int) GetValue(SelectedYearProperty); }
+            set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public LocationRect StartExtent
+        {
+            get { return this.startExtent; }
+
+            set
+            {
+                if (value.Equals(this.startExtent))
+                {
+                    return;
+                }
+
+                this.startExtent = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public MainWindow()
         {
-            StyleManager.ApplicationTheme = new Windows8TouchTheme();
+            StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-
-            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MARV");
-            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, cacheDirectory);
-
-            this.MapView.TileLayer = TileLayers.BingMapsAerial;
+            this.Loaded += MainWindow_Loaded;
         }
 
-        public static Dict<int, string, double> CalculateMultiLocationValueTimeSeriesAndWrite(LocationCollection multiLocation, Graph graph = null)
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            logger.Info("Computing belief for line {0}.", multiLocation.Name);
-
-            var vertexKey = "B08";
-            var vertexName = graph.Vertices[vertexKey].Name;
-            var stateKey = "Fail";
-            // var quantity = "Mean";
-
-            var multiLocationValueTimeSeries = new Dict<int, string, double>();
-            var nCompleted = 0;
-            var nLocations = multiLocation.Count;
-
-            var excelFileName = Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name + ".xlsx");
-            var excelPackage = new ExcelPackage(new FileInfo(excelFileName));
-            var excelWorkSheetName = vertexName + "_" + stateKey;
-            // var excelWorkSheetName = vertexName + "_" + quantity;
-
-            try
+            if (this.PropertyChanged != null && propertyName != null)
             {
-                excelPackage.Workbook.Worksheets.Add(excelWorkSheetName);
-            }
-            catch (InvalidOperationException)
-            {
-                logger.Warn("The worksheet {0} already exists.", excelWorkSheetName);
-            }
-
-            var excelWorkSheet = excelPackage.Workbook.Worksheets[excelWorkSheetName];
-
-            var excelRow = 1;
-
-            foreach (var location in multiLocation)
-            {
-                //var excelCol = 1;
-
-                //excelWorkSheet.SetValue(++excelRow, excelCol, location.Name);
-
-                //var fileName = GetFileNameForModelValue(multiLocation.Name, location.Name);
-
-                //try
-                //{
-                //    var modelValue = Odb.ReadValueSingle<Dict<int, string, string, double>>(fileName, x => true);
-
-                //    foreach (var year in modelValue.Keys)
-                //    {
-                //        excelWorkSheet.SetValue(1, ++excelCol, year);
-
-                //        var graphValue = modelValue[year];
-                //        var vertexValue = graphValue[vertexKey];
-                //        var stateValue = vertexValue[stateKey];
-
-                //        if (!multiLocationValueTimeSeries.ContainsKey(year))
-                //        {
-                //            multiLocationValueTimeSeries[year] = new Dictionary<string, double>();
-                //        }
-
-                //        multiLocationValueTimeSeries[year][location.Name] = stateValue;
-
-                //        // var extractedValue = graph.GetMean(vertexKey, vertexValue);
-                //        // var extractedValue = graph.GetStandardDeviation(vertexKey, vertexValue);
-                //        var extractedValue = stateValue;
-                //        excelWorkSheet.SetValue(excelRow, excelCol, extractedValue);
-                //    }
-                //}
-                //catch (OdbDataNotFoundException)
-                //{
-                //    logger.Info("Belief not found for point {0}.", location);
-                //}
-
-                //logger.Info("Completed {0} of {1}", ++nCompleted, nLocations);
-            }
-
-            excelPackage.Save();
-
-            var fName = GetFileNameForMultiLocationValueTimeSeries(multiLocation, vertexKey, stateKey);
-            Odb.Write(fName, multiLocationValueTimeSeries);
-
-            return multiLocationValueTimeSeries;
-        }
-
-        public static Task<Dict<int, string, double>> CalculateMultiLocationValueTimeSeriesAndWriteAsync(LocationCollection multiLocation, Graph graph)
-        {
-            return Task.Run(() => { return CalculateMultiLocationValueTimeSeriesAndWrite(multiLocation, graph); });
-        }
-
-        public static string GetFileNameForModelValue(string multiLocationName, string locationName)
-        {
-            return Path.Combine("ModelValues", multiLocationName, locationName + ".db");
-        }
-
-        public static string GetFileNameForMultiLocationValueTimeSeries(LocationCollection multiLocation, string vertexKey, string stateKey)
-        {
-            return Path.Combine("MultiLocationValueTimeSeries", multiLocation.Name, vertexKey + "_" + stateKey + ".db");
-        }
-
-        public void ReadGraphValues()
-        {
-            //var multiLocation = this.Polylines.SelectedItem;
-            //var location = multiLocation.SelectedItem;
-
-            try
-            {
-                //this.GraphValues = this.GraphValueReader.Read(multiLocation.Name, location.Name);
-            }
-            catch (GraphValueNotFoundException exception)
-            {
-                logger.Warn(exception.Message);
-
-                this.Notifications.Push(new NotificationTimed
-                {
-                    Name = "Belief Not Found",
-                    Description = exception.Message
-                });
-
-                this.GraphValues = null;
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
-        public void ReadMultiLocationValueTimeSeriesForMultiLocation()
+        private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            foreach (var multiLocation in this.Polylines)
+            this.LineDataChart.UpdateEvidence(vertexEvidence);
+            this.LineDataControl.SetSelectedCells(vertexEvidence);
+        }
+
+        private void GraphControl_GraphChanged(object sender, Graph newGraph, Graph oldGraph)
+        {
+            if (this.LineData == null)
             {
-                try
-                {
-                    var fileName = GetFileNameForMultiLocationValueTimeSeries(multiLocation, "B08", "Fail");
-                    this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation] = Odb.ReadValueSingle<Dict<int, string, double>>(fileName, x => true);
-                }
-                catch (OdbDataNotFoundException)
-                {
-                    logger.Warn("Belief not found for line {0}.", multiLocation.Name);
-                }
+                this.LineData = new LineData();
+                this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
         }
 
-        public static void RunAndWrite(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
         {
-            var graph = Graph.Read(networkFileName);
-            var graphEvidence = AdcoInput.GetGraphEvidence(graph, inputFileName, multiLocationName, locationName);
-
-            // var graphValueTimeSeries = graph.Run(graphEvidence, startYear, endYear);
-
-            var fileName = GetFileNameForModelValue(multiLocationName, locationName);
-
-            try
-            {
-                // Odb.Write(fileName, graphValueTimeSeries);
-            }
-            catch (IOException exp)
-            {
-                logger.Warn(exp.Message);
-            }
+            this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
         }
 
-        public static Task RunAndWriteAsync(string networkFileName, string inputFileName, string multiLocationName, string locationName, int startYear, int endYear)
+        private void LineDataControl_NotificationClosed(object sender, Notification notification)
         {
-            return Task.Run(() => { RunAndWrite(networkFileName, inputFileName, multiLocationName, locationName, startYear, endYear); });
+            this.Notifications.Remove(notification);
         }
 
-        public void UpdateGraphValue()
+        private void LineDataControl_NotificationOpened(object sender, Notification notification)
         {
-            if (this.Graph != null)
+            this.Notifications.Add(notification);
+        }
+
+        private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
+        {
+            if (this.SelectedSectionId != null && this.SelectedYear > 0)
             {
-                if (this.GraphValues != null)
-                {
-                    if (this.GraphValues.ContainsKey(this.SelectedYear))
-                    {
-                        //this.Graph.Belief = this.GraphValues[this.SelectedYear];
-                    }
-                    else
-                    {
-                        this.Graph.Vertices.SetBelief(0);
-                    }
-                }
-                else
-                {
-                    this.Graph.Vertices.SetBelief(0);
-                }
+                this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
             }
         }
 
-        public void UpdateMultiLocationValues()
+        private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
         {
-            //foreach (var multiLocation in this.Polylines)
-            //{
-            //    if ((int) multiLocation.Properties["StartYear"] > this.SelectedYear)
-            //    {
-            //        multiLocation.IsEnabled = false;
-            //    }
-            //    else
-            //    {
-            //        multiLocation.IsEnabled = true;
-
-            //        if (this.Polylines.SelectedItem.IsEnabled == false)
-            //        {
-            //            // this.Polylines.Select(multiLocation);
-            //        }
-
-            //        try
-            //        {
-            //            multiLocation.Value = this.MultiLocationValueTimeSeriesForMultiLocation[multiLocation][this.SelectedYear];
-            //        }
-            //        catch (KeyNotFoundException)
-            //        {
-            //            logger.Warn("Belief not found for line {0} for year {1}", multiLocation.Name, this.SelectedYear);
-            //        }
-            //    }
-            //}
+            this.LineDataChart.UpdateBasePoints();
         }
+
+        private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
+        {
+            this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
+            this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            const string dataDirRoot = @"Data";
+            this.LineData = FolderLineData.Read(Path.Combine(dataDirRoot, @"LineData\WestPipeline.marv-linedata"));
+            this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
+            this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
+            this.SelectedYear = this.LineData.StartYear;
+
+            var casingNetworkFiles = new Dict<double, string>
+            {
+                { 8.0, "CASED_PIPELINE_8.net" },
+                { 8.8, "CASED_PIPELINE_88.net" },
+                { 10.0, "CASED_PIPELINE_10.net" },
+                { 11.0, "CASED_PIPELINE_11.net" },
+                { 13.3, "CASED_PIPELINE_133.net" },
+                { 14.3, "CASED_PIPELINE_143.net" },
+            };
+
+            var networkFiles = new Dict<double, string>
+            {
+                { 8.0, "MODEL_modified_08262014a_8.net" },
+                { 8.8, "MODEL_modified_08262014a_88.net" },
+                { 10.0, "MODEL_modified_08262014a_10.net" },
+                { 11.0, "MODEL_modified_08262014a_11.net" },
+                { 13.3, "MODEL_modified_08262014a_133.net" },
+                { 14.3, "MODEL_modified_08262014a_143.net" },
+            };
+
+            var graphReadingNotification = new Notification
+            {
+                Description = "Reading networks...",
+                Value = 0
+            };
+
+            this.Notifications.Add(graphReadingNotification);
+
+            var total = casingNetworkFiles.Count + networkFiles.Count;
+            var done = 0.0;
+
+            foreach (var size in casingNetworkFiles.Keys)
+            {
+                var fileName = Path.Combine(dataDirRoot, "Networks", casingNetworkFiles[size]);
+                this.casingGraphs[size] = await Task.Run(() => Graph.Read(fileName));
+
+                done++;
+                graphReadingNotification.Value = done / total;
+            }
+
+            foreach (var size in networkFiles.Keys)
+            {
+                var fileName = Path.Combine(dataDirRoot, "Networks", networkFiles[size]);
+                this.graphs[size] = await Task.Run(() => Graph.Read(fileName));
+
+                done++;
+                graphReadingNotification.Value = done / total;
+            }
+
+            this.Notifications.Remove(graphReadingNotification);
+
+            this.UpdateGraph();
+            this.UpdateGraphValue();
+
+            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
+            this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
+
+            this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
+            this.GraphControl.GraphChanged += GraphControl_GraphChanged;
+
+            this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
+            this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
+
+            this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
+            this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
+
+            this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
+            this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
+
+            this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
+            this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
+
+            this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
+            this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
+
+            this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
+            this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
+
+            this.PolylineControl.SelectionChanged -= PolylineControl_SelectionChanged;
+            this.PolylineControl.SelectionChanged += PolylineControl_SelectionChanged;
+
+            this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+
+            this.YearSlider.ValueChanged -= YearSlider_ValueChanged;
+            this.YearSlider.ValueChanged += YearSlider_ValueChanged;
+        }
+
+        private void PolylineControl_SelectionChanged(object sender, Location location)
+        {
+            this.UpdateGraph();
+            this.UpdateGraphValue();
+        }
+
+        private void UpdateGraph()
+        {
+            var crossing = (this.SelectedLocation["Crossing"] as string).ToLower();
+            var weight = this.SelectedLocation["Weight"];
+
+            if (crossing.Contains("river") || crossing.Contains("rail") || crossing.Contains("highway"))
+            {
+                this.Graph = this.casingGraphs[(double) weight];
+            }
+            else
+            {
+                this.Graph = this.graphs[(double) weight];
+            }
+        }
+
+        private void UpdateGraphValue()
+        {
+            var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
+            var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
+
+            this.Graph.Belief = graphBelief;
+            this.Graph.SetEvidence(graphEvidence);
+        }
+
+        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.UpdateGraphValue();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
