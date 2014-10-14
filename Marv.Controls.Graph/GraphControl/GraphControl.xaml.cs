@@ -25,6 +25,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoLayoutEnabled));
 
+        public static readonly DependencyProperty IsAutoRunEnabledProperty =
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoRunEnabled));
+
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
@@ -75,6 +78,12 @@ namespace Marv.Controls.Graph
         {
             get { return (bool) GetValue(IsAutoLayoutEnabledProperty); }
             set { SetValue(IsAutoLayoutEnabledProperty, value); }
+        }
+
+        public bool IsAutoRunEnabled
+        {
+            get { return (bool) GetValue(IsAutoRunEnabledProperty); }
+            set { SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
@@ -140,6 +149,11 @@ namespace Marv.Controls.Graph
             {
                 control.EnableVertexDragging();
             }
+        }
+
+        private static void ChangedAutoRunEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as GraphControl).Run();
         }
 
         private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -231,6 +245,14 @@ namespace Marv.Controls.Graph
             this.Open(openFileDialog.FileName);
         }
 
+        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
+        {
+            if (this.EvidenceEntered != null)
+            {
+                this.EvidenceEntered(this, vertexEvidence);
+            }
+        }
+
         public void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
         {
             if (this.GraphChanged != null)
@@ -267,14 +289,6 @@ namespace Marv.Controls.Graph
             }
         }
 
-        internal void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
-        {
-            if (this.EvidenceEntered != null)
-            {
-                this.EvidenceEntered(this, vertexEvidence);
-            }
-        }
-
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
             this.DiagramPart.AutoFitAsync(new Thickness(10));
@@ -308,8 +322,16 @@ namespace Marv.Controls.Graph
             this.UpdateLayout();
         }
 
+        private void GraphControl_EvidenceEntered(object sender, VertexEvidence e)
+        {
+            this.Run();
+        }
+
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.EvidenceEntered -= GraphControl_EvidenceEntered;
+            this.EvidenceEntered += GraphControl_EvidenceEntered;
+
             // All the buttons
             this.AutoFitButton.Click -= AutoFitButton_Click;
             this.AutoFitButton.Click += AutoFitButton_Click;
@@ -322,9 +344,6 @@ namespace Marv.Controls.Graph
 
             this.ExpandButton.Click -= ExpandButton_Click;
             this.ExpandButton.Click += ExpandButton_Click;
-
-            this.RunButton.Click -= RunButton_Click;
-            this.RunButton.Click += RunButton_Click;
 
             this.OpenButton.Click -= this.OpenButton_Click;
             this.OpenButton.Click += this.OpenButton_Click;
@@ -342,11 +361,13 @@ namespace Marv.Controls.Graph
             this.Open();
         }
 
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private void Run()
         {
-            if (this.Graph != null)
+            if (this.IsAutoRunEnabled && this.Graph != null)
             {
+                Console.WriteLine("Running...");
                 this.Graph.Run();
+                Console.WriteLine("Run");
             }
         }
 

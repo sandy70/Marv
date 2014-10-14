@@ -299,7 +299,7 @@ namespace Marv
             return value;
         }
 
-        public Graph GetSubGraph(string group)
+        public Graph GetSubGraph(string group, string vertexKey = null)
         {
             // Extract the header vertices
             var subGraph = new Graph();
@@ -423,9 +423,9 @@ namespace Marv
             }
         }
 
-        public void UpdateDisplayGraph(string group)
+        public void UpdateDisplayGraph(string @group, string vertexKey = null)
         {
-            this.DisplayGraph = this.GetSubGraph(group);
+            this.DisplayGraph = this.GetSubGraph(group, vertexKey);
             this.IsDefaultGroupVisible = group == this.DefaultGroup;
         }
 

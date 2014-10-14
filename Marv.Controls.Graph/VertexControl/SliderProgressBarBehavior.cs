@@ -8,6 +8,8 @@ namespace Marv.Controls.Graph
         protected override void OnAttached()
         {
             base.OnAttached();
+
+            this.AssociatedObject.ValueEntered -= AssociatedObject_ValueEntered;
             this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
         }
 

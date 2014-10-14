@@ -57,21 +57,6 @@
                                    ToolTip="Fit network to window.">
                     <Image Source="/Marv.Common;component/Resources/Icons/AutoFit.png" />
                 </telerik:RadButton>
-
-                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
-                                         ToolTip="Layout Automatically">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
-                </telerik:RadToggleButton>
-
-                <telerik:RadButton Name="ClearEvidenceButton"
-                                   ToolTip="Clears the evidence in the network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="RunButton"
-                                   ToolTip="Runs the evidence into the network.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
-                </telerik:RadButton>
             </ToolBar>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
@@ -100,6 +85,21 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
                 </telerik:RadToggleButton>
 
+                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
+                                         ToolTip="Layout Automatically">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
+                </telerik:RadToggleButton>
+
+                <telerik:RadButton Name="ClearEvidenceButton"
+                                   ToolTip="Clears the evidence in the network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+                </telerik:RadButton>
+
+                <telerik:RadToggleButton Name="RunButton"
+                                         IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
+                                         ToolTip="Runs the evidence into the network.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
+                </telerik:RadToggleButton>
             </ToolBar>
         </ToolBarTray>
 

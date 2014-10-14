@@ -1,4 +1,5 @@
-﻿using System.Windows.Interactivity;
+﻿using System.Windows.Input;
+using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
 {
@@ -16,21 +17,14 @@ namespace Marv.Controls.Graph
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
 
+            this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
+
             this.VertexControl.MouseEnter -= VertexControl_MouseEnter;
             this.VertexControl.MouseEnter += VertexControl_MouseEnter;
 
             this.VertexControl.MouseLeave -= VertexControl_MouseLeave;
             this.VertexControl.MouseLeave += VertexControl_MouseLeave;
-        }
-
-        void VertexControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            this.VertexControl.IsToolbarVisible = false;
-        }
-
-        void VertexControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            this.VertexControl.IsToolbarVisible = true;
         }
 
         private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
@@ -52,6 +46,21 @@ namespace Marv.Controls.Graph
             {
                 this.GraphControl.UpdateLayout();
             }
+        }
+
+        private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
+        {
+            this.GraphControl.RaiseEvidenceEntered(e);
+        }
+
+        private void VertexControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = true;
+        }
+
+        private void VertexControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = false;
         }
     }
 }
