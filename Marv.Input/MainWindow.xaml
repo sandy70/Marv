@@ -14,11 +14,6 @@
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
                 <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
-            <Style x:Key="BarSeriesStyle" TargetType="Border">
-                <Setter Property="Background" Value="Red" />
-                <Setter Property="Opacity" Value="0.5" />
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -90,7 +85,7 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
-                                <RowDefinition Height="32" />
+                                <RowDefinition Height="40" />
                             </Grid.RowDefinitions>
 
                             <marv:GraphControl Name="GraphControl"
@@ -110,8 +105,9 @@
                                            FontWeight="Bold"
                                            Text="{Binding ElementName=Root, Path=SelectedYear}"
                                            TextAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                           VerticalAlignment="Stretch"/>
                                 
+                                <!-- Year Slider -->
                                 <surface:SurfaceSlider Name="YearSlider"
                                                    Grid.Column="1"
                                                    Background="#DDDDDD"
@@ -120,10 +116,7 @@
                                                    Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
                                                    Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                             </Grid>
-                            
-                           
                         </Grid>
-
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
 
