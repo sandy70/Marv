@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Marv;
 
 namespace FixPoF
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var filePaths = Directory.EnumerateFiles(@"C:\Users\vkha\Source\Marv\Marv.Input\bin\Debug\Data\LineData\SectionBeliefs", "*.marv-sectionbelief");
 
@@ -26,6 +23,12 @@ namespace FixPoF
 
                     var pof = new[] { 0.5, 0.5 };
                     pof[0] = nof.Select((x, i) => x * nofStates[i]).Normalized().Sum() * pgpc[0];
+
+                    if (pof[0] > 1)
+                    {
+                        pof[0] = 1;
+                    }
+
                     pof[1] = 1 - pof[0];
 
                     sectionBelief[year]["pof"] = pof;
