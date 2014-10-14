@@ -13,7 +13,6 @@ namespace Marv.Controls.Graph
     internal class DiagramPartBehavior : Behavior<RadDiagram>
     {
         private RadDiagram diagram;
-        private GraphControl graphControl;
         private Vertex newVertex;
         private Vertex oldVertex;
 
@@ -22,7 +21,6 @@ namespace Marv.Controls.Graph
             base.OnAttached();
 
             diagram = this.AssociatedObject;
-            graphControl = diagram.FindParent<GraphControl>();
 
             this.diagram.CommandExecuted += this.AssociatedObject_CommandExecuted;
             this.diagram.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
