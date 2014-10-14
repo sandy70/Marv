@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -28,6 +29,9 @@ namespace Marv.Controls.Map
 
         public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
             DependencyProperty.Register("SimplifiedPolylineParts", typeof (IEnumerable<LocationCollectionViewModel>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty StrokeThicknessProperty =
+            DependencyProperty.Register("StrokeThickness", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(3.0));
 
         public static readonly DependencyProperty ToleranceProperty =
             DependencyProperty.Register("Tolerance", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(5.0));
@@ -78,6 +82,12 @@ namespace Marv.Controls.Map
             set { this.SetValue(SimplifiedPolylinePartsProperty, value); }
         }
 
+        public double StrokeThickness
+        {
+            get { return (double) GetValue(StrokeThicknessProperty); }
+            set { SetValue(StrokeThicknessProperty, value); }
+        }
+
         public double Tolerance
         {
             get { return (double) this.GetValue(ToleranceProperty); }
@@ -97,6 +107,8 @@ namespace Marv.Controls.Map
             {
                 0.00, 0.25, 0.5, 0.75, 1.00
             };
+
+            this.Loaded += SegmentedPolylineControl_Loaded;
         }
 
         private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -127,14 +139,24 @@ namespace Marv.Controls.Map
             }
         }
 
+        public void RaiseSelectionChanged(Location location)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, location);
+            }
+        }
+
         public void UpdatePolylineParts()
         {
             var oldBinIndex = -1;
-            var multiLocationParts = new List<LocationCollection>();
+            var polylineParts = new List<LocationCollection>();
             LocationCollection locationCollection = null;
+
             foreach (var location in this.Locations)
             {
                 var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
+                
                 if (newBinIndex != oldBinIndex)
                 {
                     if (locationCollection == null)
@@ -150,7 +172,7 @@ namespace Marv.Controls.Map
                         locationCollection.Add(mid);
                         locationCollection.Add(location);
                     }
-                    multiLocationParts.Add(locationCollection);
+                    polylineParts.Add(locationCollection);
                 }
                 else
                 {
@@ -159,9 +181,11 @@ namespace Marv.Controls.Map
                         locationCollection.Add(location);
                     }
                 }
+                
                 oldBinIndex = newBinIndex;
             }
-            this.PolylineParts = multiLocationParts;
+            
+            this.PolylineParts = polylineParts;
         }
 
         public void UpdateSimplifiedPolylineParts()
@@ -203,5 +227,13 @@ namespace Marv.Controls.Map
                 this.UpdateSimplifiedPolylineParts();
             }
         }
+
+        private void SegmentedPolylineControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.UpdatePolylineParts();
+            this.UpdateSimplifiedPolylineParts();
+        }
+
+        public event EventHandler<Location> SelectionChanged;
     }
 }

@@ -15,7 +15,8 @@ namespace Marv.Controls.Graph
             this.VertexControl = this.AssociatedObject;
             this.GraphControl = this.VertexControl.FindParent<GraphControl>();
 
-            this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
+            this.VertexControl.CommandExecuted -= AssociatedObject_CommandExecuted;
+            this.VertexControl.CommandExecuted += AssociatedObject_CommandExecuted;
 
             this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;

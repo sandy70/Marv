@@ -12,9 +12,16 @@ namespace Marv.Controls
         {
             base.OnAttached();
 
+            this.AssociatedObject.MouseDoubleClick -= AssociatedObject_MouseDoubleClick;
             this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
+
+            this.AssociatedObject.MouseDown -= AssociatedObject_MouseDown;
             this.AssociatedObject.MouseDown += AssociatedObject_MouseDown;
+
+            this.AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
             this.AssociatedObject.MouseMove += AssociatedObject_MouseMove;
+
+            this.AssociatedObject.MouseUp -= AssociatedObject_MouseUp;
             this.AssociatedObject.MouseUp += AssociatedObject_MouseUp;
         }
 

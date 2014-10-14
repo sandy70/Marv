@@ -12,7 +12,7 @@
     <local:PolylineControlBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/..\Marv.Controls\ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
                 <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -23,41 +23,31 @@
     </i:Interaction.Behaviors>
 
     <mapcontrol:MapPanel>
-        <mapcontrol:MapPanel.Resources>
-            
-        </mapcontrol:MapPanel.Resources>
-        
         <mapcontrol:MapItemsControl Name="MapPolyline"
-                                    ItemsSource="{Binding SimplifiedPolylineParts, ElementName=Root}"
+                                    ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}"
                                     VirtualizingPanel.IsVirtualizing="True">
-            <mapcontrol:MapItemsControl.ItemContainerStyle>
-                <Style TargetType="mapcontrol:MapItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate>
-                                <mapcontrol:MapPanel>
-                                    <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
-                                                            Stroke="{Binding Stroke}"
-                                                            StrokeEndLineCap="Round"
-                                                            StrokeLineJoin="Round"
-                                                            StrokeStartLineCap="Round"
-                                                            StrokeThickness="5" />
+            <mapcontrol:MapItemsControl.ItemTemplate>
+                <DataTemplate DataType="local:LocationCollectionViewModel">
+                    <mapcontrol:MapPanel>
+                        <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationToMapControlLocation}}"
+                                                Stroke="GreenYellow"
+                                                StrokeEndLineCap="Round"
+                                                StrokeLineJoin="Round"
+                                                StrokeStartLineCap="Round"
+                                                StrokeThickness="3" />
 
-                                    <!-- This Bigger Dummy Polyline is Location selection -->
-                                    <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                        <!-- Bigger dummy polyline for easier selection -->
+                        <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource LocationToMapControlLocation}}"
                                                 Opacity="0.0"
                                                 Stroke="Red"
                                                 StrokeThickness="30">
-                                        <i:Interaction.Behaviors>
-                                            <local:MapPoylineBehavior />
-                                        </i:Interaction.Behaviors>
-                                    </mapcontrol:MapPolyline>
-                                </mapcontrol:MapPanel>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </mapcontrol:MapItemsControl.ItemContainerStyle>
+                            <i:Interaction.Behaviors>
+                                <local:MapPoylineBehavior />
+                            </i:Interaction.Behaviors>
+                        </mapcontrol:MapPolyline>
+                    </mapcontrol:MapPanel>
+                </DataTemplate>
+            </mapcontrol:MapItemsControl.ItemTemplate>
         </mapcontrol:MapItemsControl>
 
         <Label mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
@@ -66,13 +56,13 @@
                Visibility="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}" />
 
         <Ellipse Name="Ellipse"
-                mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
-                Fill="{Binding CursorFill, ElementName=Root}"
-                Height="50" Width="50"
-                HorizontalAlignment="Center" VerticalAlignment="Center"
-                Opacity="0.8"
-                Stroke="{Binding CursorStroke, ElementName=Root}"
-                StrokeThickness="2"
-                Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+                 mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                 Fill="{Binding CursorFill, ElementName=Root}"
+                 Height="50" Width="50"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Opacity="0.8"
+                 Stroke="{Binding CursorStroke, ElementName=Root}"
+                 StrokeThickness="2"
+                 Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
     </mapcontrol:MapPanel>
 </local:PolylineControlBase>

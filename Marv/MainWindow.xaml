@@ -42,10 +42,10 @@
                                       StartBounds="{Binding ElementName=Root, Path=StartExtent}"
                                       TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
                             <marv:PolylineControl Name="PolylineControl"
-                                                  Locations="{Binding ElementName=Root, Path=Locations}"
-                                                  SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                  Stroke="GreenYellow"
-                                                  StrokeThickness="3" />
+                                                           Locations="{Binding ElementName=Root, Path=Locations}"
+                                                           SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
+                                                           Stroke="GreenYellow"
+                                                           StrokeThickness="3" />
                         </marv:MapView>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -95,7 +95,7 @@
 
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="100" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
@@ -105,16 +105,16 @@
                                            FontWeight="Bold"
                                            Text="{Binding ElementName=Root, Path=SelectedYear}"
                                            TextAlignment="Center"
-                                           VerticalAlignment="Stretch"/>
-                                
+                                           VerticalAlignment="Stretch" />
+
                                 <!-- Year Slider -->
                                 <surface:SurfaceSlider Name="YearSlider"
-                                                   Grid.Column="1"
-                                                   Background="#DDDDDD"
-                                                   TickFrequency="1"
-                                                   Maximum="{Binding ElementName=Root, Path=LineData.EndYear}"
-                                                   Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
-                                                   Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+                                                       Grid.Column="1"
+                                                       Background="#DDDDDD"
+                                                       TickFrequency="1"
+                                                       Maximum="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                                       Minimum="{Binding ElementName=Root, Path=LineData.StartYear}"
+                                                       Value="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                             </Grid>
                         </Grid>
                     </telerik:RadPane>

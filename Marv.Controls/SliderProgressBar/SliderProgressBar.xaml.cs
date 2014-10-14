@@ -17,38 +17,20 @@ namespace Marv.Controls
 
         public bool IsEditable
         {
-            get
-            {
-                return (bool) GetValue(IsEditableProperty);
-            }
-            set
-            {
-                SetValue(IsEditableProperty, value);
-            }
+            get { return (bool) GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
         }
 
         public bool IsTextVisible
         {
-            get
-            {
-                return (bool) GetValue(IsTextVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsTextVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsTextVisibleProperty); }
+            set { SetValue(IsTextVisibleProperty, value); }
         }
 
         public Brush SliderForeground
         {
-            get
-            {
-                return (Brush) GetValue(SliderForegroundProperty);
-            }
-            set
-            {
-                SetValue(SliderForegroundProperty, value);
-            }
+            get { return (Brush) GetValue(SliderForegroundProperty); }
+            set { SetValue(SliderForegroundProperty, value); }
         }
 
         public SliderProgressBar()

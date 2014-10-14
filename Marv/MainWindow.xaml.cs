@@ -392,6 +392,11 @@ namespace Marv.Input
 
         private void UpdateGraphValue()
         {
+            if (this.SelectedLocation == null)
+            {
+                return;
+            }
+
             var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
             var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
 

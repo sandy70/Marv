@@ -22,6 +22,29 @@
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="Black" />
             </Style>
+
+            <Style x:Key="ScaleInStyle"
+                   TargetType="{x:Type FrameworkElement}">
+                <Style.Triggers>
+                    <Trigger Property="IsVisible" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     From="0"
+                                                     Duration="0:0:.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                </Style.Triggers>
+
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <ScaleTransform x:Name="transform" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </StackPanel.Resources>
 
@@ -50,7 +73,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition SharedSizeGroup="One" />
                         <ColumnDefinition SharedSizeGroup="Two" />
-                        <ColumnDefinition SharedSizeGroup="Three"  />
+                        <ColumnDefinition SharedSizeGroup="Three" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -216,6 +239,7 @@
     <!-- Toolbar -->
     <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
+                  Style="{StaticResource ScaleInStyle}"
                   Visibility="{Binding ElementName=Root, Path=IsToolbarVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

@@ -6,31 +6,33 @@ namespace Marv.Controls.Graph
 {
     internal class ToolbarButtonClickBehavior : Behavior<Button>
     {
+        public VertexControl VertexControl;
+
         protected override void OnAttached()
         {
             base.OnAttached();
+
+            this.VertexControl = this.AssociatedObject.FindParent<VertexControl>();
+
             this.AssociatedObject.Click += this.AssociatedObject_Click;
         }
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var command = this.AssociatedObject.DataContext as Command<Vertex>;
-
-            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
-            var vertex = vertexControl.Vertex;
+            var vertex = this.VertexControl.Vertex;
 
             command.Excecute(vertex);
 
-            vertexControl.RaiseCommandExecuted(command);
+            this.VertexControl.RaiseCommandExecuted(command);
 
             if (command == VertexCommands.Lock && vertex.IsLocked)
             {
-                vertexControl.RaiseEvidenceEntered();
+                this.VertexControl.RaiseEvidenceEntered();
             }
-
-            if (command == VertexCommands.Clear)
+            else if (command == VertexCommands.Clear)
             {
-                vertexControl.RaiseEvidenceEntered();
+                this.VertexControl.RaiseEvidenceEntered();
             }
         }
     }

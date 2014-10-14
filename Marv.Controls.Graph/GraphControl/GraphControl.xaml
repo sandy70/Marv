@@ -95,8 +95,7 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
 
-                <telerik:RadToggleButton Name="RunButton"
-                                         IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
+                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
                                          ToolTip="Runs the evidence into the network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadToggleButton>
@@ -111,7 +110,7 @@
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="False"
                             IsEditable="False"
-                            IsInformationAdornerVisible="False"
+                            IsInformationAdornerVisible="True"
                             IsManipulationAdornerVisible="False"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"
