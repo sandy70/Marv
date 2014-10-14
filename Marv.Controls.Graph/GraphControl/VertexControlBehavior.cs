@@ -15,6 +15,22 @@ namespace Marv.Controls.Graph
             this.GraphControl = this.VertexControl.FindParent<GraphControl>();
 
             this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
+
+            this.VertexControl.MouseEnter -= VertexControl_MouseEnter;
+            this.VertexControl.MouseEnter += VertexControl_MouseEnter;
+
+            this.VertexControl.MouseLeave -= VertexControl_MouseLeave;
+            this.VertexControl.MouseLeave += VertexControl_MouseLeave;
+        }
+
+        void VertexControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = false;
+        }
+
+        void VertexControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = true;
         }
 
         private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
@@ -24,7 +40,7 @@ namespace Marv.Controls.Graph
 
             if (command == VertexCommands.SubGraph)
             {
-                graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup);
+                graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup, vertexControl.Vertex.Key);
             }
 
             if (command == VertexCommands.Clear)
@@ -34,7 +50,7 @@ namespace Marv.Controls.Graph
             }
             else if (command == VertexCommands.Expand)
             {
-                this.GraphControl.AutoLayout();
+                this.GraphControl.UpdateLayout();
             }
         }
     }

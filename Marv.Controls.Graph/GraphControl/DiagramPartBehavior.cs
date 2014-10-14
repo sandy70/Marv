@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
@@ -8,7 +7,6 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
-using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls.Graph
 {
@@ -16,9 +14,7 @@ namespace Marv.Controls.Graph
     {
         private RadDiagram diagram;
         private GraphControl graphControl;
-        private Edge newEdge;
         private Vertex newVertex;
-        private Edge oldEdge;
         private Vertex oldVertex;
 
         protected override void OnAttached()
@@ -31,8 +27,6 @@ namespace Marv.Controls.Graph
             this.diagram.CommandExecuted += this.AssociatedObject_CommandExecuted;
             this.diagram.ConnectionManipulationCompleted += this.AssociatedObject_ConnectionManipulationCompleted;
             this.diagram.ConnectionManipulationStarted += this.AssociatedObject_ConnectionManipulationStarted;
-            this.diagram.GraphSourceChanged += this.AssociatedObject_GraphSourceChanged;
-            this.diagram.SelectionChanged += diagram_SelectionChanged;
             this.diagram.ShapeClicked += this.AssociatedObject_ShapeClicked;
         }
 
@@ -57,15 +51,6 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_ConnectionManipulationCompleted(object sender, ManipulationRoutedEventArgs e)
         {
-            if (e.Connection == null)
-            {
-                this.newEdge = null;
-            }
-            else
-            {
-                this.newEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-            }
-
             if (e.Shape == null)
             {
                 this.newVertex = null;
@@ -78,15 +63,6 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
         {
-            if (e.Connection != null)
-            {
-                this.oldEdge = (e.Connection as RadDiagramConnection).DataContext as Edge;
-            }
-            else
-            {
-                this.oldEdge = null;
-            }
-
             if (e.Shape != null)
             {
                 this.oldVertex = (e.Shape as RadDiagramShape).DataContext as Vertex;
@@ -95,11 +71,6 @@ namespace Marv.Controls.Graph
             {
                 this.oldVertex = null;
             }
-        }
-
-        private void AssociatedObject_GraphSourceChanged(object sender, EventArgs e)
-        {
-            this.diagram.AutoFitAsync(new Thickness(10));
         }
 
         private void AssociatedObject_ShapeClicked(object sender, ShapeRoutedEventArgs e)
@@ -149,11 +120,6 @@ namespace Marv.Controls.Graph
             };
 
             timer.Start();
-        }
-
-        private void diagram_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.graphControl.AutoLayout();
         }
     }
 }

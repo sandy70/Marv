@@ -130,7 +130,7 @@ namespace Marv.Controls.Graph
         {
             var control = d as GraphControl;
 
-            control.AutoLayout();
+            control.UpdateLayout();
 
             if (control.IsAutoLayoutEnabled)
             {
@@ -159,29 +159,6 @@ namespace Marv.Controls.Graph
             {
                 control.Graph.SelectedVertex = control.Graph.Vertices[0];
             }
-        }
-
-        public void AutoFit()
-        {
-            this.DiagramPart.AutoFitAsync(new Thickness(10));
-        }
-
-        public void AutoLayout()
-        {
-            if (!this.IsAutoLayoutEnabled)
-            {
-                return;
-            }
-
-            var sugiyamaSettings = new SugiyamaSettings
-            {
-                AnimateTransitions = true,
-                ShapeMargin = new Size(40, 40),
-                Orientation = Orientation.Vertical,
-                VerticalDistance = 100
-            };
-
-            this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
         }
 
         public void DisableConnectorEditing()
@@ -262,6 +239,34 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void UpdateLayout(bool isAutoFitDone = false)
+        {
+            if (this.IsAutoLayoutEnabled)
+            {
+                if (isAutoFitDone)
+                {
+                    this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
+                    this.DiagramPart.DiagramLayoutComplete += this.DiagramPart_DiagramLayoutComplete;
+                }
+
+                var sugiyamaSettings = new SugiyamaSettings
+                {
+                    AnimateTransitions = true,
+                    Orientation = Orientation.Vertical,
+                    VerticalDistance = 100
+                };
+
+                this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
+            }
+            else
+            {
+                if (isAutoFitDone)
+                {
+                    this.DiagramPart.AutoFitAsync(new Thickness(10));
+                }
+            }
+        }
+
         internal void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
             if (this.EvidenceEntered != null)
@@ -272,7 +277,7 @@ namespace Marv.Controls.Graph
 
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.AutoFit();
+            this.DiagramPart.AutoFitAsync(new Thickness(10));
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -286,14 +291,26 @@ namespace Marv.Controls.Graph
             this.RaiseEvidenceEntered();
         }
 
+        private void DiagramPart_DiagramLayoutComplete(object sender, RoutedEventArgs e)
+        {
+            this.DiagramPart.DiagramLayoutComplete -= DiagramPart_DiagramLayoutComplete;
+            this.DiagramPart.AutoFitAsync(new Thickness(10));
+        }
+
+        private void DiagramPart_GraphSourceChanged(object sender, EventArgs e)
+        {
+            this.UpdateLayout(true);
+        }
+
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.DisplayGraph.IsExpanded = !this.Graph.DisplayGraph.IsMostlyExpanded;
-            this.AutoLayout();
+            this.UpdateLayout();
         }
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
+            // All the buttons
             this.AutoFitButton.Click -= AutoFitButton_Click;
             this.AutoFitButton.Click += AutoFitButton_Click;
 
@@ -314,11 +331,10 @@ namespace Marv.Controls.Graph
 
             this.SaveButton.Click -= this.SaveButton_Click;
             this.SaveButton.Click += this.SaveButton_Click;
-        }
 
-        private void LayoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.AutoLayout();
+            // Other controls
+            this.DiagramPart.GraphSourceChanged -= DiagramPart_GraphSourceChanged;
+            this.DiagramPart.GraphSourceChanged += DiagramPart_GraphSourceChanged;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

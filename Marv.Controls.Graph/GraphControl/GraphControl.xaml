@@ -58,10 +58,8 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/AutoFit.png" />
                 </telerik:RadButton>
 
-                <telerik:RadToggleButton Name="LayoutButton"
-                                         IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
-                                         ToolTip="Layout Automatically"
-                                         Click="LayoutButton_Click">
+                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
+                                         ToolTip="Layout Automatically">
                     <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
                 </telerik:RadToggleButton>
 
@@ -162,7 +160,6 @@
                                                      IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
                                                      IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
                                                      IsStatesVisible="{Binding IsExpanded}"
-                                                     IsToolbarVisible="{Binding IsSelected}"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
