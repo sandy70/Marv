@@ -111,10 +111,6 @@ namespace Marv.Controls
             // if it's not a ContentElement/FrameworkElement, rely on VisualTreeHelper
             return VisualTreeHelper.GetParent(child);
         }
-
-
-
-
     }
 }
 
