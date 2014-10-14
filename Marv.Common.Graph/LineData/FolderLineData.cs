@@ -131,7 +131,6 @@ namespace Marv.Common.Graph
 
         public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
         {
-            Console.WriteLine("Reading section: " + sectionId);
             return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
         }
 
