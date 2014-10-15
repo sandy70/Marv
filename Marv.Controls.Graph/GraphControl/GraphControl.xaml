@@ -155,7 +155,6 @@
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsEvidenceVisible="True"
                                                      IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
-                                                     IsStatesVisible="{Binding IsExpanded}"
                                                      IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
                                                      IsToolbarVisible="False"
                                                      IsValueVisible="{Binding IsLocked}"

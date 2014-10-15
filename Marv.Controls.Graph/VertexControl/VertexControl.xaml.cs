@@ -18,9 +18,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsStatesVisibleProperty =
-            DependencyProperty.Register("IsStatesVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
-
         public static readonly DependencyProperty IsSubGraphCommandVisibleProperty =
             DependencyProperty.Register("IsSubGraphCommandVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false, ChangedIsSubGraphCommandVisible));
 
@@ -72,12 +69,6 @@ namespace Marv.Controls.Graph
         {
             get { return (bool) GetValue(IsInputVisibleProperty); }
             set { SetValue(IsInputVisibleProperty, value); }
-        }
-
-        public bool IsStatesVisible
-        {
-            get { return (bool) GetValue(IsStatesVisibleProperty); }
-            set { SetValue(IsStatesVisibleProperty, value); }
         }
 
         public bool IsSubGraphCommandVisible
