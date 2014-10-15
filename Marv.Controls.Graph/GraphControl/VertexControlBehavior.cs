@@ -31,6 +31,8 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_CommandExecuted(object sender, Command<VertexControl> command)
         {
+            this.GraphControl.Graph.SelectedVertex = this.VertexControl.Vertex;
+
             if (command == VertexControlCommands.Expand)
             {
                 this.GraphControl.UpdateLayout();

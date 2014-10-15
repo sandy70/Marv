@@ -17,6 +17,7 @@ namespace Marv.Controls.Graph
             this.AssociatedObject.Click += this.AssociatedObject_Click;
         }
 
+
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
             var command = this.AssociatedObject.DataContext as Command<VertexControl>;

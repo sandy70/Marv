@@ -110,7 +110,7 @@
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="False"
                             IsEditable="False"
-                            IsInformationAdornerVisible="True"
+                            IsInformationAdornerVisible="False"
                             IsManipulationAdornerVisible="False"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"

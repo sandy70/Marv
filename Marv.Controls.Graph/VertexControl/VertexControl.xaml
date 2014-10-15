@@ -48,9 +48,8 @@
             <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="One" Width="*" />
-                        <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-                        <ColumnDefinition SharedSizeGroup="Three" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="One" />
+                        <ColumnDefinition SharedSizeGroup="Two" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -87,20 +86,6 @@
                             <local:SliderProgressBarBehavior />
                         </i:Interaction.Behaviors>
                     </marv:SliderProgressBar>
-
-                    <telerik:RadMaskedNumericInput Grid.Column="2"
-                                                   HorizontalContentAlignment="Right"
-                                                   Margin="1"
-                                                   Mask="#3.2"
-                                                   Placeholder=" "
-                                                   TextMode="PlainText"
-                                                   UpdateValueEvent="PropertyChanged"
-                                                   Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
-                        <i:Interaction.Behaviors>
-                            <local:MaskedNumericInputBehavior />
-                        </i:Interaction.Behaviors>
-                    </telerik:RadMaskedNumericInput>
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -110,9 +95,8 @@
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Three" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
@@ -137,29 +121,11 @@
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Three" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Column="0"
-                   FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                   FontWeight="Bold"
-                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                   Text="Belief"
-                   TextAlignment="Right"
-                   VerticalAlignment="Center" />
-
-        <TextBox Name="EvidenceStringTextBox"
-                 Grid.Column="1"
-                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                 Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"
-                 MaxWidth="200" />
-
-        <Grid Grid.Column="2">
+        
+        <Grid Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -183,13 +149,22 @@
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                Margin="{Binding Source={StaticResource MarginSmallest}}" />
         </Grid>
+
+        <TextBox Name="EvidenceStringTextBox"
+                 Grid.Column="1"
+                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
+                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                 Margin="{Binding Source={StaticResource MarginSmallest}}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
+                 VerticalAlignment="Center"
+                 MaxWidth="200" />
     </Grid>
 
     <!-- Units -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"

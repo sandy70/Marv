@@ -6,14 +6,11 @@ namespace Marv.Controls
 {
     public class ProgressBarBehavior : Behavior<RadProgressBar>
     {
-        public SliderProgressBar SliderProgressBar;
         private bool isDoubleClicked;
 
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            this.SliderProgressBar = this.AssociatedObject.FindParent<SliderProgressBar>();
 
             this.AssociatedObject.MouseDoubleClick -= AssociatedObject_MouseDoubleClick;
             this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
