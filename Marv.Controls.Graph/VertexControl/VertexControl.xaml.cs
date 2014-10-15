@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Marv.Controls.Graph
 {
-    public partial class VertexControl
+    public partial class VertexControl : INotifyPropertyChanged
     {
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
@@ -30,6 +32,8 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (VertexControl), new PropertyMetadata(null));
 
+        private bool isExpanded;
+
         public bool IsEditable
         {
             get { return (bool) GetValue(IsEditableProperty); }
@@ -42,6 +46,22 @@ namespace Marv.Controls.Graph
             get { return (bool) GetValue(IsEvidenceVisibleProperty); }
 
             set { SetValue(IsEvidenceVisibleProperty, value); }
+        }
+
+        public bool IsExpanded
+        {
+            get { return this.isExpanded; }
+
+            set
+            {
+                if (value.Equals(this.isExpanded))
+                {
+                    return;
+                }
+
+                this.isExpanded = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsInputVisible
@@ -116,6 +136,24 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void ShowCollapsed()
+        {
+            this.IsExpanded = false;
+        }
+
+        public void ShowExpanded()
+        {
+            this.IsExpanded = true;
+        }
+
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Vertex.Evidence = null;
@@ -151,5 +189,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<Command<Vertex>> CommandExecuted;
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
