@@ -210,11 +210,11 @@
     <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
                           Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
-                          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
+                          Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                           Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 
     <!-- Toolbar -->
-    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
+    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
                   Visibility="Collapsed">
         <ItemsControl.ItemsPanel>

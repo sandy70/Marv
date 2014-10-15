@@ -106,7 +106,7 @@
                             Grid.Row="1"
                             ActiveTool="PanTool"
                             AllowDelete="True"
-                            GraphSource="{Binding ElementName=Root, Path=Graph.DisplayGraph}"
+                            GraphSource="{Binding ElementName=Root, Path=DisplayGraph}"
                             IsBackgroundSurfaceVisible="False"
                             IsConnectorsManipulationEnabled="False"
                             IsEditable="False"

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -32,7 +33,28 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (VertexControl), new PropertyMetadata(null));
 
+        private ObservableCollection<Command<VertexControl>> commands = new ObservableCollection<Command<VertexControl>>
+        {
+            VertexControlCommands.Expand
+        };
+
         private bool isExpanded;
+
+        public ObservableCollection<Command<VertexControl>> Commands
+        {
+            get { return this.commands; }
+
+            set
+            {
+                if (value.Equals(this.commands))
+                {
+                    return;
+                }
+
+                this.commands = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public bool IsEditable
         {

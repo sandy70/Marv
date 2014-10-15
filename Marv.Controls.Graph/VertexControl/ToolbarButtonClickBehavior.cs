@@ -19,23 +19,22 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            var command = this.AssociatedObject.DataContext as Command<Vertex>;
-            var vertex = this.VertexControl.Vertex;
+            var command = this.AssociatedObject.DataContext as Command<VertexControl>;
 
-            command.Excecute(vertex);
+            command.Excecute(this.VertexControl);
 
-            this.VertexControl.RaiseCommandExecuted(command);
+            //this.VertexControl.RaiseCommandExecuted(command);
 
-            this.VertexControl.RaiseCommandExecuted(command);
+            //this.VertexControl.RaiseCommandExecuted(command);
 
-            if (command == VertexCommands.Lock && vertex.IsLocked)
-            {
-                this.VertexControl.RaiseEvidenceEntered();
-            }
-            else if (command == VertexCommands.Clear)
-            {
-                this.VertexControl.RaiseEvidenceEntered();
-            }
+            //if (command == VertexCommands.Lock && vertex.IsLocked)
+            //{
+            //    this.VertexControl.RaiseEvidenceEntered();
+            //}
+            //else if (command == VertexCommands.Clear)
+            //{
+            //    this.VertexControl.RaiseEvidenceEntered();
+            //}
         }
     }
 }

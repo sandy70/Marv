@@ -34,11 +34,6 @@ namespace Marv.Controls.Graph
             var vertexControl = this.AssociatedObject;
             var graphControl = vertexControl.FindParent<GraphControl>();
 
-            if (command == VertexCommands.SubGraph)
-            {
-                graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup, vertexControl.Vertex.Key);
-            }
-
             if (command == VertexCommands.Clear)
             {
                 graphControl.Graph.ClearEvidence();

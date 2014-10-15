@@ -1,6 +1,6 @@
 ﻿namespace Marv
 {
-    public class Command<T> : NotifyPropertyChanged
+    public abstract class Command<T> : NotifyPropertyChanged
     {
         private string imageSource;
 
@@ -20,8 +20,6 @@
             }
         }
 
-        public virtual void Excecute(T item)
-        {
-        }
+        public abstract void Excecute(T item);
     }
 }

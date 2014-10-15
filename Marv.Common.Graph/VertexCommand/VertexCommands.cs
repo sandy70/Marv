@@ -12,10 +12,10 @@
             ImageSource = "/Marv.Common;component/Resources/Icons/Lock.png"
         };
 
-        public static readonly Command<Vertex> SubGraph = new Command<Vertex>
-        {
-            ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
-        };
+        //public static readonly Command<Vertex> SubGraph = new Command<Vertex>
+        //{
+        //    ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
+        //};
 
         public static readonly Command<Vertex> Clear = new VertexClearCommand
         {

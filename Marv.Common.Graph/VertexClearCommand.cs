@@ -4,7 +4,7 @@
     {
         public override void Excecute(Vertex vertex)
         {
-            base.Excecute(vertex);
+            //base.Excecute(vertex);
             vertex.Evidence = null;
             vertex.EvidenceString = null;
         }

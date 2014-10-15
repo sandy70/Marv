@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -8,7 +10,7 @@ using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls.Graph
 {
-    public partial class GraphControl
+    public partial class GraphControl : INotifyPropertyChanged
     {
         public static readonly DependencyProperty AutoSaveDurationProperty =
             DependencyProperty.Register("AutoSaveDuration", typeof (int), typeof (GraphControl), new PropertyMetadata(10000));
@@ -46,6 +48,8 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
+        private Marv.Graph displayGraph;
+
         public int AutoSaveDuration
         {
             get { return (int) this.GetValue(AutoSaveDurationProperty); }
@@ -58,6 +62,22 @@ namespace Marv.Controls.Graph
             get { return (Color) this.GetValue(ConnectionColorProperty); }
 
             set { this.SetValue(ConnectionColorProperty, value); }
+        }
+
+        public Marv.Graph DisplayGraph
+        {
+            get { return this.displayGraph; }
+
+            set
+            {
+                if (value.Equals(this.displayGraph))
+                {
+                    return;
+                }
+
+                this.displayGraph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Marv.Graph Graph
@@ -173,6 +193,8 @@ namespace Marv.Controls.Graph
             {
                 control.Graph.SelectedVertex = control.Graph.Vertices[0];
             }
+
+            control.DisplayGraph = control.Graph.GetSubGraph(control.Graph.DefaultGroup);
         }
 
         public void DisableConnectorEditing()
@@ -261,6 +283,16 @@ namespace Marv.Controls.Graph
             }
         }
 
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void UpdateDisplayGraph(string group) {}
+
         public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
         {
             if (this.IsAutoLayoutEnabled)
@@ -303,7 +335,7 @@ namespace Marv.Controls.Graph
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
+            this.UpdateDisplayGraph(this.Graph.DefaultGroup);
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -325,7 +357,7 @@ namespace Marv.Controls.Graph
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.DisplayGraph.IsExpanded = !this.Graph.DisplayGraph.IsMostlyExpanded;
+            this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
             this.UpdateLayout();
         }
 
@@ -386,5 +418,7 @@ namespace Marv.Controls.Graph
         public event EventHandler<VertexEvidence> EvidenceEntered;
 
         public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

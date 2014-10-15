@@ -12,7 +12,6 @@ namespace Marv
     public partial class Graph : NotifyPropertyChanged
     {
         private string defaultGroup;
-        private Graph displayGraph;
         private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
         private Guid guid;
         private bool isDefaultGroupVisible;
@@ -43,20 +42,6 @@ namespace Marv
                 if (value != this.defaultGroup)
                 {
                     this.defaultGroup = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public Graph DisplayGraph
-        {
-            get { return this.displayGraph; }
-
-            private set
-            {
-                if (value != this.displayGraph)
-                {
-                    this.displayGraph = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -234,8 +219,6 @@ namespace Marv
                 }
             }
 
-            graph.UpdateDisplayGraph(graph.DefaultGroup);
-
             return graph;
         }
 
@@ -316,20 +299,20 @@ namespace Marv
                         vertex.PositionForGroup[group] = vertex.Position;
                     }
 
-                    if (group == this.DefaultGroup)
-                    {
-                        if (!vertex.Commands.Contains(VertexCommands.SubGraph))
-                        {
-                            vertex.Commands.Push(VertexCommands.SubGraph);
-                        }
-                    }
-                    else
-                    {
-                        if (vertex.Commands.Contains(VertexCommands.SubGraph))
-                        {
-                            vertex.Commands.Remove(VertexCommands.SubGraph);
-                        }
-                    }
+                    //if (group == this.DefaultGroup)
+                    //{
+                    //    if (!vertex.Commands.Contains(VertexCommands.SubGraph))
+                    //    {
+                    //        vertex.Commands.Push(VertexCommands.SubGraph);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (vertex.Commands.Contains(VertexCommands.SubGraph))
+                    //    {
+                    //        vertex.Commands.Remove(VertexCommands.SubGraph);
+                    //    }
+                    //}
 
                     vertex.SelectedGroup = group;
                     vertex.DisplayPosition = vertex.PositionForGroup[group];
@@ -421,12 +404,6 @@ namespace Marv
                 vertex.Evidence = vertexEvidences[vertex.Key].Value;
                 vertex.EvidenceString = vertexEvidences[vertex.Key].ToString();
             }
-        }
-
-        public void UpdateDisplayGraph(string @group, string vertexKey = null)
-        {
-            this.DisplayGraph = this.GetSubGraph(group, vertexKey);
-            this.IsDefaultGroupVisible = group == this.DefaultGroup;
         }
 
         public void Write()
