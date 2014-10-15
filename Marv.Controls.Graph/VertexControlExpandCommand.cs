@@ -4,9 +4,8 @@
     {
         public override void Excecute(VertexControl vertexControl)
         {
-            vertexControl.IsExpanded = !vertexControl.IsExpanded;
+            vertexControl.Vertex.IsExpanded = !vertexControl.Vertex.IsExpanded;
             vertexControl.IsStatesVisible = !vertexControl.IsStatesVisible;
-            vertexControl.IsMostProbableStateVisible = !vertexControl.IsMostProbableStateVisible;
         }
     }
 }

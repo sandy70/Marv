@@ -18,9 +18,6 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsMostProbableStateVisibleProperty =
-            DependencyProperty.Register("IsMostProbableStateVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
-
         public static readonly DependencyProperty IsStatesVisibleProperty =
             DependencyProperty.Register("IsStatesVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
 
@@ -40,8 +37,6 @@ namespace Marv.Controls.Graph
         {
             VertexControlCommands.Expand
         };
-
-        private bool isExpanded;
 
         public ObservableCollection<Command<VertexControl>> Commands
         {
@@ -73,33 +68,10 @@ namespace Marv.Controls.Graph
             set { SetValue(IsEvidenceVisibleProperty, value); }
         }
 
-        public bool IsExpanded
-        {
-            get { return this.isExpanded; }
-
-            set
-            {
-                if (value.Equals(this.isExpanded))
-                {
-                    return;
-                }
-
-                this.isExpanded = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public bool IsInputVisible
         {
             get { return (bool) GetValue(IsInputVisibleProperty); }
             set { SetValue(IsInputVisibleProperty, value); }
-        }
-
-        public bool IsMostProbableStateVisible
-        {
-            get { return (bool) GetValue(IsMostProbableStateVisibleProperty); }
-
-            set { SetValue(IsMostProbableStateVisibleProperty, value); }
         }
 
         public bool IsStatesVisible
@@ -187,16 +159,6 @@ namespace Marv.Controls.Graph
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        public void ShowCollapsed()
-        {
-            this.IsExpanded = false;
-        }
-
-        public void ShowExpanded()
-        {
-            this.IsExpanded = true;
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)

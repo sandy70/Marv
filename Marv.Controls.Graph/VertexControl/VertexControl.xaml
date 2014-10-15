@@ -43,7 +43,7 @@
     <ItemsControl Name="StatesControl"
                   ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource BooleanToVisibility}}">
+                  Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource BooleanToVisibility}}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <Grid>
@@ -108,7 +108,7 @@
 
     <!-- Most Probable State -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=IsMostProbableStateVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" Width="*" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
@@ -210,7 +210,7 @@
     <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
                           Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
-                          Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
+                          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                           Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 
     <!-- Toolbar -->
