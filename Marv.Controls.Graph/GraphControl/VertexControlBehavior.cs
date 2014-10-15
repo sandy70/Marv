@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
@@ -16,8 +15,8 @@ namespace Marv.Controls.Graph
             this.VertexControl = this.AssociatedObject;
             this.GraphControl = this.VertexControl.FindParent<GraphControl>();
 
-            this.VertexControl.CommandExecuted -= AssociatedObject_CommandExecuted;
-            this.VertexControl.CommandExecuted += AssociatedObject_CommandExecuted;
+            this.VertexControl.CommandExecuted -= VertexControl_CommandExecuted;
+            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
 
             this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
@@ -29,7 +28,7 @@ namespace Marv.Controls.Graph
             this.VertexControl.MouseLeave += VertexControl_MouseLeave;
         }
 
-        private void AssociatedObject_CommandExecuted(object sender, Command<VertexControl> command)
+        private void VertexControl_CommandExecuted(object sender, Command<VertexControl> command)
         {
             this.GraphControl.Graph.SelectedVertex = this.VertexControl.Vertex;
 

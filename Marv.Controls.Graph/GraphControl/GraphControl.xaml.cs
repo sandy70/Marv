@@ -351,7 +351,7 @@ namespace Marv.Controls.Graph
 
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DiagramPart.AutoFitAsync(new Thickness(10));
+            this.DiagramPart.AutoFit(new Thickness(10));
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

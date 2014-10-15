@@ -110,7 +110,7 @@ namespace Marv.Controls.Graph
             
             if (control.IsSubGraphCommandVisible)
             {
-                control.Commands.AddUnique(VertexControlCommands.SubGraph);
+                control.Commands.PushUnique(VertexControlCommands.SubGraph);
             }
             else
             {
