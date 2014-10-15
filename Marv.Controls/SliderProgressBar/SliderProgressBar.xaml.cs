@@ -15,6 +15,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty SliderForegroundProperty =
             DependencyProperty.Register("SliderForeground", typeof (Brush), typeof (SliderProgressBar), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
 
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register("Value", typeof (double), typeof (SliderProgressBar), new PropertyMetadata(32.0));
+
         public bool IsEditable
         {
             get { return (bool) GetValue(IsEditableProperty); }
@@ -31,6 +34,12 @@ namespace Marv.Controls
         {
             get { return (Brush) GetValue(SliderForegroundProperty); }
             set { SetValue(SliderForegroundProperty, value); }
+        }
+
+        public double Value
+        {
+            get { return (double) GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
         }
 
         public SliderProgressBar()

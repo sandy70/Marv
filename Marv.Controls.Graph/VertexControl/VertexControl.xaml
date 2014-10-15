@@ -48,9 +48,9 @@
             <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="One" />
-                        <ColumnDefinition SharedSizeGroup="Two" />
-                        <ColumnDefinition SharedSizeGroup="Three" />
+                        <ColumnDefinition SharedSizeGroup="One" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="Three" Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -112,6 +112,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" Width="*" />
             <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+            <ColumnDefinition SharedSizeGroup="Three" Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
