@@ -49,6 +49,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
         private Marv.Graph displayGraph;
+        private bool isDefaultGroupVisible;
 
         public int AutoSaveDuration
         {
@@ -111,6 +112,22 @@ namespace Marv.Controls.Graph
             get { return (bool) this.GetValue(IsAutoSaveEnabledProperty); }
 
             set { this.SetValue(IsAutoSaveEnabledProperty, value); }
+        }
+
+        public bool IsDefaultGroupVisible
+        {
+            get { return this.isDefaultGroupVisible; }
+
+            set
+            {
+                if (value.Equals(this.isDefaultGroupVisible))
+                {
+                    return;
+                }
+
+                this.isDefaultGroupVisible = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsInputVisible
@@ -194,7 +211,7 @@ namespace Marv.Controls.Graph
                 control.Graph.SelectedVertex = control.Graph.Vertices[0];
             }
 
-            control.DisplayGraph = control.Graph.GetSubGraph(control.Graph.DefaultGroup);
+            control.UpdateDisplayGraph(control.Graph.DefaultGroup);
         }
 
         public void DisableConnectorEditing()
@@ -291,7 +308,11 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void UpdateDisplayGraph(string group) {}
+        public void UpdateDisplayGraph(string group)
+        {
+            this.DisplayGraph = this.Graph.GetSubGraph(group);
+            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
+        }
 
         public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
         {

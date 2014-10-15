@@ -142,7 +142,6 @@
 
             <telerik:RadDiagram.ShapeStyle>
                 <Style TargetType="telerik:RadDiagramShapeBase">
-                    <Setter Property="Opacity" Value="{Binding Opacity}" />
                     <Setter Property="Padding" Value="0" />
                     <Setter Property="Position" Value="{Binding DisplayPosition, Mode=TwoWay}" />
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsDraggingEnabled}" />
@@ -155,11 +154,12 @@
                                 <local:VertexControl Background="#DDDDDD"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsEvidenceVisible="True"
-                                                     IsValueVisible="{Binding IsLocked}"
                                                      IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
                                                      IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
                                                      IsStatesVisible="{Binding IsExpanded}"
+                                                     IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
                                                      IsToolbarVisible="False"
+                                                     IsValueVisible="{Binding IsLocked}"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />

@@ -24,6 +24,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsStatesVisibleProperty =
             DependencyProperty.Register("IsStatesVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsSubGraphCommandVisibleProperty =
+            DependencyProperty.Register("IsSubGraphCommandVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false, ChangedIsSubGraphCommandVisible));
+
         public static readonly DependencyProperty IsToolbarVisibleProperty =
             DependencyProperty.Register("IsToolbarVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
@@ -105,6 +108,12 @@ namespace Marv.Controls.Graph
             set { SetValue(IsStatesVisibleProperty, value); }
         }
 
+        public bool IsSubGraphCommandVisible
+        {
+            get { return (bool) GetValue(IsSubGraphCommandVisibleProperty); }
+            set { SetValue(IsSubGraphCommandVisibleProperty, value); }
+        }
+
         public bool IsToolbarVisible
         {
             get { return (bool) GetValue(IsToolbarVisibleProperty); }
@@ -130,6 +139,20 @@ namespace Marv.Controls.Graph
 
             this.Loaded -= VertexControl_Loaded;
             this.Loaded += VertexControl_Loaded;
+        }
+
+        private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as VertexControl;
+
+            if (control.IsSubGraphCommandVisible)
+            {
+                control.Commands.AddUnique(VertexControlCommands.SubGraph);
+            }
+            else
+            {
+                control.Commands.Remove(VertexControlCommands.SubGraph);
+            }
         }
 
         public void RaiseCommandExecuted(Command<Vertex> command)
@@ -206,6 +229,15 @@ namespace Marv.Controls.Graph
 
             this.UniformEvidenceButton.Click -= UniformEvidenceButton_Click;
             this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
+
+            if (this.IsSubGraphCommandVisible)
+            {
+                this.Commands.AddUnique(VertexControlCommands.SubGraph);
+            }
+            else
+            {
+                this.Commands.Remove(VertexControlCommands.SubGraph);
+            }
         }
 
         public event EventHandler<Command<Vertex>> CommandExecuted;
