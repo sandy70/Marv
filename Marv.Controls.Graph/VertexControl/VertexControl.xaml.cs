@@ -118,7 +118,7 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseCommandExecuted(Command<Vertex> command)
+        public void RaiseCommandExecuted(Command<VertexControl> command)
         {
             if (this.CommandExecuted != null)
             {
@@ -193,7 +193,7 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public event EventHandler<Command<Vertex>> CommandExecuted;
+        public event EventHandler<Command<VertexControl>> CommandExecuted;
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
 

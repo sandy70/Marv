@@ -29,19 +29,11 @@ namespace Marv.Controls.Graph
             this.VertexControl.MouseLeave += VertexControl_MouseLeave;
         }
 
-        private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
+        private void AssociatedObject_CommandExecuted(object sender, Command<VertexControl> command)
         {
-            var vertexControl = this.AssociatedObject;
-            var graphControl = vertexControl.FindParent<GraphControl>();
-
-            if (command == VertexCommands.Clear)
+            if (command == VertexControlCommands.Expand)
             {
-                graphControl.Graph.ClearEvidence();
-                graphControl.Graph.Run();
-            }
-            else if (command == VertexCommands.Expand)
-            {
-                this.GraphControl.UpdateLayout(isAsync: false);
+                this.GraphControl.UpdateLayout();
             }
         }
 

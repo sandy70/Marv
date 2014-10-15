@@ -19,7 +19,11 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            (this.AssociatedObject.DataContext as Command<VertexControl>).Excecute(this.VertexControl);
+            var command = this.AssociatedObject.DataContext as Command<VertexControl>;
+
+            command.Excecute(this.VertexControl);
+
+            this.VertexControl.RaiseCommandExecuted(command);
         }
     }
 }

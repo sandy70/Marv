@@ -158,7 +158,8 @@
                                                      IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
                                                      IsToolbarVisible="False"
                                                      IsValueVisible="{Binding IsLocked}"
-                                                     Vertex="{Binding}">
+                                                     Vertex="{Binding}"
+                                                     Width="256">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />
                                     </local:VertexControl.Effect>

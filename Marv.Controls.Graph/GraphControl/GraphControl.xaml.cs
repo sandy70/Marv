@@ -328,7 +328,7 @@ namespace Marv.Controls.Graph
                 {
                     AnimateTransitions = true,
                     Orientation = Orientation.Vertical,
-                    VerticalDistance = 100
+                    VerticalDistance = 128
                 };
 
                 if (isAsync)
