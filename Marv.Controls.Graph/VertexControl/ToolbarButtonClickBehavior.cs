@@ -26,6 +26,8 @@ namespace Marv.Controls.Graph
 
             this.VertexControl.RaiseCommandExecuted(command);
 
+            this.VertexControl.RaiseCommandExecuted(command);
+
             if (command == VertexCommands.Lock && vertex.IsLocked)
             {
                 this.VertexControl.RaiseEvidenceEntered();

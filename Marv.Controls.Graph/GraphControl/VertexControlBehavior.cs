@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
@@ -45,7 +46,7 @@ namespace Marv.Controls.Graph
             }
             else if (command == VertexCommands.Expand)
             {
-                this.GraphControl.UpdateLayout();
+                this.GraphControl.UpdateLayout(isAsync: false);
             }
         }
 

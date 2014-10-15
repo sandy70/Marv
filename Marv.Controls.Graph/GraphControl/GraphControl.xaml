@@ -159,6 +159,7 @@
                                                      IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
                                                      IsMostProbableStateVisible="{Binding IsExpanded, Converter={StaticResource BooleanNot}}"
                                                      IsStatesVisible="{Binding IsExpanded}"
+                                                     IsToolbarVisible="False"
                                                      Vertex="{Binding}">
                                     <local:VertexControl.Effect>
                                         <DropShadowEffect Opacity="0.5" ShadowDepth="3" Color="#686868" />

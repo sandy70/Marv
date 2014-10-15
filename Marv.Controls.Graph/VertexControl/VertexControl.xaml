@@ -22,29 +22,6 @@
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="Black" />
             </Style>
-
-            <Style x:Key="ScaleInStyle"
-                   TargetType="{x:Type FrameworkElement}">
-                <Style.Triggers>
-                    <Trigger Property="IsVisible" Value="True">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
-                                                     From="0"
-                                                     Duration="0:0:.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-                </Style.Triggers>
-
-                <Setter Property="LayoutTransform">
-                    <Setter.Value>
-                        <ScaleTransform x:Name="transform" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </ResourceDictionary>
     </StackPanel.Resources>
 
@@ -66,7 +43,7 @@
     <ItemsControl Name="StatesControl"
                   ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                  Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource BooleanToVisibility}}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <Grid>
@@ -239,8 +216,7 @@
     <!-- Toolbar -->
     <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Style="{StaticResource ScaleInStyle}"
-                  Visibility="{Binding ElementName=Root, Path=IsToolbarVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                  Visibility="Collapsed">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <StackPanel HorizontalAlignment="Center"
@@ -262,5 +238,50 @@
                 </telerik:RadButton>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
+        
+        <ItemsControl.Style>
+            <Style TargetType="ItemsControl">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ElementName=Root, Path=IsToolbarVisible}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard >
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:0"
+                                                                Value="{x:Static Visibility.Visible}" />
+                                    </ObjectAnimationUsingKeyFrames>
+
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     From="0"
+                                                     Duration="0:0:.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     To="0"
+                                                     Duration="0:0:.2" />
+
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:.2"
+                                                                Value="{x:Static Visibility.Collapsed}" />
+                                    </ObjectAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <ScaleTransform x:Name="transform" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ItemsControl.Style>
     </ItemsControl>
 </StackPanel>

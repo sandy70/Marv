@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Marv
 {
-    public class DictEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>>
+    public sealed class DictEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly IEnumerator<Kvp<TKey, TValue>> enumerator;
 

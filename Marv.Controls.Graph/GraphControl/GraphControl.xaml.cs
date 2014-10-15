@@ -261,7 +261,7 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void UpdateLayout(bool isAutoFitDone = false)
+        public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
         {
             if (this.IsAutoLayoutEnabled)
             {
@@ -278,7 +278,14 @@ namespace Marv.Controls.Graph
                     VerticalDistance = 100
                 };
 
-                this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
+                if (isAsync)
+                {
+                    this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
+                }
+                else
+                {
+                    this.DiagramPart.Layout(LayoutType.Sugiyama, sugiyamaSettings);
+                }
             }
             else
             {
