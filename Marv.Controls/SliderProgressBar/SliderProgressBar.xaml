@@ -10,8 +10,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <telerik:RadProgressBar Name="ProgressBar"
-                                Foreground="{Binding SliderForeground, ElementName=Root}"
+        <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
                                 Minimum="0" Maximum="100"
                                 Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}">
             <i:Interaction.Behaviors>

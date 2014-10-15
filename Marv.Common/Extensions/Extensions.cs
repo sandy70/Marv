@@ -231,13 +231,6 @@ namespace Marv
             return new KeyValuePair<string, string>(key, readString);
         }
 
-        public static void Push<T>(this Collection<T> collection, T item)
-        {
-            if (!collection.Contains(item))
-            {
-                collection.Insert(0, item);
-            }
-        }
 
         public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
         {

@@ -354,6 +354,30 @@ namespace Marv
             return Enumerable.Repeat(value, 1).Concat(source);
         }
 
+        public static void Push<T>(this IList<T> collection, T item)
+        {
+            if (!collection.Contains(item))
+            {
+                collection.Insert(0, item);
+            }
+        }
+
+        public static void PushUnique<T>(this IList<T> list, T item)
+        {
+            if (!list.Contains(item))
+            {
+                list.Push(item);
+            }
+        }
+
+        public static void PushUnique<T>(this IList<T> list, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                list.PushUnique(item);
+            }
+        }
+
         public static void Remove<T>(this ICollection<T> items, Func<T, bool> predicate)
         {
             if (items == null)

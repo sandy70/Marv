@@ -107,7 +107,7 @@ namespace Marv.Controls.Graph
         private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as VertexControl;
-
+            
             if (control.IsSubGraphCommandVisible)
             {
                 control.Commands.AddUnique(VertexControlCommands.SubGraph);
@@ -182,15 +182,6 @@ namespace Marv.Controls.Graph
 
             this.UniformEvidenceButton.Click -= UniformEvidenceButton_Click;
             this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
-
-            if (this.IsSubGraphCommandVisible)
-            {
-                this.Commands.AddUnique(VertexControlCommands.SubGraph);
-            }
-            else
-            {
-                this.Commands.Remove(VertexControlCommands.SubGraph);
-            }
         }
 
         public event EventHandler<Command<VertexControl>> CommandExecuted;
