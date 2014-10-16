@@ -282,6 +282,11 @@ namespace Marv
             return value;
         }
 
+        public Vertex GetSinkVertex()
+        {
+            return this.Vertices.First(vertex => this.Edges.All(edge => edge.Source != vertex));
+        }
+
         public Graph GetSubGraph(string group, string vertexKey = null)
         {
             // Extract the header vertices
@@ -299,23 +304,19 @@ namespace Marv
                         vertex.PositionForGroup[group] = vertex.Position;
                     }
 
-                    //if (group == this.DefaultGroup)
-                    //{
-                    //    if (!vertex.Commands.Contains(VertexCommands.SubGraph))
-                    //    {
-                    //        vertex.Commands.Push(VertexCommands.SubGraph);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (vertex.Commands.Contains(VertexCommands.SubGraph))
-                    //    {
-                    //        vertex.Commands.Remove(VertexCommands.SubGraph);
-                    //    }
-                    //}
-
                     vertex.SelectedGroup = group;
                     vertex.DisplayPosition = vertex.PositionForGroup[group];
+                }
+            }
+
+            if (vertexKey != null)
+            {
+                var defaultGroupPosition = this.Vertices[vertexKey].PositionForGroup[this.DefaultGroup];
+                var positionOffset = this.Vertices[vertexKey].PositionForGroup[group] - defaultGroupPosition;
+
+                foreach (var vertex in subGraph.Vertices)
+                {
+                    vertex.DisplayPosition = vertex.PositionForGroup[group] - positionOffset;
                 }
             }
 
