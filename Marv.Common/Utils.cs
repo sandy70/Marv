@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Media;
+using System.Windows.Threading;
 using Newtonsoft.Json;
 
 namespace Marv
@@ -121,6 +121,22 @@ namespace Marv
                     return serializer.Deserialize(jsonTextWriter);
                 }
             }
+        }
+
+        public static void Schedule(TimeSpan timeSpan, Action action)
+        {
+            var timer = new DispatcherTimer
+            {
+                Interval = timeSpan
+            };
+
+            timer.Tick += (timerSender, timerEvent) =>
+            {
+                timer.Stop();
+                action();
+            };
+
+            timer.Start();
         }
 
         public static Guid ToGuid(this long n)
