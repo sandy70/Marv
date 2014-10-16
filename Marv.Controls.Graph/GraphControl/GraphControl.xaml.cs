@@ -49,6 +49,7 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
         private Marv.Graph displayGraph;
+        private string displayVertexKey;
         private bool isDefaultGroupVisible;
 
         public int AutoSaveDuration
@@ -77,6 +78,22 @@ namespace Marv.Controls.Graph
                 }
 
                 this.displayGraph = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string DisplayVertexKey
+        {
+            get { return this.displayVertexKey; }
+
+            set
+            {
+                if (value.Equals(this.displayVertexKey))
+                {
+                    return;
+                }
+
+                this.displayVertexKey = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -176,7 +193,7 @@ namespace Marv.Controls.Graph
         {
             var control = d as GraphControl;
 
-            control.UpdateLayout();
+            control.UpdateLayout(isAsync: false, isAutoFitDone: true);
 
             if (control.IsAutoLayoutEnabled)
             {
@@ -208,10 +225,10 @@ namespace Marv.Controls.Graph
 
             if (control.Graph.Vertices.Count > 0)
             {
-                control.Graph.SelectedVertex = control.Graph.Vertices[0];
+                control.Graph.SelectedVertex = control.Graph.GetSinkVertex();
             }
 
-            control.UpdateDisplayGraph(control.Graph.DefaultGroup);
+            control.UpdateDisplayGraph(control.Graph.DefaultGroup, control.Graph.SelectedVertex.Key);
         }
 
         public void DisableConnectorEditing()
@@ -308,10 +325,17 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void UpdateDisplayGraph(string group)
+        public void UpdateDisplayGraph(string group, string vertexKey = null)
         {
-            this.DisplayGraph = this.Graph.GetSubGraph(group);
+            if (vertexKey == null)
+            {
+                vertexKey = this.DisplayVertexKey;
+            }
+
+            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
             this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
+
+            this.DisplayVertexKey = vertexKey;
         }
 
         public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
@@ -328,7 +352,9 @@ namespace Marv.Controls.Graph
                 {
                     AnimateTransitions = true,
                     Orientation = Orientation.Vertical,
-                    VerticalDistance = 128
+                    VerticalDistance = 128,
+                    HorizontalDistance = 128,
+                    ComponentMargin = new Size(128, 128)
                 };
 
                 if (isAsync)
@@ -373,7 +399,7 @@ namespace Marv.Controls.Graph
 
         private void DiagramPart_GraphSourceChanged(object sender, EventArgs e)
         {
-            this.UpdateLayout(true);
+            Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
         }
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)

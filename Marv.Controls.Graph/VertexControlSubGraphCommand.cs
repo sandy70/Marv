@@ -8,7 +8,7 @@
 
             if (graphControl != null)
             {
-                graphControl.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup);
+                graphControl.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup, vertexControl.Vertex.Key);
             }
         }
     }
