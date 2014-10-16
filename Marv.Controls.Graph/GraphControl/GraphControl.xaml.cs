@@ -399,7 +399,14 @@ namespace Marv.Controls.Graph
 
         private void DiagramPart_GraphSourceChanged(object sender, EventArgs e)
         {
-            Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
+            if (this.IsAutoLayoutEnabled)
+            {
+                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(isAutoFitDone: true));
+            }
+            else
+            {
+                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
+            }
         }
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
