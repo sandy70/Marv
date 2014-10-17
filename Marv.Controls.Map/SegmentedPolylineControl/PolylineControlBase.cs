@@ -19,9 +19,6 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty IsCursorVisibleProperty =
             DependencyProperty.Register("IsCursorVisible", typeof (bool), typeof (PolylineControlBase), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty LocationsProperty =
-            DependencyProperty.Register("Locations", typeof (LocationCollection), typeof (PolylineControlBase), new PropertyMetadata(null, ChangedLocations));
-
         public static readonly DependencyProperty SelectedLocationProperty =
             DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControlBase), new PropertyMetadata(null, OnSelectedLocationChanged));
 
@@ -76,18 +73,6 @@ namespace Marv.Controls.Map
             }
         }
 
-        public LocationCollection Locations
-        {
-            get
-            {
-                return (LocationCollection) this.GetValue(LocationsProperty);
-            }
-            set
-            {
-                this.SetValue(LocationsProperty, value);
-            }
-        }
-
         public Location SelectedLocation
         {
             get
@@ -109,16 +94,6 @@ namespace Marv.Controls.Map
             set
             {
                 this.SetValue(StrokeProperty, value);
-            }
-        }
-
-        private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControlBase;
-
-            if (control != null)
-            {
-                control.OnChangedLocations();
             }
         }
 

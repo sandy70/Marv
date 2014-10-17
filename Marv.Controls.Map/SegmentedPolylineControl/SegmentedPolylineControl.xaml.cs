@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -15,6 +15,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty DoubleToBrushMapProperty =
             DependencyProperty.Register("DoubleToBrushMap", typeof (IDoubleToBrushMap), typeof (SegmentedPolylineControl), new PropertyMetadata(new DoubleToBrushMap()));
 
+        public static readonly DependencyProperty LocationsProperty =
+            DependencyProperty.Register("Locations", typeof (LocationCollection), typeof (SegmentedPolylineControl), new PropertyMetadata(null, ChangedLocations));
+
         public static readonly DependencyProperty NameLatitudeProperty =
             DependencyProperty.Register("NameLatitude", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(0.0, ChangedNameLatitude));
 
@@ -25,10 +28,10 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("NameLongitude", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(0.0, ChangedNameLongitude));
 
         public static readonly DependencyProperty PolylinePartsProperty =
-            DependencyProperty.Register("PolylineParts", typeof (IEnumerable<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("PolylineParts", typeof (ObservableCollection<LocationCollection>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SimplifiedPolylinePartsProperty =
-            DependencyProperty.Register("SimplifiedPolylineParts", typeof (IEnumerable<LocationCollectionViewModel>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SimplifiedPolylineParts", typeof (ObservableCollection<LocationCollectionViewModel>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(3.0));
@@ -37,7 +40,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("Tolerance", typeof (double), typeof (SegmentedPolylineControl), new PropertyMetadata(5.0));
 
         public static readonly DependencyProperty ValueLevelsProperty =
-            DependencyProperty.Register("ValueLevels", typeof (Sequence<double>), typeof (SegmentedPolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("ValueLevels", typeof (Sequence<double>), typeof (SegmentedPolylineControl), new PropertyMetadata(null, ChangedValueLevels));
 
         public Brush DisabledStroke
         {
@@ -49,6 +52,12 @@ namespace Marv.Controls.Map
         {
             get { return (IDoubleToBrushMap) this.GetValue(DoubleToBrushMapProperty); }
             set { this.SetValue(DoubleToBrushMapProperty, value); }
+        }
+
+        public LocationCollection Locations
+        {
+            get { return (LocationCollection) GetValue(LocationsProperty); }
+            set { SetValue(LocationsProperty, value); }
         }
 
         public double NameLatitude
@@ -69,15 +78,15 @@ namespace Marv.Controls.Map
             set { this.SetValue(NameLongitudeProperty, value); }
         }
 
-        public IEnumerable<LocationCollection> PolylineParts
+        public ObservableCollection<LocationCollection> PolylineParts
         {
-            get { return (IEnumerable<LocationCollection>) this.GetValue(PolylinePartsProperty); }
+            get { return (ObservableCollection<LocationCollection>) this.GetValue(PolylinePartsProperty); }
             set { this.SetValue(PolylinePartsProperty, value); }
         }
 
-        public IEnumerable<LocationCollectionViewModel> SimplifiedPolylineParts
+        public ObservableCollection<LocationCollectionViewModel> SimplifiedPolylineParts
         {
-            get { return (IEnumerable<LocationCollectionViewModel>) this.GetValue(SimplifiedPolylinePartsProperty); }
+            get { return (ObservableCollection<LocationCollectionViewModel>) this.GetValue(SimplifiedPolylinePartsProperty); }
 
             set { this.SetValue(SimplifiedPolylinePartsProperty, value); }
         }
@@ -111,6 +120,23 @@ namespace Marv.Controls.Map
             this.Loaded += SegmentedPolylineControl_Loaded;
         }
 
+        private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+
+            if (control.Locations != null)
+            {
+                control.CursorLocation = control.Locations.First();
+                control.SelectedLocation = control.Locations.First();
+
+                control.UpdatePolylineParts();
+                
+                control.Locations.ValueChanged += control.Locations_ValueChanged;
+            }
+
+            control.UpdateSimplifiedPolylineParts();
+        }
+
         private static void ChangedNameLatitude(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as SegmentedPolylineControl;
@@ -139,6 +165,13 @@ namespace Marv.Controls.Map
             }
         }
 
+        private static void ChangedValueLevels(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as SegmentedPolylineControl;
+            control.UpdatePolylineParts();
+            control.UpdateSimplifiedPolylineParts();
+        }
+
         public void RaiseSelectionChanged(Location location)
         {
             if (this.SelectionChanged != null)
@@ -149,14 +182,20 @@ namespace Marv.Controls.Map
 
         public void UpdatePolylineParts()
         {
+            if (this.ValueLevels == null ||
+                this.Locations == null)
+            {
+                return;
+            }
+
             var oldBinIndex = -1;
-            var polylineParts = new List<LocationCollection>();
+            var polylineParts = new ObservableCollection<LocationCollection>();
             LocationCollection locationCollection = null;
 
             foreach (var location in this.Locations)
             {
                 var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
-                
+
                 if (newBinIndex != oldBinIndex)
                 {
                     if (locationCollection == null)
@@ -181,41 +220,28 @@ namespace Marv.Controls.Map
                         locationCollection.Add(location);
                     }
                 }
-                
+
                 oldBinIndex = newBinIndex;
             }
-            
+
             this.PolylineParts = polylineParts;
         }
 
         public void UpdateSimplifiedPolylineParts()
         {
             var mapView = this.FindParent<MapView>();
-            var simplifiedLocationCollections = new List<LocationCollectionViewModel>();
+            var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
 
             if (this.PolylineParts != null)
             {
-                simplifiedLocationCollections.AddRange(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
+                simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
                     Locations = locationCollection.ToPoints(mapView).Reduce(this.Tolerance).ToLocations(mapView).ToLocationCollection(),
                     Stroke = this.IsEnabled ? this.DoubleToBrushMap.Map(locationCollection[1].Value) : this.DisabledStroke
                 }));
             }
 
-            this.SimplifiedPolylineParts = simplifiedLocationCollections;
-        }
-
-        protected override void OnChangedLocations()
-        {
-            base.OnChangedLocations();
-
-            if (this.Locations != null)
-            {
-                this.CursorLocation = this.Locations.First();
-                this.UpdatePolylineParts();
-            }
-
-            this.UpdateSimplifiedPolylineParts();
+            this.SimplifiedPolylineParts = simplifiedPolylineParts;
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -226,6 +252,12 @@ namespace Marv.Controls.Map
             {
                 this.UpdateSimplifiedPolylineParts();
             }
+        }
+
+        private void Locations_ValueChanged(object sender, EventArgs e)
+        {
+            this.UpdatePolylineParts();
+            this.UpdateSimplifiedPolylineParts();
         }
 
         private void SegmentedPolylineControl_Loaded(object sender, RoutedEventArgs e)

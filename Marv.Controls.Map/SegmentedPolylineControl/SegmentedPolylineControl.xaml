@@ -24,28 +24,19 @@
 
     <mapcontrol:MapPanel>
         <mapcontrol:MapItemsControl Name="MapPolyline"
-                                    ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}"
-                                    VirtualizingPanel.IsVirtualizing="True">
+                                    ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}">
             <mapcontrol:MapItemsControl.ItemTemplate>
-                <DataTemplate DataType="local:LocationCollectionViewModel">
-                    <mapcontrol:MapPanel>
-                        <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationToMapControlLocation}}"
-                                                Stroke="GreenYellow"
-                                                StrokeEndLineCap="Round"
-                                                StrokeLineJoin="Round"
-                                                StrokeStartLineCap="Round"
-                                                StrokeThickness="3" />
-
-                        <!-- Bigger dummy polyline for easier selection -->
-                        <mapcontrol:MapPolyline Locations="{Binding Path=., Converter={StaticResource LocationToMapControlLocation}}"
-                                                Opacity="0.0"
-                                                Stroke="Red"
-                                                StrokeThickness="30">
-                            <i:Interaction.Behaviors>
-                                <local:MapPoylineBehavior />
-                            </i:Interaction.Behaviors>
-                        </mapcontrol:MapPolyline>
-                    </mapcontrol:MapPanel>
+                <DataTemplate>
+                    <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationToMapControlLocation}}"
+                                            Stroke="{Binding Path=Stroke}"
+                                            StrokeEndLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="3">
+                        <i:Interaction.Behaviors>
+                            <local:MapPoylineBehavior />
+                        </i:Interaction.Behaviors>
+                    </mapcontrol:MapPolyline>
                 </DataTemplate>
             </mapcontrol:MapItemsControl.ItemTemplate>
         </mapcontrol:MapItemsControl>

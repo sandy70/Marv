@@ -103,6 +103,7 @@ namespace Marv.Controls.Map
             {
                 return (Location) GetValue(SelectedLocationProperty);
             }
+
             set
             {
                 SetValue(SelectedLocationProperty, value);

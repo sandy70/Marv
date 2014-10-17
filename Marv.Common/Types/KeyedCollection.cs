@@ -59,7 +59,10 @@ namespace Marv
             {
                 foreach (var keyedItem in e.NewItems.OfType<IKeyed>())
                 {
-                    this.dictionary[keyedItem.Key] = (T) keyedItem;
+                    if (keyedItem.Key != null)
+                    {
+                        this.dictionary[keyedItem.Key] = (T) keyedItem;
+                    }
                 }
             }
         }

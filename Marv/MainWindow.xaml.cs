@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common.Graph;
+using Marv.Controls.Map;
 using Marv.Map;
 using Telerik.Windows.Controls;
 
@@ -32,9 +33,12 @@ namespace Marv.Input
         private bool isMapViewVisible = true;
         private bool isVertexControlVisible;
         private ILineData lineData;
+        private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
+        private Dict<string, int, double> locationValues;
         private LocationCollection locations;
         private Location selectedLocation;
         private LocationRect startExtent;
+        private Sequence<double> valueLevels;
 
         public Graph Graph
         {
@@ -138,6 +142,22 @@ namespace Marv.Input
             }
         }
 
+        public IDoubleToBrushMap LocationValueToBrushMap
+        {
+            get { return this.locationValueToBrushMap; }
+
+            set
+            {
+                if (value.Equals(this.locationValueToBrushMap))
+                {
+                    return;
+                }
+
+                this.locationValueToBrushMap = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public LocationCollection Locations
         {
             get { return this.locations; }
@@ -200,6 +220,22 @@ namespace Marv.Input
                 }
 
                 this.startExtent = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Sequence<double> ValueLevels
+        {
+            get { return this.valueLevels; }
+
+            set
+            {
+                if (value.Equals(this.valueLevels))
+                {
+                    return;
+                }
+
+                this.valueLevels = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -271,10 +307,15 @@ namespace Marv.Input
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             const string dataDirRoot = @"Data";
+
+            this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Path.Combine(dataDirRoot, "LocationValues.json"));
+
             this.LineData = FolderLineData.Read(Path.Combine(dataDirRoot, @"LineData\WestPipeline.marv-linedata"));
             this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
             this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
             this.SelectedYear = this.LineData.StartYear;
+
+            this.Locations.Value = this.locationValues[null, this.SelectedYear];
 
             var casingNetworkFiles = new Dict<double, string>
             {
@@ -324,6 +365,8 @@ namespace Marv.Input
                 done++;
                 graphReadingNotification.Value = done / total;
             }
+
+            this.ValueLevels = new Sequence<double> { 0, 0.2, 0.8, 1.0 };
 
             this.Notifications.Remove(graphReadingNotification);
 
@@ -406,6 +449,7 @@ namespace Marv.Input
 
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            this.Locations.Value = this.locationValues[null, this.SelectedYear];
             this.UpdateGraphValue();
         }
 

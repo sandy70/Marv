@@ -5,6 +5,7 @@
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WPF"
         Name="Root"
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized">
@@ -38,15 +39,40 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Map"
                                      IsHidden="{Binding ElementName=Root, Path=IsMapViewVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:MapView Name="MapView" ManipulationMode="Scale,Translate"
-                                      StartBounds="{Binding ElementName=Root, Path=StartExtent}"
-                                      TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
-                            <marv:PolylineControl Name="PolylineControl"
-                                                           Locations="{Binding ElementName=Root, Path=Locations}"
-                                                           SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                           Stroke="GreenYellow"
-                                                           StrokeThickness="3" />
-                        </marv:MapView>
+                        <Grid>
+                            <marv:MapView ManipulationMode="Scale,Translate"
+                                          StartBounds="{Binding ElementName=Root, Path=StartExtent}"
+                                          TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
+                                <marv:SegmentedPolylineControl Name="PolylineControl"
+                                                               Locations="{Binding ElementName=Root, Path=Locations}"
+                                                               SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
+                                                               Stroke="GreenYellow"
+                                                               StrokeThickness="3"
+                                                               DoubleToBrushMap="{Binding ElementName=Root, Path=LocationValueToBrushMap}"
+                                                               ValueLevels="{Binding ElementName=Root, Path=ValueLevels}" />
+                            </marv:MapView>
+
+                            <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
+                                                     DescriptionPanelVisibility="Collapsed"
+                                                     Effect="{StaticResource DropShadow}"
+                                                     FieldIndicatorVisibility="Collapsed"
+                                                     Height="Auto" Width="Auto"
+                                                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                     IsReadOnly="True"
+                                                     Item="{Binding ElementName=Root, Path=SelectedLocation}"
+                                                     Margin="10"
+                                                     SearchBoxVisibility="Collapsed"
+                                                     SortAndGroupButtonsVisibility="Collapsed">
+                                <telerik:RadPropertyGrid.PropertyDefinitions>
+                                    <telerik:PropertyDefinition Binding="{Binding Key}" Description="Section #" DisplayName="#" />
+                                    <telerik:PropertyDefinition Binding="{Binding RelativeDistance}" Description="Relative Distance" DisplayName="Relative Distance" />
+                                    <telerik:PropertyDefinition Binding="{Binding AbsoluteDistance}" Description="Absolute Distance" DisplayName="Absolute Distance" />
+                                    <telerik:PropertyDefinition Binding="{Binding Comment}" Description="Comment" DisplayName="Comment" />
+                                    <telerik:PropertyDefinition Binding="{Binding Null}" Description="Latitude" DisplayName="Latitude" />
+                                    <telerik:PropertyDefinition Binding="{Binding Null}" Description="Longitude" DisplayName="Longitude" />
+                                </telerik:RadPropertyGrid.PropertyDefinitions>
+                            </telerik:RadPropertyGrid>
+                        </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
 

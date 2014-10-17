@@ -153,7 +153,7 @@ namespace Marv.Controls.Map
 
         private void mapView_ViewportMoved(object sender, Location location)
         {
-            // this.AssociatedObject.UpdateSimplifiedPolylineParts();
+            this.AssociatedObject.UpdateSimplifiedPolylineParts();
         }
 
         private void mapView_ZoomLevelChanged(object sender, int zoom)
@@ -165,8 +165,11 @@ namespace Marv.Controls.Map
         {
             if (this.locationStack.Count > 0)
             {
-                this.AssociatedObject.SelectedLocation = this.locationStack.Pop();
-                this.AssociatedObject.RaiseSelectionChanged(this.AssociatedObject.SelectedLocation);
+                var location = this.locationStack.Pop();
+
+                this.AssociatedObject.SelectedLocation = location;
+                this.AssociatedObject.RaiseSelectionChanged(location);
+                
                 this.locationStack.Clear();
                 this.timer.Stop();
             }

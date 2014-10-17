@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -15,10 +16,7 @@ namespace Marv.Map
         /// </summary>
         public LocationRect Bounds
         {
-            get
-            {
-                return this.bounds;
-            }
+            get { return this.bounds; }
 
             private set
             {
@@ -32,10 +30,7 @@ namespace Marv.Map
 
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
 
             set
             {
@@ -46,6 +41,30 @@ namespace Marv.Map
 
                 this.name = value;
                 this.RaisePropertyChanged();
+            }
+        }
+
+        public Dict<string, double> Value
+        {
+            set
+            {
+                foreach (var key in value.Keys)
+                {
+                    this[key].Value = value[key];
+                }
+
+                this.RaisePropertyChanged();
+                this.RaiseValueChanged();
+            }
+        }
+
+        public LocationCollection() {}
+
+        public LocationCollection(IEnumerable<Location> locations)
+        {
+            foreach (var location in locations)
+            {
+                this.Add(location);
             }
         }
 
@@ -76,7 +95,7 @@ namespace Marv.Map
 
                 var location = new Location();
 
-                for (int i = 0; i < headers.Length; i++)
+                for (var i = 0; i < headers.Length; i++)
                 {
                     if (headers[i].ToLower() == "latitude")
                     {
@@ -96,6 +115,7 @@ namespace Marv.Map
                     }
                 }
 
+                location["Null"] = "Unknown";
                 locationCollection.Add(location);
             }
 
@@ -117,6 +137,14 @@ namespace Marv.Map
             if (e.OldItems != null)
             {
                 this.UpdateBounds();
+            }
+        }
+
+        protected void RaiseValueChanged()
+        {
+            if (this.ValueChanged != null)
+            {
+                this.ValueChanged(this, new EventArgs());
             }
         }
 
@@ -158,5 +186,7 @@ namespace Marv.Map
                 }
             }
         }
+
+        public event EventHandler ValueChanged;
     }
 }
