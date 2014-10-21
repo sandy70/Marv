@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Caching;
 using MapControl;
+using Marv.Common;
 using Marv.Map;
 using Location = Marv.Map.Location;
 
@@ -25,6 +28,7 @@ namespace Marv.Controls.Map
                         X = 0,
                         Y = 0
                     }),
+
                     SouthEast = this.ViewportPointToLocation(new Point
                     {
                         X = this.RenderSize.Width,
@@ -47,6 +51,51 @@ namespace Marv.Controls.Map
             TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, "./");
             var behaviors = Interaction.GetBehaviors(this);
             behaviors.Add(new MapViewBehavior());
+        }
+
+        public bool Contains(IEnumerable<Location> locations)
+        {
+            return locations.All(location => this.Bounds.Contains(location));
+        }
+
+        public IEnumerable<Location> Intersection(IList<Location> locations)
+        {
+            var cornerPoints = new List<Point>(this.Bounds.ToPoints(this));
+            cornerPoints.Add(cornerPoints[0]); // close the polygon
+
+            return locations
+                .AllButLast()
+                .Where((location, i) =>
+                {
+                    var thisLocation = location;
+                    var nextLocation = locations[i + 1];
+
+                    if (this.Bounds.Contains(thisLocation) || this.Bounds.Contains(nextLocation))
+                    {
+                        return true;
+                    }
+
+                    var isIntersection = false;
+
+                    var line2 = new LineSegment
+                    {
+                        P1 = this.LocationToViewportPoint(thisLocation.ToMapControlLocation()),
+                        P2 = this.LocationToViewportPoint(nextLocation.ToMapControlLocation())
+                    };
+
+                    cornerPoints.AllButLast().ForEach((cornerPoint, k) =>
+                    {
+                        var line1 = new LineSegment
+                        {
+                            P1 = cornerPoint,
+                            P2 = cornerPoints[k + 1]
+                        };
+
+                        isIntersection = Marv.Utils.Intersection(line1, line2) != null;
+                    });
+
+                    return isIntersection;
+                });
         }
 
         public void RaiseViewportMoved(Location location)
