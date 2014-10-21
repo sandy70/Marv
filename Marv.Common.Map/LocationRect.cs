@@ -1,33 +1,32 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Marv.Map
 {
-    [TypeConverter(typeof(LocationRectConverter))]
-    public class LocationRect : NotifyPropertyChanged
+    [TypeConverter(typeof (LocationRectConverter))]
+    public class LocationRect : NotifyPropertyChanged, IEnumerable<Location>
     {
         private double east;
         private double north;
-        private Location northEast = new Location();
-        private Location northWest = new Location();
+        private Location northEast;
+        private Location northWest;
         private double south;
-        private Location southEast = new Location();
-        private Location southWest = new Location();
+        private Location southEast;
+        private Location southWest;
         private double west;
 
         public double East
         {
-            get
-            {
-                return this.east;
-            }
+            get { return this.east; }
 
             set
             {
                 if (value != this.east)
                 {
                     this.east = value;
-                    this.RaisePropertyChanged("East");
+                    this.RaisePropertyChanged();
 
                     this.NorthEast.Longitude = this.East;
                     this.SouthEast.Longitude = this.East;
@@ -37,18 +36,12 @@ namespace Marv.Map
 
         public double MaxDimension
         {
-            get
-            {
-                return Math.Max(this.North - this.South, this.East - this.West);
-            }
+            get { return Math.Max(this.North - this.South, this.East - this.West); }
         }
 
         public double North
         {
-            get
-            {
-                return this.north;
-            }
+            get { return this.north; }
 
             set
             {
@@ -65,10 +58,7 @@ namespace Marv.Map
 
         public Location NorthEast
         {
-            get
-            {
-                return this.northEast;
-            }
+            get { return this.northEast; }
 
             set
             {
@@ -85,10 +75,7 @@ namespace Marv.Map
 
         public Location NorthWest
         {
-            get
-            {
-                return this.northWest;
-            }
+            get { return this.northWest; }
 
             set
             {
@@ -105,10 +92,7 @@ namespace Marv.Map
 
         public double South
         {
-            get
-            {
-                return this.south;
-            }
+            get { return this.south; }
 
             set
             {
@@ -125,10 +109,7 @@ namespace Marv.Map
 
         public Location SouthEast
         {
-            get
-            {
-                return this.southEast;
-            }
+            get { return this.southEast; }
 
             set
             {
@@ -145,10 +126,7 @@ namespace Marv.Map
 
         public Location SouthWest
         {
-            get
-            {
-                return this.southWest;
-            }
+            get { return this.southWest; }
 
             set
             {
@@ -165,10 +143,7 @@ namespace Marv.Map
 
         public double West
         {
-            get
-            {
-                return this.west;
-            }
+            get { return this.west; }
 
             set
             {
@@ -194,6 +169,22 @@ namespace Marv.Map
             };
         }
 
+        public bool Contains(Location location)
+        {
+            return location.Latitude > this.South && location.Latitude < this.North && location.Longitude > this.West && location.Longitude < this.East;
+        }
+
+        public IEnumerator<Location> GetEnumerator()
+        {
+            return (new List<Location>
+            {
+                this.SouthWest,
+                this.NorthWest,
+                this.NorthEast,
+                this.SouthEast
+            }).GetEnumerator();
+        }
+
         public LocationRect GetPadded(double pad)
         {
             return new LocationRect
@@ -205,15 +196,21 @@ namespace Marv.Map
             };
         }
 
-        public bool Contains(Location location)
-        {
-            return location.Latitude > this.South && location.Latitude < this.North && location.Longitude > this.West && location.Longitude < this.East;
-        }
-
         public override string ToString()
         {
             var str = String.Format("N:{0,9:F4} E:{1,9:F4} S:{2,9:F4} W:{3,9:F4}", this.North, this.East, this.South, this.West);
             return base.ToString() + ": " + str;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (new List<Location>
+            {
+                this.SouthWest,
+                this.NorthWest,
+                this.NorthEast,
+                this.SouthEast
+            }).GetEnumerator();
         }
     }
 }
