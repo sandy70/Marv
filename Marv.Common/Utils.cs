@@ -2,13 +2,14 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using Marv.Common;
 using Newtonsoft.Json;
 
 namespace Marv
 {
     public static class Utils
     {
-        public const double Epsilon = 10E-06;
+        public const double Epsilon = 10E-03;
 
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
@@ -62,6 +63,40 @@ namespace Marv
             }
 
             return height;
+        }
+
+        public static Point? Intersection(LineSegment line1, LineSegment line2)
+        {
+            var a1 = line1.P2.Y - line1.P1.Y; // y2 - y1
+            var b1 = -(line1.P2.X - line1.P1.X); // -(x2 - x1)
+            var c1 = line1.P1.Y * (line1.P2.X - line1.P1.X) - line1.P1.X * (line1.P2.Y - line1.P1.Y);
+
+            var a2 = line2.P2.Y - line2.P1.Y; // y2 - y1
+            var b2 = -(line2.P2.X - line2.P1.X); // -(x2 - x1)
+            var c2 = line2.P1.Y * (line2.P2.X - line2.P1.X) - line2.P1.X * (line2.P2.Y - line2.P1.Y);
+
+            var delta = a1 * b2 - a2 * b1;
+
+            if (Math.Abs(delta) < 0.0001)
+            {
+                return null;
+            }
+
+            var intersection = new Point
+            {
+                X = (b2 * c1 - b1 * c2) / delta,
+                Y = (a1 * c2 - a2 * c1) / delta
+            };
+
+            var distance1 = Distance(line1.P1, line1.P2, intersection);
+            var distance2 = Distance(line2.P1, line2.P2, intersection);
+
+            if (distance1 > Epsilon || distance2 > Epsilon)
+            {
+                return null;
+            }
+
+            return intersection;
         }
 
         public static T Max<T>(T a, T b) where T : IComparable
