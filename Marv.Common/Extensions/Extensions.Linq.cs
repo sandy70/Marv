@@ -159,7 +159,7 @@ namespace Marv
         ///     for the projected type. This operator uses immediate execution, but
         ///     only buffers a single result (the current maximal element).
         /// </remarks>
-        /// <typeparam name="TSource">Type of the source sequence</typeparam>
+        /// <typeparam name="TSource">Type of the items sequence</typeparam>
         /// <typeparam name="TKey">Type of the projected element</typeparam>
         /// <param name="source">Source sequence</param>
         /// <param name="selector">Selector to use to pick the results to compare</param>
@@ -181,7 +181,7 @@ namespace Marv
         ///     for the projected type. This operator uses immediate execution, but
         ///     only buffers a single result (the current maximal element).
         /// </remarks>
-        /// <typeparam name="TSource">Type of the source sequence</typeparam>
+        /// <typeparam name="TSource">Type of the items sequence</typeparam>
         /// <typeparam name="TKey">Type of the projected element</typeparam>
         /// <param name="source">Source sequence</param>
         /// <param name="selector">Selector to use to pick the results to compare</param>
@@ -256,7 +256,7 @@ namespace Marv
         ///     for the projected type. This operator uses immediate execution, but
         ///     only buffers a single result (the current minimal element).
         /// </remarks>
-        /// <typeparam name="TSource">Type of the source sequence</typeparam>
+        /// <typeparam name="TSource">Type of the items sequence</typeparam>
         /// <typeparam name="TKey">Type of the projected element</typeparam>
         /// <param name="source">Source sequence</param>
         /// <param name="selector">Selector to use to pick the results to compare</param>
@@ -278,7 +278,7 @@ namespace Marv
         ///     for the projected type. This operator uses immediate execution, but
         ///     only buffers a single result (the current minimal element).
         /// </remarks>
-        /// <typeparam name="TSource">Type of the source sequence</typeparam>
+        /// <typeparam name="TSource">Type of the items sequence</typeparam>
         /// <typeparam name="TKey">Type of the projected element</typeparam>
         /// <param name="source">Source sequence</param>
         /// <param name="selector">Selector to use to pick the results to compare</param>
@@ -421,7 +421,7 @@ namespace Marv
 
         /// <summary>
         ///     Returns items from the input sequence until the given predicate returns true
-        ///     when applied to the current source item; that item will be the last returned.
+        ///     when applied to the current items item; that item will be the last returned.
         /// </summary>
         /// <remarks>
         ///     <para>
@@ -436,17 +436,17 @@ namespace Marv
         ///         <code>x => x == 3</code>, the result would be <code>{ 1, 2, 3 }</code>.
         ///     </para>
         ///     <para>
-        ///         TakeUntil is as lazy as possible: it will not iterate over the source sequence
+        ///         TakeUntil is as lazy as possible: it will not iterate over the items sequence
         ///         until it has to, it won't iterate further than it has to, and it won't evaluate
         ///         the predicate until it has to. (This means that an item may be returned which would
         ///         actually cause the predicate to throw an exception if it were evaluated, so long as
         ///         no more items of data are requested.)
         ///     </para>
         /// </remarks>
-        /// <typeparam name="TSource">Type of the source sequence</typeparam>
+        /// <typeparam name="TSource">Type of the items sequence</typeparam>
         /// <param name="source">Source sequence</param>
-        /// <param name="predicate">Predicate used to determine when to stop yielding results from the source.</param>
-        /// <returns>Items from the source sequence, until the predicate returns true when applied to the item.</returns>
+        /// <param name="predicate">Predicate used to determine when to stop yielding results from the items.</param>
+        /// <returns>Items from the items sequence, until the predicate returns true when applied to the item.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> or <paramref name="predicate" /> is null</exception>
         public static IEnumerable<TSource> TakeUntil<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
