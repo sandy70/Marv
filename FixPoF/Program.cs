@@ -10,25 +10,25 @@ namespace FixPoF
         private static void Main(string[] args)
         {
             // UpdatePoFFrancois();
-            // WritePofFrancois();
+            WritePofFrancois();
 
-            var filePaths = Directory.EnumerateFiles(@"C:\Users\vkha\Source\Marv\Marv\bin\Debug\Data\LineData\SectionBeliefs", "*.marv-sectionbelief");
-            var locationValues = new Dict<string, int, double>();
+            //var filePaths = Directory.EnumerateFiles(@"C:\Users\vkha\Source\Marv\Marv\bin\Debug\Data\LineData\SectionBeliefs", "*.marv-sectionbelief");
+            //var locationValues = new Dict<string, int, double>();
 
-            foreach (var filePath in filePaths)
-            {
-                var sectionBelief = Utils.ReadJson<Dict<int, string, double[]>>(filePath);
-                var sectionId = Path.GetFileNameWithoutExtension(filePath);
+            //foreach (var filePath in filePaths)
+            //{
+            //    var sectionBelief = Utils.ReadJson<Dict<int, string, double[]>>(filePath);
+            //    var sectionId = Path.GetFileNameWithoutExtension(filePath);
 
-                foreach (var year in sectionBelief.Keys)
-                {
-                    locationValues[sectionId][year] = sectionBelief[year]["pof"][0];
-                }
+            //    foreach (var year in sectionBelief.Keys)
+            //    {
+            //        locationValues[sectionId][year] = sectionBelief[year]["pof"][0];
+            //    }
 
-                Console.WriteLine("Read file: " + filePath);
-            }
+            //    Console.WriteLine("Read file: " + filePath);
+            //}
 
-            locationValues.WriteJson(@"C:\Users\vkha\Downloads\LocationValues.json");
+            //locationValues.WriteJson(@"C:\Users\vkha\Downloads\LocationValues.json");
 
             Console.ReadKey();
         }
@@ -73,7 +73,7 @@ namespace FixPoF
 
                         var pof = new[] { 0.5, 0.5 };
                         var sum = nof.Select((x, i) => x * nofStates[i]).Sum();
-                        pof[0] = 1- Math.Pow(1 - pgpc[0], sum);
+                        pof[0] = 1 - (1 - pgpc[0]) * sum;
 
                         if (pof[0] > 1)
                         {
