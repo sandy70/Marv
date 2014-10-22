@@ -19,9 +19,6 @@ namespace Marv.Input
 {
     public partial class LineDataControl : INotifier, INotifyPropertyChanged
     {
-        public static readonly DependencyProperty CurrentGraphDataProperty =
-            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
@@ -51,13 +48,6 @@ namespace Marv.Input
         private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private Network network;
         private ObservableCollection<Dynamic> rows;
-        private VirtualQueryableCollectionView virtualRows;
-
-        public Dict<string, VertexEvidence> CurrentGraphData
-        {
-            get { return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty); }
-            set { SetValue(CurrentGraphDataProperty, value); }
-        }
 
         public string FileName
         {
@@ -121,22 +111,6 @@ namespace Marv.Input
         {
             get { return (int) GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
-        }
-
-        public VirtualQueryableCollectionView VirtualRows
-        {
-            get { return this.virtualRows; }
-
-            set
-            {
-                if (value.Equals(this.virtualRows))
-                {
-                    return;
-                }
-
-                this.virtualRows = value;
-                this.RaisePropertyChanged();
-            }
         }
 
         public LineDataControl()
@@ -665,7 +639,7 @@ namespace Marv.Input
                 this.Rows.Add(row);
             }
 
-            this.VirtualRows = new VirtualQueryableCollectionView(this.Rows, typeof (Dynamic)) { LoadSize = 100 };
+            // this.VirtualRows = new VirtualQueryableCollectionView(this.Rows, typeof (Dynamic)) { LoadSize = 100 };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
