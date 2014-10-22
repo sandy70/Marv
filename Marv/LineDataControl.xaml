@@ -130,6 +130,6 @@
                              SelectionMode="Extended"
                              SelectionUnit="Cell"
                              RowIndicatorVisibility="Collapsed"
-                             ItemsSource="{Binding ElementName=Root, Path=Rows}" />
+                             ItemsSource="{Binding ElementName=Root, Path=VirtualRows}" />
     </Grid>
 </UserControl>

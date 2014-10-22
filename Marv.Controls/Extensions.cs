@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -7,25 +6,21 @@ namespace Marv.Controls
 {
     public static class Extensions
     {
-        public static IEnumerable<T> FindChildren<T>(this DependencyObject depObj) where T : DependencyObject
+        public static IEnumerable<T> GetChildren<T>(this DependencyObject depObj) where T : class
         {
-            if (depObj == null)
+            if (depObj != null)
             {
-                yield break;
-            }
-
-            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-
-                if (child is T)
+                foreach (var child in LogicalTreeHelper.GetChildren(depObj))
                 {
-                    yield return (T) child;
-                }
+                    if (child is T)
+                    {
+                        yield return child as T;
+                    }
 
-                foreach (var childOfChild in FindChildren<T>(child))
-                {
-                    yield return childOfChild;
+                    foreach (var childOfChild in GetChildren<T>(child as DependencyObject))
+                    {
+                        yield return childOfChild;
+                    }
                 }
             }
         }
@@ -43,7 +38,7 @@ namespace Marv.Controls
         ///     type parameter. If not matching item can be found, a null
         ///     reference is being returned.
         /// </returns>
-        public static T FindParent<T>(this DependencyObject child) where T : DependencyObject
+        public static T GetParent<T>(this DependencyObject child) where T : DependencyObject
         {
             //get parent item
             var parentObject = GetParentObject(child);
@@ -61,7 +56,7 @@ namespace Marv.Controls
                 return parent;
             }
             //use recursion to proceed with next level
-            return FindParent<T>(parentObject);
+            return GetParent<T>(parentObject);
         }
 
         /// <summary>

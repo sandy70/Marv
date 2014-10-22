@@ -59,6 +59,7 @@
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="Notification\INotifier.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />
     <Compile Include="LineSegment.cs" />

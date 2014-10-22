@@ -86,7 +86,7 @@ namespace Marv.Controls
                     }
                     else
                     {
-                        this.FindParent<FrameworkElement>().RaiseEvent(e);
+                        this.GetParent<FrameworkElement>().RaiseEvent(e);
                     }
                 }
             }

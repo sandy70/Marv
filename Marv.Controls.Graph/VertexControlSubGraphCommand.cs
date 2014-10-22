@@ -4,7 +4,7 @@
     {
         public override void Excecute(VertexControl vertexControl)
         {
-            var graphControl = vertexControl.FindParent<GraphControl>();
+            var graphControl = vertexControl.GetParent<GraphControl>();
 
             if (graphControl != null)
             {

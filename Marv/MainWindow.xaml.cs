@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Marv.Common;
 using Marv.Common.Graph;
+using Marv.Controls;
 using Marv.Controls.Map;
 using Marv.Map;
 using Telerik.Windows.Controls;
@@ -326,23 +328,25 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            var notifiers = this.GetChildren<INotifier>();
+
+            foreach (var notifier in notifiers)
+            {
+                notifier.NotificationClosed -= notifier_NotificationClosed;
+                notifier.NotificationClosed += notifier_NotificationClosed;
+
+                notifier.NotificationOpened -= notifier_NotificationOpened;
+                notifier.NotificationOpened += notifier_NotificationOpened;
+            }
+
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
-            this.GraphControl.NotificationOpened -= GraphControl_NotificationOpened;
-            this.GraphControl.NotificationOpened += GraphControl_NotificationOpened;
-
             this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
             this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
-
-            this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
-            this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
-
-            this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
-            this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
 
             this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
             this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
@@ -412,6 +416,16 @@ namespace Marv.Input
 
             this.Locations.Value = this.locationValues[null, this.SelectedYear];
             this.UpdateGraphValue();
+        }
+
+        private void notifier_NotificationClosed(object sender, Notification notification)
+        {
+            this.Notifications.Remove(notification);
+        }
+
+        private void notifier_NotificationOpened(object sender, Notification notification)
+        {
+            this.Notifications.Add(notification);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -266,7 +266,7 @@ namespace Marv.Controls.Map
 
         public void UpdateSimplifiedPolylineParts()
         {
-            var mapView = this.FindParent<MapView>();
+            var mapView = this.GetParent<MapView>();
             var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
 
             if (this.PolylineParts != null)
@@ -288,7 +288,7 @@ namespace Marv.Controls.Map
                 var disabledStroke = this.DisabledStroke;
                 var doubleToBrushMap = this.DoubleToBrushMap;
                 var isEnabled = this.IsEnabled;
-                var mapView = this.FindParent<MapView>();
+                var mapView = this.GetParent<MapView>();
                 var polylineParts = this.PolylineParts;
                 var tolerance = this.Tolerance;
 
@@ -331,7 +331,7 @@ namespace Marv.Controls.Map
 
             this.PolylineParts = await Task.Run(() => this.Segment(locations, valueLevels));
 
-            var mapView = this.FindParent<MapView>();
+            var mapView = this.GetParent<MapView>();
             var polylineParts = this.PolylineParts;
             var tolerance = this.Tolerance;
             var isEnabled = this.IsEnabled;

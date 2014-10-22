@@ -88,8 +88,8 @@ namespace Marv.Controls
 
             foreach (var element in this.Elements)
             {
-                var nameScope = NameScope.GetNameScope(this.Parent.FindParent<ContentControl>());
-                NameScope.SetNameScope(element, NameScope.GetNameScope(this.Parent.FindParent<ContentControl>()));
+                var nameScope = NameScope.GetNameScope(this.Parent.GetParent<ContentControl>());
+                NameScope.SetNameScope(element, NameScope.GetNameScope(this.Parent.GetParent<ContentControl>()));
             }
 
             this.Content = this.transitionControlInner;

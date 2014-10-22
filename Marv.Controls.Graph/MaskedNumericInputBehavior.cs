@@ -14,7 +14,7 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
+            var vertexControl = this.AssociatedObject.GetParent<VertexControl>();
 
             if (vertexControl == null)
             {

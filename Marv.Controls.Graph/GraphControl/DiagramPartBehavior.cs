@@ -80,7 +80,7 @@ namespace Marv.Controls.Graph
             };
 
             // Change color of connections
-            var graphControl = this.diagram.FindParent<GraphControl>();
+            var graphControl = this.diagram.GetParent<GraphControl>();
 
             foreach (var conn in this.diagram.Connections)
             {

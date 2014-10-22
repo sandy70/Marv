@@ -194,7 +194,7 @@ namespace Marv.Controls.Map
 
         public void UpdateSimplifiedLocations()
         {
-            var mapView = this.FindParent<MapView>();
+            var mapView = this.GetParent<MapView>();
 
             this.SimplifiedLocations = this.Locations
                                            .ToPoints(mapView)

@@ -57,7 +57,7 @@ namespace Marv.Controls
 
         private void RaiseValueEntered()
         {
-            var sliderProgressBar = this.AssociatedObject.FindParent<SliderProgressBar>();
+            var sliderProgressBar = this.AssociatedObject.GetParent<SliderProgressBar>();
 
             if (sliderProgressBar == null)
             {
@@ -69,7 +69,7 @@ namespace Marv.Controls
 
         private void SetValue(object sender, MouseEventArgs e)
         {
-            var parent = this.AssociatedObject.FindParent<SliderProgressBar>();
+            var parent = this.AssociatedObject.GetParent<SliderProgressBar>();
 
             if (!parent.IsEditable)
             {

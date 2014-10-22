@@ -12,7 +12,7 @@ namespace Marv.Controls.Graph
         {
             base.OnAttached();
 
-            this.VertexControl = this.AssociatedObject.FindParent<VertexControl>();
+            this.VertexControl = this.AssociatedObject.GetParent<VertexControl>();
 
             this.AssociatedObject.Click += this.AssociatedObject_Click;
         }

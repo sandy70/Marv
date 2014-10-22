@@ -13,7 +13,7 @@ namespace Marv.Controls.Graph
             base.OnAttached();
 
             this.VertexControl = this.AssociatedObject;
-            this.GraphControl = this.VertexControl.FindParent<GraphControl>();
+            this.GraphControl = this.VertexControl.GetParent<GraphControl>();
 
             this.VertexControl.CommandExecuted -= VertexControl_CommandExecuted;
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;

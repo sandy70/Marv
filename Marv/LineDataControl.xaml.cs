@@ -7,15 +7,17 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Win32;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
+using Telerik.Windows.Data;
 
 namespace Marv.Input
 {
-    public partial class LineDataControl : INotifyPropertyChanged
+    public partial class LineDataControl : INotifier, INotifyPropertyChanged
     {
         public static readonly DependencyProperty CurrentGraphDataProperty =
             DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
@@ -49,6 +51,7 @@ namespace Marv.Input
         private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private Network network;
         private ObservableCollection<Dynamic> rows;
+        private VirtualQueryableCollectionView virtualRows;
 
         public Dict<string, VertexEvidence> CurrentGraphData
         {
@@ -118,6 +121,22 @@ namespace Marv.Input
         {
             get { return (int) GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public VirtualQueryableCollectionView VirtualRows
+        {
+            get { return this.virtualRows; }
+
+            set
+            {
+                if (value.Equals(this.virtualRows))
+                {
+                    return;
+                }
+
+                this.virtualRows = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public LineDataControl()
@@ -642,7 +661,11 @@ namespace Marv.Input
                 {
                     progress.Report(row);
                 }
+
+                this.Rows.Add(row);
             }
+
+            this.VirtualRows = new VirtualQueryableCollectionView(this.Rows, typeof (Dynamic)) { LoadSize = 100 };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

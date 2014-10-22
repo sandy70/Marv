@@ -41,7 +41,7 @@ namespace Marv.Controls.Map
             this.AssociatedObject.Ellipse.TouchMove += this.Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
-            this.mapView = this.AssociatedObject.FindParent<MapView>();
+            this.mapView = this.AssociatedObject.GetParent<MapView>();
 
             if (this.mapView != null)
             {
@@ -134,7 +134,7 @@ namespace Marv.Controls.Map
 
         private void SelectLocation(Point position)
         {
-            var map = this.AssociatedObject.FindParent<MapControl.Map>();
+            var map = this.AssociatedObject.GetParent<MapControl.Map>();
             var mLocation = map.ViewportPointToLocation(position);
             var location = new Location
             {

@@ -15,7 +15,7 @@ namespace Marv.Controls.Graph
 
         private void AssociatedObject_ValueEntered(object sender, double e)
         {
-            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
+            var vertexControl = this.AssociatedObject.GetParent<VertexControl>();
 
             if (Math.Abs(e - 100) < Marv.Utils.Epsilon)
             {

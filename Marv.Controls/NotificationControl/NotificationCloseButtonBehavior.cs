@@ -14,7 +14,7 @@ namespace Marv.Controls
 
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            var control = this.AssociatedObject.FindParent<NotificationControl>();
+            var control = this.AssociatedObject.GetParent<NotificationControl>();
             var notification = this.AssociatedObject.DataContext as Notification;
 
             if (control != null)

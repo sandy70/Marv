@@ -6,12 +6,13 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Marv.Common;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls.Graph
 {
-    public partial class GraphControl : INotifyPropertyChanged
+    public partial class GraphControl : INotifyPropertyChanged, INotifier
     {
         public static readonly DependencyProperty AutoSaveDurationProperty =
             DependencyProperty.Register("AutoSaveDuration", typeof (int), typeof (GraphControl), new PropertyMetadata(10000));
