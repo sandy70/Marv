@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common.Graph;
 using Marv.Controls.Map;
@@ -28,10 +26,11 @@ namespace Marv.Input
         private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
         private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible;
-        private bool isLineDataControlVisible;
-        private bool isMapViewVisible = true;
-        private bool isVertexControlVisible;
+        private bool isLineDataChartVisible = true;
+        private bool isLineDataControlVisible = true;
+        private bool isMapViewVisible;
+        private bool isVertexControlVisible = true;
+        private bool isYearSliderVisible;
         private ILineData lineData;
         private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
         private Dict<string, int, double> locationValues;
@@ -122,6 +121,22 @@ namespace Marv.Input
                 }
 
                 this.isVertexControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsYearSliderVisible
+        {
+            get { return this.isYearSliderVisible; }
+
+            set
+            {
+                if (value.Equals(this.isYearSliderVisible))
+                {
+                    return;
+                }
+
+                this.isYearSliderVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -304,74 +319,8 @@ namespace Marv.Input
             this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            const string dataDirRoot = @"Data";
-
-            this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Path.Combine(dataDirRoot, "LocationValues.json"));
-
-            this.LineData = FolderLineData.Read(Path.Combine(dataDirRoot, @"LineData\WestPipeline.marv-linedata"));
-            this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
-            this.Locations.Value = this.locationValues[null, this.SelectedYear];
-            this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
-            this.SelectedYear = this.LineData.StartYear;
-            this.ValueLevels = new Sequence<double> { 0, 0.2, 0.8, 1.0 };
-
-            var casingNetworkFiles = new Dict<double, string>
-            {
-                { 8.0, "CASED_PIPELINE_8.net" },
-                { 8.8, "CASED_PIPELINE_88.net" },
-                { 10.0, "CASED_PIPELINE_10.net" },
-                { 11.0, "CASED_PIPELINE_11.net" },
-                { 13.3, "CASED_PIPELINE_133.net" },
-                { 14.3, "CASED_PIPELINE_143.net" },
-            };
-
-            var networkFiles = new Dict<double, string>
-            {
-                { 8.0, "MODEL_modified_08262014a_8.net" },
-                { 8.8, "MODEL_modified_08262014a_88.net" },
-                { 10.0, "MODEL_modified_08262014a_10.net" },
-                { 11.0, "MODEL_modified_08262014a_11.net" },
-                { 13.3, "MODEL_modified_08262014a_133.net" },
-                { 14.3, "MODEL_modified_08262014a_143.net" },
-            };
-
-            var graphReadingNotification = new Notification
-            {
-                Description = "Reading networks...",
-                Value = 0
-            };
-
-            this.Notifications.Add(graphReadingNotification);
-
-            var total = casingNetworkFiles.Count + networkFiles.Count;
-            var done = 0.0;
-
-            foreach (var size in casingNetworkFiles.Keys)
-            {
-                var fileName = Path.Combine(dataDirRoot, "Networks", casingNetworkFiles[size]);
-                this.casingGraphs[size] = await Task.Run(() => Graph.Read(fileName));
-
-                done++;
-                graphReadingNotification.Value = done / total;
-            }
-
-            foreach (var size in networkFiles.Keys)
-            {
-                var fileName = Path.Combine(dataDirRoot, "Networks", networkFiles[size]);
-                this.graphs[size] = await Task.Run(() => Graph.Read(fileName));
-
-                done++;
-                graphReadingNotification.Value = done / total;
-            }
-
-
-            this.Notifications.Remove(graphReadingNotification);
-
-            this.UpdateGraph();
-            this.UpdateGraphValue();
-
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 

@@ -304,7 +304,7 @@ namespace Marv.Controls.Map
         {
             return new LocationCollectionViewModel
             {
-                Locations = locationCollection.Reduce(converter, tolerance),
+                Locations = new LocationCollection(locationCollection.Reduce(converter, tolerance)),
                 Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
             };
         }
@@ -343,7 +343,7 @@ namespace Marv.Controls.Map
 
             foreach (var part in polylineParts)
             {
-                this.SimplifiedPolylineParts.Add(await Task.Run(() => this.Reduce(part, mapView, tolerance, doubleToBrushMap, isEnabled, disabledStroke)));
+                this.SimplifiedPolylineParts.Add(await Task.Run(() => this.Reduce(part, converter, tolerance, doubleToBrushMap, isEnabled, disabledStroke)));
             }
         }
 
