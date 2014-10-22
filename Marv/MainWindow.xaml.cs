@@ -287,24 +287,9 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_NotificationOpened(object sender, Notification notification)
-        {
-            this.Notifications.Add(notification);
-        }
-
         private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
         {
             this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
-        }
-
-        private void LineDataControl_NotificationClosed(object sender, Notification notification)
-        {
-            this.Notifications.Remove(notification);
-        }
-
-        private void LineDataControl_NotificationOpened(object sender, Notification notification)
-        {
-            this.Notifications.Add(notification);
         }
 
         private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
