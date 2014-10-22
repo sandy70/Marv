@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
@@ -156,9 +157,9 @@ namespace Marv.Controls.Map
             this.AssociatedObject.UpdateSimplifiedPolylineParts();
         }
 
-        private void mapView_ZoomLevelChanged(object sender, int zoom)
+        private async void mapView_ZoomLevelChanged(object sender, int zoom)
         {
-            this.AssociatedObject.UpdateSimplifiedPolylineParts();
+            await this.AssociatedObject.UpdateSimplifiedPolylinePartsAsync();
         }
 
         private void timer_Tick(object sender, EventArgs e)

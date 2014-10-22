@@ -67,6 +67,7 @@
     <Compile Include="EllipseControl\LocationEllipse.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IDoubleToBrushMap.cs" />
+    <Compile Include="LocationConverter.cs" />
     <Compile Include="MapView\MapView.cs" />
     <Compile Include="MapView\MapViewBehavior.cs" />
     <Compile Include="PolylineControl\PolylineControl.xaml.cs">

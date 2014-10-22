@@ -9,10 +9,7 @@
 
         public string Key
         {
-            get
-            {
-                return this.key;
-            }
+            get { return this.key; }
 
             set
             {
@@ -28,10 +25,7 @@
 
         public double Latitude
         {
-            get
-            {
-                return this.latitude;
-            }
+            get { return this.latitude; }
 
             set
             {
@@ -43,10 +37,7 @@
 
         public double Longitude
         {
-            get
-            {
-                return this.longitude;
-            }
+            get { return this.longitude; }
 
             set
             {
@@ -57,10 +48,7 @@
 
         public double Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             set
             {
@@ -97,6 +85,15 @@
                 Key = mLocation.Latitude + "," + mLocation.Longitude,
                 Latitude = mLocation.Latitude,
                 Longitude = mLocation.Longitude
+            };
+        }
+
+        public static implicit operator MapControl.Location(Location location)
+        {
+            return new MapControl.Location
+            {
+                Latitude = location.Latitude,
+                Longitude = location.Longitude
             };
         }
     }

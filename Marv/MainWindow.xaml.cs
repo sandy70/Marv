@@ -312,10 +312,10 @@ namespace Marv.Input
 
             this.LineData = FolderLineData.Read(Path.Combine(dataDirRoot, @"LineData\WestPipeline.marv-linedata"));
             this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
+            this.Locations.Value = this.locationValues[null, this.SelectedYear];
             this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
             this.SelectedYear = this.LineData.StartYear;
-
-            this.Locations.Value = this.locationValues[null, this.SelectedYear];
+            this.ValueLevels = new Sequence<double> { 0, 0.2, 0.8, 1.0 };
 
             var casingNetworkFiles = new Dict<double, string>
             {
@@ -366,7 +366,6 @@ namespace Marv.Input
                 graphReadingNotification.Value = done / total;
             }
 
-            this.ValueLevels = new Sequence<double> { 0, 0.2, 0.8, 1.0 };
 
             this.Notifications.Remove(graphReadingNotification);
 

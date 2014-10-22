@@ -231,7 +231,6 @@ namespace Marv
             return new KeyValuePair<string, string>(key, readString);
         }
 
-
         public static IEnumerable<Point> Reduce(this IEnumerable<Point> points, double tolerance = 10)
         {
             var pointList = points as IList<Point> ?? points.ToList();

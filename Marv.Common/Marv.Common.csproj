@@ -61,6 +61,7 @@
     <Compile Include="EventHandler.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />
+    <Compile Include="LineSegment.cs" />
     <Compile Include="Types\Dict\Dict.cs" />
     <Compile Include="Types\Dict\Dict.IDictionary.cs" />
     <Compile Include="Types\Dict\DictEnumerator.cs" />

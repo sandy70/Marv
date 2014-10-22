@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Marv.Map;
@@ -130,7 +132,7 @@ namespace Marv.Controls.Map
                 control.SelectedLocation = control.Locations.First();
 
                 control.UpdatePolylineParts();
-                
+
                 control.Locations.ValueChanged += control.Locations_ValueChanged;
             }
 
@@ -200,16 +202,13 @@ namespace Marv.Controls.Map
                 {
                     if (locationCollection == null)
                     {
-                        locationCollection = new LocationCollection();
-                        locationCollection.Add(location);
+                        locationCollection = new LocationCollection { location };
                     }
                     else
                     {
                         var mid = Marv.Map.Utils.Mid(locationCollection.Last(), location);
                         locationCollection.Add(mid);
-                        locationCollection = new LocationCollection();
-                        locationCollection.Add(mid);
-                        locationCollection.Add(location);
+                        locationCollection = new LocationCollection { mid, location };
                     }
                     polylineParts.Add(locationCollection);
                 }
@@ -225,6 +224,44 @@ namespace Marv.Controls.Map
             }
 
             this.PolylineParts = polylineParts;
+        }
+
+        public ObservableCollection<LocationCollection> Segment(IEnumerable<Location> locations, Sequence<double> valueLevels)
+        {
+            var oldBinIndex = -1;
+            var locationCollections = new ObservableCollection<LocationCollection>();
+            LocationCollection locationCollection = null;
+
+            foreach (var location in locations)
+            {
+                var newBinIndex = valueLevels.GetBinIndex(location.Value);
+
+                if (newBinIndex != oldBinIndex)
+                {
+                    if (locationCollection == null)
+                    {
+                        locationCollection = new LocationCollection { location };
+                    }
+                    else
+                    {
+                        var mid = Marv.Map.Utils.Mid(locationCollection.Last(), location);
+                        locationCollection.Add(mid);
+                        locationCollection = new LocationCollection { mid, location };
+                    }
+                    locationCollections.Add(locationCollection);
+                }
+                else
+                {
+                    if (locationCollection != null)
+                    {
+                        locationCollection.Add(location);
+                    }
+                }
+
+                oldBinIndex = newBinIndex;
+            }
+
+            return locationCollections;
         }
 
         public void UpdateSimplifiedPolylineParts()
@@ -244,6 +281,34 @@ namespace Marv.Controls.Map
             this.SimplifiedPolylineParts = simplifiedPolylineParts;
         }
 
+        public async Task UpdateSimplifiedPolylinePartsAsync()
+        {
+            if (this.PolylineParts != null)
+            {
+                var disabledStroke = this.DisabledStroke;
+                var doubleToBrushMap = this.DoubleToBrushMap;
+                var isEnabled = this.IsEnabled;
+                var mapView = this.FindParent<MapView>();
+                var polylineParts = this.PolylineParts;
+                var tolerance = this.Tolerance;
+
+                this.SimplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>(await Task.Run(() => polylineParts.Select(locationCollection => new LocationCollectionViewModel
+                {
+                    Locations = locationCollection.Reduce(mapView, tolerance),
+                    Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
+                })));
+            }
+        }
+
+        public LocationCollectionViewModel Reduce(LocationCollection locationCollection, LocationConverter converter, double tolerance, IDoubleToBrushMap doubleToBrushMap, bool isEnabled, Brush disabledStroke)
+        {
+            return new LocationCollectionViewModel
+            {
+                Locations = locationCollection.Reduce(converter, tolerance),
+                Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
+            };
+        }
+
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -254,10 +319,32 @@ namespace Marv.Controls.Map
             }
         }
 
-        private void Locations_ValueChanged(object sender, EventArgs e)
+        private async void Locations_ValueChanged(object sender, EventArgs e)
         {
-            this.UpdatePolylineParts();
-            this.UpdateSimplifiedPolylineParts();
+            var locations = this.Locations;
+            var valueLevels = this.ValueLevels;
+
+            if (locations == null || valueLevels == null)
+            {
+                return;
+            }
+
+            this.PolylineParts = await Task.Run(() => this.Segment(locations, valueLevels));
+
+            var mapView = this.FindParent<MapView>();
+            var polylineParts = this.PolylineParts;
+            var tolerance = this.Tolerance;
+            var isEnabled = this.IsEnabled;
+            var doubleToBrushMap = this.DoubleToBrushMap;
+            var disabledStroke = this.DisabledStroke;
+            var converter = new LocationConverter(mapView);
+
+            this.SimplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
+
+            foreach (var part in polylineParts)
+            {
+                this.SimplifiedPolylineParts.Add(await Task.Run(() => this.Reduce(part, mapView, tolerance, doubleToBrushMap, isEnabled, disabledStroke)));
+            }
         }
 
         private void SegmentedPolylineControl_Loaded(object sender, RoutedEventArgs e)

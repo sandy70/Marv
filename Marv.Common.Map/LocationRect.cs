@@ -10,11 +10,11 @@ namespace Marv.Map
     {
         private double east;
         private double north;
-        private Location northEast;
-        private Location northWest;
+        private Location northEast = new Location();
+        private Location northWest = new Location();
         private double south;
-        private Location southEast;
-        private Location southWest;
+        private Location southEast = new Location();
+        private Location southWest = new Location();
         private double west;
 
         public double East
@@ -48,7 +48,7 @@ namespace Marv.Map
                 if (value != this.north)
                 {
                     this.north = value;
-                    this.RaisePropertyChanged("North");
+                    this.RaisePropertyChanged();
 
                     this.NorthWest.Latitude = this.North;
                     this.NorthEast.Latitude = this.North;
