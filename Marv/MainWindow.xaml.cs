@@ -285,6 +285,11 @@ namespace Marv.Input
             }
         }
 
+        private void GraphControl_NotificationOpened(object sender, Notification notification)
+        {
+            this.Notifications.Add(notification);
+        }
+
         private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
         {
             this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
@@ -326,6 +331,9 @@ namespace Marv.Input
 
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
+
+            this.GraphControl.NotificationOpened -= GraphControl_NotificationOpened;
+            this.GraphControl.NotificationOpened += GraphControl_NotificationOpened;
 
             this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
             this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
@@ -397,6 +405,11 @@ namespace Marv.Input
 
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (this.locationValues == null)
+            {
+                return;
+            }
+
             this.Locations.Value = this.locationValues[null, this.SelectedYear];
             this.UpdateGraphValue();
         }

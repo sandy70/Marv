@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -272,7 +273,26 @@ namespace Marv.Controls.Graph
             {
                 if (this.IsAutoSaveEnabled && this.Graph != null)
                 {
-                    this.Graph.Write();
+                    try
+                    {
+                        this.Graph.Write();
+                    }
+                    catch (UnauthorizedAccessException exception)
+                    {
+                        var fileName = this.Graph.Network.FileName;
+
+                        var fileInfo = new FileInfo(fileName);
+
+                        var message = fileInfo.IsReadOnly ? "File is read only. Cannot save to " + fileName : "Cannot access " + fileName;
+
+                        var notification = new Notification
+                        {
+                            IsTimed = true,
+                            Description = message
+                        };
+
+                        this.RaiseNotificationOpened(notification);
+                    }
                 }
             };
 
@@ -314,6 +334,22 @@ namespace Marv.Controls.Graph
             if (this.GraphChanged != null)
             {
                 this.GraphChanged(this, newGraph, oldGraph);
+            }
+        }
+
+        public void RaiseNotificationClosed(Notification notification)
+        {
+            if (this.NotificationClosed != null)
+            {
+                this.NotificationClosed(this, notification);
+            }
+        }
+
+        public void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
             }
         }
 
@@ -401,7 +437,7 @@ namespace Marv.Controls.Graph
         {
             if (this.IsAutoLayoutEnabled)
             {
-                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(isAutoFitDone: true));
+                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(true));
             }
             else
             {
@@ -474,5 +510,9 @@ namespace Marv.Controls.Graph
         public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<Notification> NotificationOpened;
+
+        public event EventHandler<Notification> NotificationClosed;
     }
 }
