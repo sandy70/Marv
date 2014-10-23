@@ -537,7 +537,18 @@ namespace Marv.Input
             if (dialog.ShowDialog() == true)
             {
                 this.FileName = dialog.FileName;
-                this.LineData = Utils.ReadJson<LineData>(this.FileName);
+
+                var directoryName = Path.GetDirectoryName(this.FileName);
+
+                if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
+                {
+                    // This is a folder line data
+                    this.LineData = FolderLineData.Read(this.FileName);
+                }
+                else
+                {
+                    this.LineData = Common.Graph.LineData.Read(this.FileName);
+                }
             }
         }
 
