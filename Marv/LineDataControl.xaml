@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="600"
+             d:DesignHeight="300" d:DesignWidth="800"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -105,7 +105,8 @@
                            TextAlignment="Right" VerticalAlignment="Center"
                            Text="End Year" />
 
-                <telerik:RadNumericUpDown Margin="2"
+                <telerik:RadNumericUpDown Name="EndYearControl"
+                                          Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
                                           Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"

@@ -173,15 +173,22 @@ namespace Marv.Input
 
             control.IsGridViewEnabled = true;
 
-            if (control.LineData == null || control.SelectedVertex == null)
+            await control.UpdateRows();
+
+            control.LineData.DataChanged += control.LineData_DataChanged;
+        }
+
+        private async Task<bool> UpdateRows()
+        {
+            if (this.LineData == null || this.SelectedVertex == null)
             {
-                return;
+                return false;
             }
 
-            var lineData = control.LineData;
-            var vertexKey = control.SelectedVertex.Key;
+            var lineData = this.LineData;
+            var vertexKey = this.SelectedVertex.Key;
 
-            var rows = control.Rows = new ObservableCollection<Dynamic>();
+            var rows = this.Rows = new ObservableCollection<Dynamic>();
 
             var notification = new Notification
             {
@@ -189,13 +196,13 @@ namespace Marv.Input
                 Value = 0
             };
 
-            control.RaiseNotificationOpened(notification);
+            this.RaiseNotificationOpened(notification);
 
             await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
 
-            control.RaiseNotificationClosed(notification);
+            this.RaiseNotificationClosed(notification);
 
-            control.LineData.DataChanged += control.LineData_DataChanged;
+            return true;
         }
 
         private static void ChangedNetworkFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -416,6 +423,26 @@ namespace Marv.Input
             }
         }
 
+        private async void EndYearControl_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)
+        {
+            this.LineData.EndYear = (int) e.NewValue.Value;
+
+            foreach (var sectionId in this.LineData.GetSectionIds())
+            {
+                var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+                var newSectionEvidence = new Dict<int, string, VertexEvidence>();
+
+                for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
+                {
+                    newSectionEvidence[year] = sectionEvidence[year];
+                }
+
+                this.LineData.SetSectionEvidence(sectionId, newSectionEvidence);
+            }
+
+            await this.UpdateRows();
+        }
+
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
@@ -499,6 +526,9 @@ namespace Marv.Input
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.EndYearControl.ValueChanged -= EndYearControl_ValueChanged;
+            this.EndYearControl.ValueChanged += EndYearControl_ValueChanged;
+
             this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
             this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
 
@@ -542,9 +572,9 @@ namespace Marv.Input
             this.SaveButton.Click += SaveButton_Click;
         }
 
-        private void LineData_DataChanged(object sender, EventArgs e)
+        private async void LineData_DataChanged(object sender, EventArgs e)
         {
-            this.UpdateRows();
+            await this.UpdateRows();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -682,34 +712,6 @@ namespace Marv.Input
                 this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
 
                 this.RaiseEvidenceChanged(cellModel, vertexEvidence);
-            }
-        }
-
-        private void UpdateRows()
-        {
-            this.UpdateRows(this.LineData, this.SelectedVertex.Key);
-        }
-
-        private void UpdateRows(ILineData lineData, string vertexKey, IProgress<Dynamic> progress = null)
-        {
-            foreach (var sectionId in lineData.GetSectionIds())
-            {
-                var row = new Dynamic();
-                row[CellModel.SectionIdHeader] = sectionId;
-
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
-                {
-                    row[year.ToString()] = sectionEvidence[year][vertexKey];
-                }
-
-                if (progress != null)
-                {
-                    progress.Report(row);
-                }
-
-                Thread.Sleep(1);
             }
         }
 
