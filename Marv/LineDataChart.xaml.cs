@@ -330,6 +330,11 @@ namespace Marv.Input
                 this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
             }
 
+            if (this.BaseDistributionSeries == null)
+            {
+                this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            }
+
             switch (type)
             {
                 case VertexEvidenceType.Number:
