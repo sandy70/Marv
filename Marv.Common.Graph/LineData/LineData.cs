@@ -19,10 +19,7 @@ namespace Marv.Common.Graph
 
         public int EndYear
         {
-            get
-            {
-                return this.endYear;
-            }
+            get { return this.endYear; }
 
             set
             {
@@ -42,10 +39,7 @@ namespace Marv.Common.Graph
 
         public Guid Guid
         {
-            get
-            {
-                return this.guid;
-            }
+            get { return this.guid; }
 
             set
             {
@@ -59,10 +53,7 @@ namespace Marv.Common.Graph
 
         public Dict<string, int, string, double[]> SectionBeliefs
         {
-            get
-            {
-                return this.sectionBeliefs;
-            }
+            get { return this.sectionBeliefs; }
 
             set
             {
@@ -78,10 +69,7 @@ namespace Marv.Common.Graph
 
         public Dict<string, int, string, VertexEvidence> SectionEvidences
         {
-            get
-            {
-                return this.sectionEvidences;
-            }
+            get { return this.sectionEvidences; }
 
             set
             {
@@ -95,10 +83,7 @@ namespace Marv.Common.Graph
 
         public int StartYear
         {
-            get
-            {
-                return this.startYear;
-            }
+            get { return this.startYear; }
 
             set
             {
@@ -137,7 +122,7 @@ namespace Marv.Common.Graph
                 }
             }
 
-            this.RaiseDataChanged();
+            // this.RaiseDataChanged();
         }
 
         public void ChangeSectionId(string oldId, string newId)

@@ -15,10 +15,7 @@ namespace Marv
 
         public string Description
         {
-            get
-            {
-                return this.description;
-            }
+            get { return this.description; }
 
             set
             {
@@ -32,10 +29,7 @@ namespace Marv
 
         public TimeSpan Duration
         {
-            get
-            {
-                return this.duration;
-            }
+            get { return this.duration; }
 
             set
             {
@@ -49,10 +43,7 @@ namespace Marv
 
         public bool IsIndeterminate
         {
-            get
-            {
-                return this.isIndeterminate;
-            }
+            get { return this.isIndeterminate; }
 
             set
             {
@@ -66,10 +57,7 @@ namespace Marv
 
         public bool IsMuteable
         {
-            get
-            {
-                return this.isMuteable;
-            }
+            get { return this.isMuteable; }
 
             set
             {
@@ -83,10 +71,7 @@ namespace Marv
 
         public bool IsMuted
         {
-            get
-            {
-                return this.isMuted;
-            }
+            get { return this.isMuted; }
 
             set
             {
@@ -100,10 +85,7 @@ namespace Marv
 
         public bool IsTimed
         {
-            get
-            {
-                return this.isTimed;
-            }
+            get { return this.isTimed; }
 
             set
             {
@@ -111,16 +93,18 @@ namespace Marv
                 {
                     this.isTimed = value;
                     this.RaisePropertyChanged();
+
+                    if (this.IsTimed)
+                    {
+                        this.IsIndeterminate = true;
+                    }
                 }
             }
         }
 
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
 
             set
             {
@@ -136,10 +120,7 @@ namespace Marv
 
         public double Value
         {
-            get
-            {
-                return this.value;
-            }
+            get { return this.value; }
 
             set
             {

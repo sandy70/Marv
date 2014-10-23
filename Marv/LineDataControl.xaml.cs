@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
@@ -13,7 +14,6 @@ using Microsoft.Win32;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
-using Telerik.Windows.Data;
 
 namespace Marv.Input
 {
@@ -118,6 +118,43 @@ namespace Marv.Input
             InitializeComponent();
 
             this.Loaded += LineDataControl_Loaded;
+        }
+
+        private static void AddSections(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, int sectionsToAddCount, IProgress<double> progress = null)
+        {
+            var count = 0.0;
+            var nSection = 1;
+
+            for (var i = 0; i < sectionsToAddCount; i++)
+            {
+                var sectionId = "Section " + nSection;
+
+                while (lineData.ContainsSection(sectionId))
+                {
+                    sectionId = "Section " + nSection++;
+                }
+
+                lineData.SetSectionEvidence(sectionId, new Dict<int, string, VertexEvidence>());
+
+                var row = new Dynamic();
+                row[CellModel.SectionIdHeader] = sectionId;
+
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
+                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
+                {
+                    row[year.ToString()] = sectionEvidence[year][vertexKey];
+                }
+
+                rows.Add(row);
+
+                if (progress != null)
+                {
+                    progress.Report(count++ / sectionsToAddCount);
+                }
+
+                Thread.Sleep(1);
+            }
         }
 
         private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -256,24 +293,28 @@ namespace Marv.Input
             }
         }
 
-        private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
+        private async void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
-            var nSection = 1;
+            var lineData = this.LineData;
+            var theRows = this.Rows;
+            var sectionsToAddCount = this.SectionsToAddCount;
+            var vertexKey = this.SelectedVertex.Key;
 
-            var keys = Enumerable.Range(0, this.SectionsToAddCount).Select(i =>
+            var notification = new Notification
             {
-                var sectionId = "Section " + nSection;
+                IsIndeterminate = true,
+                Description = "Adding sections..."
+            };
 
-                while (this.LineData.ContainsSection(sectionId))
-                {
-                    nSection++;
-                    sectionId = "Section " + nSection;
-                }
+            this.RaiseNotificationOpened(notification);
 
-                return sectionId;
-            });
+            this.IsEnabled = false;
 
-            this.LineData.AddSections(keys);
+            await Task.Run(() => AddSections(theRows, lineData, vertexKey, sectionsToAddCount));
+
+            this.IsEnabled = true;
+
+            this.RaiseNotificationClosed(notification);
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
@@ -636,10 +677,8 @@ namespace Marv.Input
                     progress.Report(row);
                 }
 
-                this.Rows.Add(row);
+                Thread.Sleep(1);
             }
-
-            // this.VirtualRows = new VirtualQueryableCollectionView(this.Rows, typeof (Dynamic)) { LoadSize = 100 };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
