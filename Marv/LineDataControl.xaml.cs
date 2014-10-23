@@ -120,6 +120,21 @@ namespace Marv.Input
             this.Loaded += LineDataControl_Loaded;
         }
 
+        private static void AddRow(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, string sectionId)
+        {
+            var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
+            var row = new Dynamic();
+            row[CellModel.SectionIdHeader] = sectionId;
+
+            for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
+            {
+                row[year.ToString()] = sectionEvidence[year][vertexKey];
+            }
+
+            rows.Add(row);
+        }
+
         private static void AddSections(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, int sectionsToAddCount, IProgress<double> progress = null)
         {
             var count = 0.0;
@@ -136,17 +151,7 @@ namespace Marv.Input
 
                 lineData.SetSectionEvidence(sectionId, new Dict<int, string, VertexEvidence>());
 
-                var row = new Dynamic();
-                row[CellModel.SectionIdHeader] = sectionId;
-
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
-                {
-                    row[year.ToString()] = sectionEvidence[year][vertexKey];
-                }
-
-                rows.Add(row);
+                AddRow(rows, lineData, vertexKey, sectionId);
 
                 if (progress != null)
                 {
@@ -176,21 +181,19 @@ namespace Marv.Input
             var lineData = control.LineData;
             var vertexKey = control.SelectedVertex.Key;
 
-            control.Rows = new ObservableCollection<Dynamic>();
+            var rows = control.Rows = new ObservableCollection<Dynamic>();
 
-            await Task.Run(() => control.UpdateRows(lineData, vertexKey, new Progress<Dynamic>(row => control.Rows.Add(row))));
-
-            foreach (var selectionInfo in control.selectionInfos)
+            var notification = new Notification
             {
-                try
-                {
-                    control.GridView.SelectedCells.Add(new GridViewCellInfo(control.Rows[selectionInfo.Item1], control.GridView.Columns[selectionInfo.Item2], control.GridView));
-                }
-                catch
-                {
-                    // do nothing
-                }
-            }
+                Description = "Reading line data...",
+                Value = 0
+            };
+
+            control.RaiseNotificationOpened(notification);
+
+            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
+
+            control.RaiseNotificationClosed(notification);
 
             control.LineData.DataChanged += control.LineData_DataChanged;
         }
@@ -214,6 +217,24 @@ namespace Marv.Input
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as LineDataControl).RaiseSelectedYearChanged();
+        }
+
+        private static void UpdateRows(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, IProgress<double> progress)
+        {
+            var count = 1.0;
+            var total = lineData.GetSectionIds().Count();
+
+            foreach (var sectionId in lineData.GetSectionIds())
+            {
+                AddRow(rows, lineData, vertexKey, sectionId);
+
+                if (progress != null)
+                {
+                    progress.Report(count ++ / total);
+                }
+
+                Thread.Sleep(1);
+            }
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
