@@ -175,6 +175,11 @@ namespace Marv.Common.Graph
             this.SectionEvidences[sectionId] = sectionEvidence;
         }
 
+        public void Write(string filePath)
+        {
+            this.WriteJson(filePath);
+        }
+
         private void Keys_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)

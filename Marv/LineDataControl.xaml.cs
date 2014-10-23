@@ -644,7 +644,7 @@ namespace Marv.Input
                     this.FileName = this.FileName + "." + Common.Graph.LineData.FileExtension;
                 }
 
-                this.LineData.WriteJson(this.FileName);
+                this.LineData.Write(this.FileName);
             }
         }
 

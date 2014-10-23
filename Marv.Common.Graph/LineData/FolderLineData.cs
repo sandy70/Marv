@@ -169,6 +169,11 @@ namespace Marv.Common.Graph
             sectionEvidence.WriteJson(evidenceFilePath);
         }
 
+        public void Write(string filePath)
+        {
+            // Do nothing because files should be updated already.
+        }
+
         public event EventHandler DataChanged;
     }
 }

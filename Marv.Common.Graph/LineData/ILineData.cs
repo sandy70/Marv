@@ -18,6 +18,7 @@ namespace Marv.Common.Graph
         void RemoveSection(string sectionId);
         void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief);
         void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
+        void Write(string filePath);
         event EventHandler DataChanged;
     }
 }
