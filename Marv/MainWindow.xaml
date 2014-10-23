@@ -87,6 +87,7 @@
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
                                                    Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

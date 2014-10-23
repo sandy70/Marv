@@ -702,14 +702,19 @@ namespace Marv.Input
         {
             foreach (var sectionId in this.LineData.GetSectionIds())
             {
+                var sectionBelief = this.LineData.GetSectionBelief(sectionId);
                 var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+
+                var newSectionBelief = new Dict<int, string, double[]>();
                 var newSectionEvidence = new Dict<int, string, VertexEvidence>();
 
                 for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
                 {
+                    newSectionBelief[year] = sectionBelief[year];
                     newSectionEvidence[year] = sectionEvidence[year];
                 }
 
+                this.LineData.SetSectionBelief(sectionId, newSectionBelief);
                 this.LineData.SetSectionEvidence(sectionId, newSectionEvidence);
             }
 
