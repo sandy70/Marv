@@ -23,12 +23,8 @@ namespace Marv.Common.Graph
 
             set
             {
-                var oldEndYear = this.EndYear;
-
                 this.endYear = value;
                 this.RaisePropertyChanged();
-
-                this.UpdateSections(this.StartYear, this.EndYear, this.StartYear, oldEndYear);
 
                 if (this.EndYear < this.StartYear)
                 {
@@ -87,12 +83,8 @@ namespace Marv.Common.Graph
 
             set
             {
-                var oldStartYear = this.StartYear;
-
                 this.startYear = value;
                 this.RaisePropertyChanged();
-
-                this.UpdateSections(this.StartYear, this.EndYear, oldStartYear, this.endYear);
 
                 if (this.StartYear > this.EndYear)
                 {
@@ -217,33 +209,6 @@ namespace Marv.Common.Graph
                     }
                 }
             }
-        }
-
-        private void UpdateSections(int newStartYear, int newEndYear, int oldStartYear, int oldEndYear)
-        {
-            foreach (var sectionId in this.SectionEvidences.Keys.ToList())
-            {
-                var startYear = Utils.Min(newStartYear, oldStartYear);
-                var endYear = Utils.Max(newEndYear, oldEndYear);
-
-                var yearEvidences = new Dict<int, string, VertexEvidence>();
-
-                for (var year = startYear; year <= endYear; year++)
-                {
-                    if (this.SectionEvidences[sectionId].ContainsKey(year))
-                    {
-                        yearEvidences[year] = this.SectionEvidences[sectionId][year];
-                    }
-                    else
-                    {
-                        yearEvidences[year] = new Dict<string, VertexEvidence>();
-                    }
-                }
-
-                this.SectionEvidences[sectionId] = yearEvidences;
-            }
-
-            this.RaiseDataChanged();
         }
 
         public event EventHandler DataChanged;

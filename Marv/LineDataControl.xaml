@@ -93,26 +93,25 @@
                            TextAlignment="Right" VerticalAlignment="Center"
                            Text="Start Year" />
 
-                <telerik:RadNumericUpDown Margin="2"
+                <telerik:RadNumericUpDown Name="YearStartControl"
+                                          Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
-                                          LargeChange="5" />
+                                          LargeChange="5"
+                                          Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}" />
 
                 <TextBlock Margin="2"
                            TextAlignment="Right" VerticalAlignment="Center"
                            Text="End Year" />
 
-                <telerik:RadNumericUpDown Name="EndYearControl"
+                <telerik:RadNumericUpDown Name="YearEndControl"
+                                          LargeChange="5" SmallChange="1"
                                           Margin="2"
-                                          Maximum="2050"
-                                          Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
+                                          Maximum="2050" Minimum="1950"
                                           NumberDecimalDigits="0"
-                                          SmallChange="1"
-                                          LargeChange="5" />
+                                          Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}" />
             </ToolBar>
         </ToolBarTray>
 
