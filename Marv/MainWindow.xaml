@@ -99,7 +99,8 @@
                                 <local:LineDataChart x:Name="LineDataChart"
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
+                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

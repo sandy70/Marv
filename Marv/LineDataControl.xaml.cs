@@ -98,7 +98,11 @@ namespace Marv.Input
         {
             get { return (string) GetValue(SelectedSectionIdProperty); }
 
-            set { SetValue(SelectedSectionIdProperty, value); }
+            set
+            {
+                SetValue(SelectedSectionIdProperty, value);
+                this.RaiseSelectedSectionIdChanged();
+            }
         }
 
         public Vertex SelectedVertex
@@ -283,6 +287,14 @@ namespace Marv.Input
             if (this.SelectedCellChanged != null)
             {
                 this.SelectedCellChanged(this, new EventArgs());
+            }
+        }
+
+        protected void RaiseSelectedSectionIdChanged()
+        {
+            if (this.SelectedSectionIdChanged != null)
+            {
+                this.SelectedSectionIdChanged(this, new EventArgs());
             }
         }
 
@@ -750,5 +762,7 @@ namespace Marv.Input
         public event EventHandler SectionEvidencesChanged;
 
         public event EventHandler SelectedCellChanged;
+
+        public event EventHandler SelectedSectionIdChanged;
     }
 }
