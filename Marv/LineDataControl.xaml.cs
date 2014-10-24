@@ -177,7 +177,23 @@ namespace Marv.Input
 
             control.IsGridViewEnabled = true;
 
-            await control.UpdateRows();
+            if (control.LineData == null || control.SelectedVertex == null) return;
+
+            var lineData = control.LineData;
+            var rows = control.Rows = new ObservableCollection<Dynamic>();
+            var vertexKey = control.SelectedVertex.Key;
+
+            var notification = new Notification
+            {
+                Description = "Reading line data...",
+                Value = 0
+            };
+
+            control.RaiseNotificationOpened(notification);
+
+            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
+
+            control.RaiseNotificationClosed(notification);
 
             control.LineData.DataChanged += control.LineData_DataChanged;
         }
@@ -210,7 +226,17 @@ namespace Marv.Input
 
             foreach (var sectionId in lineData.GetSectionIds())
             {
-                AddRow(rows, lineData, vertexKey, sectionId);
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
+                var row = new Dynamic();
+                row[CellModel.SectionIdHeader] = sectionId;
+
+                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
+                {
+                    row[year.ToString()] = sectionEvidence[year][vertexKey];
+                }
+
+                rows.Add(row);
 
                 if (progress != null)
                 {
@@ -430,9 +456,9 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexData = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
-            if (vertexData.Type == VertexEvidenceType.Invalid)
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
@@ -542,7 +568,21 @@ namespace Marv.Input
 
         private async void LineData_DataChanged(object sender, EventArgs e)
         {
-            await this.UpdateRows();
+            var lineData = this.LineData;
+            var rows = this.Rows = new ObservableCollection<Dynamic>();
+            var vertexKey = this.SelectedVertex.Key;
+
+            var notification = new Notification
+            {
+                Description = "Reading line data...",
+                Value = 0
+            };
+
+            this.RaiseNotificationOpened(notification);
+
+            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
+
+            this.RaiseNotificationClosed(notification);
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -683,33 +723,6 @@ namespace Marv.Input
             }
         }
 
-        private async Task<bool> UpdateRows()
-        {
-            if (this.LineData == null || this.SelectedVertex == null)
-            {
-                return false;
-            }
-
-            var lineData = this.LineData;
-            var vertexKey = this.SelectedVertex.Key;
-
-            var rows = this.Rows = new ObservableCollection<Dynamic>();
-
-            var notification = new Notification
-            {
-                Description = "Reading line data...",
-                Value = 0
-            };
-
-            this.RaiseNotificationOpened(notification);
-
-            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
-
-            this.RaiseNotificationClosed(notification);
-
-            return true;
-        }
-
         private async Task UpdateYears()
         {
             foreach (var sectionId in this.LineData.GetSectionIds())
@@ -730,7 +743,26 @@ namespace Marv.Input
                 this.LineData.SetSectionEvidence(sectionId, newSectionEvidence);
             }
 
-            await this.UpdateRows();
+            if (this.LineData == null || this.SelectedVertex == null)
+            {
+                return;
+            }
+
+            var lineData = this.LineData;
+            var rows = this.Rows = new ObservableCollection<Dynamic>();
+            var vertexKey = this.SelectedVertex.Key;
+
+            var notification = new Notification
+            {
+                Description = "Reading line data...",
+                Value = 0
+            };
+
+            this.RaiseNotificationOpened(notification);
+
+            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
+
+            this.RaiseNotificationClosed(notification);
         }
 
         private async void YearEnd_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)

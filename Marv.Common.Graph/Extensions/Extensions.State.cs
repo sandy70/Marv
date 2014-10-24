@@ -77,7 +77,7 @@ namespace Marv
             {
                 return new VertexEvidence
                 {
-                    Type = VertexEvidenceType.Invalid
+                    Type = VertexEvidenceType.Null
                 };
             }
 
@@ -121,13 +121,13 @@ namespace Marv
                 evidenceType = VertexEvidenceType.Triangular;
             }
 
-            if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
+            else if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
             {
                 evidence = stateList.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1]));
                 evidenceType = VertexEvidenceType.Normal;
             }
 
-            if (anEvidenceString.Contains(":") && evidenceParams.Count == 2)
+            else if (anEvidenceString.Contains(":") && evidenceParams.Count == 2)
             {
                 evidenceParams.Sort();
 
@@ -135,7 +135,7 @@ namespace Marv
                 evidenceType = VertexEvidenceType.Range;
             }
 
-            if (anEvidenceString.Contains(",") && evidenceParams.Count == stateList.Count)
+            else if (evidenceParams.Count == stateList.Count)
             {
                 evidence = evidenceParams.Normalized().ToArray();
                 evidenceType = VertexEvidenceType.Distribution;

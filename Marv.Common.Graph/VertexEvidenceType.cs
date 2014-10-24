@@ -5,6 +5,7 @@
         Distribution,
         Invalid,
         Normal,
+        Null,
         Number,
         Range,
         State,
