@@ -402,6 +402,8 @@ namespace Marv.Controls.Graph
                 {
                     this.DiagramPart.Layout(LayoutType.Sugiyama, sugiyamaSettings);
                 }
+
+                this.DiagramPart.InvalidateVisual();
             }
             else
             {
