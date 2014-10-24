@@ -15,6 +15,9 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsEvidenceVisibleProperty =
             DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register("IsExpanded", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
@@ -65,6 +68,12 @@ namespace Marv.Controls.Graph
             set { SetValue(IsEvidenceVisibleProperty, value); }
         }
 
+        public bool IsExpanded
+        {
+            get { return (bool) GetValue(IsExpandedProperty); }
+            set { SetValue(IsExpandedProperty, value); }
+        }
+
         public bool IsInputVisible
         {
             get { return (bool) GetValue(IsInputVisibleProperty); }
@@ -107,7 +116,7 @@ namespace Marv.Controls.Graph
         private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as VertexControl;
-            
+
             if (control.IsSubGraphCommandVisible)
             {
                 control.Commands.PushUnique(VertexControlCommands.SubGraph);
