@@ -8,13 +8,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Win32;
-using Telerik.Windows;
 using Telerik.Windows.Controls;
-using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -99,11 +96,7 @@ namespace Marv.Input
         {
             get { return (string) GetValue(SelectedSectionIdProperty); }
 
-            set
-            {
-                SetValue(SelectedSectionIdProperty, value);
-                this.RaiseSelectedSectionIdChanged();
-            }
+            set { SetValue(SelectedSectionIdProperty, value); }
         }
 
         public Vertex SelectedVertex
@@ -122,7 +115,11 @@ namespace Marv.Input
         {
             InitializeComponent();
 
+            this.Loaded -= LineDataControl_Loaded;
             this.Loaded += LineDataControl_Loaded;
+
+            this.Loaded -= LineDataControl_Loaded_GridView;
+            this.Loaded += LineDataControl_Loaded_GridView;
         }
 
         private static void AddRow(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, string sectionId)
@@ -215,6 +212,7 @@ namespace Marv.Input
         private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
+            control.RaiseSelectedSectionIdChanged();
 
             try
             {
@@ -452,102 +450,6 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
-        {
-            e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
-            e.Column.MaxWidth = 100;
-        }
-
-        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
-        {
-            var cellModel = e.Cell.ToModel();
-            var oldString = e.OldData as string;
-            var newString = e.NewData as string;
-
-            this.SetCell(cellModel, newString, oldString);
-        }
-
-        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
-        {
-            if (e.Cell.ToModel().IsColumnSectionId)
-            {
-                return;
-            }
-
-            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
-
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
-        }
-
-        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
-        {
-            if (e.NewCell == null || this.LineData == null)
-            {
-                return;
-            }
-
-            var cellModel = e.NewCell.ToModel();
-            this.SelectedSectionId = cellModel.SectionId;
-
-            if (cellModel.IsColumnSectionId)
-            {
-                this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
-                return;
-            }
-
-            this.SelectedYear = cellModel.Year;
-            this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-
-            this.RaiseSelectedCellChanged();
-        }
-
-        private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
-        {
-            foreach (var item in e.Items)
-            {
-                var row = item as Dynamic;
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.RemoveSection(sectionId);
-            }
-        }
-
-        private void GridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                if (this.GridView.SelectionUnit == GridViewSelectionUnit.Cell)
-                {
-                    foreach (var selectedCell in this.GridView.SelectedCells)
-                    {
-                        var cellModel = selectedCell.ToModel();
-                        this.SetCell(cellModel, "");
-                    }
-                }
-            }
-        }
-
-        private void GridView_Pasted(object sender, RadRoutedEventArgs e)
-        {
-            foreach (var pastedCell in this.pastedCells)
-            {
-                this.SetCell(pastedCell.Cell.ToModel(), pastedCell.Value as string, this.oldData[pastedCell] as string);
-            }
-
-            this.pastedCells.Clear();
-
-            this.RaiseSectionEvidencesChanged();
-        }
-
-        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
-        {
-            this.pastedCells.Add(e);
-            this.oldData[e] = e.Cell.ToModel().Data;
-        }
-
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.YearEndControl.ValueChanged -= this.YearEnd_ValueChanged;
@@ -555,30 +457,6 @@ namespace Marv.Input
 
             this.YearStartControl.ValueChanged -= YearStart_ValueChanged;
             this.YearStartControl.ValueChanged += YearStart_ValueChanged;
-
-            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
-            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
-
-            this.GridView.CellEditEnded -= GridView_CellEditEnded;
-            this.GridView.CellEditEnded += GridView_CellEditEnded;
-
-            this.GridView.CellValidating -= GridView_CellValidating;
-            this.GridView.CellValidating += GridView_CellValidating;
-
-            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
-            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
-
-            this.GridView.Deleted -= GridView_Deleted;
-            this.GridView.Deleted += GridView_Deleted;
-
-            this.GridView.KeyDown -= GridView_KeyDown;
-            this.GridView.KeyDown += GridView_KeyDown;
-
-            this.GridView.Pasted -= GridView_Pasted;
-            this.GridView.Pasted += GridView_Pasted;
-
-            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
-            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
 
             this.AddSectionsButton.Click -= AddSectionsButton_Click;
             this.AddSectionsButton.Click += AddSectionsButton_Click;
