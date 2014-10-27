@@ -43,7 +43,6 @@ namespace Marv.Input
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
-        private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private Network network;
         private ObservableCollection<Dynamic> rows;
 
