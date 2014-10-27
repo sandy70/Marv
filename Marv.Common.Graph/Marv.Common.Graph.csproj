@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Extensions\Extensions.State.cs" />
     <Compile Include="Extensions\Extensions.Vertex.cs" />
+    <Compile Include="InvalidEvidenceException.cs" />
     <Compile Include="LineData\FolderLineData.cs" />
     <Compile Include="LineData\ILineData.cs" />
     <Compile Include="LineData\LineData.cs" />

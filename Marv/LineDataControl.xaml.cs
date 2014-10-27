@@ -177,7 +177,10 @@ namespace Marv.Input
 
             control.IsGridViewEnabled = true;
 
-            if (control.LineData == null || control.SelectedVertex == null) return;
+            if (control.LineData == null || control.SelectedVertex == null)
+            {
+                return;
+            }
 
             var lineData = control.LineData;
             var rows = control.Rows = new ObservableCollection<Dynamic>();
@@ -211,7 +214,21 @@ namespace Marv.Input
         private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
-            control.RunSection(control.SelectedSectionId);
+
+            try
+            {
+                control.RunSection(control.SelectedSectionId);
+            }
+            catch (InvalidEvidenceException exception)
+            {
+                control.RaiseNotificationOpened(new Notification
+                {
+                    Duration = TimeSpan.FromSeconds(10),
+                    Description = exception.Message,
+                    IsIndeterminate = true,
+                    IsTimed = true
+                });
+            }
         }
 
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -622,11 +639,31 @@ namespace Marv.Input
 
             this.RaiseNotificationOpened(notification);
 
-            await Task.Run(() => this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
-
-            // this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
+            var exception = await Task.Run(() =>
+            {
+                try
+                {
+                    this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100));
+                    return null;
+                }
+                catch (InvalidEvidenceException exp)
+                {
+                    return exp;
+                }
+            });
 
             this.RaiseNotificationClosed(notification);
+
+            if (exception != null)
+            {
+                this.RaiseNotificationOpened(new Notification
+                {
+                    IsIndeterminate = true,
+                    IsTimed = true,
+                    Duration = TimeSpan.FromSeconds(10),
+                    Description = exception.Message
+                });
+            }
 
             this.RaiseSectionBeliefsChanged();
         }
@@ -640,6 +677,7 @@ namespace Marv.Input
             foreach (var sectionId in sectionIds)
             {
                 var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
                 lineData.SetSectionBelief(sectionId, this.network.Run(sectionEvidence));
 
                 done++;

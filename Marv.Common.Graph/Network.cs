@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Marv.Common.Graph;
 using Smile;
 
 namespace Marv
@@ -45,18 +46,18 @@ namespace Marv
             var pathStream = new FileStream(path, FileMode.OpenOrCreate);
             var rMCrypto = new RijndaelManaged();
 
-            byte[] Key =
+            byte[] key =
             {
                 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
             };
 
-            byte[] IV =
+            byte[] iv =
             {
                 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
             };
 
             var cryptStream = new CryptoStream(pathStream,
-                rMCrypto.CreateDecryptor(Key, IV),
+                rMCrypto.CreateDecryptor(key, iv),
                 CryptoStreamMode.Read);
 
             var lineList = new List<String>();
@@ -70,7 +71,7 @@ namespace Marv
                 }
                 sReader.Close();
             }
-            catch (CryptographicException e)
+            catch (CryptographicException)
             {
                 return;
             }
@@ -332,6 +333,16 @@ namespace Marv
             {
                 if (graphData[vertexKey].Value != null && graphData[vertexKey].Value.Sum() > 0)
                 {
+                    // Hugin allows a node to have a single state. Smile doesn't. So Smile adds a state
+                    // to the node silently. This causes the length of the evidence array to not match
+                    // the number of states. In this case, we throw an exception.
+                    var outcomeCount = this.GetOutcomeCount(vertexKey);
+
+                    if (outcomeCount != graphData[vertexKey].Value.Length)
+                    {
+                        throw new InvalidEvidenceException("The length of evidence array does not match the number of states for node: " + vertexKey) { VertexKey = vertexKey };
+                    }
+                    
                     this.SetSoftEvidence(vertexKey, graphData[vertexKey].Value);
                 }
             }
