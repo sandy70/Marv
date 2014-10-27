@@ -329,21 +329,21 @@ namespace Marv
         {
             this.ClearAllEvidence();
 
-            foreach (var vertexKey in graphData.Keys)
+            foreach (var vertex in this.Vertices)
             {
-                if (graphData[vertexKey].Value != null && graphData[vertexKey].Value.Sum() > 0)
+                if (graphData.ContainsKey(vertex.Key) && graphData[vertex.Key].Value != null && graphData[vertex.Key].Value.Sum() > 0)
                 {
                     // Hugin allows a node to have a single state. Smile doesn't. So Smile adds a state
                     // to the node silently. This causes the length of the evidence array to not match
                     // the number of states. In this case, we throw an exception.
-                    var outcomeCount = this.GetOutcomeCount(vertexKey);
+                    var outcomeCount = this.GetOutcomeCount(vertex.Key);
 
-                    if (outcomeCount != graphData[vertexKey].Value.Length)
+                    if (outcomeCount != graphData[vertex.Key].Value.Length)
                     {
-                        throw new InvalidEvidenceException("The length of evidence array does not match the number of states for node: " + vertexKey) { VertexKey = vertexKey };
+                        throw new InvalidEvidenceException("The length of evidence array does not match the number of states for node: " + vertex.Key) { VertexKey = vertex.Key };
                     }
                     
-                    this.SetSoftEvidence(vertexKey, graphData[vertexKey].Value);
+                    this.SetSoftEvidence(vertex.Key, graphData[vertex.Key].Value);
                 }
             }
 
