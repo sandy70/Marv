@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Graph;
 using Microsoft.Win32;
@@ -514,6 +515,21 @@ namespace Marv.Input
             }
         }
 
+        private void GridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (this.GridView.SelectionUnit == GridViewSelectionUnit.Cell)
+                {
+                    foreach (var selectedCell in this.GridView.SelectedCells)
+                    {
+                        var cellModel = selectedCell.ToModel();
+                        this.SetCell(cellModel, "");
+                    }
+                }
+            }
+        }
+
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
             foreach (var pastedCell in this.pastedCells)
@@ -554,6 +570,9 @@ namespace Marv.Input
 
             this.GridView.Deleted -= GridView_Deleted;
             this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.KeyDown -= GridView_KeyDown;
+            this.GridView.KeyDown += GridView_KeyDown;
 
             this.GridView.Pasted -= GridView_Pasted;
             this.GridView.Pasted += GridView_Pasted;
