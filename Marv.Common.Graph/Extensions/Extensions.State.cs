@@ -12,7 +12,7 @@ namespace Marv
 
         public static double GetSafeMin(this IEnumerable<State> states)
         {
-            return states.Max(state => state.SafeMin);
+            return states.Min(state => state.SafeMin);
         }
 
         public static IEnumerable<double> Parse(this IEnumerable<State> states, IDistribution dist)
