@@ -14,7 +14,6 @@ namespace Marv
         private string defaultGroup;
         private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
         private Guid guid;
-        private bool isDefaultGroupVisible;
         private bool isExpanded = true;
         private string key;
         private Vertex selectedVertex;
@@ -83,20 +82,6 @@ namespace Marv
                 if (value != this.guid)
                 {
                     this.guid = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public bool IsDefaultGroupVisible
-        {
-            get { return this.isDefaultGroupVisible; }
-
-            set
-            {
-                if (value != this.isDefaultGroupVisible)
-                {
-                    this.isDefaultGroupVisible = value;
                     this.RaisePropertyChanged();
                 }
             }

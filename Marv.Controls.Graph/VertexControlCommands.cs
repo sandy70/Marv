@@ -13,7 +13,7 @@ namespace Marv.Controls.Graph
             ImageSource = "/Marv.Common;component/Resources/Icons/Expand.png"
         };
 
-        public static VertexControlSubGraphCommand SubGraph = new VertexControlSubGraphCommand
+        public static readonly VertexControlSubGraphCommand SubGraph = new VertexControlSubGraphCommand
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
         };
