@@ -235,6 +235,23 @@ namespace Marv.Input
             (d as LineDataControl).RaiseSelectedYearChanged();
         }
 
+        private static void RunAllSections(ILineData lineData, Network theNetwork, IProgress<double> progress)
+        {
+            var sectionIds = lineData.GetSectionIds().ToList();
+            var total = sectionIds.Count;
+            var done = 0.0;
+
+            foreach (var sectionId in sectionIds)
+            {
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+
+                lineData.SetSectionBelief(sectionId, theNetwork.Run(sectionEvidence));
+
+                done++;
+                progress.Report(done / total);
+            }
+        }
+
         private static void UpdateRows(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, IProgress<double> progress)
         {
             var count = 1.0;
@@ -540,7 +557,7 @@ namespace Marv.Input
             {
                 try
                 {
-                    this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100));
+                    RunAllSections(lineData, this.network, new Progress<double>(progress => notification.Value = progress * 100));
                     return null;
                 }
                 catch (InvalidEvidenceException exp)
@@ -563,23 +580,6 @@ namespace Marv.Input
             }
 
             this.RaiseSectionBeliefsChanged();
-        }
-
-        private void RunAllSections(ILineData lineData, IProgress<double> progress)
-        {
-            var sectionIds = lineData.GetSectionIds().ToList();
-            var total = sectionIds.Count;
-            var done = 0.0;
-
-            foreach (var sectionId in sectionIds)
-            {
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                lineData.SetSectionBelief(sectionId, this.network.Run(sectionEvidence));
-
-                done++;
-                progress.Report(done / total);
-            }
         }
 
         private void RunSection(string sectionId)
