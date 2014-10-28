@@ -149,7 +149,14 @@ namespace Marv
 
             for (var i = 0; i < valueList.Count; i++)
             {
-                valueList[i] /= sum;
+                if (sum == 0)
+                {
+                    valueList[i] = 0;
+                }
+                else
+                {
+                    valueList[i] /= sum;
+                }
             }
 
             return valueList;
