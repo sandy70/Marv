@@ -1,6 +1,6 @@
 ﻿namespace Marv
 {
-    public class SectionBelief : Dict<int, string, double[]>
+    public class SectionEvidence : Dict<int, string, VertexEvidence>
     {
         public void Write(string filePath)
         {

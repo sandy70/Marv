@@ -65,6 +65,7 @@
     <Compile Include="LineData\LineData.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="SectionBelief.cs" />
+    <Compile Include="SectionEvidence.cs" />
     <Compile Include="VertexClearCommand.cs" />
     <Compile Include="VertexEvidence.cs" />
     <Compile Include="Edge.cs" />
