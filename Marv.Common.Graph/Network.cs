@@ -248,6 +248,11 @@ namespace Marv
             return vertexBeliefs;
         }
 
+        public string GetBeliefsJson()
+        {
+            return this.GetBeliefs().ToJson();
+        }
+
         public Dict<string, VertexEvidence> GetEvidences()
         {
             var graphData = new Dict<string, VertexEvidence>();
@@ -269,6 +274,11 @@ namespace Marv
             }
 
             return graphData;
+        }
+
+        public string GetEvidencesJson()
+        {
+            return this.GetEvidences().ToJson();
         }
 
         public double[] GetIntervals(string vertexKey)
@@ -342,7 +352,7 @@ namespace Marv
                     {
                         throw new InvalidEvidenceException("The length of evidence array does not match the number of states for node: " + vertex.Key) { VertexKey = vertex.Key };
                     }
-                    
+
                     this.SetSoftEvidence(vertex.Key, graphData[vertex.Key].Value);
                 }
             }
@@ -412,6 +422,17 @@ namespace Marv
         public void SetNodeEvidence(string vertexKey, string evidenceString)
         {
             var vertexEvidence = this.Vertices[vertexKey].States.ParseEvidenceString(evidenceString);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Null)
+            {
+                return;
+            }
+
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+                throw new InvalidEvidenceException("The evidence (" + evidenceString + ") is invalid for node " + vertexKey);
+            }
+
             this.SetSoftEvidence(vertexKey, vertexEvidence.Value);
         }
 
