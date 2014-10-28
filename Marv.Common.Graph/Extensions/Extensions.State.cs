@@ -68,7 +68,7 @@ namespace Marv
 
         public static double[] ParseEvidence(this IEnumerable<State> states, IDistribution dist)
         {
-            return states.Select(state => dist.Cdf(state.SafeMax) - dist.Cdf(state.SafeMin)).Normalized().ToArray();
+            return states.Select(state => dist.Cdf(state.SafeMax + Utils.Epsilon) - dist.Cdf(state.SafeMin - Utils.Epsilon)).Normalized().ToArray();
         }
 
         public static VertexEvidence ParseEvidenceString(this IEnumerable<State> states, string anEvidenceString)
