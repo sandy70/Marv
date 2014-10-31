@@ -37,6 +37,24 @@ namespace Marv
             }
         }
 
+        public Dict<string, double[]> InitialBelief
+        {
+            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.InitialBelief); }
+
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    if (value.ContainsKey(vertex.Key))
+                    {
+                        vertex.InitialBelief = value[vertex.Key];
+                    }
+                }
+
+                this.RaisePropertyChanged();
+            }
+        }
+
         // Dictionary<targetVertexKey, sourceVertexKey>
         // Beliefs from sourceVertexKey should go into targetVertexKey
         public Dictionary<string, string> Loops { get; set; }
@@ -180,6 +198,8 @@ namespace Marv
                 }
             }
 
+            network.UpdateBeliefs();
+            network.InitialBelief = network.GetBeliefs();
             return network;
         }
 
@@ -280,6 +300,56 @@ namespace Marv
         {
             var states = this.Vertices[vertexKey].States;
             return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
+        }
+
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkVertex, double[], double[], double> statisticFunc)
+        {
+            var targetVertex = this.Vertices[targetVertexKey];
+
+            // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
+            var value = new Dict<string, string, double>();
+
+            // Collect vertices to ignore
+            var verticesToIgnore = new List<NetworkVertex>
+            {
+                targetVertex
+            };
+
+            verticesToIgnore.AddRange(this.Vertices.Where(vertex => this.IsEvidence(vertex.Key)));
+
+            foreach (var sourceVertex in this.Vertices.Except(verticesToIgnore))
+            {
+                foreach (var sourceState in sourceVertex.States)
+                {
+                    try
+                    {
+                        var stateIndex = sourceVertex.States.IndexOf(sourceState);
+                        this.SetHardEvidence(sourceVertex.Key, stateIndex);
+
+                        this.UpdateBeliefs();
+
+                        var beliefs = this.GetBeliefs();
+
+                        this.ClearEvidence(sourceVertex.Key);
+
+                        var targetVertexValue = beliefs[targetVertex.Key];
+
+                        value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief);
+                    }
+                    catch (SmileException exp)
+                    {
+                        Console.WriteLine(exp.Message);
+                        value[sourceVertex.Key][sourceState.Key] = double.NaN;
+                    }
+                }
+            }
+
+            return value;
+        }
+
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer computer)
+        {
+            return this.GetSensitivity(targetVertexKey, computer.Compute);
         }
 
         public string ParseUserProperty(string userPropertyName, string defaultValue)

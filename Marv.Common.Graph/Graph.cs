@@ -182,7 +182,7 @@ namespace Marv
                     PositionForGroup = networkVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
                     Units = networkVertex.ParseStringProperty("units"),
                     States = networkVertex.States,
-                    Type = networkVertex.ParseSubType()
+                    Type = networkVertex.Type
                 };
 
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
@@ -215,57 +215,6 @@ namespace Marv
             }
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dict<string, VertexEvidence> graphEvidence = null)
-        {
-            var targetVertex = this.Vertices[targetVertexKey];
-
-            // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
-            var value = new Dict<string, string, double>();
-
-            // Clear all evidence to begin with
-            this.Network.ClearEvidence();
-
-            // Collect vertices to ignore
-            var verticesToIgnore = new List<Vertex>
-            {
-                targetVertex
-            };
-
-            if (graphEvidence != null)
-            {
-                // Set the given evidence
-                this.SetEvidence(graphEvidence);
-
-                // Collect more vertices to ignore
-                verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
-            }
-
-            foreach (var sourceVertex in this.Vertices.Except(verticesToIgnore))
-            {
-                foreach (var sourceState in sourceVertex.States)
-                {
-                    try
-                    {
-                        var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.Network.SetHardEvidence(sourceVertex.Key, stateIndex);
-
-                        var graphValue = this.Network.GetBeliefs();
-                        var targetVertexValue = graphValue[targetVertex.Key];
-
-                        value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
-
-                        sourceVertex.Evidence = null;
-                        sourceVertex.EvidenceString = null;
-                    }
-                    catch (SmileException)
-                    {
-                        value[sourceVertex.Key][sourceState.Key] = double.NaN;
-                    }
-                }
-            }
-
-            return value;
-        }
 
         public Vertex GetSinkVertex()
         {

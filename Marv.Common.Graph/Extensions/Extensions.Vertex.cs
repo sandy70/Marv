@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Marv
 {
     public static partial class Extensions
     {
-        public static double Entropy(this Vertex vertex, double[] newValue, double[] oldValue = null)
+        public static double Entropy(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);
 
             return newValue.Entropy();
         }
 
-        public static double EntropyDifference(this Vertex vertex, double[] newValue, double[] oldValue = null)
+        public static double EntropyDifference(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);
             CheckVertexStatisticComputable(vertex, oldValue);
@@ -21,16 +20,16 @@ namespace Marv
             return newValue.Entropy() - oldValue.Entropy();
         }
 
-        public static double Mean(this Vertex vertex, double[] newValue, double[] oldValue = null)
+        public static double Mean(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);
 
             return vertex.States
-                .Select((state, i) => (newValue[i] * (state.Max + state.Min) / 2))
-                .Sum();
+                         .Select((state, i) => (newValue[i] * (state.Max + state.Min) / 2))
+                         .Sum();
         }
 
-        public static double MeanDifference(this Vertex vertex, double[] newValue, double[] oldValue = null)
+        public static double MeanDifference(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);
             CheckVertexStatisticComputable(vertex, oldValue);
@@ -38,25 +37,25 @@ namespace Marv
             return vertex.Mean(newValue) - vertex.Mean(oldValue);
         }
 
-        public static double StandardDeviation(this Vertex vertex, double[] newValue, double[] oldValue = null)
+        public static double StandardDeviation(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(vertex, newValue);
 
             var mu = vertex.Mean(newValue);
 
             var stdev = vertex.States.Select((state, i) =>
-                newValue[i] *
-                (
-                    1.0 / 3 * (Math.Pow(state.Max, 3) - Math.Pow(state.Min, 3)) +
-                    Math.Pow(mu, 2) * (state.Max - state.Min) -
-                    mu * (Math.Pow(state.Max, 2) - Math.Pow(state.Min, 2))
-                    ))
-                .Sum();
+                                             newValue[i] *
+                                             (
+                                                 1.0 / 3 * (Math.Pow(state.Max, 3) - Math.Pow(state.Min, 3)) +
+                                                 Math.Pow(mu, 2) * (state.Max - state.Min) -
+                                                 mu * (Math.Pow(state.Max, 2) - Math.Pow(state.Min, 2))
+                                             ))
+                              .Sum();
 
             return Math.Sqrt(stdev / vertex.States.Count);
         }
 
-        private static void CheckVertexStatisticComputable(Vertex vertex, double[] value)
+        private static void CheckVertexStatisticComputable(NetworkVertex vertex, double[] value)
         {
             if (vertex.States.Count != value.Length)
             {
@@ -71,4 +70,6 @@ namespace Marv
             }
         }
     }
+
+    
 }

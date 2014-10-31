@@ -12,12 +12,33 @@ namespace Marv
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
         private ObservableCollection<State> states;
+        private VertexType? type;
+
+        public double[] InitialBelief
+        {
+            get { return this.States.Select(state => state.InitialBelief).ToArray(); }
+
+            set
+            {
+                for (var i = 0; i < this.States.Count; i++)
+                {
+                    this.States[i].InitialBelief = value[i];
+                }
+            }
+        }
 
         public string Key { get; set; }
 
         public ObservableCollection<State> States
         {
             get { return this.states ?? (this.states = this.ParseStates()); }
+        }
+
+        public VertexType Type
+        {
+            get { return this.type ?? (this.type = this.ParseSubType()).Value; }
+
+            set { this.type = value; }
         }
 
         public ObservableCollection<string> ParseGroups()
@@ -141,21 +162,6 @@ namespace Marv
             return htmlDesc;
         }
 
-        public VertexType ParseSubType()
-        {
-            var typeString = this.ParseStringProperty("subtype");
-
-            if (typeString.Equals("number"))
-            {
-                return VertexType.Numbered;
-            }
-            if (typeString.Equals("interval"))
-            {
-                return VertexType.Interval;
-            }
-            return VertexType.Labelled;
-        }
-
         private ObservableCollection<State> ParseStates()
         {
             var theStates = new ObservableCollection<State>();
@@ -245,6 +251,21 @@ namespace Marv
             }
 
             return theStates;
+        }
+
+        private VertexType ParseSubType()
+        {
+            var typeString = this.ParseStringProperty("subtype");
+
+            if (typeString.Equals("number"))
+            {
+                return VertexType.Numbered;
+            }
+            if (typeString.Equals("interval"))
+            {
+                return VertexType.Interval;
+            }
+            return VertexType.Labelled;
         }
     }
 }
