@@ -247,7 +247,7 @@ namespace Marv
                     try
                     {
                         var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.Network.SetEvidence(sourceVertex.Key, stateIndex);
+                        this.Network.SetHardEvidence(sourceVertex.Key, stateIndex);
 
                         var graphValue = this.Network.GetBeliefs();
                         var targetVertexValue = graphValue[targetVertex.Key];

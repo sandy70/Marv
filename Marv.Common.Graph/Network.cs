@@ -183,11 +183,6 @@ namespace Marv
             return network;
         }
 
-        public void ClearEvidence()
-        {
-            this.ClearAllEvidence();
-        }
-
         public void EncryptWrite(string path)
         {
             var pathStream = new FileStream(path, FileMode.OpenOrCreate);
@@ -314,7 +309,7 @@ namespace Marv
 
         public Dict<string, double[]> Run(Dict<string, double[]> graphData)
         {
-            this.ClearAllEvidence();
+            this.ClearEvidence();
 
             foreach (var vertexKey in graphData.Keys)
             {
@@ -337,7 +332,7 @@ namespace Marv
 
         public Dict<string, double[]> Run(Dict<string, VertexEvidence> graphData)
         {
-            this.ClearAllEvidence();
+            this.ClearEvidence();
 
             foreach (var vertex in this.Vertices)
             {
