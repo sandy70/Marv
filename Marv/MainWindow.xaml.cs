@@ -314,7 +314,9 @@ namespace Marv.Input
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             var network = Network.Read(@"C:\Users\vkha\Data\WestPipeline\WP08.net");
-            var sensitivity = network.GetSensitivity("CR", new VertexEntropyComputer());
+            network.SetHardEvidence("water_cut", 1);
+
+            var sensitivity = network.GetSensitivity("A02", new VertexEntropyComputer());
 
             Console.WriteLine(sensitivity);
 

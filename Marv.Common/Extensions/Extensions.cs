@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
@@ -81,9 +79,9 @@ namespace Marv
             return str.Enquote('"');
         }
 
-        public static double Entropy(this double[] array)
+        public static double Entropy(this IEnumerable<double> array)
         {
-            return array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Length);
+            return -array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Count());
         }
 
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
@@ -145,7 +143,6 @@ namespace Marv
         {
             var valueList = values as IList<double> ?? values.ToList();
             var sum = valueList.Sum();
-            valueList.Select(value => value /= sum);
 
             for (var i = 0; i < valueList.Count; i++)
             {
@@ -176,8 +173,9 @@ namespace Marv
 
         public static List<string> ParseBlocks(this string str)
         {
-            var startChar = '{';
-            var endChar = '}';
+            const char startChar = '{';
+            const char endChar = '}';
+
             var count = 0;
             var readStr = "";
             var blocks = new List<string>();
@@ -387,4 +385,3 @@ namespace Marv
         }
     }
 }
-

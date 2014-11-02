@@ -7,15 +7,15 @@ namespace Marv
     {
         public static double Entropy(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
-            CheckVertexStatisticComputable(vertex, newValue);
+            CheckValueArrayLength(vertex, newValue);
 
             return newValue.Entropy();
         }
 
         public static double EntropyDifference(this NetworkVertex vertex, double[] newValue, double[] oldValue = null)
         {
-            CheckVertexStatisticComputable(vertex, newValue);
-            CheckVertexStatisticComputable(vertex, oldValue);
+            CheckValueArrayLength(vertex, newValue);
+            CheckValueArrayLength(vertex, oldValue);
 
             return newValue.Entropy() - oldValue.Entropy();
         }
@@ -57,11 +57,7 @@ namespace Marv
 
         private static void CheckVertexStatisticComputable(NetworkVertex vertex, double[] value)
         {
-            if (vertex.States.Count != value.Length)
-            {
-                var message = String.Format("The length of value array [{0}] should be = number of states in this vertex [{1}:{2}].", value.Length, vertex, vertex.States.Count);
-                throw new InvalidValueException(message);
-            }
+            CheckValueArrayLength(vertex, value);
 
             if (vertex.Type != VertexType.Interval)
             {
@@ -69,7 +65,14 @@ namespace Marv
                 throw new InvalidValueException(message);
             }
         }
-    }
 
-    
+        private static void CheckValueArrayLength(NetworkVertex vertex, double[] value)
+        {
+            if (vertex.States.Count != value.Length)
+            {
+                var message = String.Format("The length of value array [{0}] should be = number of states in this vertex [{1}:{2}].", value.Length, vertex, vertex.States.Count);
+                throw new InvalidValueException(message);
+            }
+        }
+    }
 }

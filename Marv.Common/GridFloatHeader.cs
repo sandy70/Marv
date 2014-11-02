@@ -17,13 +17,13 @@ namespace Marv
         {
             var gridFloatHeader = new GridFloatHeader();
 
-            string line;
             var headerParts = new string[7, 2];
             var j = 0;
 
             // Read the file and display it line by line.
             using (var file = new StreamReader(filePath))
             {
+                string line;
                 while ((line = file.ReadLine()) != null)
                 {
                     var delimiters = new char[] { '\t', ' ' };

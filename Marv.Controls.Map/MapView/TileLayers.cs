@@ -18,7 +18,7 @@ namespace Marv.Controls.Map
             TileSource = new TileSource("http://ecn.t{i}.tiles.virtualearth.net/tiles/r{q}.png?g=0&amp;stl=h")
         };
 
-        public static TileLayer MapBoxAerial = new TileLayer
+        public static readonly TileLayer MapBoxAerial = new TileLayer
         {
             SourceName = "MapBoxAerial",
             Description = "MapBox Aerial",
