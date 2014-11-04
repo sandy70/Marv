@@ -20,6 +20,7 @@ namespace Marv
         public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
         private string fileName;
+        private Dictionary<string, string> loops = new Dictionary<string, string>();
 
         public string FileName
         {
@@ -57,7 +58,11 @@ namespace Marv
 
         // Dictionary<targetVertexKey, sourceVertexKey>
         // Beliefs from sourceVertexKey should go into targetVertexKey
-        public Dictionary<string, string> Loops { get; set; }
+        public Dictionary<string, string> Loops
+        {
+            get { return this.loops; }
+            set { this.loops = value; }
+        }
 
         public static void Decrypt(string path)
         {
@@ -104,9 +109,11 @@ namespace Marv
 
         public static Network Read(string path)
         {
-            var network = new Network();
-            network.Loops = new Dictionary<string, string>();
-            network.FileName = path;
+            var network = new Network
+            {
+                FileName = path
+            };
+
             network.ReadFile(path);
 
             var fileLines = File.ReadAllLines(path).Trimmed().ToList();
@@ -118,11 +125,7 @@ namespace Marv
                 // Parse the node section
                 if (fileLines[i].StartsWith("node"))
                 {
-                    var parts = fileLines[i].Split(new[]
-                    {
-                        ' '
-                    },
-                        2).ToList();
+                    var parts = fileLines[i].Split(" ".ToArray(), 2).ToList();
 
                     var node = new NetworkVertex
                     {
@@ -140,12 +143,7 @@ namespace Marv
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        parts = fileLines[i].Split(new[]
-                        {
-                            '=', ';'
-                        },
-                            2,
-                            StringSplitOptions.RemoveEmptyEntries).ToList();
+                        parts = fileLines[i].Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
                         node.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
