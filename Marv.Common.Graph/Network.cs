@@ -266,24 +266,33 @@ namespace Marv
             return this.GetBeliefs().ToJson();
         }
 
+        public double[] GetEvidence(string vertexKey)
+        {
+            var softEvidence = this.GetSoftEvidence(vertexKey);
+            var evidenceIndex = this.IsEvidence(vertexKey) ? this.GetHardEvidence(vertexKey) : -1;
+
+            if (softEvidence != null)
+            {
+                return softEvidence;
+            }
+
+            if (evidenceIndex >= 0)
+            {
+                var evidence = new double[this.GetOutcomeCount(vertexKey)];
+                evidence[evidenceIndex] = 1;
+                return evidence;
+            }
+
+            throw new SmileException("No evidence is set on node " + vertexKey);
+        }
+
         public Dict<string, VertexEvidence> GetEvidences()
         {
             var graphData = new Dict<string, VertexEvidence>();
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
-                var softEvidence = this.GetSoftEvidence(vertexKey);
-                var evidenceIndex = this.IsEvidence(vertexKey) ? this.GetEvidence(vertexKey) : -1;
-
-                if (softEvidence != null)
-                {
-                    graphData[vertexKey].Value = softEvidence;
-                }
-                else if (evidenceIndex >= 0)
-                {
-                    graphData[vertexKey].Value = new double[this.GetOutcomeCount(vertexKey)];
-                    graphData[vertexKey].Value[evidenceIndex] = 1;
-                }
+                graphData[vertexKey].Value = this.GetEvidence(vertexKey);
             }
 
             return graphData;
@@ -482,7 +491,7 @@ namespace Marv
             return sectionBeliefs;
         }
 
-        public void SetNodeEvidence(string vertexKey, string evidenceString)
+        public void SetEvidence(string vertexKey, string evidenceString)
         {
             var vertexEvidence = this.Vertices[vertexKey].States.ParseEvidenceString(evidenceString);
 
@@ -497,6 +506,11 @@ namespace Marv
             }
 
             this.SetSoftEvidence(vertexKey, vertexEvidence.Value);
+        }
+
+        public void SetEvidence(string vertexKey, double value)
+        {
+            this.SetEvidence(vertexKey, value.ToString());
         }
 
         public void Write()

@@ -278,7 +278,7 @@ namespace Marv.Controls.Graph
                     {
                         this.Graph.Write();
                     }
-                    catch (UnauthorizedAccessException exception)
+                    catch (UnauthorizedAccessException)
                     {
                         var fileName = this.Graph.Network.FileName;
 
