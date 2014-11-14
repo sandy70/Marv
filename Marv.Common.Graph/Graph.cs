@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using QuickGraph.Algorithms.RankedShortestPath;
-using Smile;
 
 namespace Marv
 {
@@ -215,7 +214,6 @@ namespace Marv
             }
         }
 
-
         public Vertex GetSinkVertex()
         {
             return this.Vertices.First(vertex => this.Edges.All(edge => edge.Source != vertex));
@@ -343,12 +341,39 @@ namespace Marv
 
         public void Write()
         {
-            this.Network.Write(this);
+            this.Write(this.Network.FileName);
         }
 
         public void Write(string filePath)
         {
-            this.Network.Write(filePath, this);
+            var userProperties = new List<string>
+            {
+                "defaultgroup=" + this.DefaultGroup,
+                "guid=" + this.Guid,
+                "key=" + this.Key,
+            };
+
+            this.Network.Properties["HR_Desc"] = userProperties.String().Enquote();
+
+            foreach (var networkStructureVertex in this.Network.Vertices)
+            {
+                var vertex = this.Vertices[networkStructureVertex.Key];
+
+                networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
+                networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
+                networkStructureVertex.Properties["HR_Desc"] = vertex.Description.Enquote();
+                networkStructureVertex.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
+                networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
+                networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
+                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
+                networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
+
+                // Remove legacy properties
+                networkStructureVertex.Properties.Remove("grouppositions");
+                networkStructureVertex.Properties.Remove("isheaderofgroup");
+            }
+
+            this.Network.Write(filePath);
         }
     }
 }

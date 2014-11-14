@@ -249,6 +249,11 @@ namespace Marv
             }
         }
 
+        public double[] GetBelief(string vertexKey)
+        {
+            return this.GetNodeValue(vertexKey);
+        }
+
         public Dict<string, double[]> GetBeliefs()
         {
             var vertexBeliefs = new Dict<string, double[]>();
@@ -303,15 +308,15 @@ namespace Marv
             return this.GetEvidences().ToJson();
         }
 
-        public double GetMean(string vertexKey)
-        {
-            return this.Vertices[vertexKey].Mean(this.GetNodeValue(vertexKey));
-        }
-
         public double[] GetIntervals(string vertexKey)
         {
             var states = this.Vertices[vertexKey].States;
             return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
+        }
+
+        public double GetMean(string vertexKey)
+        {
+            return this.Vertices[vertexKey].Mean(this.GetNodeValue(vertexKey));
         }
 
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkVertex, double[], double[], double> statisticFunc)
@@ -518,16 +523,6 @@ namespace Marv
             this.SetEvidence(vertexKey, value.ToString());
         }
 
-        public void Write()
-        {
-            this.Write(this.FileName);
-        }
-
-        public void Write(Graph graph)
-        {
-            this.Write(this.FileName, graph);
-        }
-
         public void Write(string path)
         {
             using (var writer = new StreamWriter(path))
@@ -566,38 +561,6 @@ namespace Marv
                     }
                 }
             }
-        }
-
-        public void Write(string path, Graph graph)
-        {
-            var userProperties = new List<string>
-            {
-                "defaultgroup=" + graph.DefaultGroup,
-                "guid=" + graph.Guid,
-                "key=" + graph.Key,
-            };
-
-            this.Properties["HR_Desc"] = userProperties.String().Enquote();
-
-            foreach (var networkStructureVertex in this.Vertices)
-            {
-                var vertex = graph.Vertices[networkStructureVertex.Key];
-
-                networkStructureVertex.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
-                networkStructureVertex.Properties["groups"] = vertex.Groups.String().Enquote();
-                networkStructureVertex.Properties["HR_Desc"] = vertex.Description.Enquote();
-                networkStructureVertex.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
-                networkStructureVertex.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
-                networkStructureVertex.Properties["label"] = "\"" + vertex.Name + "\"";
-                networkStructureVertex.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
-                networkStructureVertex.Properties["units"] = "\"" + vertex.Units + "\"";
-
-                // Remove legacy properties
-                networkStructureVertex.Properties.Remove("grouppositions");
-                networkStructureVertex.Properties.Remove("isheaderofgroup");
-            }
-
-            this.Write(path);
         }
 
         public void WriteBeliefs(string filePath)

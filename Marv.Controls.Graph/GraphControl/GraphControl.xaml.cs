@@ -308,11 +308,12 @@ namespace Marv.Controls.Graph
 
         public void Open()
         {
-            var openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Filter = "Network Files (.net)|*.net";
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.Multiselect = false;
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = @"Network Files (.net)|*.net", 
+                FilterIndex = 1,
+                Multiselect = false
+            };
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)
             {
