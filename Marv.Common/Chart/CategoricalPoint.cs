@@ -2,17 +2,13 @@
 {
     public class CategoricalPoint : NotifyPropertyChanged, IKeyed
     {
-        private double? _value;
         private object category;
-
         private int name;
+        private double? value;
 
         public object Category
         {
-            get
-            {
-                return this.category;
-            }
+            get { return this.category; }
 
             set
             {
@@ -24,12 +20,14 @@
             }
         }
 
+        string IKeyed<string>.Key
+        {
+            get { return this.Category as string; }
+        }
+
         public int Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
 
             set
             {
@@ -45,26 +43,15 @@
 
         public double? Value
         {
-            get
-            {
-                return this._value;
-            }
+            get { return this.value; }
 
             set
             {
-                if (value != this._value)
+                if (value != this.value)
                 {
-                    this._value = value;
+                    this.value = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        string IKeyed<string>.Key
-        {
-            get
-            {
-                return this.Category as string;
             }
         }
     }

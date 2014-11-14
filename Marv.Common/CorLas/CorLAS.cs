@@ -26,9 +26,25 @@ namespace Marv
          * Ratio of yield strength to tensile strength can not be < 0.5 or > 1.0
          **/
 
-        public static double CrackPredictedCriticalPressure(int profile, int flowStrengthFormula, double yieldStrength, double ultimateStrength, double flowConstant,
-            BindingList<Flaw> flaws, double maxLength, double maxDepth, double od, double wt, double yFactor, string jFract, string location, double mop,
-            double tMod, double eMod, double hExp, double fTough, int alloyGrp)
+        public static double CrackPredictedCriticalPressure(int profile,
+                                                            int flowStrengthFormula,
+                                                            double yieldStrength,
+                                                            double ultimateStrength,
+                                                            double flowConstant,
+                                                            BindingList<Flaw> flaws,
+                                                            double maxLength,
+                                                            double maxDepth,
+                                                            double od,
+                                                            double wt,
+                                                            double yFactor,
+                                                            string jFract,
+                                                            string location,
+                                                            double mop,
+                                                            double tMod,
+                                                            double eMod,
+                                                            double hExp,
+                                                            double fTough,
+                                                            int alloyGrp)
         {
             var ftmax = new EffectiveFlawData();
 
@@ -91,8 +107,25 @@ namespace Marv
                         qfactor1 = Qefactor(xx1, profile);
 
                         //CritToughPres(prssop,prsscr,aspect,effdepth,rad,wallthk,flawloc,yfactor,outdia,iallygrp,yslb,emodf,shexpn,qfactor,qfactor1,jmin,safefct,safeprcrk,effval(j,5),effval(j,6),1,failcri,flowstr,tmodf,iprofiletype)
-                        efd.JValue = CritToughPres(false, profile, jFract, location, tMod, fTough, hExp, yieldStrength, alloyGrp, mop, eMod,
-                            aspect, effDepth, flowstr, qfactor, qfactor1, od, wt, yFactor);
+                        efd.JValue = CritToughPres(false,
+                            profile,
+                            jFract,
+                            location,
+                            tMod,
+                            fTough,
+                            hExp,
+                            yieldStrength,
+                            alloyGrp,
+                            mop,
+                            eMod,
+                            aspect,
+                            effDepth,
+                            flowstr,
+                            qfactor,
+                            qfactor1,
+                            od,
+                            wt,
+                            yFactor);
 
                         if (efd.JValue > ftmax.JValue)
                         {
@@ -123,12 +156,38 @@ namespace Marv
             qfactor = Qefactor(xx, profile);
             qfactor1 = Qefactor(xx1, profile);
 
-            return CritToughPres(true, profile, jFract, location, tMod, fTough, hExp, yieldStrength, alloyGrp, mop, eMod,
-                taspect, teffDepth, flowstr, qfactor, qfactor1, od, wt, yFactor);
+            return CritToughPres(true,
+                profile,
+                jFract,
+                location,
+                tMod,
+                fTough,
+                hExp,
+                yieldStrength,
+                alloyGrp,
+                mop,
+                eMod,
+                taspect,
+                teffDepth,
+                flowstr,
+                qfactor,
+                qfactor1,
+                od,
+                wt,
+                yFactor);
         }
 
-        public static double FlawFailurePressure(int profile, int flowStrengthFormula, double yieldStrength, double ultimateStrength, double flowConstant,
-            BindingList<Flaw> flaws, double maxLength, double maxDepth, double od, double wt, double yFactor)
+        public static double FlawFailurePressure(int profile,
+                                                 int flowStrengthFormula,
+                                                 double yieldStrength,
+                                                 double ultimateStrength,
+                                                 double flowConstant,
+                                                 BindingList<Flaw> flaws,
+                                                 double maxLength,
+                                                 double maxDepth,
+                                                 double od,
+                                                 double wt,
+                                                 double yFactor)
         {
             double failpr;
             double flowstr;
@@ -248,9 +307,25 @@ namespace Marv
             return 0.5 * flnth * flnth / flarea;
         }
 
-        private static double CritToughPres(bool retCrit, int profile, string jFractureToughnessCrit, string location, double tearingModulus, double fractureToughness,
-            double strainHardeningExponent, double alloyYieldStrength, int alloyGroup, double mop, double elasticModulus,
-            double aspect, double effDepth, double fslb, double qf, double qf1, double od, double wt, double yFactor)
+        private static double CritToughPres(bool retCrit,
+                                            int profile,
+                                            string jFractureToughnessCrit,
+                                            string location,
+                                            double tearingModulus,
+                                            double fractureToughness,
+                                            double strainHardeningExponent,
+                                            double alloyYieldStrength,
+                                            int alloyGroup,
+                                            double mop,
+                                            double elasticModulus,
+                                            double aspect,
+                                            double effDepth,
+                                            double fslb,
+                                            double qf,
+                                            double qf1,
+                                            double od,
+                                            double wt,
+                                            double yFactor)
         {
             var rad = 0.5 * od - wt * yFactor;
             var shexpn = 1.0 / strainHardeningExponent; // nexpnt(ialloy);

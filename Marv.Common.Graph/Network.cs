@@ -303,6 +303,11 @@ namespace Marv
             return this.GetEvidences().ToJson();
         }
 
+        public double GetMean(string vertexKey)
+        {
+            return this.Vertices[vertexKey].Mean(this.GetNodeValue(vertexKey));
+        }
+
         public double[] GetIntervals(string vertexKey)
         {
             var states = this.Vertices[vertexKey].States;

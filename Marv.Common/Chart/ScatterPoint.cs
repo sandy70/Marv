@@ -8,10 +8,7 @@
 
         public double XValue
         {
-            get
-            {
-                return this.xValue;
-            }
+            get { return this.xValue; }
 
             set
             {
@@ -25,10 +22,7 @@
 
         public double? YValue
         {
-            get
-            {
-                return this.yValue;
-            }
+            get { return this.yValue; }
 
             set
             {

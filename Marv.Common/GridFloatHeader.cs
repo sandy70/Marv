@@ -7,11 +7,11 @@ namespace Marv
     {
         public string ByteOrder;
         public double CellSize;
-        public int nCols;
         public int NoDataValue = 9999;
-        public int nRows;
         public double XLL;
         public double YLL;
+        public int nCols;
+        public int nRows;
 
         public static GridFloatHeader Read(string filePath)
         {
@@ -26,7 +26,7 @@ namespace Marv
                 string line;
                 while ((line = file.ReadLine()) != null)
                 {
-                    var delimiters = new char[] { '\t', ' ' };
+                    var delimiters = new[] { '\t', ' ' };
                     var parts = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
                     var i = 0;

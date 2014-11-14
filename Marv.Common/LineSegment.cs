@@ -16,13 +16,15 @@ namespace Marv.Common
             this.P2 = p2;
         }
 
-        public Point[] getBoundingBox()
+        public Point[] GetBoundingBox()
         {
             var result = new Point[2];
-            result[0] = new Point(Math.Min(P1.X, P2.X), Math.Min(P1.Y,
-                P2.Y));
-            result[1] = new Point(Math.Max(P1.X, P2.X), Math.Max(P1.Y,
-                P2.Y));
+            result[0] = new Point(Math.Min(P1.X, P2.X),
+                Math.Min(P1.Y,
+                    P2.Y));
+            result[1] = new Point(Math.Max(P1.X, P2.X),
+                Math.Max(P1.Y,
+                    P2.Y));
             return result;
         }
     }
