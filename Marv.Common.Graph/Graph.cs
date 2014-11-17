@@ -72,6 +72,21 @@ namespace Marv
             }
         }
 
+        public IEnumerable<string> Groups
+        {
+            get
+            {
+                var groups = new List<string>();
+
+                foreach (var vertex in this.Vertices)
+                {
+                    groups.AddUnique(vertex.Groups);
+                }
+
+                return groups;
+            }
+        }
+
         public Guid Guid
         {
             get { return this.guid; }
