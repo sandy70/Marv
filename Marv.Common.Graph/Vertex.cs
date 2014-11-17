@@ -10,13 +10,6 @@ namespace Marv
 {
     public class Vertex : NotifyPropertyChanged, IKeyed
     {
-        private ObservableCollection<Command<Vertex>> commands = new ObservableCollection<Command<Vertex>>
-        {
-            VertexCommands.Expand,
-            VertexCommands.Lock,
-            VertexCommands.Clear
-        };
-
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
@@ -47,20 +40,6 @@ namespace Marv
             {
                 this.States.ForEach((state, i) => state.Belief = value == null ? 0 : value[i]);
                 this.RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<Command<Vertex>> Commands
-        {
-            get { return this.commands; }
-
-            set
-            {
-                if (value != this.commands)
-                {
-                    this.commands = value;
-                    this.RaisePropertyChanged();
-                }
             }
         }
 
