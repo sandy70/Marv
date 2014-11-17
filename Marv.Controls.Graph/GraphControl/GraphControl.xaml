@@ -98,7 +98,8 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadToggleButton>
                 
-                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}" />
+                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
+                                     SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"/>
             </ToolBar>
         </ToolBarTray>
 

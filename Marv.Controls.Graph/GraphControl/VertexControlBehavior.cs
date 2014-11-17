@@ -36,6 +36,10 @@ namespace Marv.Controls.Graph
             {
                 this.GraphControl.UpdateLayout();
             }
+            else if (command == VertexControlCommands.SubGraph)
+            {
+                this.GraphControl.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
+            }
         }
 
         private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Marv.Controls.Graph
+﻿namespace Marv.Controls.Graph
 {
     public static class VertexControlCommands
     {
@@ -13,7 +7,7 @@ namespace Marv.Controls.Graph
             ImageSource = "/Marv.Common;component/Resources/Icons/Expand.png"
         };
 
-        public static readonly VertexControlSubGraphCommand SubGraph = new VertexControlSubGraphCommand
+        public static readonly Command<VertexControl> SubGraph = new Command<VertexControl>
         {
             ImageSource = "/Marv.Common;component/Resources/Icons/SubGraph.png"
         };

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -53,6 +54,7 @@ namespace Marv.Controls.Graph
         private Marv.Graph displayGraph;
         private string displayVertexKey;
         private bool isDefaultGroupVisible;
+        private string selectedGroup;
 
         public int AutoSaveDuration
         {
@@ -176,6 +178,31 @@ namespace Marv.Controls.Graph
             set { this.SetValue(OutgoingConnectionHighlightColorProperty, value); }
         }
 
+        public string SelectedGroup
+        {
+            get { return this.selectedGroup; }
+
+            set
+            {
+                if (value.Equals(this.selectedGroup))
+                {
+                    return;
+                }
+
+                this.selectedGroup = value;
+                this.RaisePropertyChanged();
+
+                if (this.Graph.SelectedVertex != null)
+                {
+                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.SelectedVertex.Key);
+                }
+                else
+                {
+                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.GetHeaderVertexKey(this.SelectedGroup));
+                }
+            }
+        }
+
         public double ShapeOpacity
         {
             get { return (double) this.GetValue(ShapeOpacityProperty); }
@@ -230,7 +257,7 @@ namespace Marv.Controls.Graph
                 control.Graph.SelectedVertex = control.Graph.GetSinkVertex();
             }
 
-            control.UpdateDisplayGraph(control.Graph.DefaultGroup, control.Graph.SelectedVertex.Key);
+            control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
         public void DisableConnectorEditing()
@@ -310,7 +337,7 @@ namespace Marv.Controls.Graph
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = @"Network Files (.net)|*.net", 
+                Filter = @"Network Files (.net)|*.net",
                 FilterIndex = 1,
                 Multiselect = false
             };
@@ -422,7 +449,7 @@ namespace Marv.Controls.Graph
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.UpdateDisplayGraph(this.Graph.DefaultGroup);
+            this.SelectedGroup = this.Graph.DefaultGroup;
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)

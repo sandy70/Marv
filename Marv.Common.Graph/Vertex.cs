@@ -33,7 +33,7 @@ namespace Marv
         private State mostProbableState;
         private string name;
         private Point position;
-        private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
+        private Dict<string, Point> positionsForGroup = new Dict<string, Point>();
         private string selectedGroup;
         private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.Labelled;
@@ -337,7 +337,7 @@ namespace Marv
             }
         }
 
-        public Dictionary<string, Point> PositionForGroup
+        public Dict<string, Point> PositionForGroup
         {
             get { return this.positionsForGroup; }
 

@@ -193,7 +193,7 @@ namespace Marv
                     Key = networkVertex.Key,
                     Name = networkVertex.ParseStringProperty("label"),
                     Position = networkVertex.ParsePosition(),
-                    PositionForGroup = networkVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
+                    PositionForGroup = networkVertex.ParseJson<Dict<string, Point>>("PositionForGroup"),
                     Units = networkVertex.ParseStringProperty("units"),
                     States = networkVertex.States,
                     Type = networkVertex.Type
@@ -227,6 +227,17 @@ namespace Marv
             {
                 vertex.ClearEvidence();
             }
+        }
+
+        /// <summary>
+        ///     Returns the key of the vertex which is the header of the give group.
+        /// </summary>
+        /// <param name="group">The group of which the header is required.</param>
+        /// <returns>The key of the vertex which is the header of group.</returns>
+        public string GetHeaderVertexKey(string group)
+        {
+            var headerVertex = this.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == @group);
+            return headerVertex == null ? null : headerVertex.Key;
         }
 
         public Vertex GetSinkVertex()
