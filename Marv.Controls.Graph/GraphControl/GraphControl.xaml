@@ -97,6 +97,8 @@
                                          ToolTip="Runs the evidence into the network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadToggleButton>
+                
+                <telerik:RadComboBox />
             </ToolBar>
         </ToolBarTray>
 
