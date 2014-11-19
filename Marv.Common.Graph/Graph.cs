@@ -180,23 +180,23 @@ namespace Marv
             graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var networkVertex in graph.Network.Nodes)
+            foreach (var networkNode in graph.Network.Nodes)
             {
                 var vertex = new Vertex
                 {
-                    ConnectorPositions = networkVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
-                    Description = networkVertex.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = networkVertex.ParseGroups(),
-                    HeaderOfGroup = networkVertex.ParseStringProperty("headerofgroup"),
-                    InputVertexKey = networkVertex.ParseStringProperty("InputNode"),
-                    IsExpanded = networkVertex.ParseIsExpanded(),
-                    Key = networkVertex.Key,
-                    Name = networkVertex.ParseStringProperty("label"),
-                    Position = networkVertex.ParsePosition(),
-                    PositionForGroup = networkVertex.ParseJson<Dict<string, Point>>("PositionForGroup"),
-                    Units = networkVertex.ParseStringProperty("units"),
-                    States = networkVertex.States,
-                    Type = networkVertex.Type
+                    ConnectorPositions = networkNode.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    Description = networkNode.ParseStringProperty("HR_HTML_Desc"),
+                    Groups = networkNode.ParseGroups(),
+                    HeaderOfGroup = networkNode.ParseStringProperty("headerofgroup"),
+                    InputVertexKey = networkNode.InputNodeKey,
+                    IsExpanded = networkNode.ParseIsExpanded(),
+                    Key = networkNode.Key,
+                    Name = networkNode.ParseStringProperty("label"),
+                    Position = networkNode.ParsePosition(),
+                    PositionForGroup = networkNode.ParseJson<Dict<string, Point>>("PositionForGroup"),
+                    Units = networkNode.ParseStringProperty("units"),
+                    States = networkNode.States,
+                    Type = networkNode.Type
                 };
 
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);

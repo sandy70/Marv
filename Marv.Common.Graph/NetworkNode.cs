@@ -10,6 +10,7 @@ namespace Marv
     {
         public readonly List<NetworkNode> Children = new List<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        private string inputNodeKey;
 
         private ObservableCollection<State> states;
         private VertexType? type;
@@ -27,6 +28,11 @@ namespace Marv
                     this.States[i].InitialBelief = value[i];
                 }
             }
+        }
+
+        public string InputNodeKey
+        {
+            get { return this.inputNodeKey ?? (this.inputNodeKey = this.ParseStringProperty("InputNode")); }
         }
 
         public string Key { get; set; }

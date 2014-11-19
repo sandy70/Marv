@@ -12,20 +12,12 @@ namespace Marv
 {
     public class Network : Smile.Network, INotifyPropertyChanged
     {
-        private enum NetworkFileLocation
-        {
-            Header,
-            Node,
-            Potential,
-            Root,
-        };
-
         private const string BeliefFileExtension = "marv-networkbelief";
         private const string EvidenceFileExtension = "marv-networkevidence";
 
-        private readonly List<string> footer = new List<string>();
         public readonly KeyedCollection<NetworkNode> Nodes = new KeyedCollection<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        private readonly List<string> footer = new List<string>();
 
         private string fileName;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
@@ -68,7 +60,8 @@ namespace Marv
         // Beliefs from sourceVertexKey should go into targetVertexKey
         public Dictionary<string, string> Loops
         {
-            get { return this.loops; }
+            get { return this.Nodes.Where(node => !string.IsNullOrWhiteSpace(node.InputNodeKey)).ToDictionary(node => node.Key, node => node.InputNodeKey); }
+
             set { this.loops = value; }
         }
 
@@ -124,21 +117,22 @@ namespace Marv
 
             network.ReadFile(path);
 
-            string currentNodeKey = "";
+            var currentNodeKey = "";
             var networkFileLocation = NetworkFileLocation.Root;
+            var line = "";
+            var streamReader = new StreamReader(path);
 
-            foreach (var line in File.ReadAllLines(path).Trimmed())
+            while ((line = streamReader.ReadLine()) != null)
             {
                 if (networkFileLocation == NetworkFileLocation.Root)
                 {
-                    if (line.Trim().Equals("net"))
+                    if (line.Equals("net"))
                     {
                         // Enter the header 'net' section
                         networkFileLocation = NetworkFileLocation.Header;
-                        continue;
                     }
 
-                    if (line.Trim().StartsWith("node"))
+                    else if (line.StartsWith("node"))
                     {
                         // Enter the node section
                         networkFileLocation = NetworkFileLocation.Node;
@@ -149,11 +143,9 @@ namespace Marv
                         {
                             Key = currentNodeKey
                         });
-
-                        continue;
                     }
 
-                    if (line.Trim().StartsWith("potential"))
+                    else if (line.StartsWith("potential"))
                     {
                         // Enter the potential section
                         networkFileLocation = NetworkFileLocation.Potential;
@@ -163,11 +155,11 @@ namespace Marv
 
                 else if (networkFileLocation == NetworkFileLocation.Header)
                 {
-                    if (line.Trim().Equals("{"))
+                    if (line.Equals("{"))
                     {
                         // do nothing
                     }
-                    else if (line.Trim().Equals("}"))
+                    else if (line.Equals("}"))
                     {
                         // Exit to root
                         networkFileLocation = NetworkFileLocation.Root;
@@ -181,11 +173,11 @@ namespace Marv
 
                 else if (networkFileLocation == NetworkFileLocation.Node)
                 {
-                    if (line.Trim().Equals("{"))
+                    if (line.Equals("{"))
                     {
                         // do nothing
                     }
-                    else if (line.Trim().Equals("}"))
+                    else if (line.Equals("}"))
                     {
                         // Exit to root
                         networkFileLocation = NetworkFileLocation.Root;
@@ -199,15 +191,15 @@ namespace Marv
 
                 else if (networkFileLocation == NetworkFileLocation.Potential)
                 {
-                    if (line.Trim().Equals("{"))
+                    if (line.Equals("{"))
                     {
                         // do nothing
                     }
                     else if (line.Contains("model_data"))
                     {
-                        network.Nodes[currentNodeKey].Expression = line.Trim().Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                        network.Nodes[currentNodeKey].Expression = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
                     }
-                    else if (line.Trim().Equals("}"))
+                    else if (line.Equals("}"))
                     {
                         networkFileLocation = NetworkFileLocation.Root;
                     }
@@ -215,19 +207,12 @@ namespace Marv
             }
 
             // Parse Children
-            foreach (var vertex in network.Nodes)
+            foreach (var node in network.Nodes)
             {
-                foreach (var childHandle in network.GetChildren(vertex.Key))
+                foreach (var childHandle in network.GetChildren(node.Key))
                 {
                     var childKey = network.GetNodeId(childHandle);
-                    vertex.Children.Add(network.Nodes[childKey]);
-                }
-
-                var inputVertexKey = vertex.ParseStringProperty("InputNode");
-
-                if (!string.IsNullOrWhiteSpace(inputVertexKey))
-                {
-                    network.Loops[vertex.Key] = inputVertexKey;
+                    node.Children.Add(network.Nodes[childKey]);
                 }
             }
 
@@ -702,6 +687,14 @@ namespace Marv
 
             return potentialString;
         }
+
+        private enum NetworkFileLocation
+        {
+            Header,
+            Node,
+            Potential,
+            Root,
+        };
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
