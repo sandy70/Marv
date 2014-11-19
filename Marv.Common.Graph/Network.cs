@@ -14,8 +14,10 @@ namespace Marv
     {
         private enum NetworkFileLocation
         {
+            Header,
+            Node,
+            Potential,
             Root,
-            Potential
         };
 
         private const string BeliefFileExtension = "marv-networkbelief";
@@ -122,76 +124,92 @@ namespace Marv
 
             network.ReadFile(path);
 
-            var fileLines = File.ReadAllLines(path).Trimmed().ToList();
-
-            var nLines = fileLines.Count;
-
             string currentNodeKey = "";
             var networkFileLocation = NetworkFileLocation.Root;
 
-            for (var i = 0; i < nLines; i++)
+            foreach (var line in File.ReadAllLines(path).Trimmed())
             {
-                // Parse the node section
-                if (fileLines[i].StartsWith("node"))
+                if (networkFileLocation == NetworkFileLocation.Root)
                 {
-                    var parts = fileLines[i].Split(" ".ToArray(), 2).ToList();
-
-                    var node = new NetworkNode
+                    if (line.Trim().Equals("net"))
                     {
-                        Key = parts[1]
-                    };
-
-                    network.Nodes.Add(node);
-
-                    while (!fileLines[i].Equals("{"))
-                    {
-                        i++;
+                        // Enter the header 'net' section
+                        networkFileLocation = NetworkFileLocation.Header;
+                        continue;
                     }
 
-                    i++;
-
-                    while (!fileLines[i].Equals("}"))
+                    if (line.Trim().StartsWith("node"))
                     {
-                        parts = fileLines[i].Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        node.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
-                        i++;
-                    }
-                }
+                        // Enter the node section
+                        networkFileLocation = NetworkFileLocation.Node;
 
-                // Parse the header 'net' section
-                else if (fileLines[i].Equals("net"))
-                {
-                    while (!fileLines[i].Equals("{"))
-                    {
-                        i++;
+                        currentNodeKey = line.Split(" ".ToArray(), 2).ToList()[1];
+
+                        network.Nodes.Add(new NetworkNode
+                        {
+                            Key = currentNodeKey
+                        });
+
+                        continue;
                     }
 
-                    i++;
-
-                    while (!fileLines[i].Equals("}"))
+                    if (line.Trim().StartsWith("potential"))
                     {
-                        var parts = fileLines[i].Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        network.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
-                        i++;
+                        // Enter the potential section
+                        networkFileLocation = NetworkFileLocation.Potential;
+                        currentNodeKey = line.Trim().Split("()| ".ToArray(), StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                     }
                 }
 
-                // Else just add to the footer. Later these might be 'potential' objects
-                else if(networkFileLocation == NetworkFileLocation.Root && fileLines[i].Trim().StartsWith("potential"))
+                else if (networkFileLocation == NetworkFileLocation.Header)
                 {
-                    networkFileLocation = NetworkFileLocation.Potential;
-                    currentNodeKey = fileLines[i].Trim().Split("()| ".ToArray(), StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                }
-
-                if (networkFileLocation == NetworkFileLocation.Potential)
-                {
-                    if (fileLines[i].Contains("}"))
+                    if (line.Trim().Equals("{"))
                     {
+                        // do nothing
+                    }
+                    else if (line.Trim().Equals("}"))
+                    {
+                        // Exit to root
                         networkFileLocation = NetworkFileLocation.Root;
                     }
-                    else if(fileLines[i].Contains("model_data"))
+                    else
                     {
-                        network.Nodes[currentNodeKey].Expression = fileLines[i].Trim().Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                        var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        network.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
+                    }
+                }
+
+                else if (networkFileLocation == NetworkFileLocation.Node)
+                {
+                    if (line.Trim().Equals("{"))
+                    {
+                        // do nothing
+                    }
+                    else if (line.Trim().Equals("}"))
+                    {
+                        // Exit to root
+                        networkFileLocation = NetworkFileLocation.Root;
+                    }
+                    else
+                    {
+                        var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        network.Nodes[currentNodeKey].Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
+                    }
+                }
+
+                else if (networkFileLocation == NetworkFileLocation.Potential)
+                {
+                    if (line.Trim().Equals("{"))
+                    {
+                        // do nothing
+                    }
+                    else if (line.Contains("model_data"))
+                    {
+                        network.Nodes[currentNodeKey].Expression = line.Trim().Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                    }
+                    else if (line.Trim().Equals("}"))
+                    {
+                        networkFileLocation = NetworkFileLocation.Root;
                     }
                 }
             }
