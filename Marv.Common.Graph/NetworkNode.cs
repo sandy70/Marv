@@ -6,13 +6,15 @@ using System.Windows;
 
 namespace Marv
 {
-    public class NetworkVertex : IKeyed
+    public class NetworkNode : IKeyed
     {
-        public readonly List<NetworkVertex> Children = new List<NetworkVertex>();
+        public readonly List<NetworkNode> Children = new List<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
         private ObservableCollection<State> states;
         private VertexType? type;
+
+        public string Expression { get; set; }
 
         public double[] InitialBelief
         {
@@ -52,7 +54,8 @@ namespace Marv
                 var parts = groupsValueString.Split(new[]
                 {
                     '"', ','
-                }, StringSplitOptions.RemoveEmptyEntries);
+                },
+                    StringSplitOptions.RemoveEmptyEntries);
 
                 groups = new ObservableCollection<string>(parts);
 
@@ -103,7 +106,8 @@ namespace Marv
             var parts = posValueString.Split(new[]
             {
                 '(', ')', ' '
-            }, StringSplitOptions.RemoveEmptyEntries);
+            },
+                StringSplitOptions.RemoveEmptyEntries);
 
             var position = new Point
             {

@@ -180,7 +180,7 @@ namespace Marv
             graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var networkVertex in graph.Network.Vertices)
+            foreach (var networkVertex in graph.Network.Nodes)
             {
                 var vertex = new Vertex
                 {
@@ -210,7 +210,7 @@ namespace Marv
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.Network.Vertices)
+            foreach (var srcVertex in graph.Network.Nodes)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -381,7 +381,7 @@ namespace Marv
 
             this.Network.Properties["HR_Desc"] = userProperties.String().Enquote();
 
-            foreach (var networkStructureVertex in this.Network.Vertices)
+            foreach (var networkStructureVertex in this.Network.Nodes)
             {
                 var vertex = this.Vertices[networkStructureVertex.Key];
 

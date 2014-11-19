@@ -2,46 +2,46 @@
 {
     public interface IVertexValueComputer
     {
-        double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue);
+        double Compute(NetworkNode node, double[] newValue, double[] oldValue);
     }
 
     public class VertexEntropyComputer : IVertexValueComputer
     {
-        public double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
         {
-            return vertex.Entropy(newValue, oldValue);
+            return node.Entropy(newValue, oldValue);
         }
     }
 
     public class VertexEntropyDifferenceComputer : IVertexValueComputer
     {
-        public double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
         {
-            return vertex.EntropyDifference(newValue, oldValue);
+            return node.EntropyDifference(newValue, oldValue);
         }
     }
 
     public class VertexMeanComputer : IVertexValueComputer
     {
-        public double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
         {
-            return vertex.Mean(newValue, oldValue);
+            return node.Mean(newValue, oldValue);
         }
     }
 
     public class VertexMeanDifferenceComputer : IVertexValueComputer
     {
-        public double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
         {
-            return vertex.MeanDifference(newValue, oldValue);
+            return node.MeanDifference(newValue, oldValue);
         }
     }
 
     public class VertexStandardDeviationComputer : IVertexValueComputer
     {
-        public double Compute(NetworkVertex vertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
         {
-            return vertex.StandardDeviation(newValue, oldValue);
+            return node.StandardDeviation(newValue, oldValue);
         }
     }
 }

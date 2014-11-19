@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -269,6 +268,8 @@ namespace Marv.Controls.Graph
 
         public void DisableVertexDragging()
         {
+            if (this.Graph == null) return;
+
             foreach (var vertex in this.Graph.Vertices)
             {
                 vertex.IsDraggingEnabled = false;

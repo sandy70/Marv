@@ -12,12 +12,18 @@ namespace Marv
 {
     public class Network : Smile.Network, INotifyPropertyChanged
     {
-        public const string BeliefFileExtension = "marv-networkbelief";
-        public const string EvidenceFileExtension = "marv-networkevidence";
+        private enum NetworkFileLocation
+        {
+            Root,
+            Potential
+        };
 
-        public readonly List<string> Footer = new List<string>();
+        private const string BeliefFileExtension = "marv-networkbelief";
+        private const string EvidenceFileExtension = "marv-networkevidence";
+
+        private readonly List<string> footer = new List<string>();
+        public readonly KeyedCollection<NetworkNode> Nodes = new KeyedCollection<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
-        public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
         private string fileName;
         private Dictionary<string, string> loops = new Dictionary<string, string>();
@@ -40,11 +46,11 @@ namespace Marv
 
         public Dict<string, double[]> InitialBelief
         {
-            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.InitialBelief); }
+            get { return this.Nodes.ToDict(vertex => vertex.Key, vertex => vertex.InitialBelief); }
 
             set
             {
-                foreach (var vertex in this.Vertices)
+                foreach (var vertex in this.Nodes)
                 {
                     if (value.ContainsKey(vertex.Key))
                     {
@@ -120,6 +126,9 @@ namespace Marv
 
             var nLines = fileLines.Count;
 
+            string currentNodeKey = "";
+            var networkFileLocation = NetworkFileLocation.Root;
+
             for (var i = 0; i < nLines; i++)
             {
                 // Parse the node section
@@ -127,12 +136,12 @@ namespace Marv
                 {
                     var parts = fileLines[i].Split(" ".ToArray(), 2).ToList();
 
-                    var node = new NetworkVertex
+                    var node = new NetworkNode
                     {
                         Key = parts[1]
                     };
 
-                    network.Vertices.Add(node);
+                    network.Nodes.Add(node);
 
                     while (!fileLines[i].Equals("{"))
                     {
@@ -149,7 +158,7 @@ namespace Marv
                     }
                 }
 
-                    // Parse the header 'net' section
+                // Parse the header 'net' section
                 else if (fileLines[i].Equals("net"))
                 {
                     while (!fileLines[i].Equals("{"))
@@ -161,31 +170,39 @@ namespace Marv
 
                     while (!fileLines[i].Equals("}"))
                     {
-                        var parts = fileLines[i].Split(new[]
-                        {
-                            '=', ';'
-                        },
-                            2,
-                            StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var parts = fileLines[i].Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
                         network.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
                         i++;
                     }
                 }
 
-                    // Else just add to the footer. Later these might be 'potential' objects
-                else
+                // Else just add to the footer. Later these might be 'potential' objects
+                else if(networkFileLocation == NetworkFileLocation.Root && fileLines[i].Trim().StartsWith("potential"))
                 {
-                    network.Footer.Add(fileLines[i]);
+                    networkFileLocation = NetworkFileLocation.Potential;
+                    currentNodeKey = fileLines[i].Trim().Split("()| ".ToArray(), StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                }
+
+                if (networkFileLocation == NetworkFileLocation.Potential)
+                {
+                    if (fileLines[i].Contains("}"))
+                    {
+                        networkFileLocation = NetworkFileLocation.Root;
+                    }
+                    else if(fileLines[i].Contains("model_data"))
+                    {
+                        network.Nodes[currentNodeKey].Expression = fileLines[i].Trim().Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                    }
                 }
             }
 
             // Parse Children
-            foreach (var vertex in network.Vertices)
+            foreach (var vertex in network.Nodes)
             {
                 foreach (var childHandle in network.GetChildren(vertex.Key))
                 {
                     var childKey = network.GetNodeId(childHandle);
-                    vertex.Children.Add(network.Vertices[childKey]);
+                    vertex.Children.Add(network.Nodes[childKey]);
                 }
 
                 var inputVertexKey = vertex.ParseStringProperty("InputNode");
@@ -223,7 +240,7 @@ namespace Marv
 
                 writer.WriteLine("}");
 
-                foreach (var node in this.Vertices)
+                foreach (var node in this.Nodes)
                 {
                     writer.WriteLine();
                     writer.WriteLine("node {0}", node.Key);
@@ -239,7 +256,7 @@ namespace Marv
 
                 writer.WriteLine();
 
-                foreach (var line in this.Footer)
+                foreach (var line in this.footer)
                 {
                     if (!string.IsNullOrWhiteSpace(line))
                     {
@@ -310,31 +327,31 @@ namespace Marv
 
         public double[] GetIntervals(string vertexKey)
         {
-            var states = this.Vertices[vertexKey].States;
+            var states = this.Nodes[vertexKey].States;
             return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
         }
 
         public double GetMean(string vertexKey)
         {
-            return this.Vertices[vertexKey].Mean(this.GetNodeValue(vertexKey));
+            return this.Nodes[vertexKey].Mean(this.GetNodeValue(vertexKey));
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkVertex, double[], double[], double> statisticFunc)
+        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkNode, double[], double[], double> statisticFunc)
         {
-            var targetVertex = this.Vertices[targetVertexKey];
+            var targetVertex = this.Nodes[targetVertexKey];
 
             // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
             var value = new Dict<string, string, double>();
 
             // Collect vertices to ignore
-            var verticesToIgnore = new List<NetworkVertex>
+            var verticesToIgnore = new List<NetworkNode>
             {
                 targetVertex
             };
 
-            verticesToIgnore.AddRange(this.Vertices.Where(vertex => this.IsEvidence(vertex.Key)));
+            verticesToIgnore.AddRange(this.Nodes.Where(vertex => this.IsEvidence(vertex.Key)));
 
-            foreach (var sourceVertex in this.Vertices.Except(verticesToIgnore))
+            foreach (var sourceVertex in this.Nodes.Except(verticesToIgnore))
             {
                 foreach (var sourceState in sourceVertex.States)
                 {
@@ -421,7 +438,7 @@ namespace Marv
         {
             this.ClearEvidence();
 
-            foreach (var vertex in this.Vertices)
+            foreach (var vertex in this.Nodes)
             {
                 if (graphData.ContainsKey(vertex.Key) && graphData[vertex.Key].Value != null && graphData[vertex.Key].Value.Sum() > 0)
                 {
@@ -503,7 +520,7 @@ namespace Marv
 
         public void SetEvidence(string vertexKey, string evidenceString)
         {
-            var vertexEvidence = this.Vertices[vertexKey].States.ParseEvidenceString(evidenceString);
+            var vertexEvidence = this.Nodes[vertexKey].States.ParseEvidenceString(evidenceString);
 
             if (vertexEvidence.Type == VertexEvidenceType.Null)
             {
@@ -527,6 +544,7 @@ namespace Marv
         {
             using (var writer = new StreamWriter(path))
             {
+                // Write network header
                 writer.WriteLine("net");
                 writer.WriteLine("{");
 
@@ -537,7 +555,8 @@ namespace Marv
 
                 writer.WriteLine("}");
 
-                foreach (var node in this.Vertices)
+                // Write node definitions
+                foreach (var node in this.Nodes)
                 {
                     writer.WriteLine();
                     writer.WriteLine("node {0}", node.Key);
@@ -553,12 +572,41 @@ namespace Marv
 
                 writer.WriteLine();
 
-                foreach (var line in this.Footer)
+                // Write node CPTs
+                foreach (var node in this.Nodes)
                 {
-                    if (!string.IsNullOrWhiteSpace(line))
+                    // Write the potential line
+                    writer.Write("potential ({0}", node.Key);
+
+                    var parentNodeKeys = this.GetParentIds(node.Key);
+
+                    if (parentNodeKeys.Any())
                     {
-                        writer.WriteLine(line);
+                        writer.Write(" |");
+
+                        foreach (var parentNodeKey in parentNodeKeys)
+                        {
+                            writer.Write(" {0}", parentNodeKey);
+                        }
                     }
+
+                    writer.WriteLine(")");
+
+                    writer.WriteLine("{");
+
+                    if (node.Expression != null)
+                    {
+                        writer.WriteLine("\tmodel_nodes = ();");
+                        writer.WriteLine("\tmodel_data = ({0});", node.Expression);
+                    }
+
+                    writer.Write("\tdata = ");
+
+                    writer.WriteLine(this.FormPotentialString(node, this.GetTable(node.Key), parentNodeKeys) + ";");
+
+                    writer.WriteLine("}");
+
+                    writer.WriteLine();
                 }
             }
         }
@@ -589,6 +637,52 @@ namespace Marv
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private string FormPotentialString(NetworkNode node, double[,] table, string[] parentNodeKeys = null, int row = 0, int col = 0, int level = 0)
+        {
+            var potentialString = "";
+
+            parentNodeKeys = parentNodeKeys ?? this.GetParentIds(node.Key);
+
+            if (!parentNodeKeys.Any())
+            {
+                potentialString += "(";
+
+                foreach (var state in node.States)
+                {
+                    potentialString += table[row++, col];
+
+                    if (state != node.States.Last())
+                    {
+                        potentialString += " ";
+                    }
+                }
+
+                potentialString += ")";
+            }
+
+            else
+            {
+                var currentNodeKey = parentNodeKeys.First();
+                var currentNodeStates = this.Nodes[currentNodeKey].States;
+
+                potentialString += "(";
+
+                foreach (var state in currentNodeStates)
+                {
+                    potentialString += this.FormPotentialString(node, table, parentNodeKeys.Except(currentNodeKey).ToArray(), row, col++, level + 1);
+
+                    if (state != currentNodeStates.Last())
+                    {
+                        potentialString += "\n\t\t    " + String.Concat(Enumerable.Repeat(" ", level));
+                    }
+                }
+
+                potentialString += ")";
+            }
+
+            return potentialString;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
