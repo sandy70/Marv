@@ -1,11 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Marv
 {
     public partial class Dict<TKey, TValue> : IDictionary<TKey, TValue>
     {
+        public bool IsReadOnly
+        {
+            get { return this.IsReadOnly; }
+        }
+
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys
+        {
+            get { return this.keys; }
+        }
+
+        ICollection<TValue> IDictionary<TKey, TValue>.Values
+        {
+            get { return this.values; }
+        }
+
         public void Add(TKey key, TValue value)
         {
             if (this.ContainsKey(key))
@@ -28,17 +42,29 @@ namespace Marv
             }
         }
 
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            this.Add(item.Key, item.Value);
+        }
+
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            return this.dictionary.ContainsKey(item.Key) && this.dictionary[item.Key].Equals(item.Value);
+        }
+
         public bool ContainsKey(TKey key)
         {
             return this.dictionary.ContainsKey(key);
         }
 
-        ICollection<TKey> IDictionary<TKey, TValue>.Keys
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            get
-            {
-                return this.keys;
-            }
+            throw new NotImplementedException();
+        }
+
+        public new IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return new DictEnumerator<TKey, TValue>(this);
         }
 
         public bool Remove(TKey key)
@@ -56,48 +82,6 @@ namespace Marv
             return false;
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            Kvp<TKey, TValue> kvp;
-
-            var isSuccess = this.dictionary.TryGetValue(key, out kvp);
-
-            value = isSuccess ? kvp.Value : default(TValue);
-
-            return isSuccess;
-        }
-
-        ICollection<TValue> IDictionary<TKey, TValue>.Values
-        {
-            get
-            {
-                return this.values;
-            }
-        }
-
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
-            this.Add(item.Key, item.Value);
-        }
-
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
-            return this.dictionary.ContainsKey(item.Key) && this.dictionary[item.Key].Equals(item.Value);
-        }
-
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsReadOnly
-        {
-            get
-            {
-                return this.IsReadOnly;
-            }
-        }
-
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
             if (this.dictionary.ContainsKey(item.Key))
@@ -110,9 +94,15 @@ namespace Marv
             return false;
         }
 
-        public new IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            return new DictEnumerator<TKey, TValue>(this);
+            Kvp<TKey, TValue> kvp;
+
+            var isSuccess = this.dictionary.TryGetValue(key, out kvp);
+
+            value = isSuccess ? kvp.Value : default(TValue);
+
+            return isSuccess;
         }
     }
 }

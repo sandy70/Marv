@@ -7,7 +7,7 @@
     <ProjectGuid>{5EC15F8C-655C-4A46-A4CF-7AF1EAC94376}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Marv.Common.Graph</RootNamespace>
+    <RootNamespace>Marv</RootNamespace>
     <AssemblyName>Marv.Common.Graph</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -20,7 +20,7 @@
             }
         }
 
-        string IKeyed<string>.Key
+        public string Key
         {
             get { return this.Category as string; }
         }

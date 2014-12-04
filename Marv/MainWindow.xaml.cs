@@ -313,9 +313,6 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var network = Network.Read(@"C:\Users\Vinod\Data\WestPipeline\WP08.net");
-            network.Write(@"C:\Users\Vinod\Downloads\WP08.net");
-
             var notifiers = this.GetChildren<INotifier>();
 
             foreach (var notifier in notifiers)

@@ -17,10 +17,8 @@ namespace Marv
 
         public readonly KeyedCollection<NetworkNode> Nodes = new KeyedCollection<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
-        private readonly List<string> footer = new List<string>();
 
         private string fileName;
-        private Dictionary<string, string> loops = new Dictionary<string, string>();
 
         public string FileName
         {
@@ -62,53 +60,50 @@ namespace Marv
         {
             get { return this.Nodes.Where(node => !string.IsNullOrWhiteSpace(node.InputNodeKey)).ToDictionary(node => node.Key, node => node.InputNodeKey); }
 
-            set { this.loops = value; }
+            set { }
         }
 
-        public static void Decrypt(string path)
+        public static Network Read(string filePath)
         {
-            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
-            var rMCrypto = new RijndaelManaged();
-
-            byte[] key =
+            if (Path.GetExtension(filePath) == ".enet")
             {
-                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
-            };
-
-            byte[] iv =
-            {
-                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
-            };
-
-            var cryptStream = new CryptoStream(pathStream,
-                rMCrypto.CreateDecryptor(key, iv),
-                CryptoStreamMode.Read);
-
-            var lineList = new List<String>();
-            try
-            {
-                var sReader = new StreamReader(cryptStream);
-
-                while (!sReader.EndOfStream)
-                {
-                    lineList.Add(sReader.ReadLine());
-                }
-                sReader.Close();
-            }
-            catch (CryptographicException)
-            {
-                return;
+                return ReadEncrypted(filePath);
             }
 
-            var sWriter = new StreamWriter(path);
-            foreach (var line in lineList)
-            {
-                sWriter.WriteLine(line);
-            }
-            sWriter.Close();
+            return ReadText(filePath);
         }
 
-        public static Network Read(string path)
+        public static Network ReadEncrypted(string filePath)
+        {
+            byte[] key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            byte[] iv = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+
+            var cryptoStream = new CryptoStream(new FileStream(filePath, FileMode.Open), (new RijndaelManaged()).CreateDecryptor(key, iv), CryptoStreamMode.Read);
+
+            var unencryptedFilePath = Path.Combine(Path.GetDirectoryName(filePath), "temp_" + Path.GetFileNameWithoutExtension(filePath) + ".net");
+
+            using (var streamReader = new StreamReader(cryptoStream))
+            {
+                using (var streamWriter = new StreamWriter(unencryptedFilePath))
+                {
+                    string line;
+
+                    while ((line = streamReader.ReadLine()) != null)
+                    {
+                        streamWriter.WriteLine(line);
+                    }
+                }
+            }
+
+            var network = Read(unencryptedFilePath);
+            network.FileName = filePath;
+
+            File.Delete(unencryptedFilePath);
+
+            return network;
+        }
+
+        public static Network ReadText(string path)
         {
             var network = new Network
             {
@@ -120,88 +115,90 @@ namespace Marv
             var currentNodeKey = "";
             var networkFileLocation = NetworkFileLocation.Root;
             var line = "";
-            var streamReader = new StreamReader(path);
 
-            while ((line = streamReader.ReadLine()) != null)
+            using (var streamReader = new StreamReader(path))
             {
-                if (networkFileLocation == NetworkFileLocation.Root)
+                while ((line = streamReader.ReadLine()) != null)
                 {
-                    if (line.Equals("net"))
+                    if (networkFileLocation == NetworkFileLocation.Root)
                     {
-                        // Enter the header 'net' section
-                        networkFileLocation = NetworkFileLocation.Header;
-                    }
-
-                    else if (line.StartsWith("node"))
-                    {
-                        // Enter the node section
-                        networkFileLocation = NetworkFileLocation.Node;
-
-                        currentNodeKey = line.Split(" ".ToArray(), 2).ToList()[1];
-
-                        network.Nodes.Add(new NetworkNode
+                        if (line.Equals("net"))
                         {
-                            Key = currentNodeKey
-                        });
+                            // Enter the header 'net' section
+                            networkFileLocation = NetworkFileLocation.Header;
+                        }
+
+                        else if (line.StartsWith("node"))
+                        {
+                            // Enter the node section
+                            networkFileLocation = NetworkFileLocation.Node;
+
+                            currentNodeKey = line.Split(" ".ToArray(), 2).ToList()[1];
+
+                            network.Nodes.Add(new NetworkNode
+                            {
+                                Key = currentNodeKey
+                            });
+                        }
+
+                        else if (line.StartsWith("potential"))
+                        {
+                            // Enter the potential section
+                            networkFileLocation = NetworkFileLocation.Potential;
+                            currentNodeKey = line.Trim().Split("()| ".ToArray(), StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        }
                     }
 
-                    else if (line.StartsWith("potential"))
+                    else if (networkFileLocation == NetworkFileLocation.Header)
                     {
-                        // Enter the potential section
-                        networkFileLocation = NetworkFileLocation.Potential;
-                        currentNodeKey = line.Trim().Split("()| ".ToArray(), StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        if (line.Equals("{"))
+                        {
+                            // do nothing
+                        }
+                        else if (line.Equals("}"))
+                        {
+                            // Exit to root
+                            networkFileLocation = NetworkFileLocation.Root;
+                        }
+                        else
+                        {
+                            var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            network.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
+                        }
                     }
-                }
 
-                else if (networkFileLocation == NetworkFileLocation.Header)
-                {
-                    if (line.Equals("{"))
+                    else if (networkFileLocation == NetworkFileLocation.Node)
                     {
-                        // do nothing
+                        if (line.Equals("{"))
+                        {
+                            // do nothing
+                        }
+                        else if (line.Equals("}"))
+                        {
+                            // Exit to root
+                            networkFileLocation = NetworkFileLocation.Root;
+                        }
+                        else
+                        {
+                            var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            network.Nodes[currentNodeKey].Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
+                        }
                     }
-                    else if (line.Equals("}"))
-                    {
-                        // Exit to root
-                        networkFileLocation = NetworkFileLocation.Root;
-                    }
-                    else
-                    {
-                        var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        network.Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
-                    }
-                }
 
-                else if (networkFileLocation == NetworkFileLocation.Node)
-                {
-                    if (line.Equals("{"))
+                    else if (networkFileLocation == NetworkFileLocation.Potential)
                     {
-                        // do nothing
-                    }
-                    else if (line.Equals("}"))
-                    {
-                        // Exit to root
-                        networkFileLocation = NetworkFileLocation.Root;
-                    }
-                    else
-                    {
-                        var parts = line.Split("=;".ToArray(), 2, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        network.Nodes[currentNodeKey].Properties[parts[0].Trim()] = new string(parts[1].Trim().AllButLast().ToArray());
-                    }
-                }
-
-                else if (networkFileLocation == NetworkFileLocation.Potential)
-                {
-                    if (line.Equals("{"))
-                    {
-                        // do nothing
-                    }
-                    else if (line.Contains("model_data"))
-                    {
-                        network.Nodes[currentNodeKey].Expression = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
-                    }
-                    else if (line.Equals("}"))
-                    {
-                        networkFileLocation = NetworkFileLocation.Root;
+                        if (line.Equals("{"))
+                        {
+                            // do nothing
+                        }
+                        else if (line.Contains("model_data"))
+                        {
+                            network.Nodes[currentNodeKey].Expression = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                        }
+                        else if (line.Equals("}"))
+                        {
+                            networkFileLocation = NetworkFileLocation.Root;
+                        }
                     }
                 }
             }
@@ -219,54 +216,6 @@ namespace Marv
             network.UpdateBeliefs();
             network.InitialBelief = network.GetBeliefs();
             return network;
-        }
-
-        public void EncryptWrite(string path)
-        {
-            var pathStream = new FileStream(path, FileMode.OpenOrCreate);
-            var rMCrypto = new RijndaelManaged();
-
-            byte[] key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
-            byte[] iv = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
-
-            var cryptStream = new CryptoStream(pathStream, rMCrypto.CreateEncryptor(key, iv), CryptoStreamMode.Write);
-
-            using (var writer = new StreamWriter(cryptStream))
-            {
-                writer.WriteLine("net");
-                writer.WriteLine("{");
-
-                foreach (var prop in this.Properties)
-                {
-                    writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
-                }
-
-                writer.WriteLine("}");
-
-                foreach (var node in this.Nodes)
-                {
-                    writer.WriteLine();
-                    writer.WriteLine("node {0}", node.Key);
-                    writer.WriteLine("{");
-
-                    foreach (var prop in node.Properties)
-                    {
-                        writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
-                    }
-
-                    writer.WriteLine("}");
-                }
-
-                writer.WriteLine();
-
-                foreach (var line in this.footer)
-                {
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        writer.WriteLine(line);
-                    }
-                }
-            }
         }
 
         public double[] GetBelief(string vertexKey)
@@ -543,74 +492,86 @@ namespace Marv
             this.SetEvidence(vertexKey, value.ToString());
         }
 
-        public void Write(string path)
+        public void Write(StreamWriter streamWriter)
         {
-            using (var writer = new StreamWriter(path))
+            using (streamWriter)
             {
                 // Write network header
-                writer.WriteLine("net");
-                writer.WriteLine("{");
+                streamWriter.WriteLine("net");
+                streamWriter.WriteLine("{");
 
                 foreach (var prop in this.Properties)
                 {
-                    writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                    streamWriter.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
                 }
 
-                writer.WriteLine("}");
+                streamWriter.WriteLine("}");
 
                 // Write node definitions
                 foreach (var node in this.Nodes)
                 {
-                    writer.WriteLine();
-                    writer.WriteLine("node {0}", node.Key);
-                    writer.WriteLine("{");
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("node {0}", node.Key);
+                    streamWriter.WriteLine("{");
 
                     foreach (var prop in node.Properties)
                     {
-                        writer.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
+                        streamWriter.WriteLine("\t{0} = {1};", prop.Key, prop.Value);
                     }
 
-                    writer.WriteLine("}");
+                    streamWriter.WriteLine("}");
                 }
 
-                writer.WriteLine();
+                streamWriter.WriteLine();
 
                 // Write node CPTs
                 foreach (var node in this.Nodes)
                 {
                     // Write the potential line
-                    writer.Write("potential ({0}", node.Key);
+                    streamWriter.Write("potential ({0}", node.Key);
 
                     var parentNodeKeys = this.GetParentIds(node.Key);
 
                     if (parentNodeKeys.Any())
                     {
-                        writer.Write(" |");
+                        streamWriter.Write(" |");
 
                         foreach (var parentNodeKey in parentNodeKeys)
                         {
-                            writer.Write(" {0}", parentNodeKey);
+                            streamWriter.Write(" {0}", parentNodeKey);
                         }
                     }
 
-                    writer.WriteLine(")");
+                    streamWriter.WriteLine(")");
 
-                    writer.WriteLine("{");
+                    streamWriter.WriteLine("{");
 
                     if (node.Expression != null)
                     {
-                        writer.WriteLine("\tmodel_nodes = ();");
-                        writer.WriteLine("\tmodel_data = ({0});", node.Expression);
+                        streamWriter.WriteLine("\tmodel_nodes = ();");
+                        streamWriter.WriteLine("\tmodel_data = ({0});", node.Expression);
                     }
 
-                    writer.Write("\tdata = ");
+                    streamWriter.Write("\tdata = ");
 
-                    writer.WriteLine(this.FormPotentialString(node, this.GetTable(node.Key), parentNodeKeys) + ";");
+                    streamWriter.WriteLine(this.FormPotentialString(node, this.GetTable(node.Key), parentNodeKeys) + ";");
 
-                    writer.WriteLine("}");
+                    streamWriter.WriteLine("}");
 
-                    writer.WriteLine();
+                    streamWriter.WriteLine();
                 }
+            }
+        }
+
+        public void Write(string filePath)
+        {
+            if (Path.GetExtension(filePath) == "enet")
+            {
+                this.WriteEncrypted(filePath);
+            }
+            else
+            {
+                this.Write(new StreamWriter(Path.ChangeExtension(filePath, "net")));
             }
         }
 
@@ -622,6 +583,16 @@ namespace Marv
             }
 
             this.GetBeliefs().WriteJson(filePath);
+        }
+
+        public void WriteEncrypted(string filePath)
+        {
+            byte[] key = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+            byte[] iv = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
+
+            var cryptoStream = new CryptoStream(new FileStream(filePath, FileMode.Create), (new RijndaelManaged()).CreateEncryptor(key, iv), CryptoStreamMode.Write);
+
+            this.Write(new StreamWriter(cryptoStream));
         }
 
         public void WriteEvidences(string filePath)

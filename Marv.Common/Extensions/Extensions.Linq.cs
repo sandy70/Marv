@@ -48,7 +48,7 @@ namespace Marv
         public static IEnumerable<T> AllButLastN<T>(this IEnumerable<T> items, int n)
         {
             var it = items.GetEnumerator();
-            var hasRemainingItems = false;
+            bool hasRemainingItems;
             var cache = new Queue<T>(n + 1);
 
             do
@@ -104,7 +104,7 @@ namespace Marv
             return items.Except(item.Yield());
         }
 
-        public static T FirstOrNew<T>(this ICollection<T> items, Func<T, bool> predicate)
+        public static T FirstOrNew<T>(this ICollection<T> items, Func<T, bool> predicate) where T : class
         {
             var firstOrDefault = items.FirstOrDefault();
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{A17E2D7F-D5E8-4A8F-9394-9748C0DDBD1D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Marv.Common</RootNamespace>
+    <RootNamespace>Marv</RootNamespace>
     <AssemblyName>Marv.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

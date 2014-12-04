@@ -338,7 +338,7 @@ namespace Marv.Controls.Graph
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = @"Network Files (.net)|*.net",
+                Filter = @"Network Files|*.net|Binary Network Files|*.enet",
                 FilterIndex = 1,
                 Multiselect = false
             };
