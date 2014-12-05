@@ -208,7 +208,6 @@
     <Compile Include="LocationValueToBrushMap.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="VertexEvidenceProgress.cs" />
     <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

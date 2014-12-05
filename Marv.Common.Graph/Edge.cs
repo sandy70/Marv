@@ -11,50 +11,41 @@ namespace Marv
 
         public EdgeConnectorPositions ConnectorPositions
         {
-            get
-            {
-                return this.connectorPositions;
-            }
+            get { return this.connectorPositions; }
 
             set
             {
                 if (value != this.connectorPositions)
                 {
                     this.connectorPositions = value;
-                    this.RaisePropertyChanged("ConnectorPositions");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
-        public Edge(Vertex source, Vertex target)
-        {
-            this.Source = source;
-            this.Target = target;
-        }
-
         public Vertex Source
         {
-            get
-            {
-                return this.source;
-            }
+            get { return this.source; }
 
             set
             {
                 if (value != this.source)
                 {
                     this.source = value;
-                    this.RaisePropertyChanged("Source");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
+        object ILink.Source
+        {
+            get { return this.Source; }
+            set { this.Source = value as Vertex; }
+        }
+
         public Vertex Target
         {
-            get
-            {
-                return this.target;
-            }
+            get { return this.target; }
 
             set
             {
@@ -66,28 +57,16 @@ namespace Marv
             }
         }
 
-        object ILink.Source
-        {
-            get
-            {
-                return this.Source;
-            }
-            set
-            {
-                this.Source = value as Vertex;
-            }
-        }
-
         object ILink.Target
         {
-            get
-            {
-                return this.Target;
-            }
-            set
-            {
-                this.Target = value as Vertex;
-            }
+            get { return this.Target; }
+            set { this.Target = value as Vertex; }
+        }
+
+        public Edge(Vertex source, Vertex target)
+        {
+            this.Source = source;
+            this.Target = target;
         }
 
         public override string ToString()
