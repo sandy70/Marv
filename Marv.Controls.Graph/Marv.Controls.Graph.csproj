@@ -8,7 +8,7 @@
     <ProjectGuid>{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Marv.Controls.Graph</RootNamespace>
+    <RootNamespace>Marv.Controls</RootNamespace>
     <AssemblyName>Marv.Controls.Graph</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

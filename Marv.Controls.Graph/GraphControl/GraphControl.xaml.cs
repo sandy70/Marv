@@ -10,7 +10,7 @@ using Marv.Common;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
-namespace Marv.Controls.Graph
+namespace Marv.Controls.GraphControl
 {
     public partial class GraphControl : INotifyPropertyChanged, INotifier
     {
@@ -117,14 +117,14 @@ namespace Marv.Controls.Graph
 
         public bool IsAutoLayoutEnabled
         {
-            get { return (bool) GetValue(IsAutoLayoutEnabledProperty); }
-            set { SetValue(IsAutoLayoutEnabledProperty, value); }
+            get { return (bool) this.GetValue(IsAutoLayoutEnabledProperty); }
+            set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
         }
 
         public bool IsAutoRunEnabled
         {
-            get { return (bool) GetValue(IsAutoRunEnabledProperty); }
-            set { SetValue(IsAutoRunEnabledProperty, value); }
+            get { return (bool) this.GetValue(IsAutoRunEnabledProperty); }
+            set { this.SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
@@ -152,22 +152,22 @@ namespace Marv.Controls.Graph
 
         public bool IsInputVisible
         {
-            get { return (bool) GetValue(IsInputVisibleProperty); }
+            get { return (bool) this.GetValue(IsInputVisibleProperty); }
 
-            set { SetValue(IsInputVisibleProperty, value); }
+            set { this.SetValue(IsInputVisibleProperty, value); }
         }
 
         public bool IsNavigationPaneVisible
         {
-            get { return (bool) GetValue(IsNavigationPaneVisibleProperty); }
-            set { SetValue(IsNavigationPaneVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsNavigationPaneVisibleProperty); }
+            set { this.SetValue(IsNavigationPaneVisibleProperty, value); }
         }
 
         public bool IsVerticesEnabled
         {
-            get { return (bool) GetValue(IsVerticesEnabledProperty); }
+            get { return (bool) this.GetValue(IsVerticesEnabledProperty); }
 
-            set { SetValue(IsVerticesEnabledProperty, value); }
+            set { this.SetValue(IsVerticesEnabledProperty, value); }
         }
 
         public Color OutgoingConnectionHighlightColor
@@ -212,9 +212,9 @@ namespace Marv.Controls.Graph
         public GraphControl()
         {
             InitializeComponent();
-            InitializeAutoSave();
+            this.InitializeAutoSave();
 
-            this.Loaded += GraphControl_Loaded;
+            this.Loaded += this.GraphControl_Loaded;
         }
 
         private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -268,7 +268,10 @@ namespace Marv.Controls.Graph
 
         public void DisableVertexDragging()
         {
-            if (this.Graph == null) return;
+            if (this.Graph == null)
+            {
+                return;
+            }
 
             foreach (var vertex in this.Graph.Vertices)
             {
@@ -295,7 +298,7 @@ namespace Marv.Controls.Graph
         {
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
+                Interval = TimeSpan.FromMilliseconds(this.AutoSaveDuration)
             };
 
             timer.Tick += (o, e2) =>
@@ -461,7 +464,7 @@ namespace Marv.Controls.Graph
 
         private void DiagramPart_DiagramLayoutComplete(object sender, RoutedEventArgs e)
         {
-            this.DiagramPart.DiagramLayoutComplete -= DiagramPart_DiagramLayoutComplete;
+            this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
             this.DiagramPart.AutoFitAsync(new Thickness(10));
         }
 
@@ -469,11 +472,11 @@ namespace Marv.Controls.Graph
         {
             if (this.IsAutoLayoutEnabled)
             {
-                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(true));
+                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(true));
             }
             else
             {
-                Marv.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
+                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
             }
         }
 
@@ -490,21 +493,21 @@ namespace Marv.Controls.Graph
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.EvidenceEntered += GraphControl_EvidenceEntered;
+            this.EvidenceEntered -= this.GraphControl_EvidenceEntered;
+            this.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
             // All the buttons
-            this.AutoFitButton.Click -= AutoFitButton_Click;
-            this.AutoFitButton.Click += AutoFitButton_Click;
+            this.AutoFitButton.Click -= this.AutoFitButton_Click;
+            this.AutoFitButton.Click += this.AutoFitButton_Click;
 
-            this.BackButton.Click -= BackButton_Click;
-            this.BackButton.Click += BackButton_Click;
+            this.BackButton.Click -= this.BackButton_Click;
+            this.BackButton.Click += this.BackButton_Click;
 
             this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
 
-            this.ExpandButton.Click -= ExpandButton_Click;
-            this.ExpandButton.Click += ExpandButton_Click;
+            this.ExpandButton.Click -= this.ExpandButton_Click;
+            this.ExpandButton.Click += this.ExpandButton_Click;
 
             this.OpenButton.Click -= this.OpenButton_Click;
             this.OpenButton.Click += this.OpenButton_Click;
@@ -513,8 +516,8 @@ namespace Marv.Controls.Graph
             this.SaveButton.Click += this.SaveButton_Click;
 
             // Other controls
-            this.DiagramPart.GraphSourceChanged -= DiagramPart_GraphSourceChanged;
-            this.DiagramPart.GraphSourceChanged += DiagramPart_GraphSourceChanged;
+            this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
+            this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

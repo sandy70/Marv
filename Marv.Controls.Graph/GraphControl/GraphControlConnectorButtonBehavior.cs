@@ -3,7 +3,7 @@ using System.Windows.Interactivity;
 
 namespace Marv.Controls.Graph
 {
-    public class GraphControlConnectorButtonBehavior : Behavior<GraphControl>
+    public class GraphControlConnectorButtonBehavior : Behavior<GraphControl.GraphControl>
     {
         protected override void OnAttached()
         {

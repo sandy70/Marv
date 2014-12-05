@@ -5,7 +5,7 @@ namespace Marv.Controls.Graph
 {
     internal class VertexControlBehavior : Behavior<VertexControl>
     {
-        public GraphControl GraphControl;
+        public GraphControl.GraphControl GraphControl;
         public VertexControl VertexControl;
 
         protected override void OnAttached()
@@ -13,7 +13,7 @@ namespace Marv.Controls.Graph
             base.OnAttached();
 
             this.VertexControl = this.AssociatedObject;
-            this.GraphControl = this.VertexControl.GetParent<GraphControl>();
+            this.GraphControl = this.VertexControl.GetParent<GraphControl.GraphControl>();
 
             this.VertexControl.CommandExecuted -= VertexControl_CommandExecuted;
             this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;

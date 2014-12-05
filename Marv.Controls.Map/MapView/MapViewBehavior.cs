@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Interactivity;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -43,8 +42,8 @@ namespace Marv.Controls.Map
 
             var rect = new LocationRect
             {
-                NorthWest = Marv.Map.Utils.Mid(mapView.Center, mapView.Bounds.NorthWest),
-                SouthEast = Marv.Map.Utils.Mid(mapView.Center, mapView.Bounds.SouthEast)
+                NorthWest = Common.Utils.Mid(mapView.Center, mapView.Bounds.NorthWest),
+                SouthEast = Common.Utils.Mid(mapView.Center, mapView.Bounds.SouthEast)
             };
 
             if (this.previousCenter == null)

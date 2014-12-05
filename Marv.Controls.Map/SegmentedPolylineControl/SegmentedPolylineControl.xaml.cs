@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -117,7 +116,11 @@ namespace Marv.Controls.Map
             this.InitializeComponent();
             this.ValueLevels = new Sequence<double>
             {
-                0.00, 0.25, 0.5, 0.75, 1.00
+                0.00,
+                0.25,
+                0.5,
+                0.75,
+                1.00
             };
 
             this.Loaded += SegmentedPolylineControl_Loaded;
@@ -183,6 +186,53 @@ namespace Marv.Controls.Map
             }
         }
 
+        public LocationCollectionViewModel Reduce(LocationCollection locationCollection, LocationConverter converter, double tolerance, IDoubleToBrushMap doubleToBrushMap, bool isEnabled, Brush disabledStroke)
+        {
+            return new LocationCollectionViewModel
+            {
+                Locations = new LocationCollection(locationCollection.Reduce(converter, tolerance)),
+                Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
+            };
+        }
+
+        public ObservableCollection<LocationCollection> Segment(IEnumerable<Location> locations, Sequence<double> valueLevels)
+        {
+            var oldBinIndex = -1;
+            var locationCollections = new ObservableCollection<LocationCollection>();
+            LocationCollection locationCollection = null;
+
+            foreach (var location in locations)
+            {
+                var newBinIndex = valueLevels.GetBinIndex(location.Value);
+
+                if (newBinIndex != oldBinIndex)
+                {
+                    if (locationCollection == null)
+                    {
+                        locationCollection = new LocationCollection { location };
+                    }
+                    else
+                    {
+                        var mid = Common.Utils.Mid(locationCollection.Last(), location);
+                        locationCollection.Add(mid);
+                        locationCollection = new LocationCollection { mid, location };
+                    }
+                    locationCollections.Add(locationCollection);
+                }
+                else
+                {
+                    if (locationCollection != null)
+                    {
+                        locationCollection.Add(location);
+                    }
+                }
+
+                oldBinIndex = newBinIndex;
+            }
+
+            return locationCollections;
+        }
+
         public void UpdatePolylineParts()
         {
             if (this.ValueLevels == null ||
@@ -207,7 +257,7 @@ namespace Marv.Controls.Map
                     }
                     else
                     {
-                        var mid = Marv.Map.Utils.Mid(locationCollection.Last(), location);
+                        var mid = Common.Utils.Mid(locationCollection.Last(), location);
                         locationCollection.Add(mid);
                         locationCollection = new LocationCollection { mid, location };
                     }
@@ -225,44 +275,6 @@ namespace Marv.Controls.Map
             }
 
             this.PolylineParts = polylineParts;
-        }
-
-        public ObservableCollection<LocationCollection> Segment(IEnumerable<Location> locations, Sequence<double> valueLevels)
-        {
-            var oldBinIndex = -1;
-            var locationCollections = new ObservableCollection<LocationCollection>();
-            LocationCollection locationCollection = null;
-
-            foreach (var location in locations)
-            {
-                var newBinIndex = valueLevels.GetBinIndex(location.Value);
-
-                if (newBinIndex != oldBinIndex)
-                {
-                    if (locationCollection == null)
-                    {
-                        locationCollection = new LocationCollection { location };
-                    }
-                    else
-                    {
-                        var mid = Marv.Map.Utils.Mid(locationCollection.Last(), location);
-                        locationCollection.Add(mid);
-                        locationCollection = new LocationCollection { mid, location };
-                    }
-                    locationCollections.Add(locationCollection);
-                }
-                else
-                {
-                    if (locationCollection != null)
-                    {
-                        locationCollection.Add(location);
-                    }
-                }
-
-                oldBinIndex = newBinIndex;
-            }
-
-            return locationCollections;
         }
 
         public void UpdateSimplifiedPolylineParts()
@@ -299,15 +311,6 @@ namespace Marv.Controls.Map
                     Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
                 })));
             }
-        }
-
-        public LocationCollectionViewModel Reduce(LocationCollection locationCollection, LocationConverter converter, double tolerance, IDoubleToBrushMap doubleToBrushMap, bool isEnabled, Brush disabledStroke)
-        {
-            return new LocationCollectionViewModel
-            {
-                Locations = new LocationCollection(locationCollection.Reduce(converter, tolerance)),
-                Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
-            };
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)

@@ -91,7 +91,7 @@ namespace Marv.Controls.Map
                             P2 = cornerPoints[k + 1]
                         };
 
-                        isIntersection = Marv.Utils.Intersection(line1, line2) != null;
+                        isIntersection = Common.Utils.Intersection(line1, line2) != null;
                     });
 
                     return isIntersection;
