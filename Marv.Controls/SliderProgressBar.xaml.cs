@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Marv.Controls
@@ -17,6 +18,8 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register("Value", typeof (double), typeof (SliderProgressBar), new PropertyMetadata(32.0));
+
+        private bool isDoubleClicked;
 
         public bool IsEditable
         {
@@ -45,6 +48,9 @@ namespace Marv.Controls
         public SliderProgressBar()
         {
             InitializeComponent();
+
+            this.Loaded -= SliderProgressBar_Loaded;
+            this.Loaded += SliderProgressBar_Loaded;
         }
 
         public void RaiseValueEntered()
@@ -53,6 +59,61 @@ namespace Marv.Controls
             {
                 this.ValueEntered(this, this.Value);
             }
+        }
+
+        private void ProgressBar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            this.isDoubleClicked = true;
+            this.Value = 100;
+            this.RaiseValueEntered();
+        }
+
+        private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.isDoubleClicked = false;
+            this.SetValue(sender, e);
+        }
+
+        private void ProgressBar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && !this.isDoubleClicked)
+            {
+                this.SetValue(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void ProgressBar_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!this.isDoubleClicked)
+            {
+                this.RaiseValueEntered();
+            }
+        }
+
+        private void SetValue(object sender, MouseEventArgs e)
+        {
+            if (!this.IsEditable)
+            {
+                return;
+            }
+
+            this.Value = (e.GetPosition(this.ProgressBar).X - 1) / (this.ProgressBar.ActualWidth - 2) * 100;
+        }
+
+        private void SliderProgressBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.ProgressBar.MouseDoubleClick -= ProgressBar_MouseDoubleClick;
+            this.ProgressBar.MouseDoubleClick += ProgressBar_MouseDoubleClick;
+
+            this.ProgressBar.MouseDown -= ProgressBar_MouseDown;
+            this.ProgressBar.MouseDown += ProgressBar_MouseDown;
+
+            this.ProgressBar.MouseMove -= ProgressBar_MouseMove;
+            this.ProgressBar.MouseMove += ProgressBar_MouseMove;
+
+            this.ProgressBar.MouseUp -= ProgressBar_MouseUp;
+            this.ProgressBar.MouseUp += ProgressBar_MouseUp;
         }
 
         public event EventHandler<double> ValueEntered;

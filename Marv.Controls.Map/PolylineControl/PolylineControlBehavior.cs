@@ -5,7 +5,6 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -133,7 +132,8 @@ namespace Marv.Controls.Map
             var mLocation = map.ViewportPointToLocation(position);
             var location = new Location
             {
-                Latitude = mLocation.Latitude, Longitude = mLocation.Longitude
+                Latitude = mLocation.Latitude,
+                Longitude = mLocation.Longitude
             };
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 

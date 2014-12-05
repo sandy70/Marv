@@ -6,7 +6,6 @@ using Marv.Common;
 using Marv.Common.Graph;
 using Marv.Controls;
 using Marv.Controls.Map;
-using Marv.Map;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input

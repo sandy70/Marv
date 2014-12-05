@@ -1,7 +1,5 @@
 ﻿<UserControl x:Class="Marv.Controls.SliderProgressBar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:local="clr-namespace:Marv.Controls"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Name="Root">
@@ -10,13 +8,10 @@
     </UserControl.Resources>
 
     <Grid>
-        <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
+        <telerik:RadProgressBar Name="ProgressBar"
+                                Foreground="{Binding SliderForeground, ElementName=Root}"
                                 Minimum="0" Maximum="100"
-                                Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}">
-            <i:Interaction.Behaviors>
-                <local:ProgressBarBehavior />
-            </i:Interaction.Behaviors>
-        </telerik:RadProgressBar>
+                                Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}" />
 
         <Viewbox IsHitTestVisible="False"
                  Margin="2"

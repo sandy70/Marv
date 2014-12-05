@@ -9,8 +9,8 @@ namespace Marv.Common
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return sourceType == typeof(string) ||
-                   sourceType == typeof(LocationRect);
+            return sourceType == typeof (string) ||
+                   sourceType == typeof (LocationRect);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -19,18 +19,18 @@ namespace Marv.Common
             {
                 return value;
             }
-            
+
             if (value is string)
             {
                 var str = value as string;
 
-                if (Marv.Common.Countries.BoundsForKey.ContainsKey(str))
+                if (Countries.BoundsForKey.ContainsKey(str))
                 {
                     return Countries.BoundsForKey[str];
                 }
-                
+
                 var locationRect = new LocationRect();
-                
+
                 var parts = str.Split(",".ToCharArray());
 
                 if (parts.Count() == 4)

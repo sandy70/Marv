@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -40,83 +39,44 @@ namespace Marv.Controls.Map
 
         public Brush CursorFill
         {
-            get
-            {
-                return (Brush) this.GetValue(CursorFillProperty);
-            }
-            set
-            {
-                this.SetValue(CursorFillProperty, value);
-            }
+            get { return (Brush) this.GetValue(CursorFillProperty); }
+            set { this.SetValue(CursorFillProperty, value); }
         }
 
         public Location CursorLocation
         {
-            get
-            {
-                return (Location) this.GetValue(CursorLocationProperty);
-            }
-            set
-            {
-                this.SetValue(CursorLocationProperty, value);
-            }
+            get { return (Location) this.GetValue(CursorLocationProperty); }
+            set { this.SetValue(CursorLocationProperty, value); }
         }
 
         public Brush CursorStroke
         {
-            get
-            {
-                return (Brush) this.GetValue(CursorStrokeProperty);
-            }
-            set
-            {
-                this.SetValue(CursorStrokeProperty, value);
-            }
+            get { return (Brush) this.GetValue(CursorStrokeProperty); }
+            set { this.SetValue(CursorStrokeProperty, value); }
         }
 
         public bool IsCursorVisible
         {
-            get
-            {
-                return (bool) this.GetValue(IsCursorVisibleProperty);
-            }
-            set
-            {
-                this.SetValue(IsCursorVisibleProperty, value);
-            }
+            get { return (bool) this.GetValue(IsCursorVisibleProperty); }
+            set { this.SetValue(IsCursorVisibleProperty, value); }
         }
 
         public IEnumerable<Location> Locations
         {
-            get
-            {
-                return (LocationCollection) this.GetValue(LocationsProperty);
-            }
-            set
-            {
-                this.SetValue(LocationsProperty, value);
-            }
+            get { return (LocationCollection) this.GetValue(LocationsProperty); }
+            set { this.SetValue(LocationsProperty, value); }
         }
 
         public Location SelectedLocation
         {
-            get
-            {
-                return (Location) GetValue(SelectedLocationProperty);
-            }
+            get { return (Location) GetValue(SelectedLocationProperty); }
 
-            set
-            {
-                SetValue(SelectedLocationProperty, value);
-            }
+            set { SetValue(SelectedLocationProperty, value); }
         }
 
         public IEnumerable<Location> SimplifiedLocations
         {
-            get
-            {
-                return this.simplifiedLocations;
-            }
+            get { return this.simplifiedLocations; }
 
             set
             {
@@ -132,26 +92,14 @@ namespace Marv.Controls.Map
 
         public Brush Stroke
         {
-            get
-            {
-                return (Brush) this.GetValue(StrokeProperty);
-            }
-            set
-            {
-                this.SetValue(StrokeProperty, value);
-            }
+            get { return (Brush) this.GetValue(StrokeProperty); }
+            set { this.SetValue(StrokeProperty, value); }
         }
 
         public double StrokeThickness
         {
-            get
-            {
-                return (double) GetValue(StrokeThicknessProperty);
-            }
-            set
-            {
-                SetValue(StrokeThicknessProperty, value);
-            }
+            get { return (double) GetValue(StrokeThicknessProperty); }
+            set { SetValue(StrokeThicknessProperty, value); }
         }
 
         public PolylineControl()

@@ -1,5 +1,4 @@
 ﻿using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -10,10 +9,7 @@ namespace Marv.Controls.Map
 
         public Location Center
         {
-            get
-            {
-                return this.center;
-            }
+            get { return this.center; }
 
             set
             {
@@ -27,10 +23,7 @@ namespace Marv.Controls.Map
 
         public double Radius
         {
-            get
-            {
-                return this.radius;
-            }
+            get { return this.radius; }
 
             set
             {

@@ -13,7 +13,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
-                <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </local:PolylineControlBase.Resources>
@@ -41,13 +40,13 @@
             </mapcontrol:MapItemsControl.ItemTemplate>
         </mapcontrol:MapItemsControl>
 
-        <Label mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+        <Label mapcontrol:MapPanel.Location="{Binding NameLocation, ElementName=Root}"
                Background="LightGray"
                Content="{Binding Locations.Name, ElementName=Root}"
                Visibility="{Binding NameLocation, ElementName=Root, Converter={StaticResource ResourceKey=NullToVisibility}}" />
 
         <Ellipse Name="Ellipse"
-                 mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                 mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
                  Fill="{Binding CursorFill, ElementName=Root}"
                  Height="50" Width="50"
                  HorizontalAlignment="Center" VerticalAlignment="Center"

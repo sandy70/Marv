@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {

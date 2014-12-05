@@ -7,7 +7,6 @@ using System.Windows.Interactivity;
 using Caching;
 using MapControl;
 using Marv.Common;
-using Marv.Map;
 using Location = Marv.Common.Location;
 
 namespace Marv.Controls.Map
@@ -28,7 +27,6 @@ namespace Marv.Controls.Map
                         X = 0,
                         Y = 0
                     }),
-
                     SouthEast = this.ViewportPointToLocation(new Point
                     {
                         X = this.RenderSize.Width,

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -12,10 +10,7 @@ namespace Marv.Controls.Map
 
         public LocationCollection Locations
         {
-            get
-            {
-                return this.locations;
-            }
+            get { return this.locations; }
 
             set
             {
@@ -31,10 +26,7 @@ namespace Marv.Controls.Map
 
         public Brush Stroke
         {
-            get
-            {
-                return this.stroke;
-            }
+            get { return this.stroke; }
 
             set
             {

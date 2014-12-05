@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
-using MapControl;
 using Marv.Common;
-using Marv.Map;
-using Location = Marv.Common.Location;
 
 namespace Marv.Controls.Map
 {
@@ -139,7 +134,8 @@ namespace Marv.Controls.Map
             var mLocation = map.ViewportPointToLocation(position);
             var location = new Location
             {
-                Latitude = mLocation.Latitude, Longitude = mLocation.Longitude
+                Latitude = mLocation.Latitude,
+                Longitude = mLocation.Longitude
             };
             var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
 
@@ -171,7 +167,7 @@ namespace Marv.Controls.Map
 
                 this.AssociatedObject.SelectedLocation = location;
                 this.AssociatedObject.RaiseSelectionChanged(location);
-                
+
                 this.locationStack.Clear();
                 this.timer.Stop();
             }

@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using Marv.Common;
-using Marv.Map;
 
 namespace Marv.Controls.Map
 {
@@ -28,74 +27,38 @@ namespace Marv.Controls.Map
 
         public Brush CursorFill
         {
-            get
-            {
-                return (Brush) this.GetValue(CursorFillProperty);
-            }
-            set
-            {
-                this.SetValue(CursorFillProperty, value);
-            }
+            get { return (Brush) this.GetValue(CursorFillProperty); }
+            set { this.SetValue(CursorFillProperty, value); }
         }
 
         public Location CursorLocation
         {
-            get
-            {
-                return (Location) this.GetValue(CursorLocationProperty);
-            }
-            set
-            {
-                this.SetValue(CursorLocationProperty, value);
-            }
+            get { return (Location) this.GetValue(CursorLocationProperty); }
+            set { this.SetValue(CursorLocationProperty, value); }
         }
 
         public Brush CursorStroke
         {
-            get
-            {
-                return (Brush) this.GetValue(CursorStrokeProperty);
-            }
-            set
-            {
-                this.SetValue(CursorStrokeProperty, value);
-            }
+            get { return (Brush) this.GetValue(CursorStrokeProperty); }
+            set { this.SetValue(CursorStrokeProperty, value); }
         }
 
         public bool IsCursorVisible
         {
-            get
-            {
-                return (bool) this.GetValue(IsCursorVisibleProperty);
-            }
-            set
-            {
-                this.SetValue(IsCursorVisibleProperty, value);
-            }
+            get { return (bool) this.GetValue(IsCursorVisibleProperty); }
+            set { this.SetValue(IsCursorVisibleProperty, value); }
         }
 
         public Location SelectedLocation
         {
-            get
-            {
-                return (Location) this.GetValue(SelectedLocationProperty);
-            }
-            set
-            {
-                this.SetValue(SelectedLocationProperty, value);
-            }
+            get { return (Location) this.GetValue(SelectedLocationProperty); }
+            set { this.SetValue(SelectedLocationProperty, value); }
         }
 
         public Brush Stroke
         {
-            get
-            {
-                return (Brush) this.GetValue(StrokeProperty);
-            }
-            set
-            {
-                this.SetValue(StrokeProperty, value);
-            }
+            get { return (Brush) this.GetValue(StrokeProperty); }
+            set { this.SetValue(StrokeProperty, value); }
         }
 
         private static void OnSelectedLocationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
