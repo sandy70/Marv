@@ -74,7 +74,7 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
+    <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
@@ -103,7 +103,7 @@
     <Compile Include="VisibilityAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="EditableTextBox\EditableTextBox.xaml">
+    <Page Include="EditableTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -148,9 +148,7 @@
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SliderProgressBar\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

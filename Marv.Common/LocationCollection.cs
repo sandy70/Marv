@@ -187,6 +187,11 @@ namespace Marv.Common
             }
         }
 
+        public static implicit operator MapControl.LocationCollection(LocationCollection locations)
+        {
+            return new MapControl.LocationCollection(locations.Select(location => (MapControl.Location) location));
+        }
+
         public event EventHandler ValueChanged;
     }
 }

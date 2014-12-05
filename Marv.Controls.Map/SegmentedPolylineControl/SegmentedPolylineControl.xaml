@@ -26,7 +26,7 @@
                                     ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}">
             <mapcontrol:MapItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationToMapControlLocation}}"
+                    <mapcontrol:MapPolyline Locations="{Binding Path=Locations}"
                                             Stroke="{Binding Path=Stroke}"
                                             StrokeEndLineCap="Round"
                                             StrokeLineJoin="Round"
