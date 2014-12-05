@@ -30,11 +30,13 @@ namespace Marv.Controls.Map
 
             set
             {
-                if (value != this.stroke)
+                if (value.Equals(this.stroke))
                 {
-                    this.stroke = value;
-                    this.RaisePropertyChanged();
+                    return;
                 }
+
+                this.stroke = value;
+                this.RaisePropertyChanged();
             }
         }
     }

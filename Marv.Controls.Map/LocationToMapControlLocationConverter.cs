@@ -22,7 +22,7 @@ namespace Marv.Controls.Map
             if (value is IEnumerable<Location>)
             {
                 var locations = value as IEnumerable<Location>;
-                return locations.Select(x => Common.Extensions.ToMapControlLocation(x));
+                return locations.Select(x => x);
             }
 
             return Binding.DoNothing;

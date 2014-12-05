@@ -61,7 +61,7 @@ namespace Marv.Controls.Map
             set { this.SetValue(IsCursorVisibleProperty, value); }
         }
 
-        public IEnumerable<Location> Locations
+        public LocationCollection Locations
         {
             get { return (LocationCollection) this.GetValue(LocationsProperty); }
             set { this.SetValue(LocationsProperty, value); }

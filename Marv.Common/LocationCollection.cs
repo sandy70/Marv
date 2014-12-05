@@ -122,6 +122,11 @@ namespace Marv.Common
             return locationCollection;
         }
 
+        public Location GetLocationNearestTo(Location queryLocation)
+        {
+            return this.MinBy(location => Utils.Distance(location, queryLocation));
+        }
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);

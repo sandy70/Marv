@@ -65,7 +65,7 @@ namespace Marv.Common
                 if (value != this.northEast)
                 {
                     this.northEast = value;
-                    this.RaisePropertyChanged("NorthEast");
+                    this.RaisePropertyChanged();
 
                     this.North = this.NorthEast.Latitude;
                     this.East = this.NorthEast.Longitude;
@@ -82,7 +82,7 @@ namespace Marv.Common
                 if (value != this.northWest)
                 {
                     this.northWest = value;
-                    this.RaisePropertyChanged("NorthWest");
+                    this.RaisePropertyChanged();
 
                     this.North = this.NorthWest.Latitude;
                     this.West = this.NorthWest.Longitude;
@@ -99,7 +99,7 @@ namespace Marv.Common
                 if (value != this.south)
                 {
                     this.south = value;
-                    this.RaisePropertyChanged("South");
+                    this.RaisePropertyChanged();
 
                     this.SouthEast.Latitude = this.South;
                     this.SouthWest.Latitude = this.South;
@@ -116,7 +116,7 @@ namespace Marv.Common
                 if (value != this.southEast)
                 {
                     this.southEast = value;
-                    this.RaisePropertyChanged("SouthEast");
+                    this.RaisePropertyChanged();
 
                     this.South = this.SouthEast.Latitude;
                     this.East = this.SouthEast.Longitude;
@@ -133,7 +133,7 @@ namespace Marv.Common
                 if (value != this.southWest)
                 {
                     this.southWest = value;
-                    this.RaisePropertyChanged("SouthWest");
+                    this.RaisePropertyChanged();
 
                     this.South = this.SouthWest.Latitude;
                     this.West = this.SouthWest.Longitude;
@@ -150,7 +150,7 @@ namespace Marv.Common
                 if (value != this.west)
                 {
                     this.west = value;
-                    this.RaisePropertyChanged("West");
+                    this.RaisePropertyChanged();
 
                     this.NorthWest.Longitude = this.West;
                     this.SouthWest.Longitude = this.West;

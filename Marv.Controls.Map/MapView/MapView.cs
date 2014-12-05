@@ -35,7 +35,7 @@ namespace Marv.Controls.Map
                 };
             }
 
-            set { this.ZoomToBounds(value.SouthWest.ToMapControlLocation(), value.NorthEast.ToMapControlLocation()); }
+            set { this.ZoomToBounds(value.SouthWest, value.NorthEast); }
         }
 
         public LocationRect StartBounds
@@ -77,8 +77,8 @@ namespace Marv.Controls.Map
 
                     var line2 = new LineSegment
                     {
-                        P1 = this.LocationToViewportPoint(thisLocation.ToMapControlLocation()),
-                        P2 = this.LocationToViewportPoint(nextLocation.ToMapControlLocation())
+                        P1 = this.LocationToViewportPoint(thisLocation),
+                        P2 = this.LocationToViewportPoint(nextLocation)
                     };
 
                     cornerPoints.AllButLast().ForEach((cornerPoint, k) =>

@@ -44,7 +44,7 @@ namespace Marv.Controls.Map
 
         public static IEnumerable<Point> ToPoints(this IEnumerable<Location> locations, MapView mapView)
         {
-            return locations.Select(location => mapView.LocationToViewportPoint(location.ToMapControlLocation()));
+            return locations.Select(location => mapView.LocationToViewportPoint(location));
         }
 
         public static IEnumerable<Point> ToPoints(this IEnumerable<Location> locations, LocationConverter converter)

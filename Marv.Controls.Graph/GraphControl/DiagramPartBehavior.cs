@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;

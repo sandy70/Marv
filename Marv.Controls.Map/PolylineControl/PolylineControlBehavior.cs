@@ -135,7 +135,8 @@ namespace Marv.Controls.Map
                 Latitude = mLocation.Latitude,
                 Longitude = mLocation.Longitude
             };
-            var nearestLocation = this.AssociatedObject.Locations.NearestTo(location);
+
+            var nearestLocation = this.AssociatedObject.Locations.GetLocationNearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
 
