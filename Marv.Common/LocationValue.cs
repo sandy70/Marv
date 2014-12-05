@@ -1,6 +1,4 @@
-﻿using Marv.Map;
-
-namespace Marv
+﻿namespace Marv.Common
 {
     public class LocationValue : NotifyPropertyChanged
     {

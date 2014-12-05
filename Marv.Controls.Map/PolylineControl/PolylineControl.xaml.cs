@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using Marv.Common;
 using Marv.Map;
 
 namespace Marv.Controls.Map

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Marv.Map
+namespace Marv.Common
 {
     [TypeConverter(typeof (LocationRectConverter))]
     public class LocationRect : NotifyPropertyChanged, IEnumerable<Location>

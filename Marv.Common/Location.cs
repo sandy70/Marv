@@ -1,4 +1,4 @@
-﻿namespace Marv.Map
+﻿namespace Marv.Common
 {
     public class Location : Dynamic, IKeyed
     {

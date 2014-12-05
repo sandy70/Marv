@@ -7,7 +7,7 @@
     <ProjectGuid>{A17E2D7F-D5E8-4A8F-9394-9748C0DDBD1D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Marv</RootNamespace>
+    <RootNamespace>Marv.Common</RootNamespace>
     <AssemblyName>Marv.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -42,6 +42,12 @@
     <AssemblyOriginatorKeyFile>Marv.Common.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImageFileCache">
+      <HintPath>..\packages\XAML.MapControl.2.2.0\lib\net45\ImageFileCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF">
+      <HintPath>..\packages\XAML.MapControl.2.2.0\lib\net45\MapControl.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -53,12 +59,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
-    <Compile Include="Chart\CategoricalPoint.cs" />
-    <Compile Include="Chart\ScatterPoint.cs" />
     <Compile Include="CorLas\CorLAS.cs" />
     <Compile Include="CorLas\EffectiveFlawData.cs" />
     <Compile Include="CorLas\Flaw.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="LocationCollection.cs" />
+    <Compile Include="LocationRect.cs" />
+    <Compile Include="LocationRectConverter.cs" />
+    <Compile Include="LocationValue.cs" />
     <Compile Include="Notification\INotifier.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />

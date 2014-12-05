@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
+using Marv.Common;
 using Marv.Map;
 
 namespace Marv.Controls.Map

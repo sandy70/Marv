@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using MapControl;
-using Location = Marv.Map.Location;
+using Location = Marv.Common.Location;
 
 namespace Marv.Controls.Map
 {

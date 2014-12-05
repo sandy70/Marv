@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
-namespace Marv.Map
+namespace Marv.Common
 {
     public class LocationCollection : KeyedCollection<Location>
     {

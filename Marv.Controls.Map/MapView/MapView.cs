@@ -8,7 +8,7 @@ using Caching;
 using MapControl;
 using Marv.Common;
 using Marv.Map;
-using Location = Marv.Map.Location;
+using Location = Marv.Common.Location;
 
 namespace Marv.Controls.Map
 {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace Marv.Map
+namespace Marv.Common
 {
     public class LocationRectConverter : TypeConverter
     {
@@ -24,7 +24,7 @@ namespace Marv.Map
             {
                 var str = value as string;
 
-                if (Countries.BoundsForKey.ContainsKey(str))
+                if (Marv.Common.Countries.BoundsForKey.ContainsKey(str))
                 {
                     return Countries.BoundsForKey[str];
                 }
