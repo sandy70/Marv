@@ -181,10 +181,6 @@
                     </Setter>
                 </Style>
             </telerik:RadDiagram.ShapeStyle>
-
-            <i:Interaction.Behaviors>
-                <local:DiagramPartBehavior />
-            </i:Interaction.Behaviors>
         </telerik:RadDiagram>
 
         <telerik:RadDiagramNavigationPane Grid.Row="1"

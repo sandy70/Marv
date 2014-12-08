@@ -53,6 +53,7 @@ namespace Marv.Controls.GraphControl
         private Marv.Graph displayGraph;
         private string displayVertexKey;
         private bool isDefaultGroupVisible;
+
         private string selectedGroup;
 
         public int AutoSaveDuration
@@ -462,24 +463,6 @@ namespace Marv.Controls.GraphControl
             this.RaiseEvidenceEntered();
         }
 
-        private void DiagramPart_DiagramLayoutComplete(object sender, RoutedEventArgs e)
-        {
-            this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
-            this.DiagramPart.AutoFitAsync(new Thickness(10));
-        }
-
-        private void DiagramPart_GraphSourceChanged(object sender, EventArgs e)
-        {
-            if (this.IsAutoLayoutEnabled)
-            {
-                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(true));
-            }
-            else
-            {
-                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
-            }
-        }
-
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
@@ -516,8 +499,20 @@ namespace Marv.Controls.GraphControl
             this.SaveButton.Click += this.SaveButton_Click;
 
             // Other controls
+            this.DiagramPart.CommandExecuted -= DiagramPart_CommandExecuted;
+            this.DiagramPart.CommandExecuted += DiagramPart_CommandExecuted;
+
+            this.DiagramPart.ConnectionManipulationCompleted -= DiagramPart_ConnectionManipulationCompleted;
+            this.DiagramPart.ConnectionManipulationCompleted += DiagramPart_ConnectionManipulationCompleted;
+
+            this.DiagramPart.ConnectionManipulationStarted -= DiagramPart_ConnectionManipulationStarted;
+            this.DiagramPart.ConnectionManipulationStarted += DiagramPart_ConnectionManipulationStarted;
+
             this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
             this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
+
+            this.DiagramPart.ShapeClicked -= DiagramPart_ShapeClicked;
+            this.DiagramPart.ShapeClicked += DiagramPart_ShapeClicked;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
