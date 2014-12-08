@@ -60,8 +60,6 @@ namespace Marv
         public Dictionary<string, string> Loops
         {
             get { return this.Nodes.Where(node => !string.IsNullOrWhiteSpace(node.InputNodeKey)).ToDictionary(node => node.Key, node => node.InputNodeKey); }
-
-            set { }
         }
 
         public static Network Read(string filePath)
@@ -115,10 +113,11 @@ namespace Marv
 
             var currentNodeKey = "";
             var networkFileLocation = NetworkFileLocation.Root;
-            var line = "";
 
             using (var streamReader = new StreamReader(path))
             {
+                var line = "";
+
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (networkFileLocation == NetworkFileLocation.Root)
