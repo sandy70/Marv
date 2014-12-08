@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Caching;
 using MapControl;
+using MapControl.Caching;
 using Marv.Common;
 using Location = Marv.Common.Location;
 
