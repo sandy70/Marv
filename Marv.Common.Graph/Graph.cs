@@ -299,7 +299,12 @@ namespace Marv
                             {
                                 var connectorPostions = srcVertex.ConnectorPositions[group][dstVertex.Key];
 
-                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
+                                var newEdge = new Edge(src, edge.Target)
+                                {
+                                    ConnectorPositions = connectorPostions ?? new EdgeConnectorPositions()
+                                };
+
+                                subGraph.Edges.AddUnique(newEdge);
 
                                 src = edge.Target;
                             }

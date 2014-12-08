@@ -68,7 +68,6 @@
     <Compile Include="LocationCollection.cs" />
     <Compile Include="LocationRect.cs" />
     <Compile Include="LocationRectConverter.cs" />
-    <Compile Include="LocationValue.cs" />
     <Compile Include="Notification\INotifier.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />

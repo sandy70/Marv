@@ -69,7 +69,6 @@
     <Compile Include="VertexEvidence.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
-    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
