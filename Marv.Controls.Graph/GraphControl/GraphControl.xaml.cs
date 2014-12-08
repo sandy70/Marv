@@ -463,6 +463,16 @@ namespace Marv.Controls.GraphControl
             this.RaiseEvidenceEntered();
         }
 
+        private void ConnectorButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.EnableConnectorEditing();
+        }
+
+        private void ConnectorButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.DisableConnectorEditing();
+        }
+
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
@@ -488,6 +498,12 @@ namespace Marv.Controls.GraphControl
 
             this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
+
+            this.ConnectorButton.Checked -= ConnectorButton_Checked;
+            this.ConnectorButton.Checked += ConnectorButton_Checked;
+
+            this.ConnectorButton.Unchecked -= ConnectorButton_Unchecked;
+            this.ConnectorButton.Unchecked += ConnectorButton_Unchecked;
 
             this.ExpandButton.Click -= this.ExpandButton_Click;
             this.ExpandButton.Click += this.ExpandButton_Click;

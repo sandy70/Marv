@@ -6,6 +6,7 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:graphControl="clr-namespace:Marv.Controls.GraphControl;assembly=Marv.Controls.Graph"
+        xmlns:marv1="clr-namespace:Marv"
         Name="Root"
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized">
@@ -81,7 +82,7 @@
                         <telerik:RadPane Header="Input"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
-                            <local:LineDataControl x:Name="LineDataControl"
+                            <marv1:LineDataControl x:Name="LineDataControl"
                                                    LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"

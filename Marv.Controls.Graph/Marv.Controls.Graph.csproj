@@ -102,13 +102,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphControl.DiagramPart.cs" />
-    <Compile Include="GraphControl\GraphControlConnectorButtonBehavior.cs" />
+    <Compile Include="GraphControl\GraphControl.DiagramPart.cs" />
     <Compile Include="GraphControl\GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GraphControl\VertexControlBehavior.cs" />
-    <Compile Include="MaskedNumericInputBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

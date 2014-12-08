@@ -1,10 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Marv.Input;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
-namespace Marv.Input
+namespace Marv
 {
     public partial class LineDataControl
     {
@@ -106,29 +107,29 @@ namespace Marv.Input
 
         private void LineDataControl_Loaded_GridView(object sender, RoutedEventArgs e)
         {
-            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
-            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
+            this.GridView.AutoGeneratingColumn -= this.GridView_AutoGeneratingColumn;
+            this.GridView.AutoGeneratingColumn += this.GridView_AutoGeneratingColumn;
 
-            this.GridView.CellEditEnded -= GridView_CellEditEnded;
-            this.GridView.CellEditEnded += GridView_CellEditEnded;
+            this.GridView.CellEditEnded -= this.GridView_CellEditEnded;
+            this.GridView.CellEditEnded += this.GridView_CellEditEnded;
 
-            this.GridView.CellValidating -= GridView_CellValidating;
-            this.GridView.CellValidating += GridView_CellValidating;
+            this.GridView.CellValidating -= this.GridView_CellValidating;
+            this.GridView.CellValidating += this.GridView_CellValidating;
 
-            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
-            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
+            this.GridView.CurrentCellChanged -= this.GridView_CurrentCellChanged;
+            this.GridView.CurrentCellChanged += this.GridView_CurrentCellChanged;
 
-            this.GridView.Deleted -= GridView_Deleted;
-            this.GridView.Deleted += GridView_Deleted;
+            this.GridView.Deleted -= this.GridView_Deleted;
+            this.GridView.Deleted += this.GridView_Deleted;
 
-            this.GridView.KeyDown -= GridView_KeyDown;
-            this.GridView.KeyDown += GridView_KeyDown;
+            this.GridView.KeyDown -= this.GridView_KeyDown;
+            this.GridView.KeyDown += this.GridView_KeyDown;
 
-            this.GridView.Pasted -= GridView_Pasted;
-            this.GridView.Pasted += GridView_Pasted;
+            this.GridView.Pasted -= this.GridView_Pasted;
+            this.GridView.Pasted += this.GridView_Pasted;
 
-            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
-            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
+            this.GridView.PastingCellClipboardContent -= this.GridView_PastingCellClipboardContent;
+            this.GridView.PastingCellClipboardContent += this.GridView_PastingCellClipboardContent;
         }
     }
 }

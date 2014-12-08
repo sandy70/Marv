@@ -1,4 +1,6 @@
-﻿namespace Marv.Controls.Graph
+﻿using Marv.Controls.Graph;
+
+namespace Marv.Controls
 {
     public class VertexControlExpandCommand : Command<VertexControl>
     {

@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Graph;
+using Marv.Input;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
-namespace Marv.Input
+namespace Marv
 {
     public partial class LineDataControl : INotifier, INotifyPropertyChanged
     {
@@ -48,27 +49,27 @@ namespace Marv.Input
 
         public string FileName
         {
-            get { return (string) GetValue(FileNameProperty); }
-            set { SetValue(FileNameProperty, value); }
+            get { return (string) this.GetValue(FileNameProperty); }
+            set { this.SetValue(FileNameProperty, value); }
         }
 
         public bool IsGridViewEnabled
         {
-            get { return (bool) GetValue(IsGridViewEnabledProperty); }
-            set { SetValue(IsGridViewEnabledProperty, value); }
+            get { return (bool) this.GetValue(IsGridViewEnabledProperty); }
+            set { this.SetValue(IsGridViewEnabledProperty, value); }
         }
 
         public ILineData LineData
         {
-            get { return (ILineData) GetValue(LineDataProperty); }
+            get { return (ILineData) this.GetValue(LineDataProperty); }
 
-            set { SetValue(LineDataProperty, value); }
+            set { this.SetValue(LineDataProperty, value); }
         }
 
         public string NetworkFileName
         {
-            get { return (string) GetValue(NetworkFileNameProperty); }
-            set { SetValue(NetworkFileNameProperty, value); }
+            get { return (string) this.GetValue(NetworkFileNameProperty); }
+            set { this.SetValue(NetworkFileNameProperty, value); }
         }
 
         public ObservableCollection<Dynamic> Rows
@@ -87,38 +88,38 @@ namespace Marv.Input
 
         public int SectionsToAddCount
         {
-            get { return (int) GetValue(SectionsToAddCountProperty); }
-            set { SetValue(SectionsToAddCountProperty, value); }
+            get { return (int) this.GetValue(SectionsToAddCountProperty); }
+            set { this.SetValue(SectionsToAddCountProperty, value); }
         }
 
         public string SelectedSectionId
         {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
+            get { return (string) this.GetValue(SelectedSectionIdProperty); }
 
-            set { SetValue(SelectedSectionIdProperty, value); }
+            set { this.SetValue(SelectedSectionIdProperty, value); }
         }
 
         public Vertex SelectedVertex
         {
-            get { return (Vertex) GetValue(SelectedVertexProperty); }
-            set { SetValue(SelectedVertexProperty, value); }
+            get { return (Vertex) this.GetValue(SelectedVertexProperty); }
+            set { this.SetValue(SelectedVertexProperty, value); }
         }
 
         public int SelectedYear
         {
-            get { return (int) GetValue(SelectedYearProperty); }
-            set { SetValue(SelectedYearProperty, value); }
+            get { return (int) this.GetValue(SelectedYearProperty); }
+            set { this.SetValue(SelectedYearProperty, value); }
         }
 
         public LineDataControl()
         {
             InitializeComponent();
 
-            this.Loaded -= LineDataControl_Loaded;
-            this.Loaded += LineDataControl_Loaded;
+            this.Loaded -= this.LineDataControl_Loaded;
+            this.Loaded += this.LineDataControl_Loaded;
 
-            this.Loaded -= LineDataControl_Loaded_GridView;
-            this.Loaded += LineDataControl_Loaded_GridView;
+            this.Loaded -= this.LineDataControl_Loaded_GridView;
+            this.Loaded += this.LineDataControl_Loaded_GridView;
         }
 
         private static void AddRow(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, string sectionId)
@@ -471,29 +472,29 @@ namespace Marv.Input
             this.YearEndControl.ValueChanged -= this.YearEnd_ValueChanged;
             this.YearEndControl.ValueChanged += this.YearEnd_ValueChanged;
 
-            this.YearStartControl.ValueChanged -= YearStart_ValueChanged;
-            this.YearStartControl.ValueChanged += YearStart_ValueChanged;
+            this.YearStartControl.ValueChanged -= this.YearStart_ValueChanged;
+            this.YearStartControl.ValueChanged += this.YearStart_ValueChanged;
 
-            this.AddSectionsButton.Click -= AddSectionsButton_Click;
-            this.AddSectionsButton.Click += AddSectionsButton_Click;
+            this.AddSectionsButton.Click -= this.AddSectionsButton_Click;
+            this.AddSectionsButton.Click += this.AddSectionsButton_Click;
 
-            this.CopyAcrossAllButton.Click -= CopyAcrossAllButton_Click;
-            this.CopyAcrossAllButton.Click += CopyAcrossAllButton_Click;
+            this.CopyAcrossAllButton.Click -= this.CopyAcrossAllButton_Click;
+            this.CopyAcrossAllButton.Click += this.CopyAcrossAllButton_Click;
 
-            this.CopyAcrossColButton.Click -= CopyAcrossColButton_Click;
-            this.CopyAcrossColButton.Click += CopyAcrossColButton_Click;
+            this.CopyAcrossColButton.Click -= this.CopyAcrossColButton_Click;
+            this.CopyAcrossColButton.Click += this.CopyAcrossColButton_Click;
 
-            this.CopyAcrossRowButton.Click -= CopyAcrossRowButton_Click;
-            this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
+            this.CopyAcrossRowButton.Click -= this.CopyAcrossRowButton_Click;
+            this.CopyAcrossRowButton.Click += this.CopyAcrossRowButton_Click;
 
-            this.OpenButton.Click -= OpenButton_Click;
-            this.OpenButton.Click += OpenButton_Click;
+            this.OpenButton.Click -= this.OpenButton_Click;
+            this.OpenButton.Click += this.OpenButton_Click;
 
-            this.RunAllButton.Click -= RunAllButton_Click;
-            this.RunAllButton.Click += RunAllButton_Click;
+            this.RunAllButton.Click -= this.RunAllButton_Click;
+            this.RunAllButton.Click += this.RunAllButton_Click;
 
-            this.SaveButton.Click -= SaveButton_Click;
-            this.SaveButton.Click += SaveButton_Click;
+            this.SaveButton.Click -= this.SaveButton_Click;
+            this.SaveButton.Click += this.SaveButton_Click;
         }
 
         private async void LineData_DataChanged(object sender, EventArgs e)

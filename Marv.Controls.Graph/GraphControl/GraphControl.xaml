@@ -11,14 +11,9 @@
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="600"
              Name="Root">
-
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
-
-    <i:Interaction.Behaviors>
-        <local:GraphControlConnectorButtonBehavior />
-    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>
