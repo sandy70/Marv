@@ -100,7 +100,6 @@
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="VisibilityAnimation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox.xaml">
