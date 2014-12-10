@@ -65,7 +65,7 @@
                                             IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
                                             Margin="0"
                                             SliderForeground="YellowGreen"
-                                            Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                            Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                             Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}">
                         <i:Interaction.Behaviors>
                             <local:SliderProgressBarBehavior />
@@ -81,11 +81,7 @@
                                             Margin="0,0,0,3"
                                             SliderForeground="#20aeff"
                                             Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                            Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}">
-                        <i:Interaction.Behaviors>
-                            <local:SliderProgressBarBehavior />
-                        </i:Interaction.Behaviors>
-                    </marv:SliderProgressBar>
+                                            Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -110,11 +106,7 @@
                                 Margin="1"
                                 SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
                                 Width="Auto"
-                                Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
-            <i:Interaction.Behaviors>
-                <local:SliderProgressBarBehavior />
-            </i:Interaction.Behaviors>
-        </marv:SliderProgressBar>
+                                Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
     </Grid>
 
     <!-- Input -->

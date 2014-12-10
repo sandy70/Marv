@@ -19,7 +19,7 @@ namespace Marv.Controls
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register("Value", typeof (double), typeof (SliderProgressBar), new PropertyMetadata(32.0));
 
-        private bool isDoubleClicked;
+        private bool isDoubleClick;
 
         public bool IsEditable
         {
@@ -63,35 +63,34 @@ namespace Marv.Controls
 
         private void ProgressBar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            this.isDoubleClicked = true;
             this.Value = 100;
-            this.RaiseValueEntered();
         }
 
         private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.isDoubleClicked = false;
-            this.SetValue(sender, e);
+            this.isDoubleClick = e.ClickCount == 2;
+
+            if (!this.isDoubleClick)
+            {
+                this.SetValue(e);
+            }
         }
 
         private void ProgressBar_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && !this.isDoubleClicked)
+            if (e.LeftButton == MouseButtonState.Pressed && !isDoubleClick)
             {
-                this.SetValue(sender, e);
+                this.SetValue(e);
                 e.Handled = true;
             }
         }
 
         private void ProgressBar_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!this.isDoubleClicked)
-            {
-                this.RaiseValueEntered();
-            }
+            this.RaiseValueEntered();
         }
 
-        private void SetValue(object sender, MouseEventArgs e)
+        private void SetValue(MouseEventArgs e)
         {
             if (!this.IsEditable)
             {
