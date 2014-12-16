@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using Marv.Common;
 
@@ -23,20 +24,6 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
 
-        private static void LocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControl;
-
-            if (control.Locations != null)
-            {
-                if (control.Locations != null)
-                {
-                    control.CursorLocation = control.Locations.First();
-                    control.IsCursorVisible = control.CursorLocation != null;
-                }
-            }
-        }
-
         public static readonly DependencyProperty SelectedLocationProperty =
             DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
 
@@ -46,6 +33,8 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(3.0));
 
+        private Location cursorLocation;
+        private MapView mapView;
         private IEnumerable<Location> simplifiedLocations;
 
         public Brush CursorFill
@@ -54,18 +43,16 @@ namespace Marv.Controls.Map
             set { this.SetValue(CursorFillProperty, value); }
         }
 
-        private Location cursorLocation;
-
         public Location CursorLocation
         {
-            get
-            {
-                return this.cursorLocation;
-            }
+            get { return this.cursorLocation; }
 
             set
             {
-                if (value.Equals(this.cursorLocation)) return;
+                if (value.Equals(this.cursorLocation))
+                {
+                    return;
+                }
 
                 this.cursorLocation = value;
                 this.RaisePropertyChanged();
@@ -87,11 +74,8 @@ namespace Marv.Controls.Map
         public LocationCollection Locations
         {
             get { return (LocationCollection) this.GetValue(LocationsProperty); }
-            
-            set
-            {
-                this.SetValue(LocationsProperty, value);
-            }
+
+            set { this.SetValue(LocationsProperty, value); }
         }
 
         public Location SelectedLocation
@@ -132,6 +116,23 @@ namespace Marv.Controls.Map
         public PolylineControl()
         {
             this.InitializeComponent();
+
+            this.Loaded -= PolylineControl_Loaded;
+            this.Loaded += PolylineControl_Loaded;
+        }
+
+        private static void LocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as PolylineControl;
+
+            if (control.Locations != null)
+            {
+                if (control.Locations != null)
+                {
+                    control.CursorLocation = control.Locations.First();
+                    control.IsCursorVisible = control.CursorLocation != null;
+                }
+            }
         }
 
         public void RaiseSelectionChanged(Location location)
@@ -160,6 +161,147 @@ namespace Marv.Controls.Map
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("Ellipse_MouseDown");
+
+            this.Ellipse.CaptureMouse();
+
+            e.Handled = true;
+        }
+
+        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.CursorLocation = this.GetNearestLocation(e.GetPosition(this));
+            }
+        }
+
+        private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("Ellipse_MouseUp");
+
+            var nearestLocation = this.GetNearestLocation(e.GetPosition(this));
+
+            this.CursorLocation = nearestLocation;
+            this.SelectedLocation = nearestLocation;
+
+            this.Ellipse.ReleaseMouseCapture();
+
+            e.Handled = true;
+        }
+
+        private void Ellipse_TouchDown(object sender, TouchEventArgs e)
+        {
+            Console.WriteLine("Ellipse_TouchDown");
+
+            this.Ellipse.CaptureTouch(e.TouchDevice);
+
+            e.Handled = true;
+        }
+
+        private void Ellipse_TouchMove(object sender, TouchEventArgs e)
+        {
+            this.CursorLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
+        }
+
+        private void Ellipse_TouchUp(object sender, TouchEventArgs e)
+        {
+            Console.WriteLine("Ellipse_MouseUp");
+
+            var nearestLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
+
+            this.CursorLocation = nearestLocation;
+            this.SelectedLocation = nearestLocation;
+
+            this.Ellipse.ReleaseTouchCapture(e.TouchDevice);
+
+            e.Handled = true;
+        }
+
+        private Location GetNearestLocation(Point position)
+        {
+            var location = this.mapView.ViewportPointToLocation(position);
+            var nearestLocation = this.Locations.GetLocationNearestTo(location);
+            return nearestLocation;
+        }
+
+        private void MapPolyline_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("MapPolyline_MouseDown");
+
+            var nearestLocation = this.GetNearestLocation(e.GetPosition(this));
+
+            this.CursorLocation = nearestLocation;
+            this.SelectedLocation = nearestLocation;
+
+            this.Ellipse.CaptureMouse();
+
+            e.Handled = true;
+        }
+
+        private void MapPolyline_TouchDown(object sender, TouchEventArgs e)
+        {
+            Console.WriteLine("MapPolyline_TouchDown");
+
+            var nearestLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
+
+            this.CursorLocation = nearestLocation;
+            this.SelectedLocation = nearestLocation;
+
+            this.Ellipse.CaptureTouch(e.TouchDevice);
+
+            e.Handled = true;
+        }
+
+        private void PolylineControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.mapView = this.GetParent<MapView>();
+
+            this.mapView.ZoomLevelChanged -= mapView_ZoomLevelChanged;
+            this.mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+
+            this.Ellipse.MouseDown -= Ellipse_MouseDown;
+            this.Ellipse.MouseDown += Ellipse_MouseDown;
+
+            this.Ellipse.MouseMove -= Ellipse_MouseMove;
+            this.Ellipse.MouseMove += Ellipse_MouseMove;
+
+            this.Ellipse.MouseUp -= Ellipse_MouseUp;
+            this.Ellipse.MouseUp += Ellipse_MouseUp;
+
+            this.Ellipse.TouchDown -= Ellipse_TouchDown;
+            this.Ellipse.TouchDown += Ellipse_TouchDown;
+
+            this.Ellipse.TouchMove -= Ellipse_TouchMove;
+            this.Ellipse.TouchMove += Ellipse_TouchMove;
+
+            this.Ellipse.TouchUp -= Ellipse_TouchUp;
+            this.Ellipse.TouchUp += Ellipse_TouchUp;
+
+            this.MapPolyline.MouseDown -= MapPolyline_MouseDown;
+            this.MapPolyline.MouseDown += MapPolyline_MouseDown;
+
+            this.MapPolyline.TouchDown -= MapPolyline_TouchDown;
+            this.MapPolyline.TouchDown += MapPolyline_TouchDown;
+        }
+
+        private void mapView_ZoomLevelChanged(object sender, int e)
+        {
+            if (this.Locations == null)
+            {
+                return;
+            }
+
+            var mapView = sender as MapView;
+
+            this.SimplifiedLocations = this.Locations
+                                           .ToPoints(mapView)
+                                           .Reduce(5)
+                                           .ToLocations(mapView);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

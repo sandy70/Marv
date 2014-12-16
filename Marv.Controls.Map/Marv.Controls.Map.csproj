@@ -71,7 +71,6 @@
     <Compile Include="PolylineControl\PolylineControl.xaml.cs">
       <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PolylineControl\PolylineControlBehavior.cs" />
     <Compile Include="SegmentedPolylineControl\LocationCollectionViewModel.cs" />
     <Compile Include="SegmentedPolylineControl\MapPoylineBehavior.cs" />
     <Compile Include="SegmentedPolylineControl\PolylineControlBase.cs" />
