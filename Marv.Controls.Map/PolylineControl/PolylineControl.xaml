@@ -34,13 +34,13 @@
 
     <!-- Cursor -->
     <Ellipse Name="Ellipse"
-             mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
+             mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource LocationConverter}}"
              Fill="{Binding CursorFill, ElementName=Root}"
              Height="50" Width="50"
              HorizontalAlignment="Center" VerticalAlignment="Center"
              Opacity="0.8"
              Stroke="{Binding CursorStroke, ElementName=Root}"
              StrokeThickness="2"
-             Visibility="{Binding IsCursorVisible, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+             Visibility="{Binding ElementName=Root, Path=IsCursorVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
 </mapcontrol:MapPanel>

@@ -21,7 +21,21 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("IsCursorVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LocationsProperty =
-            DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
+
+        private static void LocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as PolylineControl;
+
+            if (control.Locations != null)
+            {
+                if (control.Locations != null)
+                {
+                    control.CursorLocation = control.Locations.First();
+                    control.IsCursorVisible = control.CursorLocation != null;
+                }
+            }
+        }
 
         public static readonly DependencyProperty SelectedLocationProperty =
             DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
@@ -55,8 +69,6 @@ namespace Marv.Controls.Map
 
                 this.cursorLocation = value;
                 this.RaisePropertyChanged();
-
-                this.IsCursorVisible = this.CursorLocation != null;
             }
         }
 
@@ -75,14 +87,10 @@ namespace Marv.Controls.Map
         public LocationCollection Locations
         {
             get { return (LocationCollection) this.GetValue(LocationsProperty); }
+            
             set
             {
                 this.SetValue(LocationsProperty, value);
-
-                if (this.Locations != null)
-                {
-                    this.CursorLocation = this.Locations.First();
-                }
             }
         }
 

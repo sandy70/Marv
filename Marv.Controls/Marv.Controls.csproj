@@ -80,6 +80,7 @@
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\LocationCollectionConverter.cs" />
+    <Compile Include="Converters\LocationConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="EditableTextBox.xaml.cs">
