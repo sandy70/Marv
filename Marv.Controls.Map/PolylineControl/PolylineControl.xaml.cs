@@ -14,9 +14,6 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty CursorFillProperty =
             DependencyProperty.Register("CursorFill", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.YellowGreen)));
 
-        public static readonly DependencyProperty CursorLocationProperty =
-            DependencyProperty.Register("CursorLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null, ChangedCursorLocation));
-
         public static readonly DependencyProperty CursorStrokeProperty =
             DependencyProperty.Register("CursorStroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
@@ -24,7 +21,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("IsCursorVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LocationsProperty =
-            DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, ChangedLocations));
+            DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedLocationProperty =
             DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
@@ -43,10 +40,24 @@ namespace Marv.Controls.Map
             set { this.SetValue(CursorFillProperty, value); }
         }
 
+        private Location cursorLocation;
+
         public Location CursorLocation
         {
-            get { return (Location) this.GetValue(CursorLocationProperty); }
-            set { this.SetValue(CursorLocationProperty, value); }
+            get
+            {
+                return this.cursorLocation;
+            }
+
+            set
+            {
+                if (value.Equals(this.cursorLocation)) return;
+
+                this.cursorLocation = value;
+                this.RaisePropertyChanged();
+
+                this.IsCursorVisible = this.CursorLocation != null;
+            }
         }
 
         public Brush CursorStroke
@@ -64,7 +75,15 @@ namespace Marv.Controls.Map
         public LocationCollection Locations
         {
             get { return (LocationCollection) this.GetValue(LocationsProperty); }
-            set { this.SetValue(LocationsProperty, value); }
+            set
+            {
+                this.SetValue(LocationsProperty, value);
+
+                if (this.Locations != null)
+                {
+                    this.CursorLocation = this.Locations.First();
+                }
+            }
         }
 
         public Location SelectedLocation
@@ -105,30 +124,6 @@ namespace Marv.Controls.Map
         public PolylineControl()
         {
             this.InitializeComponent();
-        }
-
-        private static void ChangedCursorLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControl;
-
-            if (control != null)
-            {
-                control.IsCursorVisible = control.CursorLocation != null;
-            }
-        }
-
-        private static void ChangedLocations(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as PolylineControl;
-
-            if (control != null && control.Locations != null)
-            {
-                var firstLocation = control.Locations.First();
-
-                control.CursorLocation = firstLocation;
-                control.UpdateSimplifiedLocations();
-                control.RaiseSelectionChanged(firstLocation);
-            }
         }
 
         public void RaiseSelectionChanged(Location location)

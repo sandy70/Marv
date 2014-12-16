@@ -1,16 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Media;
-using MapControl;
-using Location = Marv.Common.Location;
+using Marv.Common;
 
 namespace Marv.Controls.Map
 {
-    public class LocationConverter
+    public class MapTransform
     {
-        private readonly MapTransform mapTransform;
+        private readonly MapControl.MapTransform mapTransform;
         private readonly Transform viewportTransform;
 
-        public LocationConverter(MapView mapView)
+        public MapTransform(MapView mapView)
         {
             this.mapTransform = mapView.MapTransform;
             this.viewportTransform = mapView.ViewportTransform;

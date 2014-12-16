@@ -10,12 +10,7 @@
                      d:DesignHeight="300" d:DesignWidth="300"
                      x:Name="Root">
     <mapcontrol:MapPanel.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
-                <ResourceDictionary Source="/Marv.Common.Map;component/ResourceDictionary.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary> 
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </mapcontrol:MapPanel.Resources>
 
     <i:Interaction.Behaviors>
@@ -23,7 +18,7 @@
     </i:Interaction.Behaviors>
 
     <!-- This is the polyling that the viewer sees -->
-    <mapcontrol:MapPolyline Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+    <mapcontrol:MapPolyline Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"
                             Stroke="{Binding ElementName=Root, Path=Stroke}"
                             StrokeEndLineCap="Round"
                             StrokeLineJoin="Round"
@@ -32,14 +27,14 @@
 
     <!-- This is the dummy polyline that is used to broaden selection area -->
     <mapcontrol:MapPolyline Name="MapPolyline"
-                            Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+                            Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"
                             Opacity="0.0"
                             Stroke="Black"
                             StrokeThickness="30" />
 
     <!-- Cursor -->
     <Ellipse Name="Ellipse"
-             mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource ResourceKey=LocationToMapControlLocation}}"
+             mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root}"
              Fill="{Binding CursorFill, ElementName=Root}"
              Height="50" Width="50"
              HorizontalAlignment="Center" VerticalAlignment="Center"

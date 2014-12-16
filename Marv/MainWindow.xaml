@@ -1,6 +1,6 @@
-﻿<Window x:Class="Marv.MainWindow"
+﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:local="clr-namespace:Marv.Input"
+        xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
@@ -43,13 +43,8 @@
                             <marv:MapView ManipulationMode="Scale,Translate"
                                           StartBounds="{Binding ElementName=Root, Path=StartExtent}"
                                           TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
-                                <marv:SegmentedPolylineControl Name="PolylineControl"
-                                                               Locations="{Binding ElementName=Root, Path=Locations}"
-                                                               SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                               Stroke="GreenYellow"
-                                                               StrokeThickness="3"
-                                                               DoubleToBrushMap="{Binding ElementName=Root, Path=LocationValueToBrushMap}"
-                                                               ValueLevels="{Binding ElementName=Root, Path=ValueLevels}" />
+                                <marv:PolylineControl Locations="{Binding ElementName=Root, Path=Locations}"
+                                                        Stroke="DeepSkyBlue"/>
                             </marv:MapView>
 
                             <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
@@ -100,7 +95,7 @@
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"/>
+                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -117,9 +112,9 @@
                             </Grid.RowDefinitions>
 
                             <graphControl:GraphControl Name="GraphControl"
-                                               Grid.Row="0"
-                                               Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                                                       Grid.Row="0"
+                                                       Background="WhiteSmoke"
+                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
 
                             <Grid Grid.Row="1"
                                   Height="32"
