@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Marv
+namespace Marv.Common
 {
     public class GridFloatReader
     {

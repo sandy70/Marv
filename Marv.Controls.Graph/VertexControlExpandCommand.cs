@@ -1,4 +1,5 @@
-﻿using Marv.Controls.Graph;
+﻿using Marv.Common;
+using Marv.Controls.Graph;
 
 namespace Marv.Controls
 {

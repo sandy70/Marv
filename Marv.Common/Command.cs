@@ -1,4 +1,4 @@
-﻿namespace Marv
+﻿namespace Marv.Common
 {
     public class Command<T> : NotifyPropertyChanged
     {

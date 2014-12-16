@@ -39,7 +39,8 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Marv.Common.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus">
@@ -72,7 +73,7 @@
     <Compile Include="LocationCollection.cs" />
     <Compile Include="LocationRect.cs" />
     <Compile Include="LocationRectConverter.cs" />
-    <Compile Include="Notification\INotifier.cs" />
+    <Compile Include="INotifier.cs" />
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />
     <Compile Include="LineSegment.cs" />
@@ -84,7 +85,7 @@
     <Compile Include="Types\IKeyed.cs" />
     <Compile Include="InvalidValueException.cs" />
     <Compile Include="Types\KeyedCollection.cs" />
-    <Compile Include="Notification\NotificationCollection.cs" />
+    <Compile Include="NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />
     <Compile Include="Interpolators\CubicSplineInterpolator.cs" />
@@ -96,12 +97,11 @@
     <Compile Include="Distributions\NormalDistribution.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Extensions.Linq.cs" />
-    <Compile Include="Notification\Notification.cs" />
+    <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\Sequence.cs" />
     <Compile Include="Distributions\UniformDistribution.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="ValueChangedArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
@@ -174,7 +174,6 @@
     <Resource Include="Resources\Icons\Close.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <None Include="Marv.Common.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Threading;
 
-namespace Marv
+namespace Marv.Common
 {
     public class NotificationCollection : ObservableCollection<Notification>
     {

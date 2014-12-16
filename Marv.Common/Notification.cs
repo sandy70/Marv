@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv
+namespace Marv.Common
 {
     public class Notification : NotifyPropertyChanged
     {

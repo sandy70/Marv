@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Marv
+namespace Marv.Common
 {
     public class NotifyPropertyChanged : INotifyPropertyChanged
     {
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null && propertyName.Length > 0)
+            if (this.PropertyChanged != null && propertyName.Length > 0)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
