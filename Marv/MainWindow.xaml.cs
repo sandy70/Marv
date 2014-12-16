@@ -8,7 +8,7 @@ using Marv.Controls;
 using Marv.Controls.Map;
 using Telerik.Windows.Controls;
 
-namespace Marv.Input
+namespace Marv
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
@@ -42,8 +42,8 @@ namespace Marv.Input
 
         public Graph Graph
         {
-            get { return (Graph) GetValue(GraphProperty); }
-            set { SetValue(GraphProperty, value); }
+            get { return (Graph) this.GetValue(GraphProperty); }
+            set { this.SetValue(GraphProperty, value); }
         }
 
         public bool IsGraphControlVisible
@@ -192,8 +192,8 @@ namespace Marv.Input
 
         public NotificationCollection Notifications
         {
-            get { return (NotificationCollection) GetValue(NotificationsProperty); }
-            set { SetValue(NotificationsProperty, value); }
+            get { return (NotificationCollection) this.GetValue(NotificationsProperty); }
+            set { this.SetValue(NotificationsProperty, value); }
         }
 
         public Location SelectedLocation
@@ -214,14 +214,14 @@ namespace Marv.Input
 
         public string SelectedSectionId
         {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
-            set { SetValue(SelectedSectionIdProperty, value); }
+            get { return (string) this.GetValue(SelectedSectionIdProperty); }
+            set { this.SetValue(SelectedSectionIdProperty, value); }
         }
 
         public int SelectedYear
         {
-            get { return (int) GetValue(SelectedYearProperty); }
-            set { SetValue(SelectedYearProperty, value); }
+            get { return (int) this.GetValue(SelectedYearProperty); }
+            set { this.SetValue(SelectedYearProperty, value); }
         }
 
         public LocationRect StartExtent
@@ -260,7 +260,7 @@ namespace Marv.Input
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-            this.Loaded += MainWindow_Loaded;
+            this.Loaded += this.MainWindow_Loaded;
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -316,39 +316,39 @@ namespace Marv.Input
 
             foreach (var notifier in notifiers)
             {
-                notifier.NotificationClosed -= notifier_NotificationClosed;
-                notifier.NotificationClosed += notifier_NotificationClosed;
+                notifier.NotificationClosed -= this.notifier_NotificationClosed;
+                notifier.NotificationClosed += this.notifier_NotificationClosed;
 
-                notifier.NotificationOpened -= notifier_NotificationOpened;
-                notifier.NotificationOpened += notifier_NotificationOpened;
+                notifier.NotificationOpened -= this.notifier_NotificationOpened;
+                notifier.NotificationOpened += this.notifier_NotificationOpened;
             }
 
-            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
+            this.GraphControl.EvidenceEntered -= this.GraphControl_EvidenceEntered;
+            this.GraphControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
-            this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
-            this.GraphControl.GraphChanged += GraphControl_GraphChanged;
+            this.GraphControl.GraphChanged -= this.GraphControl_GraphChanged;
+            this.GraphControl.GraphChanged += this.GraphControl_GraphChanged;
 
-            this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
-            this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
+            this.LineDataControl.EvidenceChanged -= this.LineDataControl_EvidenceChanged;
+            this.LineDataControl.EvidenceChanged += this.LineDataControl_EvidenceChanged;
 
-            this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
-            this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
+            this.LineDataControl.SectionBeliefsChanged -= this.LineDataControl_SectionBeliefsChanged;
+            this.LineDataControl.SectionBeliefsChanged += this.LineDataControl_SectionBeliefsChanged;
 
-            this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
-            this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
+            this.LineDataControl.SectionEvidencesChanged -= this.LineDataControl_SectionEvidencesChanged;
+            this.LineDataControl.SectionEvidencesChanged += this.LineDataControl_SectionEvidencesChanged;
 
-            this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
-            this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
+            this.LineDataControl.SelectedCellChanged -= this.LineDataControl_SelectedCellChanged;
+            this.LineDataControl.SelectedCellChanged += this.LineDataControl_SelectedCellChanged;
 
-            this.PolylineControl.SelectionChanged -= PolylineControl_SelectionChanged;
-            this.PolylineControl.SelectionChanged += PolylineControl_SelectionChanged;
+            this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
+            this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;
 
-            this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered -= this.GraphControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
-            this.YearSlider.ValueChanged -= YearSlider_ValueChanged;
-            this.YearSlider.ValueChanged += YearSlider_ValueChanged;
+            this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
+            this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
         }
 
         private void PolylineControl_SelectionChanged(object sender, Location location)

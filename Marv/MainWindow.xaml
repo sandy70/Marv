@@ -1,4 +1,4 @@
-﻿<Window x:Class="Marv.Input.MainWindow"
+﻿<Window x:Class="Marv.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:local="clr-namespace:Marv.Input"
         xmlns:marv="http://dnvgl.com/marv"
@@ -96,7 +96,7 @@
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
-                                <local:LineDataChart x:Name="LineDataChart"
+                                <marv1:LineDataChart x:Name="LineDataChart"
                                                      LineData="{Binding ElementName=Root, Path=LineData}"
                                                      SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                      Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"

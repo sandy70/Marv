@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Marv.Input;
 using Telerik.Charting;
 using Telerik.Windows.Controls.GridView;
 
-namespace Marv.Input
+namespace Marv
 {
     public class CellTemplateSelector : DataTemplateSelector
     {

@@ -2,7 +2,7 @@
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
-namespace Marv.Input
+namespace Marv
 {
     public class CellModel
     {

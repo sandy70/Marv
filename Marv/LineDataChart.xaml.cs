@@ -10,7 +10,7 @@ using Marv.Common.Graph;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 
-namespace Marv.Input
+namespace Marv
 {
     public partial class LineDataChart : INotifyPropertyChanged
     {
@@ -114,21 +114,21 @@ namespace Marv.Input
 
         public bool IsEvidenceEditEnabled
         {
-            get { return (bool) GetValue(IsEvidenceEditEnabledProperty); }
-            set { SetValue(IsEvidenceEditEnabledProperty, value); }
+            get { return (bool) this.GetValue(IsEvidenceEditEnabledProperty); }
+            set { this.SetValue(IsEvidenceEditEnabledProperty, value); }
         }
 
         public bool IsXAxisSections
         {
-            get { return (bool) GetValue(IsXAxisSectionsProperty); }
-            set { SetValue(IsXAxisSectionsProperty, value); }
+            get { return (bool) this.GetValue(IsXAxisSectionsProperty); }
+            set { this.SetValue(IsXAxisSectionsProperty, value); }
         }
 
         public ILineData LineData
         {
-            get { return (ILineData) GetValue(LineDataProperty); }
+            get { return (ILineData) this.GetValue(LineDataProperty); }
 
-            set { SetValue(LineDataProperty, value); }
+            set { this.SetValue(LineDataProperty, value); }
         }
 
         public ObservableCollection<CategoricalDataPoint> MaxPoints
@@ -175,46 +175,46 @@ namespace Marv.Input
 
         public string SelectedSectionId
         {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
-            set { SetValue(SelectedSectionIdProperty, value); }
+            get { return (string) this.GetValue(SelectedSectionIdProperty); }
+            set { this.SetValue(SelectedSectionIdProperty, value); }
         }
 
         public string Title
         {
-            get { return (string) GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get { return (string) this.GetValue(TitleProperty); }
+            set { this.SetValue(TitleProperty, value); }
         }
 
         public Vertex Vertex
         {
-            get { return (Vertex) GetValue(VertexProperty); }
-            set { SetValue(VertexProperty, value); }
+            get { return (Vertex) this.GetValue(VertexProperty); }
+            set { this.SetValue(VertexProperty, value); }
         }
 
         public CartesianAxis VerticalAxis
         {
-            get { return (CartesianAxis) GetValue(VerticalAxisProperty); }
-            set { SetValue(VerticalAxisProperty, value); }
+            get { return (CartesianAxis) this.GetValue(VerticalAxisProperty); }
+            set { this.SetValue(VerticalAxisProperty, value); }
         }
 
         public string XTitle
         {
-            get { return (string) GetValue(XTitleProperty); }
-            set { SetValue(XTitleProperty, value); }
+            get { return (string) this.GetValue(XTitleProperty); }
+            set { this.SetValue(XTitleProperty, value); }
         }
 
         public int Year
         {
-            get { return (int) GetValue(YearProperty); }
-            set { SetValue(YearProperty, value); }
+            get { return (int) this.GetValue(YearProperty); }
+            set { this.SetValue(YearProperty, value); }
         }
 
         public LineDataChart()
         {
             InitializeComponent();
 
-            this.Loaded -= LineDataChart_Loaded;
-            this.Loaded += LineDataChart_Loaded;
+            this.Loaded -= this.LineDataChart_Loaded;
+            this.Loaded += this.LineDataChart_Loaded;
         }
 
         private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -516,11 +516,11 @@ namespace Marv.Input
 
         private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Chart.MouseDown -= Chart_MouseDown;
-            this.Chart.MouseDown += Chart_MouseDown;
+            this.Chart.MouseDown -= this.Chart_MouseDown;
+            this.Chart.MouseDown += this.Chart_MouseDown;
 
-            this.Chart.MouseMove -= Chart_MouseMove;
-            this.Chart.MouseMove += Chart_MouseMove;
+            this.Chart.MouseMove -= this.Chart_MouseMove;
+            this.Chart.MouseMove += this.Chart_MouseMove;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
