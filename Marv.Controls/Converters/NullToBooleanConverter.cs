@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Marv.Controls
+namespace Marv.Controls.Converters
 {
     [ValueConversion(typeof (object), typeof (bool))]
     public class NullToBooleanConverter : DependencyObject, IValueConverter

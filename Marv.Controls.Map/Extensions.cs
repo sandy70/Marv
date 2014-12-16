@@ -17,12 +17,12 @@ namespace Marv.Controls.Map
             return locations.ToPoints(mapView).Reduce(tolerance).ToLocations(mapView).ToLocationCollection();
         }
 
-        public static IEnumerable<Location> Reduce(this IEnumerable<Location> locations, LocationConverter converter, double tolerance)
+        public static IEnumerable<Location> Reduce(this IEnumerable<Location> locations, MapTransform converter, double tolerance)
         {
             return locations.ToPoints(converter).Reduce(tolerance).ToLocations(converter);
         }
 
-        public static Location ToLocation(this Point point, LocationConverter converter)
+        public static Location ToLocation(this Point point, MapTransform converter)
         {
             return converter.ToLocation(point);
         }
@@ -32,12 +32,12 @@ namespace Marv.Controls.Map
             return points.Select<Point, Location>(point => mapView.ViewportPointToLocation(point));
         }
 
-        public static IEnumerable<Location> ToLocations(this IEnumerable<Point> points, LocationConverter converter)
+        public static IEnumerable<Location> ToLocations(this IEnumerable<Point> points, MapTransform converter)
         {
             return points.Select(point => point.ToLocation(converter));
         }
 
-        public static Point ToPoint(this Location location, LocationConverter converter)
+        public static Point ToPoint(this Location location, MapTransform converter)
         {
             return converter.ToPoint(location);
         }
@@ -47,7 +47,7 @@ namespace Marv.Controls.Map
             return locations.Select(location => mapView.LocationToViewportPoint(location));
         }
 
-        public static IEnumerable<Point> ToPoints(this IEnumerable<Location> locations, LocationConverter converter)
+        public static IEnumerable<Point> ToPoints(this IEnumerable<Location> locations, MapTransform converter)
         {
             return locations.Select(location => location.ToPoint(converter));
         }

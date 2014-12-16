@@ -186,7 +186,7 @@ namespace Marv.Controls.Map
             }
         }
 
-        public LocationCollectionViewModel Reduce(LocationCollection locationCollection, LocationConverter converter, double tolerance, IDoubleToBrushMap doubleToBrushMap, bool isEnabled, Brush disabledStroke)
+        public LocationCollectionViewModel Reduce(LocationCollection locationCollection, MapTransform converter, double tolerance, IDoubleToBrushMap doubleToBrushMap, bool isEnabled, Brush disabledStroke)
         {
             return new LocationCollectionViewModel
             {
@@ -341,7 +341,7 @@ namespace Marv.Controls.Map
             var isEnabled = this.IsEnabled;
             var doubleToBrushMap = this.DoubleToBrushMap;
             var disabledStroke = this.DisabledStroke;
-            var converter = new LocationConverter(mapView);
+            var converter = new MapTransform(mapView);
 
             this.SimplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Data;
 using Marv.Common;
 
-namespace Marv.Controls
+namespace Marv.Controls.Converters
 {
     [ValueConversion(typeof(IEnumerable<Location>), typeof(IEnumerable<MapControl.Location>))]
     public class LocationCollectionConverter : IValueConverter
