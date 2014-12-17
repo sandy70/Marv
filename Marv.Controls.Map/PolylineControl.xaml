@@ -18,7 +18,7 @@
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
                             StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
-
+    
     <!-- This is the dummy polyline that is used to broaden selection area -->
     <mapcontrol:MapPolyline Name="MapPolyline"
                             Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"
@@ -35,6 +35,6 @@
              Opacity="0.8"
              Stroke="{Binding CursorStroke, ElementName=Root}"
              StrokeThickness="2"
-             Visibility="{Binding ElementName=Root, Path=IsCursorVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
+             Visibility="{Binding ElementName=Root, Path=IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
 </mapcontrol:MapPanel>

@@ -18,8 +18,8 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty CursorStrokeProperty =
             DependencyProperty.Register("CursorStroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
-        public static readonly DependencyProperty IsCursorVisibleProperty =
-            DependencyProperty.Register("IsCursorVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
@@ -65,10 +65,10 @@ namespace Marv.Controls.Map
             set { this.SetValue(CursorStrokeProperty, value); }
         }
 
-        public bool IsCursorVisible
+        public bool IsSelected
         {
-            get { return (bool) this.GetValue(IsCursorVisibleProperty); }
-            set { this.SetValue(IsCursorVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsSelectedProperty); }
+            set { this.SetValue(IsSelectedProperty, value); }
         }
 
         public LocationCollection Locations
@@ -80,9 +80,9 @@ namespace Marv.Controls.Map
 
         public Location SelectedLocation
         {
-            get { return (Location) GetValue(SelectedLocationProperty); }
+            get { return (Location) this.GetValue(SelectedLocationProperty); }
 
-            set { SetValue(SelectedLocationProperty, value); }
+            set { this.SetValue(SelectedLocationProperty, value); }
         }
 
         public IEnumerable<Location> SimplifiedLocations
@@ -109,16 +109,16 @@ namespace Marv.Controls.Map
 
         public double StrokeThickness
         {
-            get { return (double) GetValue(StrokeThicknessProperty); }
-            set { SetValue(StrokeThicknessProperty, value); }
+            get { return (double) this.GetValue(StrokeThicknessProperty); }
+            set { this.SetValue(StrokeThicknessProperty, value); }
         }
 
         public PolylineControl()
         {
             this.InitializeComponent();
 
-            this.Loaded -= PolylineControl_Loaded;
-            this.Loaded += PolylineControl_Loaded;
+            this.Loaded -= this.PolylineControl_Loaded;
+            this.Loaded += this.PolylineControl_Loaded;
         }
 
         private static void LocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -130,7 +130,7 @@ namespace Marv.Controls.Map
                 if (control.Locations != null)
                 {
                     control.CursorLocation = control.Locations.First();
-                    control.IsCursorVisible = control.CursorLocation != null;
+                    control.IsSelected = control.CursorLocation != null;
                 }
             }
         }
@@ -147,12 +147,10 @@ namespace Marv.Controls.Map
 
         public void UpdateSimplifiedLocations()
         {
-            var mapView = this.GetParent<MapView>();
-
             this.SimplifiedLocations = this.Locations
-                                           .ToPoints(mapView)
+                                           .ToPoints(this.mapView)
                                            .Reduce(5)
-                                           .ToLocations(mapView);
+                                           .ToLocations(this.mapView);
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -261,32 +259,32 @@ namespace Marv.Controls.Map
         {
             this.mapView = this.GetParent<MapView>();
 
-            this.mapView.ZoomLevelChanged -= mapView_ZoomLevelChanged;
-            this.mapView.ZoomLevelChanged += mapView_ZoomLevelChanged;
+            this.mapView.ZoomLevelChanged -= this.mapView_ZoomLevelChanged;
+            this.mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
 
-            this.Ellipse.MouseDown -= Ellipse_MouseDown;
-            this.Ellipse.MouseDown += Ellipse_MouseDown;
+            this.Ellipse.MouseDown -= this.Ellipse_MouseDown;
+            this.Ellipse.MouseDown += this.Ellipse_MouseDown;
 
-            this.Ellipse.MouseMove -= Ellipse_MouseMove;
-            this.Ellipse.MouseMove += Ellipse_MouseMove;
+            this.Ellipse.MouseMove -= this.Ellipse_MouseMove;
+            this.Ellipse.MouseMove += this.Ellipse_MouseMove;
 
-            this.Ellipse.MouseUp -= Ellipse_MouseUp;
-            this.Ellipse.MouseUp += Ellipse_MouseUp;
+            this.Ellipse.MouseUp -= this.Ellipse_MouseUp;
+            this.Ellipse.MouseUp += this.Ellipse_MouseUp;
 
-            this.Ellipse.TouchDown -= Ellipse_TouchDown;
-            this.Ellipse.TouchDown += Ellipse_TouchDown;
+            this.Ellipse.TouchDown -= this.Ellipse_TouchDown;
+            this.Ellipse.TouchDown += this.Ellipse_TouchDown;
 
-            this.Ellipse.TouchMove -= Ellipse_TouchMove;
-            this.Ellipse.TouchMove += Ellipse_TouchMove;
+            this.Ellipse.TouchMove -= this.Ellipse_TouchMove;
+            this.Ellipse.TouchMove += this.Ellipse_TouchMove;
 
-            this.Ellipse.TouchUp -= Ellipse_TouchUp;
-            this.Ellipse.TouchUp += Ellipse_TouchUp;
+            this.Ellipse.TouchUp -= this.Ellipse_TouchUp;
+            this.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
-            this.MapPolyline.MouseDown -= MapPolyline_MouseDown;
-            this.MapPolyline.MouseDown += MapPolyline_MouseDown;
+            this.MapPolyline.MouseDown -= this.MapPolyline_MouseDown;
+            this.MapPolyline.MouseDown += this.MapPolyline_MouseDown;
 
-            this.MapPolyline.TouchDown -= MapPolyline_TouchDown;
-            this.MapPolyline.TouchDown += MapPolyline_TouchDown;
+            this.MapPolyline.TouchDown -= this.MapPolyline_TouchDown;
+            this.MapPolyline.TouchDown += this.MapPolyline_TouchDown;
         }
 
         private void mapView_ZoomLevelChanged(object sender, int e)
@@ -296,12 +294,10 @@ namespace Marv.Controls.Map
                 return;
             }
 
-            var mapView = sender as MapView;
-
             this.SimplifiedLocations = this.Locations
-                                           .ToPoints(mapView)
+                                           .ToPoints(this.mapView)
                                            .Reduce(5)
-                                           .ToLocations(mapView);
+                                           .ToLocations(this.mapView);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

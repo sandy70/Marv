@@ -68,7 +68,7 @@
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MapView.cs" />
-    <Compile Include="PolylineControl\PolylineControl.xaml.cs">
+    <Compile Include="PolylineControl.xaml.cs">
       <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="SegmentedPolylineControl\LocationCollectionViewModel.cs" />
@@ -118,7 +118,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PolylineControl\PolylineControl.xaml">
+    <Page Include="PolylineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -127,6 +127,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
