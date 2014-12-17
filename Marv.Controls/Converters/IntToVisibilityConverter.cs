@@ -8,30 +8,33 @@ namespace Marv.Controls.Converters
     [ValueConversion(typeof (int), typeof (Visibility))]
     public class IntToVisibilityConverter : DependencyObject, IValueConverter
     {
+        public static readonly DependencyProperty CutoffProperty =
+            DependencyProperty.Register("Cutoff", typeof (int), typeof (IntToVisibilityConverter), new PropertyMetadata(0));
+
         public static readonly DependencyProperty IsReversedProperty =
             DependencyProperty.Register("IsReversed", typeof (bool), typeof (IntToVisibilityConverter), new PropertyMetadata(false));
 
+        public int Cutoff
+        {
+            get { return (int) GetValue(CutoffProperty); }
+            set { SetValue(CutoffProperty, value); }
+        }
+
         public bool IsReversed
         {
-            get
-            {
-                return (bool) this.GetValue(IsReversedProperty);
-            }
-
-            set
-            {
-                this.SetValue(IsReversedProperty, value);
-            }
+            get { return (bool) this.GetValue(IsReversedProperty); }
+            set { this.SetValue(IsReversedProperty, value); }
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var original = (int) value;
 
-            if (original != 0 ^ this.IsReversed)
+            if (original > this.Cutoff ^ this.IsReversed)
             {
                 return Visibility.Visible;
             }
+
             return Visibility.Collapsed;
         }
 
