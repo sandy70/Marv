@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using Marv.Common;
+using Marv.Common.Graph;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
     public class LineData : NotifyPropertyChanged, ILineData
     {

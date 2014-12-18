@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Marv.Common;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
     public class FolderLineData : NotifyPropertyChanged, ILineData
     {
