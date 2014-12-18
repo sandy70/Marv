@@ -44,7 +44,7 @@ namespace Marv
             DependencyProperty.Register("Year", typeof (int), typeof (LineDataChart), new PropertyMetadata(int.MinValue, ChangedLineData));
 
         private readonly LinearAxis linearAxis = new LinearAxis();
-        private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
+        private readonly LogarithmicAxis logarithmicAxis = new LogarithmicAxis();
 
         private ObservableCollection<CategoricalDataPoint> anchorPoints;
         private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> baseDistributionSeries;
@@ -507,7 +507,7 @@ namespace Marv
                 return;
             }
 
-            this.VerticalAxis = this.Vertex.IsLogScale ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
+            this.VerticalAxis = this.Vertex.IsLogScale ? (CartesianAxis) this.logarithmicAxis : this.linearAxis;
 
             var numericalAxis = this.VerticalAxis as NumericalAxis;
             numericalAxis.Minimum = this.Vertex.SafeMin;
