@@ -266,7 +266,15 @@ namespace Marv
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
-                graphData[vertexKey].Value = this.GetEvidence(vertexKey);
+                try
+                {
+                    var evidence = this.GetEvidence(vertexKey);
+                    graphData[vertexKey].Value = evidence;
+                }
+                catch(SmileException)
+                {
+                    // do nothing
+                }
             }
 
             return graphData;
