@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Graph;
 using Marv.Controls;
 using Marv.Controls.Map;
 using Telerik.Windows.Controls;
@@ -30,6 +30,7 @@ namespace Marv.Input
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isMapViewVisible;
+        private bool isMenuVisible;
         private bool isVertexControlVisible;
         private bool isYearSliderVisible;
         private ILineData lineData;
@@ -106,6 +107,22 @@ namespace Marv.Input
                 }
 
                 this.isMapViewVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsMenuVisible
+        {
+            get { return this.isMenuVisible; }
+
+            set
+            {
+                if (value.Equals(this.isMenuVisible))
+                {
+                    return;
+                }
+
+                this.isMenuVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -310,6 +327,16 @@ namespace Marv.Input
             this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.M &&
+                (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) &&
+                (Keyboard.IsKeyDown(Key.LeftAlt)  || Keyboard.IsKeyDown(Key.RightAlt)))
+            {
+                this.IsMenuVisible = !this.IsMenuVisible;
+            }
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             var notifiers = this.GetChildren<INotifier>();
@@ -349,6 +376,11 @@ namespace Marv.Input
 
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
+        }
+
+        private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsGraphControlVisible = !this.IsGraphControlVisible;
         }
 
         private void PolylineControl_SelectionChanged(object sender, Location location)
@@ -413,10 +445,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
-        {
-            this.IsGraphControlVisible = !this.IsGraphControlVisible;
-        }
     }
 }

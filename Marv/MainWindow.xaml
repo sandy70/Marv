@@ -9,7 +9,8 @@
         xmlns:marv1="clr-namespace:Marv"
         Name="Root"
         Title="MARV - Multi-Analytic Risk Visualization"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        KeyDown="MainWindow_KeyDown">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,10 +26,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0"
+              Visibility="{Binding ElementName=Root, Path=IsMenuVisible, Converter={StaticResource BooleanToVisibility}}">
             <MenuItem Header="Window">
-                <MenuItem Name="MenuWindowNetwork"
-                          Header="Network"
+                <MenuItem Header="Network"
                           Click="MenuWindowNetwork_Click"/>
             </MenuItem>
         </Menu>
@@ -112,7 +113,7 @@
 
                 <!-- Graph and  timeline -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Name="NetworkPane" Header="Network"
+                    <telerik:RadPane Header="Network"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}, Mode=TwoWay}">
                         <Grid>
                             <Grid.RowDefinitions>
