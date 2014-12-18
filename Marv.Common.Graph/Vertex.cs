@@ -238,7 +238,15 @@ namespace Marv
 
         public bool IsLogScale
         {
-            get { return this.States.Any(state => state.Min != 0 && state.Max >= state.Min * 9.99); }
+            get
+            {
+                // Use Math.Abs here so that negative numbers work.
+                return this.States.Any(state =>
+                {
+                    var scale = Math.Abs(state.Max) / Math.Abs(state.Min);
+                    return state.Min != 0 && (scale < 0.1 || 10 < scale);
+                });
+            }
         }
 
         public bool IsSelected
