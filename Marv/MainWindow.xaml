@@ -20,11 +20,20 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <telerik:RadDocking Grid.Row="0"
+        <Menu Grid.Row="0">
+            <MenuItem Header="Window">
+                <MenuItem Name="MenuWindowNetwork"
+                          Header="Network"
+                          Click="MenuWindowNetwork_Click"/>
+            </MenuItem>
+        </Menu>
+        
+        <telerik:RadDocking Grid.Row="1"
                             HasDocumentHost="False">
             <telerik:RadDocking.Resources>
                 <Style TargetType="telerik:RadPane">
@@ -103,8 +112,8 @@
 
                 <!-- Graph and  timeline -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Network"
-                                     IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
+                    <telerik:RadPane Name="NetworkPane" Header="Network"
+                                     IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}, Mode=TwoWay}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition />
@@ -188,7 +197,7 @@
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 
-        <marv:StatusControl Grid.Row="1"
+        <marv:StatusControl Grid.Row="2"
                             Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}"
                             Height="28" />
     </Grid>

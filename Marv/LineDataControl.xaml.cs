@@ -520,7 +520,7 @@ namespace Marv
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Common.Graph.LineData.FileDescription + "|*." + Common.Graph.LineData.FileExtension,
+                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -537,7 +537,7 @@ namespace Marv
                 }
                 else
                 {
-                    this.LineData = Common.Graph.LineData.Read(this.FileName);
+                    this.LineData = Marv.LineData.Read(this.FileName);
                 }
             }
         }
@@ -599,7 +599,7 @@ namespace Marv
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = Common.Graph.LineData.FileDescription + "|*." + Common.Graph.LineData.FileExtension,
+                    Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -612,9 +612,9 @@ namespace Marv
 
             if (this.FileName != null)
             {
-                if (Path.GetExtension(this.FileName) != "." + Common.Graph.LineData.FileExtension)
+                if (Path.GetExtension(this.FileName) != "." + Marv.LineData.FileExtension)
                 {
-                    this.FileName = this.FileName + "." + Common.Graph.LineData.FileExtension;
+                    this.FileName = this.FileName + "." + Marv.LineData.FileExtension;
                 }
 
                 this.LineData.Write(this.FileName);

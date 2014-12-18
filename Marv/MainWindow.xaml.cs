@@ -26,10 +26,10 @@ namespace Marv.Input
 
         private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
         private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
-        private bool isGraphControlVisible;
-        private bool isLineDataChartVisible;
-        private bool isLineDataControlVisible;
-        private bool isMapViewVisible = true;
+        private bool isGraphControlVisible = true;
+        private bool isLineDataChartVisible = true;
+        private bool isLineDataControlVisible = true;
+        private bool isMapViewVisible;
         private bool isVertexControlVisible;
         private bool isYearSliderVisible;
         private ILineData lineData;
@@ -312,8 +312,6 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\ADCO02\Line.csv");
-
             var notifiers = this.GetChildren<INotifier>();
 
             foreach (var notifier in notifiers)
@@ -415,5 +413,10 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsGraphControlVisible = !this.IsGraphControlVisible;
+        }
     }
 }
