@@ -191,6 +191,10 @@ namespace Marv
                         {
                             // do nothing
                         }
+                        else if (line.Contains("model_nodes"))
+                        {
+                            network.Nodes[currentNodeKey].ModelNodes = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                        }
                         else if (line.Contains("model_data"))
                         {
                             network.Nodes[currentNodeKey].Expression = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
@@ -271,7 +275,7 @@ namespace Marv
                     var evidence = this.GetEvidence(vertexKey);
                     graphData[vertexKey].Value = evidence;
                 }
-                catch(SmileException)
+                catch (SmileException)
                 {
                     // do nothing
                 }
@@ -556,7 +560,7 @@ namespace Marv
 
                     if (node.Expression != null)
                     {
-                        streamWriter.WriteLine("\tmodel_nodes = ();");
+                        streamWriter.WriteLine("\tmodel_nodes = ({0});", node.ModelNodes);
                         streamWriter.WriteLine("\tmodel_data = ({0});", node.Expression);
                     }
 
@@ -621,7 +625,7 @@ namespace Marv
             }
         }
 
-        private string FormPotentialString(NetworkNode node, double[,] table, string[] parentNodeKeys = null, int row = 0, int col = 0, int level = 0)
+        private string FormPotentialString(NetworkNode node, double[,] table, string[] parentNodeKeys, int row = 0, int col = 0, int level = 0)
         {
             var potentialString = "";
 
@@ -648,12 +652,15 @@ namespace Marv
             {
                 var currentNodeKey = parentNodeKeys.First();
                 var currentNodeStates = this.Nodes[currentNodeKey].States;
+                var nCols = parentNodeKeys.Except(currentNodeKey).Aggregate(1, (current, parentNodeKey) => current * this.Nodes[parentNodeKey].States.Count);
 
                 potentialString += "(";
 
                 foreach (var state in currentNodeStates)
                 {
-                    potentialString += this.FormPotentialString(node, table, parentNodeKeys.Except(currentNodeKey).ToArray(), row, col++, level + 1);
+                    potentialString += this.FormPotentialString(node, table, parentNodeKeys.Except(currentNodeKey).ToArray(), row, col, level + 1);
+
+                    col += nCols;
 
                     if (state != currentNodeStates.Last())
                     {

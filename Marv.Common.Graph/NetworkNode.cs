@@ -18,6 +18,8 @@ namespace Marv
 
         public string Expression { get; set; }
 
+        public string ModelNodes { get; set; }
+
         public double[] InitialBelief
         {
             get { return this.States.Select(state => state.InitialBelief).ToArray(); }
@@ -180,7 +182,7 @@ namespace Marv
 
             if (this.Properties.TryGetValue("subtype", out subtype))
             {
-                if (subtype.Equals("interval"))
+                if (subtype == "interval")
                 {
                     var stateStrings = this.Properties["state_values"]
                         .Split("() ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
@@ -200,7 +202,11 @@ namespace Marv
                         });
                     }
                 }
-                else if (subtype.Equals("number"))
+                else if (subtype == "label")
+                {
+                    theStates = this.GetLabelledStates();
+                }
+                else if (subtype == "number")
                 {
                     var stateStrings = this.Properties["state_values"]
                         .Split("() ".ToArray(), StringSplitOptions.RemoveEmptyEntries)
@@ -223,40 +229,48 @@ namespace Marv
             }
             else
             {
-                string statesString;
-                var stateString = "";
-                var stateIndex = 0;
+                theStates = this.GetLabelledStates();
+            }
 
-                if (this.Properties.TryGetValue("states", out statesString))
+            return theStates;
+        }
+
+        private ObservableCollection<State> GetLabelledStates()
+        {
+            string statesString;
+            var stateString = "";
+            var stateIndex = 0;
+            var theStates = new ObservableCollection<State>();
+
+            if (this.Properties.TryGetValue("states", out statesString))
+            {
+                var isReading = false;
+                foreach (var c in statesString)
                 {
-                    var isReading = false;
-                    foreach (var c in statesString)
+                    if (c == '"')
                     {
-                        if (c == '"')
-                        {
-                            if (isReading)
-                            {
-                                var range = this.ParseStateRange(stateIndex);
-
-                                theStates.Add(new State
-                                {
-                                    Key = stateString,
-                                    Max = range == null ? 0 : range.Max,
-                                    Min = range == null ? 0 : range.Min,
-                                });
-
-                                stateIndex++;
-                                stateString = "";
-                            }
-
-                            isReading = !isReading;
-                            continue;
-                        }
-
                         if (isReading)
                         {
-                            stateString += c;
+                            var range = this.ParseStateRange(stateIndex);
+
+                            theStates.Add(new State
+                            {
+                                Key = stateString,
+                                Max = range == null ? 0 : range.Max,
+                                Min = range == null ? 0 : range.Min,
+                            });
+
+                            stateIndex++;
+                            stateString = "";
                         }
+
+                        isReading = !isReading;
+                        continue;
+                    }
+
+                    if (isReading)
+                    {
+                        stateString += c;
                     }
                 }
             }
