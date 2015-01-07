@@ -217,8 +217,6 @@ namespace Marv
                 }
             }
 
-            network.UpdateBeliefs();
-            network.InitialBelief = network.GetBeliefs();
             return network;
         }
 
@@ -348,6 +346,11 @@ namespace Marv
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer computer)
         {
             return this.GetSensitivity(targetVertexKey, computer.Compute);
+        }
+
+        public VertexType GetType(string nodeKey)
+        {
+            return this.Nodes[nodeKey].Type;
         }
 
         public string ParseUserProperty(string userPropertyName, string defaultValue)
