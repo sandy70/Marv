@@ -117,6 +117,7 @@ namespace Marv
             using (var streamReader = new StreamReader(path))
             {
                 var line = "";
+                var cumulativeLine = "";
 
                 while ((line = streamReader.ReadLine()) != null)
                 {
@@ -191,17 +192,33 @@ namespace Marv
                         {
                             // do nothing
                         }
-                        else if (line.Contains("model_nodes"))
+                        else if (line.Contains("model_nodes") && line.Contains(";"))
                         {
                             network.Nodes[currentNodeKey].ModelNodes = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
                         }
-                        else if (line.Contains("model_data"))
+                        else if (line.Contains("model_data") && line.Contains(";"))
                         {
                             network.Nodes[currentNodeKey].Expression = line.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                        }
+                        else if (line.Contains("model_data"))
+                        {
+                            cumulativeLine = line;
+                            networkFileLocation = NetworkFileLocation.ModelData;
                         }
                         else if (line.Equals("}"))
                         {
                             networkFileLocation = NetworkFileLocation.Root;
+                        }
+                    }
+
+                    else if (networkFileLocation == NetworkFileLocation.ModelData)
+                    {
+                        cumulativeLine += line;
+
+                        if (line.Contains(";"))
+                        {
+                            network.Nodes[currentNodeKey].Expression = cumulativeLine.Split("=;".ToArray())[1].Trim().Dequote('(', ')').Trim();
+                            networkFileLocation = NetworkFileLocation.Potential;
                         }
                     }
                 }
@@ -290,7 +307,18 @@ namespace Marv
         public double[] GetIntervals(string vertexKey)
         {
             var states = this.Nodes[vertexKey].States;
-            return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
+
+            if (this.Nodes[vertexKey].Type == VertexType.Interval)
+            {
+                return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
+            }
+
+            if (this.Nodes[vertexKey].Type == VertexType.Numbered)
+            {
+                return states.Select(state => state.Min).ToArray();
+            }
+
+            throw new SmileException("Node {0} isn't of type Interval or Numbered and hence has no intervals.");
         }
 
         public double GetMean(string vertexKey)
@@ -487,6 +515,11 @@ namespace Marv
 
         public void SetEvidence(string vertexKey, string evidenceString)
         {
+            if (!this.Nodes.ContainsKey(vertexKey))
+            {
+                throw new SmileException("The node '" + vertexKey + "' does not exist in the network.");
+            }
+
             var vertexEvidence = this.Nodes[vertexKey].States.ParseEvidenceString(evidenceString);
 
             if (vertexEvidence.Type == VertexEvidenceType.Null)
@@ -680,6 +713,7 @@ namespace Marv
         private enum NetworkFileLocation
         {
             Header,
+            ModelData,
             Node,
             Potential,
             Root,
