@@ -192,13 +192,23 @@ namespace Marv
 
                     for (var i = 0; i < nStatesStrings - 1; i++)
                     {
+                        var max = stateStrings[i + 1].ParseDouble();
+                        var min = stateStrings[i].ParseDouble();
+
+                        if (max < min)
+                        {
+                            var tmp = max;
+                            max = min;
+                            min = tmp;
+                        }
+
                         theStates.Add(new State
                         {
                             Key = String.Format("{0} - {1}", stateStrings[i], stateStrings[i + 1]),
 
                             // we use ParseDouble to take care of infinities
-                            Max = stateStrings[i + 1].ParseDouble(),
-                            Min = stateStrings[i].ParseDouble()
+                            Max = max,
+                            Min = min
                         });
                     }
                 }
