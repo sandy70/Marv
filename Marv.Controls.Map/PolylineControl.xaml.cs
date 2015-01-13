@@ -25,7 +25,13 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
 
         public static readonly DependencyProperty SelectedLocationProperty =
-            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
+
+        private static void ChangedSelectedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as PolylineControl;
+            control.RaiseSelectionChanged(control.SelectedLocation);
+        }
 
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));

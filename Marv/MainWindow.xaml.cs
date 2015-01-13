@@ -27,12 +27,12 @@ namespace Marv.Input
         private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
         private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible = true;
-        private bool isLineDataControlVisible = true;
-        private bool isMapViewVisible;
+        private bool isLineDataChartVisible;
+        private bool isLineDataControlVisible;
+        private bool isMapViewVisible = true;
         private bool isMenuVisible;
         private bool isVertexControlVisible;
-        private bool isYearSliderVisible;
+        private bool isYearSliderVisible = true;
         private ILineData lineData;
         private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
         private Dict<string, int, double> locationValues;
@@ -368,14 +368,18 @@ namespace Marv.Input
             this.LineDataControl.SelectedCellChanged -= this.LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += this.LineDataControl_SelectedCellChanged;
 
-            //this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
-            //this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;
+            this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
+            this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;
 
             this.VertexControl.EvidenceEntered -= this.GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
+
+            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model_011315.net");
+            this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
+            this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\NoILI\NoILI.marv-linedata");
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
@@ -391,22 +395,22 @@ namespace Marv.Input
 
         private void UpdateGraph()
         {
-            if (this.SelectedLocation == null)
-            {
-                return;
-            }
+            //if (this.SelectedLocation == null)
+            //{
+            //    return;
+            //}
 
-            var crossing = (this.SelectedLocation["Crossing"] as string).ToLower();
-            var weight = this.SelectedLocation["Weight"];
+            //var crossing = (this.SelectedLocation["Crossing"] as string).ToLower();
+            //var weight = this.SelectedLocation["Weight"];
 
-            if (crossing.Contains("river") || crossing.Contains("rail") || crossing.Contains("highway"))
-            {
-                this.Graph = this.casingGraphs[(double) weight];
-            }
-            else
-            {
-                this.Graph = this.graphs[(double) weight];
-            }
+            //if (crossing.Contains("river") || crossing.Contains("rail") || crossing.Contains("highway"))
+            //{
+            //    this.Graph = this.casingGraphs[(double) weight];
+            //}
+            //else
+            //{
+            //    this.Graph = this.graphs[(double) weight];
+            //}
         }
 
         private void UpdateGraphValue()
@@ -425,13 +429,14 @@ namespace Marv.Input
 
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            this.UpdateGraphValue();
+
             if (this.locationValues == null)
             {
                 return;
             }
 
             this.Locations.Value = this.locationValues[null, this.SelectedYear];
-            this.UpdateGraphValue();
         }
 
         private void notifier_NotificationClosed(object sender, Notification notification)

@@ -97,15 +97,15 @@ namespace Marv.Common
 
                 for (var i = 0; i < headers.Length; i++)
                 {
-                    if (headers[i].ToLower() == "latitude")
+                    if (headers[i].Trim().ToLower() == "latitude")
                     {
                         location.Latitude = Convert.ToDouble(parts[i]);
                     }
-                    else if (headers[i].ToLower() == "longitude")
+                    else if (headers[i].Trim().ToLower() == "longitude")
                     {
                         location.Longitude = Convert.ToDouble(parts[i]);
                     }
-                    else if (headers[i].ToLower() == "section id")
+                    else if (headers[i].Trim().ToLower() == "section id")
                     {
                         location.Key = parts[i];
                     }
@@ -115,7 +115,6 @@ namespace Marv.Common
                     }
                 }
 
-                location["Null"] = "Unknown";
                 locationCollection.Add(location);
             }
 

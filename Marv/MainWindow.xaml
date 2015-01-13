@@ -1,6 +1,5 @@
 ﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:mapcontrol="clr-namespace:MapControl;assembly=MapControl.WPF"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
@@ -30,10 +29,10 @@
               Visibility="{Binding ElementName=Root, Path=IsMenuVisible, Converter={StaticResource BooleanToVisibility}}">
             <MenuItem Header="Window">
                 <MenuItem Header="Network"
-                          Click="MenuWindowNetwork_Click"/>
+                          Click="MenuWindowNetwork_Click" />
             </MenuItem>
         </Menu>
-        
+
         <telerik:RadDocking Grid.Row="1"
                             HasDocumentHost="False">
             <telerik:RadDocking.Resources>
@@ -53,8 +52,10 @@
                             <marv:MapView ManipulationMode="Scale,Translate"
                                           StartBounds="{Binding ElementName=Root, Path=StartExtent}"
                                           TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
-                                <marv:PolylineControl Locations="{Binding ElementName=Root, Path=Locations}"
-                                                        Stroke="DeepSkyBlue"/>
+                                <marv:PolylineControl Name="PolylineControl"
+                                                      Locations="{Binding ElementName=Root, Path=Locations}"
+                                                      SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
+                                                      Stroke="DeepSkyBlue" />
                             </marv:MapView>
 
                             <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
