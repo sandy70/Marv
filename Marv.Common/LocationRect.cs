@@ -17,6 +17,11 @@ namespace Marv.Common
         private Location southWest = new Location();
         private double west;
 
+        public Location Center
+        {
+            get { return Utils.Mid(this.NorthEast, this.SouthWest); }
+        }
+
         public double East
         {
             get { return this.east; }
@@ -171,6 +176,14 @@ namespace Marv.Common
 
         public bool Contains(Location location)
         {
+            if (location.Latitude < this.South ||
+                location.Latitude > this.North ||
+                location.Longitude < this.West ||
+                location.Longitude > this.East)
+            {
+                return false;
+            }
+
             return location.Latitude > this.South && location.Latitude < this.North && location.Longitude > this.West && location.Longitude < this.East;
         }
 
@@ -193,6 +206,17 @@ namespace Marv.Common
                 West = this.West - pad,
                 South = this.South - pad,
                 East = this.East + pad
+            };
+        }
+
+        public LocationRect Scale(double scale)
+        {
+            return new LocationRect
+            {
+                North = this.Center.Latitude + (this.North - this.Center.Latitude) * scale,
+                South = this.Center.Latitude + (this.South - this.Center.Latitude) * scale,
+                East = this.Center.Longitude + (this.East - this.Center.Longitude) * scale,
+                West = this.Center.Longitude + (this.West - this.Center.Longitude) * scale,
             };
         }
 

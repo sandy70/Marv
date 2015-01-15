@@ -19,6 +19,7 @@
                             StrokeStartLineCap="Round"
                             StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
 
+    <!-- Skeleton -->
     <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=VisibleLocations}">
         <mapcontrol:MapItemsControl.ItemContainerStyle>
             <Style TargetType="mapcontrol:MapItem">
@@ -32,6 +33,7 @@
                     <Setter.Value>
                         <ControlTemplate>
                             <Ellipse Fill="OrangeRed" Stroke="DarkRed"
+                                     StrokeThickness="2"
                                      Height="8" Width="8"/>
                         </ControlTemplate>
                     </Setter.Value>

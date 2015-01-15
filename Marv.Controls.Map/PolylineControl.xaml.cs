@@ -29,7 +29,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("SelectedLocation", typeof (Location), typeof (PolylineControl), new PropertyMetadata(null, ChangedSelectedLocation));
 
         public static readonly DependencyProperty SkeletonZoomLevelProperty =
-            DependencyProperty.Register("SkeletonZoomLevel", typeof (double), typeof (PolylineControl), new PropertyMetadata(13.0));
+            DependencyProperty.Register("SkeletonZoomLevel", typeof (double), typeof (PolylineControl), new PropertyMetadata(15.0));
 
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
@@ -39,10 +39,8 @@ namespace Marv.Controls.Map
 
         private readonly DispatcherTimer timer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromTicks(10)
+            Interval = TimeSpan.FromMilliseconds(10)
         };
-
-        private int count;
 
         private Location cursorLocation;
         private IEnumerator<Location> locationsEnumerator;
@@ -373,13 +371,15 @@ namespace Marv.Controls.Map
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            for (var i = 0; i < 100; i++)
+            var scaledBounds = this.mapView.Bounds.Scale(3);
+
+            for (var i = 0; i < 1000; i++)
             {
                 if (this.locationsEnumerator.MoveNext())
                 {
                     var location = this.locationsEnumerator.Current;
 
-                    if (this.mapView.Contains(location))
+                    if (scaledBounds.Contains(location))
                     {
                         this.VisibleLocations.AddUnique(location);
                     }
@@ -395,8 +395,6 @@ namespace Marv.Controls.Map
                 }
             }
         }
-
-        private void timer_Tick(IEnumerator<Location> enumerator) {}
 
         public event PropertyChangedEventHandler PropertyChanged;
 
