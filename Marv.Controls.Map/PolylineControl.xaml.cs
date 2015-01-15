@@ -202,8 +202,6 @@ namespace Marv.Controls.Map
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("Ellipse_MouseDown");
-
             this.Ellipse.CaptureMouse();
 
             e.Handled = true;
@@ -219,8 +217,6 @@ namespace Marv.Controls.Map
 
         private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("Ellipse_MouseUp");
-
             var nearestLocation = this.GetNearestLocation(e.GetPosition(this));
 
             this.CursorLocation = nearestLocation;
@@ -233,8 +229,6 @@ namespace Marv.Controls.Map
 
         private void Ellipse_TouchDown(object sender, TouchEventArgs e)
         {
-            Console.WriteLine("Ellipse_TouchDown");
-
             this.Ellipse.CaptureTouch(e.TouchDevice);
 
             e.Handled = true;
@@ -247,8 +241,6 @@ namespace Marv.Controls.Map
 
         private void Ellipse_TouchUp(object sender, TouchEventArgs e)
         {
-            Console.WriteLine("Ellipse_MouseUp");
-
             var nearestLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
 
             this.CursorLocation = nearestLocation;
