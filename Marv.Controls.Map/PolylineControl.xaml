@@ -61,4 +61,14 @@
              StrokeThickness="2"
              Visibility="{Binding ElementName=Root, Path=IsSelected, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
 
+    <!-- Selected Location Label -->
+    <Label mapcontrol:MapPanel.Location="{Binding CursorLocation, ElementName=Root, Converter={StaticResource LocationConverter}}"
+           Background="{StaticResource BackgroundMedium}"
+           Content="{Binding ElementName=Root, Path=CursorLocation.Key}"
+           Margin="32,0,0,0"
+           MinWidth="64"
+           HorizontalAlignment="Left"
+           HorizontalContentAlignment="Right"
+           VerticalAlignment="Center"/>
+    
 </mapcontrol:MapPanel>
