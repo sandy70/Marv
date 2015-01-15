@@ -11,14 +11,36 @@
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </mapcontrol:MapPanel.Resources>
 
-    <!-- This is the polyling that the viewer sees -->
+    <!-- This is the polyling that the user sees -->
     <mapcontrol:MapPolyline Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"
                             Stroke="{Binding ElementName=Root, Path=Stroke}"
                             StrokeEndLineCap="Round"
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
                             StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
-    
+
+    <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=VisibleLocations}">
+        <mapcontrol:MapItemsControl.ItemContainerStyle>
+            <Style TargetType="mapcontrol:MapItem">
+                <Setter Property="mapcontrol:MapPanel.Location" Value="{Binding Converter={StaticResource LocationConverter}}" />
+                
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                
+                <Setter Property="VerticalAlignment" Value="Center" />
+                
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Ellipse Fill="OrangeRed" Stroke="DarkRed"
+                                     Height="8" Width="8"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+            </Style>
+        </mapcontrol:MapItemsControl.ItemContainerStyle>
+    </mapcontrol:MapItemsControl>
+
     <!-- This is the dummy polyline that is used to broaden selection area -->
     <mapcontrol:MapPolyline Name="MapPolyline"
                             Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"

@@ -59,7 +59,12 @@ namespace Marv.Controls.Map
 
         public bool Contains(IEnumerable<Location> locations)
         {
-            return locations.All(location => this.Bounds.Contains(location));
+            return locations.All(this.Bounds.Contains);
+        }
+
+        public bool Contains(Location location)
+        {
+            return this.Bounds.Contains(location);
         }
 
         public IEnumerable<Location> Intersection(IList<Location> locations)

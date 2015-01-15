@@ -10,14 +10,6 @@ namespace Marv.Common
 {
     public static partial class Extensions
     {
-        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items)
-        {
-            foreach (var item in items)
-            {
-                collection.Add(item);
-            }
-        }
-
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0)

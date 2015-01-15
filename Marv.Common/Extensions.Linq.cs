@@ -6,7 +6,15 @@ namespace Marv.Common
 {
     public static partial class Extensions
     {
-        public static void AddUnique<T>(this IList<T> list, T item)
+        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                collection.Add(item);
+            }
+        }
+
+        public static void AddUnique<T>(this ICollection<T> list, T item)
         {
             if (!list.Contains(item))
             {
@@ -14,7 +22,7 @@ namespace Marv.Common
             }
         }
 
-        public static void AddUnique<T>(this IList<T> list, IEnumerable<T> items)
+        public static void AddUnique<T>(this ICollection<T> list, IEnumerable<T> items)
         {
             foreach (var item in items)
             {
@@ -375,6 +383,14 @@ namespace Marv.Common
             foreach (var item in items)
             {
                 list.PushUnique(item);
+            }
+        }
+
+        public static void Remove<T>(this ICollection<T> items, IEnumerable<T> itemsToRemove)
+        {
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                items.Remove(itemToRemove);
             }
         }
 
