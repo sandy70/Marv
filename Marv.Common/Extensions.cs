@@ -183,31 +183,26 @@ namespace Marv.Common
                             .Concat(last);
         }
 
-        public static string String<T>(this IEnumerable<T> items, string format = "{0}")
-        {
-            return items.Select(item => System.String.Format(format, item)).String();
-        }
-
-        public static string String(this IEnumerable<string> strings)
+        public static string String<T>(this IEnumerable<T> items, string format = "{0}", string delim = ",")
         {
             var str = "";
 
-            var stringList = strings as IList<string> ?? strings.ToList();
+            var itemList = items as IList<T> ?? items.ToList();
 
-            if (stringList.Count == 0)
+            if (itemList.Count == 0)
             {
                 return str;
             }
 
-            if (stringList.Count == 1)
+            if (itemList.Count == 1)
             {
-                str += stringList.First();
+                str += System.String.Format(format, itemList.First());
                 return str;
             }
 
-            str = stringList.AllButLast().Aggregate(str, (current, s) => current + s + ",");
+            str = itemList.AllButLast().Aggregate(str, (current, item) => current + System.String.Format(format, item) + delim);
 
-            str += stringList.Last();
+            str += System.String.Format(format, itemList.Last());
 
             return str;
         }
