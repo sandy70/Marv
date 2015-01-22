@@ -157,6 +157,7 @@ namespace Marv.Controls.Map
         private static void ChangedSelectedLocation(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as PolylineControl;
+            control.CursorLocation = control.SelectedLocation;
             control.RaiseSelectionChanged(control.SelectedLocation);
         }
 

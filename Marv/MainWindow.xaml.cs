@@ -219,7 +219,7 @@ namespace Marv.Input
 
             set
             {
-                if (value.Equals(this.selectedLocation))
+                if (value == null || value.Equals(this.selectedLocation))
                 {
                     return;
                 }

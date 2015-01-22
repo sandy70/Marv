@@ -66,7 +66,7 @@
                                                      HorizontalAlignment="Left" VerticalAlignment="Top"
                                                      IsReadOnly="True"
                                                      Item="{Binding ElementName=Root, Path=SelectedLocation}"
-                                                     Margin="10"
+                                                     Margin="8"
                                                      SearchBoxVisibility="Collapsed"
                                                      SortAndGroupButtonsVisibility="Collapsed">
                                 <telerik:RadPropertyGrid.PropertyDefinitions>
@@ -78,6 +78,30 @@
                                     <telerik:PropertyDefinition Binding="{Binding Null}" Description="Longitude" DisplayName="Longitude" />
                                 </telerik:RadPropertyGrid.PropertyDefinitions>
                             </telerik:RadPropertyGrid>
+
+                            <!-- Location Combo Box -->
+                            <telerik:RadComboBox CanAutocompleteSelectItems="False"
+                                                 CanKeyboardNavigationSelectItems="False"
+                                                 DisplayMemberPath="Key"
+                                                 Height="32"
+                                                 HorizontalAlignment="Right"
+                                                 IsEditable="True"
+                                                 IsFilteringEnabled="True"
+                                                 IsSynchronizedWithCurrentItem="False"
+                                                 ItemsSource="{Binding ElementName=Root, Path=Locations}"
+                                                 Margin="8"
+                                                 OpenDropDownOnFocus="True"
+                                                 SelectedIndex="0"
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
+                                                 TextSearchMode="Contains" 
+                                                 VerticalAlignment="Top"
+                                                 Width="96">
+                                <telerik:RadComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </telerik:RadComboBox.ItemsPanel>
+                            </telerik:RadComboBox>
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
