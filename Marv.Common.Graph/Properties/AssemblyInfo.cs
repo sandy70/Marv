@@ -7,11 +7,11 @@ using System.Windows.Markup;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Marv.Common.Graph")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("MARV Bayesian Networks API")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
+[assembly: AssemblyCompany("DNV GL")]
 [assembly: AssemblyProduct("Marv.Common.Graph")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2014")]
+[assembly: AssemblyCopyright("Copyright © DNV GL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +19,7 @@ using System.Windows.Markup;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 
-[assembly: ComVisible(true)]
+[assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
