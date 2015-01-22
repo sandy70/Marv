@@ -95,12 +95,13 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageFileCache.WPF">
-      <HintPath>..\packages\XAML.MapControl.2.4.1\lib\net45\ImageFileCache.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="MapControl.WPF, Version=2.4.1.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="ImageFileCache.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.2.4.1\lib\net45\MapControl.WPF.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\ImageFileCache.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="MapControl.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="Marv.Smile.x64">
       <HintPath>..\packages\Smile\x64\Marv.Smile.x64.dll</HintPath>
@@ -128,7 +129,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

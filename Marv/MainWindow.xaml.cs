@@ -377,7 +377,7 @@ namespace Marv.Input
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
-            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 15a.net");
+            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 22.net");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
             this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario02\Scenario02.marv-linedata");
         }
@@ -420,11 +420,19 @@ namespace Marv.Input
                 return;
             }
 
-            var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
-            var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
+            try
+            {
+                var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
+                var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
 
-            this.Graph.Belief = graphBelief;
-            this.Graph.SetEvidence(graphEvidence);
+                this.Graph.Belief = graphBelief;
+                this.Graph.SetEvidence(graphEvidence);
+            }
+            catch (Exception exp)
+            {
+                this.Graph.Belief = null;
+                this.Graph.Evidence = null;
+            }
         }
 
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
