@@ -560,5 +560,10 @@ namespace Marv.Controls.GraphControl
         public event EventHandler<Notification> NotificationOpened;
 
         public event EventHandler<Notification> NotificationClosed;
+
+        private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }
