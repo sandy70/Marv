@@ -540,6 +540,18 @@ namespace Marv
             this.SetEvidence(vertexKey, value.ToString());
         }
 
+        public void SetNormalDistribution(string nodeKey, double mean, double variance)
+        {
+            var distribution = this.Nodes[nodeKey].States.ParseEvidence(new NormalDistribution(mean, variance));
+            this.SetSoftEvidence(nodeKey, distribution);
+        }
+
+        public void SetTriangularDistribution(string nodeKey, double min, double mode, double max)
+        {
+            var distribution = this.Nodes[nodeKey].States.ParseEvidence(new TriangularDistribution(min, mode, max));
+            this.SetSoftEvidence(nodeKey, distribution);
+        }
+
         public void Write(StreamWriter streamWriter)
         {
             using (streamWriter)
@@ -651,6 +663,19 @@ namespace Marv
             }
 
             this.GetEvidences().WriteJson(filePath);
+        }
+
+        public void WriteEvidencesHcs(string filePath)
+        {
+            using (var hcsFile = new StreamWriter(filePath))
+            {
+                var evidences = this.GetEvidences();
+
+                foreach (var nodeKey in evidences.Keys)
+                {
+                    hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].Value.String(delim: " "));
+                }
+            }
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
