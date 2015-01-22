@@ -657,25 +657,15 @@ namespace Marv
 
         public void WriteEvidences(string filePath)
         {
-            if (Path.GetExtension(filePath) != EvidenceFileExtension)
+            var vertexEvidences = this.GetEvidences();
+
+            if (Path.GetExtension(filePath) == ".hcs")
             {
-                filePath = filePath + "." + EvidenceFileExtension;
+                vertexEvidences.WriteHcs(filePath);
+                return;
             }
 
-            this.GetEvidences().WriteJson(filePath);
-        }
-
-        public void WriteEvidencesHcs(string filePath)
-        {
-            using (var hcsFile = new StreamWriter(filePath))
-            {
-                var evidences = this.GetEvidences();
-
-                foreach (var nodeKey in evidences.Keys)
-                {
-                    hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].Value.String(delim: " "));
-                }
-            }
+            vertexEvidences.WriteJson(filePath);
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")

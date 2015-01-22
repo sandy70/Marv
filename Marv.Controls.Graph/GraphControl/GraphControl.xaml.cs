@@ -447,6 +447,17 @@ namespace Marv.Controls.GraphControl
             }
         }
 
+        public void WriteEvidences(string filePath)
+        {
+            if (Path.GetExtension(filePath) == ".hcs")
+            {
+                this.Graph.Evidence.WriteHcs(filePath);
+                return;
+            }
+
+            this.Graph.Evidence.WriteJson(filePath);
+        }
+
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
             this.DiagramPart.AutoFit(new Thickness(10));
@@ -551,6 +562,22 @@ namespace Marv.Controls.GraphControl
             this.Graph.Write();
         }
 
+        private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new SaveFileDialog
+            {
+                Filter = @"Hugin Case|*.hcs|MARV Network Evidence|*.marv-networkevidence",
+                FilterIndex = 1,
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            this.WriteEvidences(openFileDialog.FileName);
+        }
+
         public event EventHandler<VertexEvidence> EvidenceEntered;
 
         public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
@@ -560,10 +587,5 @@ namespace Marv.Controls.GraphControl
         public event EventHandler<Notification> NotificationOpened;
 
         public event EventHandler<Notification> NotificationClosed;
-
-        private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
     }
 }
