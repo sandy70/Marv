@@ -406,6 +406,17 @@ namespace Marv
             return defaultValue;
         }
 
+        public void RenameGroup(string oldGroup, string newGroup)
+        {
+            foreach (var node in this.Nodes)
+            {
+                if (node.Groups.Contains(oldGroup))
+                {
+                    node.Groups.Replace(oldGroup, newGroup);
+                }
+            }
+        }
+
         public Dict<string, double[]> Run(Dict<string, double[]> graphData)
         {
             this.ClearEvidence();

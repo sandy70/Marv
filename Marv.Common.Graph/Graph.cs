@@ -187,7 +187,7 @@ namespace Marv
                 {
                     ConnectorPositions = networkNode.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
                     Description = networkNode.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = networkNode.ParseGroups(),
+                    Groups = networkNode.Groups,
                     HeaderOfGroup = networkNode.ParseStringProperty("headerofgroup"),
                     InputVertexKey = networkNode.InputNodeKey,
                     IsExpanded = networkNode.ParseIsExpanded(),

@@ -11,14 +11,17 @@ namespace Marv
     {
         public readonly List<NetworkNode> Children = new List<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+        private ObservableCollection<string> groups;
         private string inputNodeKey;
-
         private ObservableCollection<State> states;
         private VertexType? type;
 
         public string Expression { get; set; }
 
-        public string ModelNodes { get; set; }
+        public ObservableCollection<string> Groups
+        {
+            get { return this.groups ?? (this.groups = this.ParseGroups()); }
+        }
 
         public double[] InitialBelief
         {
@@ -40,6 +43,8 @@ namespace Marv
 
         public string Key { get; set; }
 
+        public string ModelNodes { get; set; }
+
         public ObservableCollection<State> States
         {
             get { return this.states ?? (this.states = this.ParseStates()); }
@@ -50,35 +55,6 @@ namespace Marv
             get { return this.type ?? (this.type = this.ParseSubType()).Value; }
 
             set { this.type = value; }
-        }
-
-        public ObservableCollection<string> ParseGroups()
-        {
-            var groups = new ObservableCollection<string>();
-
-            if (this.Properties.ContainsKey("groups"))
-            {
-                var groupsValueString = this.Properties["groups"];
-
-                var parts = groupsValueString.Split(new[]
-                {
-                    '"', ','
-                },
-                    StringSplitOptions.RemoveEmptyEntries);
-
-                groups = new ObservableCollection<string>(parts);
-
-                if (!groups.Contains("all"))
-                {
-                    groups.Add("all");
-                }
-            }
-            else
-            {
-                groups.Add("all");
-            }
-
-            return groups;
         }
 
         public bool ParseIsExpanded()
@@ -127,7 +103,91 @@ namespace Marv
             return position;
         }
 
-        public Sequence<double> ParseStateRange(int stateIndex)
+        public string ParseStringProperty(string str)
+        {
+            var htmlDesc = "";
+
+            if (this.Properties.ContainsKey(str))
+            {
+                htmlDesc = this.Properties[str].Trim().Dequote();
+            }
+
+            return htmlDesc;
+        }
+
+        private ObservableCollection<State> GetLabelledStates()
+        {
+            string statesString;
+            var stateString = "";
+            var stateIndex = 0;
+            var theStates = new ObservableCollection<State>();
+
+            if (this.Properties.TryGetValue("states", out statesString))
+            {
+                var isReading = false;
+                foreach (var c in statesString)
+                {
+                    if (c == '"')
+                    {
+                        if (isReading)
+                        {
+                            var range = this.ParseStateRange(stateIndex);
+
+                            theStates.Add(new State
+                            {
+                                Key = stateString,
+                                Max = range == null ? 0 : range.Max,
+                                Min = range == null ? 0 : range.Min,
+                            });
+
+                            stateIndex++;
+                            stateString = "";
+                        }
+
+                        isReading = !isReading;
+                        continue;
+                    }
+
+                    if (isReading)
+                    {
+                        stateString += c;
+                    }
+                }
+            }
+
+            return theStates;
+        }
+
+        private ObservableCollection<string> ParseGroups()
+        {
+            var groups = new ObservableCollection<string>();
+
+            if (this.Properties.ContainsKey("groups"))
+            {
+                var groupsValueString = this.Properties["groups"];
+
+                var parts = groupsValueString.Split(new[]
+                {
+                    '"', ','
+                },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                groups = new ObservableCollection<string>(parts);
+
+                if (!groups.Contains("all"))
+                {
+                    groups.Add("all");
+                }
+            }
+            else
+            {
+                groups.Add("all");
+            }
+
+            return groups;
+        }
+
+        private Sequence<double> ParseStateRange(int stateIndex)
         {
             var key = "HR_State_" + stateIndex;
             var range = new Sequence<double>();
@@ -161,18 +221,6 @@ namespace Marv
             }
 
             return range;
-        }
-
-        public string ParseStringProperty(string str)
-        {
-            var htmlDesc = "";
-
-            if (this.Properties.ContainsKey(str))
-            {
-                htmlDesc = this.Properties[str].Trim().Dequote();
-            }
-
-            return htmlDesc;
         }
 
         private ObservableCollection<State> ParseStates()
@@ -240,49 +288,6 @@ namespace Marv
             else
             {
                 theStates = this.GetLabelledStates();
-            }
-
-            return theStates;
-        }
-
-        private ObservableCollection<State> GetLabelledStates()
-        {
-            string statesString;
-            var stateString = "";
-            var stateIndex = 0;
-            var theStates = new ObservableCollection<State>();
-
-            if (this.Properties.TryGetValue("states", out statesString))
-            {
-                var isReading = false;
-                foreach (var c in statesString)
-                {
-                    if (c == '"')
-                    {
-                        if (isReading)
-                        {
-                            var range = this.ParseStateRange(stateIndex);
-
-                            theStates.Add(new State
-                            {
-                                Key = stateString,
-                                Max = range == null ? 0 : range.Max,
-                                Min = range == null ? 0 : range.Min,
-                            });
-
-                            stateIndex++;
-                            stateString = "";
-                        }
-
-                        isReading = !isReading;
-                        continue;
-                    }
-
-                    if (isReading)
-                    {
-                        stateString += c;
-                    }
-                }
             }
 
             return theStates;
