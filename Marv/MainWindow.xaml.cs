@@ -331,7 +331,7 @@ namespace Marv.Input
         {
             if (e.Key == Key.M &&
                 (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) &&
-                (Keyboard.IsKeyDown(Key.LeftAlt)  || Keyboard.IsKeyDown(Key.RightAlt)))
+                (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt)))
             {
                 this.IsMenuVisible = !this.IsMenuVisible;
             }
