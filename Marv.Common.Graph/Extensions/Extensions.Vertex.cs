@@ -26,7 +26,7 @@ namespace Marv
             CheckVertexStatisticComputable(node, newValue);
 
             return node.States
-                         .Select((state, i) => (newValue[i] * (state.Max + state.Min) / 2))
+                         .Select((state, i) => (newValue[i] * (state.SafeMax + state.SafeMin) / 2))
                          .Sum();
         }
 
