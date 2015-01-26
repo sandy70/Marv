@@ -17,10 +17,7 @@ namespace Marv
 
         public int EndYear
         {
-            get
-            {
-                return this.endYear;
-            }
+            get { return this.endYear; }
 
             set
             {
@@ -38,10 +35,7 @@ namespace Marv
 
         public Guid Guid
         {
-            get
-            {
-                return this.guid;
-            }
+            get { return this.guid; }
 
             set
             {
@@ -57,10 +51,7 @@ namespace Marv
 
         public int StartYear
         {
-            get
-            {
-                return this.startYear;
-            }
+            get { return this.startYear; }
 
             set
             {
@@ -90,14 +81,6 @@ namespace Marv
             }
         }
 
-        private void WriteHeader()
-        {
-            if (this.rootDirPathPath != null)
-            {
-                this.WriteJson(Path.Combine(this.rootDirPathPath, Path.GetFileName(this.rootDirPathPath) + "." + LineData.FileExtension));
-            }
-        }
-
         public static ILineData Read(string filePath)
         {
             // This should read End, StartYears and Guid
@@ -114,13 +97,13 @@ namespace Marv
                 var sectionBelief = new Dict<int, string, double[]>();
                 var sectionEvidence = new Dict<int, string, VertexEvidence>();
 
-                for (int year = this.StartYear; year <= this.EndYear; year ++)
+                for (var year = this.StartYear; year <= this.EndYear; year ++)
                 {
                     sectionBelief[year] = new Dict<string, double[]>();
                     sectionEvidence[year] = new Dict<string, VertexEvidence>();
                 }
 
-                var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId +  ".marv-sectionbelief");
+                var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId + ".marv-sectionbelief");
                 var evidenceFilePath = Path.Combine(this.rootDirPathPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
 
                 sectionBelief.WriteJson(beliefFilePath);
@@ -162,7 +145,17 @@ namespace Marv
         public IEnumerable<string> GetSectionIds()
         {
             var evidencesDir = Path.Combine(this.rootDirPathPath, EvidencesDirName);
-            return Directory.EnumerateFiles(evidencesDir, "*.marv-sectionevidence").Select(Path.GetFileNameWithoutExtension);
+            var list = Directory.EnumerateFiles(evidencesDir, "*.marv-sectionevidence").Select(Path.GetFileNameWithoutExtension).ToList();
+            list.Sort(new AlphaNumericComparer());
+            return list;
+        }
+
+        public void GetStatistic(Network network, string nodeKey, IVertexValueComputer valueComputer)
+        {
+            foreach (var sectionId in this.GetSectionIds())
+            {
+                Console.WriteLine(sectionId);
+            }
         }
 
         public void RaiseDataChanged()
@@ -199,6 +192,14 @@ namespace Marv
         public void Write(string filePath)
         {
             // Do nothing because files should be updated already.
+        }
+
+        private void WriteHeader()
+        {
+            if (this.rootDirPathPath != null)
+            {
+                this.WriteJson(Path.Combine(this.rootDirPathPath, Path.GetFileName(this.rootDirPathPath) + "." + LineData.FileExtension));
+            }
         }
 
         public event EventHandler DataChanged;
