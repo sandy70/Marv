@@ -381,7 +381,7 @@ namespace Marv.Input
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
             this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario02\Scenario02.marv-linedata");
 
-            var statistic = this.LineData.GetStatistic(this.Graph.Network, "P", new VertexMeanComputer());
+            var statistic = this.LineData.GetStatistic(this.Graph.Network.Nodes["P"], new VertexMeanComputer());
             Console.WriteLine(statistic);
         }
 

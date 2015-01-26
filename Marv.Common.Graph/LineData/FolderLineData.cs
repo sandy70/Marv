@@ -153,8 +153,11 @@ namespace Marv
 
         public double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
-            var sectionIds = this.GetSectionIds();
+            return this.GetStatistic(this.GetSectionIds(), node, valueComputer);
+        }
 
+        public double[,] GetStatistic(IEnumerable<string> sectionIds, NetworkNode node, IVertexValueComputer valueComputer)
+        {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
             var nRows = sectionIdList.Count();
@@ -174,7 +177,7 @@ namespace Marv
                     statistic[row, col] = valueComputer.Compute(node, sectionBelief[year][node.Key], null);
                     col++;
                 }
-                
+
                 row++;
             }
 
