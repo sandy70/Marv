@@ -134,6 +134,7 @@ namespace Marv
 
         public Dict<int, string, double[]> GetSectionBelief(string sectionId)
         {
+            Console.WriteLine("Getting section [{0}] belief", sectionId);
             return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
         }
 
@@ -150,12 +151,34 @@ namespace Marv
             return list;
         }
 
-        public void GetStatistic(Network network, string nodeKey, IVertexValueComputer valueComputer)
+        public double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
-            foreach (var sectionId in this.GetSectionIds())
+            var sectionIds = this.GetSectionIds();
+
+            var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
+
+            var nRows = sectionIdList.Count();
+            var nCols = this.GetSectionBelief(sectionIdList.First()).Keys.Count;
+
+            var statistic = new double[nRows, nCols];
+
+            var row = 0;
+            foreach (var sectionId in sectionIdList)
             {
-                Console.WriteLine(sectionId);
+                var col = 0;
+
+                var sectionBelief = this.GetSectionBelief(sectionId);
+
+                foreach (var year in sectionBelief.Keys)
+                {
+                    statistic[row, col] = valueComputer.Compute(node, sectionBelief[year][node.Key], null);
+                    col++;
+                }
+                
+                row++;
             }
+
+            return statistic;
         }
 
         public void RaiseDataChanged()

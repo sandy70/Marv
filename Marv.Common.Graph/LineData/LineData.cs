@@ -140,6 +140,16 @@ namespace Marv
             return this.sectionEvidences[sectionId];
         }
 
+        public double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        {
+            foreach (var sectionId in this.GetSectionIds())
+            {
+                Console.WriteLine(sectionId);
+            }
+
+            return null;
+        }
+
         public IEnumerable<string> GetSectionIds()
         {
             return this.sectionEvidences.Keys;

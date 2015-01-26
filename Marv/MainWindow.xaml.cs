@@ -380,6 +380,9 @@ namespace Marv.Input
             this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 22.net");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
             this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario02\Scenario02.marv-linedata");
+
+            var statistic = this.LineData.GetStatistic(this.Graph.Network, "P", new VertexMeanComputer());
+            Console.WriteLine(statistic);
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
