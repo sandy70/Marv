@@ -14,8 +14,6 @@ namespace Marv
         Dict<int, string, double[]> GetSectionBelief(string sectionId);
         Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId);
         IEnumerable<string> GetSectionIds();
-        double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer);
-        double[,] GetStatistic(IEnumerable<string> sectionIds, NetworkNode node, IVertexValueComputer valueComputer);
         void RaiseDataChanged();
         void RemoveSection(string sectionId);
         void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief);

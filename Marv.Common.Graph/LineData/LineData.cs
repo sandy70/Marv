@@ -140,7 +140,7 @@ namespace Marv
             return this.sectionEvidences[sectionId];
         }
 
-        public double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
             foreach (var sectionId in this.GetSectionIds())
             {
@@ -150,7 +150,7 @@ namespace Marv
             return null;
         }
 
-        public double[,] GetStatistic(IEnumerable<string> sectionIds, NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
             foreach (var sectionId in this.GetSectionIds())
             {
