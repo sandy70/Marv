@@ -132,31 +132,12 @@ namespace Marv
             return Directory.Exists(beliefDir) || Directory.Exists(evidenceDir);
         }
 
-        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
+        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
-            Console.WriteLine("Getting section [{0}] belief", sectionId);
-            return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
+            return this.GetBeliefStatistic(node, valueComputer, this.GetSectionIds());
         }
 
-        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
-        {
-            return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
-        }
-
-        public IEnumerable<string> GetSectionIds()
-        {
-            var evidencesDir = Path.Combine(this.rootDirPathPath, EvidencesDirName);
-            var list = Directory.EnumerateFiles(evidencesDir, "*.marv-sectionevidence").Select(Path.GetFileNameWithoutExtension).ToList();
-            list.Sort(new AlphaNumericComparer());
-            return list;
-        }
-
-        public double[,] GetStatistic(NetworkNode node, IVertexValueComputer valueComputer)
-        {
-            return this.GetStatistic(this.GetSectionIds(), node, valueComputer);
-        }
-
-        public double[,] GetStatistic(IEnumerable<string> sectionIds, NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -172,9 +153,18 @@ namespace Marv
 
                 var sectionBelief = this.GetSectionBelief(sectionId);
 
+                if (sectionBelief == null)
+                {
+                    continue;
+                }
+
                 foreach (var year in sectionBelief.Keys)
                 {
-                    statistic[row, col] = valueComputer.Compute(node, sectionBelief[year][node.Key], null);
+                    if (sectionBelief[year][node.Key] != null)
+                    {
+                        statistic[row, col] = valueComputer.Compute(node, sectionBelief[year][node.Key], null);
+                    }
+
                     col++;
                 }
 
@@ -182,6 +172,68 @@ namespace Marv
             }
 
             return statistic;
+        }
+
+        public double[,] GetEvidenceStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        {
+            return this.GetEvidenceStatistic(node, valueComputer, this.GetSectionIds());
+        }
+
+        public double[,] GetEvidenceStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
+        {
+            var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
+
+            var nRows = sectionIdList.Count();
+            var nCols = this.GetSectionEvidence(sectionIdList.First()).Keys.Count;
+
+            var statistic = new double[nRows, nCols];
+
+            var row = 0;
+            foreach (var sectionId in sectionIdList)
+            {
+                var col = 0;
+
+                var sectionEvidence = this.GetSectionEvidence(sectionId);
+
+                if (sectionEvidence == null)
+                {
+                    continue;
+                }
+
+                foreach (var year in sectionEvidence.Keys)
+                {
+                    if (sectionEvidence[year][node.Key].Value != null)
+                    {
+                        statistic[row, col] = valueComputer.Compute(node, sectionEvidence[year][node.Key].Value, null);
+                    }
+
+                    col++;
+                }
+
+                row++;
+            }
+
+            return statistic;
+        }
+
+        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
+        {
+            Console.WriteLine("Getting section [{0}] belief", sectionId);
+            return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
+        }
+
+        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
+        {
+            Console.WriteLine("Getting evidence for section [{0}]", sectionId);
+            return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
+        }
+
+        public IEnumerable<string> GetSectionIds()
+        {
+            var evidencesDir = Path.Combine(this.rootDirPathPath, EvidencesDirName);
+            var list = Directory.EnumerateFiles(evidencesDir, "*.marv-sectionevidence").Select(Path.GetFileNameWithoutExtension).ToList();
+            list.Sort(new AlphaNumericComparer());
+            return list;
         }
 
         public void RaiseDataChanged()
