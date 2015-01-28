@@ -44,4 +44,19 @@
             return node.StandardDeviation(newValue, oldValue);
         }
     }
+
+    public class VertexStateComputer : IVertexValueComputer
+    {
+        private readonly int stateIndex;
+
+        public VertexStateComputer(int i)
+        {
+            this.stateIndex = i;
+        }
+
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        {
+            return newValue[this.stateIndex];
+        }
+    }
 }
