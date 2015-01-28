@@ -326,6 +326,11 @@ namespace Marv
             return this.Nodes[vertexKey].Mean(this.GetNodeValue(vertexKey));
         }
 
+        public NetworkNode GetNode(string nodeKey)
+        {
+            return this.Nodes[nodeKey];
+        }
+
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkNode, double[], double[], double> statisticFunc)
         {
             var targetVertex = this.Nodes[targetVertexKey];
