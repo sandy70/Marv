@@ -12,6 +12,7 @@ namespace Marv
         public readonly List<NetworkNode> Children = new List<NetworkNode>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         private ObservableCollection<string> groups;
+        private string headerOfGroup;
         private string inputNodeKey;
         private ObservableCollection<State> states;
         private VertexType? type;
@@ -21,6 +22,13 @@ namespace Marv
         public ObservableCollection<string> Groups
         {
             get { return this.groups ?? (this.groups = this.ParseGroups()); }
+        }
+
+        public string HeaderOfGroup
+        {
+            get { return this.headerOfGroup ?? (this.headerOfGroup = this.ParseStringProperty("headerofgroup")); }
+
+            set { this.headerOfGroup = value; }
         }
 
         public double[] InitialBelief

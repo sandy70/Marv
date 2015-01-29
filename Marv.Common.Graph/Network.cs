@@ -237,6 +237,24 @@ namespace Marv
             return network;
         }
 
+        public void AddGroup(string nodeKey, string group)
+        {
+            this.Nodes[nodeKey].Groups.AddUnique(group);
+        }
+
+        public void ClearGroups()
+        {
+            foreach (var node in this.Nodes)
+            {
+                node.Groups.Clear();
+            }
+        }
+
+        public void ClearGroups(string nodeKey)
+        {
+            this.Nodes[nodeKey].Groups.Clear();
+        }
+
         public double[] GetBelief(string vertexKey)
         {
             return this.GetNodeValue(vertexKey);
@@ -411,6 +429,24 @@ namespace Marv
             return defaultValue;
         }
 
+        public void RemoveGroup(string group)
+        {
+            foreach (var node in this.Nodes)
+            {
+                node.Groups.Remove(group);
+
+                if (node.HeaderOfGroup == group)
+                {
+                    node.HeaderOfGroup = null;
+                }
+            }
+        }
+
+        public void RemoveGroup(string nodeKey, string group)
+        {
+            this.Nodes[nodeKey].Groups.Remove(group);
+        }
+
         public void RenameGroup(string oldGroup, string newGroup)
         {
             foreach (var node in this.Nodes)
@@ -418,6 +454,11 @@ namespace Marv
                 if (node.Groups.Contains(oldGroup))
                 {
                     node.Groups.Replace(oldGroup, newGroup);
+                }
+
+                if (node.HeaderOfGroup == oldGroup)
+                {
+                    node.HeaderOfGroup = newGroup;
                 }
             }
         }
@@ -556,6 +597,11 @@ namespace Marv
             this.SetEvidence(vertexKey, value.ToString());
         }
 
+        public void SetHeader(string nodeKey, string headerOfGroup)
+        {
+            this.Nodes[nodeKey].HeaderOfGroup = headerOfGroup;
+        }
+
         public void SetNormalDistribution(string nodeKey, double mean, double variance)
         {
             var distribution = this.Nodes[nodeKey].States.ParseEvidence(new NormalDistribution(mean, variance));
@@ -565,6 +611,12 @@ namespace Marv
         public void SetTriangularDistribution(string nodeKey, double min, double mode, double max)
         {
             var distribution = this.Nodes[nodeKey].States.ParseEvidence(new TriangularDistribution(min, mode, max));
+            this.SetSoftEvidence(nodeKey, distribution);
+        }
+
+        public void SetUniformDistribution(string nodeKey, double min, double max)
+        {
+            var distribution = this.Nodes[nodeKey].States.ParseEvidence(new UniformDistribution(min, max));
             this.SetSoftEvidence(nodeKey, distribution);
         }
 
@@ -586,6 +638,9 @@ namespace Marv
                 // Write node definitions
                 foreach (var node in this.Nodes)
                 {
+                    node.Properties["groups"] = node.Groups.String().Enquote();
+                    node.Properties["headerofgroup"] = node.HeaderOfGroup.Enquote();
+
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("node {0}", node.Key);
                     streamWriter.WriteLine("{");
