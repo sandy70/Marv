@@ -130,6 +130,7 @@ namespace Marv
         public string HeaderOfGroup
         {
             get { return this.headerOfGroup; }
+
             set
             {
                 this.headerOfGroup = value;

@@ -377,12 +377,9 @@ namespace Marv.Input
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
-            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 22.net");
+            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29.net");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
-            this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario02\Scenario02.marv-linedata");
-
-            var statistic = this.LineData.GetStatistic(this.Graph.Network.Nodes["P"], new VertexMeanComputer());
-            Console.WriteLine(statistic);
+            this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario07\Scenario07.marv-linedata");
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)

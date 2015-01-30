@@ -174,6 +174,26 @@ namespace Marv
             return statistic;
         }
 
+        public double[,] GetBeliefs(NetworkNode node, string sectionId, int[] years)
+        {
+            var sectionBelief = this.GetSectionBelief(sectionId);
+
+            var nRows = node.States.Count;
+            var nCols = years.Count();
+
+            var beliefs = new double[nRows, nCols];
+
+            for (var col = 0; col < nCols; col++)
+            {
+                for (var row = 0; row < nRows; row++)
+                {
+                    beliefs[row, col] = sectionBelief[years.ElementAt(col)][node.Key][row];
+                }
+            }
+
+            return beliefs;
+        }
+
         public double[,] GetEvidenceStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
             return this.GetEvidenceStatistic(node, valueComputer, this.GetSectionIds());

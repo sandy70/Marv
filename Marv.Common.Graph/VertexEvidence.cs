@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Marv.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -11,9 +13,9 @@ namespace Marv
         public double[] Params { get; set; }
         public string StateKey { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof (StringEnumConverter))]
         public VertexEvidenceType Type { get; set; }
-        
+
         public double[] Value { get; set; }
 
         public static List<double> ParseEvidenceParams(string str)
