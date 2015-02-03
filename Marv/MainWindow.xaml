@@ -52,8 +52,8 @@
                                           StartBounds="{Binding ElementName=Root, Path=StartExtent}"
                                           TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
                                 <marv:PolylineControl Name="PolylineControl"
-                                                      IsEnabled="False"
                                                       Locations="{Binding ElementName=Root, Path=Locations}"
+                                                      LocationValues="{Binding ElementName=Root, Path=LocationValues}"
                                                       SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
                                                       Stroke="DeepSkyBlue" />
                             </marv:MapView>

@@ -35,7 +35,7 @@ namespace Marv.Input
         private bool isYearSliderVisible = true;
         private ILineData lineData;
         private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
-        private Dict<string, int, double> locationValues;
+        private Dict<string, double> locationValues;
         private LocationCollection locations;
         private Location selectedLocation;
         private LocationRect startExtent;
@@ -191,6 +191,22 @@ namespace Marv.Input
             }
         }
 
+        public Dict<string, double> LocationValues
+        {
+            get { return this.locationValues; }
+
+            set
+            {
+                if (value.Equals(this.locationValues))
+                {
+                    return;
+                }
+
+                this.locationValues = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public LocationCollection Locations
         {
             get { return this.locations; }
@@ -330,8 +346,18 @@ namespace Marv.Input
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
             this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net");
-            this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
             this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario07\Scenario07.marv-linedata");
+            this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
+
+            var random = new Random();
+            var locationValues = new Dict<string, double>();
+
+            foreach (var location in this.Locations)
+            {
+                locationValues[location.Key] = random.NextDouble();
+            }
+
+            this.LocationValues = locationValues;
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
