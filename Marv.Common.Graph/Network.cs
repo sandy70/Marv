@@ -399,6 +399,11 @@ namespace Marv
             return this.GetSensitivity(targetVertexKey, computer.Compute);
         }
 
+        public string[] GetStateKeys(string nodeKey)
+        {
+            return this.Nodes[nodeKey].States.Select(state => state.Key).ToArray();
+        }
+
         public VertexType GetType(string nodeKey)
         {
             return this.Nodes[nodeKey].Type;

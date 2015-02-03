@@ -17,24 +17,39 @@
                             StrokeEndLineCap="Round"
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
-                            StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
+                            StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}"
+                            Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibilityReversed}}"/>
+
+    <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}"
+                                Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibility}}">
+        <mapcontrol:MapItemsControl.ItemTemplate>
+            <DataTemplate>
+                <mapcontrol:MapPolyline Locations="{Binding Path=Locations}"
+                                        Stroke="{Binding Path=Stroke}"
+                                        StrokeEndLineCap="Round"
+                                        StrokeLineJoin="Round"
+                                        StrokeStartLineCap="Round"
+                                        StrokeThickness="3" />
+            </DataTemplate>
+        </mapcontrol:MapItemsControl.ItemTemplate>
+    </mapcontrol:MapItemsControl>
 
     <!-- Skeleton -->
     <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=VisibleLocations}">
         <mapcontrol:MapItemsControl.ItemContainerStyle>
             <Style TargetType="mapcontrol:MapItem">
                 <Setter Property="mapcontrol:MapPanel.Location" Value="{Binding Converter={StaticResource LocationConverter}}" />
-                
+
                 <Setter Property="HorizontalAlignment" Value="Center" />
-                
+
                 <Setter Property="VerticalAlignment" Value="Center" />
-                
+
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate>
                             <Ellipse Fill="OrangeRed" Stroke="DarkRed"
                                      StrokeThickness="2"
-                                     Height="8" Width="8"/>
+                                     Height="8" Width="8" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -69,6 +84,6 @@
            MinWidth="64"
            HorizontalAlignment="Left"
            HorizontalContentAlignment="Right"
-           VerticalAlignment="Center"/>
-    
+           VerticalAlignment="Center" />
+
 </mapcontrol:MapPanel>

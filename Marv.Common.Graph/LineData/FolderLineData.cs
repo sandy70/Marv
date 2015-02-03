@@ -132,12 +132,12 @@ namespace Marv
             return Directory.Exists(beliefDir) || Directory.Exists(evidenceDir);
         }
 
-        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node)
         {
-            return this.GetBeliefStatistic(node, valueComputer, this.GetSectionIds());
+            return this.GetBeliefStatistic(valueComputer, node, this.GetSectionIds());
         }
 
-        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
+        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -174,7 +174,7 @@ namespace Marv
             return statistic;
         }
 
-        public double[,] GetBeliefs(NetworkNode node, string sectionId, int[] years)
+        public double[,] GetBeliefs(NetworkNode node, string sectionId, IEnumerable<int> years)
         {
             var sectionBelief = this.GetSectionBelief(sectionId);
 
@@ -188,6 +188,28 @@ namespace Marv
                 for (var row = 0; row < nRows; row++)
                 {
                     beliefs[row, col] = sectionBelief[years.ElementAt(col)][node.Key][row];
+                }
+            }
+
+            return beliefs;
+        }
+
+        public double[,] GetBeliefs(NetworkNode node, IEnumerable<string> sectionIds, int year)
+        {
+            var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
+
+            var nRows = sectionIdList.Count();
+            var nCols = node.States.Count;
+
+            var beliefs = new double[nRows, nCols];
+
+            for (var row = 0; row < nRows; row++)
+            {
+                var sectionBelief = this.GetSectionBelief(sectionIdList[row]);
+
+                for (var col = 0; col < nCols; col++)
+                {
+                    beliefs[row, col] = sectionBelief[year][node.Key][col];
                 }
             }
 

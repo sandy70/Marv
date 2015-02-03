@@ -69,6 +69,7 @@
     <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MapView.cs" />
+    <Compile Include="PolylineControl.Cursor.cs" />
     <Compile Include="PolylineControl.xaml.cs">
       <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>

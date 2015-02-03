@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
@@ -21,6 +21,9 @@ namespace Marv.Controls.Map
 
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty LocationValuesProperty =
+            DependencyProperty.Register("LocationValues", typeof (Dict<string, double>), typeof (PolylineControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
@@ -45,7 +48,10 @@ namespace Marv.Controls.Map
         private Location cursorLocation;
         private IEnumerator<Location> locationsEnumerator;
         private MapView mapView;
+        private ObservableCollection<LocationCollection> polylineParts;
         private IEnumerable<Location> simplifiedLocations;
+        private ObservableCollection<LocationCollectionViewModel> simplifiedPolylineParts;
+        private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.25, 0.50, 0.75, 1.00 };
         private LocationCollection visibleLocations = new LocationCollection();
 
         public Brush CursorFill
@@ -82,11 +88,33 @@ namespace Marv.Controls.Map
             set { this.SetValue(IsSelectedProperty, value); }
         }
 
+        public Dict<string, double> LocationValues
+        {
+            get { return (Dict<string, double>) GetValue(LocationValuesProperty); }
+            set { SetValue(LocationValuesProperty, value); }
+        }
+
         public LocationCollection Locations
         {
             get { return (LocationCollection) this.GetValue(LocationsProperty); }
 
             set { this.SetValue(LocationsProperty, value); }
+        }
+
+        public ObservableCollection<LocationCollection> PolylineParts
+        {
+            get { return this.polylineParts; }
+
+            set
+            {
+                if (value.Equals(this.polylineParts))
+                {
+                    return;
+                }
+
+                this.polylineParts = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Location SelectedLocation
@@ -112,6 +140,22 @@ namespace Marv.Controls.Map
             }
         }
 
+        public ObservableCollection<LocationCollectionViewModel> SimplifiedPolylineParts
+        {
+            get { return this.simplifiedPolylineParts; }
+
+            set
+            {
+                if (value.Equals(this.simplifiedPolylineParts))
+                {
+                    return;
+                }
+
+                this.simplifiedPolylineParts = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public double SkeletonZoomLevel
         {
             get { return (double) GetValue(SkeletonZoomLevelProperty); }
@@ -128,6 +172,22 @@ namespace Marv.Controls.Map
         {
             get { return (double) this.GetValue(StrokeThicknessProperty); }
             set { this.SetValue(StrokeThicknessProperty, value); }
+        }
+
+        public Sequence<double> ValueLevels
+        {
+            get { return this.valueLevels; }
+
+            set
+            {
+                if (value.Equals(this.valueLevels))
+                {
+                    return;
+                }
+
+                this.valueLevels = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public LocationCollection VisibleLocations
@@ -175,81 +235,48 @@ namespace Marv.Controls.Map
             }
         }
 
-        public void RaiseSelectionChanged(Location location)
+        public void UpdatePolylineParts()
         {
-            this.SelectedLocation = location;
-
-            if (this.SelectionChanged != null)
+            if (this.Locations == null || this.ValueLevels == null)
             {
-                this.SelectionChanged(this, location);
+                return;
             }
-        }
 
-        public void UpdateSimplifiedLocations()
-        {
-            this.SimplifiedLocations = this.Locations
-                                           .ToPoints(this.mapView)
-                                           .Reduce(5)
-                                           .ToLocations(this.mapView);
-        }
+            var oldBinIndex = -1;
+            var polylineParts = new ObservableCollection<LocationCollection>();
+            LocationCollection locationCollection = null;
 
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
+            foreach (var location in this.Locations)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
+
+                if (newBinIndex != oldBinIndex)
+                {
+                    if (locationCollection == null)
+                    {
+                        locationCollection = new LocationCollection { location };
+                    }
+                    else
+                    {
+                        var mid = Common.Utils.Mid(locationCollection.Last(), location);
+                        locationCollection.Add(mid);
+                        locationCollection = new LocationCollection { mid, location };
+                    }
+
+                    polylineParts.Add(locationCollection);
+                }
+                else
+                {
+                    if (locationCollection != null)
+                    {
+                        locationCollection.Add(location);
+                    }
+                }
+
+                oldBinIndex = newBinIndex;
             }
-        }
 
-        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            this.Ellipse.CaptureMouse();
-
-            e.Handled = true;
-        }
-
-        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.CursorLocation = this.GetNearestLocation(e.GetPosition(this));
-            }
-        }
-
-        private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            var nearestLocation = this.GetNearestLocation(e.GetPosition(this));
-
-            this.CursorLocation = nearestLocation;
-            this.SelectedLocation = nearestLocation;
-
-            this.Ellipse.ReleaseMouseCapture();
-
-            e.Handled = true;
-        }
-
-        private void Ellipse_TouchDown(object sender, TouchEventArgs e)
-        {
-            this.Ellipse.CaptureTouch(e.TouchDevice);
-
-            e.Handled = true;
-        }
-
-        private void Ellipse_TouchMove(object sender, TouchEventArgs e)
-        {
-            this.CursorLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
-        }
-
-        private void Ellipse_TouchUp(object sender, TouchEventArgs e)
-        {
-            var nearestLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
-
-            this.CursorLocation = nearestLocation;
-            this.SelectedLocation = nearestLocation;
-
-            this.Ellipse.ReleaseTouchCapture(e.TouchDevice);
-
-            e.Handled = true;
+            this.PolylineParts = polylineParts;
         }
 
         private Location GetNearestLocation(Point position)
@@ -257,34 +284,6 @@ namespace Marv.Controls.Map
             var location = this.mapView.ViewportPointToLocation(position);
             var nearestLocation = this.Locations.GetLocationNearestTo(location);
             return nearestLocation;
-        }
-
-        private void MapPolyline_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Console.WriteLine("MapPolyline_MouseDown");
-
-            var nearestLocation = this.GetNearestLocation(e.GetPosition(this));
-
-            this.CursorLocation = nearestLocation;
-            this.SelectedLocation = nearestLocation;
-
-            this.Ellipse.CaptureMouse();
-
-            e.Handled = true;
-        }
-
-        private void MapPolyline_TouchDown(object sender, TouchEventArgs e)
-        {
-            Console.WriteLine("MapPolyline_TouchDown");
-
-            var nearestLocation = this.GetNearestLocation(e.GetTouchPoint(this).Position);
-
-            this.CursorLocation = nearestLocation;
-            this.SelectedLocation = nearestLocation;
-
-            this.Ellipse.CaptureTouch(e.TouchDevice);
-
-            e.Handled = true;
         }
 
         private void PolylineControl_Loaded(object sender, RoutedEventArgs e)
@@ -323,6 +322,24 @@ namespace Marv.Controls.Map
 
             this.MapPolyline.TouchDown -= this.MapPolyline_TouchDown;
             this.MapPolyline.TouchDown += this.MapPolyline_TouchDown;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void RaiseSelectionChanged(Location location)
+        {
+            this.SelectedLocation = location;
+
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, location);
+            }
         }
 
         private void UpdateVisibleLocations()
