@@ -349,15 +349,15 @@ namespace Marv.Input
             this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario07\Scenario07.marv-linedata");
             this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
 
-            var random = new Random();
-            var locationValues = new Dict<string, double>();
+            //var random = new Random();
+            //var locationValues = new Dict<string, double>();
 
-            foreach (var location in this.Locations)
-            {
-                locationValues[location.Key] = random.NextDouble();
-            }
+            //foreach (var location in this.Locations)
+            //{
+            //    locationValues[location.Key] = random.NextDouble();
+            //}
 
-            this.LocationValues = locationValues;
+            //this.LocationValues = locationValues;
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)

@@ -43,6 +43,8 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(3.0));
 
+        private readonly Dict<LocationCollection, double> polylinePartValues = new Dict<LocationCollection, double>();
+
         private readonly DispatcherTimer timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(10)
@@ -56,8 +58,7 @@ namespace Marv.Controls.Map
         private IEnumerable<Location> simplifiedLocations;
         private ObservableCollection<LocationCollectionViewModel> simplifiedPolylineParts;
         private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.25, 0.50, 0.75, 1.00 };
-        private LocationCollection visibleLocations = new LocationCollection();
-        private Dict<LocationCollection, double> polylinePartValues = new Dict<LocationCollection, double>();
+        private LocationCollection displayLocations = new LocationCollection();
 
         public Brush CursorFill
         {
@@ -217,18 +218,18 @@ namespace Marv.Controls.Map
             }
         }
 
-        public LocationCollection VisibleLocations
+        public LocationCollection DisplayLocations
         {
-            get { return this.visibleLocations; }
+            get { return this.displayLocations; }
 
             set
             {
-                if (value.Equals(this.visibleLocations))
+                if (value.Equals(this.displayLocations))
                 {
                     return;
                 }
 
-                this.visibleLocations = value;
+                this.displayLocations = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -260,70 +261,6 @@ namespace Marv.Controls.Map
                     control.IsSelected = control.CursorLocation != null;
                 }
             }
-        }
-
-        public void UpdatePolylineParts()
-        {
-            if (this.Locations == null || this.LocationValues == null || this.ValueLevels == null )
-            {
-                return;
-            }
-
-            var oldBinIndex = -1;
-            var polylineParts = new ObservableCollection<LocationCollection>();
-            LocationCollection locationCollection = null;
-
-            foreach (var location in this.Locations)
-            {
-                var locationValue = this.LocationValues[location.Key];
-                var newBinIndex = this.ValueLevels.GetBinIndex(locationValue);
-
-                if (newBinIndex != oldBinIndex)
-                {
-                    if (locationCollection == null)
-                    {
-                        locationCollection = new LocationCollection { location };
-                        this.polylinePartValues[locationCollection] = locationValue;
-                    }
-                    else
-                    {
-                        var mid = Common.Utils.Mid(locationCollection.Last(), location);
-                        locationCollection.Add(mid);
-                        locationCollection = new LocationCollection { mid, location };
-                        this.polylinePartValues[locationCollection] = locationValue;
-                    }
-
-                    polylineParts.Add(locationCollection);
-                }
-                else
-                {
-                    if (locationCollection != null)
-                    {
-                        locationCollection.Add(location);
-                    }
-                }
-
-                oldBinIndex = newBinIndex;
-            }
-
-            this.PolylineParts = polylineParts;
-        }
-
-        public void UpdateSimplifiedPolylineParts()
-        {
-            var mapView = this.GetParent<MapView>();
-            var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
-
-            if (this.PolylineParts != null)
-            {
-                simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
-                {
-                    Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
-                    Stroke = this.IsEnabled ? this.GetStroke(this.polylinePartValues[locationCollection]) : this.DisabledStroke
-                }));
-            }
-
-            this.SimplifiedPolylineParts = simplifiedPolylineParts;
         }
 
         private Location GetNearestLocation(Point position)
@@ -420,6 +357,70 @@ namespace Marv.Controls.Map
             this.DisplayStroke = this.IsEnabled ? this.Stroke : this.DisabledStroke;
         }
 
+        private void UpdatePolylineParts()
+        {
+            if (this.Locations == null || this.LocationValues == null || this.ValueLevels == null)
+            {
+                return;
+            }
+
+            var oldBinIndex = -1;
+            var polylineParts = new ObservableCollection<LocationCollection>();
+            LocationCollection locationCollection = null;
+
+            foreach (var location in this.Locations)
+            {
+                var locationValue = this.LocationValues[location.Key];
+                var newBinIndex = this.ValueLevels.GetBinIndex(locationValue);
+
+                if (newBinIndex != oldBinIndex)
+                {
+                    if (locationCollection == null)
+                    {
+                        locationCollection = new LocationCollection { location };
+                        this.polylinePartValues[locationCollection] = locationValue;
+                    }
+                    else
+                    {
+                        var mid = Common.Utils.Mid(locationCollection.Last(), location);
+                        locationCollection.Add(mid);
+                        locationCollection = new LocationCollection { mid, location };
+                        this.polylinePartValues[locationCollection] = locationValue;
+                    }
+
+                    polylineParts.Add(locationCollection);
+                }
+                else
+                {
+                    if (locationCollection != null)
+                    {
+                        locationCollection.Add(location);
+                    }
+                }
+
+                oldBinIndex = newBinIndex;
+            }
+
+            this.PolylineParts = polylineParts;
+        }
+
+        private void UpdateSimplifiedPolylineParts()
+        {
+            var mapView = this.GetParent<MapView>();
+            var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
+
+            if (this.PolylineParts != null)
+            {
+                simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
+                {
+                    Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
+                    Stroke = this.IsEnabled ? this.GetStroke(this.polylinePartValues[locationCollection]) : this.DisabledStroke
+                }));
+            }
+
+            this.SimplifiedPolylineParts = simplifiedPolylineParts;
+        }
+
         private void UpdateVisibleLocations()
         {
             if (this.mapView.ZoomLevel > this.SkeletonZoomLevel)
@@ -433,7 +434,7 @@ namespace Marv.Controls.Map
             else
             {
                 this.timer.Stop();
-                this.VisibleLocations = new LocationCollection();
+                this.DisplayLocations = new LocationCollection();
             }
         }
 
@@ -454,6 +455,7 @@ namespace Marv.Controls.Map
                                            .Reduce(5)
                                            .ToLocations(this.mapView);
 
+            this.UpdateSimplifiedPolylineParts();
             this.UpdateVisibleLocations();
         }
 
@@ -469,11 +471,11 @@ namespace Marv.Controls.Map
 
                     if (scaledBounds.Contains(location))
                     {
-                        this.VisibleLocations.AddUnique(location);
+                        this.DisplayLocations.AddUnique(location);
                     }
                     else
                     {
-                        this.VisibleLocations.Remove(location);
+                        this.DisplayLocations.Remove(location);
                     }
                 }
                 else
