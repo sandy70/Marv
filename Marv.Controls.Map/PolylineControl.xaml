@@ -18,7 +18,7 @@
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
                             StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}"
-                            Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibilityReversed}}"/>
+                            Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibilityReversed}}" />
 
     <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=SimplifiedPolylineParts}"
                                 Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibility}}">
@@ -35,7 +35,8 @@
     </mapcontrol:MapItemsControl>
 
     <!-- Skeleton -->
-    <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=VisibleLocations}">
+    <mapcontrol:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=DisplayLocations}"
+                                Visibility="{Binding ElementName=Root, Path=IsSkeletonVisible, Converter={StaticResource BooleanToVisibility}}">
         <mapcontrol:MapItemsControl.ItemContainerStyle>
             <Style TargetType="mapcontrol:MapItem">
                 <Setter Property="mapcontrol:MapPanel.Location" Value="{Binding Converter={StaticResource LocationConverter}}" />

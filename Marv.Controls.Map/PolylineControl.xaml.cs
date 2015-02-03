@@ -25,6 +25,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsSkeletonVisibleProperty =
+            DependencyProperty.Register("IsSkeletonVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty LocationValuesProperty =
             DependencyProperty.Register("LocationValues", typeof (Dict<string, double>), typeof (PolylineControl), new PropertyMetadata(null));
 
@@ -51,6 +54,7 @@ namespace Marv.Controls.Map
         };
 
         private Location cursorLocation;
+        private LocationCollection displayLocations = new LocationCollection();
         private Brush displayStroke = new SolidColorBrush(Colors.DeepSkyBlue);
         private IEnumerator<Location> locationsEnumerator;
         private MapView mapView;
@@ -58,7 +62,6 @@ namespace Marv.Controls.Map
         private IEnumerable<Location> simplifiedLocations;
         private ObservableCollection<LocationCollectionViewModel> simplifiedPolylineParts;
         private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.25, 0.50, 0.75, 1.00 };
-        private LocationCollection displayLocations = new LocationCollection();
 
         public Brush CursorFill
         {
@@ -94,6 +97,22 @@ namespace Marv.Controls.Map
             set { SetValue(DisabledStrokeProperty, value); }
         }
 
+        public LocationCollection DisplayLocations
+        {
+            get { return this.displayLocations; }
+
+            set
+            {
+                if (value.Equals(this.displayLocations))
+                {
+                    return;
+                }
+
+                this.displayLocations = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public Brush DisplayStroke
         {
             get { return this.displayStroke; }
@@ -114,6 +133,12 @@ namespace Marv.Controls.Map
         {
             get { return (bool) this.GetValue(IsSelectedProperty); }
             set { this.SetValue(IsSelectedProperty, value); }
+        }
+
+        public bool IsSkeletonVisible
+        {
+            get { return (bool) GetValue(IsSkeletonVisibleProperty); }
+            set { SetValue(IsSkeletonVisibleProperty, value); }
         }
 
         public Dict<string, double> LocationValues
@@ -214,22 +239,6 @@ namespace Marv.Controls.Map
                 }
 
                 this.valueLevels = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public LocationCollection DisplayLocations
-        {
-            get { return this.displayLocations; }
-
-            set
-            {
-                if (value.Equals(this.displayLocations))
-                {
-                    return;
-                }
-
-                this.displayLocations = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -352,6 +361,23 @@ namespace Marv.Controls.Map
             }
         }
 
+        private void UpdateDisplayLocations()
+        {
+            if (this.mapView.ZoomLevel > this.SkeletonZoomLevel)
+            {
+                this.timer.Stop();
+
+                this.locationsEnumerator = this.Locations.GetEnumerator();
+
+                this.timer.Start();
+            }
+            else
+            {
+                this.timer.Stop();
+                this.DisplayLocations = new LocationCollection();
+            }
+        }
+
         private void UpdateDisplayStroke()
         {
             this.DisplayStroke = this.IsEnabled ? this.Stroke : this.DisabledStroke;
@@ -421,26 +447,9 @@ namespace Marv.Controls.Map
             this.SimplifiedPolylineParts = simplifiedPolylineParts;
         }
 
-        private void UpdateVisibleLocations()
-        {
-            if (this.mapView.ZoomLevel > this.SkeletonZoomLevel)
-            {
-                this.timer.Stop();
-
-                this.locationsEnumerator = this.Locations.GetEnumerator();
-
-                this.timer.Start();
-            }
-            else
-            {
-                this.timer.Stop();
-                this.DisplayLocations = new LocationCollection();
-            }
-        }
-
         private void mapView_ViewportMoved(object sender, Location e)
         {
-            this.UpdateVisibleLocations();
+            this.UpdateDisplayLocations();
         }
 
         private void mapView_ZoomLevelChanged(object sender, int e)
@@ -456,7 +465,7 @@ namespace Marv.Controls.Map
                                            .ToLocations(this.mapView);
 
             this.UpdateSimplifiedPolylineParts();
-            this.UpdateVisibleLocations();
+            this.UpdateDisplayLocations();
         }
 
         private void timer_Tick(object sender, EventArgs e)
