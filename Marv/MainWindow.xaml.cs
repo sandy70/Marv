@@ -288,12 +288,6 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
-        {
-            this.LineDataChart.UpdateEvidence(vertexEvidence);
-            this.LineDataControl.SetSelectedCells(vertexEvidence);
-        }
-
         private void GraphControl_GraphChanged(object sender, Graph newGraph, Graph oldGraph)
         {
             if (this.LineData == null)
@@ -301,30 +295,6 @@ namespace Marv.Input
                 this.LineData = new LineData();
                 this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
-        }
-
-        private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
-        {
-            this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
-        }
-
-        private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
-        {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0)
-            {
-                this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
-            }
-        }
-
-        private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
-        {
-            this.LineDataChart.UpdateBasePoints();
-        }
-
-        private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
-        {
-            this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
-            this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -350,29 +320,11 @@ namespace Marv.Input
                 notifier.NotificationOpened += this.notifier_NotificationOpened;
             }
 
-            this.GraphControl.EvidenceEntered -= this.GraphControl_EvidenceEntered;
-            this.GraphControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
-
             this.GraphControl.GraphChanged -= this.GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += this.GraphControl_GraphChanged;
 
-            this.LineDataControl.EvidenceChanged -= this.LineDataControl_EvidenceChanged;
-            this.LineDataControl.EvidenceChanged += this.LineDataControl_EvidenceChanged;
-
-            this.LineDataControl.SectionBeliefsChanged -= this.LineDataControl_SectionBeliefsChanged;
-            this.LineDataControl.SectionBeliefsChanged += this.LineDataControl_SectionBeliefsChanged;
-
-            this.LineDataControl.SectionEvidencesChanged -= this.LineDataControl_SectionEvidencesChanged;
-            this.LineDataControl.SectionEvidencesChanged += this.LineDataControl_SectionEvidencesChanged;
-
-            this.LineDataControl.SelectedCellChanged -= this.LineDataControl_SelectedCellChanged;
-            this.LineDataControl.SelectedCellChanged += this.LineDataControl_SelectedCellChanged;
-
             this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
             this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;
-
-            this.VertexControl.EvidenceEntered -= this.GraphControl_EvidenceEntered;
-            this.VertexControl.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
