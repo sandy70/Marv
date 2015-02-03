@@ -191,7 +191,7 @@ namespace Marv.Controls.Map
             return new LocationCollectionViewModel
             {
                 Locations = new LocationCollection(locationCollection.Reduce(converter, tolerance)),
-                Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
+                //Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
             };
         }
 
@@ -203,7 +203,7 @@ namespace Marv.Controls.Map
 
             foreach (var location in locations)
             {
-                var newBinIndex = valueLevels.GetBinIndex(location.Value);
+                var newBinIndex = valueLevels.GetBinIndex(0);
 
                 if (newBinIndex != oldBinIndex)
                 {
@@ -247,7 +247,7 @@ namespace Marv.Controls.Map
 
             foreach (var location in this.Locations)
             {
-                var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
+                var newBinIndex = this.ValueLevels.GetBinIndex(0);
 
                 if (newBinIndex != oldBinIndex)
                 {
@@ -287,7 +287,7 @@ namespace Marv.Controls.Map
                 simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
                     Locations = locationCollection.ToPoints(mapView).Reduce(this.Tolerance).ToLocations(mapView).ToLocationCollection(),
-                    Stroke = this.IsEnabled ? this.DoubleToBrushMap.Map(locationCollection[1].Value) : this.DisabledStroke
+                    Stroke = this.IsEnabled ? this.DoubleToBrushMap.Map(0) : this.DisabledStroke
                 }));
             }
 
@@ -308,7 +308,7 @@ namespace Marv.Controls.Map
                 this.SimplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>(await Task.Run(() => polylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
                     Locations = locationCollection.Reduce(mapView, tolerance),
-                    Stroke = isEnabled ? doubleToBrushMap.Map(locationCollection[1].Value) : disabledStroke
+                    Stroke = isEnabled ? doubleToBrushMap.Map(0) : disabledStroke
                 })));
             }
         }

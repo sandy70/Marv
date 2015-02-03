@@ -5,7 +5,6 @@
         private string key;
         private double latitude;
         private double longitude;
-        private double value;
 
         public string Key
         {
@@ -42,22 +41,6 @@
             set
             {
                 this.longitude = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double Value
-        {
-            get { return this.value; }
-
-            set
-            {
-                if (value.Equals(this.value))
-                {
-                    return;
-                }
-
-                this.value = value;
                 this.RaisePropertyChanged();
             }
         }

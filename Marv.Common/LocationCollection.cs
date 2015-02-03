@@ -44,20 +44,6 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, double> Value
-        {
-            set
-            {
-                foreach (var key in value.Keys)
-                {
-                    this[key].Value = value[key];
-                }
-
-                this.RaisePropertyChanged();
-                this.RaiseValueChanged();
-            }
-        }
-
         public LocationCollection() {}
 
         public LocationCollection(IEnumerable<Location> locations)

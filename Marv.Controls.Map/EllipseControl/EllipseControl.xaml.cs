@@ -11,6 +11,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty LocationEllipsesProperty =
             DependencyProperty.Register("LocationEllipses", typeof (IEnumerable<LocationEllipse>), typeof (EllipseControl), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty LocationValuesProperty =
+            DependencyProperty.Register("LocationValues", typeof (Dict<string, double>), typeof (EllipseControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (EllipseControl), new PropertyMetadata(null, OnLocationsChanged));
 
@@ -27,6 +30,12 @@ namespace Marv.Controls.Map
         {
             get { return (IEnumerable<LocationEllipse>) this.GetValue(LocationEllipsesProperty); }
             set { this.SetValue(LocationEllipsesProperty, value); }
+        }
+
+        public Dict<string, double> LocationValues
+        {
+            get { return (Dict<string, double>) GetValue(LocationValuesProperty); }
+            set { SetValue(LocationValuesProperty, value); }
         }
 
         public IEnumerable<Location> Locations
@@ -89,7 +98,7 @@ namespace Marv.Controls.Map
                     return new LocationEllipse
                     {
                         Center = location,
-                        Radius = control.ScalingFunc(location.Value)
+                        Radius = control.ScalingFunc(control.LocationValues[location.Key])
                     };
                 });
             }
@@ -107,14 +116,14 @@ namespace Marv.Controls.Map
                 {
                     foreach (var locationEllipse in control.LocationEllipses)
                     {
-                        locationEllipse.Radius = locationEllipse.Center.Value;
+                        locationEllipse.Radius = control.LocationValues[locationEllipse.Center.Key];
                     }
                 }
                 else
                 {
                     foreach (var locationEllipse in control.LocationEllipses)
                     {
-                        locationEllipse.Radius = control.ScalingFunc(locationEllipse.Center.Value);
+                        locationEllipse.Radius = control.ScalingFunc(control.LocationValues[locationEllipse.Center.Key]);
                     }
                 }
             }

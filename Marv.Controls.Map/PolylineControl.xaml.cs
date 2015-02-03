@@ -274,7 +274,7 @@ namespace Marv.Controls.Map
 
             foreach (var location in this.Locations)
             {
-                var newBinIndex = this.ValueLevels.GetBinIndex(location.Value);
+                var newBinIndex = this.ValueLevels.GetBinIndex(this.LocationValues[location.Key]);
 
                 if (newBinIndex != oldBinIndex)
                 {
@@ -315,7 +315,7 @@ namespace Marv.Controls.Map
                 simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
                     Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
-                    Stroke = this.IsEnabled ? this.GetStroke(locationCollection[1].Value) : this.DisabledStroke
+                    Stroke = this.IsEnabled ? this.GetStroke(this.LocationValues[locationCollection[1].Key]) : this.DisabledStroke
                 }));
             }
 

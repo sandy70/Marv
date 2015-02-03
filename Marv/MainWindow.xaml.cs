@@ -390,13 +390,6 @@ namespace Marv.Input
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             this.UpdateGraphValue();
-
-            if (this.locationValues == null)
-            {
-                return;
-            }
-
-            this.Locations.Value = this.locationValues[null, this.SelectedYear];
         }
 
         private void notifier_NotificationClosed(object sender, Notification notification)
