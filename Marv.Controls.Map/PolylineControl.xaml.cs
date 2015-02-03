@@ -38,7 +38,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("SkeletonZoomLevel", typeof (double), typeof (PolylineControl), new PropertyMetadata(15.0));
 
         public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.CornflowerBlue)));
+            DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.DeepSkyBlue)));
 
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(3.0));
@@ -49,7 +49,7 @@ namespace Marv.Controls.Map
         };
 
         private Location cursorLocation;
-        private Brush displayStroke = new SolidColorBrush(Colors.CornflowerBlue);
+        private Brush displayStroke = new SolidColorBrush(Colors.DeepSkyBlue);
         private IEnumerator<Location> locationsEnumerator;
         private MapView mapView;
         private ObservableCollection<LocationCollection> polylineParts;
@@ -346,12 +346,13 @@ namespace Marv.Controls.Map
 
         private void PolylineControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            this.DisplayStroke = this.IsEnabled ? this.Stroke : this.DisabledStroke;
+            this.UpdateDisplayStroke();
         }
 
         private void PolylineControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.mapView = this.GetParent<MapView>();
+            this.UpdateDisplayStroke();
 
             this.IsEnabledChanged -= PolylineControl_IsEnabledChanged;
             this.IsEnabledChanged += PolylineControl_IsEnabledChanged;
@@ -406,6 +407,11 @@ namespace Marv.Controls.Map
             {
                 this.SelectionChanged(this, location);
             }
+        }
+
+        private void UpdateDisplayStroke()
+        {
+            this.DisplayStroke = this.IsEnabled ? this.Stroke : this.DisabledStroke;
         }
 
         private void UpdateVisibleLocations()

@@ -13,7 +13,7 @@
 
     <!-- This is the polyling that the user sees -->
     <mapcontrol:MapPolyline Locations="{Binding SimplifiedLocations, ElementName=Root, Converter={StaticResource ResourceKey=LocationCollectionConverter}}"
-                            Stroke="{Binding ElementName=Root, Path=Stroke}"
+                            Stroke="{Binding ElementName=Root, Path=DisplayStroke}"
                             StrokeEndLineCap="Round"
                             StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
