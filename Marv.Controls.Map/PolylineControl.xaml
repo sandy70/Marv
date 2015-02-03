@@ -24,7 +24,7 @@
                                 Visibility="{Binding ElementName=Root, Path=LocationValues, Converter={StaticResource NullToVisibility}}">
         <mapcontrol:MapItemsControl.ItemTemplate>
             <DataTemplate>
-                <mapcontrol:MapPolyline Locations="{Binding Path=Locations}"
+                <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationCollectionConverter}}"
                                         Stroke="{Binding Path=Stroke}"
                                         StrokeEndLineCap="Round"
                                         StrokeLineJoin="Round"

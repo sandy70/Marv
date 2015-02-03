@@ -57,6 +57,7 @@ namespace Marv.Controls.Map
         private ObservableCollection<LocationCollectionViewModel> simplifiedPolylineParts;
         private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.25, 0.50, 0.75, 1.00 };
         private LocationCollection visibleLocations = new LocationCollection();
+        private Dict<LocationCollection, double> polylinePartValues = new Dict<LocationCollection, double>();
 
         public Brush CursorFill
         {
@@ -263,7 +264,7 @@ namespace Marv.Controls.Map
 
         public void UpdatePolylineParts()
         {
-            if (this.Locations == null || this.ValueLevels == null)
+            if (this.Locations == null || this.LocationValues == null || this.ValueLevels == null )
             {
                 return;
             }
@@ -274,19 +275,22 @@ namespace Marv.Controls.Map
 
             foreach (var location in this.Locations)
             {
-                var newBinIndex = this.ValueLevels.GetBinIndex(this.LocationValues[location.Key]);
+                var locationValue = this.LocationValues[location.Key];
+                var newBinIndex = this.ValueLevels.GetBinIndex(locationValue);
 
                 if (newBinIndex != oldBinIndex)
                 {
                     if (locationCollection == null)
                     {
                         locationCollection = new LocationCollection { location };
+                        this.polylinePartValues[locationCollection] = locationValue;
                     }
                     else
                     {
                         var mid = Common.Utils.Mid(locationCollection.Last(), location);
                         locationCollection.Add(mid);
                         locationCollection = new LocationCollection { mid, location };
+                        this.polylinePartValues[locationCollection] = locationValue;
                     }
 
                     polylineParts.Add(locationCollection);
@@ -315,7 +319,7 @@ namespace Marv.Controls.Map
                 simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
                     Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
-                    Stroke = this.IsEnabled ? this.GetStroke(this.LocationValues[locationCollection[1].Key]) : this.DisabledStroke
+                    Stroke = this.IsEnabled ? this.GetStroke(this.polylinePartValues[locationCollection]) : this.DisabledStroke
                 }));
             }
 
@@ -353,6 +357,8 @@ namespace Marv.Controls.Map
         {
             this.mapView = this.GetParent<MapView>();
             this.UpdateDisplayStroke();
+            this.UpdatePolylineParts();
+            this.UpdateSimplifiedPolylineParts();
 
             this.IsEnabledChanged -= PolylineControl_IsEnabledChanged;
             this.IsEnabledChanged += PolylineControl_IsEnabledChanged;
