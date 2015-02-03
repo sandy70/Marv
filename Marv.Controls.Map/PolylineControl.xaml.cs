@@ -19,6 +19,9 @@ namespace Marv.Controls.Map
         public static readonly DependencyProperty CursorStrokeProperty =
             DependencyProperty.Register("CursorStroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Yellow)));
 
+        public static readonly DependencyProperty DisabledStrokeProperty =
+            DependencyProperty.Register("DisabledStroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.LightGray)));
+
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof (bool), typeof (PolylineControl), new PropertyMetadata(false));
 
@@ -35,7 +38,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("SkeletonZoomLevel", typeof (double), typeof (PolylineControl), new PropertyMetadata(15.0));
 
         public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.Red)));
+            DependencyProperty.Register("Stroke", typeof (Brush), typeof (PolylineControl), new PropertyMetadata(new SolidColorBrush(Colors.CornflowerBlue)));
 
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof (double), typeof (PolylineControl), new PropertyMetadata(3.0));
@@ -46,6 +49,7 @@ namespace Marv.Controls.Map
         };
 
         private Location cursorLocation;
+        private Brush displayStroke = new SolidColorBrush(Colors.CornflowerBlue);
         private IEnumerator<Location> locationsEnumerator;
         private MapView mapView;
         private ObservableCollection<LocationCollection> polylineParts;
@@ -80,6 +84,28 @@ namespace Marv.Controls.Map
         {
             get { return (Brush) this.GetValue(CursorStrokeProperty); }
             set { this.SetValue(CursorStrokeProperty, value); }
+        }
+
+        public Brush DisabledStroke
+        {
+            get { return (Brush) GetValue(DisabledStrokeProperty); }
+            set { SetValue(DisabledStrokeProperty, value); }
+        }
+
+        public Brush DisplayStroke
+        {
+            get { return this.displayStroke; }
+
+            set
+            {
+                if (value.Equals(this.displayStroke))
+                {
+                    return;
+                }
+
+                this.displayStroke = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsSelected
@@ -279,6 +305,23 @@ namespace Marv.Controls.Map
             this.PolylineParts = polylineParts;
         }
 
+        public void UpdateSimplifiedPolylineParts()
+        {
+            var mapView = this.GetParent<MapView>();
+            var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
+
+            if (this.PolylineParts != null)
+            {
+                simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
+                {
+                    Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
+                    Stroke = this.IsEnabled ? this.GetStroke(locationCollection[1].Value) : this.DisabledStroke
+                }));
+            }
+
+            this.SimplifiedPolylineParts = simplifiedPolylineParts;
+        }
+
         private Location GetNearestLocation(Point position)
         {
             var location = this.mapView.ViewportPointToLocation(position);
@@ -286,9 +329,32 @@ namespace Marv.Controls.Map
             return nearestLocation;
         }
 
+        private Brush GetStroke(double value)
+        {
+            if (value < 0.2)
+            {
+                return new SolidColorBrush(Colors.Green);
+            }
+
+            if (value < 0.8)
+            {
+                return new SolidColorBrush(Colors.Yellow);
+            }
+
+            return new SolidColorBrush(Colors.Red);
+        }
+
+        private void PolylineControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            this.DisplayStroke = this.IsEnabled ? this.Stroke : this.DisabledStroke;
+        }
+
         private void PolylineControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.mapView = this.GetParent<MapView>();
+
+            this.IsEnabledChanged -= PolylineControl_IsEnabledChanged;
+            this.IsEnabledChanged += PolylineControl_IsEnabledChanged;
 
             this.mapView.ViewportMoved -= mapView_ViewportMoved;
             this.mapView.ViewportMoved += mapView_ViewportMoved;
