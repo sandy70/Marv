@@ -6,7 +6,9 @@ using System.Windows.Input;
 using Marv.Common;
 using Marv.Controls;
 using Marv.Controls.Map;
+using Marv.Properties;
 using Telerik.Windows.Controls;
+using Utils = Marv.Common.Utils;
 
 namespace Marv.Input
 {
@@ -35,9 +37,10 @@ namespace Marv.Input
         private bool isYearSliderVisible = true;
         private ILineData lineData;
         private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
-        private Dict<string, double> locationValues;
+        private Dict<string, int, double> locationValues;
         private LocationCollection locations;
         private Location selectedLocation;
+        private Dict<string, double> selectedYearLocationValues;
         private LocationRect startExtent;
         private Sequence<double> valueLevels;
 
@@ -191,22 +194,6 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, double> LocationValues
-        {
-            get { return this.locationValues; }
-
-            set
-            {
-                if (value.Equals(this.locationValues))
-                {
-                    return;
-                }
-
-                this.locationValues = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public LocationCollection Locations
         {
             get { return this.locations; }
@@ -257,6 +244,22 @@ namespace Marv.Input
             set { this.SetValue(SelectedYearProperty, value); }
         }
 
+        public Dict<string, double> SelectedYearLocationValues
+        {
+            get { return this.selectedYearLocationValues; }
+
+            set
+            {
+                if (value.Equals(this.selectedYearLocationValues))
+                {
+                    return;
+                }
+
+                this.selectedYearLocationValues = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public LocationRect StartExtent
         {
             get { return this.startExtent; }
@@ -273,35 +276,11 @@ namespace Marv.Input
             }
         }
 
-        public Sequence<double> ValueLevels
-        {
-            get { return this.valueLevels; }
-
-            set
-            {
-                if (value.Equals(this.valueLevels))
-                {
-                    return;
-                }
-
-                this.valueLevels = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
             this.Loaded += this.MainWindow_Loaded;
-        }
-
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private void GraphControl_GraphChanged(object sender, Graph newGraph, Graph oldGraph)
@@ -327,6 +306,8 @@ namespace Marv.Input
         {
             var notifiers = this.GetChildren<INotifier>();
 
+            
+
             foreach (var notifier in notifiers)
             {
                 notifier.NotificationClosed -= this.notifier_NotificationClosed;
@@ -339,25 +320,28 @@ namespace Marv.Input
             this.GraphControl.GraphChanged -= this.GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += this.GraphControl_GraphChanged;
 
+            this.MapView.Loaded -= MapView_Loaded;
+            this.MapView.Loaded += MapView_Loaded;
+
             this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
             this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;
 
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
-            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net");
-            this.LineData = FolderLineData.Read(@"C:\Users\Vinod\Data\LongChang\Scenario07\Scenario07.marv-linedata");
-            this.Locations = LocationCollection.ReadCsv(@"C:\Users\Vinod\Data\LongChang\Line.csv");
+            this.Graph = Graph.Read(Settings.Default.NetworkFileName);
+            this.LineData = FolderLineData.Read(Settings.Default.LineDataFileName);
+            this.Locations = LocationCollection.ReadCsv(Settings.Default.LocationsFileName);
+            this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Settings.Default.LocationValuesFileName);
+            this.SelectedYear = this.LineData.StartYear;
 
-            //var random = new Random();
-            //var locationValues = new Dict<string, double>();
+            this.UpdateGraphValue();
+            this.UpdateLocationValues();
+        }
 
-            //foreach (var location in this.Locations)
-            //{
-            //    locationValues[location.Key] = random.NextDouble();
-            //}
-
-            //this.LocationValues = locationValues;
+        private void MapView_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.MapView.Bounds = this.Locations.Bounds.GetPadded(0.1);
         }
 
         private void MenuWindowNetwork_Click(object sender, RoutedEventArgs e)
@@ -369,6 +353,14 @@ namespace Marv.Input
         {
             this.UpdateGraph();
             this.UpdateGraphValue();
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void UpdateGraph()
@@ -416,6 +408,15 @@ namespace Marv.Input
         private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             this.UpdateGraphValue();
+            this.UpdateLocationValues();
+        }
+
+        private void UpdateLocationValues()
+        {
+            if (this.locationValues != null)
+            {
+                this.SelectedYearLocationValues = this.locationValues[null, this.SelectedYear];
+            }
         }
 
         private void notifier_NotificationClosed(object sender, Notification notification)

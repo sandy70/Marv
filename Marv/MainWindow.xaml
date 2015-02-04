@@ -48,14 +48,16 @@
                     <telerik:RadPane Header="Map"
                                      IsHidden="{Binding ElementName=Root, Path=IsMapViewVisible, Converter={StaticResource BooleanNot}}">
                         <Grid>
-                            <marv:MapView ManipulationMode="Scale,Translate"
-                                          StartBounds="{Binding ElementName=Root, Path=StartExtent}"
+                            <marv:MapView Name="MapView"
+                                          ManipulationMode="Scale,Translate"
                                           TileLayer="{x:Static marv:TileLayers.MapBoxAerial}">
                                 <marv:PolylineControl Name="PolylineControl"
+                                                      IsSkeletonVisible="False"
                                                       Locations="{Binding ElementName=Root, Path=Locations}"
-                                                      LocationValues="{Binding ElementName=Root, Path=LocationValues}"
+                                                      LocationValues="{Binding ElementName=Root, Path=SelectedYearLocationValues}"
                                                       SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                      Stroke="DeepSkyBlue" />
+                                                      Stroke="DeepSkyBlue"
+                                                      StrokeThickness="10"/>
                             </marv:MapView>
 
                             <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"

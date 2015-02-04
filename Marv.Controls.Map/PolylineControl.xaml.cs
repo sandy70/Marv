@@ -29,7 +29,7 @@ namespace Marv.Controls.Map
             DependencyProperty.Register("IsSkeletonVisible", typeof (bool), typeof (PolylineControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty LocationValuesProperty =
-            DependencyProperty.Register("LocationValues", typeof (Dict<string, double>), typeof (PolylineControl), new PropertyMetadata(null));
+            DependencyProperty.Register("LocationValues", typeof (Dict<string, double>), typeof (PolylineControl), new PropertyMetadata(null, LocationValuesChanged));
 
         public static readonly DependencyProperty LocationsProperty =
             DependencyProperty.Register("Locations", typeof (IEnumerable<Location>), typeof (PolylineControl), new PropertyMetadata(null, LocationsChanged));
@@ -258,6 +258,13 @@ namespace Marv.Controls.Map
             control.RaiseSelectionChanged(control.SelectedLocation);
         }
 
+        private static void LocationValuesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as PolylineControl;
+            control.UpdatePolylineParts();
+            control.UpdateSimplifiedPolylineParts();
+        }
+
         private static void LocationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as PolylineControl;
@@ -281,12 +288,12 @@ namespace Marv.Controls.Map
 
         private Brush GetStroke(double value)
         {
-            if (value < 0.2)
+            if (value < 0.1)
             {
                 return new SolidColorBrush(Colors.Green);
             }
 
-            if (value < 0.8)
+            if (value < 0.2)
             {
                 return new SolidColorBrush(Colors.Yellow);
             }

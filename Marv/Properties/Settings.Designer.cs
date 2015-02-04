@@ -25,13 +25,49 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\stop\\Documents\\GitHub\\Marv Files\\FreeCorp.net")]
-        public string FileName {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\ECDA_Model 2015 01 29 1630.net")]
+        public string NetworkFileName {
             get {
-                return ((string)(this["FileName"]));
+                return ((string)(this["NetworkFileName"]));
             }
             set {
-                this["FileName"] = value;
+                this["NetworkFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\Scenario08.marv-linedata")]
+        public string LineDataFileName {
+            get {
+                return ((string)(this["LineDataFileName"]));
+            }
+            set {
+                this["LineDataFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Line.csv")]
+        public string LocationsFileName {
+            get {
+                return ((string)(this["LocationsFileName"]));
+            }
+            set {
+                this["LocationsFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\LocationValues.json")]
+        public string LocationValuesFileName {
+            get {
+                return ((string)(this["LocationValuesFileName"]));
+            }
+            set {
+                this["LocationValuesFileName"] = value;
             }
         }
     }

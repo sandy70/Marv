@@ -107,22 +107,6 @@ namespace Marv.Controls.Map
                 });
         }
 
-        public void RaiseViewportMoved(Location location)
-        {
-            if (this.ViewportMoved != null)
-            {
-                this.ViewportMoved(this, location);
-            }
-        }
-
-        public void RaiseZoomLevelChanged(int zoom)
-        {
-            if (this.ZoomLevelChanged != null)
-            {
-                this.ZoomLevelChanged(this, zoom);
-            }
-        }
-
         protected override void OnManipulationInertiaStarting(ManipulationInertiaStartingEventArgs e)
         {
             base.OnManipulationInertiaStarting(e);
@@ -164,6 +148,22 @@ namespace Marv.Controls.Map
             {
                 this.previousCenter = this.Center;
                 this.RaiseViewportMoved(this.previousCenter);
+            }
+        }
+
+        private void RaiseViewportMoved(Location location)
+        {
+            if (this.ViewportMoved != null)
+            {
+                this.ViewportMoved(this, location);
+            }
+        }
+
+        private void RaiseZoomLevelChanged(int zoom)
+        {
+            if (this.ZoomLevelChanged != null)
+            {
+                this.ZoomLevelChanged(this, zoom);
             }
         }
 

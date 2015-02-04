@@ -26,10 +26,10 @@
             <DataTemplate>
                 <mapcontrol:MapPolyline Locations="{Binding Path=Locations, Converter={StaticResource LocationCollectionConverter}}"
                                         Stroke="{Binding Path=Stroke}"
-                                        StrokeEndLineCap="Round"
+                                        StrokeEndLineCap="Flat"
                                         StrokeLineJoin="Round"
-                                        StrokeStartLineCap="Round"
-                                        StrokeThickness="3" />
+                                        StrokeStartLineCap="Flat"
+                                        StrokeThickness="{Binding ElementName=Root, Path=StrokeThickness}" />
             </DataTemplate>
         </mapcontrol:MapItemsControl.ItemTemplate>
     </mapcontrol:MapItemsControl>

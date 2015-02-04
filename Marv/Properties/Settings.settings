@@ -1,10 +1,18 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Marv.Input.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Marv.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="FileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\stop\Documents\GitHub\Marv Files\FreeCorp.net</Value>
+    <Setting Name="NetworkFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net</Value>
+    </Setting>
+    <Setting Name="LineDataFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\Scenario08.marv-linedata</Value>
+    </Setting>
+    <Setting Name="LocationsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Line.csv</Value>
+    </Setting>
+    <Setting Name="LocationValuesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\LocationValues.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

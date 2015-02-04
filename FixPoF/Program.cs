@@ -10,27 +10,29 @@ namespace FixPoF
     {
         private static void Main(string[] args)
         {
-            // UpdatePoFFrancois();
-           //  WritePofFrancois();
+            var lineData = new FolderLineData(@"C:\Users\Vinod\Data\LongChang\Scenario08");
+            var locationValues = new Dict<string, int, double>();
+            var lastSectionBelief = new Dict<int, string, double[]>();
 
-            var filePaths = Directory.EnumerateFiles(@"C:\Users\vkha\Downloads\Data\LineData WaterCut 1\SectionBeliefs", "*.marv-sectionbelief");
-            // var locationValues = new Dict<string, int, double>();
-
-            foreach (var filePath in filePaths)
+            foreach (var sectionId in lineData.GetSectionIds())
             {
-                var sectionBelief = Utils.ReadJson<Dict<int, string, double[]>>(filePath);
-                var sectionId = Path.GetFileNameWithoutExtension(filePath);
+                var sectionBelief = lineData.GetSectionBelief(sectionId);
+
+                if (sectionBelief == null)
+                {
+                    lineData.SetSectionBelief(sectionId, lastSectionBelief);
+                    sectionBelief = lastSectionBelief;
+                }
 
                 foreach (var year in sectionBelief.Keys)
                 {
-                    sectionBelief[year]["Temperature"] = new double[] { 1, 0, 0, 0 };
+                    locationValues[sectionId][year] = sectionBelief[year]["depth"][1];
                 }
 
-                sectionBelief.WriteJson(filePath);
-                Console.WriteLine("Read file: " + filePath);
+                lastSectionBelief = sectionBelief;
             }
 
-            // locationValues.WriteJson(@"C:\Users\vkha\Downloads\LocationValues.json");
+            locationValues.WriteJson("LocationValuesDepth.json");
 
             Console.ReadKey();
         }
