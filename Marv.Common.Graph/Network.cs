@@ -277,10 +277,10 @@ namespace Marv
             return this.GetBeliefs().ToJson();
         }
 
-        public double[] GetEvidence(string vertexKey)
+        public double[] GetEvidence(string nodeKey)
         {
-            var softEvidence = this.GetSoftEvidence(vertexKey);
-            var evidenceIndex = this.IsEvidence(vertexKey) ? this.GetHardEvidence(vertexKey) : -1;
+            var softEvidence = this.GetSoftEvidence(nodeKey);
+            var evidenceIndex = this.IsEvidence(nodeKey) ? this.GetHardEvidence(nodeKey) : -1;
 
             if (softEvidence != null)
             {
@@ -289,12 +289,12 @@ namespace Marv
 
             if (evidenceIndex >= 0)
             {
-                var evidence = new double[this.GetOutcomeCount(vertexKey)];
+                var evidence = new double[this.GetOutcomeCount(nodeKey)];
                 evidence[evidenceIndex] = 1;
                 return evidence;
             }
 
-            throw new SmileException("No evidence is set on node " + vertexKey);
+            throw new SmileException("No evidence is set on node " + nodeKey);
         }
 
         public Dict<string, VertexEvidence> GetEvidences()
@@ -349,6 +349,11 @@ namespace Marv
             return this.Nodes[nodeKey];
         }
 
+        public IEnumerable<string> GetNodeKeys()
+        {
+            return this.Nodes.Select(node => node.Key);
+        }
+
         public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkNode, double[], double[], double> statisticFunc)
         {
             var targetVertex = this.Nodes[targetVertexKey];
@@ -356,16 +361,11 @@ namespace Marv
             // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
             var value = new Dict<string, string, double>();
 
-            // Collect vertices to ignore
-            var verticesToIgnore = new List<NetworkNode>
+            foreach (var sourceVertex in this.Nodes.Except(targetVertex))
             {
-                targetVertex
-            };
+                // Store the original evidence
+                var originalEvidence = this.GetEvidence(sourceVertex.Key);
 
-            verticesToIgnore.AddRange(this.Nodes.Where(vertex => this.IsEvidence(vertex.Key)));
-
-            foreach (var sourceVertex in this.Nodes.Except(verticesToIgnore))
-            {
                 foreach (var sourceState in sourceVertex.States)
                 {
                     try
@@ -389,6 +389,9 @@ namespace Marv
                         value[sourceVertex.Key][sourceState.Key] = double.NaN;
                     }
                 }
+
+                // Set the stored evidence
+                this.SetSoftEvidence(sourceVertex.Key, originalEvidence);
             }
 
             return value;
@@ -600,6 +603,11 @@ namespace Marv
         public void SetEvidence(string vertexKey, double value)
         {
             this.SetEvidence(vertexKey, value.ToString());
+        }
+
+        public void SetEvidence(string nodeKey, double[] evidence)
+        {
+            this.SetSoftEvidence(nodeKey, evidence);
         }
 
         public void SetHeader(string nodeKey, string headerOfGroup)
