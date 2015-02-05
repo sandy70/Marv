@@ -17,7 +17,7 @@ namespace Marv
             {
                 if (!this.ContainsKey(key))
                 {
-                    this[key] = Utils.Create<TValue>();
+                    this.Add(key, Utils.Create<TValue>());
                 }
 
                 return this.dictionary[key].Value;
