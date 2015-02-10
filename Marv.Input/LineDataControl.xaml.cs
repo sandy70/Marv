@@ -496,7 +496,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
+                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -560,7 +560,7 @@ namespace Marv.Input
             {
                 var dialog = new SaveFileDialog
                 {
-                    Filter = Input.LineData.FileDescription + "|*." + Input.LineData.FileExtension,
+                    Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
                 };
 
                 var result = dialog.ShowDialog();
@@ -573,9 +573,9 @@ namespace Marv.Input
 
             if (this.FileName != null)
             {
-                if (Path.GetExtension(this.FileName) != "." + Input.LineData.FileExtension)
+                if (Path.GetExtension(this.FileName) != "." + Marv.LineData.FileExtension)
                 {
-                    this.FileName = this.FileName + "." + Input.LineData.FileExtension;
+                    this.FileName = this.FileName + "." + Marv.LineData.FileExtension;
                 }
 
                 this.LineData.WriteJson(this.FileName);
