@@ -26,6 +26,9 @@ namespace Marv.Controls.GraphControl
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
+        public static readonly DependencyProperty IsAdvancedToolbarVisibleProperty =
+            DependencyProperty.Register("IsAdvancedToolbarVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoLayoutEnabled));
 
@@ -53,7 +56,6 @@ namespace Marv.Controls.GraphControl
         private Marv.Graph displayGraph;
         private string displayVertexKey;
         private bool isDefaultGroupVisible;
-
         private string selectedGroup;
 
         public int AutoSaveDuration
@@ -114,6 +116,12 @@ namespace Marv.Controls.GraphControl
             get { return (Color) this.GetValue(IncomingConnectionHighlightColorProperty); }
 
             set { this.SetValue(IncomingConnectionHighlightColorProperty, value); }
+        }
+
+        public bool IsAdvancedToolbarVisible
+        {
+            get { return (bool) GetValue(IsAdvancedToolbarVisibleProperty); }
+            set { SetValue(IsAdvancedToolbarVisibleProperty, value); }
         }
 
         public bool IsAutoLayoutEnabled

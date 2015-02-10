@@ -62,7 +62,7 @@
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0"
-                     Visibility="Collapsed">
+                     Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                 <telerik:RadButton Name="OpenButton"
                                    ToolTip="Opens a preexisting network.">
                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
