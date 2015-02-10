@@ -12,27 +12,18 @@ namespace FixPoF
         {
             var lineData = new FolderLineData(@"C:\Users\Vinod\Data\LongChang\Scenario08");
             var locationValues = new Dict<string, int, double>();
-            var lastSectionBelief = new Dict<int, string, double[]>();
 
             foreach (var sectionId in lineData.GetSectionIds())
             {
                 var sectionBelief = lineData.GetSectionBelief(sectionId);
 
-                if (sectionBelief == null)
-                {
-                    lineData.SetSectionBelief(sectionId, lastSectionBelief);
-                    sectionBelief = lastSectionBelief;
-                }
-
                 foreach (var year in sectionBelief.Keys)
                 {
-                    locationValues[sectionId][year] = sectionBelief[year]["depth"][1];
+                    locationValues[sectionId][year] = sectionBelief[year]["exceed"][1];
                 }
-
-                lastSectionBelief = sectionBelief;
             }
 
-            locationValues.WriteJson("LocationValuesDepth.json");
+            locationValues.WriteJson(@"C:\Users\Vinod\Downloads\LocationValues.json");
 
             Console.ReadKey();
         }

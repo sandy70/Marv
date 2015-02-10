@@ -61,7 +61,7 @@ namespace Marv.Controls.Map
         private ObservableCollection<LocationCollection> polylineParts;
         private IEnumerable<Location> simplifiedLocations;
         private ObservableCollection<LocationCollectionViewModel> simplifiedPolylineParts;
-        private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.25, 0.50, 0.75, 1.00 };
+        private Sequence<double> valueLevels = new Sequence<double> { 0.00, 0.02, 0.05, 1.00 };
 
         public Brush CursorFill
         {
@@ -288,17 +288,14 @@ namespace Marv.Controls.Map
 
         private Brush GetStroke(double value)
         {
-            if (value < 0.1)
+            var brushes = new Dict<int, Brush>
             {
-                return new SolidColorBrush(Colors.Green);
-            }
+                { 0, new SolidColorBrush(Colors.Green) },
+                { 1, new SolidColorBrush(Colors.Yellow) },
+                { 2, new SolidColorBrush(Colors.Red) }
+            };
 
-            if (value < 0.2)
-            {
-                return new SolidColorBrush(Colors.Yellow);
-            }
-
-            return new SolidColorBrush(Colors.Red);
+            return brushes[this.ValueLevels.GetBinIndex(value)];
         }
 
         private void PolylineControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)

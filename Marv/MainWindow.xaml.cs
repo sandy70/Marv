@@ -28,21 +28,40 @@ namespace Marv.Input
 
         private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
         private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
+        private LocationCollection criticalLocations;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible;
         private bool isLineDataControlVisible;
         private bool isMapViewVisible = true;
         private bool isMenuVisible;
+        private bool isReferenceLocationsVisible = true;
         private bool isVertexControlVisible;
         private bool isYearSliderVisible = true;
         private ILineData lineData;
         private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
         private Dict<string, int, double> locationValues;
         private LocationCollection locations;
+        private LocationCollection referenceLocations;
         private Location selectedLocation;
         private Dict<string, double> selectedYearLocationValues;
         private LocationRect startExtent;
         private Sequence<double> valueLevels;
+
+        public LocationCollection CriticalLocations
+        {
+            get { return this.criticalLocations; }
+
+            set
+            {
+                if (value.Equals(this.criticalLocations))
+                {
+                    return;
+                }
+
+                this.criticalLocations = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public Graph Graph
         {
@@ -126,6 +145,22 @@ namespace Marv.Input
                 }
 
                 this.isMenuVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsReferenceLocationsVisible
+        {
+            get { return this.isReferenceLocationsVisible; }
+
+            set
+            {
+                if (value.Equals(this.isReferenceLocationsVisible))
+                {
+                    return;
+                }
+
+                this.isReferenceLocationsVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -214,6 +249,22 @@ namespace Marv.Input
         {
             get { return (NotificationCollection) this.GetValue(NotificationsProperty); }
             set { this.SetValue(NotificationsProperty, value); }
+        }
+
+        public LocationCollection ReferenceLocations
+        {
+            get { return this.referenceLocations; }
+
+            set
+            {
+                if (value.Equals(this.referenceLocations))
+                {
+                    return;
+                }
+
+                this.referenceLocations = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Location SelectedLocation
@@ -306,8 +357,6 @@ namespace Marv.Input
         {
             var notifiers = this.GetChildren<INotifier>();
 
-            
-
             foreach (var notifier in notifiers)
             {
                 notifier.NotificationClosed -= this.notifier_NotificationClosed;
@@ -329,14 +378,25 @@ namespace Marv.Input
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
+            this.CriticalLocations = LocationCollection.ReadCsv(Settings.Default.CriticalLocationsFileName);
             this.Graph = Graph.Read(Settings.Default.NetworkFileName);
             this.LineData = FolderLineData.Read(Settings.Default.LineDataFileName);
             this.Locations = LocationCollection.ReadCsv(Settings.Default.LocationsFileName);
             this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Settings.Default.LocationValuesFileName);
+            this.ReferenceLocations = LocationCollection.ReadCsv(Settings.Default.ReferenceLocationsFileName);
             this.SelectedYear = this.LineData.StartYear;
 
             this.UpdateGraphValue();
             this.UpdateLocationValues();
+
+            //var sectionEvidence = SectionEvidence.Read(@"C:\Users\Vinod\Data\LongChang\Scenario08\SectionEvidences\969.marv-sectionevidence");
+            //var network = Network.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net");
+            //network.SetEvidence(sectionEvidence, 2014);
+
+            //var sensitivity = network.GetSensitivity("current", new VertexStateDifferenceComputer(1));
+            //// sensitivity = this.Graph.Network.GetSensitivity("exceed", new VertexEntropyComputer());
+            //sensitivity.WriteJson(@"C:\Users\Vinod\Downloads\entropy.json");
+            //Console.Write(sensitivity);
         }
 
         private void MapView_Loaded(object sender, RoutedEventArgs e)
@@ -405,18 +465,18 @@ namespace Marv.Input
             }
         }
 
-        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            this.UpdateGraphValue();
-            this.UpdateLocationValues();
-        }
-
         private void UpdateLocationValues()
         {
             if (this.locationValues != null)
             {
                 this.SelectedYearLocationValues = this.locationValues[null, this.SelectedYear];
             }
+        }
+
+        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.UpdateGraphValue();
+            this.UpdateLocationValues();
         }
 
         private void notifier_NotificationClosed(object sender, Notification notification)

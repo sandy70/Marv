@@ -63,6 +63,21 @@ namespace Marv
         }
     }
 
+    public class VertexStateDifferenceComputer : IVertexValueComputer
+    {
+        private readonly int stateIndex;
+
+        public VertexStateDifferenceComputer(int i)
+        {
+            this.stateIndex = i;
+        }
+
+        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        {
+            return newValue[this.stateIndex] - oldValue[this.stateIndex];
+        }
+    }
+
     public class VertexPercentileComputer : IVertexValueComputer
     {
         private readonly double percentile;
