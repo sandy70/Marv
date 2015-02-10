@@ -198,25 +198,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CellModel.cs" />
-    <Compile Include="LineDataChart.xaml.cs">
-      <DependentUpon>LineDataChart.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="LineDataControl.GridView.cs" />
-    <Compile Include="LineDataControl.xaml.cs">
-      <DependentUpon>LineDataControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="LocationValueToBrushMap.cs" />
-    <Compile Include="ProbabilityDataPoint.cs" />
-    <Page Include="LineDataChart.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="LineDataControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -224,7 +206,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CellTemplateSelector.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
