@@ -55,8 +55,8 @@ namespace Marv
             }
         }
 
-        // Dictionary<targetVertexKey, sourceVertexKey>
-        // Beliefs from sourceVertexKey should go into targetVertexKey
+        // Dictionary<targetNodeKey, sourceVertexKey>
+        // Beliefs from sourceVertexKey should go into targetNodeKey
         public Dictionary<string, string> Loops
         {
             get { return this.Nodes.Where(node => !string.IsNullOrWhiteSpace(node.InputNodeKey)).ToDictionary(node => node.Key, node => node.InputNodeKey); }
@@ -262,14 +262,21 @@ namespace Marv
 
         public Dict<string, double[]> GetBeliefs()
         {
-            var vertexBeliefs = new Dict<string, double[]>();
+            var nodeBelief = new Dict<string, double[]>();
 
             foreach (var nodeKey in this.GetAllNodeIds())
             {
-                vertexBeliefs[nodeKey] = this.GetNodeValue(nodeKey);
+                try
+                {
+                    nodeBelief[nodeKey] = this.GetNodeValue(nodeKey);
+                }
+                catch (SmileException)
+                {
+                    nodeBelief[nodeKey] = this.GetEvidence(nodeKey);
+                }
             }
 
-            return vertexBeliefs;
+            return nodeBelief;
         }
 
         public string GetBeliefsJson()
@@ -354,24 +361,41 @@ namespace Marv
             return this.Nodes.Select(node => node.Key);
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, Func<NetworkNode, double[], double[], double> statisticFunc)
+        public Dict<string, double[]> GetSensitivity(string targetNodeKey, Func<NetworkNode, double[], double[], double> statisticFunc)
         {
-            var targetVertex = this.Nodes[targetVertexKey];
+            var targetVertex = this.Nodes[targetNodeKey];
 
             // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
-            var value = new Dict<string, string, double>();
+            var value = new Dict<string, double[]>();
+
+            double[] targetNodeEvidence = null;
+
+            if (this.IsEvidenceSet(targetNodeKey))
+            {
+                targetNodeEvidence = this.GetEvidence(targetNodeKey);
+                this.ClearEvidence(targetNodeKey);
+            }
 
             foreach (var sourceVertex in this.Nodes.Except(targetVertex))
             {
-                // Store the original evidence
-                var originalEvidence = this.GetEvidence(sourceVertex.Key);
+                double[] originalEvidence = null;
+                value[sourceVertex.Key] = new double[sourceVertex.States.Count];
+
+                if (this.IsEvidenceSet(sourceVertex.Key))
+                {
+                    originalEvidence = this.GetEvidence(sourceVertex.Key);
+                    this.ClearEvidence(sourceVertex.Key);
+                }
 
                 foreach (var sourceState in sourceVertex.States)
                 {
+                    var stateIndex = sourceVertex.States.IndexOf(sourceState);
                     try
                     {
-                        var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.SetHardEvidence(sourceVertex.Key, stateIndex);
+                        var evidence = new double[sourceVertex.States.Count];
+                        evidence[stateIndex] = 1;
+
+                        this.SetEvidence(sourceVertex.Key, evidence);
 
                         this.UpdateBeliefs();
 
@@ -381,25 +405,39 @@ namespace Marv
 
                         var targetVertexValue = beliefs[targetVertex.Key];
 
-                        value[sourceVertex.Key][sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief);
+                        value[sourceVertex.Key][stateIndex] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief);
+
+                        if (originalEvidence != null)
+                        {
+                            value[sourceVertex.Key][stateIndex] *= originalEvidence[stateIndex];
+                        }
                     }
                     catch (SmileException exp)
                     {
                         Console.WriteLine(exp.Message);
-                        value[sourceVertex.Key][sourceState.Key] = double.NaN;
+                        Console.WriteLine("Node: {0}, State: {1}", sourceVertex.Key, sourceState.Key);
+                        value[sourceVertex.Key][stateIndex] = double.NaN;
                     }
                 }
 
                 // Set the stored evidence
-                this.SetSoftEvidence(sourceVertex.Key, originalEvidence);
+                if (originalEvidence != null)
+                {
+                    this.SetEvidence(sourceVertex.Key, originalEvidence);
+                }
+            }
+
+            if (targetNodeEvidence != null)
+            {
+                this.SetEvidence(targetNodeKey, targetNodeEvidence);
             }
 
             return value;
         }
 
-        public Dict<string, string, double> GetSensitivity(string targetVertexKey, IVertexValueComputer computer)
+        public Dict<string, double[]> GetSensitivity(string targetNodeKey, IVertexValueComputer computer)
         {
-            return this.GetSensitivity(targetVertexKey, computer.Compute);
+            return this.GetSensitivity(targetNodeKey, computer.Compute);
         }
 
         public string[] GetStateKeys(string nodeKey)
@@ -410,6 +448,11 @@ namespace Marv
         public VertexType GetType(string nodeKey)
         {
             return this.Nodes[nodeKey].Type;
+        }
+
+        public bool IsEvidenceSet(string nodeKey)
+        {
+            return this.IsEvidence(nodeKey) || this.GetSoftEvidence(nodeKey) != null;
         }
 
         public string ParseUserProperty(string userPropertyName, string defaultValue)
@@ -578,14 +621,14 @@ namespace Marv
             return sectionBeliefs;
         }
 
-        public void SetEvidence(string vertexKey, string evidenceString)
+        public void SetEvidence(string nodeKey, string evidenceString)
         {
-            if (!this.Nodes.ContainsKey(vertexKey))
+            if (!this.Nodes.ContainsKey(nodeKey))
             {
-                throw new SmileException("The node '" + vertexKey + "' does not exist in the network.");
+                throw new SmileException("The node '" + nodeKey + "' does not exist in the network.");
             }
 
-            var vertexEvidence = this.Nodes[vertexKey].States.ParseEvidenceString(evidenceString);
+            var vertexEvidence = this.Nodes[nodeKey].States.ParseEvidenceString(evidenceString);
 
             if (vertexEvidence.Type == VertexEvidenceType.Null)
             {
@@ -594,20 +637,33 @@ namespace Marv
 
             if (vertexEvidence.Type == VertexEvidenceType.Invalid)
             {
-                throw new InvalidEvidenceException("The evidence (" + evidenceString + ") is invalid for node " + vertexKey);
+                throw new InvalidEvidenceException("The evidence (" + evidenceString + ") is invalid for node " + nodeKey);
             }
 
-            this.SetSoftEvidence(vertexKey, vertexEvidence.Value);
+            this.SetSoftEvidence(nodeKey, vertexEvidence.Value);
         }
 
-        public void SetEvidence(string vertexKey, double value)
+        public void SetEvidence(string nodeKey, double value)
         {
-            this.SetEvidence(vertexKey, value.ToString());
+            this.SetEvidence(nodeKey, value.ToString());
         }
 
         public void SetEvidence(string nodeKey, double[] evidence)
         {
             this.SetSoftEvidence(nodeKey, evidence);
+        }
+
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        {
+            foreach (var nodeKey in vertexEvidences.Keys)
+            {
+                this.SetEvidence(nodeKey, vertexEvidences[nodeKey].Value);
+            }
+        }
+
+        public void SetEvidence(SectionEvidence sectionEvidence, int year)
+        {
+            this.SetEvidence(sectionEvidence[year]);
         }
 
         public void SetHeader(string nodeKey, string headerOfGroup)
@@ -631,6 +687,17 @@ namespace Marv
         {
             var distribution = this.Nodes[nodeKey].States.ParseEvidence(new UniformDistribution(min, max));
             this.SetSoftEvidence(nodeKey, distribution);
+        }
+
+        public void UpdateInitialBeliefs()
+        {
+            this.ClearEvidence();
+            this.UpdateBeliefs();
+
+            foreach (var node in this.Nodes)
+            {
+                node.InitialBelief = this.GetBelief(node.Key);
+            }
         }
 
         public void Write(StreamWriter streamWriter)
