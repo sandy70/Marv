@@ -20,5 +20,7 @@ namespace Marv
         void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
         void Write(string filePath);
         event EventHandler DataChanged;
+
+        void AddSection(string sectionId);
     }
 }

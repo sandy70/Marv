@@ -90,6 +90,24 @@ namespace Marv
             return lineData;
         }
 
+        public void AddSection(string sectionId)
+        {
+            var sectionBelief = new Dict<int, string, double[]>();
+            var sectionEvidence = new Dict<int, string, VertexEvidence>();
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                sectionBelief[year] = new Dict<string, double[]>();
+                sectionEvidence[year] = new Dict<string, VertexEvidence>();
+            }
+
+            var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId + ".marv-sectionbelief");
+            var evidenceFilePath = Path.Combine(this.rootDirPathPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
+
+            sectionBelief.WriteJson(beliefFilePath);
+            sectionEvidence.WriteJson(evidenceFilePath);
+        }
+
         public void AddSections(IEnumerable<string> theSectionIds)
         {
             foreach (var sectionId in theSectionIds)

@@ -248,7 +248,7 @@ namespace Marv.Input
             this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             const string dataDirRoot = @"C:\Users\Vinod\Data\WestPipeline\EC";
             this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));

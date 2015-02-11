@@ -263,11 +263,26 @@ namespace Marv.Input
             }
         }
 
+        private void AddRow(string sectionId)
+        {
+            var row = new Dynamic();
+            row[CellModel.SectionIdHeader] = sectionId;
+
+            var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+
+            for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
+            {
+                row[year.ToString()] = sectionEvidence[year][this.SelectedVertex.Key];
+            }
+
+            this.Rows.Add(row);
+        }
+
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var nSection = 1;
 
-            var keys = Enumerable.Range(0, this.SectionsToAddCount).Select(i =>
+            for (var i = 0; i < this.SectionsToAddCount; i++)
             {
                 var sectionId = "Section " + nSection;
 
@@ -277,10 +292,9 @@ namespace Marv.Input
                     sectionId = "Section " + nSection;
                 }
 
-                return sectionId;
-            });
-
-            this.LineData.AddSections(keys);
+                this.LineData.AddSection(sectionId);
+                this.AddRow(sectionId);
+            }
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)

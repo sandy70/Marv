@@ -55,10 +55,7 @@ namespace Marv.Input
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
-            get
-            {
-                return this.anchorPoints;
-            }
+            get { return this.anchorPoints; }
 
             set
             {
@@ -72,10 +69,7 @@ namespace Marv.Input
 
         public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> BaseDistributionSeries
         {
-            get
-            {
-                return this.baseDistributionSeries;
-            }
+            get { return this.baseDistributionSeries; }
 
             set
             {
@@ -89,10 +83,7 @@ namespace Marv.Input
 
         public ObservableCollection<CategoricalDataPoint> BaseNumberPoints
         {
-            get
-            {
-                return this.baseNumberPoints;
-            }
+            get { return this.baseNumberPoints; }
 
             set
             {
@@ -106,10 +97,7 @@ namespace Marv.Input
 
         public ObservableCollection<ObservableCollection<CategoricalDataPoint>> EvidenceSeries
         {
-            get
-            {
-                return this.evidenceSeries;
-            }
+            get { return this.evidenceSeries; }
 
             set
             {
@@ -125,47 +113,26 @@ namespace Marv.Input
 
         public bool IsEvidenceEditEnabled
         {
-            get
-            {
-                return (bool) GetValue(IsEvidenceEditEnabledProperty);
-            }
-            set
-            {
-                SetValue(IsEvidenceEditEnabledProperty, value);
-            }
+            get { return (bool) GetValue(IsEvidenceEditEnabledProperty); }
+            set { SetValue(IsEvidenceEditEnabledProperty, value); }
         }
 
         public bool IsXAxisSections
         {
-            get
-            {
-                return (bool) GetValue(IsXAxisSectionsProperty);
-            }
-            set
-            {
-                SetValue(IsXAxisSectionsProperty, value);
-            }
+            get { return (bool) GetValue(IsXAxisSectionsProperty); }
+            set { SetValue(IsXAxisSectionsProperty, value); }
         }
 
         public ILineData LineData
         {
-            get
-            {
-                return (ILineData) GetValue(LineDataProperty);
-            }
+            get { return (ILineData) GetValue(LineDataProperty); }
 
-            set
-            {
-                SetValue(LineDataProperty, value);
-            }
+            set { SetValue(LineDataProperty, value); }
         }
 
         public ObservableCollection<CategoricalDataPoint> MaxPoints
         {
-            get
-            {
-                return this.maxPoints;
-            }
+            get { return this.maxPoints; }
 
             set
             {
@@ -179,10 +146,7 @@ namespace Marv.Input
 
         public ObservableCollection<CategoricalDataPoint> MinPoints
         {
-            get
-            {
-                return this.minPoints;
-            }
+            get { return this.minPoints; }
 
             set
             {
@@ -196,10 +160,7 @@ namespace Marv.Input
 
         public ObservableCollection<CategoricalDataPoint> ModePoints
         {
-            get
-            {
-                return this.modePoints;
-            }
+            get { return this.modePoints; }
 
             set
             {
@@ -213,74 +174,38 @@ namespace Marv.Input
 
         public string SelectedSectionId
         {
-            get
-            {
-                return (string) GetValue(SelectedSectionIdProperty);
-            }
-            set
-            {
-                SetValue(SelectedSectionIdProperty, value);
-            }
+            get { return (string) GetValue(SelectedSectionIdProperty); }
+            set { SetValue(SelectedSectionIdProperty, value); }
         }
 
         public string Title
         {
-            get
-            {
-                return (string) GetValue(TitleProperty);
-            }
-            set
-            {
-                SetValue(TitleProperty, value);
-            }
+            get { return (string) GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); }
         }
 
         public Vertex Vertex
         {
-            get
-            {
-                return (Vertex) GetValue(VertexProperty);
-            }
-            set
-            {
-                SetValue(VertexProperty, value);
-            }
+            get { return (Vertex) GetValue(VertexProperty); }
+            set { SetValue(VertexProperty, value); }
         }
 
         public CartesianAxis VerticalAxis
         {
-            get
-            {
-                return (CartesianAxis) GetValue(VerticalAxisProperty);
-            }
-            set
-            {
-                SetValue(VerticalAxisProperty, value);
-            }
+            get { return (CartesianAxis) GetValue(VerticalAxisProperty); }
+            set { SetValue(VerticalAxisProperty, value); }
         }
 
         public string XTitle
         {
-            get
-            {
-                return (string) GetValue(XTitleProperty);
-            }
-            set
-            {
-                SetValue(XTitleProperty, value);
-            }
+            get { return (string) GetValue(XTitleProperty); }
+            set { SetValue(XTitleProperty, value); }
         }
 
         public int Year
         {
-            get
-            {
-                return (int) GetValue(YearProperty);
-            }
-            set
-            {
-                SetValue(YearProperty, value);
-            }
+            get { return (int) GetValue(YearProperty); }
+            set { SetValue(YearProperty, value); }
         }
 
         public LineDataChart()
@@ -290,8 +215,6 @@ namespace Marv.Input
             this.Loaded -= LineDataChart_Loaded;
             this.Loaded += LineDataChart_Loaded;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -514,7 +437,7 @@ namespace Marv.Input
             return series.MinBy(s =>
             {
                 var xCoords = s.Select(point => (double) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => point.Value.Value);
+                var yCoords = s.Select(point => point.Value != null ? point.Value.Value : 0);
 
                 var spline = new LinearInterpolator(xCoords, yCoords);
 
@@ -542,32 +465,38 @@ namespace Marv.Input
 
             this.MaxPoints.Add(new CategoricalDataPoint
             {
-                Category = first, Value = maxValue
+                Category = first,
+                Value = maxValue
             });
 
             this.MaxPoints.Add(new CategoricalDataPoint
             {
-                Category = last, Value = maxValue
+                Category = last,
+                Value = maxValue
             });
 
             this.ModePoints.Add(new CategoricalDataPoint
             {
-                Category = first, Value = modeValue
+                Category = first,
+                Value = modeValue
             });
 
             this.ModePoints.Add(new CategoricalDataPoint
             {
-                Category = last, Value = modeValue
+                Category = last,
+                Value = modeValue
             });
 
             this.MinPoints.Add(new CategoricalDataPoint
             {
-                Category = first, Value = minValue
+                Category = first,
+                Value = minValue
             });
 
             this.MinPoints.Add(new CategoricalDataPoint
             {
-                Category = last, Value = minValue
+                Category = last,
+                Value = minValue
             });
         }
 
@@ -672,7 +601,7 @@ namespace Marv.Input
             var splines = series.Select(s =>
             {
                 var xCoords = s.Select(point => (double) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => point.Value.Value);
+                var yCoords = s.Select(point => point.Value != null ? point.Value.Value : 0);
 
                 return new LinearInterpolator(xCoords.ToArray(), yCoords.ToArray());
             });
@@ -693,5 +622,7 @@ namespace Marv.Input
 
             this.LineData.RaiseDataChanged();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
