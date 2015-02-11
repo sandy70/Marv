@@ -47,8 +47,25 @@ namespace Marv.Input
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
+        private bool canUserInsertRows;
         private Network network;
         private ObservableCollection<Dynamic> rows;
+
+        public bool CanUserInsertRows
+        {
+            get { return this.canUserInsertRows; }
+
+            set
+            {
+                if (value.Equals(this.canUserInsertRows))
+                {
+                    return;
+                }
+
+                this.canUserInsertRows = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public Dict<string, VertexEvidence> CurrentGraphData
         {
@@ -442,18 +459,23 @@ namespace Marv.Input
         {
             foreach (var pastedCell in this.pastedCells)
             {
-                this.SetCell(pastedCell.Cell.ToModel(), pastedCell.Value as string, this.oldData[pastedCell] as string);
+                var cellModel = pastedCell.Cell.ToModel();
+                this.SetCell(cellModel, pastedCell.Value as string, this.oldData[pastedCell] as string);
             }
 
+            this.CanUserInsertRows = false;
             this.pastedCells.Clear();
-
             this.RaiseSectionEvidencesChanged();
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
+            var cellModel = e.Cell.ToModel();
+
+            this.CanUserInsertRows = cellModel.IsColumnSectionId;
+
             this.pastedCells.Add(e);
-            this.oldData[e] = e.Cell.ToModel().Data;
+            this.oldData[e] = cellModel.Data;
         }
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)

@@ -118,7 +118,7 @@
         <telerik:RadGridView Name="GridView"
                              Grid.Row="1"
                              AutoGenerateColumns="True"
-                             CanUserInsertRows="True"
+                             CanUserInsertRows="{Binding ElementName=Root, Path=CanUserInsertRows}"
                              CanUserReorderColumns="False"
                              CanUserSortColumns="False"
                              ClipboardCopyMode="Cells"

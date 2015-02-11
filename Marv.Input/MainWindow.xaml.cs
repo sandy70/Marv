@@ -250,10 +250,6 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            const string dataDirRoot = @"C:\Users\Vinod\Data\WestPipeline\EC";
-            this.Locations = LocationCollection.ReadCsv(Path.Combine(dataDirRoot, @"line.csv"));
-            this.StartExtent = this.Locations.Bounds.GetPadded(0.25);
-
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
