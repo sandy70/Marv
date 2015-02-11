@@ -1,15 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
-using Marv.Common.Graph;
+using Telerik.Windows.Diagrams.Core;
+using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
-namespace Marv.Controls.Graph
+namespace Marv.Controls.GraphControl
 {
-    public partial class GraphControl
+    public partial class GraphControl : INotifyPropertyChanged, INotifier
     {
         public static readonly DependencyProperty AutoSaveDurationProperty =
             DependencyProperty.Register("AutoSaveDuration", typeof (int), typeof (GraphControl), new PropertyMetadata(10000));
@@ -18,10 +21,16 @@ namespace Marv.Controls.Graph
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Common.Graph.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
+            DependencyProperty.Register("Graph", typeof (Marv.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
+
+        public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
+            DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoLayoutEnabled));
+
+        public static readonly DependencyProperty IsAutoRunEnabledProperty =
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoRunEnabled));
 
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
@@ -41,181 +50,214 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
+        private Marv.Graph displayGraph;
+        private string displayVertexKey;
+        private bool isDefaultGroupVisible;
+
+        private string selectedGroup;
+
         public int AutoSaveDuration
         {
-            get
-            {
-                return (int) this.GetValue(AutoSaveDurationProperty);
-            }
+            get { return (int) this.GetValue(AutoSaveDurationProperty); }
 
-            set
-            {
-                this.SetValue(AutoSaveDurationProperty, value);
-            }
+            set { this.SetValue(AutoSaveDurationProperty, value); }
         }
 
         public Color ConnectionColor
         {
-            get
-            {
-                return (Color) this.GetValue(ConnectionColorProperty);
-            }
+            get { return (Color) this.GetValue(ConnectionColorProperty); }
+
+            set { this.SetValue(ConnectionColorProperty, value); }
+        }
+
+        public Marv.Graph DisplayGraph
+        {
+            get { return this.displayGraph; }
 
             set
             {
-                this.SetValue(ConnectionColorProperty, value);
+                if (value.Equals(this.displayGraph))
+                {
+                    return;
+                }
+
+                this.displayGraph = value;
+                this.RaisePropertyChanged();
             }
         }
 
-        public Common.Graph.Graph Graph
+        public string DisplayVertexKey
         {
-            get
-            {
-                return (Common.Graph.Graph) this.GetValue(GraphProperty);
-            }
+            get { return this.displayVertexKey; }
 
             set
             {
-                this.SetValue(GraphProperty, value);
+                if (value.Equals(this.displayVertexKey))
+                {
+                    return;
+                }
+
+                this.displayVertexKey = value;
+                this.RaisePropertyChanged();
             }
+        }
+
+        public Marv.Graph Graph
+        {
+            get { return (Marv.Graph) this.GetValue(GraphProperty); }
+
+            set { this.SetValue(GraphProperty, value); }
         }
 
         public Color IncomingConnectionHighlightColor
         {
-            get
-            {
-                return (Color) this.GetValue(IncomingConnectionHighlightColorProperty);
-            }
+            get { return (Color) this.GetValue(IncomingConnectionHighlightColorProperty); }
 
-            set
-            {
-                this.SetValue(IncomingConnectionHighlightColorProperty, value);
-            }
+            set { this.SetValue(IncomingConnectionHighlightColorProperty, value); }
+        }
+
+        public bool IsAutoLayoutEnabled
+        {
+            get { return (bool) this.GetValue(IsAutoLayoutEnabledProperty); }
+            set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
+        }
+
+        public bool IsAutoRunEnabled
+        {
+            get { return (bool) this.GetValue(IsAutoRunEnabledProperty); }
+            set { this.SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
         {
-            get
-            {
-                return (bool) this.GetValue(IsAutoSaveEnabledProperty);
-            }
+            get { return (bool) this.GetValue(IsAutoSaveEnabledProperty); }
+
+            set { this.SetValue(IsAutoSaveEnabledProperty, value); }
+        }
+
+        public bool IsDefaultGroupVisible
+        {
+            get { return this.isDefaultGroupVisible; }
 
             set
             {
-                this.SetValue(IsAutoSaveEnabledProperty, value);
+                if (value.Equals(this.isDefaultGroupVisible))
+                {
+                    return;
+                }
+
+                this.isDefaultGroupVisible = value;
+                this.RaisePropertyChanged();
             }
         }
 
         public bool IsInputVisible
         {
-            get
-            {
-                return (bool) GetValue(IsInputVisibleProperty);
-            }
+            get { return (bool) this.GetValue(IsInputVisibleProperty); }
 
-            set
-            {
-                SetValue(IsInputVisibleProperty, value);
-            }
+            set { this.SetValue(IsInputVisibleProperty, value); }
         }
 
         public bool IsNavigationPaneVisible
         {
-            get
-            {
-                return (bool) GetValue(IsNavigationPaneVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsNavigationPaneVisibleProperty, value);
-            }
+            get { return (bool) this.GetValue(IsNavigationPaneVisibleProperty); }
+            set { this.SetValue(IsNavigationPaneVisibleProperty, value); }
         }
 
         public bool IsVerticesEnabled
         {
-            get
-            {
-                return (bool) GetValue(IsVerticesEnabledProperty);
-            }
+            get { return (bool) this.GetValue(IsVerticesEnabledProperty); }
 
-            set
-            {
-                SetValue(IsVerticesEnabledProperty, value);
-            }
+            set { this.SetValue(IsVerticesEnabledProperty, value); }
         }
 
         public Color OutgoingConnectionHighlightColor
         {
-            get
-            {
-                return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty);
-            }
+            get { return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty); }
+
+            set { this.SetValue(OutgoingConnectionHighlightColorProperty, value); }
+        }
+
+        public string SelectedGroup
+        {
+            get { return this.selectedGroup; }
 
             set
             {
-                this.SetValue(OutgoingConnectionHighlightColorProperty, value);
+                if (value.Equals(this.selectedGroup))
+                {
+                    return;
+                }
+
+                this.selectedGroup = value;
+                this.RaisePropertyChanged();
+
+                if (this.Graph.SelectedVertex != null)
+                {
+                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.SelectedVertex.Key);
+                }
+                else
+                {
+                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.GetHeaderVertexKey(this.SelectedGroup));
+                }
             }
         }
 
         public double ShapeOpacity
         {
-            get
-            {
-                return (double) this.GetValue(ShapeOpacityProperty);
-            }
+            get { return (double) this.GetValue(ShapeOpacityProperty); }
 
-            set
-            {
-                this.SetValue(ShapeOpacityProperty, value);
-            }
+            set { this.SetValue(ShapeOpacityProperty, value); }
         }
 
         public GraphControl()
         {
             InitializeComponent();
-            InitializeAutoSave();
+            this.InitializeAutoSave();
 
-            this.Loaded += GraphControl_Loaded;
+            this.Loaded += this.GraphControl_Loaded;
+        }
+
+        private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as GraphControl;
+
+            control.UpdateLayout(isAsync: false, isAutoFitDone: true);
+
+            if (control.IsAutoLayoutEnabled)
+            {
+                control.DisableVertexDragging();
+            }
+            else
+            {
+                control.EnableVertexDragging();
+            }
+        }
+
+        private static void ChangedAutoRunEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as GraphControl).Run();
         }
 
         private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as GraphControl;
 
-            if (control == null || control.Graph == null) return;
-
-            var oldGraph = e.OldValue as Common.Graph.Graph;
-
-            control.RaiseGraphChanged(e.NewValue as Common.Graph.Graph, oldGraph);
-
-            if (oldGraph != null)
+            if (control == null || control.Graph == null)
             {
-                oldGraph.PropertyChanged -= control.Graph_PropertyChanged;
+                return;
             }
 
-            control.Graph.PropertyChanged -= control.Graph_PropertyChanged;
-            control.Graph.PropertyChanged += control.Graph_PropertyChanged;
+            var oldGraph = e.OldValue as Marv.Graph;
+
+            control.RaiseGraphChanged(e.NewValue as Marv.Graph, oldGraph);
 
             if (control.Graph.Vertices.Count > 0)
             {
-                control.Graph.SelectedVertex = control.Graph.Vertices[0];
+                control.Graph.SelectedVertex = control.Graph.GetSinkVertex();
             }
-        }
 
-        public void AutoFit()
-        {
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(300)
-            };
-
-            timer.Tick += (o, e2) =>
-            {
-                this.DiagramPart.AutoFit();
-                timer.Stop();
-            };
-
-            timer.Start();
+            control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
         public void DisableConnectorEditing()
@@ -225,6 +267,19 @@ namespace Marv.Controls.Graph
             this.DiagramPart.IsManipulationAdornerVisible = false;
         }
 
+        public void DisableVertexDragging()
+        {
+            if (this.Graph == null)
+            {
+                return;
+            }
+
+            foreach (var vertex in this.Graph.Vertices)
+            {
+                vertex.IsDraggingEnabled = false;
+            }
+        }
+
         public void EnableConnectorEditing()
         {
             this.IsVerticesEnabled = false;
@@ -232,11 +287,11 @@ namespace Marv.Controls.Graph
             this.DiagramPart.IsManipulationAdornerVisible = true;
         }
 
-        public void Graph_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void EnableVertexDragging()
         {
-            if (e.PropertyName == "SelectedVertex")
+            foreach (var vertex in this.Graph.Vertices)
             {
-                this.RaiseSelectionChanged(this.Graph.SelectedVertex);
+                vertex.IsDraggingEnabled = true;
             }
         }
 
@@ -244,14 +299,33 @@ namespace Marv.Controls.Graph
         {
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(AutoSaveDuration)
+                Interval = TimeSpan.FromMilliseconds(this.AutoSaveDuration)
             };
 
             timer.Tick += (o, e2) =>
             {
                 if (this.IsAutoSaveEnabled && this.Graph != null)
                 {
-                    this.Graph.Write();
+                    try
+                    {
+                        this.Graph.Write();
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        var fileName = this.Graph.Network.FileName;
+
+                        var fileInfo = new FileInfo(fileName);
+
+                        var message = fileInfo.IsReadOnly ? "File is read only. Cannot save to " + fileName : "Cannot access " + fileName;
+
+                        var notification = new Notification
+                        {
+                            IsTimed = true,
+                            Description = message
+                        };
+
+                        this.RaiseNotificationOpened(notification);
+                    }
                 }
             };
 
@@ -260,17 +334,18 @@ namespace Marv.Controls.Graph
 
         public void Open(string fileName)
         {
-            this.Graph = Common.Graph.Graph.Read(fileName);
+            this.Graph = Marv.Graph.Read(fileName);
             this.Graph.Run();
         }
 
         public void Open()
         {
-            var openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Filter = "Network Files (.net)|*.net";
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.Multiselect = false;
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = @"Network Files|*.net|Binary Network Files|*.enet",
+                FilterIndex = 1,
+                Multiselect = false
+            };
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)
             {
@@ -280,112 +355,237 @@ namespace Marv.Controls.Graph
             this.Open(openFileDialog.FileName);
         }
 
-        public void RaiseGraphChanged(Common.Graph.Graph newGraph, Common.Graph.Graph oldGraph)
-        {
-            if (this.GraphChanged != null)
-            {
-                this.GraphChanged(this, new ValueChangedArgs<Common.Graph.Graph>
-                {
-                    NewValue = newGraph,
-                    OldValue = oldGraph
-                });
-            }
-        }
-
-        internal void RaiseEvidenceEntered(Vertex vertex = null)
+        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, vertex);
+                this.EvidenceEntered(this, vertexEvidence);
             }
         }
 
-        internal void RaiseSelectionChanged(Vertex vertex)
+        public void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
         {
-            if (this.SelectionChanged != null)
+            if (this.GraphChanged != null)
             {
-                this.SelectionChanged(this, vertex);
+                this.GraphChanged(this, newGraph, oldGraph);
             }
         }
 
-        internal void RaiseVertexCommandExecuted(Vertex vertex, Command<Vertex> command)
+        public void RaiseNotificationClosed(Notification notification)
         {
-            if (this.VertexCommandExecuted != null)
+            if (this.NotificationClosed != null)
             {
-                this.VertexCommandExecuted(this, new VertexCommandArgs
+                this.NotificationClosed(this, notification);
+            }
+        }
+
+        public void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
+            }
+        }
+
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void UpdateDisplayGraph(string group, string vertexKey = null)
+        {
+            if (vertexKey == null)
+            {
+                vertexKey = this.DisplayVertexKey;
+            }
+
+            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
+            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
+
+            this.DisplayVertexKey = vertexKey;
+        }
+
+        public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
+        {
+            if (this.IsAutoLayoutEnabled)
+            {
+                if (isAutoFitDone)
                 {
-                    Command = command,
-                    Vertex = vertex
-                });
+                    this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
+                    this.DiagramPart.DiagramLayoutComplete += this.DiagramPart_DiagramLayoutComplete;
+                }
+
+                var sugiyamaSettings = new SugiyamaSettings
+                {
+                    AnimateTransitions = true,
+                    Orientation = Orientation.Vertical,
+                    VerticalDistance = 128,
+                    HorizontalDistance = 128,
+                    ComponentMargin = new Size(128, 128)
+                };
+
+                if (isAsync)
+                {
+                    this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
+                }
+                else
+                {
+                    this.DiagramPart.Layout(LayoutType.Sugiyama, sugiyamaSettings);
+                }
+
+                this.DiagramPart.InvalidateVisual();
             }
+            else
+            {
+                if (isAutoFitDone)
+                {
+                    this.DiagramPart.AutoFitAsync(new Thickness(10));
+                }
+            }
+        }
+
+        public void WriteEvidences(string filePath)
+        {
+            if (Path.GetExtension(filePath) == ".hcs")
+            {
+                this.Graph.Evidence.WriteHcs(filePath);
+                return;
+            }
+
+            this.Graph.Evidence.WriteJson(filePath);
         }
 
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
-            this.AutoFit();
+            this.DiagramPart.AutoFit(new Thickness(10));
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.UpdateDisplayGraph(this.Graph.DefaultGroup);
+            this.SelectedGroup = this.Graph.DefaultGroup;
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Vertices.ClearEvidence();
+            this.Graph.Evidence = null;
             this.RaiseEvidenceEntered();
+        }
+
+        private void ConnectorButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.EnableConnectorEditing();
+        }
+
+        private void ConnectorButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.DisableConnectorEditing();
         }
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.DisplayGraph.IsExpanded = !this.Graph.DisplayGraph.IsMostlyExpanded;
+            this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
+            this.UpdateLayout();
+        }
+
+        private void GraphControl_EvidenceEntered(object sender, VertexEvidence e)
+        {
+            this.Run();
         }
 
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AutoFitButton.Click -= AutoFitButton_Click;
-            this.AutoFitButton.Click += AutoFitButton_Click;
+            this.EvidenceEntered -= this.GraphControl_EvidenceEntered;
+            this.EvidenceEntered += this.GraphControl_EvidenceEntered;
 
-            this.BackButton.Click -= BackButton_Click;
-            this.BackButton.Click += BackButton_Click;
+            // All the buttons
+            this.AutoFitButton.Click -= this.AutoFitButton_Click;
+            this.AutoFitButton.Click += this.AutoFitButton_Click;
+
+            this.BackButton.Click -= this.BackButton_Click;
+            this.BackButton.Click += this.BackButton_Click;
 
             this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
 
-            this.ExpandButton.Click -= ExpandButton_Click;
-            this.ExpandButton.Click += ExpandButton_Click;
+            this.ConnectorButton.Checked -= ConnectorButton_Checked;
+            this.ConnectorButton.Checked += ConnectorButton_Checked;
 
-            this.RunButton.Click -= RunButton_Click;
-            this.RunButton.Click += RunButton_Click;
+            this.ConnectorButton.Unchecked -= ConnectorButton_Unchecked;
+            this.ConnectorButton.Unchecked += ConnectorButton_Unchecked;
 
-            this.OpenNetworkButton.Click -= OpenNetworkButton_Click;
-            this.OpenNetworkButton.Click += OpenNetworkButton_Click;
+            this.ExpandButton.Click -= this.ExpandButton_Click;
+            this.ExpandButton.Click += this.ExpandButton_Click;
 
-            this.SaveNetworkButton.Click -= SaveNetworkButton_Click;
-            this.SaveNetworkButton.Click += SaveNetworkButton_Click;
+            this.OpenButton.Click -= this.OpenButton_Click;
+            this.OpenButton.Click += this.OpenButton_Click;
+
+            this.SaveButton.Click -= this.SaveButton_Click;
+            this.SaveButton.Click += this.SaveButton_Click;
+
+            // Other controls
+            this.DiagramPart.CommandExecuted -= DiagramPart_CommandExecuted;
+            this.DiagramPart.CommandExecuted += DiagramPart_CommandExecuted;
+
+            this.DiagramPart.ConnectionManipulationCompleted -= DiagramPart_ConnectionManipulationCompleted;
+            this.DiagramPart.ConnectionManipulationCompleted += DiagramPart_ConnectionManipulationCompleted;
+
+            this.DiagramPart.ConnectionManipulationStarted -= DiagramPart_ConnectionManipulationStarted;
+            this.DiagramPart.ConnectionManipulationStarted += DiagramPart_ConnectionManipulationStarted;
+
+            this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
+            this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
+
+            this.DiagramPart.ShapeClicked -= DiagramPart_ShapeClicked;
+            this.DiagramPart.ShapeClicked += DiagramPart_ShapeClicked;
         }
 
-        private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             this.Open();
         }
 
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private void Run()
         {
-            this.Graph.Run();
+            if (this.IsAutoRunEnabled && this.Graph != null)
+            {
+                Console.WriteLine("Running...");
+                this.Graph.Run();
+                Console.WriteLine("Run");
+            }
         }
 
-        private void SaveNetworkButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Write();
         }
 
-        public event EventHandler<Vertex> EvidenceEntered;
+        private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new SaveFileDialog
+            {
+                Filter = @"Hugin Case|*.hcs|MARV Network Evidence|*.marv-networkevidence",
+                FilterIndex = 1,
+            };
 
-        public event EventHandler<VertexCommandArgs> VertexCommandExecuted;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
 
-        public event EventHandler<Vertex> SelectionChanged;
+            this.WriteEvidences(openFileDialog.FileName);
+        }
 
-        public event EventHandler<ValueChangedArgs<Common.Graph.Graph>> GraphChanged;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
+
+        public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<Notification> NotificationOpened;
+
+        public event EventHandler<Notification> NotificationClosed;
     }
 }

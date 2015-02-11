@@ -4,7 +4,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:Marv.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:surface="http://schemas.microsoft.com/surface/2008"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d"
@@ -12,18 +11,18 @@
              d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+        <ResourceDictionary Source="/ResourceDictionary.xaml" />
     </UserControl.Resources>
 
     <!-- Notification Listbox -->
-    <surface:SurfaceListBox Background="LightGray"
-                            HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding Notifications, ElementName=Root}"
-                            ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                            Visibility="{Binding ElementName=Root, Path=Notifications.Count, Converter={StaticResource IntToVisibility}}">
-        <surface:SurfaceListBox.ItemContainerStyle>
-            <Style TargetType="{x:Type surface:SurfaceListBoxItem}">
+    <ListBox Background="LightGray"
+             HorizontalContentAlignment="Stretch"
+             ItemsSource="{Binding Notifications, ElementName=Root}"
+             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             Visibility="{Binding ElementName=Root, Path=Notifications.Count, Converter={StaticResource IntToVisibility}}">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
                 <Style.Triggers>
                     <EventTrigger RoutedEvent="Loaded">
                         <EventTrigger.Actions>
@@ -49,9 +48,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-        </surface:SurfaceListBox.ItemContainerStyle>
+        </ListBox.ItemContainerStyle>
 
-        <surface:SurfaceListBox.ItemTemplate>
+        <ListBox.ItemTemplate>
             <DataTemplate>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -67,7 +66,7 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="30" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- Title -->
                         <TextBlock Name="TextBlock"
                                    Grid.Column="0"
@@ -118,6 +117,6 @@
                               Visibility="{Binding IsMuteable, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
-        </surface:SurfaceListBox.ItemTemplate>
-    </surface:SurfaceListBox>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

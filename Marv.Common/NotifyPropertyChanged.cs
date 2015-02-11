@@ -5,14 +5,14 @@ namespace Marv.Common
 {
     public class NotifyPropertyChanged : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null && propertyName.Length > 0)
+            if (this.PropertyChanged != null && propertyName.Length > 0)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

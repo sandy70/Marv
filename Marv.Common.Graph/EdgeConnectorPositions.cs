@@ -1,6 +1,8 @@
-﻿namespace Marv.Common.Graph
+﻿using Marv.Common;
+
+namespace Marv
 {
-    public class EdgeConnectorPositions : Model
+    public class EdgeConnectorPositions : NotifyPropertyChanged
     {
         private string sourcePosition = "Auto";
         private string targetPosition = "Auto";
@@ -17,7 +19,7 @@
                 if (value != this.sourcePosition)
                 {
                     this.sourcePosition = value;
-                    this.RaisePropertyChanged("SourcePosition");
+                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -34,7 +36,7 @@
                 if (value != this.targetPosition)
                 {
                     this.targetPosition = value;
-                    this.RaisePropertyChanged("TargetPosition");
+                    this.RaisePropertyChanged();
                 }
             }
         }

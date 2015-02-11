@@ -1,33 +1,43 @@
-﻿using System.Collections.Generic;
-using System.Windows.Media;
-using Marv.Common.Map;
+﻿using System.Windows.Media;
+using Marv.Common;
 
 namespace Marv.Controls.Map
 {
-    public class LocationCollectionViewModel : LocationCollection
+    public class LocationCollectionViewModel : NotifyPropertyChanged
     {
+        private LocationCollection locations;
         private Brush stroke;
 
-        public Brush Stroke
+        public LocationCollection Locations
         {
-            get
-            {
-                return this.stroke;
-            }
+            get { return this.locations; }
 
             set
             {
-                if (value != this.stroke)
+                if (value.Equals(this.locations))
                 {
-                    this.stroke = value;
-                    this.RaisePropertyChanged("Stroke");
+                    return;
                 }
+
+                this.locations = value;
+                this.RaisePropertyChanged();
             }
         }
 
-        public LocationCollectionViewModel(IEnumerable<Location> locations): base(locations)
+        public Brush Stroke
         {
-            
+            get { return this.stroke; }
+
+            set
+            {
+                if (value.Equals(this.stroke))
+                {
+                    return;
+                }
+
+                this.stroke = value;
+                this.RaisePropertyChanged();
+            }
         }
     }
 }

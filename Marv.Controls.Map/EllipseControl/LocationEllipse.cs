@@ -1,41 +1,34 @@
 ﻿using Marv.Common;
-using Marv.Common.Map;
 
 namespace Marv.Controls.Map
 {
-    public class LocationEllipse : Model
+    public class LocationEllipse : NotifyPropertyChanged
     {
         private Location center;
         private double radius;
 
         public Location Center
         {
-            get
-            {
-                return this.center;
-            }
+            get { return this.center; }
 
             set
             {
                 if (value != this.center)
                 {
                     this.center = value;
-                    this.RaisePropertyChanged("Center");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
         public double Radius
         {
-            get
-            {
-                return this.radius;
-            }
+            get { return this.radius; }
 
             set
             {
                 this.radius = value;
-                this.RaisePropertyChanged("Radius");
+                this.RaisePropertyChanged();
             }
         }
     }

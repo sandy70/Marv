@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using AddinExpress.XL;
-using Marv.Common.Graph;
+using Marv;
 
 namespace Marv_Excel
 {

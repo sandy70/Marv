@@ -36,3 +36,4 @@ using System.Windows.Markup;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: XmlnsDefinition("http://dnvgl.com/marv", "Marv.Controls")]
+[assembly: XmlnsDefinition("http://dnvgl.com/marv", "Marv.Controls.Converters")]

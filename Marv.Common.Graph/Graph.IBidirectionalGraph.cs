@@ -2,40 +2,28 @@
 using System.Linq;
 using QuickGraph;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
     public partial class Graph : IBidirectionalGraph<Vertex, Edge>
     {
         public bool AllowParallelEdges
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public int EdgeCount
         {
-            get
-            {
-                return this.Edges.Count;
-            }
+            get { return this.Edges.Count; }
         }
 
         IEnumerable<Edge> IEdgeSet<Vertex, Edge>.Edges
         {
-            get
-            {
-                return this.Edges;
-            }
+            get { return this.Edges; }
         }
 
         public bool IsDirected
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public bool IsEdgesEmpty
@@ -62,25 +50,19 @@ namespace Marv.Common.Graph
             }
         }
 
-        IEnumerable<Vertex> IVertexSet<Vertex>.Vertices
-        {
-            get
-            {
-                return this.Vertices;
-            }
-        }
-
         public int VertexCount
         {
-            get
-            {
-                return this.Vertices.Count;
-            }
+            get { return this.Vertices.Count; }
+        }
+
+        IEnumerable<Vertex> IVertexSet<Vertex>.Vertices
+        {
+            get { return this.Vertices; }
         }
 
         public bool ContainsEdge(Vertex source, Vertex target)
         {
-            return this.Edges.Contains(source, target);
+            return this.Edges.Any(edge => edge.Source == source && edge.Target == target);
         }
 
         public bool ContainsEdge(Edge edge)
@@ -95,12 +77,12 @@ namespace Marv.Common.Graph
 
         public int Degree(Vertex vertex)
         {
-            return this.Edges.Where(edge => edge.Source == vertex || edge.Target == vertex).Count();
+            return this.Edges.Count(edge => edge.Source == vertex || edge.Target == vertex);
         }
 
         public int InDegree(Vertex vertex)
         {
-            return this.Edges.Where(edge => edge.Target == vertex).Count();
+            return this.Edges.Count(edge => edge.Target == vertex);
         }
 
         public Edge InEdge(Vertex vertex, int index)
@@ -115,36 +97,17 @@ namespace Marv.Common.Graph
 
         public bool IsInEdgesEmpty(Vertex vertex)
         {
-            if (this.InEdges(vertex).Count() == 0)
-            {
-                return true;
-            }
-            return false;
+            return !this.InEdges(vertex).Any();
         }
 
         public bool IsOutEdgesEmpty(Vertex vertex)
         {
-            if (this.OutDegree(vertex) > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return this.OutDegree(vertex) == 0;
         }
 
         public int OutDegree(Vertex vertex)
         {
-            var outDegree = 0;
-
-            foreach (var edge in this.Edges)
-            {
-                if (edge.Source == vertex)
-                {
-                    outDegree++;
-                }
-            }
-
-            return outDegree;
+            return this.Edges.Count(edge => edge.Source == vertex);
         }
 
         public Edge OutEdge(Vertex vertex, int index)
@@ -174,45 +137,26 @@ namespace Marv.Common.Graph
 
         public bool TryGetEdges(Vertex source, Vertex target, out IEnumerable<Edge> outEdges)
         {
-            var foundEdges = new List<Edge>();
-
-            foreach (var edge in this.Edges)
-            {
-                if (edge.Source == source && edge.Target == target)
-                {
-                    foundEdges.Add(edge);
-                }
-            }
+            var foundEdges = this.Edges.Where(edge => edge.Source == source && edge.Target == target).ToList();
 
             if (foundEdges.Count > 0)
             {
                 outEdges = foundEdges;
                 return true;
             }
+
             outEdges = null;
             return false;
         }
 
         public bool TryGetInEdges(Vertex vertex, out IEnumerable<Edge> edges)
         {
-            edges = this.InEdges(vertex);
-
-            if (edges.Count() > 0)
-            {
-                return true;
-            }
-            return false;
+            return (edges = this.InEdges(vertex)).Any();
         }
 
         public bool TryGetOutEdges(Vertex vertex, out IEnumerable<Edge> outEdges)
         {
-            outEdges = this.Edges.Where(edge => edge.Source == vertex);
-
-            if (outEdges.Count() > 0)
-            {
-                return true;
-            }
-            return false;
+            return (outEdges = this.Edges.Where(edge => edge.Source == vertex)).Any();
         }
     }
 }

@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Marv.Controls.Map</RootNamespace>
     <AssemblyName>Marv.Controls.Map</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,19 +38,16 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageFileCache, Version=1.12.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="ImageFileCache.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.1.12.0\lib\net45\ImageFileCache.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\ImageFileCache.WPF.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WPF, Version=1.12.0.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="MapControl.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.1.12.0\lib\net45\MapControl.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -69,12 +67,12 @@
     <Compile Include="EllipseControl\LocationEllipse.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IDoubleToBrushMap.cs" />
-    <Compile Include="MapView\MapView.cs" />
-    <Compile Include="MapView\MapViewBehavior.cs" />
-    <Compile Include="PolylineControl\PolylineControl.xaml.cs">
+    <Compile Include="MapTransform.cs" />
+    <Compile Include="MapView.cs" />
+    <Compile Include="PolylineControl.Cursor.cs" />
+    <Compile Include="PolylineControl.xaml.cs">
       <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PolylineControl\PolylineControlBehavior.cs" />
     <Compile Include="SegmentedPolylineControl\LocationCollectionViewModel.cs" />
     <Compile Include="SegmentedPolylineControl\MapPoylineBehavior.cs" />
     <Compile Include="SegmentedPolylineControl\PolylineControlBase.cs" />
@@ -95,7 +93,7 @@
       <DependentUpon>SegmentedPolylineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="SegmentedPolylineControl\SegmentedPolylineControlBehavior.cs" />
-    <Compile Include="MapView\TileLayers.cs" />
+    <Compile Include="TileLayers.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -108,13 +106,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marv.Common.Map\Marv.Common.Map.csproj">
-      <Project>{0093c28f-0446-4340-8ec0-9733edc73ad3}</Project>
-      <Name>Marv.Common.Map</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Marv.Controls\Marv.Controls.csproj">
+      <Project>{37506e1a-457b-4186-8c4f-11ba0e7aa78e}</Project>
+      <Name>Marv.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +120,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PolylineControl\PolylineControl.xaml">
+    <Page Include="PolylineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -131,6 +129,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

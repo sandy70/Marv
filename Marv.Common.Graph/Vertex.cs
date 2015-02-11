@@ -5,53 +5,47 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using MoreLinq;
+using Marv.Common;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
-    public class Vertex : Model
+    public class Vertex : NotifyPropertyChanged, IKeyed
     {
-        private ObservableCollection<Command<Vertex>> commands = new ObservableCollection<Command<Vertex>>
-        {
-            VertexCommands.Expand,
-            VertexCommands.Lock,
-            VertexCommands.Clear
-        };
-
-        private Dictionary<string, string, EdgeConnectorPositions> connectorPositions = new Dictionary<string, string, EdgeConnectorPositions>();
+        private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
         private string evidenceString;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
         private string inputVertexKey;
+        private bool isDraggingEnabled = true;
         private bool isExpanded;
         private bool isHeader;
         private bool isLocked = true;
+        private bool isSelected;
+        private string key;
         private State mostProbableState;
+        private string name;
         private Point position;
-        private Dictionary<string, Point> positionsForGroup = new Dictionary<string, Point>();
+        private Dict<string, Point> positionsForGroup = new Dict<string, Point>();
         private string selectedGroup;
-        private ModelCollection<State> states;
+        private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.Labelled;
         private string units = "";
 
-        public ObservableCollection<Command<Vertex>> Commands
+        public double[] Belief
         {
-            get { return this.commands; }
+            get { return this.States.Select(state => state.Belief).ToArray(); }
 
             set
             {
-                if (value != this.commands)
-                {
-                    this.commands = value;
-                    this.RaisePropertyChanged();
-                }
+                this.States.ForEach((state, i) => state.Belief = value == null ? 0 : value[i]);
+                this.RaisePropertyChanged();
             }
         }
 
         // Dictionary<group, targetVertexKey, EdgeConnectorPositions>
-        public Dictionary<string, string, EdgeConnectorPositions> ConnectorPositions
+        public Dict<string, string, EdgeConnectorPositions> ConnectorPositions
         {
             get { return this.connectorPositions; }
 
@@ -85,7 +79,10 @@ namespace Marv.Common.Graph
 
             set
             {
-                if (value == this.displayPosition) return;
+                if (value == this.displayPosition)
+                {
+                    return;
+                }
 
                 this.displayPosition = value;
                 this.RaisePropertyChanged();
@@ -94,6 +91,17 @@ namespace Marv.Common.Graph
                 {
                     this.PositionForGroup[this.SelectedGroup] = this.DisplayPosition;
                 }
+            }
+        }
+
+        public double[] Evidence
+        {
+            get { return this.States.Select(state => state.Evidence).ToArray(); }
+
+            set
+            {
+                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value[i]);
+                this.RaisePropertyChanged();
             }
         }
 
@@ -122,6 +130,7 @@ namespace Marv.Common.Graph
         public string HeaderOfGroup
         {
             get { return this.headerOfGroup; }
+
             set
             {
                 this.headerOfGroup = value;
@@ -155,6 +164,22 @@ namespace Marv.Common.Graph
                     this.inputVertexKey = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public bool IsDraggingEnabled
+        {
+            get { return this.isDraggingEnabled; }
+
+            set
+            {
+                if (value.Equals(this.isDraggingEnabled))
+                {
+                    return;
+                }
+
+                this.isDraggingEnabled = value;
+                this.RaisePropertyChanged();
             }
         }
 
@@ -202,14 +227,59 @@ namespace Marv.Common.Graph
 
                 if (this.IsLocked == false)
                 {
+                    this.IsDraggingEnabled = false;
                     this.IsExpanded = true;
+                }
+                else
+                {
+                    this.IsDraggingEnabled = true;
                 }
             }
         }
 
         public bool IsLogScale
         {
-            get { return this.States.All(state => Math.Abs(state.Max - state.Min * 10) < Utils.Epsilon); }
+            get
+            {
+                // Use Math.Abs here so that negative numbers work.
+                return this.States.Any(state =>
+                {
+                    var scale = Math.Abs(state.Max) / Math.Abs(state.Min);
+                    return state.Min != 0 && (scale < 0.1 || 10 < scale);
+                });
+            }
+        }
+
+        public bool IsSelected
+        {
+            get { return this.isSelected; }
+
+            set
+            {
+                if (value.Equals(this.isSelected))
+                {
+                    return;
+                }
+
+                this.isSelected = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string Key
+        {
+            get { return this.key; }
+
+            set
+            {
+                if (value.Equals(this.key))
+                {
+                    return;
+                }
+
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public State MostProbableState
@@ -223,6 +293,22 @@ namespace Marv.Common.Graph
                     this.mostProbableState = value;
                     this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public string Name
+        {
+            get { return this.name; }
+
+            set
+            {
+                if (value.Equals(this.name))
+                {
+                    return;
+                }
+
+                this.name = value;
+                this.RaisePropertyChanged();
             }
         }
 
@@ -240,7 +326,7 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Dictionary<string, Point> PositionForGroup
+        public Dict<string, Point> PositionForGroup
         {
             get { return this.positionsForGroup; }
 
@@ -252,6 +338,16 @@ namespace Marv.Common.Graph
                     this.RaisePropertyChanged();
                 }
             }
+        }
+
+        public double SafeMax
+        {
+            get { return this.States.Max(state => state.SafeMax); }
+        }
+
+        public double SafeMin
+        {
+            get { return this.States.Min(state => state.SafeMin); }
         }
 
         public string SelectedGroup
@@ -268,7 +364,7 @@ namespace Marv.Common.Graph
             }
         }
 
-        public ModelCollection<State> States
+        public ObservableCollection<State> States
         {
             get { return this.states; }
 
@@ -287,7 +383,10 @@ namespace Marv.Common.Graph
                 this.states = value;
                 this.RaisePropertyChanged();
 
-                if (this.States == null) return;
+                if (this.States == null)
+                {
+                    return;
+                }
 
                 this.States.CollectionChanged += this.States_CollectionChanged;
 
@@ -326,20 +425,25 @@ namespace Marv.Common.Graph
             }
         }
 
-        public VertexEvidence GetEvidence()
+        public void ClearEvidence()
         {
-            return new VertexEvidence
+            foreach (var state in this.States)
             {
-                Beliefs = this.States.GetBelief().ToArray(),
-                String = this.EvidenceString,
-                Values = this.States.GetEvidence().ToArray()
-            };
+                state.Evidence = 0;
+            }
         }
 
-        // Do not remove! This is for Marv.Matlab
-        public double[] GetValue()
+        public void Normalize()
         {
-            return this.States.Select(state => state.Belief).ToArray();
+            this.Evidence = this.Evidence.Normalized().ToArray();
+        }
+
+        public void SetEvidence(State aState)
+        {
+            foreach (var state in this.States)
+            {
+                state.Evidence = state == aState ? 1 : 0;
+            }
         }
 
         public override string ToString()
@@ -349,17 +453,12 @@ namespace Marv.Common.Graph
 
         public void UpdateEvidenceString()
         {
-            this.EvidenceString = this.IsEvidenceEntered ? this.States.Select(state => state.Evidence).String("{0:F2}") : null;
+            this.EvidenceString = this.Evidence.Sum() > 0 ? this.Evidence.String("{0:F2}") : null;
         }
 
         public void UpdateMostProbableState()
         {
             this.MostProbableState = this.States.MaxBy(state => state.Belief);
-        }
-
-        public void UpdateStateEvidences()
-        {
-            this.States.SetEvidence(this.EvidenceString);
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

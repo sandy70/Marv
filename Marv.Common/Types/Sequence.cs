@@ -3,34 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common
+namespace Marv
 {
     public class Sequence<T> : IEnumerable<T> where T : IComparable<T>
     {
-        private List<T> list = new List<T>();
+        private readonly List<T> list = new List<T>();
 
         public int Count
         {
-            get
-            {
-                return this.list.Count;
-            }
+            get { return this.list.Count; }
         }
 
         public T Max
         {
-            get
-            {
-                return this.list.Last();
-            }
+            get { return this.list.Last(); }
         }
 
         public T Min
         {
-            get
-            {
-                return this.list.First();
-            }
+            get { return this.list.First(); }
         }
 
         public void Add(T item)

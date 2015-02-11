@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows.Interactivity;
-using Marv.Common;
-using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
 {
@@ -10,20 +8,23 @@ namespace Marv.Controls.Graph
         protected override void OnAttached()
         {
             base.OnAttached();
+
+            this.AssociatedObject.ValueEntered -= AssociatedObject_ValueEntered;
             this.AssociatedObject.ValueEntered += AssociatedObject_ValueEntered;
         }
 
         private void AssociatedObject_ValueEntered(object sender, double e)
         {
-            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
+            var vertexControl = this.AssociatedObject.GetParent<VertexControl>();
 
-            if (Math.Abs(e - 100) < Utils.Epsilon)
+            if (Math.Abs(e - 100) < Common.Utils.Epsilon)
             {
-                vertexControl.Vertex.States.SetEvidence(this.AssociatedObject.DataContext as State);
+                vertexControl.Vertex.SetEvidence(this.AssociatedObject.DataContext as State);
             }
 
-            vertexControl.Vertex.States.SetEvidence(vertexControl.Vertex.States.GetEvidence().Normalized());
+            vertexControl.Vertex.Normalize();
             vertexControl.Vertex.UpdateEvidenceString();
+
             vertexControl.RaiseEvidenceEntered();
         }
     }

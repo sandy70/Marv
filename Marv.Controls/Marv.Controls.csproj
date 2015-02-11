@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Marv.Controls</RootNamespace>
     <AssemblyName>Marv.Controls</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -31,13 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Surface.Presentation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="ImageFileCache.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Surface\Microsoft.Surface.Presentation.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\ImageFileCache.WPF.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+    <Reference Include="MapControl.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -49,34 +49,45 @@
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="Telerik.Windows.Controls, Version=2014.2.729.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2014.2.729.45\Telerik.Windows.Controls.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls, Version=2014.3.1202.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2014.3.1202.45\Telerik.Windows.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Chart, Version=2014.2.729.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2014.2.729.45\Telerik.Windows.Controls.Chart.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Chart, Version=2014.3.1202.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2014.3.1202.45\Telerik.Windows.Controls.Chart.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Controls.Input, Version=2014.2.729.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2014.2.729.45\Telerik.Windows.Controls.Input.dll</HintPath>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2014.3.1202.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2014.3.1202.45\Telerik.Windows.Controls.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Windows.Data, Version=2014.2.729.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2014.2.729.45\Telerik.Windows.Data.dll</HintPath>
+    <Reference Include="Telerik.Windows.Data, Version=2014.3.1202.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2014.3.1202.45\Telerik.Windows.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartAxes.cs" />
-    <Compile Include="ChartSeries.cs" />
-    <Compile Include="ChartSeriesDescriptorSelector.cs" />
-    <Compile Include="EditableTextBox\EditableTextBox.xaml.cs">
+    <Compile Include="Converters\BooleanNotConverter.cs" />
+    <Compile Include="Converters\BooleanToBrushConverter.cs" />
+    <Compile Include="Converters\BooleanToColorConverter.cs" />
+    <Compile Include="Converters\BooleanToStringConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DecimalPercentalConverter.cs" />
+    <Compile Include="Converters\DecimalToPercentageConverter.cs" />
+    <Compile Include="Converters\DoubleToBrushConverter.cs" />
+    <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
+    <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
+    <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
+    <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Converters\LocationCollectionConverter.cs" />
+    <Compile Include="Converters\LocationConverter.cs" />
+    <Compile Include="Converters\NullToBooleanConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FileBrowseControl\FileBrowseControl.xaml.cs">
-      <DependentUpon>FileBrowseControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Extensions.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
@@ -84,30 +95,26 @@
     <Compile Include="PasswordInput.xaml.cs">
       <DependentUpon>PasswordInput.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PopupControl\PopupControl.xaml.cs">
+    <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SliderProgressBar\ProgressBarBehavior.cs" />
-    <Compile Include="SliderProgressBar\SliderProgressBar.xaml.cs">
+    <Compile Include="SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SurfaceImageButton\SurfaceImageButton.xaml.cs">
-      <DependentUpon>SurfaceImageButton.xaml</DependentUpon>
+    <Compile Include="StatusControl.xaml.cs">
+      <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControInner.xaml.cs">
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="EditableTextBox\EditableTextBox.xaml">
+    <Page Include="EditableTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="FileBrowseControl\FileBrowseControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NotificationControl\NotificationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -117,17 +124,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PopupControl\PopupControl.xaml">
+    <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SliderProgressBar\SliderProgressBar.xaml">
+    <Resource Include="ResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Page Include="SliderProgressBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SurfaceImageButton\SurfaceImageButton.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="StatusControl.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="TransitionControl\TransitionControInner.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -144,12 +155,8 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

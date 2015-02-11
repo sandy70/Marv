@@ -4,11 +4,11 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Marv.Common
+namespace Marv
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
-        private readonly Dictionary<string, object> dictionary = new Dictionary<string, object>();
+        private readonly Dict<string, object> dictionary = new Dict<string, object>();
 
         public object this[string name]
         {
@@ -37,11 +37,14 @@ namespace Marv.Common
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return this.dictionary.Keys.AsEnumerable();
+            return this.dictionary.Keys;
+        }
+
+        public void Remove(string propertyName)
+        {
+            this.dictionary.Remove(propertyName);
         }
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
@@ -106,5 +109,7 @@ namespace Marv.Common
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

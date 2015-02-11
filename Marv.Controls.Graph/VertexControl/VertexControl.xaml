@@ -11,7 +11,7 @@
     <StackPanel.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Marv.Common;component/ResourceDictionary.xaml" />
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <marv:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />
@@ -43,14 +43,13 @@
     <ItemsControl Name="StatesControl"
                   ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=IsStatesVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                  Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="One" Width="*" />
-                        <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-                        <ColumnDefinition SharedSizeGroup="Three" Width="*" />
+                        <ColumnDefinition SharedSizeGroup="One" />
+                        <ColumnDefinition SharedSizeGroup="Two" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -66,7 +65,7 @@
                                             IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
                                             Margin="0"
                                             SliderForeground="YellowGreen"
-                                            Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                            Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                             Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}">
                         <i:Interaction.Behaviors>
                             <local:SliderProgressBarBehavior />
@@ -82,25 +81,7 @@
                                             Margin="0,0,0,3"
                                             SliderForeground="#20aeff"
                                             Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                            Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}">
-                        <i:Interaction.Behaviors>
-                            <local:SliderProgressBarBehavior />
-                        </i:Interaction.Behaviors>
-                    </marv:SliderProgressBar>
-
-                    <telerik:RadMaskedNumericInput Grid.Column="2"
-                                                   HorizontalContentAlignment="Right"
-                                                   Margin="1"
-                                                   Mask="#3.2"
-                                                   Placeholder=" "
-                                                   TextMode="PlainText"
-                                                   UpdateValueEvent="PropertyChanged"
-                                                   Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
-                        <i:Interaction.Behaviors>
-                            <local:MaskedNumericInputBehavior />
-                        </i:Interaction.Behaviors>
-                    </telerik:RadMaskedNumericInput>
+                                            Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -108,10 +89,10 @@
 
     <!-- Most Probable State -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=IsMostProbableStateVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+          Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
@@ -125,39 +106,18 @@
                                 Margin="1"
                                 SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
                                 Width="Auto"
-                                Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}">
-            <i:Interaction.Behaviors>
-                <local:SliderProgressBarBehavior />
-            </i:Interaction.Behaviors>
-        </marv:SliderProgressBar>
+                                Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
     </Grid>
 
     <!-- Input -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
           Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Three" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Column="0"
-                   FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                   FontWeight="Bold"
-                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                   Text="Belief"
-                   TextAlignment="Right"
-                   VerticalAlignment="Center" />
-
-        <TextBox Name="EvidenceStringTextBox"
-                 Grid.Column="1"
-                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                 Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center" />
-
-        <Grid Grid.Column="2">
+        
+        <Grid Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -181,13 +141,22 @@
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                Margin="{Binding Source={StaticResource MarginSmallest}}" />
         </Grid>
+
+        <TextBox Name="EvidenceStringTextBox"
+                 Grid.Column="1"
+                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
+                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
+                 Margin="{Binding Source={StaticResource MarginSmallest}}"
+                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
+                 VerticalAlignment="Center"
+                 MaxWidth="200" />
     </Grid>
 
     <!-- Units -->
     <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" Width="*" />
-            <ColumnDefinition SharedSizeGroup="Two" Width="*" />
+            <ColumnDefinition SharedSizeGroup="One" />
+            <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
@@ -209,13 +178,13 @@
     <marv:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
                           Margin="{Binding Source={StaticResource MarginSmall}}"
                           Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
-                          Visibility="{Binding ElementName=Root, Path=Vertex.IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
+                          Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                           Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 
     <!-- Toolbar -->
-    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Vertex.Commands}"
+    <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Commands}"
                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=IsToolbarVisible, Converter={StaticResource ResourceKey=BooleanToVisibility}}">
+                  Visibility="Collapsed">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <StackPanel HorizontalAlignment="Center"
@@ -226,7 +195,7 @@
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <telerik:RadButton Background="{StaticResource BackgroundDark}"
-                                   Height="40" Width="40"
+                                   Height="32" Width="32"
                                    Margin="{Binding Source={StaticResource MarginSmallest}}"
                                    Padding="0">
                     <Image Source="{Binding ImageSource}" />
@@ -237,5 +206,50 @@
                 </telerik:RadButton>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
+        
+        <ItemsControl.Style>
+            <Style TargetType="ItemsControl">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ElementName=Root, Path=IsToolbarVisible}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard >
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:0"
+                                                                Value="{x:Static Visibility.Visible}" />
+                                    </ObjectAnimationUsingKeyFrames>
+
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     From="0"
+                                                     Duration="0:0:.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+
+                        <DataTrigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                     To="0"
+                                                     Duration="0:0:.2" />
+
+                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                        <DiscreteObjectKeyFrame KeyTime="0:0:.2"
+                                                                Value="{x:Static Visibility.Collapsed}" />
+                                    </ObjectAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <ScaleTransform x:Name="transform" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ItemsControl.Style>
     </ItemsControl>
 </StackPanel>

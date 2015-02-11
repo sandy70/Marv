@@ -7,10 +7,11 @@
     <ProjectGuid>{5EC15F8C-655C-4A46-A4CF-7AF1EAC94376}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Marv.Common.Graph</RootNamespace>
+    <RootNamespace>Marv</RootNamespace>
     <AssemblyName>Marv.Common.Graph</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,64 +32,55 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Marv.Common.Graph.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MoreLinq, Version=1.0.16006.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\morelinq.1.0.16006\lib\net35\MoreLinq.dll</HintPath>
+    <Reference Include="Marv.Smile.x64">
+      <HintPath>..\packages\Smile\x64\Marv.Smile.x64.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="SmileNet">
-      <HintPath>..\packages\Smile\x86\SmileNet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2014.2.617.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+    <Reference Include="System.Xaml" />
+    <Reference Include="Telerik.Windows.Diagrams.Core, Version=2014.3.1021.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\RCWPF\2014.2.729.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
+      <HintPath>..\lib\RCWPF\2014.3.1021.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.State.cs" />
-    <Compile Include="Extensions.Vertex.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Extensions\Extensions.State.cs" />
+    <Compile Include="Extensions\Extensions.Vertex.cs" />
+    <Compile Include="InvalidEvidenceException.cs" />
+    <Compile Include="LineData\FolderLineData.cs" />
+    <Compile Include="LineData\ILineData.cs" />
+    <Compile Include="LineData\LineData.cs" />
+    <Compile Include="Network.cs" />
+    <Compile Include="SectionBelief.cs" />
     <Compile Include="SectionEvidence.cs" />
-    <Compile Include="VertexClearCommand.cs" />
     <Compile Include="VertexEvidence.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
-    <Compile Include="VertexCommandArgs.cs" />
-    <Compile Include="VertexCommand\VertexCommands.cs" />
-    <Compile Include="VertexCommand\VertexExpandCommand.cs" />
-    <Compile Include="VertexCommand\VertexLockCommand.cs" />
+    <Compile Include="VertexEvidenceType.cs" />
     <Compile Include="VertexType.cs" />
-    <Compile Include="NetworkStructure.cs" />
-    <Compile Include="NetworkStructureVertex.cs" />
+    <Compile Include="NetworkNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Vertex.cs" />
-    <Compile Include="VertexCommand\VertexCommand.cs" />
-    <Compile Include="VertexValueUndefinedException.cs" />
-    <Compile Include="YearEvidence.cs" />
+    <Compile Include="VertexValueComputer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">

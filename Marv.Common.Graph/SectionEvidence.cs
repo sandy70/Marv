@@ -1,18 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿using Marv.Common;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
-    public class SectionEvidence : IKey<string>
+    /// <summary>
+    /// This class exists so that we can interface with MATLAB. Do not try to replace with base class.
+    /// </summary>
+    public class SectionEvidence : Dict<int, string, VertexEvidence>
     {
-        public readonly List<YearEvidence, int> YearEvidences = new List<YearEvidence, int>();
-        public string Id;
-
-        [JsonIgnore]
-        public string Key
+        public static SectionEvidence Read(string filePath)
         {
-            get { return this.Id; }
+            return Utils.ReadJson<SectionEvidence>(filePath);
+        }
 
-            set { this.Id = value; }
+        public void Write(string filePath)
+        {
+            this.WriteJson(filePath);
         }
     }
 }

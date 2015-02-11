@@ -1,36 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using NLog;
+using Marv.Common;
 using QuickGraph.Algorithms.RankedShortestPath;
-using Smile;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
-    public partial class Graph : Model
+    public partial class Graph : NotifyPropertyChanged
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private string defaultGroup;
-        private Graph displayGraph;
-        private ModelCollection<Edge> edges = new ModelCollection<Edge>();
+        private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
         private Guid guid;
-        private bool isDefaultGroupVisible;
         private bool isExpanded = true;
-        private Dictionary<string, string> loops = new Dictionary<string, string>();
-        private NetworkStructure networkStructure;
+        private string key;
         private Vertex selectedVertex;
-        private ModelCollection<Vertex> vertices = new ModelCollection<Vertex>();
+        private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
+
+        public Dict<string, double[]> Belief
+        {
+            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Belief); }
+
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    vertex.Belief = value != null && value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
+                }
+            }
+        }
 
         public string DefaultGroup
         {
-            get
-            {
-                return this.defaultGroup;
-            }
+            get { return this.defaultGroup; }
 
             set
             {
@@ -42,29 +46,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Graph DisplayGraph
+        public ObservableCollection<Edge> Edges
         {
-            get
-            {
-                return this.displayGraph;
-            }
-
-            private set
-            {
-                if (value != this.displayGraph)
-                {
-                    this.displayGraph = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public ModelCollection<Edge> Edges
-        {
-            get
-            {
-                return this.edges;
-            }
+            get { return this.edges; }
 
             set
             {
@@ -76,12 +60,37 @@ namespace Marv.Common.Graph
             }
         }
 
-        public Guid Guid
+        public Dict<string, double[]> Evidence
+        {
+            get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence); }
+
+            set
+            {
+                foreach (var vertex in this.Vertices)
+                {
+                    vertex.Evidence = value != null && value.ContainsKey(vertex.Key) ? value[vertex.Key] : null;
+                }
+            }
+        }
+
+        public IEnumerable<string> Groups
         {
             get
             {
-                return this.guid;
+                var groups = new List<string>();
+
+                foreach (var vertex in this.Vertices)
+                {
+                    groups.AddUnique(vertex.Groups);
+                }
+
+                return groups;
             }
+        }
+
+        public Guid Guid
+        {
+            get { return this.guid; }
 
             set
             {
@@ -93,29 +102,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public bool IsDefaultGroupVisible
-        {
-            get
-            {
-                return this.isDefaultGroupVisible;
-            }
-
-            set
-            {
-                if (value != this.isDefaultGroupVisible)
-                {
-                    this.isDefaultGroupVisible = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public bool IsExpanded
         {
-            get
-            {
-                return this.isExpanded;
-            }
+            get { return this.isExpanded; }
 
             set
             {
@@ -130,35 +119,30 @@ namespace Marv.Common.Graph
 
         public bool IsMostlyExpanded
         {
-            get
-            {
-                return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2;
-            }
+            get { return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2; }
         }
 
-        public Dictionary<string, string> Loops
+        public string Key
         {
-            get
-            {
-                return this.loops;
-            }
+            get { return this.key; }
 
             set
             {
-                if (value != this.loops)
+                if (value.Equals(this.key))
                 {
-                    this.loops = value;
-                    this.RaisePropertyChanged();
+                    return;
                 }
+
+                this.key = value;
+                this.RaisePropertyChanged();
             }
         }
 
+        public Network Network { get; private set; }
+
         public Vertex SelectedVertex
         {
-            get
-            {
-                return this.selectedVertex;
-            }
+            get { return this.selectedVertex; }
 
             set
             {
@@ -170,12 +154,9 @@ namespace Marv.Common.Graph
             }
         }
 
-        public ModelCollection<Vertex> Vertices
+        public KeyedCollection<Vertex> Vertices
         {
-            get
-            {
-                return this.vertices;
-            }
+            get { return this.vertices; }
 
             set
             {
@@ -189,34 +170,34 @@ namespace Marv.Common.Graph
 
         public static Graph Read(string fileName)
         {
-            //NetworkStructure.Decrypt(fileName);
+            //Network.Decrypt(fileName);
             var graph = new Graph
             {
-                networkStructure = NetworkStructure.Read(fileName)
+                Network = Network.Read(fileName)
             };
 
-            graph.DefaultGroup = graph.networkStructure.ParseUserProperty("defaultgroup", "all");
-            graph.Guid = Guid.Parse(graph.networkStructure.ParseUserProperty("guid", Guid.NewGuid().ToString()));
-            graph.Name = graph.networkStructure.ParseUserProperty("key", "");
+            graph.DefaultGroup = graph.Network.ParseUserProperty("defaultgroup", "all");
+            graph.Guid = Guid.Parse(graph.Network.ParseUserProperty("guid", Guid.NewGuid().ToString()));
+            graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var structureVertex in graph.networkStructure.Vertices)
+            foreach (var networkNode in graph.Network.Nodes)
             {
                 var vertex = new Vertex
                 {
-                    ConnectorPositions = structureVertex.ParseJson<Dictionary<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
-                    Description = structureVertex.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = structureVertex.ParseGroups(),
-                    HeaderOfGroup = structureVertex.ParseStringProperty("headerofgroup"),
-                    InputVertexKey = structureVertex.ParseStringProperty("InputNode"),
-                    IsExpanded = structureVertex.ParseIsExpanded(),
-                    Key = structureVertex.Key,
-                    Name = structureVertex.ParseStringProperty("label"),
-                    Position = structureVertex.ParsePosition(),
-                    PositionForGroup = structureVertex.ParseJson<Dictionary<string, Point>>("PositionForGroup"),
-                    Units = structureVertex.ParseStringProperty("units"),
-                    States = structureVertex.ParseStates(),
-                    Type = structureVertex.ParseSubType()
+                    ConnectorPositions = networkNode.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    Description = networkNode.ParseStringProperty("HR_HTML_Desc"),
+                    Groups = networkNode.Groups,
+                    HeaderOfGroup = networkNode.HeaderOfGroup,
+                    InputVertexKey = networkNode.InputNodeKey,
+                    IsExpanded = networkNode.ParseIsExpanded(),
+                    Key = networkNode.Key,
+                    Name = networkNode.ParseStringProperty("label"),
+                    Position = networkNode.ParsePosition(),
+                    PositionForGroup = networkNode.ParseJson<Dict<string, Point>>("PositionForGroup"),
+                    Units = networkNode.ParseStringProperty("units"),
+                    States = networkNode.States,
+                    Type = networkNode.Type
                 };
 
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
@@ -226,16 +207,11 @@ namespace Marv.Common.Graph
                     vertex.Units = "n/a";
                 }
 
-                if (!string.IsNullOrWhiteSpace(vertex.InputVertexKey))
-                {
-                    graph.Loops[vertex.InputVertexKey] = vertex.Key;
-                }
-
                 graph.Vertices.Add(vertex);
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.networkStructure.Vertices)
+            foreach (var srcVertex in graph.Network.Nodes)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -243,72 +219,34 @@ namespace Marv.Common.Graph
                 }
             }
 
-            graph.UpdateDisplayGraph(graph.DefaultGroup);
-            graph.Run();
-
             return graph;
         }
 
-        public static Task<Graph> ReadAsync(string fileName)
+        public void ClearEvidence()
         {
-            return Task.Run(() => Graph.Read(fileName));
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.ClearEvidence();
+            }
         }
 
-        public Dictionary<string, string, double> GetSensitivity(string targetVertexKey, Func<Vertex, double[], double[], double> statisticFunc, Dictionary<string, VertexEvidence> graphEvidence = null)
+        /// <summary>
+        ///     Returns the key of the vertex which is the header of the give group.
+        /// </summary>
+        /// <param name="group">The group of which the header is required.</param>
+        /// <returns>The key of the vertex which is the header of group.</returns>
+        public string GetHeaderVertexKey(string group)
         {
-            var targetVertex = this.Vertices[targetVertexKey];
-
-            // Dictionary<sourceVertexKey, sourceStateKey, targetValue>
-            var value = new Dictionary<string, string, double>();
-
-            // Clear all evidence to begin with
-            this.networkStructure.ClearEvidence();
-
-            // Collect vertices to ignore
-            var verticesToIgnore = new List<Vertex>
-            {
-                targetVertex
-            };
-
-            if (graphEvidence != null)
-            {
-                // Set the given evidence
-                //this.Evidence = graphEvidence;
-
-                // Collect more vertices to ignore
-                verticesToIgnore.Add(this.Vertices[graphEvidence.Keys]);
-            }
-
-            foreach (var sourceVertex in this.Vertices.Except(verticesToIgnore))
-            {
-                foreach (var sourceState in sourceVertex.States)
-                {
-                    try
-                    {
-                        var stateIndex = sourceVertex.States.IndexOf(sourceState);
-                        this.networkStructure.SetEvidence(sourceVertex.Key, stateIndex);
-
-                        var graphValue = this.networkStructure.GetBelief();
-                        var targetVertexValue = graphValue[targetVertex.Key];
-
-                        value[sourceVertex.Key, sourceState.Key] = statisticFunc(targetVertex, targetVertexValue, targetVertex.InitialBelief.Select(kvp => kvp.Value).ToArray());
-
-                        sourceVertex.States.ClearEvidence();
-                        sourceVertex.EvidenceString = null;
-                    }
-                    catch (SmileException exception)
-                    {
-                        Logger.Error(exception.Message);
-
-                        value[sourceVertex.Key, sourceState.Key] = double.NaN;
-                    }
-                }
-            }
-
-            return value;
+            var headerVertex = this.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == @group);
+            return headerVertex == null ? null : headerVertex.Key;
         }
 
-        public Graph GetSubGraph(string group)
+        public Vertex GetSinkVertex()
+        {
+            return this.Vertices.First(vertex => this.Edges.All(edge => edge.Source != vertex));
+        }
+
+        public Graph GetSubGraph(string group, string vertexKey = null)
         {
             // Extract the header vertices
             var subGraph = new Graph();
@@ -325,23 +263,19 @@ namespace Marv.Common.Graph
                         vertex.PositionForGroup[group] = vertex.Position;
                     }
 
-                    if (group == this.DefaultGroup)
-                    {
-                        if (!vertex.Commands.Contains(VertexCommands.SubGraph))
-                        {
-                            vertex.Commands.Push(VertexCommands.SubGraph);
-                        }
-                    }
-                    else
-                    {
-                        if (vertex.Commands.Contains(VertexCommands.SubGraph))
-                        {
-                            vertex.Commands.Remove(VertexCommands.SubGraph);
-                        }
-                    }
-
                     vertex.SelectedGroup = group;
                     vertex.DisplayPosition = vertex.PositionForGroup[group];
+                }
+            }
+
+            if (vertexKey != null)
+            {
+                var defaultGroupPosition = this.Vertices[vertexKey].PositionForGroup[this.DefaultGroup];
+                var positionOffset = this.Vertices[vertexKey].PositionForGroup[group] - defaultGroupPosition;
+
+                foreach (var vertex in subGraph.Vertices)
+                {
+                    vertex.DisplayPosition = vertex.PositionForGroup[group] - positionOffset;
                 }
             }
 
@@ -363,9 +297,14 @@ namespace Marv.Common.Graph
                         {
                             if (subGraph.Vertices.Contains(edge.Target))
                             {
-                                var connectorPostions = srcVertex.ConnectorPositions.GetValueOrNew(group, dstVertex.Key);
+                                var connectorPostions = srcVertex.ConnectorPositions[group][dstVertex.Key];
 
-                                subGraph.Edges.AddUnique(src, edge.Target, connectorPostions);
+                                var newEdge = new Edge(src, edge.Target)
+                                {
+                                    ConnectorPositions = connectorPostions ?? new EdgeConnectorPositions()
+                                };
+
+                                subGraph.Edges.AddUnique(newEdge);
 
                                 src = edge.Target;
                             }
@@ -379,15 +318,18 @@ namespace Marv.Common.Graph
             return subGraph;
         }
 
-        public Dictionary<string, string, double> ReadValueCsv(string fileName)
+        public Dict<string, string, double> ReadValueCsv(string fileName)
         {
-            var graphValue = new Dictionary<string, string, double>();
+            var graphValue = new Dict<string, string, double>();
 
             foreach (var line in File.ReadLines(fileName))
             {
-                var vertexValue = new Dictionary<string, double>();
+                var vertexValue = new Dict<string, double>();
 
-                var parts = line.Split(new[] {','});
+                var parts = line.Split(new[]
+                {
+                    ','
+                });
 
                 var vertexKey = parts[0];
 
@@ -417,62 +359,52 @@ namespace Marv.Common.Graph
 
         public void Run()
         {
-            this.networkStructure.ClearEvidence();
+            this.Belief = Network.Read(this.Network.FileName).Run(this.Evidence);
+        }
 
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        {
             foreach (var vertex in this.Vertices)
             {
-                if (vertex.IsEvidenceEntered)
-                {
-                    this.networkStructure.SetEvidence(vertex.Key, vertex.States.GetEvidence());
-                }
+                vertex.Evidence = vertexEvidences[vertex.Key].Value;
+                vertex.EvidenceString = vertexEvidences[vertex.Key].ToString();
             }
-
-            this.UpdateBelief();
-        }
-
-        public void SetEvidence(Dictionary<string, VertexEvidence> vertexEvidences)
-        {
-            this.Vertices.ClearEvidence();
-
-            foreach (var vertexKey in vertexEvidences.Keys)
-            {
-                var vertex = this.Vertices[vertexKey];
-                var vertexEvidence = vertexEvidences[vertexKey];
-
-                vertex.EvidenceString = vertexEvidence == null ? null : vertexEvidences[vertexKey].String;
-                vertex.UpdateStateEvidences();
-            }
-        }
-
-        public void UpdateBelief()
-        {
-            this.networkStructure.Run();
-
-            var belief = this.networkStructure.GetBelief();
-
-            foreach (var vertexKey in belief.Keys)
-            {
-                this.Vertices[vertexKey].States.SetBelief(belief[vertexKey]);
-            }
-        }
-
-        public void UpdateDisplayGraph(string group)
-        {
-            this.DisplayGraph = this.GetSubGraph(group);
-            this.IsDefaultGroupVisible = group == this.DefaultGroup;
         }
 
         public void Write()
         {
-            this.networkStructure.Write(this);
+            this.Write(this.Network.FileName);
         }
 
-        public void Run(SectionEvidence sectionEvidence)
+        public void Write(string filePath)
         {
-            foreach (var yearEvidence in sectionEvidence.YearEvidences)
+            var userProperties = new List<string>
             {
-                this.networkStructure.Run(yearEvidence.VertexEvidences);
+                "defaultgroup=" + this.DefaultGroup,
+                "guid=" + this.Guid,
+                "key=" + this.Key,
+            };
+
+            this.Network.Properties["HR_Desc"] = userProperties.String().Enquote();
+
+            foreach (var networkNode in this.Network.Nodes)
+            {
+                var vertex = this.Vertices[networkNode.Key];
+
+                networkNode.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
+                networkNode.Properties["HR_Desc"] = vertex.Description.Enquote();
+                networkNode.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
+                networkNode.Properties["isexpanded"] = vertex.IsExpanded.ToString().Enquote();
+                networkNode.Properties["label"] = "\"" + vertex.Name + "\"";
+                networkNode.Properties["PositionForGroup"] = vertex.PositionForGroup.ToJson().Replace('"', '\'').Enquote();
+                networkNode.Properties["units"] = "\"" + vertex.Units + "\"";
+
+                // Remove legacy properties
+                networkNode.Properties.Remove("grouppositions");
+                networkNode.Properties.Remove("isheaderofgroup");
             }
+
+            this.Network.Write(filePath);
         }
     }
 }

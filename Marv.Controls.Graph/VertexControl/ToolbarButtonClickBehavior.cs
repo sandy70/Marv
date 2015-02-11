@@ -2,38 +2,30 @@
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 using Marv.Common;
-using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
 {
     internal class ToolbarButtonClickBehavior : Behavior<Button>
     {
+        public VertexControl VertexControl;
+
         protected override void OnAttached()
         {
             base.OnAttached();
+
+            this.VertexControl = this.AssociatedObject.GetParent<VertexControl>();
+
             this.AssociatedObject.Click += this.AssociatedObject_Click;
         }
 
+
         private void AssociatedObject_Click(object sender, RoutedEventArgs e)
         {
-            var command = this.AssociatedObject.DataContext as Command<Vertex>;
+            var command = this.AssociatedObject.DataContext as Command<VertexControl>;
 
-            var vertexControl = this.AssociatedObject.FindParent<VertexControl>();
-            var vertex = vertexControl.Vertex;
+            command.Excecute(this.VertexControl);
 
-            command.Excecute(vertex);
-
-            vertexControl.RaiseCommandExecuted(command);
-
-            if (command == VertexCommands.Lock && vertex.IsLocked)
-            {
-                vertexControl.RaiseEvidenceEntered();
-            }
-
-            if (command == VertexCommands.Clear)
-            {
-                vertexControl.RaiseEvidenceEntered();
-            }
+            this.VertexControl.RaiseCommandExecuted(command);
         }
     }
 }

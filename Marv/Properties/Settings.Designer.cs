@@ -25,127 +25,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2001")]
-        public int StartYear {
-            get {
-                return ((int)(this["StartYear"]));
-            }
-            set {
-                this["StartYear"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2014")]
-        public int EndYear {
-            get {
-                return ((int)(this["EndYear"]));
-            }
-            set {
-                this["EndYear"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public double FitToPad {
-            get {
-                return ((double)(this["FitToPad"]));
-            }
-            set {
-                this["FitToPad"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\")]
-        public string CacheDirectory {
-            get {
-                return ((string)(this["CacheDirectory"]));
-            }
-            set {
-                this["CacheDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsMapVisible {
-            get {
-                return ((bool)(this["IsMapVisible"]));
-            }
-            set {
-                this["IsMapVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsYearSliderVisible {
-            get {
-                return ((bool)(this["IsYearSliderVisible"]));
-            }
-            set {
-                this["IsYearSliderVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsMenuVisible {
-            get {
-                return ((bool)(this["IsMenuVisible"]));
-            }
-            set {
-                this["IsMenuVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsLogoVisible {
-            get {
-                return ((bool)(this["IsLogoVisible"]));
-            }
-            set {
-                this["IsLogoVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\vkha\\Data\\ADCO02\\ADCO 7.xlsx")]
-        public string InputFileName {
-            get {
-                return ((string)(this["InputFileName"]));
-            }
-            set {
-                this["InputFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsPropertyGridVisible {
-            get {
-                return ((bool)(this["IsPropertyGridVisible"]));
-            }
-            set {
-                this["IsPropertyGridVisible"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\vkha\\Data\\ADCO02\\ADCO_09.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\ECDA_Model 2015 01 29 1630.net")]
         public string NetworkFileName {
             get {
                 return ((string)(this["NetworkFileName"]));
@@ -157,44 +37,37 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\vkha\\Data\\CNPC\\GraphValues")]
-        public string InputDir {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\Scenario08.marv-linedata")]
+        public string LineDataFileName {
             get {
-                return ((string)(this["InputDir"]));
+                return ((string)(this["LineDataFileName"]));
             }
             set {
-                this["InputDir"] = value;
+                this["LineDataFileName"] = value;
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/IntegrityManagement/LineAndSectionOverviewService.as" +
-            "mx")]
-        public string Marv_LineAndSectionOverviewService_LineAndSectionOverviewService {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Line.csv")]
+        public string LocationsFileName {
             get {
-                return ((string)(this["Marv_LineAndSectionOverviewService_LineAndSectionOverviewService"]));
+                return ((string)(this["LocationsFileName"]));
+            }
+            set {
+                this["LocationsFileName"] = value;
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/BRIXLoginService/BRIXLoginService.asmx")]
-        public string Marv_LoginService_BRIXLoginService {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\LocationValues.json")]
+        public string LocationValuesFileName {
             get {
-                return ((string)(this["Marv_LoginService_BRIXLoginService"]));
+                return ((string)(this["LocationValuesFileName"]));
             }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/webservices/ProfileService/SegmentationService.asmx")]
-        public string Marv_SegmentationService_SegmentationService {
-            get {
-                return ((string)(this["Marv_SegmentationService_SegmentationService"]));
+            set {
+                this["LocationValuesFileName"] = value;
             }
         }
     }

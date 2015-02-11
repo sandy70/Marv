@@ -5,15 +5,15 @@ using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Threading;
 using Marv.Common;
-using Marv.Common.Map;
 
 namespace Marv.Controls.Map
 {
     public class SegmentedPolylineControlBehavior : Behavior<SegmentedPolylineControl>
     {
+        private readonly Stack<Location> locationStack = new Stack<Location>();
+        private readonly DispatcherTimer timer = new DispatcherTimer();
         private bool isDragging;
-        private Stack<Location> locationStack = new Stack<Location>();
-        private DispatcherTimer timer = new DispatcherTimer();
+        private MapView mapView;
 
         protected override void OnAttached()
         {
@@ -26,12 +26,10 @@ namespace Marv.Controls.Map
 
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AssociatedObject.TouchDown += AssociatedObject_TouchDown;
-
             this.AssociatedObject.MapPolyline.MouseDown += this.MapPolyline_MouseDown;
             this.AssociatedObject.MapPolyline.MouseUp += this.MapPolyline_MouseUp;
             this.AssociatedObject.MapPolyline.TouchDown += this.MapPolyline_TouchDown;
-
+            this.AssociatedObject.MapPolyline.TouchUp += MapPolyline_TouchUp;
             this.AssociatedObject.Ellipse.MouseDown += this.Ellipse_MouseDown;
             this.AssociatedObject.Ellipse.MouseUp += this.Ellipse_MouseUp;
             this.AssociatedObject.Ellipse.MouseMove += this.Ellipse_MouseMove;
@@ -39,22 +37,12 @@ namespace Marv.Controls.Map
             this.AssociatedObject.Ellipse.TouchMove += this.Ellipse_TouchMove;
             this.AssociatedObject.Ellipse.TouchUp += this.Ellipse_TouchUp;
 
-            var mapView = Common.Extensions.FindParent<MapView>(this.AssociatedObject);
+            this.mapView = this.AssociatedObject.GetParent<MapView>();
 
-            if (mapView != null)
+            if (this.mapView != null)
             {
-                mapView.ViewportMoved += this.mapView_ViewportMoved;
-                mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
-            }
-        }
-
-        private void AssociatedObject_TouchDown(object sender, TouchEventArgs e)
-        {
-            var mapItemsControl = Common.Extensions.FindParent<MapControl.MapItemsControl>(this.AssociatedObject);
-
-            if (mapItemsControl != null)
-            {
-                mapItemsControl.SelectedItem = this.AssociatedObject.Locations;
+                // this.mapView.ViewportMoved += this.mapView_ViewportMoved;
+                this.mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
             }
         }
 
@@ -104,6 +92,8 @@ namespace Marv.Controls.Map
         {
             var position = e.GetPosition(this.AssociatedObject);
             this.SelectLocation(position);
+
+            // this.OnDown();
         }
 
         private void MapPolyline_MouseUp(object sender, MouseButtonEventArgs e)
@@ -116,16 +106,14 @@ namespace Marv.Controls.Map
         {
             var position = e.GetTouchPoint(this.AssociatedObject).Position;
             this.SelectLocation(position);
+
+            // this.OnDown();
         }
 
-        private void mapView_ViewportMoved(object sender, ValueEventArgs<Location> e)
+        private void MapPolyline_TouchUp(object sender, TouchEventArgs e)
         {
-            // this.AssociatedObject.UpdateSimplifiedPolylineParts();
-        }
-
-        private void mapView_ZoomLevelChanged(object sender, ValueEventArgs<int> e)
-        {
-            this.AssociatedObject.UpdateSimplifiedPolylineParts();
+            this.OnUp();
+            e.Handled = true;
         }
 
         private void OnDown()
@@ -142,10 +130,14 @@ namespace Marv.Controls.Map
 
         private void SelectLocation(Point position)
         {
-            var map = Common.Extensions.FindParent<MapControl.Map>(this.AssociatedObject);
+            var map = this.AssociatedObject.GetParent<MapControl.Map>();
             var mLocation = map.ViewportPointToLocation(position);
-            var location = new Location { Latitude = mLocation.Latitude, Longitude = mLocation.Longitude };
-            var nearestLocation = Common.Map.Extensions.NearestTo(this.AssociatedObject.Locations, location);
+            var location = new Location
+            {
+                Latitude = mLocation.Latitude,
+                Longitude = mLocation.Longitude
+            };
+            var nearestLocation = this.AssociatedObject.Locations.GetLocationNearestTo(location);
 
             this.AssociatedObject.CursorLocation = nearestLocation;
 
@@ -157,11 +149,25 @@ namespace Marv.Controls.Map
             }
         }
 
+        private void mapView_ViewportMoved(object sender, Location location)
+        {
+            this.AssociatedObject.UpdateSimplifiedPolylineParts();
+        }
+
+        private async void mapView_ZoomLevelChanged(object sender, int zoom)
+        {
+            await this.AssociatedObject.UpdateSimplifiedPolylinePartsAsync();
+        }
+
         private void timer_Tick(object sender, EventArgs e)
         {
             if (this.locationStack.Count > 0)
             {
-                this.AssociatedObject.Locations.Select(this.locationStack.Pop());
+                var location = this.locationStack.Pop();
+
+                this.AssociatedObject.SelectedLocation = location;
+                this.AssociatedObject.RaiseSelectionChanged(location);
+
                 this.locationStack.Clear();
                 this.timer.Stop();
             }

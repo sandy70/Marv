@@ -20,8 +20,6 @@
             }
         }
 
-        public virtual void Excecute(T item)
-        {
-        }
+        public virtual void Excecute(T item) {}
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Marv.Common
+namespace Marv
 {
     public class EffectiveFlawData
     {
@@ -14,23 +14,17 @@ namespace Marv.Common
 
         public double Length { get; set; }
 
-        public double Tearing { get; set; }
-
         public static IComparer<EffectiveFlawData> SortByFlowStrength
         {
-            get
-            {
-                return new EffectiveFlawCompareFlow();
-            }
+            get { return new EffectiveFlawCompareFlow(); }
         }
 
         public static IComparer<EffectiveFlawData> SortByJFractureToughness
         {
-            get
-            {
-                return new EffectiveFlawCompareJfract();
-            }
+            get { return new EffectiveFlawCompareJfract(); }
         }
+
+        public double Tearing { get; set; }
     }
 
     internal class EffectiveFlawCompareFlow : IComparer<EffectiveFlawData>

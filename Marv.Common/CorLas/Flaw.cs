@@ -1,4 +1,4 @@
-﻿namespace Marv.Common
+﻿namespace Marv
 {
     // Just a test comment.
     public class Flaw

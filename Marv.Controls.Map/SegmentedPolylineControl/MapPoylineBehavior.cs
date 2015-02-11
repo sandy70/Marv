@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using System.Windows.Interactivity;
 using MapControl;
-using Marv.Common;
+using Marv;
 
 namespace Marv.Controls.Map
 {
@@ -19,7 +19,7 @@ namespace Marv.Controls.Map
             // We need this to raise the event on the templated parent.
             // It should be raised automatically but isn't. This is probably a bug.
 
-            var mapItemsControl = this.AssociatedObject.FindParent<MapItemsControl>();
+            var mapItemsControl = this.AssociatedObject.GetParent<MapItemsControl>();
 
             if (mapItemsControl != null)
             {
@@ -32,7 +32,7 @@ namespace Marv.Controls.Map
             // We need this to raise the event on the templated parent.
             // It should be raised automatically but isn't. This is probably a bug.
 
-            var mapItemsControl = this.AssociatedObject.FindParent<MapItemsControl>();
+            var mapItemsControl = this.AssociatedObject.GetParent<MapItemsControl>();
 
             if (mapItemsControl != null)
             {

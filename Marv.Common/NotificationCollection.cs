@@ -7,7 +7,10 @@ namespace Marv.Common
     {
         public new void Add(Notification notification)
         {
-            if (this.Contains(notification)) return;
+            if (this.Contains(notification))
+            {
+                return;
+            }
 
             base.Add(notification);
 

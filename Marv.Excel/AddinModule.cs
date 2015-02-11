@@ -5,8 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AddinExpress.MSO;
 using AddinExpress.XL;
-using Marv.Common;
-using Marv.Common.Graph;
+using Marv;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 using System.Linq;
@@ -263,7 +262,7 @@ namespace Marv_Excel
                 },
                 ColumnHeaders = new List<string>
                 {
-                    "Section Name",
+                    "Section Key",
                     "Latitude",
                     "Longitude"
                 },
@@ -273,7 +272,7 @@ namespace Marv_Excel
                 Vertices = this.TaskPane.SelectedVertices
             };
 
-            sheetModel.LineValue["One"] = new Dictionary<int, string, string, double>();
+            sheetModel.LineValue["One"] = new Dict<int, string, string, double>();
             sheetModel.Write(this.InputSheet);
         }
     }

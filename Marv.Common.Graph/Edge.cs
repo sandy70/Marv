@@ -1,87 +1,52 @@
-﻿using NLog;
+﻿using Marv.Common;
 using QuickGraph;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Common.Graph
+namespace Marv
 {
-    public class Edge : Model, IEdge<Vertex>, ILink<Vertex>
+    public class Edge : NotifyPropertyChanged, IEdge<Vertex>, ILink<Vertex>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         private EdgeConnectorPositions connectorPositions = new EdgeConnectorPositions();
         private Vertex source;
         private Vertex target;
 
-        public Edge(Vertex source, Vertex target)
-        {
-            this.Source = source;
-            this.Target = target;
-        }
-
         public EdgeConnectorPositions ConnectorPositions
         {
-            get
-            {
-                return this.connectorPositions;
-            }
+            get { return this.connectorPositions; }
 
             set
             {
                 if (value != this.connectorPositions)
                 {
                     this.connectorPositions = value;
-                    this.RaisePropertyChanged("ConnectorPositions");
+                    this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        object ILink.Source
-        {
-            get
-            {
-                return this.Source;
-            }
-            set
-            {
-                this.Source = value as Vertex;
-            }
-        }
-
-        object ILink.Target
-        {
-            get
-            {
-                return this.Target;
-            }
-            set
-            {
-                this.Target = value as Vertex;
             }
         }
 
         public Vertex Source
         {
-            get
-            {
-                return this.source;
-            }
+            get { return this.source; }
 
             set
             {
                 if (value != this.source)
                 {
                     this.source = value;
-                    this.RaisePropertyChanged("Source");
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
+        object ILink.Source
+        {
+            get { return this.Source; }
+            set { this.Source = value as Vertex; }
+        }
+
         public Vertex Target
         {
-            get
-            {
-                return this.target;
-            }
+            get { return this.target; }
 
             set
             {
@@ -91,6 +56,18 @@ namespace Marv.Common.Graph
                     this.RaisePropertyChanged("Target");
                 }
             }
+        }
+
+        object ILink.Target
+        {
+            get { return this.Target; }
+            set { this.Target = value as Vertex; }
+        }
+
+        public Edge(Vertex source, Vertex target)
+        {
+            this.Source = source;
+            this.Target = target;
         }
 
         public override string ToString()

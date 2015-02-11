@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="Marv" Label="Marv" Category="Project" />
+    <Node Id="Newtonsoft.Json 6.0.8" Label="Newtonsoft.Json 6.0.8" Category="Package" />
+    <Node Id="QuickGraph 3.6.61119.7" Label="QuickGraph 3.6.61119.7" Category="Package" />
+    <Node Id="XAML.MapControl 2.4.3" Label="XAML.MapControl 2.4.3" Category="Package" />
+    <Node Id="FixPoF" Label="FixPoF" Category="Project" />
+    <Node Id="Newtonsoft.Json 6.0.8" Label="Newtonsoft.Json 6.0.8" Category="Package" />
+    <Node Id="Marv.Excel" Label="Marv.Excel" Category="Project" />
+    <Node Id="QuickGraph 3.6.61119.7" Label="QuickGraph 3.6.61119.7" Category="Package" />
+    <Node Id="Marv.Controls.Graph" Label="Marv.Controls.Graph" Category="Project" />
+    <Node Id="Newtonsoft.Json 6.0.8" Label="Newtonsoft.Json 6.0.8" Category="Package" />
+    <Node Id="QuickGraph 3.6.61119.7" Label="QuickGraph 3.6.61119.7" Category="Package" />
+    <Node Id="Marv.Controls.Map" Label="Marv.Controls.Map" Category="Project" />
+    <Node Id="XAML.MapControl 2.4.3" Label="XAML.MapControl 2.4.3" Category="Package" />
+    <Node Id="Marv.Common.Graph" Label="Marv.Common.Graph" Category="Project" />
+    <Node Id="Newtonsoft.Json 6.0.8" Label="Newtonsoft.Json 6.0.8" Category="Package" />
+    <Node Id="QuickGraph 3.6.61119.7" Label="QuickGraph 3.6.61119.7" Category="Package" />
+    <Node Id="Marv.Controls" Label="Marv.Controls" Category="Project" />
+    <Node Id="QuickGraph 3.6.61119.7" Label="QuickGraph 3.6.61119.7" Category="Package" />
+    <Node Id="XAML.MapControl 2.4.3" Label="XAML.MapControl 2.4.3" Category="Package" />
+    <Node Id="Marv.Common" Label="Marv.Common" Category="Project" />
+    <Node Id="EPPlus 4.0.2" Label="EPPlus 4.0.2" Category="Package" />
+    <Node Id="Newtonsoft.Json 6.0.8" Label="Newtonsoft.Json 6.0.8" Category="Package" />
+    <Node Id="XAML.MapControl 2.4.3" Label="XAML.MapControl 2.4.3" Category="Package" />
+  </Nodes>
+  <Links>
+    <Link Source="Marv" Target="Newtonsoft.Json 6.0.8" Category="Installed Package" />
+    <Link Source="Marv" Target="QuickGraph 3.6.61119.7" Category="Installed Package" />
+    <Link Source="Marv" Target="XAML.MapControl 2.4.3" Category="Installed Package" />
+    <Link Source="FixPoF" Target="Newtonsoft.Json 6.0.8" Category="Installed Package" />
+    <Link Source="Marv.Excel" Target="QuickGraph 3.6.61119.7" Category="Installed Package" />
+    <Link Source="Marv.Controls.Graph" Target="Newtonsoft.Json 6.0.8" Category="Installed Package" />
+    <Link Source="Marv.Controls.Graph" Target="QuickGraph 3.6.61119.7" Category="Installed Package" />
+    <Link Source="Marv.Controls.Map" Target="XAML.MapControl 2.4.3" Category="Installed Package" />
+    <Link Source="Marv.Common.Graph" Target="Newtonsoft.Json 6.0.8" Category="Installed Package" />
+    <Link Source="Marv.Common.Graph" Target="QuickGraph 3.6.61119.7" Category="Installed Package" />
+    <Link Source="Marv.Controls" Target="QuickGraph 3.6.61119.7" Category="Installed Package" />
+    <Link Source="Marv.Controls" Target="XAML.MapControl 2.4.3" Category="Installed Package" />
+    <Link Source="Marv.Common" Target="EPPlus 4.0.2" Category="Installed Package" />
+    <Link Source="Marv.Common" Target="Newtonsoft.Json 6.0.8" Category="Installed Package" />
+    <Link Source="Marv.Common" Target="XAML.MapControl 2.4.3" Category="Installed Package" />
+  </Links>
+  <Categories>
+    <Category Id="Project" />
+    <Category Id="Package" />
+  </Categories>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Project" ValueLabel="True">
+      <Condition Expression="HasCategory('Project')" />
+      <Setter Property="Background" Value="Blue" />
+    </Style>
+  </Styles>
+</DirectedGraph>

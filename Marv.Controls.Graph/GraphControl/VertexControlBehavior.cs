@@ -1,43 +1,61 @@
-﻿using System.Windows.Interactivity;
+﻿using System.Windows.Input;
+using System.Windows.Interactivity;
 using Marv.Common;
-using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
 {
     internal class VertexControlBehavior : Behavior<VertexControl>
     {
+        public GraphControl.GraphControl GraphControl;
+        public VertexControl VertexControl;
+
         protected override void OnAttached()
         {
             base.OnAttached();
 
-            this.AssociatedObject.CommandExecuted += AssociatedObject_CommandExecuted;
+            this.VertexControl = this.AssociatedObject;
+            this.GraphControl = this.VertexControl.GetParent<GraphControl.GraphControl>();
+
+            this.VertexControl.CommandExecuted -= VertexControl_CommandExecuted;
+            this.VertexControl.CommandExecuted += VertexControl_CommandExecuted;
+
+            this.VertexControl.EvidenceEntered -= VertexControl_EvidenceEntered;
+            this.VertexControl.EvidenceEntered += VertexControl_EvidenceEntered;
+
+            this.VertexControl.MouseEnter -= VertexControl_MouseEnter;
+            this.VertexControl.MouseEnter += VertexControl_MouseEnter;
+
+            this.VertexControl.MouseLeave -= VertexControl_MouseLeave;
+            this.VertexControl.MouseLeave += VertexControl_MouseLeave;
         }
 
-        private void AssociatedObject_CommandExecuted(object sender, Command<Vertex> command)
+        private void VertexControl_CommandExecuted(object sender, Command<VertexControl> command)
         {
-            var vertexControl = this.AssociatedObject;
-            var graphControl = vertexControl.FindParent<GraphControl>();
+            this.GraphControl.Graph.SelectedVertex = this.VertexControl.Vertex;
 
-            if (command == VertexCommands.SubGraph)
+            if (command == VertexControlCommands.Expand)
             {
-                graphControl.Graph.UpdateDisplayGraph(vertexControl.Vertex.HeaderOfGroup);
+                this.GraphControl.UpdateLayout();
             }
-
-            if (command == VertexCommands.Clear)
+            else if (command == VertexControlCommands.SubGraph)
             {
-                graphControl.Graph.Vertices.ClearEvidence();
-                graphControl.Graph.Run();
+                this.GraphControl.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
             }
-
-            graphControl.RaiseVertexCommandExecuted(vertexControl.Vertex, command);
         }
 
-        private void RaiseEvidenceEntered()
+        private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
         {
-            var vertexControl = this.AssociatedObject;
-            var graphControl = vertexControl.FindParent<GraphControl>();
+            this.GraphControl.RaiseEvidenceEntered(e);
+        }
 
-            graphControl.RaiseEvidenceEntered(vertexControl.Vertex);
+        private void VertexControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = true;
+        }
+
+        private void VertexControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.VertexControl.IsToolbarVisible = false;
         }
     }
 }

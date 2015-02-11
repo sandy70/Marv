@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Graph;
 
 namespace Marv.Controls.Graph
 {
-    public partial class VertexControl
+    public partial class VertexControl : INotifyPropertyChanged
     {
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
@@ -14,14 +16,14 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty IsEvidenceVisibleProperty =
             DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register("IsExpanded", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsMostProbableStateVisibleProperty =
-            DependencyProperty.Register("IsMostProbableStateVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsStatesVisibleProperty =
-            DependencyProperty.Register("IsStatesVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsSubGraphCommandVisibleProperty =
+            DependencyProperty.Register("IsSubGraphCommandVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false, ChangedIsSubGraphCommandVisible));
 
         public static readonly DependencyProperty IsToolbarVisibleProperty =
             DependencyProperty.Register("IsToolbarVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
@@ -32,104 +34,76 @@ namespace Marv.Controls.Graph
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (VertexControl), new PropertyMetadata(null));
 
-        public bool IsEditable
+        private ObservableCollection<Command<VertexControl>> commands = new ObservableCollection<Command<VertexControl>>
         {
-            get
-            {
-                return (bool) GetValue(IsEditableProperty);
-            }
+            VertexControlCommands.Expand
+        };
+
+        public ObservableCollection<Command<VertexControl>> Commands
+        {
+            get { return this.commands; }
 
             set
             {
-                SetValue(IsEditableProperty, value);
+                if (value.Equals(this.commands))
+                {
+                    return;
+                }
+
+                this.commands = value;
+                this.RaisePropertyChanged();
             }
+        }
+
+        public bool IsEditable
+        {
+            get { return (bool) GetValue(IsEditableProperty); }
+
+            set { SetValue(IsEditableProperty, value); }
         }
 
         public bool IsEvidenceVisible
         {
-            get
-            {
-                return (bool) GetValue(IsEvidenceVisibleProperty);
-            }
+            get { return (bool) GetValue(IsEvidenceVisibleProperty); }
 
-            set
-            {
-                SetValue(IsEvidenceVisibleProperty, value);
-            }
+            set { SetValue(IsEvidenceVisibleProperty, value); }
+        }
+
+        public bool IsExpanded
+        {
+            get { return (bool) GetValue(IsExpandedProperty); }
+            set { SetValue(IsExpandedProperty, value); }
         }
 
         public bool IsInputVisible
         {
-            get
-            {
-                return (bool) GetValue(IsInputVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsInputVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsInputVisibleProperty); }
+            set { SetValue(IsInputVisibleProperty, value); }
         }
 
-        public bool IsMostProbableStateVisible
+        public bool IsSubGraphCommandVisible
         {
-            get
-            {
-                return (bool) GetValue(IsMostProbableStateVisibleProperty);
-            }
-
-            set
-            {
-                SetValue(IsMostProbableStateVisibleProperty, value);
-            }
-        }
-
-        public bool IsStatesVisible
-        {
-            get
-            {
-                return (bool) GetValue(IsStatesVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsStatesVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsSubGraphCommandVisibleProperty); }
+            set { SetValue(IsSubGraphCommandVisibleProperty, value); }
         }
 
         public bool IsToolbarVisible
         {
-            get
-            {
-                return (bool) GetValue(IsToolbarVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsToolbarVisibleProperty, value);
-            }
+            get { return (bool) GetValue(IsToolbarVisibleProperty); }
+            set { SetValue(IsToolbarVisibleProperty, value); }
         }
 
         public bool IsValueVisible
         {
-            get
-            {
-                return (bool) GetValue(IsValueVisibleProperty);
-            }
+            get { return (bool) GetValue(IsValueVisibleProperty); }
 
-            set
-            {
-                SetValue(IsValueVisibleProperty, value);
-            }
+            set { SetValue(IsValueVisibleProperty, value); }
         }
 
         public Vertex Vertex
         {
-            get
-            {
-                return (Vertex) GetValue(VertexProperty);
-            }
-            set
-            {
-                SetValue(VertexProperty, value);
-            }
+            get { return (Vertex) GetValue(VertexProperty); }
+            set { SetValue(VertexProperty, value); }
         }
 
         public VertexControl()
@@ -140,7 +114,21 @@ namespace Marv.Controls.Graph
             this.Loaded += VertexControl_Loaded;
         }
 
-        public void RaiseCommandExecuted(Command<Vertex> command)
+        private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as VertexControl;
+
+            if (control.IsSubGraphCommandVisible)
+            {
+                control.Commands.PushUnique(VertexControlCommands.SubGraph);
+            }
+            else
+            {
+                control.Commands.Remove(VertexControlCommands.SubGraph);
+            }
+        }
+
+        public void RaiseCommandExecuted(Command<VertexControl> command)
         {
             if (this.CommandExecuted != null)
             {
@@ -148,30 +136,49 @@ namespace Marv.Controls.Graph
             }
         }
 
-        public void RaiseEvidenceEntered()
+        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
+            if (vertexEvidence == null)
+            {
+                vertexEvidence = new VertexEvidence
+                {
+                    Value = this.Vertex.Evidence,
+                    Type = VertexEvidenceType.Distribution,
+                    Params = this.Vertex.Evidence
+                };
+            }
+
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, this.Vertex);
+                this.EvidenceEntered(this, vertexEvidence);
+            }
+        }
+
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.States.ClearEvidence();
+            this.Vertex.Evidence = null;
             this.Vertex.UpdateEvidenceString();
             this.RaiseEvidenceEntered();
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            this.Vertex.States.SetEvidence(this.Vertex.EvidenceString);
-            this.RaiseEvidenceEntered();
+            var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
+            this.Vertex.Evidence = vertexEvidence.Value;
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.States.ClearEvidence();
+            this.Vertex.Evidence = null;
             this.RaiseEvidenceEntered();
         }
 
@@ -187,8 +194,10 @@ namespace Marv.Controls.Graph
             this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
         }
 
-        public event EventHandler<Command<Vertex>> CommandExecuted;
+        public event EventHandler<Command<VertexControl>> CommandExecuted;
 
-        public event EventHandler<Vertex> EvidenceEntered;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

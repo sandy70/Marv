@@ -1,28 +1,19 @@
-/////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2003 CenterSpace Software, LLC                            //
-//                                                                         //
-// This code is free software under the Artistic license.                  //
-//                                                                         //
-// CenterSpace Software                                                    //
-// 301 SW 4th Street - Suite #240                                          //
-// Corvallis, Oregon, 97333                                                //
-// USA                                                                     //
-// http://www.centerspace.net                                              //
-/////////////////////////////////////////////////////////////////////////////
-
 using System;
 
-namespace Marv.Common
+namespace Marv
 {
     /// <summary>
-    /// Class NormalDist represents the normal (Gaussian) probability distribution
-    /// with a specifed mean and variance.
+    ///     Class NormalDist represents the normal (Gaussian) probability distribution
+    ///     with a specifed mean and variance.
     /// </summary>
     public class NormalDistribution : IDistribution
     {
-        private static readonly double[] a = {2.2352520354606839287e00, 1.6102823106855587881e02, 1.0676894854603709582e03, 1.8154981253343561249e04, 6.5682337918207449113e-2};
+        private const double Root32 = 5.656854248e0;
+        private static readonly double MACHINE_EPSILON = 1.0e-12;
+        private static readonly double OneOverRoot2Pi = 1.0 / Math.Sqrt(2 * Math.PI);
+        private static readonly double[] a = { 2.2352520354606839287e00, 1.6102823106855587881e02, 1.0676894854603709582e03, 1.8154981253343561249e04, 6.5682337918207449113e-2 };
 
-        private static readonly double[] b = {4.7202581904688241870e01, 9.7609855173777669322e02, 1.0260932208618978205e04, 4.5507789335026729956e04};
+        private static readonly double[] b = { 4.7202581904688241870e01, 9.7609855173777669322e02, 1.0260932208618978205e04, 4.5507789335026729956e04 };
 
         private static readonly double[] c =
         {
@@ -39,10 +30,7 @@ namespace Marv.Common
         };
 
         private static readonly double half = 0.5e0;
-        private static readonly double MACHINE_EPSILON = 1.0e-12;
         private static readonly double one = 1.0e0;
-
-        private static readonly double OneOverRoot2Pi = 1.0/Math.Sqrt(2*Math.PI);
 
         private static readonly double[] p =
         {
@@ -56,7 +44,6 @@ namespace Marv.Common
             3.78239633202758244e-3, 7.29751555083966205e-5
         };
 
-        private const double Root32 = 5.656854248e0;
         private static readonly double sixten = 1.60e0;
         private static readonly double sqrpi = 3.9894228040143267794e-1;
         private static readonly double thrsh = 0.66291e0;
@@ -75,80 +62,53 @@ namespace Marv.Common
         private double sigma_;
 
         /// <summary>
-        /// Constructs a NormalDist instance with the given mean and variance.
-        /// </summary>
-        /// <param name="mean">The mean of the density.</param>
-        /// <param name="var">The variance of the density. Must be positive.</param>
-        /// <exception cref="Exception">Thrown if the variance is less
-        /// than or equal to zero.</exception>
-        /// <remarks>The variance of the distribution is the standard deviation squared.</remarks>
-        public NormalDistribution(double mean, double var)
-        {
-            mean_ = mean;
-            Variance = var;
-        }
-
-        /// <summary>
-        /// Gets the kurtosis, a measure of the degree of peakednesss of the
-        /// density.
+        ///     Gets the kurtosis, a measure of the degree of peakednesss of the
+        ///     density.
         /// </summary>
         /// <remarks>
-        /// The kurtosis is the fourth centeral moment divided by the
-        /// fouth power of the standard deviation, normalized so that
-        /// the kurtosis if the normal density is zero.
+        ///     The kurtosis is the fourth centeral moment divided by the
+        ///     fouth power of the standard deviation, normalized so that
+        ///     the kurtosis if the normal density is zero.
         /// </remarks>
         public double Kurtosis
         {
-            get
-            {
-                return 0.0;
-            }
+            get { return 0.0; }
         }
 
         /// <summary>
-        /// Gets and sets the mean of the density.
+        ///     Gets and sets the mean of the density.
         /// </summary>
         public double Mean
         {
-            get
-            {
-                return mean_;
-            }
+            get { return mean_; }
 
-            set
-            {
-                mean_ = value;
-            }
+            set { mean_ = value; }
         }
 
         /// <summary>
-        /// Gets the skewness, a measure of the degree of asymmetry of
-        /// this density.
+        ///     Gets the skewness, a measure of the degree of asymmetry of
+        ///     this density.
         /// </summary>
         /// <remarks>
-        /// The skewness is the third central moment divided by the cube of
-        /// the standard deviation.
+        ///     The skewness is the third central moment divided by the cube of
+        ///     the standard deviation.
         /// </remarks>
         public double Skewness
         {
-            get
-            {
-                return 0.0;
-            }
+            get { return 0.0; }
         }
 
         /// <summary>
-        /// Gets and sets the variance of the density.
+        ///     Gets and sets the variance of the density.
         /// </summary>
-        /// <exception cref="Exception">Thrown if the variance is less
-        /// than or equal to zero.</exception>
+        /// <exception cref="Exception">
+        ///     Thrown if the variance is less
+        ///     than or equal to zero.
+        /// </exception>
         /// <remarks>The variance of the density is the standard deviation squared.</remarks>
         public double Variance
         {
-            get
-            {
-                return (sigma_*sigma_);
-            }
+            get { return (sigma_ * sigma_); }
 
             set
             {
@@ -158,20 +118,37 @@ namespace Marv.Common
                     throw new Exception(msg);
                 }
                 sigma_ = Math.Sqrt(value);
-                oneOverSigma_ = 1.0/sigma_;
-                oneOverSigmaSqr_ = oneOverSigma_*oneOverSigma_;
-                c_ = oneOverSigma_*OneOverRoot2Pi;
+                oneOverSigma_ = 1.0 / sigma_;
+                oneOverSigmaSqr_ = oneOverSigma_ * oneOverSigma_;
+                c_ = oneOverSigma_ * OneOverRoot2Pi;
             }
         }
 
         /// <summary>
-        /// Returns the cumulative density function evaluated at a given value.
+        ///     Constructs a NormalDist instance with the given mean and variance.
+        /// </summary>
+        /// <param name="mean">The mean of the density.</param>
+        /// <param name="var">The variance of the density. Must be positive.</param>
+        /// <exception cref="Exception">
+        ///     Thrown if the variance is less
+        ///     than or equal to zero.
+        /// </exception>
+        /// <remarks>The variance of the distribution is the standard deviation squared.</remarks>
+        public NormalDistribution(double mean, double var)
+        {
+            mean_ = mean;
+            Variance = var;
+        }
+
+        /// <summary>
+        ///     Returns the cumulative density function evaluated at a given value.
         /// </summary>
         /// <param name="x">A position on the x-axis.</param>
         /// <returns>The cumulative density function evaluated at <c>x</c>.</returns>
-        /// <remarks>The value of the cumulative density function at a point <c>x</c> is
-        /// probability that the value of a random variable having this normal density is
-        /// less than or equal to <c>x</c>.
+        /// <remarks>
+        ///     The value of the cumulative density function at a point <c>x</c> is
+        ///     probability that the value of a random variable having this normal density is
+        ///     less than or equal to <c>x</c>.
         /// </remarks>
         public double Cdf(double x)
         {
@@ -182,7 +159,7 @@ namespace Marv.Common
             int i;
             double del, temp, z, xden, xnum, y, xsq, min;
             double result, ccum;
-            var arg = (x - mean_)/sigma_;
+            var arg = (x - mean_) / sigma_;
 
             min = Double.Epsilon;
             z = arg;
@@ -193,15 +170,18 @@ namespace Marv.Common
                 // Evaluate  anorm  for  |X| <= 0.66291
                 //
                 xsq = zero;
-                if (y > MACHINE_EPSILON) xsq = z*z;
-                xnum = a[4]*xsq;
+                if (y > MACHINE_EPSILON)
+                {
+                    xsq = z * z;
+                }
+                xnum = a[4] * xsq;
                 xden = xsq;
                 for (i = 0; i < 3; i++)
                 {
-                    xnum = (xnum + a[i])*xsq;
-                    xden = (xden + b[i])*xsq;
+                    xnum = (xnum + a[i]) * xsq;
+                    xden = (xden + b[i]) * xsq;
                 }
-                result = z*(xnum + a[3])/(xden + b[3]);
+                result = z * (xnum + a[3]) / (xden + b[3]);
                 temp = result;
                 result = half + temp;
                 // ccum = half - temp;
@@ -212,17 +192,17 @@ namespace Marv.Common
                 //
             else if (y <= Root32)
             {
-                xnum = c[8]*y;
+                xnum = c[8] * y;
                 xden = y;
                 for (i = 0; i < 7; i++)
                 {
-                    xnum = (xnum + c[i])*y;
-                    xden = (xden + d[i])*y;
+                    xnum = (xnum + c[i]) * y;
+                    xden = (xden + d[i]) * y;
                 }
-                result = (xnum + c[7])/(xden + d[7]);
-                xsq = Math.Floor(y*sixten)/sixten;
-                del = (y - xsq)*(y + xsq);
-                result = Math.Exp(-(xsq*xsq*half))*Math.Exp(-(del*half))*result;
+                result = (xnum + c[7]) / (xden + d[7]);
+                xsq = Math.Floor(y * sixten) / sixten;
+                del = (y - xsq) * (y + xsq);
+                result = Math.Exp(-(xsq * xsq * half)) * Math.Exp(-(del * half)) * result;
                 ccum = one - result;
                 if (z > zero)
                 {
@@ -237,29 +217,30 @@ namespace Marv.Common
                 //
             else
             {
-                xsq = one/(z*z);
-                xnum = p[5]*xsq;
+                xsq = one / (z * z);
+                xnum = p[5] * xsq;
                 xden = xsq;
                 for (i = 0; i < 4; i++)
                 {
-                    xnum = (xnum + p[i])*xsq;
-                    xden = (xden + q[i])*xsq;
+                    xnum = (xnum + p[i]) * xsq;
+                    xden = (xden + q[i]) * xsq;
                 }
-                result = xsq*(xnum + p[4])/(xden + q[4]);
-                result = (sqrpi - result)/y;
-                xsq = Math.Floor(z*sixten)/sixten;
-                del = (z - xsq)*(z + xsq);
-                result = Math.Exp(-(xsq*xsq*half))*Math.Exp(-(del*half))*result;
+                result = xsq * (xnum + p[4]) / (xden + q[4]);
+                result = (sqrpi - result) / y;
+                xsq = Math.Floor(z * sixten) / sixten;
+                del = (z - xsq) * (z + xsq);
+                result = Math.Exp(-(xsq * xsq * half)) * Math.Exp(-(del * half)) * result;
                 ccum = one - result;
                 if (z > zero)
                 {
-                    temp = result;
                     result = ccum;
-                    ccum = temp;
                 }
             }
 
-            if (result < min) result = 0.0e0;
+            if (result < min)
+            {
+                result = 0.0e0;
+            }
             //
             // Fix up for negative argument, erf, etc.
             //
@@ -269,17 +250,17 @@ namespace Marv.Common
         }
 
         /// <summary>
-        /// Returns the probability density function evaluated at a given value.
+        ///     Returns the probability density function evaluated at a given value.
         /// </summary>
         /// <param name="x">A position on the x-axis.</param>
         /// <returns>The probability density function evaluated at <c>x</c>.</returns>
         public double Pdf(double x)
         {
             var y = (x - mean_);
-            var xMinusMuSqr = y*y;
+            var xMinusMuSqr = y * y;
 
             // c_ is a constant equal to one over sigma times one over square root of 2 PI
-            return c_*Math.Exp(-0.5*xMinusMuSqr*oneOverSigmaSqr_);
+            return c_ * Math.Exp(-0.5 * xMinusMuSqr * oneOverSigmaSqr_);
         }
     }
 }
