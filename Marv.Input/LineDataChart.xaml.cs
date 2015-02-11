@@ -450,6 +450,11 @@ namespace Marv.Input
 
                     var maxProb = vertexEvidence.Value.Max();
 
+                    if (this.BaseDistributionSeries == null)
+                    {
+                        this.UpdateBasePoints();
+                    }
+
                     this.Vertex.States.ForEach((state, i) =>
                     {
                         if (i == 0)
