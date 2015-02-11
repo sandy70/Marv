@@ -26,26 +26,18 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
-        private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
-        private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
         private LocationCollection criticalLocations;
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible;
-        private bool isLineDataControlVisible;
         private bool isMapViewVisible = true;
         private bool isMenuVisible;
         private bool isReferenceLocationsVisible = true;
-        private bool isVertexControlVisible;
         private bool isYearSliderVisible = true;
         private ILineData lineData;
-        private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
         private Dict<string, int, double> locationValues;
         private LocationCollection locations;
         private LocationCollection referenceLocations;
         private Location selectedLocation;
         private Dict<string, double> selectedYearLocationValues;
-        private LocationRect startExtent;
-        private Sequence<double> valueLevels;
 
         public LocationCollection CriticalLocations
         {
@@ -81,38 +73,6 @@ namespace Marv.Input
                 }
 
                 this.isGraphControlVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsLineDataChartVisible
-        {
-            get { return this.isLineDataChartVisible; }
-
-            set
-            {
-                if (value.Equals(this.isLineDataChartVisible))
-                {
-                    return;
-                }
-
-                this.isLineDataChartVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsLineDataControlVisible
-        {
-            get { return this.isLineDataControlVisible; }
-
-            set
-            {
-                if (value.Equals(this.isLineDataControlVisible))
-                {
-                    return;
-                }
-
-                this.isLineDataControlVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -165,22 +125,6 @@ namespace Marv.Input
             }
         }
 
-        public bool IsVertexControlVisible
-        {
-            get { return this.isVertexControlVisible; }
-
-            set
-            {
-                if (value.Equals(this.isVertexControlVisible))
-                {
-                    return;
-                }
-
-                this.isVertexControlVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public bool IsYearSliderVisible
         {
             get { return this.isYearSliderVisible; }
@@ -209,22 +153,6 @@ namespace Marv.Input
                 }
 
                 this.lineData = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public IDoubleToBrushMap LocationValueToBrushMap
-        {
-            get { return this.locationValueToBrushMap; }
-
-            set
-            {
-                if (value.Equals(this.locationValueToBrushMap))
-                {
-                    return;
-                }
-
-                this.locationValueToBrushMap = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -311,22 +239,6 @@ namespace Marv.Input
             }
         }
 
-        public LocationRect StartExtent
-        {
-            get { return this.startExtent; }
-
-            set
-            {
-                if (value.Equals(this.startExtent))
-                {
-                    return;
-                }
-
-                this.startExtent = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -388,15 +300,6 @@ namespace Marv.Input
 
             this.UpdateGraphValue();
             this.UpdateLocationValues();
-
-            //var sectionEvidence = SectionEvidence.Read(@"C:\Users\Vinod\Data\LongChang\Scenario08\SectionEvidences\969.marv-sectionevidence");
-            //var network = Network.Read(@"C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net");
-            //network.SetEvidence(sectionEvidence, 2014);
-
-            //var sensitivity = network.GetSensitivity("current", new VertexStateDifferenceComputer(1));
-            //// sensitivity = this.Graph.Network.GetSensitivity("exceed", new VertexEntropyComputer());
-            //sensitivity.WriteJson(@"C:\Users\Vinod\Downloads\entropy.json");
-            //Console.Write(sensitivity);
         }
 
         private void MapView_Loaded(object sender, RoutedEventArgs e)

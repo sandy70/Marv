@@ -89,7 +89,7 @@ namespace Marv
 
         public FolderLineData(string theRootDirPath)
         {
-            this.rootDirPathPath = theRootDirPath;
+            this.rootDirPathPath = File.Exists(theRootDirPath) ? Path.GetDirectoryName(theRootDirPath) : theRootDirPath;
 
             if (!Directory.Exists(this.rootDirPathPath))
             {
@@ -345,7 +345,7 @@ namespace Marv
             // Do nothing because files should be updated already.
         }
 
-        private void WriteHeader()
+        public void WriteHeader()
         {
             if (this.rootDirPathPath != null)
             {

@@ -639,7 +639,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    this.LineData.ChangeSectionId(oldString, newString);
+                    this.LineData.ReplaceSectionId(oldString, newString);
                 }
 
                 cellModel.Data = newString;
