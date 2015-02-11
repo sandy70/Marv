@@ -125,7 +125,7 @@ namespace Marv
             this.RaiseDataChanged();
         }
 
-        public void ChangeSectionId(string oldId, string newId)
+        public void ReplaceSectionId(string oldId, string newId)
         {
             this.SectionBeliefs.ChangeKey(oldId, newId);
             this.SectionEvidences.ChangeKey(oldId, newId);
