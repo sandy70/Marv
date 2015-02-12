@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Marv.Common;
 using Microsoft.Win32;
 using Telerik.Windows;
@@ -475,6 +476,32 @@ namespace Marv.Input
             }
         }
 
+        private void GridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                foreach (var selectedCell in this.GridView.SelectedCells)
+                {
+                    var cellModel = selectedCell.ToModel();
+
+                    if (cellModel.IsColumnSectionId)
+                    {
+                        this.Rows.Remove(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
+                        this.LineData.RemoveSection(cellModel.SectionId);
+                    }
+                    else
+                    {
+                        var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
+                        var selectedRowIndex = this.Rows.IndexOf(selectedRow);
+
+                        this.Rows.Remove(selectedRow);
+                        selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
+                        this.Rows.Insert(selectedRowIndex, selectedRow);
+                    }
+                }
+            }
+        }
+
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
             foreach (var pastedCell in this.pastedCells)
@@ -514,6 +541,9 @@ namespace Marv.Input
 
             this.GridView.Deleted -= GridView_Deleted;
             this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.KeyDown -= GridView_KeyDown;
+            this.GridView.KeyDown += GridView_KeyDown;
 
             this.GridView.Pasted -= GridView_Pasted;
             this.GridView.Pasted += GridView_Pasted;
