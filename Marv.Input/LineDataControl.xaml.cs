@@ -556,8 +556,6 @@ namespace Marv.Input
 
             await Task.Run(() => this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
 
-            // this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
-
             this.RaiseNotificationClosed(notification);
 
             this.RaiseSectionBeliefsChanged();
