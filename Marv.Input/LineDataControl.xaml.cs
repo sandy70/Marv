@@ -345,17 +345,30 @@ namespace Marv.Input
                 return;
             }
 
-            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+            var isRow = false;
+            var sectionIds = new List<string>();
 
-            if (selectedCellModel.IsColumnSectionId)
+            foreach (var selectedCell in this.GridView.SelectedCells)
+            {
+                sectionIds.AddUnique(selectedCell.ToModel().SectionId);
+            }
+
+            isRow = sectionIds.Count == 1;
+
+            if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isRow)
             {
                 return;
             }
 
-            foreach (var row in this.Rows)
+            foreach (var selectedCell in this.GridView.SelectedCells)
             {
-                var cellModel = new CellModel(row, selectedCellModel.Header);
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                var selectedCellModel = selectedCell.ToModel();
+
+                foreach (var row in this.Rows)
+                {
+                    var cellModel = new CellModel(row, selectedCellModel.Header);
+                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                }
             }
         }
 
@@ -366,23 +379,36 @@ namespace Marv.Input
                 return;
             }
 
-            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+            var isColumn = false;
+            var indices = new List<int>();
 
-            if (selectedCellModel.IsColumnSectionId)
+            foreach (var selectedCell in this.GridView.SelectedCells)
+            {
+                indices.AddUnique(selectedCell.Column.DisplayIndex);
+            }
+
+            isColumn = indices.Count == 1;
+
+            if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isColumn)
             {
                 return;
             }
 
-            foreach (var column in this.GridView.Columns)
+            foreach (var selectedCell in this.GridView.SelectedCells)
             {
-                var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+                var selectedCellModel = selectedCell.ToModel();
 
-                if (cellModel.IsColumnSectionId)
+                foreach (var column in this.GridView.Columns)
                 {
-                    continue;
-                }
+                    var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
 
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                    if (cellModel.IsColumnSectionId)
+                    {
+                        continue;
+                    }
+
+                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                }
             }
         }
 
