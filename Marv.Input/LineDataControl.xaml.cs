@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Microsoft.Win32;
-using Telerik.Windows;
 using Telerik.Windows.Controls;
-using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -345,17 +343,30 @@ namespace Marv.Input
                 return;
             }
 
-            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+            var isRow = false;
+            var sectionIds = new List<string>();
 
-            if (selectedCellModel.IsColumnSectionId)
+            foreach (var selectedCell in this.GridView.SelectedCells)
+            {
+                sectionIds.AddUnique(selectedCell.ToModel().SectionId);
+            }
+
+            isRow = sectionIds.Count == 1;
+
+            if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isRow)
             {
                 return;
             }
 
-            foreach (var row in this.Rows)
+            foreach (var selectedCell in this.GridView.SelectedCells)
             {
-                var cellModel = new CellModel(row, selectedCellModel.Header);
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                var selectedCellModel = selectedCell.ToModel();
+
+                foreach (var row in this.Rows)
+                {
+                    var cellModel = new CellModel(row, selectedCellModel.Header);
+                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                }
             }
         }
 
@@ -366,110 +377,37 @@ namespace Marv.Input
                 return;
             }
 
-            var selectedCellModel = this.GridView.SelectedCells[0].ToModel();
+            var isColumn = false;
+            var indices = new List<int>();
 
-            if (selectedCellModel.IsColumnSectionId)
+            foreach (var selectedCell in this.GridView.SelectedCells)
+            {
+                indices.AddUnique(selectedCell.Column.DisplayIndex);
+            }
+
+            isColumn = indices.Count == 1;
+
+            if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isColumn)
             {
                 return;
             }
 
-            foreach (var column in this.GridView.Columns)
+            foreach (var selectedCell in this.GridView.SelectedCells)
             {
-                var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+                var selectedCellModel = selectedCell.ToModel();
 
-                if (cellModel.IsColumnSectionId)
+                foreach (var column in this.GridView.Columns)
                 {
-                    continue;
+                    var cellModel = new CellModel(selectedCellModel.Row, column.Header as string);
+
+                    if (cellModel.IsColumnSectionId)
+                    {
+                        continue;
+                    }
+
+                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
-
-                this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
             }
-        }
-
-        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
-        {
-            e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
-            e.Column.MaxWidth = 100;
-        }
-
-        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
-        {
-            var cellModel = e.Cell.ToModel();
-            var oldString = e.OldData as string;
-            var newString = e.NewData as string;
-
-            this.SetCell(cellModel, newString, oldString);
-        }
-
-        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
-        {
-            if (e.Cell.ToModel().IsColumnSectionId)
-            {
-                return;
-            }
-
-            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
-
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
-        }
-
-        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
-        {
-            if (e.NewCell == null || this.LineData == null)
-            {
-                return;
-            }
-
-            var cellModel = e.NewCell.ToModel();
-            this.SelectedSectionId = cellModel.SectionId;
-
-            if (cellModel.IsColumnSectionId)
-            {
-                this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
-                return;
-            }
-
-            this.SelectedYear = cellModel.Year;
-            this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
-
-            this.RaiseSelectedCellChanged();
-        }
-
-        private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
-        {
-            foreach (var item in e.Items)
-            {
-                var row = item as Dynamic;
-                var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.RemoveSection(sectionId);
-            }
-        }
-
-        private void GridView_Pasted(object sender, RadRoutedEventArgs e)
-        {
-            foreach (var pastedCell in this.pastedCells)
-            {
-                var cellModel = pastedCell.Cell.ToModel();
-                this.SetCell(cellModel, pastedCell.Value as string, this.oldData[pastedCell] as string);
-            }
-
-            this.CanUserInsertRows = false;
-            this.pastedCells.Clear();
-            this.RaiseSectionEvidencesChanged();
-        }
-
-        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
-        {
-            var cellModel = e.Cell.ToModel();
-
-            this.CanUserInsertRows = cellModel.IsColumnSectionId;
-
-            this.pastedCells.Add(e);
-            this.oldData[e] = cellModel.Data;
         }
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
@@ -488,6 +426,9 @@ namespace Marv.Input
 
             this.GridView.Deleted -= GridView_Deleted;
             this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.KeyDown -= GridView_KeyDown;
+            this.GridView.KeyDown += GridView_KeyDown;
 
             this.GridView.Pasted -= GridView_Pasted;
             this.GridView.Pasted += GridView_Pasted;
