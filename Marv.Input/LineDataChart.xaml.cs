@@ -479,8 +479,10 @@ namespace Marv.Input
             var first = this.AnchorPoints.First().Category;
             var last = this.AnchorPoints.Last().Category;
 
-            var maxValue = this.Vertex.SafeMax * 0.9;
-            var minValue = this.Vertex.SafeMin == 0 ? 1 : this.Vertex.SafeMin * 1.1;
+            var size = this.Vertex.SafeMax - this.Vertex.SafeMin;
+
+            var maxValue = this.Vertex.SafeMax - size * 0.1;
+            var minValue = this.Vertex.SafeMin == 0 ? 1 : this.Vertex.SafeMin + size * 0.1;
             var modeValue = (maxValue + minValue) / 2;
 
             this.MaxPoints.Add(new CategoricalDataPoint
