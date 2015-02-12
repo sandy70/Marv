@@ -52,6 +52,7 @@ namespace Marv.Input
         private ObservableCollection<CategoricalDataPoint> maxPoints;
         private ObservableCollection<CategoricalDataPoint> minPoints;
         private ObservableCollection<CategoricalDataPoint> modePoints;
+        private CategoricalDataPoint trackedPoint;
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
@@ -204,6 +205,22 @@ namespace Marv.Input
         {
             get { return (string) GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
+        }
+
+        public CategoricalDataPoint TrackedPoint
+        {
+            get { return this.trackedPoint; }
+
+            set
+            {
+                if (value != null && value.Equals(this.trackedPoint))
+                {
+                    return;
+                }
+
+                this.trackedPoint = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Vertex Vertex
@@ -425,6 +442,24 @@ namespace Marv.Input
             }
         }
 
+        private void ChartTrackBallBehavior_TrackInfoUpdated(object sender, TrackBallInfoEventArgs e) {}
+
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            var data = this.Chart.ConvertPointToData(e.GetPosition(sender as IInputElement));
+
+            if (data == null || data.FirstValue == null || data.SecondValue == null)
+            {
+                return;
+            }
+
+            this.TrackedPoint = new CategoricalDataPoint
+            {
+                Category = data.FirstValue,
+                Value = (double) data.SecondValue
+            };
+        }
+
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
             return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
@@ -501,11 +536,8 @@ namespace Marv.Input
 
         private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
         {
-            //this.Chart.MouseDown -= Chart_MouseDown;
-            //this.Chart.MouseDown += Chart_MouseDown;
-
-            //this.Chart.MouseMove -= Chart_MouseMove;
-            //this.Chart.MouseMove += Chart_MouseMove;
+            this.Chart.MouseMove -= Chart_MouseMove;
+            this.Chart.MouseMove += Chart_MouseMove;
 
             this.MaxSeries.MouseDown -= MaxSeries_MouseDown;
             this.MaxSeries.MouseDown += MaxSeries_MouseDown;

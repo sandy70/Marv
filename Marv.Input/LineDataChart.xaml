@@ -39,10 +39,20 @@
 
                 <telerik:RadRadioButton Content="Years"
                                         Width="64" />
-                
+
                 <CheckBox Content="Log Y-Axis"
                           IsChecked="{Binding ElementName=Root, Path=IsLog, Mode=TwoWay}"
                           Margin="4,0,4,0" />
+            </ToolBar>
+            
+            <ToolBar>
+                <TextBlock VerticalAlignment="Center"
+                           Visibility="{Binding ElementName=Root, Path=TrackedPoint, Converter={StaticResource NullToVisibility}}">
+                    <Run FontWeight="Bold" Text="Section ID: " /> 
+                    <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Category}" />
+                    <Run FontWeight="Bold" Text=", Value: " />
+                    <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Value, StringFormat={}{0:F2}}" />
+                </TextBlock>
             </ToolBar>
         </ToolBarTray>
 
@@ -156,7 +166,7 @@
                 </telerik:ChartSeriesProvider>
             </telerik:RadCartesianChart.SeriesProvider>
         </telerik:RadCartesianChart>
-        
+
         <TextBlock Grid.Row="1"
                    Margin="10"
                    FontSize="16"
