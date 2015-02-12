@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -31,13 +30,7 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
-
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
+            this.RaiseCellValidating(e);
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -92,8 +85,6 @@ namespace Marv.Input
                 }
             }
         }
-
-        
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {

@@ -28,7 +28,6 @@ namespace Marv.Input
         private ILineData lineData;
         private LocationCollection locations;
         private Location selectedLocation;
-        private LocationRect startExtent;
 
         public Graph Graph
         {
@@ -166,35 +165,11 @@ namespace Marv.Input
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public LocationRect StartExtent
-        {
-            get { return this.startExtent; }
-
-            set
-            {
-                if (value.Equals(this.startExtent))
-                {
-                    return;
-                }
-
-                this.startExtent = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
-        }
-
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -262,6 +237,9 @@ namespace Marv.Input
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
+            this.LineDataControl.CellValidating -= LineDataControl_CellValidating;
+            this.LineDataControl.CellValidating += LineDataControl_CellValidating;
+
             this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
             this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
 
@@ -282,6 +260,25 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        void LineDataControl_CellValidating(object sender, GridViewCellValidatingEventArgs e)
+        {
+            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            }
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -202,6 +202,14 @@ namespace Marv.Input
             }
         }
 
+        public void RaiseCellValidating(GridViewCellValidatingEventArgs e)
+        {
+            if (this.CellValidating != null)
+            {
+                this.CellValidating(this, e);
+            }
+        }
+
         public void SetSelectedCells(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)
@@ -650,5 +658,7 @@ namespace Marv.Input
         public event EventHandler SectionEvidencesChanged;
 
         public event EventHandler SelectedCellChanged;
+
+        public event RoutedEventHandler<GridViewCellValidatingEventArgs> CellValidating;
     }
 }
