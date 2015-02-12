@@ -1,5 +1,6 @@
 ﻿<UserControl x:Class="Marv.Input.LineDataControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:global="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:local="clr-namespace:Marv.Input"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -84,7 +85,11 @@
                                           Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
-                                          LargeChange="5" />
+                                          LargeChange="5">
+                    <telerik:RadNumericUpDown.NumberFormatInfo>
+                        <global:NumberFormatInfo NumberGroupSeparator="" />
+                    </telerik:RadNumericUpDown.NumberFormatInfo>
+                </telerik:RadNumericUpDown>
 
                 <TextBlock Margin="2"
                            TextAlignment="Right" VerticalAlignment="Center"
@@ -96,7 +101,11 @@
                                           Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
-                                          LargeChange="5" />
+                                          LargeChange="5">
+                    <telerik:RadNumericUpDown.NumberFormatInfo>
+                        <global:NumberFormatInfo NumberGroupSeparator="" />
+                    </telerik:RadNumericUpDown.NumberFormatInfo>
+                </telerik:RadNumericUpDown>
             </ToolBar>
         </ToolBarTray>
 

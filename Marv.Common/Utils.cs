@@ -8,7 +8,7 @@ namespace Marv.Common
 {
     public static class Utils
     {
-        public const double Epsilon = 10E-03;
+        public const double Epsilon = 10E-09;
 
         public static T Clamp<T>(T value, T minValue, T maxValue) where T : IComparable<T>
         {
