@@ -15,9 +15,6 @@ namespace Marv.Input
 {
     public partial class LineDataControl : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty CurrentGraphDataProperty =
-            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
