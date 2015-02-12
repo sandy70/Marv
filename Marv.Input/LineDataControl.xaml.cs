@@ -67,12 +67,6 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, VertexEvidence> CurrentGraphData
-        {
-            get { return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty); }
-            set { SetValue(CurrentGraphDataProperty, value); }
-        }
-
         public string FileName
         {
             get { return (string) GetValue(FileNameProperty); }
