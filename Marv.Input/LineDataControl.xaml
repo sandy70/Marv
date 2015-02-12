@@ -66,30 +66,15 @@
             <ToolBar Height="32"
                      IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}">
                 <telerik:RadButton Name="AddSectionsButton"
-                                   Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="2"
-                                   MinWidth="48"
-                                   Text="Add"
-                                   TextAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   Content="Add Sections" />
 
-                        <telerik:RadNumericUpDown LargeChange="10" SmallChange="1"
-                                                  Maximum="10000"
-                                                  Minimum="1"
-                                                  NumberDecimalDigits="0"
-                                                  Padding="0"
-                                                  Value="{Binding ElementName=Root, Path=SectionsToAddCount, Mode=TwoWay}" />
+                <telerik:RadNumericUpDown LargeChange="10" SmallChange="1"
+                                          Maximum="10000"
+                                          Minimum="1"
+                                          NumberDecimalDigits="0"
+                                          Value="{Binding ElementName=Root, Path=SectionsToAddCount, Mode=TwoWay}" />
 
-                        <TextBlock Margin="2"
-                                   MinWidth="48"
-                                   Text="Sections"
-                                   TextAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-                </telerik:RadButton>
-
-                <TextBlock Margin="2"
+                <TextBlock Margin="8,2,2,2"
                            TextAlignment="Right" VerticalAlignment="Center"
                            Text="Start Year" />
 
