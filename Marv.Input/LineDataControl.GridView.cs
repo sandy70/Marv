@@ -87,20 +87,13 @@ namespace Marv.Input
                     }
                     else
                     {
-                        var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
-                        sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
-                        this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
-
-                        var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
-                        var selectedRowIndex = this.Rows.IndexOf(selectedRow);
-
-                        this.Rows.Remove(selectedRow);
-                        selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
-                        this.Rows.Insert(selectedRowIndex, selectedRow);
+                        this.ClearCell(cellModel);
                     }
                 }
             }
         }
+
+        
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {

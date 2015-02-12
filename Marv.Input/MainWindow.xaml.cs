@@ -199,8 +199,15 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            this.LineDataChart.UpdateEvidence(vertexEvidence);
-            this.LineDataControl.SetSelectedCells(vertexEvidence);
+            if (vertexEvidence == null)
+            {
+                this.LineDataControl.ClearSelectedCell();
+            }
+            else
+            {
+                this.LineDataChart.UpdateEvidence(vertexEvidence);
+                this.LineDataControl.SetSelectedCells(vertexEvidence);
+            }
         }
 
         private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)

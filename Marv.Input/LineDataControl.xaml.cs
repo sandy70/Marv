@@ -195,11 +195,13 @@ namespace Marv.Input
             (d as LineDataControl).RaiseSelectedYearChanged();
         }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        public void ClearSelectedCell()
         {
-            if (this.PropertyChanged != null && propertyName != null)
+            var cellModel = this.GridView.CurrentCellInfo.ToModel();
+
+            if (!cellModel.IsColumnSectionId)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.ClearCell(cellModel);
             }
         }
 
@@ -213,62 +215,6 @@ namespace Marv.Input
                 {
                     this.SetCell(cellModel, vertexEvidence);
                 }
-            }
-        }
-
-        protected void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
-        {
-            if (this.EvidenceChanged != null)
-            {
-                this.EvidenceChanged(this, cellModel, vertexEvidence);
-            }
-        }
-
-        protected void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
-        protected void RaiseNotificationOpened(Notification notification)
-        {
-            if (this.NotificationOpened != null)
-            {
-                this.NotificationOpened(this, notification);
-            }
-        }
-
-        protected void RaiseSectionBeliefsChanged()
-        {
-            if (this.SectionBeliefsChanged != null)
-            {
-                this.SectionBeliefsChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSectionEvidencesChanged()
-        {
-            if (this.SectionEvidencesChanged != null)
-            {
-                this.SectionEvidencesChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSelectedCellChanged()
-        {
-            if (this.SelectedCellChanged != null)
-            {
-                this.SelectedCellChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSelectedYearChanged()
-        {
-            if (this.SelectedYearChanged != null)
-            {
-                this.SelectedYearChanged(this, new EventArgs());
             }
         }
 
@@ -304,6 +250,20 @@ namespace Marv.Input
                 this.LineData.AddSection(sectionId);
                 this.AddRow(sectionId);
             }
+        }
+
+        private void ClearCell(CellModel cellModel)
+        {
+            var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
+            sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
+            this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
+
+            var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
+            var selectedRowIndex = this.Rows.IndexOf(selectedRow);
+
+            this.Rows.Remove(selectedRow);
+            selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
+            this.Rows.Insert(selectedRowIndex, selectedRow);
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
@@ -475,6 +435,70 @@ namespace Marv.Input
             {
                 this.FileName = dialog.FileName;
                 this.LineData = Utils.ReadJson<LineData>(this.FileName);
+            }
+        }
+
+        private void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
+        {
+            if (this.EvidenceChanged != null)
+            {
+                this.EvidenceChanged(this, cellModel, vertexEvidence);
+            }
+        }
+
+        private void RaiseNotificationClosed(Notification notification)
+        {
+            if (this.NotificationClosed != null)
+            {
+                this.NotificationClosed(this, notification);
+            }
+        }
+
+        private void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
+            }
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void RaiseSectionBeliefsChanged()
+        {
+            if (this.SectionBeliefsChanged != null)
+            {
+                this.SectionBeliefsChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSectionEvidencesChanged()
+        {
+            if (this.SectionEvidencesChanged != null)
+            {
+                this.SectionEvidencesChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSelectedCellChanged()
+        {
+            if (this.SelectedCellChanged != null)
+            {
+                this.SelectedCellChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSelectedYearChanged()
+        {
+            if (this.SelectedYearChanged != null)
+            {
+                this.SelectedYearChanged(this, new EventArgs());
             }
         }
 

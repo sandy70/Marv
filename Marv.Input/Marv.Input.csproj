@@ -189,6 +189,7 @@
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="LineDataControl.GridView.cs" />
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
