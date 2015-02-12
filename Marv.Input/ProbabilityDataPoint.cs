@@ -1,6 +1,6 @@
 ﻿using Telerik.Charting;
 
-namespace Marv
+namespace Marv.Input
 {
     public class ProbabilityDataPoint : CategoricalDataPoint
     {

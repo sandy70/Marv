@@ -9,7 +9,7 @@ namespace Marv
         Guid Guid { get; set; }
         int StartYear { get; set; }
         void AddSections(IEnumerable<string> theSectionIds);
-        void ChangeSectionId(string oldId, string newId);
+        void ReplaceSectionId(string oldId, string newId);
         bool ContainsSection(string sectionId);
         Dict<int, string, double[]> GetSectionBelief(string sectionId);
         Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId);
@@ -20,5 +20,7 @@ namespace Marv
         void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
         void Write(string filePath);
         event EventHandler DataChanged;
+
+        void AddSection(string sectionId);
     }
 }

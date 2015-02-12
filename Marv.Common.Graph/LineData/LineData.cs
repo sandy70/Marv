@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using Marv.Common;
-using Marv.Common.Graph;
 
 namespace Marv
 {
@@ -106,6 +104,14 @@ namespace Marv
             return Utils.ReadJson<LineData>(filePath);
         }
 
+        public void AddSection(string sectionId)
+        {
+            if (!this.SectionEvidences.ContainsKey(sectionId))
+            {
+                this.SectionEvidences[sectionId] = new Dict<int, string, VertexEvidence>();
+            }
+        }
+
         public void AddSections(IEnumerable<string> theSectionIds)
         {
             foreach (var key in theSectionIds)
@@ -116,10 +122,10 @@ namespace Marv
                 }
             }
 
-            // this.RaiseDataChanged();
+            this.RaiseDataChanged();
         }
 
-        public void ChangeSectionId(string oldId, string newId)
+        public void ReplaceSectionId(string oldId, string newId)
         {
             this.SectionBeliefs.ChangeKey(oldId, newId);
             this.SectionEvidences.ChangeKey(oldId, newId);
@@ -128,16 +134,6 @@ namespace Marv
         public bool ContainsSection(string sectionId)
         {
             return this.SectionEvidences.ContainsKey(sectionId);
-        }
-
-        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
-        {
-            return this.SectionBeliefs[sectionId];
-        }
-
-        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
-        {
-            return this.sectionEvidences[sectionId];
         }
 
         public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
@@ -158,6 +154,16 @@ namespace Marv
             }
 
             return null;
+        }
+
+        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
+        {
+            return this.SectionBeliefs[sectionId];
+        }
+
+        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
+        {
+            return this.sectionEvidences[sectionId];
         }
 
         public IEnumerable<string> GetSectionIds()

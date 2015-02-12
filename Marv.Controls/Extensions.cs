@@ -108,8 +108,3 @@ namespace Marv.Controls
         }
     }
 }
-
-namespace System.Windows
-{
-    public delegate void RoutedEventHandler<in TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
-}

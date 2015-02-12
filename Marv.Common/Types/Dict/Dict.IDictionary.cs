@@ -55,7 +55,7 @@ namespace Marv
 
         public bool ContainsKey(TKey key)
         {
-            return this.dictionary.ContainsKey(key);
+            return key != null && this.dictionary.ContainsKey(key);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)

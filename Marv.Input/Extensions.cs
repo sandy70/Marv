@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Marv;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
-namespace Marv
+namespace Marv.Input
 {
     public static class Extensions
     {

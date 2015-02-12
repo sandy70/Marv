@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Marv.Common;
@@ -13,6 +14,7 @@ namespace Marv
         private int endYear;
         private Guid guid;
         private string rootDirPathPath;
+        private ObservableCollection<string> sectionIds;
         private int startYear;
 
         public int EndYear
@@ -49,6 +51,22 @@ namespace Marv
             }
         }
 
+        public ObservableCollection<string> SectionIds
+        {
+            get { return this.sectionIds ?? (this.SectionIds = new ObservableCollection<string>(this.GetSectionIds())); }
+
+            set
+            {
+                if (value.Equals(this.sectionIds))
+                {
+                    return;
+                }
+
+                this.sectionIds = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public int StartYear
         {
             get { return this.startYear; }
@@ -71,7 +89,7 @@ namespace Marv
 
         public FolderLineData(string theRootDirPath)
         {
-            this.rootDirPathPath = theRootDirPath;
+            this.rootDirPathPath = File.Exists(theRootDirPath) ? Path.GetDirectoryName(theRootDirPath) : theRootDirPath;
 
             if (!Directory.Exists(this.rootDirPathPath))
             {
@@ -90,38 +108,32 @@ namespace Marv
             return lineData;
         }
 
+        public void AddSection(string sectionId)
+        {
+            this.SectionIds.AddUnique(sectionId);
+
+            var sectionBelief = new Dict<int, string, double[]>();
+            var sectionEvidence = new Dict<int, string, VertexEvidence>();
+
+            for (var year = this.StartYear; year <= this.EndYear; year++)
+            {
+                sectionBelief[year] = new Dict<string, double[]>();
+                sectionEvidence[year] = new Dict<string, VertexEvidence>();
+            }
+
+            var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId + ".marv-sectionbelief");
+            var evidenceFilePath = Path.Combine(this.rootDirPathPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
+
+            sectionBelief.WriteJson(beliefFilePath);
+            sectionEvidence.WriteJson(evidenceFilePath);
+        }
+
         public void AddSections(IEnumerable<string> theSectionIds)
         {
             foreach (var sectionId in theSectionIds)
             {
-                var sectionBelief = new Dict<int, string, double[]>();
-                var sectionEvidence = new Dict<int, string, VertexEvidence>();
-
-                for (var year = this.StartYear; year <= this.EndYear; year ++)
-                {
-                    sectionBelief[year] = new Dict<string, double[]>();
-                    sectionEvidence[year] = new Dict<string, VertexEvidence>();
-                }
-
-                var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId + ".marv-sectionbelief");
-                var evidenceFilePath = Path.Combine(this.rootDirPathPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
-
-                sectionBelief.WriteJson(beliefFilePath);
-                sectionEvidence.WriteJson(evidenceFilePath);
+                this.AddSection(sectionId);
             }
-        }
-
-        public void ChangeSectionId(string oldId, string newId)
-        {
-            var oldDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, oldId + ".marv-sectionbelief");
-            var newDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, newId + ".marv-sectionbelief");
-
-            File.Move(oldDirName, newDirName);
-
-            oldDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, oldId + ".marv-sectionevidence");
-            newDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, newId + ".marv-sectionevidence");
-
-            File.Move(oldDirName, newDirName);
         }
 
         public bool ContainsSection(string sectionId)
@@ -288,6 +300,8 @@ namespace Marv
 
         public void RemoveSection(string sectionId)
         {
+            this.SectionIds.Remove(sectionId);
+
             var beliefFilePath = Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief");
             var evidenceFilePath = Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence");
 
@@ -295,18 +309,35 @@ namespace Marv
             File.Delete(evidenceFilePath);
         }
 
+        public void ReplaceSectionId(string oldId, string newId)
+        {
+            this.SectionIds.Replace(oldId, newId);
+
+            var oldDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, oldId + ".marv-sectionbelief");
+            var newDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, newId + ".marv-sectionbelief");
+
+            File.Move(oldDirName, newDirName);
+
+            oldDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, oldId + ".marv-sectionevidence");
+            newDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, newId + ".marv-sectionevidence");
+
+            File.Move(oldDirName, newDirName);
+        }
+
         public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
         {
+            this.SectionIds.AddUnique(sectionId);
+
             var beliefFilePath = Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief");
             sectionBelief.WriteJson(beliefFilePath);
         }
 
         public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
         {
+            this.SectionIds.AddUnique(sectionId);
+
             var evidenceFilePath = Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence");
             sectionEvidence.WriteJson(evidenceFilePath);
-
-            Console.WriteLine("Read evidence: " + evidenceFilePath);
         }
 
         public void Write(string filePath)
@@ -314,7 +345,7 @@ namespace Marv
             // Do nothing because files should be updated already.
         }
 
-        private void WriteHeader()
+        public void WriteHeader()
         {
             if (this.rootDirPathPath != null)
             {

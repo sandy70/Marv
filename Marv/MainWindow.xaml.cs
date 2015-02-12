@@ -26,23 +26,34 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
-        private readonly Dict<double, Graph> casingGraphs = new Dict<double, Graph>();
-        private readonly Dict<double, Graph> graphs = new Dict<double, Graph>();
+        private LocationCollection criticalLocations;
         private bool isGraphControlVisible = true;
-        private bool isLineDataChartVisible;
-        private bool isLineDataControlVisible;
         private bool isMapViewVisible = true;
         private bool isMenuVisible;
-        private bool isVertexControlVisible;
+        private bool isReferenceLocationsVisible = true;
         private bool isYearSliderVisible = true;
         private ILineData lineData;
-        private IDoubleToBrushMap locationValueToBrushMap = new LocationValueToBrushMap();
         private Dict<string, int, double> locationValues;
         private LocationCollection locations;
+        private LocationCollection referenceLocations;
         private Location selectedLocation;
         private Dict<string, double> selectedYearLocationValues;
-        private LocationRect startExtent;
-        private Sequence<double> valueLevels;
+
+        public LocationCollection CriticalLocations
+        {
+            get { return this.criticalLocations; }
+
+            set
+            {
+                if (value.Equals(this.criticalLocations))
+                {
+                    return;
+                }
+
+                this.criticalLocations = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public Graph Graph
         {
@@ -62,38 +73,6 @@ namespace Marv.Input
                 }
 
                 this.isGraphControlVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsLineDataChartVisible
-        {
-            get { return this.isLineDataChartVisible; }
-
-            set
-            {
-                if (value.Equals(this.isLineDataChartVisible))
-                {
-                    return;
-                }
-
-                this.isLineDataChartVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsLineDataControlVisible
-        {
-            get { return this.isLineDataControlVisible; }
-
-            set
-            {
-                if (value.Equals(this.isLineDataControlVisible))
-                {
-                    return;
-                }
-
-                this.isLineDataControlVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -130,18 +109,18 @@ namespace Marv.Input
             }
         }
 
-        public bool IsVertexControlVisible
+        public bool IsReferenceLocationsVisible
         {
-            get { return this.isVertexControlVisible; }
+            get { return this.isReferenceLocationsVisible; }
 
             set
             {
-                if (value.Equals(this.isVertexControlVisible))
+                if (value.Equals(this.isReferenceLocationsVisible))
                 {
                     return;
                 }
 
-                this.isVertexControlVisible = value;
+                this.isReferenceLocationsVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -178,22 +157,6 @@ namespace Marv.Input
             }
         }
 
-        public IDoubleToBrushMap LocationValueToBrushMap
-        {
-            get { return this.locationValueToBrushMap; }
-
-            set
-            {
-                if (value.Equals(this.locationValueToBrushMap))
-                {
-                    return;
-                }
-
-                this.locationValueToBrushMap = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public LocationCollection Locations
         {
             get { return this.locations; }
@@ -214,6 +177,22 @@ namespace Marv.Input
         {
             get { return (NotificationCollection) this.GetValue(NotificationsProperty); }
             set { this.SetValue(NotificationsProperty, value); }
+        }
+
+        public LocationCollection ReferenceLocations
+        {
+            get { return this.referenceLocations; }
+
+            set
+            {
+                if (value.Equals(this.referenceLocations))
+                {
+                    return;
+                }
+
+                this.referenceLocations = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Location SelectedLocation
@@ -260,22 +239,6 @@ namespace Marv.Input
             }
         }
 
-        public LocationRect StartExtent
-        {
-            get { return this.startExtent; }
-
-            set
-            {
-                if (value.Equals(this.startExtent))
-                {
-                    return;
-                }
-
-                this.startExtent = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -306,8 +269,6 @@ namespace Marv.Input
         {
             var notifiers = this.GetChildren<INotifier>();
 
-            
-
             foreach (var notifier in notifiers)
             {
                 notifier.NotificationClosed -= this.notifier_NotificationClosed;
@@ -329,10 +290,12 @@ namespace Marv.Input
             this.YearSlider.ValueChanged -= this.YearSlider_ValueChanged;
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
+            this.CriticalLocations = LocationCollection.ReadCsv(Settings.Default.CriticalLocationsFileName);
             this.Graph = Graph.Read(Settings.Default.NetworkFileName);
             this.LineData = FolderLineData.Read(Settings.Default.LineDataFileName);
             this.Locations = LocationCollection.ReadCsv(Settings.Default.LocationsFileName);
             this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Settings.Default.LocationValuesFileName);
+            this.ReferenceLocations = LocationCollection.ReadCsv(Settings.Default.ReferenceLocationsFileName);
             this.SelectedYear = this.LineData.StartYear;
 
             this.UpdateGraphValue();
@@ -405,18 +368,18 @@ namespace Marv.Input
             }
         }
 
-        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            this.UpdateGraphValue();
-            this.UpdateLocationValues();
-        }
-
         private void UpdateLocationValues()
         {
             if (this.locationValues != null)
             {
                 this.SelectedYearLocationValues = this.locationValues[null, this.SelectedYear];
             }
+        }
+
+        private void YearSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.UpdateGraphValue();
+            this.UpdateLocationValues();
         }
 
         private void notifier_NotificationClosed(object sender, Notification notification)

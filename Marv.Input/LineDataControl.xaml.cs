@@ -5,19 +5,21 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
-using Marv.Common.Graph;
-using Marv.Input;
 using Microsoft.Win32;
+using Telerik.Windows;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.GridView;
 
-namespace Marv
+namespace Marv.Input
 {
-    public partial class LineDataControl : INotifier, INotifyPropertyChanged
+    public partial class LineDataControl : INotifyPropertyChanged
     {
+        public static readonly DependencyProperty CurrentGraphDataProperty =
+            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
@@ -44,32 +46,56 @@ namespace Marv
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+        private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
+        private bool canUserInsertRows;
         private Network network;
         private ObservableCollection<Dynamic> rows;
 
+        public bool CanUserInsertRows
+        {
+            get { return this.canUserInsertRows; }
+
+            set
+            {
+                if (value.Equals(this.canUserInsertRows))
+                {
+                    return;
+                }
+
+                this.canUserInsertRows = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Dict<string, VertexEvidence> CurrentGraphData
+        {
+            get { return (Dict<string, VertexEvidence>) GetValue(CurrentGraphDataProperty); }
+            set { SetValue(CurrentGraphDataProperty, value); }
+        }
+
         public string FileName
         {
-            get { return (string) this.GetValue(FileNameProperty); }
-            set { this.SetValue(FileNameProperty, value); }
+            get { return (string) GetValue(FileNameProperty); }
+            set { SetValue(FileNameProperty, value); }
         }
 
         public bool IsGridViewEnabled
         {
-            get { return (bool) this.GetValue(IsGridViewEnabledProperty); }
-            set { this.SetValue(IsGridViewEnabledProperty, value); }
+            get { return (bool) GetValue(IsGridViewEnabledProperty); }
+            set { SetValue(IsGridViewEnabledProperty, value); }
         }
 
         public ILineData LineData
         {
-            get { return (ILineData) this.GetValue(LineDataProperty); }
+            get { return (ILineData) GetValue(LineDataProperty); }
 
-            set { this.SetValue(LineDataProperty, value); }
+            set { SetValue(LineDataProperty, value); }
         }
 
         public string NetworkFileName
         {
-            get { return (string) this.GetValue(NetworkFileNameProperty); }
-            set { this.SetValue(NetworkFileNameProperty, value); }
+            get { return (string) GetValue(NetworkFileNameProperty); }
+            set { SetValue(NetworkFileNameProperty, value); }
         }
 
         public ObservableCollection<Dynamic> Rows
@@ -88,83 +114,37 @@ namespace Marv
 
         public int SectionsToAddCount
         {
-            get { return (int) this.GetValue(SectionsToAddCountProperty); }
-            set { this.SetValue(SectionsToAddCountProperty, value); }
+            get { return (int) GetValue(SectionsToAddCountProperty); }
+            set { SetValue(SectionsToAddCountProperty, value); }
         }
 
         public string SelectedSectionId
         {
-            get { return (string) this.GetValue(SelectedSectionIdProperty); }
+            get { return (string) GetValue(SelectedSectionIdProperty); }
 
-            set { this.SetValue(SelectedSectionIdProperty, value); }
+            set { SetValue(SelectedSectionIdProperty, value); }
         }
 
         public Vertex SelectedVertex
         {
-            get { return (Vertex) this.GetValue(SelectedVertexProperty); }
-            set { this.SetValue(SelectedVertexProperty, value); }
+            get { return (Vertex) GetValue(SelectedVertexProperty); }
+            set { SetValue(SelectedVertexProperty, value); }
         }
 
         public int SelectedYear
         {
-            get { return (int) this.GetValue(SelectedYearProperty); }
-            set { this.SetValue(SelectedYearProperty, value); }
+            get { return (int) GetValue(SelectedYearProperty); }
+            set { SetValue(SelectedYearProperty, value); }
         }
 
         public LineDataControl()
         {
             InitializeComponent();
 
-            this.Loaded -= this.LineDataControl_Loaded;
-            this.Loaded += this.LineDataControl_Loaded;
-
-            this.Loaded -= this.LineDataControl_Loaded_GridView;
-            this.Loaded += this.LineDataControl_Loaded_GridView;
+            this.Loaded += LineDataControl_Loaded;
         }
 
-        private static void AddRow(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, string sectionId)
-        {
-            var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-            var row = new Dynamic();
-            row[CellModel.SectionIdHeader] = sectionId;
-
-            for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
-            {
-                row[year.ToString()] = sectionEvidence[year][vertexKey];
-            }
-
-            rows.Add(row);
-        }
-
-        private static void AddSections(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, int sectionsToAddCount, IProgress<double> progress = null)
-        {
-            var count = 0.0;
-            var nSection = 1;
-
-            for (var i = 0; i < sectionsToAddCount; i++)
-            {
-                var sectionId = "Section " + nSection;
-
-                while (lineData.ContainsSection(sectionId))
-                {
-                    sectionId = "Section " + nSection++;
-                }
-
-                lineData.SetSectionEvidence(sectionId, new Dict<int, string, VertexEvidence>());
-
-                AddRow(rows, lineData, vertexKey, sectionId);
-
-                if (progress != null)
-                {
-                    progress.Report(count++ / sectionsToAddCount);
-                }
-
-                Thread.Sleep(1);
-            }
-        }
-
-        private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
 
@@ -181,20 +161,23 @@ namespace Marv
             }
 
             var lineData = control.LineData;
-            var rows = control.Rows = new ObservableCollection<Dynamic>();
             var vertexKey = control.SelectedVertex.Key;
 
-            var notification = new Notification
+            control.Rows = new ObservableCollection<Dynamic>();
+
+            control.UpdateRows(lineData, vertexKey, new Progress<Dynamic>(row => control.Rows.Add(row)));
+
+            foreach (var selectionInfo in control.selectionInfos)
             {
-                Description = "Reading line data...",
-                Value = 0
-            };
-
-            control.RaiseNotificationOpened(notification);
-
-            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
-
-            control.RaiseNotificationClosed(notification);
+                try
+                {
+                    control.GridView.SelectedCells.Add(new GridViewCellInfo(control.Rows[selectionInfo.Item1], control.GridView.Columns[selectionInfo.Item2], control.GridView));
+                }
+                catch
+                {
+                    // do nothing
+                }
+            }
 
             control.LineData.DataChanged += control.LineData_DataChanged;
         }
@@ -212,72 +195,12 @@ namespace Marv
         private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
-            control.RaiseSelectedSectionIdChanged();
-
-            try
-            {
-                control.RunSection(control.SelectedSectionId);
-            }
-            catch (InvalidEvidenceException exception)
-            {
-                control.RaiseNotificationOpened(new Notification
-                {
-                    Duration = TimeSpan.FromSeconds(10),
-                    Description = exception.Message,
-                    IsIndeterminate = true,
-                    IsTimed = true
-                });
-            }
+            control.RunSection(control.SelectedSectionId);
         }
 
         private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as LineDataControl).RaiseSelectedYearChanged();
-        }
-
-        private static void RunAllSections(ILineData lineData, Network theNetwork, IProgress<double> progress)
-        {
-            var sectionIds = lineData.GetSectionIds().ToList();
-            var total = sectionIds.Count;
-            var done = 0.0;
-
-            foreach (var sectionId in sectionIds)
-            {
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                lineData.SetSectionBelief(sectionId, theNetwork.Run(sectionEvidence));
-
-                done++;
-                progress.Report(done / total);
-            }
-        }
-
-        private static void UpdateRows(ObservableCollection<Dynamic> rows, ILineData lineData, string vertexKey, IProgress<double> progress)
-        {
-            var count = 1.0;
-            var total = lineData.GetSectionIds().Count();
-
-            foreach (var sectionId in lineData.GetSectionIds())
-            {
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                var row = new Dynamic();
-                row[CellModel.SectionIdHeader] = sectionId;
-
-                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
-                {
-                    row[year.ToString()] = sectionEvidence[year][vertexKey];
-                }
-
-                rows.Add(row);
-
-                if (progress != null)
-                {
-                    progress.Report(count ++ / total);
-                }
-
-                Thread.Sleep(1);
-            }
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -349,14 +272,6 @@ namespace Marv
             }
         }
 
-        protected void RaiseSelectedSectionIdChanged()
-        {
-            if (this.SelectedSectionIdChanged != null)
-            {
-                this.SelectedSectionIdChanged(this, new EventArgs());
-            }
-        }
-
         protected void RaiseSelectedYearChanged()
         {
             if (this.SelectedYearChanged != null)
@@ -365,28 +280,38 @@ namespace Marv
             }
         }
 
-        private async void AddSectionsButton_Click(object sender, RoutedEventArgs e)
+        private void AddRow(string sectionId)
         {
-            var lineData = this.LineData;
-            var theRows = this.Rows;
-            var sectionsToAddCount = this.SectionsToAddCount;
-            var vertexKey = this.SelectedVertex.Key;
+            var row = new Dynamic();
+            row[CellModel.SectionIdHeader] = sectionId;
 
-            var notification = new Notification
+            var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+
+            for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
             {
-                IsIndeterminate = true,
-                Description = "Adding sections..."
-            };
+                row[year.ToString()] = sectionEvidence[year][this.SelectedVertex.Key];
+            }
 
-            this.RaiseNotificationOpened(notification);
+            this.Rows.Add(row);
+        }
 
-            this.IsEnabled = false;
+        private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var nSection = 1;
 
-            await Task.Run(() => AddSections(theRows, lineData, vertexKey, sectionsToAddCount));
+            for (var i = 0; i < this.SectionsToAddCount; i++)
+            {
+                var sectionId = "Section " + nSection;
 
-            this.IsEnabled = true;
+                while (this.LineData.ContainsSection(sectionId))
+                {
+                    nSection++;
+                    sectionId = "Section " + nSection;
+                }
 
-            this.RaiseNotificationClosed(notification);
+                this.LineData.AddSection(sectionId);
+                this.AddRow(sectionId);
+            }
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
@@ -467,53 +392,140 @@ namespace Marv
             }
         }
 
-        private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
+        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
-            this.YearEndControl.ValueChanged -= this.YearEnd_ValueChanged;
-            this.YearEndControl.ValueChanged += this.YearEnd_ValueChanged;
-
-            this.YearStartControl.ValueChanged -= this.YearStart_ValueChanged;
-            this.YearStartControl.ValueChanged += this.YearStart_ValueChanged;
-
-            this.AddSectionsButton.Click -= this.AddSectionsButton_Click;
-            this.AddSectionsButton.Click += this.AddSectionsButton_Click;
-
-            this.CopyAcrossAllButton.Click -= this.CopyAcrossAllButton_Click;
-            this.CopyAcrossAllButton.Click += this.CopyAcrossAllButton_Click;
-
-            this.CopyAcrossColButton.Click -= this.CopyAcrossColButton_Click;
-            this.CopyAcrossColButton.Click += this.CopyAcrossColButton_Click;
-
-            this.CopyAcrossRowButton.Click -= this.CopyAcrossRowButton_Click;
-            this.CopyAcrossRowButton.Click += this.CopyAcrossRowButton_Click;
-
-            this.OpenButton.Click -= this.OpenButton_Click;
-            this.OpenButton.Click += this.OpenButton_Click;
-
-            this.RunAllButton.Click -= this.RunAllButton_Click;
-            this.RunAllButton.Click += this.RunAllButton_Click;
-
-            this.SaveButton.Click -= this.SaveButton_Click;
-            this.SaveButton.Click += this.SaveButton_Click;
+            e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
+            e.Column.MaxWidth = 100;
         }
 
-        private async void LineData_DataChanged(object sender, EventArgs e)
+        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            var lineData = this.LineData;
-            var rows = this.Rows = new ObservableCollection<Dynamic>();
-            var vertexKey = this.SelectedVertex.Key;
+            var cellModel = e.Cell.ToModel();
+            var oldString = e.OldData as string;
+            var newString = e.NewData as string;
 
-            var notification = new Notification
+            this.SetCell(cellModel, newString, oldString);
+        }
+
+        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
+        {
+            if (e.Cell.ToModel().IsColumnSectionId)
             {
-                Description = "Reading line data...",
-                Value = 0
-            };
+                return;
+            }
 
-            this.RaiseNotificationOpened(notification);
+            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
-            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            }
+        }
 
-            this.RaiseNotificationClosed(notification);
+        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        {
+            if (e.NewCell == null || this.LineData == null)
+            {
+                return;
+            }
+
+            var cellModel = e.NewCell.ToModel();
+            this.SelectedSectionId = cellModel.SectionId;
+
+            if (cellModel.IsColumnSectionId)
+            {
+                this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
+                return;
+            }
+
+            this.SelectedYear = cellModel.Year;
+            this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
+
+            this.RaiseSelectedCellChanged();
+        }
+
+        private void GridView_Deleted(object sender, GridViewDeletedEventArgs e)
+        {
+            foreach (var item in e.Items)
+            {
+                var row = item as Dynamic;
+                var sectionId = row[CellModel.SectionIdHeader] as string;
+                this.LineData.RemoveSection(sectionId);
+            }
+        }
+
+        private void GridView_Pasted(object sender, RadRoutedEventArgs e)
+        {
+            foreach (var pastedCell in this.pastedCells)
+            {
+                var cellModel = pastedCell.Cell.ToModel();
+                this.SetCell(cellModel, pastedCell.Value as string, this.oldData[pastedCell] as string);
+            }
+
+            this.CanUserInsertRows = false;
+            this.pastedCells.Clear();
+            this.RaiseSectionEvidencesChanged();
+        }
+
+        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
+        {
+            var cellModel = e.Cell.ToModel();
+
+            this.CanUserInsertRows = cellModel.IsColumnSectionId;
+
+            this.pastedCells.Add(e);
+            this.oldData[e] = cellModel.Data;
+        }
+
+        private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
+            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
+
+            this.GridView.CellEditEnded -= GridView_CellEditEnded;
+            this.GridView.CellEditEnded += GridView_CellEditEnded;
+
+            this.GridView.CellValidating -= GridView_CellValidating;
+            this.GridView.CellValidating += GridView_CellValidating;
+
+            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
+            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
+
+            this.GridView.Deleted -= GridView_Deleted;
+            this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.Pasted -= GridView_Pasted;
+            this.GridView.Pasted += GridView_Pasted;
+
+            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
+            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
+
+            this.AddSectionsButton.Click -= AddSectionsButton_Click;
+            this.AddSectionsButton.Click += AddSectionsButton_Click;
+
+            this.CopyAcrossAllButton.Click -= CopyAcrossAllButton_Click;
+            this.CopyAcrossAllButton.Click += CopyAcrossAllButton_Click;
+
+            this.CopyAcrossColButton.Click -= CopyAcrossColButton_Click;
+            this.CopyAcrossColButton.Click += CopyAcrossColButton_Click;
+
+            this.CopyAcrossRowButton.Click -= CopyAcrossRowButton_Click;
+            this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
+
+            this.OpenButton.Click -= OpenButton_Click;
+            this.OpenButton.Click += OpenButton_Click;
+
+            this.RunAllButton.Click -= RunAllButton_Click;
+            this.RunAllButton.Click += RunAllButton_Click;
+
+            this.SaveButton.Click -= SaveButton_Click;
+            this.SaveButton.Click += SaveButton_Click;
+        }
+
+        private void LineData_DataChanged(object sender, EventArgs e)
+        {
+            this.UpdateRows();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -527,18 +539,7 @@ namespace Marv
             if (dialog.ShowDialog() == true)
             {
                 this.FileName = dialog.FileName;
-
-                var directoryName = Path.GetDirectoryName(this.FileName);
-
-                if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
-                {
-                    // This is a folder line data
-                    this.LineData = FolderLineData.Read(this.FileName);
-                }
-                else
-                {
-                    this.LineData = Marv.LineData.Read(this.FileName);
-                }
+                this.LineData = Utils.ReadJson<LineData>(this.FileName);
             }
         }
 
@@ -553,33 +554,29 @@ namespace Marv
 
             this.RaiseNotificationOpened(notification);
 
-            var exception = await Task.Run(() =>
-            {
-                try
-                {
-                    RunAllSections(lineData, this.network, new Progress<double>(progress => notification.Value = progress * 100));
-                    return null;
-                }
-                catch (InvalidEvidenceException exp)
-                {
-                    return exp;
-                }
-            });
+            await Task.Run(() => this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
+
+            // this.LineData.SectionBeliefs = await Task.Run(() => this.network.Run(sectionEvidences, new Progress<double>(progress => notification.Value = progress * 100)));
 
             this.RaiseNotificationClosed(notification);
 
-            if (exception != null)
-            {
-                this.RaiseNotificationOpened(new Notification
-                {
-                    IsIndeterminate = true,
-                    IsTimed = true,
-                    Duration = TimeSpan.FromSeconds(10),
-                    Description = exception.Message
-                });
-            }
-
             this.RaiseSectionBeliefsChanged();
+        }
+
+        private void RunAllSections(ILineData lineData, IProgress<double> progress)
+        {
+            var sectionIds = lineData.GetSectionIds().ToList();
+            var total = sectionIds.Count;
+            var done = 0.0;
+
+            foreach (var sectionId in sectionIds)
+            {
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
+                lineData.SetSectionBelief(sectionId, this.network.Run(sectionEvidence));
+
+                done++;
+                progress.Report(done / total);
+            }
         }
 
         private void RunSection(string sectionId)
@@ -617,7 +614,7 @@ namespace Marv
                     this.FileName = this.FileName + "." + Marv.LineData.FileExtension;
                 }
 
-                this.LineData.Write(this.FileName);
+                this.LineData.WriteJson(this.FileName);
             }
         }
 
@@ -642,7 +639,7 @@ namespace Marv
                 }
                 else
                 {
-                    this.LineData.ChangeSectionId(oldString, newString);
+                    this.LineData.ReplaceSectionId(oldString, newString);
                 }
 
                 cellModel.Data = newString;
@@ -658,60 +655,30 @@ namespace Marv
             }
         }
 
-        private async Task UpdateYears()
+        private void UpdateRows()
         {
-            foreach (var sectionId in this.LineData.GetSectionIds())
+            this.UpdateRows(this.LineData, this.SelectedVertex.Key);
+        }
+
+        private void UpdateRows(ILineData lineData, string vertexKey, IProgress<Dynamic> progress = null)
+        {
+            foreach (var sectionId in lineData.GetSectionIds())
             {
-                var sectionBelief = this.LineData.GetSectionBelief(sectionId);
-                var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
+                var row = new Dynamic();
+                row[CellModel.SectionIdHeader] = sectionId;
 
-                var newSectionBelief = new Dict<int, string, double[]>();
-                var newSectionEvidence = new Dict<int, string, VertexEvidence>();
+                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
 
-                for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
+                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
                 {
-                    newSectionBelief[year] = sectionBelief[year];
-                    newSectionEvidence[year] = sectionEvidence[year];
+                    row[year.ToString()] = sectionEvidence[year][vertexKey];
                 }
 
-                this.LineData.SetSectionBelief(sectionId, newSectionBelief);
-                this.LineData.SetSectionEvidence(sectionId, newSectionEvidence);
+                if (progress != null)
+                {
+                    progress.Report(row);
+                }
             }
-
-            if (this.LineData == null || this.SelectedVertex == null)
-            {
-                return;
-            }
-
-            var lineData = this.LineData;
-            var rows = this.Rows = new ObservableCollection<Dynamic>();
-            var vertexKey = this.SelectedVertex.Key;
-
-            var notification = new Notification
-            {
-                Description = "Reading line data...",
-                Value = 0
-            };
-
-            this.RaiseNotificationOpened(notification);
-
-            await Task.Run(() => UpdateRows(rows, lineData, vertexKey, new Progress<double>(p => notification.Value = p)));
-
-            this.RaiseNotificationClosed(notification);
-        }
-
-        private async void YearEnd_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)
-        {
-            this.LineData.EndYear = (int) e.NewValue.Value;
-
-            await this.UpdateYears();
-        }
-
-        private async void YearStart_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)
-        {
-            this.LineData.StartYear = (int) e.NewValue.Value;
-
-            await this.UpdateYears();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -729,7 +696,5 @@ namespace Marv
         public event EventHandler SectionEvidencesChanged;
 
         public event EventHandler SelectedCellChanged;
-
-        public event EventHandler SelectedSectionIdChanged;
     }
 }

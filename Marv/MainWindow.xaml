@@ -5,6 +5,7 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:graphControl="clr-namespace:Marv.Controls.GraphControl;assembly=Marv.Controls.Graph"
+        xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WPF"
         Name="Root"
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized"
@@ -56,8 +57,55 @@
                                                       Locations="{Binding ElementName=Root, Path=Locations}"
                                                       LocationValues="{Binding ElementName=Root, Path=SelectedYearLocationValues}"
                                                       SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                      Stroke="DeepSkyBlue"
-                                                      StrokeThickness="10"/>
+                                                      StrokeThickness="8"/>
+
+                                <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=ReferenceLocations}"
+                                                            Visibility="{Binding ElementName=Root, Path=IsReferenceLocationsVisible, Converter={StaticResource BooleanToVisibility}}">
+                                    <mapControl:MapItemsControl.ItemContainerStyle>
+                                        <Style TargetType="mapControl:MapItem">
+                                            <Setter Property="mapControl:MapPanel.Location" Value="{Binding Converter={StaticResource LocationConverter}}" />
+
+                                            <Setter Property="Effect" Value="{StaticResource DropShadow}" />
+
+                                            <Setter Property="HorizontalAlignment" Value="Left" />
+
+                                            <Setter Property="VerticalAlignment" Value="Bottom" />
+                                            
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <mapControl:Pushpin Content="{Binding Path=Key}"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                        </Style>
+                                    </mapControl:MapItemsControl.ItemContainerStyle>
+                                </mapControl:MapItemsControl>
+
+                                <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=CriticalLocations}">
+                                    <mapControl:MapItemsControl.ItemContainerStyle>
+                                        <Style TargetType="mapControl:MapItem">
+                                            <Setter Property="mapControl:MapPanel.Location" Value="{Binding Converter={StaticResource LocationConverter}}" />
+
+                                            <Setter Property="Effect" Value="{StaticResource DropShadow}" />
+
+                                            <Setter Property="HorizontalAlignment" Value="Left" />
+
+                                            <Setter Property="VerticalAlignment" Value="Bottom" />
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <mapControl:Pushpin Background="Gold"
+                                                                            Content="{Binding Path=Key}"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                        </Style>
+                                    </mapControl:MapItemsControl.ItemContainerStyle>
+                                </mapControl:MapItemsControl>
                             </marv:MapView>
 
                             <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
@@ -73,37 +121,44 @@
                                                      SortAndGroupButtonsVisibility="Collapsed">
                                 <telerik:RadPropertyGrid.PropertyDefinitions>
                                     <telerik:PropertyDefinition Binding="{Binding Key}" Description="Section #" DisplayName="#" />
-                                    <telerik:PropertyDefinition Binding="{Binding RelativeDistance}" Description="Relative Distance" DisplayName="Relative Distance" />
                                     <telerik:PropertyDefinition Binding="{Binding AbsoluteDistance}" Description="Absolute Distance" DisplayName="Absolute Distance" />
-                                    <telerik:PropertyDefinition Binding="{Binding Comment}" Description="Comment" DisplayName="Comment" />
-                                    <telerik:PropertyDefinition Binding="{Binding Null}" Description="Latitude" DisplayName="Latitude" />
-                                    <telerik:PropertyDefinition Binding="{Binding Null}" Description="Longitude" DisplayName="Longitude" />
+                                    <telerik:PropertyDefinition Binding="{Binding Feature}" Description="Comment" DisplayName="Comment" />
                                 </telerik:RadPropertyGrid.PropertyDefinitions>
                             </telerik:RadPropertyGrid>
 
-                            <!-- Location Combo Box -->
-                            <telerik:RadComboBox CanAutocompleteSelectItems="False"
+                            <StackPanel Background="WhiteSmoke"
+                                        Effect="{StaticResource DropShadow}"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="8">
+                                <!-- Location Combo Box -->
+                                <telerik:RadComboBox CanAutocompleteSelectItems="False"
                                                  CanKeyboardNavigationSelectItems="False"
                                                  DisplayMemberPath="Key"
                                                  Height="32"
-                                                 HorizontalAlignment="Right"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
                                                  IsSynchronizedWithCurrentItem="False"
                                                  ItemsSource="{Binding ElementName=Root, Path=Locations}"
-                                                 Margin="8"
+                                                 Margin="4"
                                                  OpenDropDownOnFocus="True"
                                                  SelectedIndex="0"
                                                  SelectedItem="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
                                                  TextSearchMode="Contains"
                                                  VerticalAlignment="Top"
                                                  Width="96">
-                                <telerik:RadComboBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </telerik:RadComboBox.ItemsPanel>
-                            </telerik:RadComboBox>
+                                    <telerik:RadComboBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </telerik:RadComboBox.ItemsPanel>
+                                </telerik:RadComboBox>
+
+                                <CheckBox Content="Reference Points"
+                                          IsChecked="{Binding ElementName=Root, Path=IsReferenceLocationsVisible}"
+                                          Margin="8" />
+                            </StackPanel>
+                           
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -121,7 +176,8 @@
                             <graphControl:GraphControl Name="GraphControl"
                                                        Grid.Row="0"
                                                        Background="WhiteSmoke"
-                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                                       IsAutoSaveEnabled="False" />
 
                             <Grid Grid.Row="1"
                                   Height="32"

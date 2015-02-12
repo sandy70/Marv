@@ -1,21 +1,26 @@
 ﻿using System;
+using Marv;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
-namespace Marv
+namespace Marv.Input
 {
     public class CellModel
     {
-        public const string SectionIdHeader = "Section ID";
-
         private int year;
 
         public object Data
         {
-            get { return this.Row[this.Header]; }
+            get
+            {
+                return this.Row[this.Header];
+            }
 
-            set { this.Row[this.Header] = value; }
+            set
+            {
+                this.Row[this.Header] = value;
+            }
         }
 
         public string Header { get; private set; }
@@ -35,7 +40,10 @@ namespace Marv
                 return this.year;
             }
 
-            private set { this.year = value; }
+            private set
+            {
+                this.year = value;
+            }
         }
 
         public CellModel(Dynamic row, string header)
@@ -52,5 +60,7 @@ namespace Marv
         public CellModel(GridViewCellInfo cellInfo) : this(cellInfo.Item as Dynamic, cellInfo.Column.Header as string) {}
 
         public CellModel(GridViewCell cell) : this(cell.ParentRow.DataContext as Dynamic, cell.Column.Header as string) {}
+
+        public const string SectionIdHeader = "Section ID";
     }
 }

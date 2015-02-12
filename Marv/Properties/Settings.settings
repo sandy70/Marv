@@ -3,16 +3,22 @@
   <Profiles />
   <Settings>
     <Setting Name="NetworkFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\ECDA_Model 2015 01 29 1630.net</Value>
+      <Value Profile="(Default)">Data\ECDA_MODEL 2015 02 05 Clean.net</Value>
     </Setting>
     <Setting Name="LineDataFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\Scenario08.marv-linedata</Value>
+      <Value Profile="(Default)">Data\Scenario08\Scenario08.marv-linedata</Value>
     </Setting>
     <Setting Name="LocationsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Line.csv</Value>
+      <Value Profile="(Default)">Data\Locations.csv</Value>
     </Setting>
     <Setting Name="LocationValuesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\LocationValues.json</Value>
+      <Value Profile="(Default)">Data\Scenario08\LocationValues.json</Value>
+    </Setting>
+    <Setting Name="ReferenceLocationsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data\ReferenceLocations.csv</Value>
+    </Setting>
+    <Setting Name="CriticalLocationsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data\CriticalLocations.csv</Value>
     </Setting>
   </Settings>
 </SettingsFile>
