@@ -486,11 +486,15 @@ namespace Marv.Input
 
                     if (cellModel.IsColumnSectionId)
                     {
-                        this.Rows.Remove(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
                         this.LineData.RemoveSection(cellModel.SectionId);
+                        this.Rows.Remove(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
                     }
                     else
                     {
+                        var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
+                        sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
+                        this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
+
                         var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
                         var selectedRowIndex = this.Rows.IndexOf(selectedRow);
 
