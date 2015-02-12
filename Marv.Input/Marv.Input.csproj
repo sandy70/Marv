@@ -184,6 +184,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CellChangedEventArgs.cs" />
     <Compile Include="CellModel.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>

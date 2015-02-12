@@ -298,6 +298,31 @@ namespace Marv.Input
             this.RemoveEvidence(this.SelectedSectionId, this.Year);
         }
 
+        public void SetEvidence(VertexEvidence vertexEvidence)
+        {
+            this.SetEvidence(this.SelectedSectionId, this.Year, vertexEvidence);
+        }
+
+        public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
+        {
+            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
+            {
+                this.UpdateBasePoints();
+            }
+
+            var category = this.IsXAxisSections ? sectionId : year as object;
+
+            if (category == null)
+            {
+                return;
+            }
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+
+            this.AddBasePoint(category, vertexEvidence);
+        }
+
         public void UpdateBasePoints()
         {
             if (this.LineData == null ||
@@ -339,29 +364,6 @@ namespace Marv.Input
 
                 this.AddBasePoint(category, vertexData);
             }
-        }
-
-        public void UpdateEvidence(VertexEvidence vertexEvidence, CellModel cellModel = null)
-        {
-            var sectionId = cellModel == null ? this.SelectedSectionId : cellModel.SectionId;
-            var year = cellModel == null ? this.Year : cellModel.Year;
-
-            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
-            {
-                this.UpdateBasePoints();
-            }
-
-            var category = this.IsXAxisSections ? sectionId : year as object;
-
-            if (category == null)
-            {
-                return;
-            }
-
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
-
-            this.AddBasePoint(category, vertexEvidence);
         }
 
         private void AddBasePoint(object category, VertexEvidence vertexEvidence)

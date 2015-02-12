@@ -202,11 +202,11 @@ namespace Marv.Input
             }
         }
 
-        public void RaiseCellValidating(GridViewCellValidatingEventArgs e)
+        public void RaiseCellChanged(CellChangedEventArgs cellChangedEventArgs)
         {
-            if (this.CellValidating != null)
+            if (this.CellChanged != null)
             {
-                this.CellValidating(this, e);
+                this.CellChanged(this, cellChangedEventArgs);
             }
         }
 
@@ -443,6 +443,14 @@ namespace Marv.Input
             }
         }
 
+        private void RaiseCellValidating(GridViewCellValidatingEventArgs e)
+        {
+            if (this.CellValidating != null)
+            {
+                this.CellValidating(this, e);
+            }
+        }
+
         private void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (this.EvidenceChanged != null)
@@ -588,33 +596,12 @@ namespace Marv.Input
             }
 
             cellModel.Data = vertexEvidence;
-            this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
-        }
 
-        private void SetCell(CellModel cellModel, string newString, string oldString = null)
-        {
-            if (cellModel.IsColumnSectionId)
+            this.RaiseCellChanged(new CellChangedEventArgs
             {
-                if (oldString == null)
-                {
-                    this.LineData.SetSectionEvidence(newString, new Dict<int, string, VertexEvidence>());
-                }
-                else
-                {
-                    this.LineData.ReplaceSectionId(oldString, newString);
-                }
-
-                cellModel.Data = newString;
-            }
-            else
-            {
-                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(newString);
-
-                cellModel.Data = vertexEvidence;
-                this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
-
-                this.RaiseEvidenceChanged(cellModel, vertexEvidence);
-            }
+                CellModel = cellModel,
+                VertexEvidence = cellModel.Data as VertexEvidence
+            });
         }
 
         private void UpdateRows()
@@ -659,6 +646,8 @@ namespace Marv.Input
 
         public event EventHandler SelectedCellChanged;
 
-        public event RoutedEventHandler<GridViewCellValidatingEventArgs> CellValidating;
+        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
+
+        public event EventHandler<CellChangedEventArgs> CellChanged;
     }
 }

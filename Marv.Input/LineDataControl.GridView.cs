@@ -16,11 +16,12 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            var cellModel = e.Cell.ToModel();
-            var oldString = e.OldData as string;
-            var newString = e.NewData as string;
-
-            this.SetCell(cellModel, newString, oldString);
+            this.RaiseCellChanged(new CellChangedEventArgs
+            {
+                CellModel = e.Cell.ToModel(),
+                NewString = e.NewData as string,
+                OldString = e.OldData as string
+            });
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -90,8 +91,12 @@ namespace Marv.Input
         {
             foreach (var pastedCell in this.pastedCells)
             {
-                var cellModel = pastedCell.Cell.ToModel();
-                this.SetCell(cellModel, pastedCell.Value as string, this.oldData[pastedCell] as string);
+                this.RaiseCellChanged(new CellChangedEventArgs
+                {
+                    CellModel = pastedCell.Cell.ToModel(),
+                    NewString = pastedCell.Value as string,
+                    OldString = this.oldData[pastedCell] as string
+                });
             }
 
             this.CanUserInsertRows = false;
