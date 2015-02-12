@@ -293,6 +293,11 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
+        public void RemoveSelectedEvidence()
+        {
+            this.RemoveEvidence(this.SelectedSectionId, this.Year);
+        }
+
         public void UpdateBasePoints()
         {
             if (this.LineData == null ||
@@ -441,8 +446,6 @@ namespace Marv.Input
                 }
             }
         }
-
-        private void ChartTrackBallBehavior_TrackInfoUpdated(object sender, TrackBallInfoEventArgs e) {}
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
@@ -641,6 +644,19 @@ namespace Marv.Input
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void RemoveEvidence(string sectionId, int year)
+        {
+            var category = this.IsXAxisSections ? sectionId : year as object;
+
+            if (category == null)
+            {
+                return;
+            }
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
         private void Series_MouseUp(object sender, MouseButtonEventArgs e)

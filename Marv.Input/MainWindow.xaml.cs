@@ -201,6 +201,7 @@ namespace Marv.Input
         {
             if (vertexEvidence == null)
             {
+                this.LineDataChart.RemoveSelectedEvidence();
                 this.LineDataControl.ClearSelectedCell();
             }
             else
