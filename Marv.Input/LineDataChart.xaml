@@ -39,6 +39,10 @@
 
                 <telerik:RadRadioButton Content="Years"
                                         Width="64" />
+                
+                <CheckBox Content="Log Y-Axis"
+                          IsChecked="{Binding ElementName=Root, Path=IsLog, Mode=TwoWay}"
+                          Margin="4,0,4,0" />
             </ToolBar>
         </ToolBarTray>
 
@@ -95,7 +99,7 @@
                                     Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
                                     ZIndex="1000" />
 
-                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
+                <telerik:LineSeries Name="ModeSeries" CategoryBinding="Category" ValueBinding="Value"
                                     Effect="{StaticResource DropShadow}"
                                     ItemsSource="{Binding ElementName=Root, Path=ModePoints}"
                                     Stroke="Goldenrod"
@@ -109,7 +113,8 @@
                     </telerik:LineSeries.PointTemplate>
                 </telerik:LineSeries>
 
-                <telerik:LineSeries CategoryBinding="Category" ValueBinding="Value"
+                <telerik:LineSeries Name="MinSeries"
+                                    CategoryBinding="Category" ValueBinding="Value"
                                     Effect="{StaticResource DropShadow}"
                                     ItemsSource="{Binding ElementName=Root, Path=MinPoints}"
                                     Stroke="Goldenrod"

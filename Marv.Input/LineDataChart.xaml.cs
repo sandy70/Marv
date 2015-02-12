@@ -49,6 +49,7 @@ namespace Marv.Input
         private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> baseDistributionSeries;
         private ObservableCollection<CategoricalDataPoint> baseNumberPoints;
         private ObservableCollection<ObservableCollection<CategoricalDataPoint>> evidenceSeries;
+        private bool isLog;
         private ObservableCollection<CategoricalDataPoint> maxPoints;
         private ObservableCollection<CategoricalDataPoint> minPoints;
         private ObservableCollection<CategoricalDataPoint> modePoints;
@@ -115,6 +116,28 @@ namespace Marv.Input
         {
             get { return (bool) GetValue(IsEvidenceEditEnabledProperty); }
             set { SetValue(IsEvidenceEditEnabledProperty, value); }
+        }
+
+        public bool IsLog
+        {
+            get { return this.isLog; }
+
+            set
+            {
+                if (value.Equals(this.isLog))
+                {
+                    return;
+                }
+
+                this.isLog = value;
+                this.RaisePropertyChanged();
+
+                this.VerticalAxis = this.IsLog ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
+
+                var numericalAxis = this.VerticalAxis as NumericalAxis;
+                numericalAxis.Minimum = this.Vertex.SafeMin;
+                numericalAxis.Maximum = this.Vertex.SafeMax;
+            }
         }
 
         public bool IsXAxisSections
@@ -403,46 +426,9 @@ namespace Marv.Input
             }
         }
 
-        private void Chart_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var position = e.GetPosition(this.Chart);
-            this.UpdateEvidence(position, e.ChangedButton == MouseButton.Right);
-        }
-
-        private void Chart_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var position = e.GetPosition(this.Chart);
-                this.UpdateEvidence(position);
-            }
-        }
-
         private int GetAnchorIndex(CategoricalDataPoint point)
         {
             return this.AnchorPoints.IndexOf(anchorPoint => anchorPoint.Category.Equals(point.Category));
-        }
-
-        private ObservableCollection<CategoricalDataPoint> GetNearestSeries(CategoricalDataPoint userPoint)
-        {
-            var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
-
-            var series = new ObservableCollection<ObservableCollection<CategoricalDataPoint>>
-            {
-                this.MaxPoints,
-                this.ModePoints,
-                this.MinPoints
-            };
-
-            return series.MinBy(s =>
-            {
-                var xCoords = s.Select(point => (double) this.GetAnchorIndex(point));
-                var yCoords = s.Select(point => point.Value != null ? point.Value.Value : 0);
-
-                var spline = new LinearInterpolator(xCoords, yCoords);
-
-                return Math.Abs(spline.Eval(userPointAnchorIndex) - userPoint.Value.Value);
-            });
         }
 
         private void InitializeEvidence()
@@ -507,7 +493,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.VerticalAxis = this.Vertex.IsLogScale ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
+            this.VerticalAxis = this.IsLog ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
 
             var numericalAxis = this.VerticalAxis as NumericalAxis;
             numericalAxis.Minimum = this.Vertex.SafeMin;
@@ -516,11 +502,104 @@ namespace Marv.Input
 
         private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Chart.MouseDown -= Chart_MouseDown;
-            this.Chart.MouseDown += Chart_MouseDown;
+            //this.Chart.MouseDown -= Chart_MouseDown;
+            //this.Chart.MouseDown += Chart_MouseDown;
 
-            this.Chart.MouseMove -= Chart_MouseMove;
-            this.Chart.MouseMove += Chart_MouseMove;
+            //this.Chart.MouseMove -= Chart_MouseMove;
+            //this.Chart.MouseMove += Chart_MouseMove;
+
+            this.MaxSeries.MouseDown -= MaxSeries_MouseDown;
+            this.MaxSeries.MouseDown += MaxSeries_MouseDown;
+
+            this.MaxSeries.MouseMove -= MaxSeries_MouseMove;
+            this.MaxSeries.MouseMove += MaxSeries_MouseMove;
+
+            this.MaxSeries.MouseUp -= Series_MouseUp;
+            this.MaxSeries.MouseUp += Series_MouseUp;
+
+            this.ModeSeries.MouseDown -= ModeSeries_MouseDown;
+            this.ModeSeries.MouseDown += ModeSeries_MouseDown;
+
+            this.ModeSeries.MouseMove -= ModeSeries_MouseMove;
+            this.ModeSeries.MouseMove += ModeSeries_MouseMove;
+
+            this.ModeSeries.MouseUp -= Series_MouseUp;
+            this.ModeSeries.MouseUp += Series_MouseUp;
+
+            this.MinSeries.MouseDown -= MinSeries_MouseDown;
+            this.MinSeries.MouseDown += MinSeries_MouseDown;
+
+            this.MinSeries.MouseMove -= MinSeries_MouseMove;
+            this.MinSeries.MouseMove += MinSeries_MouseMove;
+
+            this.MinSeries.MouseUp -= Series_MouseUp;
+            this.MinSeries.MouseUp += Series_MouseUp;
+        }
+
+        private void MaxSeries_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(sender as IInputElement);
+
+            var position = e.GetPosition(this.Chart);
+            var points = this.MaxPoints;
+            var isPointRemoved = e.ChangedButton == MouseButton.Right;
+
+            this.UpdateEvidencePoint(position, points, isPointRemoved);
+        }
+
+        private void MaxSeries_MouseMove(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var points = this.MaxPoints;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.UpdateEvidencePoint(position, points, false);
+            }
+        }
+
+        private void MinSeries_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(sender as IInputElement);
+
+            var position = e.GetPosition(this.Chart);
+            var points = this.MinPoints;
+            var isPointRemoved = e.ChangedButton == MouseButton.Right;
+
+            this.UpdateEvidencePoint(position, points, isPointRemoved);
+        }
+
+        private void MinSeries_MouseMove(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var points = this.MinPoints;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.UpdateEvidencePoint(position, points, false);
+            }
+        }
+
+        private void ModeSeries_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(sender as IInputElement);
+
+            var position = e.GetPosition(this.Chart);
+            var points = this.ModePoints;
+            var isPointRemoved = e.ChangedButton == MouseButton.Right;
+
+            this.UpdateEvidencePoint(position, points, isPointRemoved);
+        }
+
+        private void ModeSeries_MouseMove(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var points = this.ModePoints;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.UpdateEvidencePoint(position, points, false);
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -531,7 +610,12 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateEvidence(Point position, bool removePoints = false)
+        private void Series_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            (sender as IInputElement).ReleaseMouseCapture();
+        }
+
+        private void UpdateEvidencePoint(Point position, ObservableCollection<CategoricalDataPoint> points, bool isPointRemoved)
         {
             var data = this.Chart.ConvertPointToData(position);
 
@@ -548,15 +632,13 @@ namespace Marv.Input
 
             var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var nearestSeries = this.GetNearestSeries(userPoint);
+            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
 
-            var pointsWithinTolerance = nearestSeries.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
-
-            if (removePoints)
+            if (isPointRemoved)
             {
                 foreach (var point in pointsWithinTolerance)
                 {
-                    nearestSeries.Remove(point);
+                    points.Remove(point);
                 }
 
                 return;
@@ -566,7 +648,7 @@ namespace Marv.Input
             {
                 var nearestPointAnchorIndex = 0;
 
-                foreach (var nearestPoint in nearestSeries)
+                foreach (var nearestPoint in points)
                 {
                     nearestPointAnchorIndex = this.GetAnchorIndex(nearestPoint);
 
@@ -576,9 +658,9 @@ namespace Marv.Input
                     }
                 }
 
-                var userPointInsertIndex = nearestSeries.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
+                var userPointInsertIndex = points.IndexOf(point => point.Category.Equals(this.AnchorPoints[nearestPointAnchorIndex].Category));
 
-                nearestSeries.Insert(userPointInsertIndex, userPoint);
+                points.Insert(userPointInsertIndex, userPoint);
             }
             else
             {
