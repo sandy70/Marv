@@ -144,7 +144,7 @@ namespace Marv.Input
             this.Loaded += LineDataControl_Loaded;
         }
 
-        private static async void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataControl;
 
@@ -165,7 +165,7 @@ namespace Marv.Input
 
             control.Rows = new ObservableCollection<Dynamic>();
 
-            await Task.Run(() => control.UpdateRows(lineData, vertexKey, new Progress<Dynamic>(row => control.Rows.Add(row))));
+            control.UpdateRows(lineData, vertexKey, new Progress<Dynamic>(row => control.Rows.Add(row)));
 
             foreach (var selectionInfo in control.selectionInfos)
             {
