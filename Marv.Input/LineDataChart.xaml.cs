@@ -15,7 +15,7 @@ namespace Marv.Input
         private const double Tolerance = 8;
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
-            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false, ChangedEvidenceEditEnabled));
+            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsXAxisSectionsProperty =
             DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
@@ -255,17 +255,6 @@ namespace Marv.Input
             this.Loaded += LineDataChart_Loaded;
         }
 
-        private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataChart;
-
-            if (!control.IsEvidenceEditEnabled)
-            {
-                control.UpdateLineData();
-                control.UpdateBasePoints();
-            }
-        }
-
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
@@ -463,6 +452,17 @@ namespace Marv.Input
                 Category = data.FirstValue,
                 Value = (double) data.SecondValue
             };
+        }
+
+        private void EvidenceClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.InitializeEvidence();
+        }
+
+        private void EvidenceDoneButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.UpdateLineData();
+            this.UpdateBasePoints();
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
@@ -683,14 +683,13 @@ namespace Marv.Input
 
             var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance)
-                                              .Except(points.First())
-                                              .Except(points.Last())
-                                              .ToList();
+            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance ||
+                                                              point.Category.Equals(userPoint.Category)).ToList();
 
             if (isPointRemoved)
             {
-                foreach (var point in pointsWithinTolerance)
+                // Can't remove first and last points.
+                foreach (var point in pointsWithinTolerance.Except(points.First()).Except(points.Last()))
                 {
                     points.Remove(point);
                 }
