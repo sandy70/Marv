@@ -33,8 +33,8 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedSectionIdProperty =
             DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedSectionId));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
+        public static readonly DependencyProperty SelectedVertexKeyProperty =
+            DependencyProperty.Register("SelectedVertexKey", typeof(string), typeof(LineDataControl), new PropertyMetadata(null, ChangedLineData));
 
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue, ChangedSelectedYear));
@@ -114,10 +114,10 @@ namespace Marv.Input
             set { SetValue(SelectedSectionIdProperty, value); }
         }
 
-        public Vertex SelectedVertex
+        public string SelectedVertexKey
         {
-            get { return (Vertex) GetValue(SelectedVertexProperty); }
-            set { SetValue(SelectedVertexProperty, value); }
+            get { return (string) GetValue(SelectedVertexKeyProperty); }
+            set { SetValue(SelectedVertexKeyProperty, value); }
         }
 
         public int SelectedYear
@@ -144,13 +144,13 @@ namespace Marv.Input
 
             control.IsGridViewEnabled = true;
 
-            if (control.LineData == null || control.SelectedVertex == null)
+            if (control.LineData == null || control.SelectedVertexKey == null)
             {
                 return;
             }
 
             var lineData = control.LineData;
-            var vertexKey = control.SelectedVertex.Key;
+            var vertexKey = control.SelectedVertexKey;
 
             control.Rows = new ObservableCollection<Dynamic>();
 
@@ -240,7 +240,7 @@ namespace Marv.Input
 
             for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
             {
-                row[year.ToString()] = sectionEvidence[year][this.SelectedVertex.Key];
+                row[year.ToString()] = sectionEvidence[year][this.SelectedVertexKey];
             }
 
             this.Rows.Add(row);
@@ -268,7 +268,7 @@ namespace Marv.Input
         private void ClearCell(CellModel cellModel)
         {
             var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
-            sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
+            sectionEvidence[cellModel.Year][this.SelectedVertexKey] = null;
             this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
 
             var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
@@ -614,7 +614,7 @@ namespace Marv.Input
 
         private void UpdateRows()
         {
-            this.UpdateRows(this.LineData, this.SelectedVertex.Key);
+            this.UpdateRows(this.LineData, this.SelectedVertexKey);
         }
 
         private void UpdateRows(ILineData lineData, string vertexKey, IProgress<Dynamic> progress = null)
