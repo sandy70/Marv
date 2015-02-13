@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Marv.Common;
 
 namespace Marv
@@ -244,6 +245,12 @@ namespace Marv
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
             return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
+        }
+
+        public Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId)
+        {
+            Console.WriteLine("Getting evidence for section [{0}]", sectionId);
+            return Task.Run(() => Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence")));
         }
 
         public IEnumerable<string> GetSectionIds()

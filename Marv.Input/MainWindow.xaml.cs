@@ -199,9 +199,17 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_SelectionChanged(object sender, Vertex e)
+        private async void GraphControl_SelectionChanged(object sender, Vertex e)
         {
-            this.UpdateLineDataControl();
+            if (this.LineData != null)
+            {
+                this.LineDataControl.ClearRows();
+
+                foreach (var sectionId in this.LineData.GetSectionIds())
+                {
+                    this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                }
+            }
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
@@ -378,11 +386,19 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
 
-        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "LineData")
             {
-                this.UpdateLineDataControl();
+                if (this.LineData != null)
+                {
+                    this.LineDataControl.ClearRows();
+
+                    foreach (var sectionId in this.LineData.GetSectionIds())
+                    {
+                        this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                    }
+                }
             }
         }
 

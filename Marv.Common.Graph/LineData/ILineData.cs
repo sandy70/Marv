@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Marv
 {
@@ -11,6 +12,7 @@ namespace Marv
         void ReplaceSectionId(string oldId, string newId);
         Dict<int, string, double[]> GetBelief(string sectionId);
         Dict<int, string, VertexEvidence> GetEvidence(string sectionId);
+        Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId);
         IEnumerable<string> GetSectionIds();
         void RemoveSection(string sectionId);
         void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief);

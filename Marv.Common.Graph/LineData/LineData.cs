@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using Marv.Common;
 
 namespace Marv
@@ -132,6 +133,11 @@ namespace Marv
         public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
         {
             return this.sectionEvidences[sectionId];
+        }
+
+        public Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId)
+        {
+            return Task.Run(() => this.sectionEvidences[sectionId]);
         }
 
         public IEnumerable<string> GetSectionIds()
