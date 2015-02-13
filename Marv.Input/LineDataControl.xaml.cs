@@ -210,6 +210,14 @@ namespace Marv.Input
             }
         }
 
+        public void SetCell(string sectionId, int year, VertexEvidence vertexEvidence)
+        {
+            var selectedRow = this.Rows.First(row => (new CellModel(row, year.ToString()).SectionId == sectionId));
+            var cellModel = new CellModel(selectedRow, year.ToString());
+
+            this.SetCell(cellModel, vertexEvidence);
+        }
+
         public void SetSelectedCells(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)

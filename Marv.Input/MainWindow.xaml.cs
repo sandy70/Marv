@@ -268,6 +268,8 @@ namespace Marv.Input
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
+            this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
+
             this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
             this.LineDataControl.CellChanged += LineDataControl_CellChanged;
 
@@ -291,6 +293,20 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
+        {
+            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
+
+            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
+            {
+                var sectionEvidence = this.LineData.GetSectionEvidence(e.SectionId);
+                sectionEvidence[e.Year][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.SetSectionEvidence(e.SectionId, sectionEvidence);
+
+                this.LineDataControl.SetCell(e.SectionId, e.Year, vertexEvidence);
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)

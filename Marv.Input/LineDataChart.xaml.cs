@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -280,6 +281,14 @@ namespace Marv.Input
             control.InitializeVerticalAxis();
             control.UpdateBasePoints();
             control.InitializeEvidence();
+        }
+
+        public void RaiseEvidenceGenerated(EvidenceGeneratedEventArgs e)
+        {
+            if (this.EvidenceGenerated != null)
+            {
+                this.EvidenceGenerated(this, e);
+            }
         }
 
         public void RemoveSelectedEvidence()
@@ -750,14 +759,23 @@ namespace Marv.Input
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
-                var vertexEvidence = this.Vertex.States.ParseEvidenceString(evidenceString);
+                this.RaiseEvidenceGenerated(new EvidenceGeneratedEventArgs
+                {
+                    EvidenceString = evidenceString,
+                    SectionId = sectionId,
+                    Year = year
+                });
 
-                this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
+                // var vertexEvidence = this.Vertex.States.ParseEvidenceString(evidenceString);
+
+                // this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
             });
 
-            this.LineData.RaiseDataChanged();
+            // this.LineData.RaiseDataChanged();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<EvidenceGeneratedEventArgs> EvidenceGenerated;
     }
 }
