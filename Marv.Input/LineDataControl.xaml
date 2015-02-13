@@ -103,6 +103,7 @@
                              CanUserSortColumns="False"
                              ClipboardCopyMode="Cells"
                              ClipboardPasteMode="AllSelectedCells"
+                             EditTriggers="TextInput"
                              FrozenColumnCount="1"
                              IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"
