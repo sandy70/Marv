@@ -68,7 +68,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
+                                          Value="{Binding ElementName=Root, Path=StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5">
@@ -84,7 +84,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
+                                          Value="{Binding ElementName=Root, Path=EndYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5">

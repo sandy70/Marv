@@ -108,26 +108,6 @@ namespace Marv
             return lineData;
         }
 
-        public void AddSection(string sectionId)
-        {
-            this.SectionIds.AddUnique(sectionId);
-
-            var sectionBelief = new Dict<int, string, double[]>();
-            var sectionEvidence = new Dict<int, string, VertexEvidence>();
-
-            for (var year = this.StartYear; year <= this.EndYear; year++)
-            {
-                sectionBelief[year] = new Dict<string, double[]>();
-                sectionEvidence[year] = new Dict<string, VertexEvidence>();
-            }
-
-            var beliefFilePath = Path.Combine(this.rootDirPathPath, "SectionBeliefs", sectionId + ".marv-sectionbelief");
-            var evidenceFilePath = Path.Combine(this.rootDirPathPath, "SectionEvidences", sectionId + ".marv-sectionevidence");
-
-            sectionBelief.WriteJson(beliefFilePath);
-            sectionEvidence.WriteJson(evidenceFilePath);
-        }
-
         public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node)
         {
             return this.GetBeliefStatistic(valueComputer, node, this.GetSectionIds());
@@ -274,14 +254,6 @@ namespace Marv
             return list;
         }
 
-        public void RaiseDataChanged()
-        {
-            if (this.DataChanged != null)
-            {
-                this.DataChanged(this, new EventArgs());
-            }
-        }
-
         public void RemoveSection(string sectionId)
         {
             this.SectionIds.Remove(sectionId);
@@ -336,7 +308,5 @@ namespace Marv
                 this.WriteJson(Path.Combine(this.rootDirPathPath, Path.GetFileName(this.rootDirPathPath) + "." + LineData.FileExtension));
             }
         }
-
-        public event EventHandler DataChanged;
     }
 }

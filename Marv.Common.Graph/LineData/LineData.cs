@@ -139,14 +139,6 @@ namespace Marv
             return this.sectionEvidences.Keys;
         }
 
-        public void RaiseDataChanged()
-        {
-            if (this.DataChanged != null)
-            {
-                this.DataChanged(this, new EventArgs());
-            }
-        }
-
         public void RemoveSection(string sectionId)
         {
             this.SectionBeliefs[sectionId] = null;
@@ -212,7 +204,5 @@ namespace Marv
                 }
             }
         }
-
-        public event EventHandler DataChanged;
     }
 }

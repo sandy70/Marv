@@ -224,6 +224,9 @@ namespace Marv.Controls.GraphControl
             this.InitializeAutoSave();
 
             this.Loaded += this.GraphControl_Loaded;
+
+            this.Loaded -= GraphControl_Loaded_DiagramPart;
+            this.Loaded += GraphControl_Loaded_DiagramPart;
         }
 
         private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -484,22 +487,6 @@ namespace Marv.Controls.GraphControl
 
             this.SaveButton.Click -= this.SaveButton_Click;
             this.SaveButton.Click += this.SaveButton_Click;
-
-            // Other controls
-            this.DiagramPart.CommandExecuted -= DiagramPart_CommandExecuted;
-            this.DiagramPart.CommandExecuted += DiagramPart_CommandExecuted;
-
-            this.DiagramPart.ConnectionManipulationCompleted -= DiagramPart_ConnectionManipulationCompleted;
-            this.DiagramPart.ConnectionManipulationCompleted += DiagramPart_ConnectionManipulationCompleted;
-
-            this.DiagramPart.ConnectionManipulationStarted -= DiagramPart_ConnectionManipulationStarted;
-            this.DiagramPart.ConnectionManipulationStarted += DiagramPart_ConnectionManipulationStarted;
-
-            this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
-            this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
-
-            this.DiagramPart.ShapeClicked -= DiagramPart_ShapeClicked;
-            this.DiagramPart.ShapeClicked += DiagramPart_ShapeClicked;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -528,6 +515,14 @@ namespace Marv.Controls.GraphControl
             if (this.PropertyChanged != null && propertyName != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void RaiseSelectionChanged(Vertex vertex)
+        {
+            if (this.SelectionChanged != null)
+            {
+                this.SelectionChanged(this, vertex);
             }
         }
 
@@ -585,6 +580,8 @@ namespace Marv.Controls.GraphControl
 
             this.Graph.Evidence.WriteJson(filePath);
         }
+
+        public event EventHandler<Vertex> SelectionChanged;
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
 

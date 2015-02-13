@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
@@ -76,6 +77,11 @@ namespace Marv.Controls.GraphControl
             }
         }
 
+        private void DiagramPart_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.RaiseSelectionChanged(this.Graph.SelectedVertex);
+        }
+
         private void DiagramPart_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
@@ -123,6 +129,27 @@ namespace Marv.Controls.GraphControl
             };
 
             timer.Start();
+        }
+
+        private void GraphControl_Loaded_DiagramPart(object sender, RoutedEventArgs e)
+        {
+            this.DiagramPart.CommandExecuted -= DiagramPart_CommandExecuted;
+            this.DiagramPart.CommandExecuted += DiagramPart_CommandExecuted;
+
+            this.DiagramPart.ConnectionManipulationCompleted -= DiagramPart_ConnectionManipulationCompleted;
+            this.DiagramPart.ConnectionManipulationCompleted += DiagramPart_ConnectionManipulationCompleted;
+
+            this.DiagramPart.ConnectionManipulationStarted -= DiagramPart_ConnectionManipulationStarted;
+            this.DiagramPart.ConnectionManipulationStarted += DiagramPart_ConnectionManipulationStarted;
+
+            this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
+            this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
+
+            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
+            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
+
+            this.DiagramPart.ShapeClicked -= DiagramPart_ShapeClicked;
+            this.DiagramPart.ShapeClicked += DiagramPart_ShapeClicked;
         }
     }
 }

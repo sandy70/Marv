@@ -16,6 +16,5 @@ namespace Marv
         void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief);
         void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
         void Write(string filePath);
-        event EventHandler DataChanged;
     }
 }

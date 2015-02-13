@@ -199,6 +199,11 @@ namespace Marv.Input
             }
         }
 
+        private void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            this.UpdateLineDataControl();
+        }
+
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
@@ -270,14 +275,6 @@ namespace Marv.Input
             this.LineData.RemoveSection(sectionId);
         }
 
-        private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
-        {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0)
-            {
-                this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
-            }
-        }
-
         private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
         {
             this.LineDataChart.UpdateBasePoints();
@@ -338,12 +335,19 @@ namespace Marv.Input
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            this.PropertyChanged -= MainWindow_PropertyChanged;
+            this.PropertyChanged += MainWindow_PropertyChanged;
+
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
+            this.GraphControl.SelectionChanged -= GraphControl_SelectionChanged;
+            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
+
+            this.LineDataChart.EvidenceGenerated -= LineDataChart_EvidenceGenerated;
             this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
 
             this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
@@ -364,9 +368,6 @@ namespace Marv.Input
             this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
             this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
 
-            this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
-            this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
-
             this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
             this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
 
@@ -375,6 +376,14 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LineData")
+            {
+                this.UpdateLineDataControl();
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -404,6 +413,19 @@ namespace Marv.Input
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
+        }
+
+        private void UpdateLineDataControl()
+        {
+            if (this.LineData != null)
+            {
+                this.LineDataControl.ClearRows();
+
+                foreach (var sectionId in this.LineData.GetSectionIds())
+                {
+                    this.LineDataControl.AddRow(sectionId, this.LineData.GetEvidence(sectionId)[null, this.Graph.SelectedVertex.Key]);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

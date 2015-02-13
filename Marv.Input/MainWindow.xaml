@@ -69,7 +69,7 @@
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
                                                    EndYear="{Binding ElementName=Root, Path=LineData.EndYear}"
-                                                   LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedVertexKey="{Binding ElementName=Root, Path=Graph.SelectedVertex.Key}"
