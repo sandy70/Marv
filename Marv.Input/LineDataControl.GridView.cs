@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -17,11 +16,12 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            var cellModel = e.Cell.ToModel();
-            var oldString = e.OldData as string;
-            var newString = e.NewData as string;
-
-            this.SetCell(cellModel, newString, oldString);
+            this.RaiseCellChanged(new CellChangedEventArgs
+            {
+                CellModel = e.Cell.ToModel(),
+                NewString = e.NewData as string,
+                OldString = e.OldData as string
+            });
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -31,13 +31,7 @@ namespace Marv.Input
                 return;
             }
 
-            var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
-
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }
+            this.RaiseCellValidating(e);
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -87,16 +81,7 @@ namespace Marv.Input
                     }
                     else
                     {
-                        var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
-                        sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
-                        this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
-
-                        var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
-                        var selectedRowIndex = this.Rows.IndexOf(selectedRow);
-
-                        this.Rows.Remove(selectedRow);
-                        selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
-                        this.Rows.Insert(selectedRowIndex, selectedRow);
+                        this.ClearCell(cellModel);
                     }
                 }
             }
@@ -106,8 +91,12 @@ namespace Marv.Input
         {
             foreach (var pastedCell in this.pastedCells)
             {
-                var cellModel = pastedCell.Cell.ToModel();
-                this.SetCell(cellModel, pastedCell.Value as string, this.oldData[pastedCell] as string);
+                this.RaiseCellChanged(new CellChangedEventArgs
+                {
+                    CellModel = pastedCell.Cell.ToModel(),
+                    NewString = pastedCell.Value as string,
+                    OldString = this.oldData[pastedCell] as string
+                });
             }
 
             this.CanUserInsertRows = false;

@@ -371,49 +371,12 @@ namespace Marv.Controls.GraphControl
             }
         }
 
-        public void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
-        {
-            if (this.GraphChanged != null)
-            {
-                this.GraphChanged(this, newGraph, oldGraph);
-            }
-        }
-
         public void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
             {
                 this.NotificationClosed(this, notification);
             }
-        }
-
-        public void RaiseNotificationOpened(Notification notification)
-        {
-            if (this.NotificationOpened != null)
-            {
-                this.NotificationOpened(this, notification);
-            }
-        }
-
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public void UpdateDisplayGraph(string group, string vertexKey = null)
-        {
-            if (vertexKey == null)
-            {
-                vertexKey = this.DisplayVertexKey;
-            }
-
-            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
-            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
-
-            this.DisplayVertexKey = vertexKey;
         }
 
         public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
@@ -453,17 +416,6 @@ namespace Marv.Controls.GraphControl
                     this.DiagramPart.AutoFitAsync(new Thickness(10));
                 }
             }
-        }
-
-        public void WriteEvidences(string filePath)
-        {
-            if (Path.GetExtension(filePath) == ".hcs")
-            {
-                this.Graph.Evidence.WriteHcs(filePath);
-                return;
-            }
-
-            this.Graph.Evidence.WriteJson(filePath);
         }
 
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
@@ -555,6 +507,30 @@ namespace Marv.Controls.GraphControl
             this.Open();
         }
 
+        private void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
+        {
+            if (this.GraphChanged != null)
+            {
+                this.GraphChanged(this, newGraph, oldGraph);
+            }
+        }
+
+        private void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
+            }
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         private void Run()
         {
             if (this.IsAutoRunEnabled && this.Graph != null)
@@ -584,6 +560,30 @@ namespace Marv.Controls.GraphControl
             }
 
             this.WriteEvidences(openFileDialog.FileName);
+        }
+
+        private void UpdateDisplayGraph(string group, string vertexKey = null)
+        {
+            if (vertexKey == null)
+            {
+                vertexKey = this.DisplayVertexKey;
+            }
+
+            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
+            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
+
+            this.DisplayVertexKey = vertexKey;
+        }
+
+        private void WriteEvidences(string filePath)
+        {
+            if (Path.GetExtension(filePath) == ".hcs")
+            {
+                this.Graph.Evidence.WriteHcs(filePath);
+                return;
+            }
+
+            this.Graph.Evidence.WriteJson(filePath);
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;

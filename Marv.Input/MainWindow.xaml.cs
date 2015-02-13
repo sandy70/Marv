@@ -28,7 +28,6 @@ namespace Marv.Input
         private ILineData lineData;
         private LocationCollection locations;
         private Location selectedLocation;
-        private LocationRect startExtent;
 
         public Graph Graph
         {
@@ -166,22 +165,6 @@ namespace Marv.Input
             set { SetValue(SelectedYearProperty, value); }
         }
 
-        public LocationRect StartExtent
-        {
-            get { return this.startExtent; }
-
-            set
-            {
-                if (value.Equals(this.startExtent))
-                {
-                    return;
-                }
-
-                this.startExtent = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -189,18 +172,18 @@ namespace Marv.Input
             this.Loaded += MainWindow_Loaded;
         }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            this.LineDataChart.UpdateEvidence(vertexEvidence);
-            this.LineDataControl.SetSelectedCells(vertexEvidence);
+            if (vertexEvidence == null)
+            {
+                this.LineDataChart.RemoveSelectedEvidence();
+                this.LineDataControl.ClearSelectedCell();
+            }
+            else
+            {
+                this.LineDataChart.SetEvidence(vertexEvidence);
+                this.LineDataControl.SetSelectedCells(vertexEvidence);
+            }
         }
 
         private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)
@@ -212,9 +195,40 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataControl_EvidenceChanged(object sender, CellModel cellModel, VertexEvidence vertexEvidence)
+        private void LineDataControl_CellChanged(object sender, CellChangedEventArgs e)
         {
-            this.LineDataChart.UpdateEvidence(vertexEvidence, cellModel);
+            if (e.CellModel.IsColumnSectionId)
+            {
+                if (e.OldString == null)
+                {
+                    this.LineData.SetSectionEvidence(e.NewString, new Dict<int, string, VertexEvidence>());
+                }
+                else
+                {
+                    this.LineData.ReplaceSectionId(e.OldString, e.NewString);
+                }
+
+                e.CellModel.Data = e.NewString;
+            }
+            else
+            {
+                var vertexEvidence = e.VertexEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
+
+                e.CellModel.Data = vertexEvidence;
+                this.LineData.GetSectionEvidence(e.CellModel.SectionId)[e.CellModel.Year][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineDataChart.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, vertexEvidence);
+            }
+        }
+
+        private void LineDataControl_CellValidating(object sender, GridViewCellValidatingEventArgs e)
+        {
+            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            }
         }
 
         private void LineDataControl_NotificationClosed(object sender, Notification notification)
@@ -254,8 +268,11 @@ namespace Marv.Input
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
 
-            this.LineDataControl.EvidenceChanged -= LineDataControl_EvidenceChanged;
-            this.LineDataControl.EvidenceChanged += LineDataControl_EvidenceChanged;
+            this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
+            this.LineDataControl.CellChanged += LineDataControl_CellChanged;
+
+            this.LineDataControl.CellValidating -= LineDataControl_CellValidating;
+            this.LineDataControl.CellValidating += LineDataControl_CellValidating;
 
             this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
             this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
@@ -274,6 +291,14 @@ namespace Marv.Input
 
             this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

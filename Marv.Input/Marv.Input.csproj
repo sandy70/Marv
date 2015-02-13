@@ -184,11 +184,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CellChangedEventArgs.cs" />
     <Compile Include="CellModel.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="LineDataControl.GridView.cs" />
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>

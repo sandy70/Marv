@@ -15,9 +15,6 @@ namespace Marv.Input
 {
     public partial class LineDataControl : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty CurrentGraphDataProperty =
-            DependencyProperty.Register("CurrentGraphData", typeof (Dict<string, VertexEvidence>), typeof (LineDataControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty FileNameProperty =
             DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
@@ -195,11 +192,21 @@ namespace Marv.Input
             (d as LineDataControl).RaiseSelectedYearChanged();
         }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        public void ClearSelectedCell()
         {
-            if (this.PropertyChanged != null && propertyName != null)
+            var cellModel = this.GridView.CurrentCellInfo.ToModel();
+
+            if (!cellModel.IsColumnSectionId)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.ClearCell(cellModel);
+            }
+        }
+
+        public void RaiseCellChanged(CellChangedEventArgs cellChangedEventArgs)
+        {
+            if (this.CellChanged != null)
+            {
+                this.CellChanged(this, cellChangedEventArgs);
             }
         }
 
@@ -213,62 +220,6 @@ namespace Marv.Input
                 {
                     this.SetCell(cellModel, vertexEvidence);
                 }
-            }
-        }
-
-        protected void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
-        {
-            if (this.EvidenceChanged != null)
-            {
-                this.EvidenceChanged(this, cellModel, vertexEvidence);
-            }
-        }
-
-        protected void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
-        protected void RaiseNotificationOpened(Notification notification)
-        {
-            if (this.NotificationOpened != null)
-            {
-                this.NotificationOpened(this, notification);
-            }
-        }
-
-        protected void RaiseSectionBeliefsChanged()
-        {
-            if (this.SectionBeliefsChanged != null)
-            {
-                this.SectionBeliefsChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSectionEvidencesChanged()
-        {
-            if (this.SectionEvidencesChanged != null)
-            {
-                this.SectionEvidencesChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSelectedCellChanged()
-        {
-            if (this.SelectedCellChanged != null)
-            {
-                this.SelectedCellChanged(this, new EventArgs());
-            }
-        }
-
-        protected void RaiseSelectedYearChanged()
-        {
-            if (this.SelectedYearChanged != null)
-            {
-                this.SelectedYearChanged(this, new EventArgs());
             }
         }
 
@@ -304,6 +255,20 @@ namespace Marv.Input
                 this.LineData.AddSection(sectionId);
                 this.AddRow(sectionId);
             }
+        }
+
+        private void ClearCell(CellModel cellModel)
+        {
+            var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
+            sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
+            this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
+
+            var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
+            var selectedRowIndex = this.Rows.IndexOf(selectedRow);
+
+            this.Rows.Remove(selectedRow);
+            selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
+            this.Rows.Insert(selectedRowIndex, selectedRow);
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
@@ -478,6 +443,78 @@ namespace Marv.Input
             }
         }
 
+        private void RaiseCellValidating(GridViewCellValidatingEventArgs e)
+        {
+            if (this.CellValidating != null)
+            {
+                this.CellValidating(this, e);
+            }
+        }
+
+        private void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
+        {
+            if (this.EvidenceChanged != null)
+            {
+                this.EvidenceChanged(this, cellModel, vertexEvidence);
+            }
+        }
+
+        private void RaiseNotificationClosed(Notification notification)
+        {
+            if (this.NotificationClosed != null)
+            {
+                this.NotificationClosed(this, notification);
+            }
+        }
+
+        private void RaiseNotificationOpened(Notification notification)
+        {
+            if (this.NotificationOpened != null)
+            {
+                this.NotificationOpened(this, notification);
+            }
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null && propertyName != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void RaiseSectionBeliefsChanged()
+        {
+            if (this.SectionBeliefsChanged != null)
+            {
+                this.SectionBeliefsChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSectionEvidencesChanged()
+        {
+            if (this.SectionEvidencesChanged != null)
+            {
+                this.SectionEvidencesChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSelectedCellChanged()
+        {
+            if (this.SelectedCellChanged != null)
+            {
+                this.SelectedCellChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseSelectedYearChanged()
+        {
+            if (this.SelectedYearChanged != null)
+            {
+                this.SelectedYearChanged(this, new EventArgs());
+            }
+        }
+
         private async void RunAllButton_Click(object sender, RoutedEventArgs e)
         {
             var lineData = this.LineData;
@@ -559,33 +596,12 @@ namespace Marv.Input
             }
 
             cellModel.Data = vertexEvidence;
-            this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
-        }
 
-        private void SetCell(CellModel cellModel, string newString, string oldString = null)
-        {
-            if (cellModel.IsColumnSectionId)
+            this.RaiseCellChanged(new CellChangedEventArgs
             {
-                if (oldString == null)
-                {
-                    this.LineData.SetSectionEvidence(newString, new Dict<int, string, VertexEvidence>());
-                }
-                else
-                {
-                    this.LineData.ReplaceSectionId(oldString, newString);
-                }
-
-                cellModel.Data = newString;
-            }
-            else
-            {
-                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(newString);
-
-                cellModel.Data = vertexEvidence;
-                this.LineData.GetSectionEvidence(cellModel.SectionId)[cellModel.Year][this.SelectedVertex.Key] = vertexEvidence;
-
-                this.RaiseEvidenceChanged(cellModel, vertexEvidence);
-            }
+                CellModel = cellModel,
+                VertexEvidence = cellModel.Data as VertexEvidence
+            });
         }
 
         private void UpdateRows()
@@ -629,5 +645,9 @@ namespace Marv.Input
         public event EventHandler SectionEvidencesChanged;
 
         public event EventHandler SelectedCellChanged;
+
+        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
+
+        public event EventHandler<CellChangedEventArgs> CellChanged;
     }
 }

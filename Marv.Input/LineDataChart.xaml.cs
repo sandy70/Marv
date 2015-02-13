@@ -12,7 +12,7 @@ namespace Marv.Input
 {
     public partial class LineDataChart : INotifyPropertyChanged
     {
-        private const double Tolerance = 50;
+        private const double Tolerance = 8;
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
             DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false, ChangedEvidenceEditEnabled));
@@ -293,6 +293,36 @@ namespace Marv.Input
             control.InitializeEvidence();
         }
 
+        public void RemoveSelectedEvidence()
+        {
+            this.RemoveEvidence(this.SelectedSectionId, this.Year);
+        }
+
+        public void SetEvidence(VertexEvidence vertexEvidence)
+        {
+            this.SetEvidence(this.SelectedSectionId, this.Year, vertexEvidence);
+        }
+
+        public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
+        {
+            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
+            {
+                this.UpdateBasePoints();
+            }
+
+            var category = this.IsXAxisSections ? sectionId : year as object;
+
+            if (category == null)
+            {
+                return;
+            }
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+
+            this.AddBasePoint(category, vertexEvidence);
+        }
+
         public void UpdateBasePoints()
         {
             if (this.LineData == null ||
@@ -334,29 +364,6 @@ namespace Marv.Input
 
                 this.AddBasePoint(category, vertexData);
             }
-        }
-
-        public void UpdateEvidence(VertexEvidence vertexEvidence, CellModel cellModel = null)
-        {
-            var sectionId = cellModel == null ? this.SelectedSectionId : cellModel.SectionId;
-            var year = cellModel == null ? this.Year : cellModel.Year;
-
-            if (this.BaseNumberPoints == null || this.BaseNumberPoints.Count == 0)
-            {
-                this.UpdateBasePoints();
-            }
-
-            var category = this.IsXAxisSections ? sectionId : year as object;
-
-            if (category == null)
-            {
-                return;
-            }
-
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
-
-            this.AddBasePoint(category, vertexEvidence);
         }
 
         private void AddBasePoint(object category, VertexEvidence vertexEvidence)
@@ -441,8 +448,6 @@ namespace Marv.Input
                 }
             }
         }
-
-        private void ChartTrackBallBehavior_TrackInfoUpdated(object sender, TrackBallInfoEventArgs e) {}
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
@@ -643,6 +648,19 @@ namespace Marv.Input
             }
         }
 
+        private void RemoveEvidence(string sectionId, int year)
+        {
+            var category = this.IsXAxisSections ? sectionId : year as object;
+
+            if (category == null)
+            {
+                return;
+            }
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+        }
+
         private void Series_MouseUp(object sender, MouseButtonEventArgs e)
         {
             (sender as IInputElement).ReleaseMouseCapture();
@@ -665,7 +683,10 @@ namespace Marv.Input
 
             var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
+            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance)
+                                              .Except(points.First())
+                                              .Except(points.Last())
+                                              .ToList();
 
             if (isPointRemoved)
             {
