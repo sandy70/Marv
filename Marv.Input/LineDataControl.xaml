@@ -37,20 +37,6 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Height="32">
-                <telerik:RadButton Name="OpenButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="SaveButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="RunAllButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/RunAll.png" />
-                </telerik:RadButton>
-            </ToolBar>
-
-            <ToolBar Height="32">
                 <telerik:RadButton Name="CopyAcrossColButton">
                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
                 </telerik:RadButton>

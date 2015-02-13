@@ -36,7 +36,7 @@ namespace Marv.Input
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell == null || this.LineData == null)
+            if (e.NewCell == null)
             {
                 return;
             }
@@ -62,7 +62,8 @@ namespace Marv.Input
             {
                 var row = item as Dynamic;
                 var sectionId = row[CellModel.SectionIdHeader] as string;
-                this.LineData.RemoveSection(sectionId);
+                
+                this.RaiseRowRemoved(sectionId);
             }
         }
 
@@ -76,8 +77,8 @@ namespace Marv.Input
 
                     if (cellModel.IsColumnSectionId)
                     {
-                        this.LineData.RemoveSection(cellModel.SectionId);
                         this.Rows.Remove(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
+                        this.RaiseRowRemoved(cellModel.SectionId);
                     }
                     else
                     {

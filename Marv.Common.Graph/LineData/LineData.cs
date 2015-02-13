@@ -104,36 +104,9 @@ namespace Marv
             return Utils.ReadJson<LineData>(filePath);
         }
 
-        public void AddSection(string sectionId)
+        public Dict<int, string, double[]> GetBelief(string sectionId)
         {
-            if (!this.SectionEvidences.ContainsKey(sectionId))
-            {
-                this.SectionEvidences[sectionId] = new Dict<int, string, VertexEvidence>();
-            }
-        }
-
-        public void AddSections(IEnumerable<string> theSectionIds)
-        {
-            foreach (var key in theSectionIds)
-            {
-                if (!this.SectionEvidences.ContainsKey(key))
-                {
-                    this.SectionEvidences[key] = new Dict<int, string, VertexEvidence>();
-                }
-            }
-
-            this.RaiseDataChanged();
-        }
-
-        public void ReplaceSectionId(string oldId, string newId)
-        {
-            this.SectionBeliefs.ChangeKey(oldId, newId);
-            this.SectionEvidences.ChangeKey(oldId, newId);
-        }
-
-        public bool ContainsSection(string sectionId)
-        {
-            return this.SectionEvidences.ContainsKey(sectionId);
+            return this.SectionBeliefs[sectionId];
         }
 
         public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
@@ -156,12 +129,7 @@ namespace Marv
             return null;
         }
 
-        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
-        {
-            return this.SectionBeliefs[sectionId];
-        }
-
-        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
+        public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
         {
             return this.sectionEvidences[sectionId];
         }
@@ -185,14 +153,20 @@ namespace Marv
             this.SectionEvidences[sectionId] = null;
         }
 
-        public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
+        public void ReplaceSectionId(string oldId, string newId)
         {
-            this.SectionBeliefs[sectionId] = sectionBelief;
+            this.SectionBeliefs.ChangeKey(oldId, newId);
+            this.SectionEvidences.ChangeKey(oldId, newId);
         }
 
-        public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
         {
             this.SectionEvidences[sectionId] = sectionEvidence;
+        }
+
+        public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
+        {
+            this.SectionBeliefs[sectionId] = sectionBelief;
         }
 
         public void Write(string filePath)

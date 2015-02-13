@@ -128,22 +128,6 @@ namespace Marv
             sectionEvidence.WriteJson(evidenceFilePath);
         }
 
-        public void AddSections(IEnumerable<string> theSectionIds)
-        {
-            foreach (var sectionId in theSectionIds)
-            {
-                this.AddSection(sectionId);
-            }
-        }
-
-        public bool ContainsSection(string sectionId)
-        {
-            var beliefDir = Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId);
-            var evidenceDir = Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId);
-
-            return Directory.Exists(beliefDir) || Directory.Exists(evidenceDir);
-        }
-
         public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node)
         {
             return this.GetBeliefStatistic(valueComputer, node, this.GetSectionIds());
@@ -154,7 +138,7 @@ namespace Marv
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
             var nRows = sectionIdList.Count();
-            var nCols = this.GetSectionBelief(sectionIdList.First()).Keys.Count;
+            var nCols = this.GetBelief(sectionIdList.First()).Keys.Count;
 
             var statistic = new double[nRows, nCols];
 
@@ -163,7 +147,7 @@ namespace Marv
             {
                 var col = 0;
 
-                var sectionBelief = this.GetSectionBelief(sectionId);
+                var sectionBelief = this.GetBelief(sectionId);
 
                 if (sectionBelief == null)
                 {
@@ -188,7 +172,7 @@ namespace Marv
 
         public double[,] GetBeliefs(NetworkNode node, string sectionId, IEnumerable<int> years)
         {
-            var sectionBelief = this.GetSectionBelief(sectionId);
+            var sectionBelief = this.GetBelief(sectionId);
 
             var nRows = node.States.Count;
             var nCols = years.Count();
@@ -217,7 +201,7 @@ namespace Marv
 
             for (var row = 0; row < nRows; row++)
             {
-                var sectionBelief = this.GetSectionBelief(sectionIdList[row]);
+                var sectionBelief = this.GetBelief(sectionIdList[row]);
 
                 for (var col = 0; col < nCols; col++)
                 {
@@ -238,7 +222,7 @@ namespace Marv
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
             var nRows = sectionIdList.Count();
-            var nCols = this.GetSectionEvidence(sectionIdList.First()).Keys.Count;
+            var nCols = this.GetEvidence(sectionIdList.First()).Keys.Count;
 
             var statistic = new double[nRows, nCols];
 
@@ -247,7 +231,7 @@ namespace Marv
             {
                 var col = 0;
 
-                var sectionEvidence = this.GetSectionEvidence(sectionId);
+                var sectionEvidence = this.GetEvidence(sectionId);
 
                 if (sectionEvidence == null)
                 {
@@ -270,13 +254,13 @@ namespace Marv
             return statistic;
         }
 
-        public Dict<int, string, double[]> GetSectionBelief(string sectionId)
+        public Dict<int, string, double[]> GetBelief(string sectionId)
         {
             Console.WriteLine("Getting section [{0}] belief", sectionId);
             return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
         }
 
-        public Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId)
+        public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
             return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
@@ -324,7 +308,7 @@ namespace Marv
             File.Move(oldDirName, newDirName);
         }
 
-        public void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
+        public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
         {
             this.SectionIds.AddUnique(sectionId);
 
@@ -332,7 +316,7 @@ namespace Marv
             sectionBelief.WriteJson(beliefFilePath);
         }
 
-        public void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
         {
             this.SectionIds.AddUnique(sectionId);
 

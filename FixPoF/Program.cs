@@ -15,7 +15,7 @@ namespace FixPoF
 
             foreach (var sectionId in lineData.GetSectionIds())
             {
-                var sectionBelief = lineData.GetSectionBelief(sectionId);
+                var sectionBelief = lineData.GetBelief(sectionId);
 
                 foreach (var year in sectionBelief.Keys)
                 {

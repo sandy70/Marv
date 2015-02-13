@@ -196,6 +196,7 @@
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProbabilityDataPoint.cs" />
+    <Compile Include="RowAddedEventArgs.cs" />
     <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -326,7 +326,6 @@ namespace Marv.Input
             if (this.LineData == null ||
                 this.SelectedSectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.ContainsSection(this.SelectedSectionId) ||
                 this.Vertex == null)
             {
                 return;
@@ -358,7 +357,7 @@ namespace Marv.Input
                     Value = null
                 });
 
-                var vertexData = this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key];
+                var vertexData = this.LineData.GetEvidence(sectionId)[year][this.Vertex.Key];
 
                 this.AddBasePoint(category, vertexData);
             }
@@ -768,7 +767,7 @@ namespace Marv.Input
 
                 // var vertexEvidence = this.Vertex.States.ParseEvidenceString(evidenceString);
 
-                // this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
+                // this.LineData.GetEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
             });
 
             // this.LineData.RaiseDataChanged();

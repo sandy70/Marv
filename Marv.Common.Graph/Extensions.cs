@@ -6,6 +6,29 @@ namespace Marv
 {
     public static partial class Extensions
     {
+        public static void RemoveEvidence(this ILineData lineData, string sectionId, int year, string vertexKey)
+        {
+            var sectionEvidence = lineData.GetEvidence(sectionId);
+            sectionEvidence[year][vertexKey] = null;
+            lineData.SetEvidence(sectionId, sectionEvidence);
+        }
+
+        public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, VertexEvidence vertexEvidence)
+        {
+            var sectionEvidence = lineData.GetEvidence(sectionId);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Null)
+            {
+                sectionEvidence[year][vertexKey] = null;
+            }
+            else
+            {
+                sectionEvidence[year][vertexKey] = vertexEvidence;
+            }
+
+            lineData.SetEvidence(sectionId, sectionEvidence);
+        }
+
         public static void WriteHcs(this Dict<string, VertexEvidence> evidences, string filePath)
         {
             using (var hcsFile = new StreamWriter(filePath))
