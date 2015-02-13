@@ -12,7 +12,7 @@ namespace Marv.Input
 {
     public partial class LineDataChart : INotifyPropertyChanged
     {
-        private const double Tolerance = 50;
+        private const double Tolerance = 8;
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
             DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false, ChangedEvidenceEditEnabled));
