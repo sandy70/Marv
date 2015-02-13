@@ -683,7 +683,10 @@ namespace Marv.Input
 
             var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance).ToList();
+            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance)
+                                              .Except(points.First())
+                                              .Except(points.Last())
+                                              .ToList();
 
             if (isPointRemoved)
             {
