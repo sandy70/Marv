@@ -72,7 +72,6 @@
                                                    IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedVertexKey="{Binding ElementName=Root, Path=Graph.SelectedVertex.Key}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
                                                    StartYear="{Binding ElementName=Root, Path=LineData.StartYear}"
                                                    Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
@@ -122,10 +121,9 @@
                             </Grid.RowDefinitions>
 
                             <!-- Vertex Combo Box -->
-                            <telerik:RadComboBox Grid.Row="0"
+                            <telerik:RadComboBox Grid.Row="0"  Grid.ColumnSpan="2"
                                                  CanAutocompleteSelectItems="False"
                                                  CanKeyboardNavigationSelectItems="False"
-                                                 DisplayMemberPath="Key"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
                                                  IsSynchronizedWithCurrentItem="False"
@@ -134,7 +132,18 @@
                                                  OpenDropDownOnFocus="True"
                                                  SelectedIndex="0"
                                                  SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                                 TextSearchMode="Contains" Grid.ColumnSpan="2" />
+                                                 TextSearchMode="Contains">
+                                <telerik:RadComboBox.ItemTemplate>
+                                    <DataTemplate DataType="marv:Vertex">
+                                        <TextBlock>
+                                            <Run Text="{Binding Name}" />
+                                            <Run Text=" [" />
+                                            <Run Text="{Binding Key}" />
+                                            <Run Text="]" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </telerik:RadComboBox.ItemTemplate>
+                            </telerik:RadComboBox>
 
                             <!-- Vertex Control -->
                             <marv:VertexControl Name="VertexControl"
