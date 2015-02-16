@@ -24,10 +24,20 @@
         <ToolBarTray Grid.Row="0"
                      Height="Auto">
             <ToolBar>
-                <telerik:RadToggleButton Content="Edit Evidence"
+                <telerik:RadToggleButton Content="Evidence"
                                          IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled}"
                                          Width="100" />
+                
+                <telerik:RadButton Content="Clear"
+                                   Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
+                                   Width="64"
+                                   Click="EvidenceClearButton_Click" />
 
+                <telerik:RadButton Content="Done"
+                                   Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
+                                   Width="64"
+                                   Click="EvidenceDoneButton_Click"/>
+                
                 <TextBlock VerticalAlignment="Center"
                            Text="X-Axis: "
                            TextAlignment="Right"

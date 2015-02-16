@@ -186,6 +186,7 @@
     </ApplicationDefinition>
     <Compile Include="CellChangedEventArgs.cs" />
     <Compile Include="CellModel.cs" />
+    <Compile Include="EvidenceGeneratedEventArgs.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
@@ -195,6 +196,7 @@
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProbabilityDataPoint.cs" />
+    <Compile Include="RowAddedEventArgs.cs" />
     <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

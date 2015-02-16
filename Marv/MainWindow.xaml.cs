@@ -251,7 +251,7 @@ namespace Marv.Input
             if (this.LineData == null)
             {
                 this.LineData = new LineData();
-                this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
         }
 
@@ -355,8 +355,8 @@ namespace Marv.Input
 
             try
             {
-                var graphBelief = this.LineData.GetSectionBelief(this.SelectedLocation.Key)[this.SelectedYear];
-                var graphEvidence = this.LineData.GetSectionEvidence(this.SelectedLocation.Key)[this.SelectedYear];
+                var graphBelief = this.LineData.GetBelief(this.SelectedLocation.Key)[this.SelectedYear];
+                var graphEvidence = this.LineData.GetEvidence(this.SelectedLocation.Key)[this.SelectedYear];
 
                 this.Graph.Belief = graphBelief;
                 this.Graph.SetEvidence(graphEvidence);

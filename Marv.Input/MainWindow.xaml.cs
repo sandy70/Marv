@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
+using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
@@ -26,6 +29,7 @@ namespace Marv.Input
         private bool isLineDataControlVisible = true;
         private bool isVertexControlVisible = true;
         private ILineData lineData;
+        private string lineDataFileName;
         private LocationCollection locations;
         private Location selectedLocation;
 
@@ -191,7 +195,39 @@ namespace Marv.Input
             if (this.LineData == null)
             {
                 this.LineData = new LineData();
-                this.LineData.SetSectionEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+            }
+        }
+
+        private async void GraphControl_SelectionChanged(object sender, Vertex e)
+        {
+            if (this.LineData != null)
+            {
+                this.LineDataControl.ClearRows();
+
+                foreach (var sectionId in this.LineData.GetSectionIds())
+                {
+                    var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
+
+                    if (this.Graph.SelectedVertex != null)
+                    {
+                        this.LineDataControl.AddRow(sectionId, sectionEvidence[null, this.Graph.SelectedVertex.Key]);
+                    }
+                }
+            }
+        }
+
+        private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
+        {
+            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
+
+            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
+            {
+                var sectionEvidence = this.LineData.GetEvidence(e.SectionId);
+                sectionEvidence[e.Year][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.SetEvidence(e.SectionId, sectionEvidence);
+
+                this.LineDataControl.SetCell(e.SectionId, e.Year, vertexEvidence);
             }
         }
 
@@ -201,7 +237,7 @@ namespace Marv.Input
             {
                 if (e.OldString == null)
                 {
-                    this.LineData.SetSectionEvidence(e.NewString, new Dict<int, string, VertexEvidence>());
+                    this.LineData.SetEvidence(e.NewString, new Dict<int, string, VertexEvidence>());
                 }
                 else
                 {
@@ -215,7 +251,8 @@ namespace Marv.Input
                 var vertexEvidence = e.VertexEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
 
                 e.CellModel.Data = vertexEvidence;
-                this.LineData.GetSectionEvidence(e.CellModel.SectionId)[e.CellModel.Year][this.Graph.SelectedVertex.Key] = vertexEvidence;
+
+                this.LineData.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, this.Graph.SelectedVertex.Key, vertexEvidence);
                 this.LineDataChart.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, vertexEvidence);
             }
         }
@@ -241,12 +278,14 @@ namespace Marv.Input
             this.Notifications.Add(notification);
         }
 
-        private void LineDataControl_SectionBeliefsChanged(object sender, EventArgs e)
+        private void LineDataControl_RowAdded(object sender, string sectionId)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0)
-            {
-                this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
-            }
+            this.LineData.SetEvidence(sectionId, new Dict<int, string, VertexEvidence>());
+        }
+
+        private void LineDataControl_RowRemoved(object sender, string sectionId)
+        {
+            this.LineData.RemoveSection(sectionId);
         }
 
         private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
@@ -256,17 +295,73 @@ namespace Marv.Input
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
-            this.Graph.Belief = this.LineData.GetSectionBelief(this.SelectedSectionId)[this.SelectedYear];
-            this.Graph.SetEvidence(this.LineData.GetSectionEvidence(this.SelectedSectionId)[this.SelectedYear]);
+            this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
+            this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear]);
+        }
+
+        private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                this.lineDataFileName = dialog.FileName;
+
+                var directoryName = Path.GetDirectoryName(dialog.FileName);
+
+                if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
+                {
+                    // This is a folder line data
+                    this.LineData = FolderLineData.Read(dialog.FileName);
+                }
+                else
+                {
+                    this.LineData = Marv.LineData.Read(dialog.FileName);
+                }
+            }
+        }
+
+        private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                this.lineDataFileName = dialog.FileName;
+                this.LineData.Write(this.lineDataFileName);
+            }
+        }
+
+        private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.LineData.Write(this.lineDataFileName);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            this.PropertyChanged -= MainWindow_PropertyChanged;
+            this.PropertyChanged += MainWindow_PropertyChanged;
+
             this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
             this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
 
             this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += GraphControl_GraphChanged;
+
+            this.GraphControl.SelectionChanged -= GraphControl_SelectionChanged;
+            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
+
+            this.LineDataChart.EvidenceGenerated -= LineDataChart_EvidenceGenerated;
+            this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
 
             this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
             this.LineDataControl.CellChanged += LineDataControl_CellChanged;
@@ -280,8 +375,11 @@ namespace Marv.Input
             this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
             this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
 
-            this.LineDataControl.SectionBeliefsChanged -= LineDataControl_SectionBeliefsChanged;
-            this.LineDataControl.SectionBeliefsChanged += LineDataControl_SectionBeliefsChanged;
+            this.LineDataControl.RowAdded -= LineDataControl_RowAdded;
+            this.LineDataControl.RowAdded += LineDataControl_RowAdded;
+
+            this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
+            this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
 
             this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
             this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
@@ -293,11 +391,61 @@ namespace Marv.Input
             this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
 
+        private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LineData")
+            {
+                if (this.LineData != null)
+                {
+                    this.LineDataControl.ClearRows();
+
+                    foreach (var sectionId in this.LineData.GetSectionIds())
+                    {
+                        this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                    }
+                }
+            }
+        }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var sectionIds = this.LineData.GetSectionIds().ToList();
+
+            foreach (var sectionId in sectionIds)
+            {
+                var sectionEvidence = lineData.GetEvidence(sectionId);
+                lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
+            }
+        }
+
+        private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
+
+            var sectionBelief = this.Graph.Network.Run(sectionEvidence);
+
+            this.Graph.Belief = sectionBelief[this.SelectedYear];
+            this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
+        }
+
+        private void UpdateLineDataControl()
+        {
+            if (this.LineData != null)
+            {
+                this.LineDataControl.ClearRows();
+
+                foreach (var sectionId in this.LineData.GetSectionIds())
+                {
+                    this.LineDataControl.AddRow(sectionId, this.LineData.GetEvidence(sectionId)[null, this.Graph.SelectedVertex.Key]);
+                }
             }
         }
 

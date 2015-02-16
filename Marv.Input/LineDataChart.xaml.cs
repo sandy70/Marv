@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,7 +16,7 @@ namespace Marv.Input
         private const double Tolerance = 8;
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
-            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false, ChangedEvidenceEditEnabled));
+            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsXAxisSectionsProperty =
             DependencyProperty.Register("IsXAxisSections", typeof (bool), typeof (LineDataChart), new PropertyMetadata(true, ChangedLineData));
@@ -255,17 +256,6 @@ namespace Marv.Input
             this.Loaded += LineDataChart_Loaded;
         }
 
-        private static void ChangedEvidenceEditEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataChart;
-
-            if (!control.IsEvidenceEditEnabled)
-            {
-                control.UpdateLineData();
-                control.UpdateBasePoints();
-            }
-        }
-
         private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
@@ -291,6 +281,14 @@ namespace Marv.Input
             control.InitializeVerticalAxis();
             control.UpdateBasePoints();
             control.InitializeEvidence();
+        }
+
+        public void RaiseEvidenceGenerated(EvidenceGeneratedEventArgs e)
+        {
+            if (this.EvidenceGenerated != null)
+            {
+                this.EvidenceGenerated(this, e);
+            }
         }
 
         public void RemoveSelectedEvidence()
@@ -328,7 +326,6 @@ namespace Marv.Input
             if (this.LineData == null ||
                 this.SelectedSectionId == null ||
                 this.Year < 0 ||
-                !this.LineData.ContainsSection(this.SelectedSectionId) ||
                 this.Vertex == null)
             {
                 return;
@@ -360,7 +357,7 @@ namespace Marv.Input
                     Value = null
                 });
 
-                var vertexData = this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key];
+                var vertexData = this.LineData.GetEvidence(sectionId)[year][this.Vertex.Key];
 
                 this.AddBasePoint(category, vertexData);
             }
@@ -463,6 +460,17 @@ namespace Marv.Input
                 Category = data.FirstValue,
                 Value = (double) data.SecondValue
             };
+        }
+
+        private void EvidenceClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.InitializeEvidence();
+        }
+
+        private void EvidenceDoneButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.UpdateLineData();
+            this.UpdateBasePoints();
         }
 
         private int GetAnchorIndex(CategoricalDataPoint point)
@@ -683,14 +691,13 @@ namespace Marv.Input
 
             var userPointAnchorIndex = this.GetAnchorIndex(userPoint);
 
-            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance)
-                                              .Except(points.First())
-                                              .Except(points.Last())
-                                              .ToList();
+            var pointsWithinTolerance = points.Where(point => Utils.Distance(this.Chart.ConvertDataToPoint(new DataTuple(point.Category, point.Value)), position) < Tolerance ||
+                                                              point.Category.Equals(userPoint.Category)).ToList();
 
             if (isPointRemoved)
             {
-                foreach (var point in pointsWithinTolerance)
+                // Can't remove first and last points.
+                foreach (var point in pointsWithinTolerance.Except(points.First()).Except(points.Last()))
                 {
                     points.Remove(point);
                 }
@@ -751,14 +758,23 @@ namespace Marv.Input
                 var sectionId = this.IsXAxisSections ? point.Category as string : this.SelectedSectionId;
                 var year = this.IsXAxisSections ? this.Year : (int) point.Category;
 
-                var vertexEvidence = this.Vertex.States.ParseEvidenceString(evidenceString);
+                this.RaiseEvidenceGenerated(new EvidenceGeneratedEventArgs
+                {
+                    EvidenceString = evidenceString,
+                    SectionId = sectionId,
+                    Year = year
+                });
 
-                this.LineData.GetSectionEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
+                // var vertexEvidence = this.Vertex.States.ParseEvidenceString(evidenceString);
+
+                // this.LineData.GetEvidence(sectionId)[year][this.Vertex.Key] = vertexEvidence;
             });
 
-            this.LineData.RaiseDataChanged();
+            // this.LineData.RaiseDataChanged();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<EvidenceGeneratedEventArgs> EvidenceGenerated;
     }
 }

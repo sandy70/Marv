@@ -14,7 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <Style x:Key="BarSeriesStyle" TargetType="Border">
                 <Setter Property="Background" Value="Red" />
                 <Setter Property="Opacity" Value="0.5" />
@@ -24,11 +24,33 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <telerik:RadDocking Grid.Row="0"
+        <Menu Grid.Row="0">
+            <MenuItem Header="Line Data">
+                <MenuItem Header="Open"
+                          Click="LineDataOpenMenuItem_Click"/>
+                
+                <MenuItem Header="Save"
+                          Click="LineDataSaveMenuItem_Click" />
+                
+                <MenuItem Header="SaveAs"
+                          Click="LineDataSaveAsMenuItem_Click"></MenuItem>
+            </MenuItem>
+            
+            <MenuItem Header="Run">
+                <MenuItem Header="Section"
+                          Click="RunSectionMenuItem_Click" />
+                
+                <MenuItem Header="Line"
+                          Click="RunLineMenuItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        
+        <telerik:RadDocking Grid.Row="1"
                             HasDocumentHost="False">
             <telerik:RadDocking.Resources>
                 <Style TargetType="telerik:RadPane">
@@ -46,11 +68,12 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
-                                                   LineData="{Binding ElementName=Root, Path=LineData, Mode=TwoWay}"
+                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                                   IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedVertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
+                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear}"
                                                    Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -80,9 +103,9 @@
                             </Grid.RowDefinitions>
 
                             <graphControl:GraphControl Name="GraphControl"
-                                               Grid.Row="0"
-                                               Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                                                       Grid.Row="0"
+                                                       Background="WhiteSmoke"
+                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -98,10 +121,9 @@
                             </Grid.RowDefinitions>
 
                             <!-- Vertex Combo Box -->
-                            <telerik:RadComboBox Grid.Row="0"
+                            <telerik:RadComboBox Grid.Row="0"  Grid.ColumnSpan="2"
                                                  CanAutocompleteSelectItems="False"
                                                  CanKeyboardNavigationSelectItems="False"
-                                                 DisplayMemberPath="Key"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
                                                  IsSynchronizedWithCurrentItem="False"
@@ -110,7 +132,18 @@
                                                  OpenDropDownOnFocus="True"
                                                  SelectedIndex="0"
                                                  SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                                 TextSearchMode="Contains" Grid.ColumnSpan="2" />
+                                                 TextSearchMode="Contains">
+                                <telerik:RadComboBox.ItemTemplate>
+                                    <DataTemplate DataType="marv:Vertex">
+                                        <TextBlock>
+                                            <Run Text="{Binding Name}" />
+                                            <Run Text=" [" />
+                                            <Run Text="{Binding Key}" />
+                                            <Run Text="]" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </telerik:RadComboBox.ItemTemplate>
+                            </telerik:RadComboBox>
 
                             <!-- Vertex Control -->
                             <marv:VertexControl Name="VertexControl"
@@ -129,7 +162,7 @@
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 
-        <marv:StatusControl Grid.Row="1"
+        <marv:StatusControl Grid.Row="2"
                             Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}"
                             Height="28" />
     </Grid>

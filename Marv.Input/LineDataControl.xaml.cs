@@ -2,48 +2,41 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
-using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public partial class LineDataControl : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty FileNameProperty =
-            DependencyProperty.Register("FileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty IsGridViewEnabledProperty =
-            DependencyProperty.Register("IsGridViewEnabled", typeof (bool), typeof (LineDataControl), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (ILineData), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
+        public static readonly DependencyProperty EndYearProperty =
+            DependencyProperty.Register("EndYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(2010));
 
         public static readonly DependencyProperty NetworkFileNameProperty =
-            DependencyProperty.Register("NetworkFileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedNetworkFileName));
+            DependencyProperty.Register("NetworkFileName", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SectionsToAddCountProperty =
             DependencyProperty.Register("SectionsToAddCount", typeof (int), typeof (LineDataControl), new PropertyMetadata(1));
 
         public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null, ChangedSelectedSectionId));
+            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedVertexProperty =
-            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (LineDataControl), new PropertyMetadata(null, ChangedLineData));
+        public static readonly DependencyProperty SelectedVertexKeyProperty =
+            DependencyProperty.Register("SelectedVertexKey", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedYearProperty =
-            DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue, ChangedSelectedYear));
+            DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue));
+
+        public static readonly DependencyProperty StartYearProperty =
+            DependencyProperty.Register("StartYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(2010));
 
         private readonly Dictionary<GridViewCellClipboardEventArgs, object> oldData = new Dictionary<GridViewCellClipboardEventArgs, object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
-        private readonly List<Tuple<int, int>> selectionInfos = new List<Tuple<int, int>>();
         private bool canUserInsertRows;
-        private Network network;
         private ObservableCollection<Dynamic> rows;
 
         public bool CanUserInsertRows
@@ -62,23 +55,10 @@ namespace Marv.Input
             }
         }
 
-        public string FileName
+        public int EndYear
         {
-            get { return (string) GetValue(FileNameProperty); }
-            set { SetValue(FileNameProperty, value); }
-        }
-
-        public bool IsGridViewEnabled
-        {
-            get { return (bool) GetValue(IsGridViewEnabledProperty); }
-            set { SetValue(IsGridViewEnabledProperty, value); }
-        }
-
-        public ILineData LineData
-        {
-            get { return (ILineData) GetValue(LineDataProperty); }
-
-            set { SetValue(LineDataProperty, value); }
+            get { return (int) GetValue(EndYearProperty); }
+            set { SetValue(EndYearProperty, value); }
         }
 
         public string NetworkFileName
@@ -114,16 +94,22 @@ namespace Marv.Input
             set { SetValue(SelectedSectionIdProperty, value); }
         }
 
-        public Vertex SelectedVertex
+        public string SelectedVertexKey
         {
-            get { return (Vertex) GetValue(SelectedVertexProperty); }
-            set { SetValue(SelectedVertexProperty, value); }
+            get { return (string) GetValue(SelectedVertexKeyProperty); }
+            set { SetValue(SelectedVertexKeyProperty, value); }
         }
 
         public int SelectedYear
         {
             get { return (int) GetValue(SelectedYearProperty); }
             set { SetValue(SelectedYearProperty, value); }
+        }
+
+        public int StartYear
+        {
+            get { return (int) GetValue(StartYearProperty); }
+            set { SetValue(StartYearProperty, value); }
         }
 
         public LineDataControl()
@@ -133,67 +119,31 @@ namespace Marv.Input
             this.Loaded += LineDataControl_Loaded;
         }
 
-        private static void ChangedLineData(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public void AddRow(string sectionId, Dict<int, VertexEvidence> vertexEvidences)
         {
-            var control = d as LineDataControl;
+            var row = new Dynamic();
+            row[CellModel.SectionIdHeader] = sectionId;
 
-            if (!control.IsVisible)
+            for (var year = this.StartYear; year <= this.EndYear; year++)
             {
-                return;
+                row[year.ToString()] = vertexEvidences[year];
             }
 
-            control.IsGridViewEnabled = true;
-
-            if (control.LineData == null || control.SelectedVertex == null)
-            {
-                return;
-            }
-
-            var lineData = control.LineData;
-            var vertexKey = control.SelectedVertex.Key;
-
-            control.Rows = new ObservableCollection<Dynamic>();
-
-            control.UpdateRows(lineData, vertexKey, new Progress<Dynamic>(row => control.Rows.Add(row)));
-
-            foreach (var selectionInfo in control.selectionInfos)
-            {
-                try
-                {
-                    control.GridView.SelectedCells.Add(new GridViewCellInfo(control.Rows[selectionInfo.Item1], control.GridView.Columns[selectionInfo.Item2], control.GridView));
-                }
-                catch
-                {
-                    // do nothing
-                }
-            }
-
-            control.LineData.DataChanged += control.LineData_DataChanged;
+            this.Rows.Add(row);
         }
 
-        private static void ChangedNetworkFileName(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public void ClearRows()
         {
-            var control = d as LineDataControl;
-
-            if (e.OldValue == null || !e.OldValue.Equals(e.NewValue))
-            {
-                control.network = Network.Read(control.NetworkFileName);
-            }
-        }
-
-        private static void ChangedSelectedSectionId(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as LineDataControl;
-            control.RunSection(control.SelectedSectionId);
-        }
-
-        private static void ChangedSelectedYear(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as LineDataControl).RaiseSelectedYearChanged();
+            this.Rows = new ObservableCollection<Dynamic>();
         }
 
         public void ClearSelectedCell()
         {
+            if (this.GridView.CurrentCellInfo == null)
+            {
+                return;
+            }
+
             var cellModel = this.GridView.CurrentCellInfo.ToModel();
 
             if (!cellModel.IsColumnSectionId)
@@ -202,12 +152,12 @@ namespace Marv.Input
             }
         }
 
-        public void RaiseCellChanged(CellChangedEventArgs cellChangedEventArgs)
+        public void SetCell(string sectionId, int year, VertexEvidence vertexEvidence)
         {
-            if (this.CellChanged != null)
-            {
-                this.CellChanged(this, cellChangedEventArgs);
-            }
+            var selectedRow = this.Rows.First(row => (new CellModel(row, year.ToString()).SectionId == sectionId));
+            var cellModel = new CellModel(selectedRow, year.ToString());
+
+            this.SetCell(cellModel, vertexEvidence);
         }
 
         public void SetSelectedCells(VertexEvidence vertexEvidence)
@@ -228,47 +178,51 @@ namespace Marv.Input
             var row = new Dynamic();
             row[CellModel.SectionIdHeader] = sectionId;
 
-            var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
-
-            for (var year = this.LineData.StartYear; year <= this.LineData.EndYear; year++)
+            for (var year = this.StartYear; year <= this.EndYear; year++)
             {
-                row[year.ToString()] = sectionEvidence[year][this.SelectedVertex.Key];
+                row[year.ToString()] = "";
             }
 
             this.Rows.Add(row);
+
+            this.RaiseRowAdded(sectionId);
         }
 
         private void AddSectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var nSection = 1;
+            var sectionIds = this.Rows.Select(row => row[CellModel.SectionIdHeader] as string).ToList();
 
             for (var i = 0; i < this.SectionsToAddCount; i++)
             {
                 var sectionId = "Section " + nSection;
 
-                while (this.LineData.ContainsSection(sectionId))
+                while (sectionIds.Contains(sectionId))
                 {
                     nSection++;
                     sectionId = "Section " + nSection;
                 }
 
-                this.LineData.AddSection(sectionId);
+                sectionIds.Add(sectionId);
+
                 this.AddRow(sectionId);
             }
         }
 
         private void ClearCell(CellModel cellModel)
         {
-            var sectionEvidence = this.LineData.GetSectionEvidence(cellModel.SectionId);
-            sectionEvidence[cellModel.Year][this.SelectedVertex.Key] = null;
-            this.LineData.SetSectionEvidence(cellModel.SectionId, sectionEvidence);
-
             var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader].Equals(cellModel.SectionId));
             var selectedRowIndex = this.Rows.IndexOf(selectedRow);
 
             this.Rows.Remove(selectedRow);
             selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
             this.Rows.Insert(selectedRowIndex, selectedRow);
+
+            this.RaiseCellChanged(new CellChangedEventArgs
+            {
+                CellModel = cellModel,
+                NewString = ""
+            });
         }
 
         private void CopyAcrossAllButton_Click(object sender, RoutedEventArgs e)
@@ -412,34 +366,13 @@ namespace Marv.Input
 
             this.CopyAcrossRowButton.Click -= CopyAcrossRowButton_Click;
             this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
-
-            this.OpenButton.Click -= OpenButton_Click;
-            this.OpenButton.Click += OpenButton_Click;
-
-            this.RunAllButton.Click -= RunAllButton_Click;
-            this.RunAllButton.Click += RunAllButton_Click;
-
-            this.SaveButton.Click -= SaveButton_Click;
-            this.SaveButton.Click += SaveButton_Click;
         }
 
-        private void LineData_DataChanged(object sender, EventArgs e)
+        private void RaiseCellChanged(CellChangedEventArgs cellChangedEventArgs)
         {
-            this.UpdateRows();
-        }
-
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog
+            if (this.CellChanged != null)
             {
-                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
-                Multiselect = false
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                this.FileName = dialog.FileName;
-                this.LineData = Utils.ReadJson<LineData>(this.FileName);
+                this.CellChanged(this, cellChangedEventArgs);
             }
         }
 
@@ -448,14 +381,6 @@ namespace Marv.Input
             if (this.CellValidating != null)
             {
                 this.CellValidating(this, e);
-            }
-        }
-
-        private void RaiseEvidenceChanged(CellModel cellModel, VertexEvidence vertexEvidence)
-        {
-            if (this.EvidenceChanged != null)
-            {
-                this.EvidenceChanged(this, cellModel, vertexEvidence);
             }
         }
 
@@ -483,11 +408,19 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseSectionBeliefsChanged()
+        private void RaiseRowAdded(string sectionId)
         {
-            if (this.SectionBeliefsChanged != null)
+            if (this.RowAdded != null)
             {
-                this.SectionBeliefsChanged(this, new EventArgs());
+                this.RowAdded(this, sectionId);
+            }
+        }
+
+        private void RaiseRowRemoved(string sectionId)
+        {
+            if (this.RowRemoved != null)
+            {
+                this.RowRemoved(this, sectionId);
             }
         }
 
@@ -507,87 +440,6 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseSelectedYearChanged()
-        {
-            if (this.SelectedYearChanged != null)
-            {
-                this.SelectedYearChanged(this, new EventArgs());
-            }
-        }
-
-        private async void RunAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            var lineData = this.LineData;
-
-            var notification = new Notification
-            {
-                Description = "Running Model"
-            };
-
-            this.RaiseNotificationOpened(notification);
-
-            await Task.Run(() => this.RunAllSections(lineData, new Progress<double>(progress => notification.Value = progress * 100)));
-
-            this.RaiseNotificationClosed(notification);
-
-            this.RaiseSectionBeliefsChanged();
-        }
-
-        private void RunAllSections(ILineData lineData, IProgress<double> progress)
-        {
-            var sectionIds = lineData.GetSectionIds().ToList();
-            var total = sectionIds.Count;
-            var done = 0.0;
-
-            foreach (var sectionId in sectionIds)
-            {
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-                lineData.SetSectionBelief(sectionId, this.network.Run(sectionEvidence));
-
-                done++;
-                progress.Report(done / total);
-            }
-        }
-
-        private void RunSection(string sectionId)
-        {
-            var sectionEvidence = this.LineData.GetSectionEvidence(sectionId);
-
-            var sectionBelief = this.network.Run(sectionEvidence);
-
-            this.LineData.SetSectionBelief(sectionId, sectionBelief);
-
-            this.RaiseSectionBeliefsChanged();
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.FileName == null)
-            {
-                var dialog = new SaveFileDialog
-                {
-                    Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
-                };
-
-                var result = dialog.ShowDialog();
-
-                if (result == true)
-                {
-                    this.FileName = dialog.FileName;
-                }
-            }
-
-            if (this.FileName != null)
-            {
-                if (Path.GetExtension(this.FileName) != "." + Marv.LineData.FileExtension)
-                {
-                    this.FileName = this.FileName + "." + Marv.LineData.FileExtension;
-                }
-
-                this.LineData.WriteJson(this.FileName);
-            }
-        }
-
         private void SetCell(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (cellModel.IsColumnSectionId)
@@ -604,43 +456,11 @@ namespace Marv.Input
             });
         }
 
-        private void UpdateRows()
-        {
-            this.UpdateRows(this.LineData, this.SelectedVertex.Key);
-        }
-
-        private void UpdateRows(ILineData lineData, string vertexKey, IProgress<Dynamic> progress = null)
-        {
-            foreach (var sectionId in lineData.GetSectionIds())
-            {
-                var row = new Dynamic();
-                row[CellModel.SectionIdHeader] = sectionId;
-
-                var sectionEvidence = lineData.GetSectionEvidence(sectionId);
-
-                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
-                {
-                    row[year.ToString()] = sectionEvidence[year][vertexKey];
-                }
-
-                if (progress != null)
-                {
-                    progress.Report(row);
-                }
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<CellModel, VertexEvidence> EvidenceChanged;
 
         public event EventHandler<Notification> NotificationOpened;
 
         public event EventHandler<Notification> NotificationClosed;
-
-        public event EventHandler SelectedYearChanged;
-
-        public event EventHandler SectionBeliefsChanged;
 
         public event EventHandler SectionEvidencesChanged;
 
@@ -649,5 +469,9 @@ namespace Marv.Input
         public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
 
         public event EventHandler<CellChangedEventArgs> CellChanged;
+
+        public event EventHandler<string> RowAdded;
+
+        public event EventHandler<string> RowRemoved;
     }
 }

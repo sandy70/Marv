@@ -37,20 +37,6 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Height="32">
-                <telerik:RadButton Name="OpenButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="SaveButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
-                </telerik:RadButton>
-
-                <telerik:RadButton Name="RunAllButton">
-                    <Image Source="/Marv.Common;component/Resources/Icons/RunAll.png" />
-                </telerik:RadButton>
-            </ToolBar>
-
-            <ToolBar Height="32">
                 <telerik:RadButton Name="CopyAcrossColButton">
                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
                 </telerik:RadButton>
@@ -82,7 +68,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
+                                          Value="{Binding ElementName=Root, Path=StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5">
@@ -98,7 +84,7 @@
                 <telerik:RadNumericUpDown Margin="2"
                                           Maximum="2050"
                                           Minimum="1950"
-                                          Value="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
+                                          Value="{Binding ElementName=Root, Path=EndYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
                                           LargeChange="5">
@@ -117,6 +103,7 @@
                              CanUserSortColumns="False"
                              ClipboardCopyMode="Cells"
                              ClipboardPasteMode="AllSelectedCells"
+                             EditTriggers="TextInput"
                              FrozenColumnCount="1"
                              IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"

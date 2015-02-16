@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Marv
 {
@@ -8,19 +9,14 @@ namespace Marv
         int EndYear { get; set; }
         Guid Guid { get; set; }
         int StartYear { get; set; }
-        void AddSections(IEnumerable<string> theSectionIds);
         void ReplaceSectionId(string oldId, string newId);
-        bool ContainsSection(string sectionId);
-        Dict<int, string, double[]> GetSectionBelief(string sectionId);
-        Dict<int, string, VertexEvidence> GetSectionEvidence(string sectionId);
+        Dict<int, string, double[]> GetBelief(string sectionId);
+        Dict<int, string, VertexEvidence> GetEvidence(string sectionId);
+        Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId);
         IEnumerable<string> GetSectionIds();
-        void RaiseDataChanged();
         void RemoveSection(string sectionId);
-        void SetSectionBelief(string sectionId, Dict<int, string, double[]> sectionBelief);
-        void SetSectionEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
+        void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief);
+        void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence);
         void Write(string filePath);
-        event EventHandler DataChanged;
-
-        void AddSection(string sectionId);
     }
 }
