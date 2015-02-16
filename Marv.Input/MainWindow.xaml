@@ -83,14 +83,7 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
                                 <local:LineDataChart x:Name="LineDataChart"
-                                                     EndYear="{Binding ElementName=Root, Path=LineData.EndYear}"
-                                                     HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
-                                                     LineData="{Binding ElementName=Root, Path=LineData}"
-                                                     SectionIds="{Binding ElementName=Root, Path=LineData.SectionIds}"
-                                                     SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                     StartYear="{Binding ElementName=Root, Path=LineData.StartYear}"
-                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}" />
+                                                     HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

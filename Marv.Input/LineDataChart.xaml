@@ -62,9 +62,6 @@
                                      SelectedItem="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
                                      Width="96" />
 
-                <telerik:RadRadioButton Content="Years"
-                                        Width="64" />
-
                 <CheckBox Content="Log Y-Axis"
                           IsChecked="{Binding ElementName=Root, Path=IsLog, Mode=TwoWay}"
                           Margin="4,0,4,0" />

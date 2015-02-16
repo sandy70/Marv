@@ -194,6 +194,11 @@ namespace Marv.Input
             this.Loaded += MainWindow_Loaded;
         }
 
+        private object GetChartCategory()
+        {
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedSectionId : this.SelectedYear as object;
+        }
+
         private Dict<object, VertexEvidence> GetChartEvidence()
         {
             var vertexEvidences = new Dict<object, VertexEvidence>();
@@ -221,7 +226,7 @@ namespace Marv.Input
         {
             if (vertexEvidence == null)
             {
-                this.LineDataChart.RemoveSelectedEvidence();
+                this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 this.LineDataControl.ClearSelectedCell();
             }
             else
@@ -229,11 +234,6 @@ namespace Marv.Input
                 this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
                 this.LineDataControl.SetSelectedCells(vertexEvidence);
             }
-        }
-
-        private object GetChartCategory()
-        {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
         private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)
@@ -272,13 +272,16 @@ namespace Marv.Input
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
 
+            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? e.Category as string : this.SelectedSectionId;
+            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedYear : (int) e.Category;
+
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
-                var sectionEvidence = this.LineData.GetEvidence(e.SectionId);
-                sectionEvidence[e.Year][this.Graph.SelectedVertex.Key] = vertexEvidence;
-                this.LineData.SetEvidence(e.SectionId, sectionEvidence);
+                var sectionEvidence = this.LineData.GetEvidence(sectionId);
+                sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.SetEvidence(sectionId, sectionEvidence);
 
-                this.LineDataControl.SetCell(e.SectionId, e.Year, vertexEvidence);
+                this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
             }
         }
 

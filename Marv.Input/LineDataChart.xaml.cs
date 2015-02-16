@@ -15,41 +15,17 @@ namespace Marv.Input
     {
         private const double Tolerance = 2;
 
-        public static readonly DependencyProperty EndYearProperty =
-            DependencyProperty.Register("EndYear", typeof (int), typeof (LineDataChart), new PropertyMetadata(2010));
-
         public static readonly DependencyProperty HorizontalAxisQuantityProperty =
             DependencyProperty.Register("HorizontalAxisQuantity", typeof (HorizontalAxisQuantity), typeof (LineDataChart), new PropertyMetadata(HorizontalAxisQuantity.Sections, OnHorizontalAxisQuantityChanged));
 
         public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
             DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty LineDataProperty =
-            DependencyProperty.Register("LineData", typeof (ILineData), typeof (LineDataChart), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SectionIdsProperty =
-            DependencyProperty.Register("SectionIds", typeof (ObservableCollection<string>), typeof (LineDataChart), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty StartYearProperty =
-            DependencyProperty.Register("StartYear", typeof (int), typeof (LineDataChart), new PropertyMetadata(2010));
-
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty VertexProperty =
-            DependencyProperty.Register("Vertex", typeof (Vertex), typeof (LineDataChart), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty VerticalAxisProperty =
-            DependencyProperty.Register("VerticalAxis", typeof (CartesianAxis), typeof (LineDataChart), new PropertyMetadata(null));
-
         public static readonly DependencyProperty XTitleProperty =
             DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty YearProperty =
-            DependencyProperty.Register("Year", typeof (int), typeof (LineDataChart), new PropertyMetadata(int.MinValue));
 
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
@@ -62,6 +38,7 @@ namespace Marv.Input
         private ObservableCollection<CategoricalDataPoint> minPoints;
         private ObservableCollection<CategoricalDataPoint> modePoints;
         private CategoricalDataPoint trackedPoint;
+        private NumericalAxis verticalAxis;
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
@@ -105,12 +82,6 @@ namespace Marv.Input
             }
         }
 
-        public int EndYear
-        {
-            get { return (int) GetValue(EndYearProperty); }
-            set { SetValue(EndYearProperty, value); }
-        }
-
         public HorizontalAxisQuantity HorizontalAxisQuantity
         {
             get { return (HorizontalAxisQuantity) GetValue(HorizontalAxisQuantityProperty); }
@@ -136,20 +107,7 @@ namespace Marv.Input
 
                 this.isLog = value;
                 this.RaisePropertyChanged();
-
-                this.VerticalAxis = this.IsLog ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
-
-                var numericalAxis = this.VerticalAxis as NumericalAxis;
-                numericalAxis.Minimum = this.Vertex.SafeMin;
-                numericalAxis.Maximum = this.Vertex.SafeMax;
             }
-        }
-
-        public ILineData LineData
-        {
-            get { return (ILineData) GetValue(LineDataProperty); }
-
-            set { SetValue(LineDataProperty, value); }
         }
 
         public ObservableCollection<CategoricalDataPoint> MaxPoints
@@ -194,24 +152,6 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<string> SectionIds
-        {
-            get { return (ObservableCollection<string>) GetValue(SectionIdsProperty); }
-            set { SetValue(SectionIdsProperty, value); }
-        }
-
-        public string SelectedSectionId
-        {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
-            set { SetValue(SelectedSectionIdProperty, value); }
-        }
-
-        public int StartYear
-        {
-            get { return (int) GetValue(StartYearProperty); }
-            set { SetValue(StartYearProperty, value); }
-        }
-
         public string Title
         {
             get { return (string) GetValue(TitleProperty); }
@@ -234,28 +174,26 @@ namespace Marv.Input
             }
         }
 
-        public Vertex Vertex
+        public NumericalAxis VerticalAxis
         {
-            get { return (Vertex) GetValue(VertexProperty); }
-            set { SetValue(VertexProperty, value); }
-        }
+            get { return this.verticalAxis; }
 
-        public CartesianAxis VerticalAxis
-        {
-            get { return (CartesianAxis) GetValue(VerticalAxisProperty); }
-            set { SetValue(VerticalAxisProperty, value); }
+            set
+            {
+                if (value.Equals(this.verticalAxis))
+                {
+                    return;
+                }
+
+                this.verticalAxis = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public string XTitle
         {
             get { return (string) GetValue(XTitleProperty); }
             set { SetValue(XTitleProperty, value); }
-        }
-
-        public int Year
-        {
-            get { return (int) GetValue(YearProperty); }
-            set { SetValue(YearProperty, value); }
         }
 
         public LineDataChart()
@@ -272,9 +210,15 @@ namespace Marv.Input
             control.RaiseHorizontalAxisQuantityChanged(control.HorizontalAxisQuantity);
         }
 
-        public void RemoveSelectedEvidence()
+        public void RemoveUserEvidence(object category)
         {
-            this.RemoveEvidence(this.SelectedSectionId, this.Year);
+            if (category == null)
+            {
+                return;
+            }
+
+            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
+            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
         public void SetUserEvidence(object category, VertexEvidence vertexEvidence)
@@ -286,6 +230,9 @@ namespace Marv.Input
 
             this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
             this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+
+            var max = this.VerticalAxis.Maximum;
+            var min = this.VerticalAxis.Minimum;
 
             var paramValues = vertexEvidence.Params;
             var type = vertexEvidence.Type;
@@ -338,7 +285,7 @@ namespace Marv.Input
 
                     var maxProb = vertexEvidence.Value.Max();
 
-                    this.Vertex.States.ForEach((state, i) =>
+                    vertexEvidence.Value.ForEach((state, i) =>
                     {
                         while (this.BaseDistributionSeries.Count < i + 2)
                         {
@@ -350,7 +297,7 @@ namespace Marv.Input
                             this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
-                                Value = state.SafeMin,
+                                Value = min,
                                 Probability = 0
                             });
                         }
@@ -358,7 +305,7 @@ namespace Marv.Input
                         this.BaseDistributionSeries[i + 1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
-                            Value = state.SafeMax - state.SafeMin,
+                            Value = max - min,
                             Probability = vertexEvidence.Value[i] / maxProb
                         });
                     });
@@ -386,13 +333,13 @@ namespace Marv.Input
             }
         }
 
-        public void SetVerticalAxis(double min, double max)
+        public void SetVerticalAxis(double max, double min)
         {
-            this.VerticalAxis = this.IsLog ? (CartesianAxis) this.logarightmicAxis : this.linearAxis;
+            this.VerticalAxis = this.IsLog ? (NumericalAxis) this.logarightmicAxis : this.linearAxis;
 
-            var numericalAxis = this.VerticalAxis as NumericalAxis;
-            numericalAxis.Minimum = min;
+            var numericalAxis = this.VerticalAxis;
             numericalAxis.Maximum = max;
+            numericalAxis.Minimum = min;
         }
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
@@ -439,14 +386,10 @@ namespace Marv.Input
 
                 var evidenceString = string.Format("TRI({0:F2},{1:F2},{2:F2})", values[0], values[1], values[2]);
 
-                var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? point.Category as string : this.SelectedSectionId;
-                var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.Year : (int) point.Category;
-
                 this.RaiseEvidenceGenerated(new EvidenceGeneratedEventArgs
                 {
+                    Category = point.Category,
                     EvidenceString = evidenceString,
-                    SectionId = sectionId,
-                    Year = year
                 });
             });
         }
@@ -462,18 +405,16 @@ namespace Marv.Input
             this.ModePoints = new ObservableCollection<CategoricalDataPoint>();
             this.MinPoints = new ObservableCollection<CategoricalDataPoint>();
 
-            if (this.AnchorPoints == null || this.Vertex == null)
-            {
-                return;
-            }
-
             var first = this.AnchorPoints.First().Category;
             var last = this.AnchorPoints.Last().Category;
 
-            var size = this.Vertex.SafeMax - this.Vertex.SafeMin;
+            var max = this.VerticalAxis.Maximum;
+            var min = this.VerticalAxis.Minimum;
 
-            var maxValue = this.Vertex.SafeMax - size * 0.1;
-            var minValue = this.Vertex.SafeMin == 0 ? 1 : this.Vertex.SafeMin + size * 0.1;
+            var size = max - min;
+
+            var maxValue = max - size * 0.1;
+            var minValue = min == 0 ? 1 : min + size * 0.1;
             var modeValue = (maxValue + minValue) / 2;
 
             this.MaxPoints.Add(new CategoricalDataPoint
@@ -634,19 +575,6 @@ namespace Marv.Input
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void RemoveEvidence(string sectionId, int year)
-        {
-            var category = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? sectionId : year as object;
-
-            if (category == null)
-            {
-                return;
-            }
-
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
         private void Series_MouseUp(object sender, MouseButtonEventArgs e)
