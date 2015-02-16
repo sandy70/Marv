@@ -24,6 +24,8 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
+        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Sections;
+
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -37,6 +39,22 @@ namespace Marv.Input
         {
             get { return (Graph) GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
+        }
+
+        public HorizontalAxisQuantity HorizontalAxisQuantity
+        {
+            get { return this.horizontalAxisQuantity; }
+
+            set
+            {
+                if (value.Equals(this.horizontalAxisQuantity))
+                {
+                    return;
+                }
+
+                this.horizontalAxisQuantity = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsGraphControlVisible
@@ -176,6 +194,29 @@ namespace Marv.Input
             this.Loaded += MainWindow_Loaded;
         }
 
+        private Dict<object, VertexEvidence> GetChartEvidence()
+        {
+            var vertexEvidences = new Dict<object, VertexEvidence>();
+
+            var isHorizontalAxisSections = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections;
+
+            var categories = isHorizontalAxisSections
+                                 ? this.LineData.SectionIds
+                                 : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
+
+            foreach (var category in categories)
+            {
+                var sectionId = isHorizontalAxisSections ? category as string : this.SelectedSectionId;
+                var year = isHorizontalAxisSections ? this.SelectedYear : (int) category;
+
+                var vertexEvidence = this.LineData.GetEvidence(sectionId)[year][this.Graph.SelectedVertex.Key];
+
+                vertexEvidences[category] = vertexEvidence;
+            }
+
+            return vertexEvidences;
+        }
+
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
             if (vertexEvidence == null)
@@ -185,9 +226,14 @@ namespace Marv.Input
             }
             else
             {
-                this.LineDataChart.SetEvidence(vertexEvidence);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
                 this.LineDataControl.SetSelectedCells(vertexEvidence);
             }
+        }
+
+        private object GetChartCategory()
+        {
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
         private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)
@@ -203,17 +249,22 @@ namespace Marv.Input
         {
             if (this.LineData != null)
             {
+                var selectedVertex = this.Graph.SelectedVertex;
+
                 this.LineDataControl.ClearRows();
 
                 foreach (var sectionId in this.LineData.GetSectionIds())
                 {
                     var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
 
-                    if (this.Graph.SelectedVertex != null)
+                    if (selectedVertex != null)
                     {
-                        this.LineDataControl.AddRow(sectionId, sectionEvidence[null, this.Graph.SelectedVertex.Key]);
+                        this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
                     }
                 }
+
+                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMin, selectedVertex.SafeMax);
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
             }
         }
 
@@ -231,7 +282,12 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataControl_CellChanged(object sender, CellChangedEventArgs e)
+        private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
+        {
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+        }
+
+        private void LineDataControl_CellContentChanged(object sender, CellChangedEventArgs e)
         {
             if (e.CellModel.IsColumnSectionId)
             {
@@ -253,7 +309,8 @@ namespace Marv.Input
                 e.CellModel.Data = vertexEvidence;
 
                 this.LineData.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, this.Graph.SelectedVertex.Key, vertexEvidence);
-                this.LineDataChart.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, vertexEvidence);
+
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
             }
         }
 
@@ -288,15 +345,19 @@ namespace Marv.Input
             this.LineData.RemoveSection(sectionId);
         }
 
-        private void LineDataControl_SectionEvidencesChanged(object sender, EventArgs e)
+        private void LineDataControl_RowSelected(object sender, CellModel e)
         {
-            this.LineDataChart.UpdateBasePoints();
+            this.HorizontalAxisQuantity = HorizontalAxisQuantity.Years;
+
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
         }
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
             this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear]);
+
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -363,8 +424,11 @@ namespace Marv.Input
             this.LineDataChart.EvidenceGenerated -= LineDataChart_EvidenceGenerated;
             this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
 
-            this.LineDataControl.CellChanged -= LineDataControl_CellChanged;
-            this.LineDataControl.CellChanged += LineDataControl_CellChanged;
+            this.LineDataChart.HorizontalAxisQuantityChanged -= LineDataChart_HorizontalAxisQuantityChanged;
+            this.LineDataChart.HorizontalAxisQuantityChanged += LineDataChart_HorizontalAxisQuantityChanged;
+
+            this.LineDataControl.CellContentChanged -= LineDataControl_CellContentChanged;
+            this.LineDataControl.CellContentChanged += LineDataControl_CellContentChanged;
 
             this.LineDataControl.CellValidating -= LineDataControl_CellValidating;
             this.LineDataControl.CellValidating += LineDataControl_CellValidating;
@@ -378,11 +442,11 @@ namespace Marv.Input
             this.LineDataControl.RowAdded -= LineDataControl_RowAdded;
             this.LineDataControl.RowAdded += LineDataControl_RowAdded;
 
+            this.LineDataControl.RowSelected -= LineDataControl_RowSelected;
+            this.LineDataControl.RowSelected += LineDataControl_RowSelected;
+
             this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
             this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
-
-            this.LineDataControl.SectionEvidencesChanged -= LineDataControl_SectionEvidencesChanged;
-            this.LineDataControl.SectionEvidencesChanged += LineDataControl_SectionEvidencesChanged;
 
             this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
@@ -434,19 +498,6 @@ namespace Marv.Input
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
-        }
-
-        private void UpdateLineDataControl()
-        {
-            if (this.LineData != null)
-            {
-                this.LineDataControl.ClearRows();
-
-                foreach (var sectionId in this.LineData.GetSectionIds())
-                {
-                    this.LineDataControl.AddRow(sectionId, this.LineData.GetEvidence(sectionId)[null, this.Graph.SelectedVertex.Key]);
-                }
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

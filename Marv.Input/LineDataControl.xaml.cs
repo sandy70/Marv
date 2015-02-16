@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using Marv.Common;
 using Telerik.Windows.Controls;
@@ -218,7 +217,7 @@ namespace Marv.Input
             selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
             this.Rows.Insert(selectedRowIndex, selectedRow);
 
-            this.RaiseCellChanged(new CellChangedEventArgs
+            this.RaiseCellContentChanged(new CellChangedEventArgs
             {
                 CellModel = cellModel,
                 NewString = ""
@@ -368,11 +367,11 @@ namespace Marv.Input
             this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
         }
 
-        private void RaiseCellChanged(CellChangedEventArgs cellChangedEventArgs)
+        private void RaiseCellContentChanged(CellChangedEventArgs cellChangedEventArgs)
         {
-            if (this.CellChanged != null)
+            if (this.CellContentChanged != null)
             {
-                this.CellChanged(this, cellChangedEventArgs);
+                this.CellContentChanged(this, cellChangedEventArgs);
             }
         }
 
@@ -424,11 +423,11 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseSectionEvidencesChanged()
+        private void RaiseRowSelected(CellModel cellModel)
         {
-            if (this.SectionEvidencesChanged != null)
+            if (this.RowSelected != null)
             {
-                this.SectionEvidencesChanged(this, new EventArgs());
+                this.RowSelected(this, cellModel);
             }
         }
 
@@ -449,12 +448,14 @@ namespace Marv.Input
 
             cellModel.Data = vertexEvidence;
 
-            this.RaiseCellChanged(new CellChangedEventArgs
+            this.RaiseCellContentChanged(new CellChangedEventArgs
             {
                 CellModel = cellModel,
                 VertexEvidence = cellModel.Data as VertexEvidence
             });
         }
+
+        public event EventHandler<CellModel> RowSelected;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -462,13 +463,11 @@ namespace Marv.Input
 
         public event EventHandler<Notification> NotificationClosed;
 
-        public event EventHandler SectionEvidencesChanged;
-
         public event EventHandler SelectedCellChanged;
 
         public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
 
-        public event EventHandler<CellChangedEventArgs> CellChanged;
+        public event EventHandler<CellChangedEventArgs> CellContentChanged;
 
         public event EventHandler<string> RowAdded;
 

@@ -197,6 +197,7 @@
     </Compile>
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="RowAddedEventArgs.cs" />
+    <Compile Include="HorizontalAxisQuantity.cs" />
     <Page Include="LineDataChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

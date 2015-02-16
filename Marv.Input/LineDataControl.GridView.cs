@@ -16,7 +16,7 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            this.RaiseCellChanged(new CellChangedEventArgs
+            this.RaiseCellContentChanged(new CellChangedEventArgs
             {
                 CellModel = e.Cell.ToModel(),
                 NewString = e.NewData as string,
@@ -47,6 +47,7 @@ namespace Marv.Input
             if (cellModel.IsColumnSectionId)
             {
                 this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
+                this.RaiseRowSelected(cellModel);
                 return;
             }
 
@@ -62,7 +63,7 @@ namespace Marv.Input
             {
                 var row = item as Dynamic;
                 var sectionId = row[CellModel.SectionIdHeader] as string;
-                
+
                 this.RaiseRowRemoved(sectionId);
             }
         }
@@ -92,7 +93,7 @@ namespace Marv.Input
         {
             foreach (var pastedCell in this.pastedCells)
             {
-                this.RaiseCellChanged(new CellChangedEventArgs
+                this.RaiseCellContentChanged(new CellChangedEventArgs
                 {
                     CellModel = pastedCell.Cell.ToModel(),
                     NewString = pastedCell.Value as string,
@@ -102,7 +103,6 @@ namespace Marv.Input
 
             this.CanUserInsertRows = false;
             this.pastedCells.Clear();
-            this.RaiseSectionEvidencesChanged();
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
