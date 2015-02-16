@@ -139,6 +139,11 @@ namespace Marv.Input
 
         public void ClearSelectedCell()
         {
+            if (this.GridView.CurrentCellInfo == null)
+            {
+                return;
+            }
+
             var cellModel = this.GridView.CurrentCellInfo.ToModel();
 
             if (!cellModel.IsColumnSectionId)
