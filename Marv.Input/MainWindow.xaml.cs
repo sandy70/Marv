@@ -207,7 +207,12 @@ namespace Marv.Input
 
                 foreach (var sectionId in this.LineData.GetSectionIds())
                 {
-                    this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                    var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
+
+                    if (this.Graph.SelectedVertex != null)
+                    {
+                        this.LineDataControl.AddRow(sectionId, sectionEvidence[null, this.Graph.SelectedVertex.Key]);
+                    }
                 }
             }
         }
