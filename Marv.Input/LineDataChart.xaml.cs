@@ -368,6 +368,12 @@ namespace Marv.Input
             var paramValues = vertexEvidence.Params;
             var type = vertexEvidence.Type;
 
+            if (this.BaseNumberPoints == null ||
+                this.BaseDistributionSeries == null)
+            {
+                return;
+            }
+
             switch (type)
             {
                 case VertexEvidenceType.Number:
