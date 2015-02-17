@@ -18,9 +18,6 @@ namespace Marv.Input
         public static readonly DependencyProperty HorizontalAxisQuantityProperty =
             DependencyProperty.Register("HorizontalAxisQuantity", typeof (HorizontalAxisQuantity), typeof (LineDataChart), new PropertyMetadata(HorizontalAxisQuantity.Sections, OnHorizontalAxisQuantityChanged));
 
-        public static readonly DependencyProperty IsEvidenceEditEnabledProperty =
-            DependencyProperty.Register("IsEvidenceEditEnabled", typeof (bool), typeof (LineDataChart), new PropertyMetadata(false));
-
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
@@ -31,13 +28,14 @@ namespace Marv.Input
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
         private ObservableCollection<CategoricalDataPoint> anchorPoints;
-        private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> baseDistributionSeries;
-        private ObservableCollection<CategoricalDataPoint> baseNumberPoints;
+        private bool isEvidenceEditEnabled;
         private bool isLog;
         private ObservableCollection<CategoricalDataPoint> maxPoints;
         private ObservableCollection<CategoricalDataPoint> minPoints;
         private ObservableCollection<CategoricalDataPoint> modePoints;
         private CategoricalDataPoint trackedPoint;
+        private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> userDistributionSeries;
+        private ObservableCollection<CategoricalDataPoint> userNumberPoints;
         private NumericalAxis verticalAxis;
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
@@ -54,34 +52,6 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> BaseDistributionSeries
-        {
-            get { return this.baseDistributionSeries; }
-
-            set
-            {
-                if (value != this.baseDistributionSeries)
-                {
-                    this.baseDistributionSeries = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<CategoricalDataPoint> BaseNumberPoints
-        {
-            get { return this.baseNumberPoints; }
-
-            set
-            {
-                if (value != this.baseNumberPoints)
-                {
-                    this.baseNumberPoints = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public HorizontalAxisQuantity HorizontalAxisQuantity
         {
             get { return (HorizontalAxisQuantity) GetValue(HorizontalAxisQuantityProperty); }
@@ -90,8 +60,18 @@ namespace Marv.Input
 
         public bool IsEvidenceEditEnabled
         {
-            get { return (bool) GetValue(IsEvidenceEditEnabledProperty); }
-            set { SetValue(IsEvidenceEditEnabledProperty, value); }
+            get { return this.isEvidenceEditEnabled; }
+
+            set
+            {
+                if (value.Equals(this.isEvidenceEditEnabled))
+                {
+                    return;
+                }
+
+                this.isEvidenceEditEnabled = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsLog
@@ -174,6 +154,34 @@ namespace Marv.Input
             }
         }
 
+        public ObservableCollection<ObservableCollection<ProbabilityDataPoint>> UserDistributionSeries
+        {
+            get { return this.userDistributionSeries; }
+
+            set
+            {
+                if (value != this.userDistributionSeries)
+                {
+                    this.userDistributionSeries = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<CategoricalDataPoint> UserNumberPoints
+        {
+            get { return this.userNumberPoints; }
+
+            set
+            {
+                if (value != this.userNumberPoints)
+                {
+                    this.userNumberPoints = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
         public NumericalAxis VerticalAxis
         {
             get { return this.verticalAxis; }
@@ -217,8 +225,8 @@ namespace Marv.Input
                 return;
             }
 
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+            this.UserNumberPoints.Remove(point => point.Category.Equals(category));
+            this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
         public void SetUserEvidence(object category, VertexEvidence vertexEvidence)
@@ -228,8 +236,8 @@ namespace Marv.Input
                 return;
             }
 
-            this.BaseNumberPoints.Remove(point => point.Category.Equals(category));
-            this.BaseDistributionSeries.Remove(point => point.Category.Equals(category));
+            this.UserNumberPoints.Remove(point => point.Category.Equals(category));
+            this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
 
             var max = this.VerticalAxis.Maximum;
             var min = this.VerticalAxis.Minimum;
@@ -241,7 +249,7 @@ namespace Marv.Input
             {
                 case VertexEvidenceType.Number:
                 {
-                    this.BaseNumberPoints.Add(new CategoricalDataPoint
+                    this.UserNumberPoints.Add(new CategoricalDataPoint
                     {
                         Category = category,
                         Value = paramValues[0]
@@ -252,19 +260,19 @@ namespace Marv.Input
 
                 case VertexEvidenceType.Range:
                 {
-                    while (this.BaseDistributionSeries.Count < 2)
+                    while (this.UserDistributionSeries.Count < 2)
                     {
-                        this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+                        this.UserDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
                     }
 
-                    this.BaseDistributionSeries[0].Add(new ProbabilityDataPoint
+                    this.UserDistributionSeries[0].Add(new ProbabilityDataPoint
                     {
                         Category = category,
                         Value = paramValues[0],
                         Probability = 0
                     });
 
-                    this.BaseDistributionSeries[1].Add(new ProbabilityDataPoint
+                    this.UserDistributionSeries[1].Add(new ProbabilityDataPoint
                     {
                         Category = category,
                         Value = paramValues[1] - paramValues[0],
@@ -287,14 +295,14 @@ namespace Marv.Input
 
                     vertexEvidence.Value.ForEach((state, i) =>
                     {
-                        while (this.BaseDistributionSeries.Count < i + 2)
+                        while (this.UserDistributionSeries.Count < i + 2)
                         {
-                            this.BaseDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
+                            this.UserDistributionSeries.Add(new ObservableCollection<ProbabilityDataPoint>());
                         }
 
                         if (i == 0)
                         {
-                            this.BaseDistributionSeries[i].Add(new ProbabilityDataPoint
+                            this.UserDistributionSeries[i].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
                                 Value = min,
@@ -302,7 +310,7 @@ namespace Marv.Input
                             });
                         }
 
-                        this.BaseDistributionSeries[i + 1].Add(new ProbabilityDataPoint
+                        this.UserDistributionSeries[i + 1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
                             Value = max - min,
@@ -318,8 +326,8 @@ namespace Marv.Input
         public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences)
         {
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
-            this.BaseDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
-            this.BaseNumberPoints = new ObservableCollection<CategoricalDataPoint>();
+            this.UserDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
+            this.UserNumberPoints = new ObservableCollection<CategoricalDataPoint>();
 
             foreach (var category in vertexEvidences.Keys)
             {
@@ -331,15 +339,16 @@ namespace Marv.Input
 
                 this.SetUserEvidence(category, vertexEvidences[category]);
             }
+
+            this.InitializeEvidence();
         }
 
         public void SetVerticalAxis(double max, double min)
         {
             this.VerticalAxis = this.IsLog ? (NumericalAxis) this.logarightmicAxis : this.linearAxis;
 
-            var numericalAxis = this.VerticalAxis;
-            numericalAxis.Maximum = max;
-            numericalAxis.Minimum = min;
+            this.VerticalAxis.Maximum = max;
+            this.VerticalAxis.Minimum = min;
         }
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)

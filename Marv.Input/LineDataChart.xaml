@@ -38,7 +38,7 @@
                 </ToolBar.Resources>
 
                 <telerik:RadToggleButton Content="Evidence"
-                                         IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled}"
+                                         IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Mode=TwoWay}"
                                          Width="100" />
 
                 <telerik:RadButton Content="Clear"
