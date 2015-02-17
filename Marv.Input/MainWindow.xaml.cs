@@ -23,8 +23,8 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
 
-        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Sections;
-
+        private string chartTitle;
+        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -33,6 +33,22 @@ namespace Marv.Input
         private string lineDataFileName;
         private LocationCollection locations;
         private Location selectedLocation;
+
+        public string ChartTitle
+        {
+            get { return this.chartTitle; }
+
+            set
+            {
+                if (value.Equals(this.chartTitle))
+                {
+                    return;
+                }
+
+                this.chartTitle = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public Graph Graph
         {
@@ -200,14 +216,14 @@ namespace Marv.Input
 
         private object GetChartCategory()
         {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedSectionId : this.SelectedYear as object;
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
         private Dict<object, VertexEvidence> GetChartEvidence()
         {
             var vertexEvidences = new Dict<object, VertexEvidence>();
 
-            var isHorizontalAxisSections = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections;
+            var isHorizontalAxisSections = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section;
 
             var categories = isHorizontalAxisSections
                                  ? this.LineData.SectionIds
@@ -279,8 +295,8 @@ namespace Marv.Input
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
 
-            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? e.Category as string : this.SelectedSectionId;
-            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections ? this.SelectedYear : (int) e.Category;
+            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? e.Category as string : this.SelectedSectionId;
+            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedYear : (int) e.Category;
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -296,6 +312,8 @@ namespace Marv.Input
         {
             var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
             this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+
+            this.UpdateChartTitle();
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -412,6 +430,11 @@ namespace Marv.Input
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
+        }
+
+        private void UpdateChartTitle()
+        {
+            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

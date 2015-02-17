@@ -70,7 +70,7 @@
             <ToolBar>
                 <TextBlock VerticalAlignment="Center"
                            Visibility="{Binding ElementName=Root, Path=TrackedPoint, Converter={StaticResource NullToVisibility}}">
-                    <Run FontWeight="Bold" Text="Section ID: " />
+                    <Run FontWeight="Bold" Text="{Binding ElementName=Root, Path=HorizontalAxisQuantity}" />
                     <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Category}" />
                     <Run FontWeight="Bold" Text=", Value: " />
                     <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Value, StringFormat={}{0:F2}}" />

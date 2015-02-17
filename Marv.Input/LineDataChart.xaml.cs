@@ -16,7 +16,7 @@ namespace Marv.Input
         private const double Tolerance = 2;
 
         public static readonly DependencyProperty HorizontalAxisQuantityProperty =
-            DependencyProperty.Register("HorizontalAxisQuantity", typeof (HorizontalAxisQuantity), typeof (LineDataChart), new PropertyMetadata(HorizontalAxisQuantity.Sections, OnHorizontalAxisQuantityChanged));
+            DependencyProperty.Register("HorizontalAxisQuantity", typeof (HorizontalAxisQuantity), typeof (LineDataChart), new PropertyMetadata(HorizontalAxisQuantity.Section, OnHorizontalAxisQuantityChanged));
 
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));

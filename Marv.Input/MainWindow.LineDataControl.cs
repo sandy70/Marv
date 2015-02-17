@@ -70,7 +70,7 @@ namespace Marv.Input
 
         private void LineDataControl_RowSelected(object sender, CellModel e)
         {
-            this.HorizontalAxisQuantity = HorizontalAxisQuantity.Years;
+            this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
 
             var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
             this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
@@ -84,16 +84,20 @@ namespace Marv.Input
             var isSectionChanged = this.SelectedSectionId != this.lastSectionId;
             var isYearChanged = this.SelectedYear != this.lastYear;
 
-            if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Years) ||
-                (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections))
+            if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
+                (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
             {
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
                 this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+
+                this.UpdateChartTitle();
             }
 
             this.lastSectionId = this.SelectedSectionId;
             this.lastYear = this.SelectedYear;
         }
+
+
 
         private void MainWindow_Loaded_LineDataControl(object sender, RoutedEventArgs e)
         {
