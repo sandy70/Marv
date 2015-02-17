@@ -342,7 +342,7 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
+        private void LineDataSaveAs()
         {
             var dialog = new SaveFileDialog
             {
@@ -358,24 +358,18 @@ namespace Marv.Input
             }
         }
 
+        private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.LineDataSaveAs();
+        }
+
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (this.lineDataFileName == null)
             {
-                var dialog = new SaveFileDialog
-                {
-                    Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
-                };
-
-                var result = dialog.ShowDialog();
-
-                if (result == true)
-                {
-                    this.lineDataFileName = dialog.FileName;
-                }
+                this.LineDataSaveAs();
             }
-
-            if (this.lineDataFileName != null)
+            else
             {
                 this.LineData.Write(this.lineDataFileName);
             }
