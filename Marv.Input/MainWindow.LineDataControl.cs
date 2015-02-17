@@ -7,6 +7,9 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
+        private string lastSectionId;
+        private int lastYear;
+
         private void LineDataControl_CellContentChanged(object sender, CellChangedEventArgs e)
         {
             if (e.CellModel.IsColumnSectionId)
@@ -77,7 +80,17 @@ namespace Marv.Input
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
             this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear]);
 
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+            var isSectionChanged = this.SelectedSectionId != this.lastSectionId;
+            var isYearChanged = this.SelectedYear != this.lastYear;
+
+            if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Years) ||
+                (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections))
+            {
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+            }
+
+            this.lastSectionId = this.SelectedSectionId;
+            this.lastYear = this.SelectedYear;
         }
 
         private void MainWindow_Loaded_LineDataControl(object sender, RoutedEventArgs e)

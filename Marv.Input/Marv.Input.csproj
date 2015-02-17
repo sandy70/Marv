@@ -195,6 +195,7 @@
     <Compile Include="LineDataControl.xaml.cs">
       <DependentUpon>LineDataControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow.LineDataControl.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="RowAddedEventArgs.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />

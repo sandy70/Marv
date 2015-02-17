@@ -100,7 +100,7 @@
                                     ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
 
                 <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
-                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}">
+                                     ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}">
                     <telerik:PointSeries.DefaultVisualStyle>
                         <Style TargetType="Path">
                             <Setter Property="Fill" Value="YellowGreen" />
@@ -162,7 +162,7 @@
             </telerik:RadCartesianChart.Series>
 
             <telerik:RadCartesianChart.SeriesProvider>
-                <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=BaseDistributionSeries}">
+                <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=UserDistributionSeries}">
                     <telerik:ChartSeriesProvider.SeriesDescriptors>
                         <telerik:CategoricalSeriesDescriptor>
                             <telerik:CategoricalSeriesDescriptor.Style>
