@@ -10,6 +10,7 @@ namespace Marv.Common
         private bool isMuteable;
         private bool isMuted;
         private bool isTimed;
+        private bool isWarning;
         private string name;
         private double value;
 
@@ -99,6 +100,22 @@ namespace Marv.Common
                         this.IsIndeterminate = true;
                     }
                 }
+            }
+        }
+
+        public bool IsWarning
+        {
+            get { return this.isWarning; }
+
+            set
+            {
+                if (value.Equals(this.isWarning))
+                {
+                    return;
+                }
+
+                this.isWarning = value;
+                this.RaisePropertyChanged();
             }
         }
 
