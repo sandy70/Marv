@@ -24,9 +24,6 @@ namespace Marv.Input
         public static readonly DependencyProperty SelectedSectionIdProperty =
             DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SelectedVertexKeyProperty =
-            DependencyProperty.Register("SelectedVertexKey", typeof (string), typeof (LineDataControl), new PropertyMetadata(null));
-
         public static readonly DependencyProperty SelectedYearProperty =
             DependencyProperty.Register("SelectedYear", typeof (int), typeof (LineDataControl), new PropertyMetadata(int.MinValue));
 
@@ -91,12 +88,6 @@ namespace Marv.Input
             get { return (string) GetValue(SelectedSectionIdProperty); }
 
             set { SetValue(SelectedSectionIdProperty, value); }
-        }
-
-        public string SelectedVertexKey
-        {
-            get { return (string) GetValue(SelectedVertexKeyProperty); }
-            set { SetValue(SelectedVertexKeyProperty, value); }
         }
 
         public int SelectedYear
@@ -328,6 +319,53 @@ namespace Marv.Input
             }
         }
 
+        private void EndYear_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)
+        {
+            if (this.Rows == null)
+            {
+                return;
+            }
+
+            var oldStartYear = int.MinValue;
+
+            if (this.EndYear < this.StartYear)
+            {
+                oldStartYear = this.StartYear;
+                this.StartYear = this.EndYear;
+            }
+
+            this.Rows = this.GetNewRows((int) e.NewValue, (int) e.OldValue, this.StartYear, oldStartYear);
+        }
+
+        private ObservableCollection<Dynamic> GetNewRows(int newEndYear, int oldEndYear, int newStartYear, int oldStartYear)
+        {
+            var newRows = new ObservableCollection<Dynamic>();
+
+            foreach (var oldRow in this.Rows)
+            {
+                var newRow = new Dynamic();
+
+                newRow[CellModel.SectionIdHeader] = oldRow[CellModel.SectionIdHeader];
+
+                for (var year = newStartYear; year <= newEndYear; year++)
+                {
+                    if (year < oldStartYear || oldEndYear < year)
+                    {
+                        // Data does not exist in the old row
+                        newRow[year.ToString()] = new VertexEvidence();
+                    }
+                    else
+                    {
+                        newRow[year.ToString()] = oldRow[year.ToString()];
+                    }
+                }
+
+                newRows.Add(newRow);
+            }
+
+            return newRows;
+        }
+
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
@@ -453,6 +491,24 @@ namespace Marv.Input
                 CellModel = cellModel,
                 VertexEvidence = cellModel.Data as VertexEvidence
             });
+        }
+
+        private void StartYear_ValueChanged(object sender, RadRangeBaseValueChangedEventArgs e)
+        {
+            if (this.Rows == null)
+            {
+                return;
+            }
+
+            var oldEndYear = int.MaxValue;
+
+            if (this.StartYear > this.EndYear)
+            {
+                oldEndYear = this.EndYear;
+                this.EndYear = this.StartYear;
+            }
+
+            this.Rows = this.GetNewRows(this.EndYear, oldEndYear, (int) e.NewValue, (int) e.OldValue);
         }
 
         public event EventHandler<CellModel> RowSelected;
