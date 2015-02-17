@@ -27,13 +27,13 @@ namespace Marv.Input
             }
             else
             {
+                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
                 var vertexEvidence = e.VertexEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
 
                 e.CellModel.Data = vertexEvidence;
 
                 this.LineData.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, this.Graph.SelectedVertex.Key, vertexEvidence);
-
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence, intervals);
             }
         }
 
@@ -72,7 +72,8 @@ namespace Marv.Input
         {
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Years;
 
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+            var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
         }
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
@@ -86,7 +87,8 @@ namespace Marv.Input
             if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Years) ||
                 (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Sections))
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
             }
 
             this.lastSectionId = this.SelectedSectionId;

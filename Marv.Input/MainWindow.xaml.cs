@@ -235,7 +235,8 @@ namespace Marv.Input
             }
             else
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
+                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence, intervals);
                 this.LineDataControl.SetSelectedCells(vertexEvidence);
             }
         }
@@ -267,8 +268,10 @@ namespace Marv.Input
                     }
                 }
 
+                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
             }
         }
 
@@ -291,7 +294,8 @@ namespace Marv.Input
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+            var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)

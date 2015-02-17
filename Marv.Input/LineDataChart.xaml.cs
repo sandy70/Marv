@@ -229,7 +229,7 @@ namespace Marv.Input
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
-        public void SetUserEvidence(object category, VertexEvidence vertexEvidence)
+        public void SetUserEvidence(object category, VertexEvidence vertexEvidence, double[] intervals)
         {
             if (category == null)
             {
@@ -293,7 +293,7 @@ namespace Marv.Input
 
                     var maxProb = vertexEvidence.Value.Max();
 
-                    vertexEvidence.Value.ForEach((state, i) =>
+                    vertexEvidence.Value.ForEach((v, i) =>
                     {
                         while (this.UserDistributionSeries.Count < i + 2)
                         {
@@ -305,7 +305,7 @@ namespace Marv.Input
                             this.UserDistributionSeries[i].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
-                                Value = min,
+                                Value = intervals[0],
                                 Probability = 0
                             });
                         }
@@ -313,8 +313,8 @@ namespace Marv.Input
                         this.UserDistributionSeries[i + 1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
-                            Value = max - min,
-                            Probability = vertexEvidence.Value[i] / maxProb
+                            Value = intervals[i + 1] - intervals[i],
+                            Probability = v / maxProb
                         });
                     });
 
@@ -323,7 +323,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences)
+        public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences, double[] intervals)
         {
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
             this.UserDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
@@ -337,7 +337,7 @@ namespace Marv.Input
                     Value = null
                 });
 
-                this.SetUserEvidence(category, vertexEvidences[category]);
+                this.SetUserEvidence(category, vertexEvidences[category], intervals);
             }
 
             this.InitializeEvidence();
