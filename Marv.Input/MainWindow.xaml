@@ -68,12 +68,12 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
-                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
                                                    IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
-                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear}"
+                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
                                                    Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
