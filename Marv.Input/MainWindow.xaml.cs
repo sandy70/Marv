@@ -234,6 +234,11 @@ namespace Marv.Input
                 var sectionId = isHorizontalAxisSections ? category as string : this.SelectedSectionId;
                 var year = isHorizontalAxisSections ? this.SelectedYear : (int) category;
 
+                if (sectionId == null)
+                {
+                    continue;
+                }
+
                 var vertexEvidence = this.LineData.GetEvidence(sectionId)[year][this.Graph.SelectedVertex.Key];
 
                 vertexEvidences[category] = vertexEvidence;
@@ -284,6 +289,11 @@ namespace Marv.Input
                     }
                 }
 
+                if (this.Graph.SelectedVertex == null)
+                {
+                    return;
+                }
+
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin);
@@ -311,9 +321,13 @@ namespace Marv.Input
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
             var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+            var vertexEvidences = this.GetChartEvidence();
 
-            this.UpdateChartTitle();
+            if (vertexEvidences == null || vertexEvidences.Count > 0)
+            {
+                this.LineDataChart.SetUserEvidence(vertexEvidences, intervals);
+                this.UpdateChartTitle();
+            }
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
