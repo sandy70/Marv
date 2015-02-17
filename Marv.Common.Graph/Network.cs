@@ -343,7 +343,7 @@ namespace Marv
                 return states.Select(state => state.Min).ToArray();
             }
 
-            return null;
+            return Enumerable.Range(0, this.Nodes[vertexKey].States.Count + 1).Select(i => (double)i).ToArray();
         }
 
         public double GetMean(string vertexKey)

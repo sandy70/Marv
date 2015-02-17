@@ -109,7 +109,7 @@
                              IsFilteringAllowed="False"
                              ShowGroupPanel="False"
                              SelectionMode="Extended"
-                             SelectionUnit="Cell"
+                             SelectionUnit="{Binding ElementName=Root, Path=SelectionUnit}"
                              RowIndicatorVisibility="Collapsed"
                              ItemsSource="{Binding ElementName=Root, Path=Rows}" />
     </Grid>

@@ -1,8 +1,11 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows;
+using System.Windows.Input;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -28,6 +31,7 @@ namespace Marv.Input
         {
             if (e.Cell.ToModel().IsColumnSectionId)
             {
+                this.RaiseSectionIdValidating(e);
                 return;
             }
 
@@ -46,13 +50,15 @@ namespace Marv.Input
 
             if (cellModel.IsColumnSectionId)
             {
-                this.GridView.SelectionUnit = GridViewSelectionUnit.FullRow;
+                this.CanUserInsertRows = true;
+                this.SelectionUnit = GridViewSelectionUnit.FullRow;
                 this.RaiseRowSelected(cellModel);
                 return;
             }
 
+            this.CanUserInsertRows = false;
             this.SelectedYear = cellModel.Year;
-            this.GridView.SelectionUnit = GridViewSelectionUnit.Cell;
+            this.SelectionUnit = GridViewSelectionUnit.Cell;
 
             this.RaiseSelectedCellChanged();
         }
@@ -105,14 +111,77 @@ namespace Marv.Input
             this.pastedCells.Clear();
         }
 
+        private void GridView_Pasting(object sender, GridViewClipboardEventArgs e)
+        {
+            var text = Clipboard.GetText(TextDataFormat.CommaSeparatedValue);
+
+            var lines = text.Trim().Split(new []{ "\r\n"}, StringSplitOptions.None);
+            var values = new string[lines.Count()][];
+
+            var row = 0;
+            foreach (var line in lines)
+            {
+                var parts = line.Split(",".ToCharArray());
+
+                values[row] = new string[parts.Count()];
+
+                var col = 0;
+                foreach (var part in parts)
+                {
+                    values[row][col] = part;
+                    col++;
+                }
+
+                row++;
+            }
+
+            Console.WriteLine(values);
+        }
+
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
             var cellModel = e.Cell.ToModel();
 
-            this.CanUserInsertRows = cellModel.IsColumnSectionId;
+            if (cellModel.IsColumnSectionId)
+            {
+                this.RaiseSectionIdPasting(e);
+            }
 
-            this.pastedCells.Add(e);
-            this.oldData[e] = cellModel.Data;
+            if (!e.Cancel)
+            {
+                this.pastedCells.Add(e);
+                this.oldData[e] = cellModel.Data;
+            }
+        }
+
+        private void LineDataControl_Loaded_GridView(object sender, RoutedEventArgs e)
+        {
+            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
+            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
+
+            this.GridView.CellEditEnded -= GridView_CellEditEnded;
+            this.GridView.CellEditEnded += GridView_CellEditEnded;
+
+            this.GridView.CellValidating -= GridView_CellValidating;
+            this.GridView.CellValidating += GridView_CellValidating;
+
+            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
+            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
+
+            this.GridView.Deleted -= GridView_Deleted;
+            this.GridView.Deleted += GridView_Deleted;
+
+            this.GridView.KeyDown -= GridView_KeyDown;
+            this.GridView.KeyDown += GridView_KeyDown;
+
+            this.GridView.Pasted -= GridView_Pasted;
+            this.GridView.Pasted += GridView_Pasted;
+
+            this.GridView.Pasting -= GridView_Pasting;
+            this.GridView.Pasting += GridView_Pasting;
+
+            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
+            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
         }
     }
 }

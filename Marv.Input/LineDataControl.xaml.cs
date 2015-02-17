@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -34,6 +35,7 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private bool canUserInsertRows;
         private ObservableCollection<Dynamic> rows;
+        private GridViewSelectionUnit selectionUnit = GridViewSelectionUnit.Cell;
 
         public bool CanUserInsertRows
         {
@@ -96,6 +98,22 @@ namespace Marv.Input
             set { SetValue(SelectedYearProperty, value); }
         }
 
+        public GridViewSelectionUnit SelectionUnit
+        {
+            get { return this.selectionUnit; }
+
+            set
+            {
+                if (value.Equals(this.selectionUnit))
+                {
+                    return;
+                }
+
+                this.selectionUnit = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public int StartYear
         {
             get { return (int) GetValue(StartYearProperty); }
@@ -106,7 +124,11 @@ namespace Marv.Input
         {
             InitializeComponent();
 
+            this.Loaded -= LineDataControl_Loaded;
             this.Loaded += LineDataControl_Loaded;
+
+            this.Loaded -= LineDataControl_Loaded_GridView;
+            this.Loaded += LineDataControl_Loaded_GridView;
         }
 
         public void AddRow(string sectionId, Dict<int, VertexEvidence> vertexEvidences)
@@ -160,6 +182,22 @@ namespace Marv.Input
                 {
                     this.SetCell(cellModel, vertexEvidence);
                 }
+            }
+        }
+
+        protected void RaiseSectionIdPasting(GridViewCellClipboardEventArgs e)
+        {
+            if (this.SectionIdPasting != null)
+            {
+                this.SectionIdPasting(this, e);
+            }
+        }
+
+        protected void RaiseSectionIdValidating(GridViewCellValidatingEventArgs e)
+        {
+            if (this.SectionIdValidating != null)
+            {
+                this.SectionIdValidating(this, e);
             }
         }
 
@@ -368,30 +406,6 @@ namespace Marv.Input
 
         private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
-            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
-
-            this.GridView.CellEditEnded -= GridView_CellEditEnded;
-            this.GridView.CellEditEnded += GridView_CellEditEnded;
-
-            this.GridView.CellValidating -= GridView_CellValidating;
-            this.GridView.CellValidating += GridView_CellValidating;
-
-            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
-            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
-
-            this.GridView.Deleted -= GridView_Deleted;
-            this.GridView.Deleted += GridView_Deleted;
-
-            this.GridView.KeyDown -= GridView_KeyDown;
-            this.GridView.KeyDown += GridView_KeyDown;
-
-            this.GridView.Pasted -= GridView_Pasted;
-            this.GridView.Pasted += GridView_Pasted;
-
-            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
-            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
-
             this.AddSectionsButton.Click -= AddSectionsButton_Click;
             this.AddSectionsButton.Click += AddSectionsButton_Click;
 
@@ -528,5 +542,9 @@ namespace Marv.Input
         public event EventHandler<string> RowAdded;
 
         public event EventHandler<string> RowRemoved;
+
+        public event EventHandler<GridViewCellValidatingEventArgs> SectionIdValidating;
+
+        public event EventHandler<GridViewCellClipboardEventArgs> SectionIdPasting;
     }
 }
