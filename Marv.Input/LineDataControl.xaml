@@ -50,8 +50,7 @@
                 </telerik:RadButton>
             </ToolBar>
 
-            <ToolBar Height="32"
-                     IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}">
+            <ToolBar Height="32">
                 <telerik:RadButton Name="AddSectionsButton"
                                    Content="Add Sections" />
 
@@ -71,7 +70,8 @@
                                           Value="{Binding ElementName=Root, Path=StartYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
-                                          LargeChange="5">
+                                          LargeChange="5"
+                                          ValueChanged="StartYear_ValueChanged">
                     <telerik:RadNumericUpDown.NumberFormatInfo>
                         <global:NumberFormatInfo NumberGroupSeparator="" />
                     </telerik:RadNumericUpDown.NumberFormatInfo>
@@ -87,7 +87,8 @@
                                           Value="{Binding ElementName=Root, Path=EndYear, Mode=TwoWay}"
                                           NumberDecimalDigits="0"
                                           SmallChange="1"
-                                          LargeChange="5">
+                                          LargeChange="5"
+                                          ValueChanged="EndYear_ValueChanged">
                     <telerik:RadNumericUpDown.NumberFormatInfo>
                         <global:NumberFormatInfo NumberGroupSeparator="" />
                     </telerik:RadNumericUpDown.NumberFormatInfo>
@@ -105,7 +106,6 @@
                              ClipboardPasteMode="AllSelectedCells"
                              EditTriggers="TextInput"
                              FrozenColumnCount="1"
-                             IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"
                              ShowGroupPanel="False"
                              SelectionMode="Extended"

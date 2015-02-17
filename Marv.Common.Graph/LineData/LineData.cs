@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Marv.Common;
@@ -76,6 +77,11 @@ namespace Marv
                     this.RaisePropertyChanged();
                 }
             }
+        }
+
+        public ObservableCollection<string> SectionIds
+        {
+            get { return new ObservableCollection<string>(this.GetSectionIds()); }
         }
 
         public int StartYear
@@ -157,14 +163,14 @@ namespace Marv
             this.SectionEvidences.ChangeKey(oldId, newId);
         }
 
-        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
-        {
-            this.SectionEvidences[sectionId] = sectionEvidence;
-        }
-
         public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)
         {
             this.SectionBeliefs[sectionId] = sectionBelief;
+        }
+
+        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        {
+            this.SectionEvidences[sectionId] = sectionEvidence;
         }
 
         public void Write(string filePath)

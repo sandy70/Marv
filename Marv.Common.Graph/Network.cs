@@ -337,13 +337,13 @@ namespace Marv
             {
                 return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
             }
-
+            
             if (this.Nodes[vertexKey].Type == VertexType.Numbered)
             {
                 return states.Select(state => state.Min).ToArray();
             }
 
-            throw new SmileException("Node {0} isn't of type Interval or Numbered and hence has no intervals.");
+            return null;
         }
 
         public double GetMean(string vertexKey)

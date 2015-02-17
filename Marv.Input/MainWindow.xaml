@@ -32,24 +32,24 @@
         <Menu Grid.Row="0">
             <MenuItem Header="Line Data">
                 <MenuItem Header="Open"
-                          Click="LineDataOpenMenuItem_Click"/>
-                
+                          Click="LineDataOpenMenuItem_Click" />
+
                 <MenuItem Header="Save"
                           Click="LineDataSaveMenuItem_Click" />
-                
+
                 <MenuItem Header="SaveAs"
-                          Click="LineDataSaveAsMenuItem_Click"></MenuItem>
+                          Click="LineDataSaveAsMenuItem_Click" />
             </MenuItem>
-            
+
             <MenuItem Header="Run">
                 <MenuItem Header="Section"
                           Click="RunSectionMenuItem_Click" />
-                
+
                 <MenuItem Header="Line"
-                          Click="RunLineMenuItem_Click"></MenuItem>
+                          Click="RunLineMenuItem_Click" />
             </MenuItem>
         </Menu>
-        
+
         <telerik:RadDocking Grid.Row="1"
                             HasDocumentHost="False">
             <telerik:RadDocking.Resources>
@@ -68,12 +68,12 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
                             <local:LineDataControl x:Name="LineDataControl"
-                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear}"
+                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
                                                    IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
                                                    NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
-                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear}"
+                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
                                                    Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -83,10 +83,8 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
                                 <local:LineDataChart x:Name="LineDataChart"
-                                                     LineData="{Binding ElementName=Root, Path=LineData}"
-                                                     SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                     Year="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
-                                                     Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}" />
+                                                     HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
+                                                     Title="{Binding ElementName=Root, Path=ChartTitle}"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -121,14 +119,14 @@
                             </Grid.RowDefinitions>
 
                             <!-- Vertex Combo Box -->
-                            <telerik:RadComboBox Grid.Row="0"  Grid.ColumnSpan="2"
+                            <telerik:RadComboBox Grid.Row="0" Grid.ColumnSpan="2"
                                                  CanAutocompleteSelectItems="False"
                                                  CanKeyboardNavigationSelectItems="False"
                                                  IsEditable="True"
                                                  IsFilteringEnabled="True"
                                                  IsSynchronizedWithCurrentItem="False"
                                                  ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
-                                                 Margin="5"
+                                                 Margin="4"
                                                  OpenDropDownOnFocus="True"
                                                  SelectedIndex="0"
                                                  SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"

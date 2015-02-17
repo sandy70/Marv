@@ -2,8 +2,7 @@
 {
     public class EvidenceGeneratedEventArgs
     {
+        public object Category;
         public string EvidenceString;
-        public string SectionId;
-        public int Year;
     }
 }

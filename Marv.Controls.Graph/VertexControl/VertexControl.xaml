@@ -163,7 +163,7 @@
                    FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                    FontWeight="Bold"
                    Margin="{Binding Source={StaticResource MarginSmall}}"
-                   Text="Units"
+                   Text="Units:"
                    TextAlignment="Right"
                    VerticalAlignment="Center" />
 

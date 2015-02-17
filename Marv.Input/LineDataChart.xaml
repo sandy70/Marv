@@ -4,8 +4,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:input="clr-namespace:Marv.Input"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="600"
+             d:DesignHeight="100" d:DesignWidth="800"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -24,10 +26,20 @@
         <ToolBarTray Grid.Row="0"
                      Height="Auto">
             <ToolBar>
+                <ToolBar.Resources>
+                    <ObjectDataProvider MethodName="GetValues"
+                                        ObjectType="{x:Type sys:Enum}"
+                                        x:Key="HorizontalAxisQuantities">
+                        <ObjectDataProvider.MethodParameters>
+                            <x:Type TypeName="input:HorizontalAxisQuantity" />
+                        </ObjectDataProvider.MethodParameters>
+                    </ObjectDataProvider>
+                </ToolBar.Resources>
+
                 <telerik:RadToggleButton Content="Evidence"
-                                         IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled}"
+                                         IsChecked="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Mode=TwoWay}"
                                          Width="100" />
-                
+
                 <telerik:RadButton Content="Clear"
                                    Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
                                    Width="64"
@@ -36,29 +48,28 @@
                 <telerik:RadButton Content="Done"
                                    Visibility="{Binding ElementName=Root, Path=IsEvidenceEditEnabled, Converter={StaticResource BooleanToVisibility}}"
                                    Width="64"
-                                   Click="EvidenceDoneButton_Click"/>
-                
+                                   Click="EvidenceDoneButton_Click" />
+
                 <TextBlock VerticalAlignment="Center"
                            Text="X-Axis: "
                            TextAlignment="Right"
                            Width="64" />
 
-                <telerik:RadRadioButton Content="Sections"
-                                        IsChecked="{Binding ElementName=Root, Path=IsXAxisSections}"
-                                        Width="64" />
-
-                <telerik:RadRadioButton Content="Years"
-                                        Width="64" />
+                <telerik:RadComboBox HorizontalContentAlignment="Right"
+                                     ItemsSource="{Binding Source={StaticResource HorizontalAxisQuantities}}"
+                                     SelectedIndex="0"
+                                     SelectedItem="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
+                                     Width="96" />
 
                 <CheckBox Content="Log Y-Axis"
                           IsChecked="{Binding ElementName=Root, Path=IsLog, Mode=TwoWay}"
                           Margin="4,0,4,0" />
             </ToolBar>
-            
+
             <ToolBar>
                 <TextBlock VerticalAlignment="Center"
                            Visibility="{Binding ElementName=Root, Path=TrackedPoint, Converter={StaticResource NullToVisibility}}">
-                    <Run FontWeight="Bold" Text="Section ID: " /> 
+                    <Run FontWeight="Bold" Text="{Binding ElementName=Root, Path=HorizontalAxisQuantity}" />
                     <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Category}" />
                     <Run FontWeight="Bold" Text=", Value: " />
                     <Run Text="{Binding ElementName=Root, Path=TrackedPoint.Value, StringFormat={}{0:F2}}" />
@@ -88,7 +99,7 @@
                                     ItemsSource="{Binding ElementName=Root, Path=AnchorPoints}" />
 
                 <telerik:PointSeries CategoryBinding="Category" ValueBinding="Value"
-                                     ItemsSource="{Binding ElementName=Root, Path=BaseNumberPoints}">
+                                     ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}">
                     <telerik:PointSeries.DefaultVisualStyle>
                         <Style TargetType="Path">
                             <Setter Property="Fill" Value="YellowGreen" />
@@ -150,7 +161,7 @@
             </telerik:RadCartesianChart.Series>
 
             <telerik:RadCartesianChart.SeriesProvider>
-                <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=BaseDistributionSeries}">
+                <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=UserDistributionSeries}">
                     <telerik:ChartSeriesProvider.SeriesDescriptors>
                         <telerik:CategoricalSeriesDescriptor>
                             <telerik:CategoricalSeriesDescriptor.Style>
