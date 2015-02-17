@@ -84,7 +84,8 @@ namespace Marv.Input
                 {
                     Description = "Cannot paste because line data already contains section " + e.Value,
                     Duration = TimeSpan.FromSeconds(15),
-                    IsTimed = true
+                    IsTimed = true,
+                    IsWarning = true
                 });
 
                 e.Cancel = true;
