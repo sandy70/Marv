@@ -50,8 +50,7 @@
                 </telerik:RadButton>
             </ToolBar>
 
-            <ToolBar Height="32"
-                     IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}">
+            <ToolBar Height="32">
                 <telerik:RadButton Name="AddSectionsButton"
                                    Content="Add Sections" />
 
@@ -105,7 +104,6 @@
                              ClipboardPasteMode="AllSelectedCells"
                              EditTriggers="TextInput"
                              FrozenColumnCount="1"
-                             IsEnabled="{Binding ElementName=Root, Path=IsGridViewEnabled}"
                              IsFilteringAllowed="False"
                              ShowGroupPanel="False"
                              SelectionMode="Extended"
