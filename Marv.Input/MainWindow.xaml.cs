@@ -360,7 +360,25 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.LineData.Write(this.lineDataFileName);
+            if (this.lineDataFileName == null)
+            {
+                var dialog = new SaveFileDialog
+                {
+                    Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
+                };
+
+                var result = dialog.ShowDialog();
+
+                if (result == true)
+                {
+                    this.lineDataFileName = dialog.FileName;
+                }
+            }
+
+            if (this.lineDataFileName != null)
+            {
+                this.LineData.Write(this.lineDataFileName);
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
