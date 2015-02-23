@@ -49,6 +49,24 @@ namespace Marv
             get { return this.inputNodeKey ?? (this.inputNodeKey = this.ParseStringProperty("InputNode")); }
         }
 
+        public IEnumerable<double> Intervals
+        {
+            get
+            {
+                if (this.Type == VertexType.Interval)
+                {
+                    return this.States.Select(state => state.Min).Concat(this.States.Last().Max.Yield()).ToArray();
+                }
+
+                if (this.Type == VertexType.Numbered)
+                {
+                    return this.States.Select(state => state.Min).ToArray();
+                }
+
+                return Enumerable.Range(0, this.States.Count + 1).Select(i => (double) i).ToArray();
+            }
+        }
+
         public string Key { get; set; }
 
         public string ModelNodes { get; set; }

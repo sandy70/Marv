@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using AddinExpress.MSO;
 using AddinExpress.XL;
 using Marv;
+using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Excel;
 using Application = System.Windows.Forms.Application;
 using System.Linq;
