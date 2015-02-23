@@ -5,8 +5,9 @@
            xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
            mc:Ignorable="d"
+           d:DesignHeight="32" d:DesignWidth="400"
            Name="Root"
-           d:DesignHeight="32" d:DesignWidth="400">
+           Loaded="StatusControl_Loaded">
     <StatusBar.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -81,15 +82,15 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Name="BackButton"
-                               Grid.Column="0"
-                               ToolTip="Moves backward to previous notification.">
+            <telerik:RadButton Grid.Column="0"
+                               ToolTip="Moves backward to previous notification."
+                               Click="BackButton_Click">
                 <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
             </telerik:RadButton>
 
-            <telerik:RadButton Name="ForwardButton"
-                               Grid.Column="1"
-                               ToolTip="Moves forward to next notification.">
+            <telerik:RadButton Grid.Column="1"
+                               ToolTip="Moves forward to next notification."
+                               Click="ForwardButton_Click">
                 <Image Source="/Marv.Common;component/Resources/Icons/Forward.png" />
             </telerik:RadButton>
         </Grid>
