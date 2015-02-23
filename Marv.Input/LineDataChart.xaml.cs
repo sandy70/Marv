@@ -248,9 +248,6 @@ namespace Marv.Input
             this.UserNumberPoints.Remove(point => point.Category.Equals(category));
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
 
-            var max = this.VerticalAxis.Maximum;
-            var min = this.VerticalAxis.Minimum;
-
             var paramValues = vertexEvidence.Params;
             var type = vertexEvidence.Type;
 
@@ -474,9 +471,6 @@ namespace Marv.Input
 
         private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Chart.MouseMove -= Chart_MouseMove;
-            this.Chart.MouseMove += Chart_MouseMove;
-
             this.MaxSeries.MouseDown -= MaxSeries_MouseDown;
             this.MaxSeries.MouseDown += MaxSeries_MouseDown;
 
