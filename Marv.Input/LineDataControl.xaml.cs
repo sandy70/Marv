@@ -123,12 +123,6 @@ namespace Marv.Input
         public LineDataControl()
         {
             InitializeComponent();
-
-            this.Loaded -= LineDataControl_Loaded;
-            this.Loaded += LineDataControl_Loaded;
-
-            this.Loaded -= LineDataControl_Loaded_GridView;
-            this.Loaded += LineDataControl_Loaded_GridView;
         }
 
         public void AddRow(string sectionId, Dict<int, VertexEvidence> vertexEvidences)
@@ -182,22 +176,6 @@ namespace Marv.Input
                 {
                     this.SetCell(cellModel, vertexEvidence);
                 }
-            }
-        }
-
-        protected void RaiseSectionIdPasting(GridViewCellClipboardEventArgs e)
-        {
-            if (this.SectionIdPasting != null)
-            {
-                this.SectionIdPasting(this, e);
-            }
-        }
-
-        protected void RaiseSectionIdValidating(GridViewCellValidatingEventArgs e)
-        {
-            if (this.SectionIdValidating != null)
-            {
-                this.SectionIdValidating(this, e);
             }
         }
 
@@ -404,21 +382,6 @@ namespace Marv.Input
             return newRows;
         }
 
-        private void LineDataControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.AddSectionsButton.Click -= AddSectionsButton_Click;
-            this.AddSectionsButton.Click += AddSectionsButton_Click;
-
-            this.CopyAcrossAllButton.Click -= CopyAcrossAllButton_Click;
-            this.CopyAcrossAllButton.Click += CopyAcrossAllButton_Click;
-
-            this.CopyAcrossColButton.Click -= CopyAcrossColButton_Click;
-            this.CopyAcrossColButton.Click += CopyAcrossColButton_Click;
-
-            this.CopyAcrossRowButton.Click -= CopyAcrossRowButton_Click;
-            this.CopyAcrossRowButton.Click += CopyAcrossRowButton_Click;
-        }
-
         private void RaiseCellContentChanged(CellChangedEventArgs cellChangedEventArgs)
         {
             if (this.CellContentChanged != null)
@@ -480,6 +443,22 @@ namespace Marv.Input
             if (this.RowSelected != null)
             {
                 this.RowSelected(this, cellModel);
+            }
+        }
+
+        private void RaiseSectionIdPasting(GridViewCellClipboardEventArgs e)
+        {
+            if (this.SectionIdPasting != null)
+            {
+                this.SectionIdPasting(this, e);
+            }
+        }
+
+        private void RaiseSectionIdValidating(GridViewCellValidatingEventArgs e)
+        {
+            if (this.SectionIdValidating != null)
+            {
+                this.SectionIdValidating(this, e);
             }
         }
 

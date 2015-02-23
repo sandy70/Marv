@@ -37,22 +37,22 @@
 
         <ToolBarTray Grid.Row="0">
             <ToolBar Height="32">
-                <telerik:RadButton Name="CopyAcrossColButton">
+                <telerik:RadButton Click="CopyAcrossColButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="CopyAcrossRowButton">
+                <telerik:RadButton Click="CopyAcrossRowButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRow.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="CopyAcrossAllButton">
+                <telerik:RadButton Click="CopyAcrossAllButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                 </telerik:RadButton>
             </ToolBar>
 
             <ToolBar Height="32">
-                <telerik:RadButton Name="AddSectionsButton"
-                                   Content="Add Sections" />
+                <telerik:RadButton Content="Add Sections"
+                                   Click="AddSectionsButton_Click"/>
 
                 <telerik:RadNumericUpDown LargeChange="10" SmallChange="1"
                                           Maximum="10000"
@@ -107,10 +107,20 @@
                              EditTriggers="TextInput"
                              FrozenColumnCount="1"
                              IsFilteringAllowed="False"
+                             ItemsSource="{Binding ElementName=Root, Path=Rows}"
                              ShowGroupPanel="False"
                              SelectionMode="Extended"
                              SelectionUnit="{Binding ElementName=Root, Path=SelectionUnit}"
                              RowIndicatorVisibility="Collapsed"
-                             ItemsSource="{Binding ElementName=Root, Path=Rows}" />
+                             
+                             AutoGeneratingColumn="GridView_AutoGeneratingColumn"
+                             CellEditEnded="GridView_CellEditEnded"
+                             CellValidating="GridView_CellValidating"
+                             CurrentCellChanged="GridView_CurrentCellChanged"
+                             Deleted="GridView_Deleted"
+                             KeyDown="GridView_KeyDown"
+                             Pasted="GridView_Pasted"
+                             Pasting="GridView_Pasting"
+                             PastingCellClipboardContent="GridView_PastingCellClipboardContent"/>
     </Grid>
 </UserControl>

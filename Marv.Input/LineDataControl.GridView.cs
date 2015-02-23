@@ -153,35 +153,5 @@ namespace Marv.Input
                 this.oldData[e] = cellModel.Data;
             }
         }
-
-        private void LineDataControl_Loaded_GridView(object sender, RoutedEventArgs e)
-        {
-            this.GridView.AutoGeneratingColumn -= GridView_AutoGeneratingColumn;
-            this.GridView.AutoGeneratingColumn += GridView_AutoGeneratingColumn;
-
-            this.GridView.CellEditEnded -= GridView_CellEditEnded;
-            this.GridView.CellEditEnded += GridView_CellEditEnded;
-
-            this.GridView.CellValidating -= GridView_CellValidating;
-            this.GridView.CellValidating += GridView_CellValidating;
-
-            this.GridView.CurrentCellChanged -= GridView_CurrentCellChanged;
-            this.GridView.CurrentCellChanged += GridView_CurrentCellChanged;
-
-            this.GridView.Deleted -= GridView_Deleted;
-            this.GridView.Deleted += GridView_Deleted;
-
-            this.GridView.KeyDown -= GridView_KeyDown;
-            this.GridView.KeyDown += GridView_KeyDown;
-
-            this.GridView.Pasted -= GridView_Pasted;
-            this.GridView.Pasted += GridView_Pasted;
-
-            this.GridView.Pasting -= GridView_Pasting;
-            this.GridView.Pasting += GridView_Pasting;
-
-            this.GridView.PastingCellClipboardContent -= GridView_PastingCellClipboardContent;
-            this.GridView.PastingCellClipboardContent += GridView_PastingCellClipboardContent;
-        }
     }
 }
