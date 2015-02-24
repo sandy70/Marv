@@ -14,8 +14,9 @@ namespace Marv.ExcelNew
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
             this.wpfHost = new WpfHost();
-            this.CustomTaskPane = this.CustomTaskPanes.Add(this.wpfHost, "Select Nodes");
+            this.CustomTaskPane = this.CustomTaskPanes.Add(this.wpfHost, "MARV - Multi-Analytic Risk Visualization");
             this.CustomTaskPane.Visible = true;
+            this.CustomTaskPane.Width = 512;
 
             this.CustomTaskPane.VisibleChanged += customTaskPane_VisibleChanged;
         }

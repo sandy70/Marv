@@ -37,7 +37,7 @@
             this.ElementHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ElementHost.Location = new System.Drawing.Point(0, 0);
             this.ElementHost.Name = "ElementHost";
-            this.ElementHost.Size = new System.Drawing.Size(150, 150);
+            this.ElementHost.Size = new System.Drawing.Size(512, 256);
             this.ElementHost.TabIndex = 0;
             this.ElementHost.Child = this.vertexListBox1;
             // 
@@ -47,6 +47,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ElementHost);
             this.Name = "WpfHost";
+            this.Size = new System.Drawing.Size(512, 256);
             this.ResumeLayout(false);
 
         }
