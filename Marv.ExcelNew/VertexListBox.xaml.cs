@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
+using Microsoft.Win32;
 using Telerik.Windows.Controls;
+using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace Marv.ExcelNew
 {
@@ -19,10 +19,27 @@ namespace Marv.ExcelNew
         public static readonly DependencyProperty VerticesProperty =
             DependencyProperty.Register("Vertices", typeof (IEnumerable<Vertex>), typeof (VertexListBox), new PropertyMetadata(null));
 
+        private string fileName;
+
+        public Application Application
+        {
+            get { return Globals.ThisAddIn.Application; }
+        }
+
         public int EndYear
         {
             get { return (int) GetValue(EndYearProperty); }
             set { SetValue(EndYearProperty, value); }
+        }
+
+        public Worksheet InputSheet
+        {
+            get { return this.Workbook.GetWorksheetOrNew("Input"); }
+        }
+
+        public Worksheet OutputSheet
+        {
+            get { return this.Workbook.GetWorksheetOrNew("Output"); }
         }
 
         public IEnumerable<Vertex> SelectedVertices
@@ -42,6 +59,19 @@ namespace Marv.ExcelNew
             set { SetValue(VerticesProperty, value); }
         }
 
+        public Workbook Workbook
+        {
+            get
+            {
+                if (this.Application.ActiveWorkbook == null)
+                {
+                    this.Application.Workbooks.Add();
+                }
+
+                return this.Application.ActiveWorkbook;
+            }
+        }
+
         public VertexListBox()
         {
             InitializeComponent();
@@ -51,30 +81,36 @@ namespace Marv.ExcelNew
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            var lineData = new LineData();
-            lineData.StartYear = this.StartYear;
-            lineData.EndYear = this.EndYear;
-
-            var sectionBelief = new Dict<int, string, double[]>();
-
-            for (var year = this.StartYear; year <= this.EndYear; year++)
+            if (!this.SelectedVertices.Any())
             {
-                foreach (var vertex in this.SelectedVertices)
-                {
-                    sectionBelief[year][vertex.Key] = new double[vertex.States.Count];
-                }
+                MessageBox.Show("Select at least 1 node.", "Error!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
 
-            lineData.SetBelief("Section 1", sectionBelief);
+            this.InputSheet.Cells.Clear();
+            this.InputSheet.Cells.NumberFormat = "@";
 
-            this.Write(lineData);
-        }
+            var sheetModel = new SheetModel
+            {
+                SheetHeaders = new Dictionary<string, object>
+                {
+                    { "Network File", this.fileName },
+                    { "Start Year", this.StartYear },
+                    { "End Year", this.EndYear }
+                },
+                ColumnHeaders = new List<string>
+                {
+                    "Section Key",
+                    "Latitude",
+                    "Longitude"
+                },
+                StartYear = this.StartYear,
+                EndYear = this.EndYear,
+                Vertices = this.SelectedVertices
+            };
 
-        private void Write(LineData lineData)
-        {
-            var worksheet = Globals.ThisAddIn.Application.ActiveSheet as Worksheet;
-
-            worksheet.Write(1, 1, "Hello world");
+            sheetModel.LineValue["One"] = new Dict<int, string, double[]>();
+            sheetModel.Write(this.InputSheet);
         }
 
         private void OpenNetworkButton_Click(object sender, RoutedEventArgs e)
@@ -85,9 +121,9 @@ namespace Marv.ExcelNew
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
-                this.Vertices = Graph.Read(dialog.FileName).Vertices;
+                this.Vertices = Graph.Read(this.fileName = dialog.FileName).Vertices;
             }
         }
 
@@ -115,6 +151,60 @@ namespace Marv.ExcelNew
             this.SelectNoneButton.Click += SelectNoneButton_Click;
             this.StartYearUpDown.ValueChanged += StartYearUpDown_ValueChanged;
             this.DoneButton.Click += DoneButton_Click;
+        }
+
+        private void Write(LineData lineData)
+        {
+            var worksheet = Globals.ThisAddIn.Application.ActiveSheet as Worksheet;
+
+            var row = 1;
+            var col = 1;
+            worksheet.Write(row, col, "Start Year", true);
+
+            col++;
+            worksheet.Write(row, col, lineData.StartYear);
+
+            row++;
+            col = 1;
+            worksheet.Write(row, col, "End Year", true);
+
+            col++;
+            worksheet.Write(row, col, lineData.EndYear);
+
+            row++;
+            col = 1;
+            worksheet.WriteRow(row, "");
+
+            row++;
+            worksheet.Write(row, col, "Section ID", true);
+
+            col++;
+            worksheet.WriteCol(col, "");
+
+            foreach (var vertex in this.SelectedVertices)
+            {
+                col++;
+                worksheet.Write(row, col, vertex.Key);
+
+                for (var year = lineData.StartYear; year <= lineData.EndYear; year++)
+                {
+                    col++;
+                    worksheet.Write(row, col, year);
+                }
+
+                col++;
+                worksheet.WriteCol(col, "");
+            }
+
+            row++;
+            col = 1;
+            worksheet.WriteRow(row, "");
+
+            foreach (var sectionId in lineData.SectionIds)
+            {
+                row++;
+                worksheet.Write(row, col, sectionId);
+            }
         }
     }
 }

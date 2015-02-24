@@ -337,13 +337,13 @@ namespace Marv
             {
                 return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
             }
-            
+
             if (this.Nodes[vertexKey].Type == VertexType.Numbered)
             {
                 return states.Select(state => state.Min).ToArray();
             }
 
-            return Enumerable.Range(0, this.Nodes[vertexKey].States.Count + 1).Select(i => (double)i).ToArray();
+            return Enumerable.Range(0, this.Nodes[vertexKey].States.Count + 1).Select(i => (double) i).ToArray();
         }
 
         public double GetMean(string vertexKey)
