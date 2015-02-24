@@ -1,7 +1,0 @@
-# 2014.04.03.1611
-	* The blank column between nodes has been removed.
-
-# 2014.04.03.1434
-	* Selection color of node list box when not focused is made more visible
-	* Cell format for entire sheet is set to 'Text'
-	* Fix: crash when no vertex is selected and 'Done' button is clicked.
