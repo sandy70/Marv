@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv", "Marv\Marv.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Input", "Marv.Input\Marv.Input.csproj", "{DFF71548-2FF5-4F28-9257-DA991E4E97D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.ExcelNew\Marv.Excel.csproj", "{25FA0630-C0C2-4125-A36E-CCA19B5541F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Marv.Excel.csproj", "{25FA0630-C0C2-4125-A36E-CCA19B5541F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
