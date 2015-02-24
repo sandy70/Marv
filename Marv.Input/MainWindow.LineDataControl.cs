@@ -76,6 +76,33 @@ namespace Marv.Input
             this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
         }
 
+        private void LineDataControl_SectionIdPasting(object sender, GridViewCellClipboardEventArgs e)
+        {
+            if (this.LineData.SectionIds.Contains(e.Value as string))
+            {
+                this.Notifications.Add(new Notification
+                {
+                    Description = "Cannot paste because line data already contains section " + e.Value,
+                    Duration = TimeSpan.FromSeconds(15),
+                    IsTimed = true,
+                    IsWarning = true
+                });
+
+                e.Cancel = true;
+            }
+        }
+
+        private void LineDataControl_SectionIdValidating(object sender, GridViewCellValidatingEventArgs e)
+        {
+            var cellModel = e.Cell.ToModel();
+
+            if (this.LineData.SectionIds.Contains(cellModel.SectionId))
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "The line data already contains section " + cellModel.SectionId;
+            }
+        }
+
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
@@ -96,8 +123,6 @@ namespace Marv.Input
             this.lastSectionId = this.SelectedSectionId;
             this.lastYear = this.SelectedYear;
         }
-
-
 
         private void MainWindow_Loaded_LineDataControl(object sender, RoutedEventArgs e)
         {
@@ -121,6 +146,12 @@ namespace Marv.Input
 
             this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
             this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
+
+            this.LineDataControl.SectionIdPasting -= LineDataControl_SectionIdPasting;
+            this.LineDataControl.SectionIdPasting += LineDataControl_SectionIdPasting;
+
+            this.LineDataControl.SectionIdValidating -= LineDataControl_SectionIdValidating;
+            this.LineDataControl.SectionIdValidating += LineDataControl_SectionIdValidating;
 
             this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
             this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;

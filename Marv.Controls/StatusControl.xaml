@@ -5,8 +5,9 @@
            xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
            mc:Ignorable="d"
+           d:DesignHeight="32" d:DesignWidth="400"
            Name="Root"
-           d:DesignHeight="32" d:DesignWidth="400">
+           Loaded="StatusControl_Loaded">
     <StatusBar.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -30,6 +31,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -37,8 +39,13 @@
             </Grid>
         </ItemsPanelTemplate>
     </StatusBar.ItemsPanel>
-
+    
     <StatusBarItem Grid.Column="0">
+        <Image Visibility="{Binding ElementName=Root, Path=SelectedNotification.IsWarning}"
+               Source="/Marv.Common;component/Resources/Icons/Warning.png" />
+    </StatusBarItem>
+
+    <StatusBarItem Grid.Column="1">
         <Grid>
             <telerik:RadProgressBar Minimum="0"
                                     IsIndeterminate="{Binding ElementName=Root, Path=SelectedNotification.IsIndeterminate}"
@@ -52,12 +59,12 @@
         </Grid>
     </StatusBarItem>
 
-    <StatusBarItem Grid.Column="1">
+    <StatusBarItem Grid.Column="2">
         <TextBlock TextWrapping="Wrap"
                    Text="{Binding ElementName=Root, Path=SelectedNotification.Description}" />
     </StatusBarItem>
 
-    <StatusBarItem Grid.Column="2">
+    <StatusBarItem Grid.Column="3">
         <TextBlock TextWrapping="Wrap">
             <TextBlock.Text>
                 <MultiBinding StringFormat="{}{0}/{1}">
@@ -68,22 +75,22 @@
         </TextBlock>
     </StatusBarItem>
 
-    <StatusBarItem Grid.Column="5">
+    <StatusBarItem Grid.Column="4">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Name="BackButton"
-                               Grid.Column="0"
-                               ToolTip="Moves backward to previous notification.">
+            <telerik:RadButton Grid.Column="0"
+                               ToolTip="Moves backward to previous notification."
+                               Click="BackButton_Click">
                 <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
             </telerik:RadButton>
 
-            <telerik:RadButton Name="ForwardButton"
-                               Grid.Column="1"
-                               ToolTip="Moves forward to next notification.">
+            <telerik:RadButton Grid.Column="1"
+                               ToolTip="Moves forward to next notification."
+                               Click="ForwardButton_Click">
                 <Image Source="/Marv.Common;component/Resources/Icons/Forward.png" />
             </telerik:RadButton>
         </Grid>

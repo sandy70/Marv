@@ -21,9 +21,6 @@ namespace Marv.Input
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty XTitleProperty =
-            DependencyProperty.Register("XTitle", typeof (string), typeof (LineDataChart), new PropertyMetadata(null));
-
         private readonly LinearAxis linearAxis = new LinearAxis();
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
@@ -37,6 +34,7 @@ namespace Marv.Input
         private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> userDistributionSeries;
         private ObservableCollection<CategoricalDataPoint> userNumberPoints;
         private NumericalAxis verticalAxis;
+        private string xTitle = Enum.GetNames(typeof(HorizontalAxisQuantity))[0];
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
@@ -200,8 +198,18 @@ namespace Marv.Input
 
         public string XTitle
         {
-            get { return (string) GetValue(XTitleProperty); }
-            set { SetValue(XTitleProperty, value); }
+            get { return this.xTitle; }
+
+            set
+            {
+                if (value.Equals(this.xTitle))
+                {
+                    return;
+                }
+
+                this.xTitle = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public LineDataChart()
@@ -215,6 +223,7 @@ namespace Marv.Input
         private static void OnHorizontalAxisQuantityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as LineDataChart;
+            control.XTitle = control.HorizontalAxisQuantity.ToString();
             control.RaiseHorizontalAxisQuantityChanged(control.HorizontalAxisQuantity);
         }
 
@@ -238,9 +247,6 @@ namespace Marv.Input
 
             this.UserNumberPoints.Remove(point => point.Category.Equals(category));
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
-
-            var max = this.VerticalAxis.Maximum;
-            var min = this.VerticalAxis.Minimum;
 
             var paramValues = vertexEvidence.Params;
             var type = vertexEvidence.Type;
@@ -465,9 +471,6 @@ namespace Marv.Input
 
         private void LineDataChart_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Chart.MouseMove -= Chart_MouseMove;
-            this.Chart.MouseMove += Chart_MouseMove;
-
             this.MaxSeries.MouseDown -= MaxSeries_MouseDown;
             this.MaxSeries.MouseDown += MaxSeries_MouseDown;
 

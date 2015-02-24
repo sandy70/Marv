@@ -79,7 +79,8 @@
 
         <telerik:RadCartesianChart Name="Chart"
                                    Grid.Row="1"
-                                   VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
+                                   VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
+                                   MouseMove="Chart_MouseMove">
             <telerik:RadCartesianChart.Behaviors>
                 <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"
                                                  ZoomMode="None"

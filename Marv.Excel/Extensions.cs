@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Office.Interop.Excel;
 
-namespace Marv_Excel
+namespace Marv.ExcelNew
 {
     public static class Extensions
     {
@@ -13,7 +13,7 @@ namespace Marv_Excel
             {
                 worksheet = (Worksheet) workbook.Sheets[worksheetName];
             }
-            catch (Exception)
+            catch (Exception exp)
             {
                 worksheet = (Worksheet) workbook.Worksheets.Add();
                 worksheet.Name = worksheetName;
@@ -37,6 +37,22 @@ namespace Marv_Excel
             }
 
             return value.ToString();
+        }
+
+        public static void Write(this Worksheet worksheet, int row, int col, object value, bool isBold = false)
+        {
+            ((Range) worksheet.Cells[row, col]).Value2 = value;
+            ((Range) worksheet.Cells[row, col]).Font.Bold = isBold;
+        }
+
+        public static void WriteCol(this Worksheet worksheet, int col, object value, bool isBold = false)
+        {
+            ((Range) worksheet.Cells.Columns[col]).Value2 = value;
+        }
+
+        public static void WriteRow(this Worksheet worksheet, int row, object value, bool isBold = false)
+        {
+            ((Range) worksheet.Cells.Rows[row]).Value2 = value;
         }
 
         public static void WriteValue(this Worksheet worksheet, int row, int col, object text, bool isBold = false, bool isText = false)

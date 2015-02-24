@@ -13,13 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls.Map", "Marv.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls.Graph", "Marv.Controls.Graph\Marv.Controls.Graph.csproj", "{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Marv.Excel.csproj", "{17D61DC1-D1E3-4420-90B5-89803EDC5469}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixPoF", "FixPoF\FixPoF.csproj", "{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv", "Marv\Marv.csproj", "{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Input", "Marv.Input\Marv.Input.csproj", "{DFF71548-2FF5-4F28-9257-DA991E4E97D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Marv.Excel.csproj", "{25FA0630-C0C2-4125-A36E-CCA19B5541F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,19 +103,6 @@ Global
 		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|x64.ActiveCfg = Release|Any CPU
 		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|x86.ActiveCfg = Release|Any CPU
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|x64.ActiveCfg = Debug|x64
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|x64.Build.0 = Debug|x64
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|x86.ActiveCfg = Debug|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Debug|x86.Build.0 = Debug|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|Mixed Platforms.Build.0 = Release|x86
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|x64.ActiveCfg = Release|Any CPU
-		{17D61DC1-D1E3-4420-90B5-89803EDC5469}.Release|x86.ActiveCfg = Release|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -156,6 +143,18 @@ Global
 		{DFF71548-2FF5-4F28-9257-DA991E4E97D3}.Release|x64.ActiveCfg = Release|Any CPU
 		{DFF71548-2FF5-4F28-9257-DA991E4E97D3}.Release|x86.ActiveCfg = Release|x86
 		{DFF71548-2FF5-4F28-9257-DA991E4E97D3}.Release|x86.Build.0 = Release|x86
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{25FA0630-C0C2-4125-A36E-CCA19B5541F1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
