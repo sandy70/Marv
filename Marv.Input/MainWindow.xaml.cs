@@ -283,7 +283,7 @@ namespace Marv.Input
 
                 this.LineDataControl.ClearRows();
 
-                foreach (var sectionId in this.LineData.GetSectionIds())
+                foreach (var sectionId in this.LineData.SectionIds)
                 {
                     var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
 
@@ -425,7 +425,7 @@ namespace Marv.Input
                 {
                     this.LineDataControl.ClearRows();
 
-                    foreach (var sectionId in this.LineData.GetSectionIds())
+                    foreach (var sectionId in this.LineData.SectionIds)
                     {
                         this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
                     }
@@ -443,12 +443,10 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var sectionIds = this.LineData.GetSectionIds().ToList();
-
-            foreach (var sectionId in sectionIds)
+            foreach (var sectionId in this.LineData.SectionIds)
             {
-                var sectionEvidence = lineData.GetEvidence(sectionId);
-                lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
+                var sectionEvidence = this.lineData.GetEvidence(sectionId);
+                this.lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
             }
         }
 

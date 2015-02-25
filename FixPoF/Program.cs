@@ -13,7 +13,7 @@ namespace FixPoF
             var lineData = new FolderLineData(@"C:\Users\Vinod\Data\LongChang\Scenario08");
             var locationValues = new Dict<string, int, double>();
 
-            foreach (var sectionId in lineData.GetSectionIds())
+            foreach (var sectionId in lineData.SectionIds)
             {
                 var sectionBelief = lineData.GetBelief(sectionId);
 
