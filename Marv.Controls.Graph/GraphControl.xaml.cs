@@ -7,9 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
-using Marv.Controls.Graph;
 using Telerik.Windows.Diagrams.Core;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
 namespace Marv.Controls
@@ -368,14 +366,6 @@ namespace Marv.Controls
             this.Open(openFileDialog.FileName);
         }
 
-        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
-        {
-            if (this.EvidenceEntered != null)
-            {
-                this.EvidenceEntered(this, vertexEvidence);
-            }
-        }
-
         public void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
@@ -436,6 +426,7 @@ namespace Marv.Controls
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Evidence = null;
+            this.Run();
             this.RaiseEvidenceEntered();
         }
 
@@ -455,45 +446,24 @@ namespace Marv.Controls
             this.UpdateLayout();
         }
 
-        private void GraphControl_EvidenceEntered(object sender, VertexEvidence e)
-        {
-            this.Run();
-        }
-
         private void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.EvidenceEntered -= this.GraphControl_EvidenceEntered;
-            this.EvidenceEntered += this.GraphControl_EvidenceEntered;
-
             // All the buttons
-            this.AutoFitButton.Click -= this.AutoFitButton_Click;
-            this.AutoFitButton.Click += this.AutoFitButton_Click;
-
-            this.BackButton.Click -= this.BackButton_Click;
-            this.BackButton.Click += this.BackButton_Click;
-
             this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
-
-            this.ConnectorButton.Checked -= this.ConnectorButton_Checked;
-            this.ConnectorButton.Checked += this.ConnectorButton_Checked;
-
-            this.ConnectorButton.Unchecked -= this.ConnectorButton_Unchecked;
-            this.ConnectorButton.Unchecked += this.ConnectorButton_Unchecked;
-
-            this.ExpandButton.Click -= this.ExpandButton_Click;
-            this.ExpandButton.Click += this.ExpandButton_Click;
-
-            this.OpenButton.Click -= this.OpenButton_Click;
-            this.OpenButton.Click += this.OpenButton_Click;
-
-            this.SaveButton.Click -= this.SaveButton_Click;
-            this.SaveButton.Click += this.SaveButton_Click;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             this.Open();
+        }
+
+        private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
+        {
+            if (this.EvidenceEntered != null)
+            {
+                this.EvidenceEntered(this, vertexEvidence);
+            }
         }
 
         private void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)

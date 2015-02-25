@@ -38,19 +38,19 @@
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0">
 
-                <telerik:RadButton Name="BackButton"
+                <telerik:RadButton IsCancel="True"
                                    Visibility="{Binding ElementName=Root, Path=IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}"
-                                   IsCancel="True">
+                                   Click="BackButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Back.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="ExpandButton"
-                                   ToolTip="Expand network for more information.">
+                <telerik:RadButton ToolTip="Expand network for more information."
+                                   Click="ExpandButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="AutoFitButton"
-                                   ToolTip="Fit network to window.">
+                <telerik:RadButton ToolTip="Fit network to window."
+                                   Click="AutoFitButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/AutoFit.png" />
                 </telerik:RadButton>
 
@@ -63,24 +63,24 @@
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0"
                      Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
-                <telerik:RadButton Name="OpenButton"
-                                   ToolTip="Opens a preexisting network.">
+                <telerik:RadButton ToolTip="Opens a preexisting network."
+                                   Click="OpenButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="SaveButton"
-                                   ToolTip="Saves the current network.">
+                <telerik:RadButton ToolTip="Saves the current network."
+                                   Click="SaveButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Save.png" />
                 </telerik:RadButton>
 
-                <telerik:RadButton Name="SaveEvidenceButton"
-                                   ToolTip="Save the currently displayed network evidence."
+                <telerik:RadButton ToolTip="Save the currently displayed network evidence."
                                    Click="SaveEvidenceButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/SaveEvidence.png" />
                 </telerik:RadButton>
 
-                <telerik:RadToggleButton Name="ConnectorButton"
-                                         ToolTip="Edit connections tool.">
+                <telerik:RadToggleButton ToolTip="Edit connections tool."
+                                         Checked="ConnectorButton_Checked"
+                                         Unchecked="ConnectorButton_Unchecked">
                     <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
                 </telerik:RadToggleButton>
 
@@ -90,7 +90,8 @@
                 </telerik:RadToggleButton>
 
                 <telerik:RadButton Name="ClearEvidenceButton"
-                                   ToolTip="Clears the evidence in the network.">
+                                   ToolTip="Clears the evidence in the network."
+                                   Click="ClearEvidenceButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
 
@@ -103,11 +104,11 @@
                            Text="Group"
                            FontWeight="Bold"
                            VerticalAlignment="Center"
-                           Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"/>
-                
+                           Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
+
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
-                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"/>
+                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
             </ToolBar>
         </ToolBarTray>
 
