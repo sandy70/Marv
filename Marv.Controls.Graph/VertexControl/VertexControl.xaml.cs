@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Telerik.Windows.Controls;
 
 namespace Marv.Controls.Graph
 {
@@ -109,9 +110,6 @@ namespace Marv.Controls.Graph
         public VertexControl()
         {
             InitializeComponent();
-
-            this.Loaded -= VertexControl_Loaded;
-            this.Loaded += VertexControl_Loaded;
         }
 
         private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -176,30 +174,6 @@ namespace Marv.Controls.Graph
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 
-        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Vertex.Evidence = null;
-            this.RaiseEvidenceEntered();
-        }
-
-        private void VertexControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.ClearEvidenceButton.Click -= ClearEvidenceButton_Click;
-            this.ClearEvidenceButton.Click += ClearEvidenceButton_Click;
-
-            this.EvidenceStringTextBox.KeyUp -= EvidenceStringTextBox_KeyUp;
-            this.EvidenceStringTextBox.KeyUp += EvidenceStringTextBox_KeyUp;
-
-            this.UniformEvidenceButton.Click -= UniformEvidenceButton_Click;
-            this.UniformEvidenceButton.Click += UniformEvidenceButton_Click;
-        }
-
-        public event EventHandler<Command<VertexControl>> CommandExecuted;
-
-        public event EventHandler<VertexEvidence> EvidenceEntered;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void SliderProgressBar_ValueEntered(object sender, double e)
         {
             if (Math.Abs(e - 100) < Common.Utils.Epsilon)
@@ -212,5 +186,26 @@ namespace Marv.Controls.Graph
 
             this.RaiseEvidenceEntered();
         }
+
+        private void ToolbarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var command = (sender as RadButton).DataContext as Command<VertexControl>;
+
+            command.Excecute(this);
+
+            this.RaiseCommandExecuted(command);
+        }
+
+        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Vertex.Evidence = null;
+            this.RaiseEvidenceEntered();
+        }
+
+        public event EventHandler<Command<VertexControl>> CommandExecuted;
+
+        public event EventHandler<VertexEvidence> EvidenceEntered;
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

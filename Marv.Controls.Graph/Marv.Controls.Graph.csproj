@@ -157,7 +157,6 @@
     <Compile Include="VertexControl\VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VertexControl\ToolbarButtonClickBehavior.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

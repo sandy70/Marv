@@ -127,7 +127,8 @@
                                FontWeight="Bold"
                                Foreground="Black"
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                               Margin="{Binding Source={StaticResource MarginSmallest}}" />
+                               Margin="{Binding Source={StaticResource MarginSmallest}}" 
+                               Click="UniformEvidenceButton_Click"/>
 
             <telerik:RadButton Name="ClearEvidenceButton"
                                Grid.Column="1"
@@ -136,7 +137,8 @@
                                FontWeight="Bold"
                                Foreground="Black"
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                               Margin="{Binding Source={StaticResource MarginSmallest}}" />
+                               Margin="{Binding Source={StaticResource MarginSmallest}}"
+                               Click="ClearEvidenceButton_Click"/>
         </Grid>
 
         <TextBox Name="EvidenceStringTextBox"
@@ -146,7 +148,8 @@
                  Margin="{Binding Source={StaticResource MarginSmallest}}"
                  Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
-                 MaxWidth="200" />
+                 MaxWidth="200"
+                 KeyUp="EvidenceStringTextBox_KeyUp"/>
     </Grid>
 
     <!-- Units -->
@@ -194,12 +197,9 @@
                 <telerik:RadButton Background="{StaticResource BackgroundDark}"
                                    Height="32" Width="32"
                                    Margin="{Binding Source={StaticResource MarginSmallest}}"
-                                   Padding="0">
+                                   Padding="0"
+                                   Click="ToolbarButton_Click">
                     <Image Source="{Binding ImageSource}" />
-
-                    <i:Interaction.Behaviors>
-                        <local:ToolbarButtonClickBehavior />
-                    </i:Interaction.Behaviors>
                 </telerik:RadButton>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
