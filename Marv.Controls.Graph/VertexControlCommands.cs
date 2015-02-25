@@ -1,6 +1,6 @@
 ﻿using Marv.Common;
 
-namespace Marv.Controls.Graph
+namespace Marv.Controls
 {
     public static class VertexControlCommands
     {

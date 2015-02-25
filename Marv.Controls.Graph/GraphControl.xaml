@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="Marv.Controls.GraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:local="clr-namespace:Marv.Controls.Graph"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -97,7 +96,8 @@
                 </telerik:RadButton>
 
                 <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
-                                         ToolTip="Runs the evidence into the network.">
+                                         ToolTip="Runs the evidence into the network."
+                                         Checked="AutoRunButton_Checked">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadToggleButton>
 

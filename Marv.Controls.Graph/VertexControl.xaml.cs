@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Controls.Graph;
 using Telerik.Windows.Controls;
 
 namespace Marv.Controls

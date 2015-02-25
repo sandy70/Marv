@@ -53,4 +53,4 @@ using System.Windows.Markup;
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: XmlnsDefinition("http://dnvgl.com/marv", "Marv.Controls.Graph")]
+[assembly: XmlnsDefinition("http://dnvgl.com/marv", "Marv.Controls")]
