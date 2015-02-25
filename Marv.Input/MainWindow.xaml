@@ -4,7 +4,6 @@
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Marv.Controls;assembly=Marv.Controls.Graph"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized">
@@ -99,7 +98,7 @@
                                 <RowDefinition Height="32" />
                             </Grid.RowDefinitions>
 
-                            <controls:GraphControl Name="GraphControl"
+                            <marv:GraphControl Name="GraphControl"
                                                        Grid.Row="0"
                                                        Background="WhiteSmoke"
                                                        Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
@@ -143,7 +142,7 @@
                             </telerik:RadComboBox>
 
                             <!-- Vertex Control -->
-                            <controls:VertexControl Name="VertexControl"
+                            <marv:VertexControl Name="VertexControl"
                                                 Grid.Row="1"
                                                 IsEditable="True"
                                                 IsEvidenceVisible="True"

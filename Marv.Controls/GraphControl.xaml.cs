@@ -221,7 +221,7 @@ namespace Marv.Controls
         public GraphControl()
         {
             InitializeComponent();
-            InitializeAutoSave();
+            this.InitializeAutoSave();
         }
 
         private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)

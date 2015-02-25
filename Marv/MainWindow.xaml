@@ -173,7 +173,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <controls:GraphControl Name="GraphControl"
+                            <marv:GraphControl Name="GraphControl"
                                                        Grid.Row="0"
                                                        Background="WhiteSmoke"
                                                        Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
