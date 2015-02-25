@@ -314,6 +314,7 @@ namespace Marv.Input
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
+                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence, this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key));
                 this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
             }
         }
