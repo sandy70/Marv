@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common
 {
     public static partial class Extensions
     {
@@ -62,7 +61,7 @@ namespace Marv
 
             if (node.Type != VertexType.Interval)
             {
-                var message = String.Format("Mean is undefined for non-interval type node [{0}].", node);
+                var message = System.String.Format("Mean is undefined for non-interval type node [{0}].", node);
                 throw new InvalidValueException(message);
             }
         }
@@ -71,7 +70,7 @@ namespace Marv
         {
             if (node.States.Count != value.Length)
             {
-                var message = String.Format("The length of value array [{0}] should be = number of states in this node [{1}:{2}].", value.Length, node, node.States.Count);
+                var message = System.String.Format("The length of value array [{0}] should be = number of states in this node [{1}:{2}].", value.Length, node, node.States.Count);
                 throw new InvalidValueException(message);
             }
         }

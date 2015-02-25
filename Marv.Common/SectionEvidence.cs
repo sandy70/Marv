@@ -1,6 +1,4 @@
-﻿using Marv.Common;
-
-namespace Marv
+﻿namespace Marv.Common
 {
     /// <summary>
     ///     This class exists so that we can interface with MATLAB. Do not try to replace with base class.

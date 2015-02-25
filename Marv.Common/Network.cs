@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using Marv.Common;
-using Marv.Common.Graph;
 using Smile;
 
-namespace Marv
+namespace Marv.Common
 {
     public class Network : Smile.Network, INotifyPropertyChanged
     {

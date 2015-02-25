@@ -51,6 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\XAML.MapControl.2.4.8\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
+    <Reference Include="Marv.Smile.x64">
+      <HintPath>..\packages\Smile\x64\Marv.Smile.x64.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -86,6 +89,15 @@
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
     <Compile Include="EventHandler.cs" />
+    <Compile Include="Extensions.NetworkNode.cs" />
+    <Compile Include="Extensions.State.cs" />
+    <Compile Include="FolderLineData.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Graph.IBidirectionalGraph.cs" />
+    <Compile Include="Graph.IObservableGraphSource.cs" />
+    <Compile Include="ILineData.cs" />
+    <Compile Include="InvalidEvidenceException.cs" />
+    <Compile Include="LineData.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="LocationCollection.cs" />
     <Compile Include="LocationRect.cs" />
@@ -94,6 +106,10 @@
     <Compile Include="Interpolators\IInterpolator.cs" />
     <Compile Include="Interpolators\LinearInterpolator.cs" />
     <Compile Include="LineSegment.cs" />
+    <Compile Include="Network.cs" />
+    <Compile Include="NetworkNode.cs" />
+    <Compile Include="SectionBelief.cs" />
+    <Compile Include="SectionEvidence.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Types\Dict\Dict.cs" />
     <Compile Include="Types\Dict\Dict.IDictionary.cs" />
@@ -121,7 +137,10 @@
     <Compile Include="Distributions\UniformDistribution.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Vertex.cs" />
+    <Compile Include="VertexEvidence.cs" />
+    <Compile Include="VertexEvidenceType.cs" />
     <Compile Include="VertexType.cs" />
+    <Compile Include="VertexValueComputer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\Warning.png">

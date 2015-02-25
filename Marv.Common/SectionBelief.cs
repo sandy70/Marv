@@ -1,6 +1,4 @@
-﻿using Marv.Common;
-
-namespace Marv
+﻿namespace Marv.Common
 {
     public class SectionBelief : Dict<int, string, double[]>
     {

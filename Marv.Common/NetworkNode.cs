@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common
 {
     public class NetworkNode : IKeyed
     {
@@ -186,7 +185,7 @@ namespace Marv
 
         private ObservableCollection<string> ParseGroups()
         {
-            var groups = new ObservableCollection<string>();
+            var newGroups = new ObservableCollection<string>();
 
             if (this.Properties.ContainsKey("groups"))
             {
@@ -198,19 +197,19 @@ namespace Marv
                 },
                     StringSplitOptions.RemoveEmptyEntries);
 
-                groups = new ObservableCollection<string>(parts);
+                newGroups = new ObservableCollection<string>(parts);
 
-                if (!groups.Contains("all"))
+                if (!newGroups.Contains("all"))
                 {
-                    groups.Add("all");
+                    newGroups.Add("all");
                 }
             }
             else
             {
-                groups.Add("all");
+                newGroups.Add("all");
             }
 
-            return groups;
+            return newGroups;
         }
 
         private Sequence<double> ParseStateRange(int stateIndex)

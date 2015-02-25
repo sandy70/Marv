@@ -4,9 +4,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common
 {
     public class FolderLineData : NotifyPropertyChanged, ILineData
     {

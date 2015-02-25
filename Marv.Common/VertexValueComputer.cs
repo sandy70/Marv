@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common
 {
     public interface IVertexValueComputer
     {

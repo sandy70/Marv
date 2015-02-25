@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Marv
+namespace Marv.Common
 {
     public interface ILineData
     {

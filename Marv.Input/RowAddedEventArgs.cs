@@ -1,4 +1,6 @@
-﻿namespace Marv.Input
+﻿using Marv.Common;
+
+namespace Marv.Input
 {
     public class RowAddedEventArgs
     {

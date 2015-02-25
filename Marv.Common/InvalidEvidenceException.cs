@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Marv.Common.Graph
+namespace Marv.Common
 {
     [Serializable]
     public class InvalidEvidenceException : Exception

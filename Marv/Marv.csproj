@@ -272,10 +272,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marv.Common.Graph\Marv.Common.Graph.csproj">
-      <Project>{5ec15f8c-655c-4a46-a4cf-7af1eac94376}</Project>
-      <Name>Marv.Common.Graph</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>

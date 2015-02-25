@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Marv.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Marv
+namespace Marv.Common
 {
     public class VertexEvidence
     {

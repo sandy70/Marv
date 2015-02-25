@@ -7,6 +7,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:marv="clr-namespace:Marv;assembly=Marv.Common.Graph"
              xmlns:graphControl="clr-namespace:Marv.Controls"
+             xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
              mc:Ignorable="d"
              d:DesignHeight="128" d:DesignWidth="600"
              Name="Root">
@@ -168,7 +169,7 @@
 
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="marv:Vertex">
+                            <DataTemplate DataType="common:Vertex">
                                 <graphControl:VertexControl Background="#DDDDDD"
                                                      Effect="{StaticResource DropShadow}"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"

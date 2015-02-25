@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Marv.Common;
 using QuickGraph;
 
-namespace Marv
+namespace Marv.Common
 {
     public partial class Graph : IBidirectionalGraph<Vertex, Edge>
     {

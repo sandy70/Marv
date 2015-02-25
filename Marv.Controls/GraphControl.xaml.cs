@@ -21,7 +21,7 @@ namespace Marv.Controls
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Marv.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
+            DependencyProperty.Register("Graph", typeof (Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -53,7 +53,7 @@ namespace Marv.Controls
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
-        private Marv.Graph displayGraph;
+        private Graph displayGraph;
         private string displayVertexKey;
         private bool isDefaultGroupVisible;
         private string selectedGroup;
@@ -72,7 +72,7 @@ namespace Marv.Controls
             set { this.SetValue(ConnectionColorProperty, value); }
         }
 
-        public Marv.Graph DisplayGraph
+        public Graph DisplayGraph
         {
             get { return this.displayGraph; }
 
@@ -104,9 +104,9 @@ namespace Marv.Controls
             }
         }
 
-        public Marv.Graph Graph
+        public Graph Graph
         {
-            get { return (Marv.Graph) this.GetValue(GraphProperty); }
+            get { return (Graph) this.GetValue(GraphProperty); }
 
             set { this.SetValue(GraphProperty, value); }
         }
@@ -233,9 +233,9 @@ namespace Marv.Controls
                 return;
             }
 
-            var oldGraph = e.OldValue as Marv.Graph;
+            var oldGraph = e.OldValue as Graph;
 
-            control.RaiseGraphChanged(e.NewValue as Marv.Graph, oldGraph);
+            control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
 
             if (control.Graph.Vertices.Count > 0)
             {
@@ -376,7 +376,7 @@ namespace Marv.Controls
 
         private void Open(string fileName)
         {
-            this.Graph = Marv.Graph.Read(fileName);
+            this.Graph = Graph.Read(fileName);
             this.Graph.Run();
         }
 
@@ -410,7 +410,7 @@ namespace Marv.Controls
             }
         }
 
-        private void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
+        private void RaiseGraphChanged(Graph newGraph, Graph oldGraph)
         {
             if (this.GraphChanged != null)
             {
@@ -540,7 +540,7 @@ namespace Marv.Controls
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
 
-        public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
+        public event EventHandler<Graph, Graph> GraphChanged;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
