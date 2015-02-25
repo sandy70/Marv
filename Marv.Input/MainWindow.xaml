@@ -2,10 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:local="clr-namespace:Marv.Input"
         xmlns:marv="http://dnvgl.com/marv"
-        xmlns:surface="http://schemas.microsoft.com/surface/2008"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:graphControl="clr-namespace:Marv.Controls.GraphControl;assembly=Marv.Controls.Graph"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized">
@@ -100,7 +98,7 @@
                                 <RowDefinition Height="32" />
                             </Grid.RowDefinitions>
 
-                            <graphControl:GraphControl Name="GraphControl"
+                            <marv:GraphControl Name="GraphControl"
                                                        Grid.Row="0"
                                                        Background="WhiteSmoke"
                                                        Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />

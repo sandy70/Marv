@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Common.Graph", "Marv.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls.Map", "Marv.Controls.Map\Marv.Controls.Map.csproj", "{7467493D-C8DE-47A4-93C6-8F84762360CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Controls.Graph", "Marv.Controls.Graph\Marv.Controls.Graph.csproj", "{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixPoF", "FixPoF\FixPoF.csproj", "{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv", "Marv\Marv.csproj", "{35CE9790-CDD1-4EE1-AA58-94A5F9EBD0B3}"
@@ -89,20 +87,6 @@ Global
 		{7467493D-C8DE-47A4-93C6-8F84762360CA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7467493D-C8DE-47A4-93C6-8F84762360CA}.Release|x64.ActiveCfg = Release|Any CPU
 		{7467493D-C8DE-47A4-93C6-8F84762360CA}.Release|x86.ActiveCfg = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|x64.Build.0 = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Debug|x86.Build.0 = Debug|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|x64.ActiveCfg = Release|Any CPU
-		{FFD3A3AF-D0AD-4F26-9D60-14839CC62616}.Release|x86.ActiveCfg = Release|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{776BFFC2-7FBB-4F74-9BFE-2A80A2B63D89}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

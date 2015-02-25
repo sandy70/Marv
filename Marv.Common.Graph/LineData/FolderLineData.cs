@@ -97,6 +97,21 @@ namespace Marv
             return lineData;
         }
 
+        public void ChangeSectionId(string oldId, string newId)
+        {
+            this.SectionIds.Replace(oldId, newId);
+
+            var oldDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, oldId + ".marv-sectionbelief");
+            var newDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, newId + ".marv-sectionbelief");
+
+            File.Move(oldDirName, newDirName);
+
+            oldDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, oldId + ".marv-sectionevidence");
+            newDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, newId + ".marv-sectionevidence");
+
+            File.Move(oldDirName, newDirName);
+        }
+
         public Dict<int, string, double[]> GetBelief(string sectionId)
         {
             Console.WriteLine("Getting section [{0}] belief", sectionId);
@@ -258,21 +273,6 @@ namespace Marv
 
             File.Delete(beliefFilePath);
             File.Delete(evidenceFilePath);
-        }
-
-        public void ReplaceSectionId(string oldId, string newId)
-        {
-            this.SectionIds.Replace(oldId, newId);
-
-            var oldDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, oldId + ".marv-sectionbelief");
-            var newDirName = Path.Combine(this.rootDirPathPath, BeliefsDirName, newId + ".marv-sectionbelief");
-
-            File.Move(oldDirName, newDirName);
-
-            oldDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, oldId + ".marv-sectionevidence");
-            newDirName = Path.Combine(this.rootDirPathPath, EvidencesDirName, newId + ".marv-sectionevidence");
-
-            File.Move(oldDirName, newDirName);
         }
 
         public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)

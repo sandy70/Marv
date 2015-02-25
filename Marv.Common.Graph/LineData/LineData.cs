@@ -9,9 +9,10 @@ namespace Marv
 {
     public class LineData : NotifyPropertyChanged, ILineData
     {
-        public const int DefaultYear = 2010;
         public const string FileDescription = "MARV Pipeline Data";
         public const string FileExtension = "marv-linedata";
+
+        private const int DefaultYear = 2010;
 
         private int endYear = DefaultYear;
         private Guid guid;
@@ -81,7 +82,7 @@ namespace Marv
 
         public ObservableCollection<string> SectionIds
         {
-            get { return new ObservableCollection<string>(this.GetSectionIds()); }
+            get { return this.sectionEvidences.Keys; }
         }
 
         public int StartYear
@@ -111,6 +112,12 @@ namespace Marv
             return Utils.ReadJson<LineData>(filePath);
         }
 
+        public void ChangeSectionId(string oldId, string newId)
+        {
+            this.SectionBeliefs.ChangeKey(oldId, newId);
+            this.SectionEvidences.ChangeKey(oldId, newId);
+        }
+
         public Dict<int, string, double[]> GetBelief(string sectionId)
         {
             return this.SectionBeliefs[sectionId];
@@ -118,7 +125,7 @@ namespace Marv
 
         public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
         {
-            foreach (var sectionId in this.GetSectionIds())
+            foreach (var sectionId in (IEnumerable<string>) this.sectionEvidences.Keys)
             {
                 Console.WriteLine(sectionId);
             }
@@ -128,7 +135,7 @@ namespace Marv
 
         public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
-            foreach (var sectionId in this.GetSectionIds())
+            foreach (var sectionId in (IEnumerable<string>) this.sectionEvidences.Keys)
             {
                 Console.WriteLine(sectionId);
             }
@@ -146,21 +153,10 @@ namespace Marv
             return Task.Run(() => this.sectionEvidences[sectionId]);
         }
 
-        public IEnumerable<string> GetSectionIds()
-        {
-            return this.sectionEvidences.Keys;
-        }
-
         public void RemoveSection(string sectionId)
         {
             this.SectionBeliefs[sectionId] = null;
             this.SectionEvidences[sectionId] = null;
-        }
-
-        public void ReplaceSectionId(string oldId, string newId)
-        {
-            this.SectionBeliefs.ChangeKey(oldId, newId);
-            this.SectionEvidences.ChangeKey(oldId, newId);
         }
 
         public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)

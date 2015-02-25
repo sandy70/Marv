@@ -219,6 +219,11 @@ namespace Marv.Input
             return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
+        private object GetChartCategory(string sectionId, int year)
+        {
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
+        }
+
         private Dict<object, VertexEvidence> GetChartEvidence()
         {
             var vertexEvidences = new Dict<object, VertexEvidence>();
@@ -256,8 +261,7 @@ namespace Marv.Input
             }
             else
             {
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence, intervals);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
                 this.LineDataControl.SetSelectedCells(vertexEvidence);
             }
         }
@@ -279,7 +283,7 @@ namespace Marv.Input
 
                 this.LineDataControl.ClearRows();
 
-                foreach (var sectionId in this.LineData.GetSectionIds())
+                foreach (var sectionId in this.LineData.SectionIds)
                 {
                     var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
 
@@ -296,8 +300,8 @@ namespace Marv.Input
 
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
 
-                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
             }
         }
 
@@ -314,18 +318,18 @@ namespace Marv.Input
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
+                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
                 this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
             }
         }
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
             var vertexEvidences = this.GetChartEvidence();
 
             if (vertexEvidences == null || vertexEvidences.Count > 0)
             {
-                this.LineDataChart.SetUserEvidence(vertexEvidences, intervals);
+                this.LineDataChart.SetUserEvidence(vertexEvidences);
                 this.UpdateChartTitle();
             }
         }
@@ -421,7 +425,7 @@ namespace Marv.Input
                 {
                     this.LineDataControl.ClearRows();
 
-                    foreach (var sectionId in this.LineData.GetSectionIds())
+                    foreach (var sectionId in this.LineData.SectionIds)
                     {
                         this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
                     }
@@ -439,12 +443,10 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var sectionIds = this.LineData.GetSectionIds().ToList();
-
-            foreach (var sectionId in sectionIds)
+            foreach (var sectionId in this.LineData.SectionIds)
             {
-                var sectionEvidence = lineData.GetEvidence(sectionId);
-                lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
+                var sectionEvidence = this.lineData.GetEvidence(sectionId);
+                this.lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
             }
         }
 

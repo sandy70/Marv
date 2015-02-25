@@ -25,7 +25,7 @@ namespace Marv
 
             set
             {
-                if (value == null)
+                if (value as object == null)
                 {
                     this.Remove(key);
                 }
@@ -84,16 +84,16 @@ namespace Marv
 
     public class Dict<T2, T1, TValue> : Dict<T2, Dict<T1, TValue>>
     {
-        public Dict<T2, TValue> this[IEnumerable<T2> key2s, T1 key1]
+        public Dict<T2, TValue> this[IEnumerable<T2> key2List, T1 key1]
         {
             get
             {
-                if (key2s == null)
+                if (key2List == null)
                 {
-                    key2s = this.Keys;
+                    key2List = this.Keys;
                 }
 
-                return key2s.ToDict(key2 => key2, key2 => this[key2][key1]);
+                return key2List.ToDict(key2 => key2, key2 => this[key2][key1]);
             }
         }
     }
