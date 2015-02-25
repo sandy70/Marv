@@ -11,7 +11,11 @@
         <telerik:RadProgressBar Name="ProgressBar"
                                 Foreground="{Binding SliderForeground, ElementName=Root}"
                                 Minimum="0" Maximum="100"
-                                Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}" />
+                                Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}"
+                                MouseDoubleClick="ProgressBar_MouseDoubleClick"
+                                MouseDown="ProgressBar_MouseDown"
+                                MouseMove="ProgressBar_MouseMove"
+                                MouseUp="ProgressBar_MouseUp"/>
 
         <Viewbox IsHitTestVisible="False"
                  Margin="2"
