@@ -94,11 +94,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphControl\GraphControl.DiagramPart.cs" />
-    <Compile Include="GraphControl\GraphControl.xaml.cs">
+    <Compile Include="GraphControl.DiagramPart.cs" />
+    <Compile Include="GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GraphControl\VertexControlBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -143,7 +142,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="GraphControl\GraphControl.xaml">
+    <Page Include="GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

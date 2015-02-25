@@ -7,10 +7,12 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Controls.Graph;
 using Telerik.Windows.Diagrams.Core;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
-namespace Marv.Controls.GraphControl
+namespace Marv.Controls
 {
     public partial class GraphControl : INotifyPropertyChanged, INotifier
     {
@@ -120,8 +122,8 @@ namespace Marv.Controls.GraphControl
 
         public bool IsAdvancedToolbarVisible
         {
-            get { return (bool) GetValue(IsAdvancedToolbarVisibleProperty); }
-            set { SetValue(IsAdvancedToolbarVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsAdvancedToolbarVisibleProperty); }
+            set { this.SetValue(IsAdvancedToolbarVisibleProperty, value); }
         }
 
         public bool IsAutoLayoutEnabled
@@ -225,8 +227,8 @@ namespace Marv.Controls.GraphControl
 
             this.Loaded += this.GraphControl_Loaded;
 
-            this.Loaded -= GraphControl_Loaded_DiagramPart;
-            this.Loaded += GraphControl_Loaded_DiagramPart;
+            this.Loaded -= this.GraphControl_Loaded_DiagramPart;
+            this.Loaded += this.GraphControl_Loaded_DiagramPart;
         }
 
         private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -473,11 +475,11 @@ namespace Marv.Controls.GraphControl
             this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
             this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
 
-            this.ConnectorButton.Checked -= ConnectorButton_Checked;
-            this.ConnectorButton.Checked += ConnectorButton_Checked;
+            this.ConnectorButton.Checked -= this.ConnectorButton_Checked;
+            this.ConnectorButton.Checked += this.ConnectorButton_Checked;
 
-            this.ConnectorButton.Unchecked -= ConnectorButton_Unchecked;
-            this.ConnectorButton.Unchecked += ConnectorButton_Unchecked;
+            this.ConnectorButton.Unchecked -= this.ConnectorButton_Unchecked;
+            this.ConnectorButton.Unchecked += this.ConnectorButton_Unchecked;
 
             this.ExpandButton.Click -= this.ExpandButton_Click;
             this.ExpandButton.Click += this.ExpandButton_Click;
@@ -568,6 +570,35 @@ namespace Marv.Controls.GraphControl
             this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
 
             this.DisplayVertexKey = vertexKey;
+        }
+
+        private void VertexControl_CommandExecuted(object sender, Command<VertexControl> command)
+        {
+            this.Graph.SelectedVertex = (sender as VertexControl).Vertex;
+
+            if (command == VertexControlCommands.Expand)
+            {
+                this.UpdateLayout();
+            }
+            else if (command == VertexControlCommands.SubGraph)
+            {
+                this.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
+            }
+        }
+
+        private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
+        {
+            this.RaiseEvidenceEntered(e);
+        }
+
+        private void VertexControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as VertexControl).IsToolbarVisible = true;
+        }
+
+        private void VertexControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as VertexControl).IsToolbarVisible = false;
         }
 
         private void WriteEvidences(string filePath)

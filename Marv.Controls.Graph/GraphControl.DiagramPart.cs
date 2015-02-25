@@ -9,7 +9,7 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv.Controls.GraphControl
+namespace Marv.Controls
 {
     public partial class GraphControl
     {
@@ -133,23 +133,23 @@ namespace Marv.Controls.GraphControl
 
         private void GraphControl_Loaded_DiagramPart(object sender, RoutedEventArgs e)
         {
-            this.DiagramPart.CommandExecuted -= DiagramPart_CommandExecuted;
-            this.DiagramPart.CommandExecuted += DiagramPart_CommandExecuted;
+            this.DiagramPart.CommandExecuted -= this.DiagramPart_CommandExecuted;
+            this.DiagramPart.CommandExecuted += this.DiagramPart_CommandExecuted;
 
-            this.DiagramPart.ConnectionManipulationCompleted -= DiagramPart_ConnectionManipulationCompleted;
-            this.DiagramPart.ConnectionManipulationCompleted += DiagramPart_ConnectionManipulationCompleted;
+            this.DiagramPart.ConnectionManipulationCompleted -= this.DiagramPart_ConnectionManipulationCompleted;
+            this.DiagramPart.ConnectionManipulationCompleted += this.DiagramPart_ConnectionManipulationCompleted;
 
-            this.DiagramPart.ConnectionManipulationStarted -= DiagramPart_ConnectionManipulationStarted;
-            this.DiagramPart.ConnectionManipulationStarted += DiagramPart_ConnectionManipulationStarted;
+            this.DiagramPart.ConnectionManipulationStarted -= this.DiagramPart_ConnectionManipulationStarted;
+            this.DiagramPart.ConnectionManipulationStarted += this.DiagramPart_ConnectionManipulationStarted;
 
             this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
             this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
 
-            this.DiagramPart.SelectionChanged -= DiagramPart_SelectionChanged;
-            this.DiagramPart.SelectionChanged += DiagramPart_SelectionChanged;
+            this.DiagramPart.SelectionChanged -= this.DiagramPart_SelectionChanged;
+            this.DiagramPart.SelectionChanged += this.DiagramPart_SelectionChanged;
 
-            this.DiagramPart.ShapeClicked -= DiagramPart_ShapeClicked;
-            this.DiagramPart.ShapeClicked += DiagramPart_ShapeClicked;
+            this.DiagramPart.ShapeClicked -= this.DiagramPart_ShapeClicked;
+            this.DiagramPart.ShapeClicked += this.DiagramPart_ShapeClicked;
         }
     }
 }
