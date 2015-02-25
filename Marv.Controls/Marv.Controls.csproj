@@ -120,7 +120,6 @@
     <Compile Include="Converters\LocationConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
@@ -134,7 +133,6 @@
     <Compile Include="GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IDoubleToBrushMap.cs" />
     <Compile Include="LocationCollectionViewModel.cs" />
     <Compile Include="LocationEllipse.cs" />
     <Compile Include="MapTransform.cs" />
