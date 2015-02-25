@@ -30,10 +30,10 @@ namespace Marv.Controls
             DependencyProperty.Register("IsAdvancedToolbarVisible", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
-            DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoLayoutEnabled));
+            DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsAutoRunEnabledProperty =
-            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false, ChangedAutoRunEnabled));
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
@@ -221,33 +221,7 @@ namespace Marv.Controls
         public GraphControl()
         {
             InitializeComponent();
-            this.InitializeAutoSave();
-
-            this.Loaded += this.GraphControl_Loaded;
-
-            this.Loaded -= this.GraphControl_Loaded_DiagramPart;
-            this.Loaded += this.GraphControl_Loaded_DiagramPart;
-        }
-
-        private static void ChangedAutoLayoutEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as GraphControl;
-
-            control.UpdateLayout(isAsync: false, isAutoFitDone: true);
-
-            if (control.IsAutoLayoutEnabled)
-            {
-                control.DisableVertexDragging();
-            }
-            else
-            {
-                control.EnableVertexDragging();
-            }
-        }
-
-        private static void ChangedAutoRunEnabled(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as GraphControl).Run();
+            InitializeAutoSave();
         }
 
         private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -271,14 +245,65 @@ namespace Marv.Controls
             control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
-        public void DisableConnectorEditing()
+        public void RaiseNotificationClosed(Notification notification)
         {
-            this.IsVerticesEnabled = true;
-            this.DiagramPart.IsConnectorsManipulationEnabled = false;
-            this.DiagramPart.IsManipulationAdornerVisible = false;
+            if (this.NotificationClosed != null)
+            {
+                this.NotificationClosed(this, notification);
+            }
         }
 
-        public void DisableVertexDragging()
+        private void AutoFitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Diagram.AutoFit(new Thickness(10));
+        }
+
+        private void AutoLayoutButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.DisableVertexDragging();
+            this.UpdateLayout();
+        }
+
+        private void AutoLayoutButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.EnableVertexDragging();
+        }
+
+        private void AutoRunButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.Run();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.SelectedGroup = this.Graph.DefaultGroup;
+        }
+
+        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Evidence = null;
+            this.Run();
+            this.RaiseEvidenceEntered();
+        }
+
+        private void ConnectorButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.EnableConnectorEditing();
+        }
+
+        private void ConnectorButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.DisableConnectorEditing();
+        }
+
+        private void DisableConnectorEditing()
+        {
+            this.IsVerticesEnabled = true;
+            this.Diagram.IsConnectorsManipulationEnabled = false;
+            this.Diagram.IsManipulationAdornerVisible = false;
+        }
+
+        private void DisableVertexDragging()
         {
             if (this.Graph == null)
             {
@@ -291,14 +316,14 @@ namespace Marv.Controls
             }
         }
 
-        public void EnableConnectorEditing()
+        private void EnableConnectorEditing()
         {
             this.IsVerticesEnabled = false;
-            this.DiagramPart.IsConnectorsManipulationEnabled = true;
-            this.DiagramPart.IsManipulationAdornerVisible = true;
+            this.Diagram.IsConnectorsManipulationEnabled = true;
+            this.Diagram.IsManipulationAdornerVisible = true;
         }
 
-        public void EnableVertexDragging()
+        private void EnableVertexDragging()
         {
             foreach (var vertex in this.Graph.Vertices)
             {
@@ -306,7 +331,13 @@ namespace Marv.Controls
             }
         }
 
-        public void InitializeAutoSave()
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
+            this.UpdateLayout();
+        }
+
+        private void InitializeAutoSave()
         {
             var timer = new DispatcherTimer
             {
@@ -343,13 +374,13 @@ namespace Marv.Controls
             timer.Start();
         }
 
-        public void Open(string fileName)
+        private void Open(string fileName)
         {
             this.Graph = Marv.Graph.Read(fileName);
             this.Graph.Run();
         }
 
-        public void Open()
+        private void Open()
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -364,93 +395,6 @@ namespace Marv.Controls
             }
 
             this.Open(openFileDialog.FileName);
-        }
-
-        public void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
-        public void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
-        {
-            if (this.IsAutoLayoutEnabled)
-            {
-                if (isAutoFitDone)
-                {
-                    this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
-                    this.DiagramPart.DiagramLayoutComplete += this.DiagramPart_DiagramLayoutComplete;
-                }
-
-                var sugiyamaSettings = new SugiyamaSettings
-                {
-                    AnimateTransitions = true,
-                    Orientation = Orientation.Vertical,
-                    VerticalDistance = 128,
-                    HorizontalDistance = 128,
-                    ComponentMargin = new Size(128, 128)
-                };
-
-                if (isAsync)
-                {
-                    this.DiagramPart.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
-                }
-                else
-                {
-                    this.DiagramPart.Layout(LayoutType.Sugiyama, sugiyamaSettings);
-                }
-
-                this.DiagramPart.InvalidateVisual();
-            }
-            else
-            {
-                if (isAutoFitDone)
-                {
-                    this.DiagramPart.AutoFitAsync(new Thickness(10));
-                }
-            }
-        }
-
-        private void AutoFitButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.DiagramPart.AutoFit(new Thickness(10));
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.SelectedGroup = this.Graph.DefaultGroup;
-        }
-
-        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Graph.Evidence = null;
-            this.Run();
-            this.RaiseEvidenceEntered();
-        }
-
-        private void ConnectorButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.EnableConnectorEditing();
-        }
-
-        private void ConnectorButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            this.DisableConnectorEditing();
-        }
-
-        private void ExpandButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
-            this.UpdateLayout();
-        }
-
-        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // All the buttons
-            this.ClearEvidenceButton.Click -= this.ClearEvidenceButton_Click;
-            this.ClearEvidenceButton.Click += this.ClearEvidenceButton_Click;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -540,6 +484,45 @@ namespace Marv.Controls
             this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
 
             this.DisplayVertexKey = vertexKey;
+        }
+
+        private void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
+        {
+            if (this.IsAutoLayoutEnabled)
+            {
+                if (isAutoFitDone)
+                {
+                    this.Diagram.DiagramLayoutComplete -= this.Diagram_DiagramLayoutComplete;
+                    this.Diagram.DiagramLayoutComplete += this.Diagram_DiagramLayoutComplete;
+                }
+
+                var sugiyamaSettings = new SugiyamaSettings
+                {
+                    AnimateTransitions = true,
+                    Orientation = Orientation.Vertical,
+                    VerticalDistance = 128,
+                    HorizontalDistance = 128,
+                    ComponentMargin = new Size(128, 128)
+                };
+
+                if (isAsync)
+                {
+                    this.Diagram.LayoutAsync(LayoutType.Sugiyama, sugiyamaSettings);
+                }
+                else
+                {
+                    this.Diagram.Layout(LayoutType.Sugiyama, sugiyamaSettings);
+                }
+
+                this.Diagram.InvalidateVisual();
+            }
+            else
+            {
+                if (isAutoFitDone)
+                {
+                    this.Diagram.AutoFitAsync(new Thickness(10));
+                }
+            }
         }
 
         private void WriteEvidences(string filePath)

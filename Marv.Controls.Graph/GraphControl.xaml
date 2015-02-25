@@ -55,7 +55,9 @@
                 </telerik:RadButton>
 
                 <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
-                                         ToolTip="Layout Automatically">
+                                         ToolTip="Layout Automatically"
+                                         Checked="AutoLayoutButton_Checked"
+                                         Unchecked="AutoLayoutButton_Unchecked">
                     <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
                 </telerik:RadToggleButton>
             </ToolBar>
@@ -89,8 +91,7 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
                 </telerik:RadToggleButton>
 
-                <telerik:RadButton Name="ClearEvidenceButton"
-                                   ToolTip="Clears the evidence in the network."
+                <telerik:RadButton ToolTip="Clears the evidence in the network."
                                    Click="ClearEvidenceButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
@@ -112,7 +113,7 @@
             </ToolBar>
         </ToolBarTray>
 
-        <telerik:RadDiagram Name="DiagramPart"
+        <telerik:RadDiagram Name="Diagram"
                             Grid.Row="1"
                             ActiveTool="PanTool"
                             AllowDelete="True"
@@ -127,7 +128,14 @@
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
                             SelectionMode="Single"
-                            SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}">
+                            SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                            CommandExecuted="Diagram_CommandExecuted"
+                            ConnectionManipulationCompleted="Diagram_ConnectionManipulationCompleted"
+                            ConnectionManipulationStarted="Diagram_ConnectionManipulationStarted"
+                            DiagramLayoutComplete="Diagram_DiagramLayoutComplete"
+                            GraphSourceChanged="Diagram_GraphSourceChanged"
+                            SelectionChanged="Diagram_SelectionChanged"
+                            ShapeClicked="Diagram_ShapeClicked">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
@@ -184,7 +192,7 @@
         </telerik:RadDiagram>
 
         <telerik:RadDiagramNavigationPane Grid.Row="1"
-                                          Diagram="{Binding ElementName=DiagramPart}"
+                                          Diagram="{Binding ElementName=Diagram}"
                                           Margin="10"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"

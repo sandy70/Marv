@@ -16,26 +16,26 @@ namespace Marv.Controls
         private Vertex newVertex;
         private Vertex oldVertex;
 
-        private void DiagramPart_CommandExecuted(object sender, CommandRoutedEventArgs e)
+        private void Diagram_CommandExecuted(object sender, CommandRoutedEventArgs e)
         {
             if (e.Command.Name == "Add Connection")
             {
-                this.DiagramPart.Undo();
+                this.Diagram.Undo();
             }
             else if ((e.Command.Name == "Change Target" || e.Command.Name == "Change Source"))
             {
                 if ((this.oldVertex == null || this.newVertex == null))
                 {
-                    this.DiagramPart.Undo();
+                    this.Diagram.Undo();
                 }
                 else if (this.oldVertex.Key != this.newVertex.Key)
                 {
-                    this.DiagramPart.Undo();
+                    this.Diagram.Undo();
                 }
             }
         }
 
-        private void DiagramPart_ConnectionManipulationCompleted(object sender, ManipulationRoutedEventArgs e)
+        private void Diagram_ConnectionManipulationCompleted(object sender, ManipulationRoutedEventArgs e)
         {
             if (e.Shape == null)
             {
@@ -47,7 +47,7 @@ namespace Marv.Controls
             }
         }
 
-        private void DiagramPart_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
+        private void Diagram_ConnectionManipulationStarted(object sender, ManipulationRoutedEventArgs e)
         {
             if (e.Shape != null)
             {
@@ -59,13 +59,13 @@ namespace Marv.Controls
             }
         }
 
-        private void DiagramPart_DiagramLayoutComplete(object sender, RoutedEventArgs e)
+        private void Diagram_DiagramLayoutComplete(object sender, RoutedEventArgs e)
         {
-            this.DiagramPart.DiagramLayoutComplete -= this.DiagramPart_DiagramLayoutComplete;
-            this.DiagramPart.AutoFitAsync(new Thickness(10));
+            this.Diagram.DiagramLayoutComplete -= this.Diagram_DiagramLayoutComplete;
+            this.Diagram.AutoFitAsync(new Thickness(10));
         }
 
-        private void DiagramPart_GraphSourceChanged(object sender, EventArgs e)
+        private void Diagram_GraphSourceChanged(object sender, EventArgs e)
         {
             if (this.IsAutoLayoutEnabled)
             {
@@ -73,16 +73,16 @@ namespace Marv.Controls
             }
             else
             {
-                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.DiagramPart.AutoFit());
+                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.Diagram.AutoFit());
             }
         }
 
-        private void DiagramPart_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Diagram_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.RaiseSelectionChanged(this.Graph.SelectedVertex);
         }
 
-        private void DiagramPart_ShapeClicked(object sender, ShapeRoutedEventArgs e)
+        private void Diagram_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
             // Add the clicked shape to the list of shapes to bring to front
             var shapeList = new List<IDiagramItem>
@@ -91,9 +91,9 @@ namespace Marv.Controls
             };
 
             // Change color of connections
-            var graphControl = this.DiagramPart.GetParent<GraphControl>();
+            var graphControl = this.Diagram.GetParent<GraphControl>();
 
-            foreach (var conn in this.DiagramPart.Connections)
+            foreach (var conn in this.Diagram.Connections)
             {
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
             }
@@ -108,7 +108,7 @@ namespace Marv.Controls
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
             }
 
-            this.DiagramPart.BringToFront(shapeList);
+            this.Diagram.BringToFront(shapeList);
 
             var timer = new DispatcherTimer
             {
@@ -117,39 +117,18 @@ namespace Marv.Controls
 
             timer.Tick += (o, args) =>
             {
-                if (!e.Shape.Bounds.IsInBounds(this.DiagramPart.Viewport))
+                if (!e.Shape.Bounds.IsInBounds(this.Diagram.Viewport))
                 {
-                    var offset = this.DiagramPart.Viewport.GetOffset(e.Shape.Bounds, 20);
+                    var offset = this.Diagram.Viewport.GetOffset(e.Shape.Bounds, 20);
 
                     // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.DiagramPart.BringIntoView(this.DiagramPart.Viewport.OffsetRect(offset.X, offset.Y));
+                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
                 }
 
                 timer.Stop();
             };
 
             timer.Start();
-        }
-
-        private void GraphControl_Loaded_DiagramPart(object sender, RoutedEventArgs e)
-        {
-            this.DiagramPart.CommandExecuted -= this.DiagramPart_CommandExecuted;
-            this.DiagramPart.CommandExecuted += this.DiagramPart_CommandExecuted;
-
-            this.DiagramPart.ConnectionManipulationCompleted -= this.DiagramPart_ConnectionManipulationCompleted;
-            this.DiagramPart.ConnectionManipulationCompleted += this.DiagramPart_ConnectionManipulationCompleted;
-
-            this.DiagramPart.ConnectionManipulationStarted -= this.DiagramPart_ConnectionManipulationStarted;
-            this.DiagramPart.ConnectionManipulationStarted += this.DiagramPart_ConnectionManipulationStarted;
-
-            this.DiagramPart.GraphSourceChanged -= this.DiagramPart_GraphSourceChanged;
-            this.DiagramPart.GraphSourceChanged += this.DiagramPart_GraphSourceChanged;
-
-            this.DiagramPart.SelectionChanged -= this.DiagramPart_SelectionChanged;
-            this.DiagramPart.SelectionChanged += this.DiagramPart_SelectionChanged;
-
-            this.DiagramPart.ShapeClicked -= this.DiagramPart_ShapeClicked;
-            this.DiagramPart.ShapeClicked += this.DiagramPart_ShapeClicked;
         }
     }
 }

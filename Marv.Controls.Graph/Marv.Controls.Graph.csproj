@@ -94,7 +94,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphControl.DiagramPart.cs" />
+    <Compile Include="GraphControl.Diagram.cs" />
     <Compile Include="GraphControl.VertexControl.cs" />
     <Compile Include="GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
