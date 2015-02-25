@@ -256,8 +256,7 @@ namespace Marv.Input
             }
             else
             {
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence, intervals);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
                 this.LineDataControl.SetSelectedCells(vertexEvidence);
             }
         }
@@ -296,8 +295,8 @@ namespace Marv.Input
 
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
 
-                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
             }
         }
 
@@ -314,19 +313,18 @@ namespace Marv.Input
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
-                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence, this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key));
+                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
                 this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
             }
         }
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
             var vertexEvidences = this.GetChartEvidence();
 
             if (vertexEvidences == null || vertexEvidences.Count > 0)
             {
-                this.LineDataChart.SetUserEvidence(vertexEvidences, intervals);
+                this.LineDataChart.SetUserEvidence(vertexEvidences);
                 this.UpdateChartTitle();
             }
         }

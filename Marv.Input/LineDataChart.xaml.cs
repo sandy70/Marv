@@ -25,6 +25,7 @@ namespace Marv.Input
         private readonly LogarithmicAxis logarightmicAxis = new LogarithmicAxis();
 
         private ObservableCollection<CategoricalDataPoint> anchorPoints;
+        private double[] intervals;
         private bool isEvidenceEditEnabled;
         private bool isLog;
         private ObservableCollection<CategoricalDataPoint> maxPoints;
@@ -34,7 +35,7 @@ namespace Marv.Input
         private ObservableCollection<ObservableCollection<ProbabilityDataPoint>> userDistributionSeries;
         private ObservableCollection<CategoricalDataPoint> userNumberPoints;
         private NumericalAxis verticalAxis;
-        private string xTitle = Enum.GetNames(typeof(HorizontalAxisQuantity))[0];
+        private string xTitle = Enum.GetNames(typeof (HorizontalAxisQuantity))[0];
 
         public ObservableCollection<CategoricalDataPoint> AnchorPoints
         {
@@ -238,7 +239,7 @@ namespace Marv.Input
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
-        public void SetUserEvidence(object category, VertexEvidence vertexEvidence, double[] intervals)
+        public void SetUserEvidence(object category, VertexEvidence vertexEvidence)
         {
             if (category == null)
             {
@@ -311,7 +312,7 @@ namespace Marv.Input
                             this.UserDistributionSeries[i].Add(new ProbabilityDataPoint
                             {
                                 Category = category,
-                                Value = intervals[0],
+                                Value = this.intervals[0],
                                 Probability = 0
                             });
                         }
@@ -319,7 +320,7 @@ namespace Marv.Input
                         this.UserDistributionSeries[i + 1].Add(new ProbabilityDataPoint
                         {
                             Category = category,
-                            Value = intervals[i + 1] - intervals[i],
+                            Value = this.intervals[i + 1] - this.intervals[i],
                             Probability = v / maxProb
                         });
                     });
@@ -329,7 +330,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences, double[] intervals)
+        public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences)
         {
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
             this.UserDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();
@@ -343,14 +344,16 @@ namespace Marv.Input
                     Value = null
                 });
 
-                this.SetUserEvidence(category, vertexEvidences[category], intervals);
+                this.SetUserEvidence(category, vertexEvidences[category]);
             }
 
             this.InitializeEvidence();
         }
 
-        public void SetVerticalAxis(double max, double min)
+        public void SetVerticalAxis(double max, double min, double[] theIntervals)
         {
+            this.intervals = theIntervals;
+
             this.VerticalAxis = this.IsLog ? (NumericalAxis) this.logarightmicAxis : this.linearAxis;
 
             this.VerticalAxis.Maximum = max;

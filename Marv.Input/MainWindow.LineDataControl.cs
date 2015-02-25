@@ -33,7 +33,7 @@ namespace Marv.Input
                 e.CellModel.Data = vertexEvidence;
 
                 this.LineData.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, this.Graph.SelectedVertex.Key, vertexEvidence);
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence, intervals);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
             }
         }
 
@@ -71,9 +71,7 @@ namespace Marv.Input
         private void LineDataControl_RowSelected(object sender, CellModel e)
         {
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
-
-            var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
+            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
         }
 
         private void LineDataControl_SectionIdPasting(object sender, GridViewCellClipboardEventArgs e)
@@ -114,9 +112,7 @@ namespace Marv.Input
             if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
                 (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
             {
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence(), intervals);
-
+                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
                 this.UpdateChartTitle();
             }
 
