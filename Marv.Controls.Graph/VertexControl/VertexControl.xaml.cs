@@ -199,5 +199,18 @@ namespace Marv.Controls.Graph
         public event EventHandler<VertexEvidence> EvidenceEntered;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void SliderProgressBar_ValueEntered(object sender, double e)
+        {
+            if (Math.Abs(e - 100) < Common.Utils.Epsilon)
+            {
+                this.Vertex.SetEvidence((sender as SliderProgressBar).DataContext as State);
+            }
+
+            this.Vertex.Normalize();
+            this.Vertex.UpdateEvidenceString();
+
+            this.RaiseEvidenceEntered();
+        }
     }
 }

@@ -154,7 +154,6 @@
     </Compile>
     <Compile Include="VertexControlCommands.cs" />
     <Compile Include="VertexControlExpandCommand.cs" />
-    <Compile Include="VertexControl\SliderProgressBarBehavior.cs" />
     <Compile Include="VertexControl\VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>

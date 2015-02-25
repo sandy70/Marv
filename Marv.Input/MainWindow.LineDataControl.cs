@@ -20,7 +20,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    this.LineData.ReplaceSectionId(e.OldString, e.NewString);
+                    this.LineData.ChangeSectionId(e.OldString, e.NewString);
                 }
 
                 e.CellModel.Data = e.NewString;

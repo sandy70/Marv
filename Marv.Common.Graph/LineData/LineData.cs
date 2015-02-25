@@ -11,7 +11,7 @@ namespace Marv
     {
         public const string FileDescription = "MARV Pipeline Data";
         public const string FileExtension = "marv-linedata";
-     
+
         private const int DefaultYear = 2010;
 
         private int endYear = DefaultYear;
@@ -112,6 +112,12 @@ namespace Marv
             return Utils.ReadJson<LineData>(filePath);
         }
 
+        public void ChangeSectionId(string oldId, string newId)
+        {
+            this.SectionBeliefs.ChangeKey(oldId, newId);
+            this.SectionEvidences.ChangeKey(oldId, newId);
+        }
+
         public Dict<int, string, double[]> GetBelief(string sectionId)
         {
             return this.SectionBeliefs[sectionId];
@@ -151,12 +157,6 @@ namespace Marv
         {
             this.SectionBeliefs[sectionId] = null;
             this.SectionEvidences[sectionId] = null;
-        }
-
-        public void ReplaceSectionId(string oldId, string newId)
-        {
-            this.SectionBeliefs.ChangeKey(oldId, newId);
-            this.SectionEvidences.ChangeKey(oldId, newId);
         }
 
         public void SetBelief(string sectionId, Dict<int, string, double[]> sectionBelief)

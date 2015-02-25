@@ -66,11 +66,8 @@
                                             Margin="0"
                                             SliderForeground="YellowGreen"
                                             Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
-                                            Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}">
-                        <i:Interaction.Behaviors>
-                            <local:SliderProgressBarBehavior />
-                        </i:Interaction.Behaviors>
-                    </marv:SliderProgressBar>
+                                            Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
+                                            ValueEntered="SliderProgressBar_ValueEntered" />
 
                     <!-- Value -->
                     <marv:SliderProgressBar Grid.Column="1"
