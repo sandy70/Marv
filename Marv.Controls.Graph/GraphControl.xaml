@@ -161,7 +161,7 @@
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="marv:Vertex">
-                                <local:VertexControl Background="#DDDDDD"
+                                <graphControl:VertexControl Background="#DDDDDD"
                                                      Effect="{StaticResource DropShadow}"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsEvidenceVisible="True"

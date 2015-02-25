@@ -5,9 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Controls.Graph;
 using Telerik.Windows.Controls;
 
-namespace Marv.Controls.Graph
+namespace Marv.Controls
 {
     public partial class VertexControl : INotifyPropertyChanged
     {
@@ -58,53 +59,53 @@ namespace Marv.Controls.Graph
 
         public bool IsEditable
         {
-            get { return (bool) GetValue(IsEditableProperty); }
+            get { return (bool) this.GetValue(IsEditableProperty); }
 
-            set { SetValue(IsEditableProperty, value); }
+            set { this.SetValue(IsEditableProperty, value); }
         }
 
         public bool IsEvidenceVisible
         {
-            get { return (bool) GetValue(IsEvidenceVisibleProperty); }
+            get { return (bool) this.GetValue(IsEvidenceVisibleProperty); }
 
-            set { SetValue(IsEvidenceVisibleProperty, value); }
+            set { this.SetValue(IsEvidenceVisibleProperty, value); }
         }
 
         public bool IsExpanded
         {
-            get { return (bool) GetValue(IsExpandedProperty); }
-            set { SetValue(IsExpandedProperty, value); }
+            get { return (bool) this.GetValue(IsExpandedProperty); }
+            set { this.SetValue(IsExpandedProperty, value); }
         }
 
         public bool IsInputVisible
         {
-            get { return (bool) GetValue(IsInputVisibleProperty); }
-            set { SetValue(IsInputVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsInputVisibleProperty); }
+            set { this.SetValue(IsInputVisibleProperty, value); }
         }
 
         public bool IsSubGraphCommandVisible
         {
-            get { return (bool) GetValue(IsSubGraphCommandVisibleProperty); }
-            set { SetValue(IsSubGraphCommandVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsSubGraphCommandVisibleProperty); }
+            set { this.SetValue(IsSubGraphCommandVisibleProperty, value); }
         }
 
         public bool IsToolbarVisible
         {
-            get { return (bool) GetValue(IsToolbarVisibleProperty); }
-            set { SetValue(IsToolbarVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsToolbarVisibleProperty); }
+            set { this.SetValue(IsToolbarVisibleProperty, value); }
         }
 
         public bool IsValueVisible
         {
-            get { return (bool) GetValue(IsValueVisibleProperty); }
+            get { return (bool) this.GetValue(IsValueVisibleProperty); }
 
-            set { SetValue(IsValueVisibleProperty, value); }
+            set { this.SetValue(IsValueVisibleProperty, value); }
         }
 
         public Vertex Vertex
         {
-            get { return (Vertex) GetValue(VertexProperty); }
-            set { SetValue(VertexProperty, value); }
+            get { return (Vertex) this.GetValue(VertexProperty); }
+            set { this.SetValue(VertexProperty, value); }
         }
 
         public VertexControl()

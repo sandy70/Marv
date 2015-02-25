@@ -1,4 +1,4 @@
-﻿<StackPanel x:Class="Marv.Controls.Graph.VertexControl"
+﻿<StackPanel x:Class="Marv.Controls.VertexControl"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
             xmlns:local="clr-namespace:Marv.Controls.Graph"
