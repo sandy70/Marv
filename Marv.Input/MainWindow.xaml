@@ -7,7 +7,8 @@
         xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Loaded="MainWindow_Loaded">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -83,7 +84,9 @@
                             <Grid>
                                 <local:LineDataChart x:Name="LineDataChart"
                                                      HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
-                                                     Title="{Binding ElementName=Root, Path=ChartTitle}"/>
+                                                     Title="{Binding ElementName=Root, Path=ChartTitle}"
+                                                     EvidenceGenerated="LineDataChart_EvidenceGenerated"
+                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -100,9 +103,12 @@
                             </Grid.RowDefinitions>
 
                             <marv:GraphControl Name="GraphControl"
-                                                       Grid.Row="0"
-                                                       Background="WhiteSmoke"
-                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}" />
+                                               Grid.Row="0"
+                                               Background="WhiteSmoke"
+                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                               EvidenceEntered="GraphControl_EvidenceEntered"
+                                               GraphChanged="GraphControl_GraphChanged"
+                                               SelectionChanged="GraphControl_SelectionChanged" />
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -152,7 +158,8 @@
                                                 IsValueVisible="False"
                                                 Margin="5"
                                                 Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource ResourceKey=NullToVisibility}}" />
+                                                Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource ResourceKey=NullToVisibility}}" 
+                                                EvidenceEntered="GraphControl_EvidenceEntered"/>
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>

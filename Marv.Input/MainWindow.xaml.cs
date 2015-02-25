@@ -11,19 +11,8 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty NotificationsProperty =
-            DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
-
-        public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedYearProperty =
-            DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
-
         private string chartTitle;
+        private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
@@ -31,8 +20,9 @@ namespace Marv.Input
         private bool isVertexControlVisible = true;
         private ILineData lineData;
         private string lineDataFileName;
-        private LocationCollection locations;
-        private Location selectedLocation;
+        private NotificationCollection notifications = new NotificationCollection();
+        private string selectedSectionId;
+        private int selectedYear;
 
         public string ChartTitle
         {
@@ -52,8 +42,18 @@ namespace Marv.Input
 
         public Graph Graph
         {
-            get { return (Graph) GetValue(GraphProperty); }
-            set { SetValue(GraphProperty, value); }
+            get { return this.graph; }
+
+            set
+            {
+                if (value.Equals(this.graph))
+                {
+                    return;
+                }
+
+                this.graph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public HorizontalAxisQuantity HorizontalAxisQuantity
@@ -152,63 +152,58 @@ namespace Marv.Input
             }
         }
 
-        public LocationCollection Locations
-        {
-            get { return this.locations; }
-
-            set
-            {
-                if (value.Equals(this.locations))
-                {
-                    return;
-                }
-
-                this.locations = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public NotificationCollection Notifications
         {
-            get { return (NotificationCollection) GetValue(NotificationsProperty); }
-            set { SetValue(NotificationsProperty, value); }
-        }
-
-        public Location SelectedLocation
-        {
-            get { return this.selectedLocation; }
+            get { return this.notifications; }
 
             set
             {
-                if (value.Equals(this.selectedLocation))
+                if (value.Equals(this.notifications))
                 {
                     return;
                 }
 
-                this.selectedLocation = value;
+                this.notifications = value;
                 this.RaisePropertyChanged();
             }
         }
 
         public string SelectedSectionId
         {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
-            set { SetValue(SelectedSectionIdProperty, value); }
+            get { return this.selectedSectionId; }
+
+            set
+            {
+                if (value.Equals(this.selectedSectionId))
+                {
+                    return;
+                }
+
+                this.selectedSectionId = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public int SelectedYear
         {
-            get { return (int) GetValue(SelectedYearProperty); }
-            set { SetValue(SelectedYearProperty, value); }
+            get { return this.selectedYear; }
+
+            set
+            {
+                if (value.Equals(this.selectedYear))
+                {
+                    return;
+                }
+
+                this.selectedYear = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-
-            this.Loaded -= MainWindow_Loaded;
-            this.Loaded += MainWindow_Loaded;
 
             this.Loaded -= MainWindow_Loaded_LineDataControl;
             this.Loaded += MainWindow_Loaded_LineDataControl;
@@ -397,24 +392,6 @@ namespace Marv.Input
         {
             this.PropertyChanged -= MainWindow_PropertyChanged;
             this.PropertyChanged += MainWindow_PropertyChanged;
-
-            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
-
-            this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
-            this.GraphControl.GraphChanged += GraphControl_GraphChanged;
-
-            this.GraphControl.SelectionChanged -= GraphControl_SelectionChanged;
-            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
-
-            this.LineDataChart.EvidenceGenerated -= LineDataChart_EvidenceGenerated;
-            this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
-
-            this.LineDataChart.HorizontalAxisQuantityChanged -= LineDataChart_HorizontalAxisQuantityChanged;
-            this.LineDataChart.HorizontalAxisQuantityChanged += LineDataChart_HorizontalAxisQuantityChanged;
-
-            this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
 
         private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
