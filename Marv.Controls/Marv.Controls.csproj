@@ -31,13 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageFileCache.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="ImageFileCache.WPF, Version=2.4.8.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\ImageFileCache.WPF.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.8\lib\net45\ImageFileCache.WPF.dll</HintPath>
     </Reference>
-    <Reference Include="MapControl.WPF, Version=2.4.3.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+    <Reference Include="MapControl.WPF, Version=2.4.8.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\XAML.MapControl.2.4.3\lib\net45\MapControl.WPF.dll</HintPath>
+      <HintPath>..\packages\XAML.MapControl.2.4.8\lib\net45\MapControl.WPF.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
