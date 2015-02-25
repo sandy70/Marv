@@ -5,28 +5,16 @@ using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Controls;
-using Marv.Controls.Map;
 using Marv.Properties;
 using Telerik.Windows.Controls;
 using Utils = Marv.Common.Utils;
 
-namespace Marv.Input
+namespace Marv
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty NotificationsProperty =
-            DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
-
-        public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedYearProperty =
-            DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
-
         private LocationCollection criticalLocations;
+        private Graph graph;
         private bool isGraphControlVisible = true;
         private bool isMapViewVisible = true;
         private bool isMenuVisible;
@@ -35,8 +23,10 @@ namespace Marv.Input
         private ILineData lineData;
         private Dict<string, int, double> locationValues;
         private LocationCollection locations;
+        private NotificationCollection notifications = new NotificationCollection();
         private LocationCollection referenceLocations;
         private Location selectedLocation;
+        private int selectedYear;
         private Dict<string, double> selectedYearLocationValues;
 
         public LocationCollection CriticalLocations
@@ -57,8 +47,18 @@ namespace Marv.Input
 
         public Graph Graph
         {
-            get { return (Graph) this.GetValue(GraphProperty); }
-            set { this.SetValue(GraphProperty, value); }
+            get { return this.graph; }
+
+            set
+            {
+                if (value.Equals(this.graph))
+                {
+                    return;
+                }
+
+                this.graph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsGraphControlVisible
@@ -175,8 +175,18 @@ namespace Marv.Input
 
         public NotificationCollection Notifications
         {
-            get { return (NotificationCollection) this.GetValue(NotificationsProperty); }
-            set { this.SetValue(NotificationsProperty, value); }
+            get { return this.notifications; }
+
+            set
+            {
+                if (value.Equals(this.notifications))
+                {
+                    return;
+                }
+
+                this.notifications = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public LocationCollection ReferenceLocations
@@ -211,16 +221,20 @@ namespace Marv.Input
             }
         }
 
-        public string SelectedSectionId
-        {
-            get { return (string) this.GetValue(SelectedSectionIdProperty); }
-            set { this.SetValue(SelectedSectionIdProperty, value); }
-        }
-
         public int SelectedYear
         {
-            get { return (int) this.GetValue(SelectedYearProperty); }
-            set { this.SetValue(SelectedYearProperty, value); }
+            get { return this.selectedYear; }
+
+            set
+            {
+                if (value.Equals(this.selectedYear))
+                {
+                    return;
+                }
+
+                this.selectedYear = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Dict<string, double> SelectedYearLocationValues
@@ -281,8 +295,8 @@ namespace Marv.Input
             this.GraphControl.GraphChanged -= this.GraphControl_GraphChanged;
             this.GraphControl.GraphChanged += this.GraphControl_GraphChanged;
 
-            this.MapView.Loaded -= MapView_Loaded;
-            this.MapView.Loaded += MapView_Loaded;
+            this.MapView.Loaded -= this.MapView_Loaded;
+            this.MapView.Loaded += this.MapView_Loaded;
 
             this.PolylineControl.SelectionChanged -= this.PolylineControl_SelectionChanged;
             this.PolylineControl.SelectionChanged += this.PolylineControl_SelectionChanged;

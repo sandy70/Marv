@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media;
-using Marv.Controls.Map;
+using Marv.Controls;
 
 namespace Marv
 {

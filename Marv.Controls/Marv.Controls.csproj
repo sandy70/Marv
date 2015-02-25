@@ -64,6 +64,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
@@ -119,21 +120,35 @@
     <Compile Include="Converters\LocationConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DoubleToBrushMap.cs" />
     <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EllipseControl.xaml.cs">
+      <DependentUpon>EllipseControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EllipseControlBehavior.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GraphControl.Diagram.cs" />
     <Compile Include="GraphControl.VertexControl.cs" />
     <Compile Include="GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IDoubleToBrushMap.cs" />
+    <Compile Include="LocationCollectionViewModel.cs" />
+    <Compile Include="LocationEllipse.cs" />
+    <Compile Include="MapTransform.cs" />
+    <Compile Include="MapView.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="PasswordInput.xaml.cs">
       <DependentUpon>PasswordInput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolylineControl.Cursor.cs" />
+    <Compile Include="PolylineControl.xaml.cs">
+      <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
@@ -145,6 +160,7 @@
     <Compile Include="StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TileLayers.cs" />
     <Compile Include="TransitionControl\TransitionControInner.xaml.cs">
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
@@ -161,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="EllipseControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GraphControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -172,6 +192,10 @@
     <Page Include="PasswordInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PolylineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>

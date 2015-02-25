@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public class EllipseControlBehavior : Behavior<EllipseControl>
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public partial class PolylineControl
     {

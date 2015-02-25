@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public partial class PolylineControl : INotifyPropertyChanged
     {
@@ -93,8 +93,8 @@ namespace Marv.Controls.Map
 
         public Brush DisabledStroke
         {
-            get { return (Brush) GetValue(DisabledStrokeProperty); }
-            set { SetValue(DisabledStrokeProperty, value); }
+            get { return (Brush) this.GetValue(DisabledStrokeProperty); }
+            set { this.SetValue(DisabledStrokeProperty, value); }
         }
 
         public LocationCollection DisplayLocations
@@ -137,14 +137,14 @@ namespace Marv.Controls.Map
 
         public bool IsSkeletonVisible
         {
-            get { return (bool) GetValue(IsSkeletonVisibleProperty); }
-            set { SetValue(IsSkeletonVisibleProperty, value); }
+            get { return (bool) this.GetValue(IsSkeletonVisibleProperty); }
+            set { this.SetValue(IsSkeletonVisibleProperty, value); }
         }
 
         public Dict<string, double> LocationValues
         {
-            get { return (Dict<string, double>) GetValue(LocationValuesProperty); }
-            set { SetValue(LocationValuesProperty, value); }
+            get { return (Dict<string, double>) this.GetValue(LocationValuesProperty); }
+            set { this.SetValue(LocationValuesProperty, value); }
         }
 
         public LocationCollection Locations
@@ -211,8 +211,8 @@ namespace Marv.Controls.Map
 
         public double SkeletonZoomLevel
         {
-            get { return (double) GetValue(SkeletonZoomLevelProperty); }
-            set { SetValue(SkeletonZoomLevelProperty, value); }
+            get { return (double) this.GetValue(SkeletonZoomLevelProperty); }
+            set { this.SetValue(SkeletonZoomLevelProperty, value); }
         }
 
         public Brush Stroke
@@ -310,17 +310,17 @@ namespace Marv.Controls.Map
             this.UpdatePolylineParts();
             this.UpdateSimplifiedPolylineParts();
 
-            this.IsEnabledChanged -= PolylineControl_IsEnabledChanged;
-            this.IsEnabledChanged += PolylineControl_IsEnabledChanged;
+            this.IsEnabledChanged -= this.PolylineControl_IsEnabledChanged;
+            this.IsEnabledChanged += this.PolylineControl_IsEnabledChanged;
 
-            this.mapView.ViewportMoved -= mapView_ViewportMoved;
-            this.mapView.ViewportMoved += mapView_ViewportMoved;
+            this.mapView.ViewportMoved -= this.mapView_ViewportMoved;
+            this.mapView.ViewportMoved += this.mapView_ViewportMoved;
 
             this.mapView.ZoomLevelChanged -= this.mapView_ZoomLevelChanged;
             this.mapView.ZoomLevelChanged += this.mapView_ZoomLevelChanged;
 
-            this.timer.Tick -= timer_Tick;
-            this.timer.Tick += timer_Tick;
+            this.timer.Tick -= this.timer_Tick;
+            this.timer.Tick += this.timer_Tick;
 
             this.Ellipse.MouseDown -= this.Ellipse_MouseDown;
             this.Ellipse.MouseDown += this.Ellipse_MouseDown;
@@ -443,7 +443,7 @@ namespace Marv.Controls.Map
             {
                 simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
-                    Locations = locationCollection.ToPoints(mapView).Reduce(5).ToLocations(mapView).ToLocationCollection(),
+                    Locations = Common.Extensions.ToLocationCollection(Common.Extensions.Reduce(locationCollection.ToPoints(mapView), 5).ToLocations(mapView)),
                     Stroke = this.IsEnabled ? this.GetStroke(this.polylinePartValues[locationCollection]) : this.DisabledStroke
                 }));
             }
@@ -463,9 +463,8 @@ namespace Marv.Controls.Map
                 return;
             }
 
-            this.SimplifiedLocations = this.Locations
-                                           .ToPoints(this.mapView)
-                                           .Reduce(5)
+            this.SimplifiedLocations = Common.Extensions.Reduce(this.Locations
+                                                       .ToPoints(this.mapView), 5)
                                            .ToLocations(this.mapView);
 
             this.UpdateSimplifiedPolylineParts();

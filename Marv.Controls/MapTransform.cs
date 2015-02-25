@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using Marv.Common;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public class MapTransform
     {

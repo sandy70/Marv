@@ -8,7 +8,7 @@ using MapControl.Caching;
 using Marv.Common;
 using Location = Marv.Common.Location;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public class MapView : MapControl.Map
     {
@@ -50,11 +50,11 @@ namespace Marv.Controls.Map
         {
             TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, "./");
 
-            this.Loaded -= MapView_Loaded;
-            this.Loaded += MapView_Loaded;
+            this.Loaded -= this.MapView_Loaded;
+            this.Loaded += this.MapView_Loaded;
 
-            this.ViewportChanged -= MapView_ViewportChanged;
-            this.ViewportChanged += MapView_ViewportChanged;
+            this.ViewportChanged -= this.MapView_ViewportChanged;
+            this.ViewportChanged += this.MapView_ViewportChanged;
         }
 
         public bool Contains(IEnumerable<Location> locations)

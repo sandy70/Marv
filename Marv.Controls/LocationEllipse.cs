@@ -1,6 +1,6 @@
 ﻿using Marv.Common;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public class LocationEllipse : NotifyPropertyChanged
     {

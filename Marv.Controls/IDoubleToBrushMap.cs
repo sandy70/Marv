@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public interface IDoubleToBrushMap
     {

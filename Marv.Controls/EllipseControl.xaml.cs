@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using Marv.Common;
 
-namespace Marv.Controls.Map
+namespace Marv.Controls
 {
     public partial class EllipseControl
     {
@@ -34,8 +34,8 @@ namespace Marv.Controls.Map
 
         public Dict<string, double> LocationValues
         {
-            get { return (Dict<string, double>) GetValue(LocationValuesProperty); }
-            set { SetValue(LocationValuesProperty, value); }
+            get { return (Dict<string, double>) this.GetValue(LocationValuesProperty); }
+            set { this.SetValue(LocationValuesProperty, value); }
         }
 
         public IEnumerable<Location> Locations
