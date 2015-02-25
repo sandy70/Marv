@@ -4,6 +4,7 @@
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized">
@@ -130,7 +131,7 @@
                                                  SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
                                                  TextSearchMode="Contains">
                                 <telerik:RadComboBox.ItemTemplate>
-                                    <DataTemplate DataType="marv:Vertex">
+                                    <DataTemplate DataType="common:Vertex">
                                         <TextBlock>
                                             <Run Text="{Binding Name}" />
                                             <Run Text=" [" />

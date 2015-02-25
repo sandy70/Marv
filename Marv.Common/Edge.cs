@@ -1,8 +1,7 @@
-﻿using Marv.Common;
-using QuickGraph;
+﻿using QuickGraph;
 using Telerik.Windows.Diagrams.Core;
 
-namespace Marv
+namespace Marv.Common
 {
     public class Edge : NotifyPropertyChanged, IEdge<Vertex>, ILink<Vertex>
     {
@@ -53,7 +52,7 @@ namespace Marv
                 if (value != this.target)
                 {
                     this.target = value;
-                    this.RaisePropertyChanged("Target");
+                    this.RaisePropertyChanged();
                 }
             }
         }

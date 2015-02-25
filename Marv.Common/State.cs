@@ -1,6 +1,4 @@
-﻿using Marv.Common;
-
-namespace Marv
+﻿namespace Marv.Common
 {
     public class State : NotifyPropertyChanged, IKeyed
     {
@@ -13,10 +11,7 @@ namespace Marv
 
         public double Belief
         {
-            get
-            {
-                return this.belief;
-            }
+            get { return this.belief; }
 
             set
             {
@@ -27,10 +22,7 @@ namespace Marv
 
         public double Evidence
         {
-            get
-            {
-                return this.evidence;
-            }
+            get { return this.evidence; }
 
             set
             {
@@ -41,10 +33,7 @@ namespace Marv
 
         public double InitialBelief
         {
-            get
-            {
-                return this.initialBelief;
-            }
+            get { return this.initialBelief; }
 
             set
             {
@@ -53,12 +42,20 @@ namespace Marv
             }
         }
 
+        public string Key
+        {
+            get { return this.key; }
+
+            set
+            {
+                this.key = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public double Max
         {
-            get
-            {
-                return this.max;
-            }
+            get { return this.max; }
 
             set
             {
@@ -72,10 +69,7 @@ namespace Marv
 
         public double Min
         {
-            get
-            {
-                return this.min;
-            }
+            get { return this.min; }
 
             set
             {
@@ -89,32 +83,12 @@ namespace Marv
 
         public double SafeMax
         {
-            get
-            {
-                return double.IsPositiveInfinity(this.Max) ? this.Min * 2 : this.Max;
-            }
+            get { return double.IsPositiveInfinity(this.Max) ? this.Min * 2 : this.Max; }
         }
 
         public double SafeMin
         {
-            get
-            {
-                return double.IsNegativeInfinity(this.Min) ? this.Max * 2 : this.Min;
-            }
-        }
-
-        public string Key
-        {
-            get
-            {
-                return this.key;
-            }
-
-            set
-            {
-                this.key = value;
-                this.RaisePropertyChanged();
-            }
+            get { return double.IsNegativeInfinity(this.Min) ? this.Max * 2 : this.Min; }
         }
 
         public bool Contains(double value)

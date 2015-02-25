@@ -1,6 +1,4 @@
-﻿using Marv.Common;
-
-namespace Marv
+﻿namespace Marv.Common
 {
     public class EdgeConnectorPositions : NotifyPropertyChanged
     {
@@ -9,10 +7,7 @@ namespace Marv
 
         public string SourcePosition
         {
-            get
-            {
-                return this.sourcePosition;
-            }
+            get { return this.sourcePosition; }
 
             set
             {
@@ -26,10 +21,7 @@ namespace Marv
 
         public string TargetPosition
         {
-            get
-            {
-                return this.targetPosition;
-            }
+            get { return this.targetPosition; }
 
             set
             {

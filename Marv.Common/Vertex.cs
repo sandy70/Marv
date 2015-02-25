@@ -5,9 +5,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common
 {
     public class Vertex : NotifyPropertyChanged, IKeyed
     {
@@ -372,11 +371,11 @@ namespace Marv
             {
                 if (this.States != null)
                 {
-                    this.States.CollectionChanged -= States_CollectionChanged;
+                    this.States.CollectionChanged -= this.States_CollectionChanged;
 
                     foreach (var state in this.States)
                     {
-                        state.PropertyChanged -= state_PropertyChanged;
+                        state.PropertyChanged -= this.state_PropertyChanged;
                     }
                 }
 
@@ -467,7 +466,7 @@ namespace Marv
             {
                 foreach (State state in e.NewItems)
                 {
-                    state.PropertyChanged += state_PropertyChanged;
+                    state.PropertyChanged += this.state_PropertyChanged;
                 }
             }
 
@@ -475,7 +474,7 @@ namespace Marv
             {
                 foreach (State state in e.OldItems)
                 {
-                    state.PropertyChanged -= state_PropertyChanged;
+                    state.PropertyChanged -= this.state_PropertyChanged;
                 }
             }
         }
