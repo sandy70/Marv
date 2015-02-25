@@ -219,6 +219,11 @@ namespace Marv.Input
             return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
+        private object GetChartCategory(string sectionId, int year)
+        {
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
+        }
+
         private Dict<object, VertexEvidence> GetChartEvidence()
         {
             var vertexEvidences = new Dict<object, VertexEvidence>();

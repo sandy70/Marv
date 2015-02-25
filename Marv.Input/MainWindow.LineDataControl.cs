@@ -27,13 +27,15 @@ namespace Marv.Input
             }
             else
             {
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
                 var vertexEvidence = e.VertexEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
 
                 e.CellModel.Data = vertexEvidence;
 
-                this.LineData.SetEvidence(e.CellModel.SectionId, e.CellModel.Year, this.Graph.SelectedVertex.Key, vertexEvidence);
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
+                var sectionId = e.CellModel.SectionId;
+                var year = e.CellModel.Year;
+                
+                this.LineData.SetEvidence(sectionId, year, this.Graph.SelectedVertex.Key, vertexEvidence);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(sectionId, year), vertexEvidence);
             }
         }
 
