@@ -362,7 +362,7 @@ namespace Marv.Common
             this.Belief = Network.Read(this.Network.FileName).Run(this.Evidence);
         }
 
-        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        public void SetEvidence(Dict<string, NodeEvidence> vertexEvidences)
         {
             foreach (var vertex in this.Vertices)
             {

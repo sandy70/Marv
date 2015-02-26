@@ -78,6 +78,42 @@ namespace Marv.Common
             return -values.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(values.Count());
         }
 
+        public static Dict<object, NodeEvidence> GetEvidence(this ILineData lineData, string sectionId, IEnumerable<int> years, string nodeKey)
+        {
+            var nodeEvidences = new Dict<object, NodeEvidence>();
+            var sectionEvidence = lineData.GetEvidence(sectionId);
+
+            if (years == null)
+            {
+                years = sectionEvidence.Keys;
+            }
+
+            foreach (var year in years)
+            {
+                nodeEvidences[year] = sectionEvidence[year][nodeKey];
+            }
+
+            return nodeEvidences;
+        }
+
+        public static Dict<object, NodeEvidence> GetEvidence(this ILineData lineData, IEnumerable<string> sectionIds, int year, string nodeKey)
+        {
+            var nodeEvidences = new Dict<object, NodeEvidence>();
+
+            if (sectionIds == null)
+            {
+                sectionIds = lineData.SectionIds;
+            }
+
+            foreach (var sectionId in sectionIds)
+            {
+                var sectionEvidence = lineData.GetEvidence(sectionId);
+                nodeEvidences[sectionId] = sectionEvidence[year][nodeKey];
+            }
+
+            return nodeEvidences;
+        }
+
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
         {
             var point = new Point();
@@ -192,17 +228,17 @@ namespace Marv.Common
             lineData.SetEvidence(sectionId, sectionEvidence);
         }
 
-        public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, VertexEvidence vertexEvidence)
+        public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, NodeEvidence nodeEvidence)
         {
             var sectionEvidence = lineData.GetEvidence(sectionId);
 
-            if (vertexEvidence.Type == VertexEvidenceType.Null)
+            if (nodeEvidence.Type == NodeEvidenceType.Null)
             {
                 sectionEvidence[year][vertexKey] = null;
             }
             else
             {
-                sectionEvidence[year][vertexKey] = vertexEvidence;
+                sectionEvidence[year][vertexKey] = nodeEvidence;
             }
 
             lineData.SetEvidence(sectionId, sectionEvidence);
@@ -269,7 +305,7 @@ namespace Marv.Common
             }
         }
 
-        public static void WriteHcs(this Dict<string, VertexEvidence> evidences, string filePath)
+        public static void WriteHcs(this Dict<string, NodeEvidence> evidences, string filePath)
         {
             using (var hcsFile = new StreamWriter(filePath))
             {

@@ -240,7 +240,7 @@ namespace Marv.Input
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
         }
 
-        public void SetUserEvidence(object category, VertexEvidence vertexEvidence)
+        public void SetUserEvidence(object category, NodeEvidence nodeEvidence)
         {
             if (category == null)
             {
@@ -250,12 +250,12 @@ namespace Marv.Input
             this.UserNumberPoints.Remove(point => point.Category.Equals(category));
             this.UserDistributionSeries.Remove(point => point.Category.Equals(category));
 
-            var paramValues = vertexEvidence.Params;
-            var type = vertexEvidence.Type;
+            var paramValues = nodeEvidence.Params;
+            var type = nodeEvidence.Type;
 
             switch (type)
             {
-                case VertexEvidenceType.Number:
+                case NodeEvidenceType.Number:
                 {
                     this.UserNumberPoints.Add(new CategoricalDataPoint
                     {
@@ -266,7 +266,7 @@ namespace Marv.Input
                     break;
                 }
 
-                case VertexEvidenceType.Range:
+                case NodeEvidenceType.Range:
                 {
                     while (this.UserDistributionSeries.Count < 2)
                     {
@@ -290,18 +290,18 @@ namespace Marv.Input
                     break;
                 }
 
-                case VertexEvidenceType.Distribution:
-                case VertexEvidenceType.Normal:
-                case VertexEvidenceType.Triangular:
+                case NodeEvidenceType.Distribution:
+                case NodeEvidenceType.Normal:
+                case NodeEvidenceType.Triangular:
                 {
-                    if (vertexEvidence.Value == null)
+                    if (nodeEvidence.Value == null)
                     {
                         break;
                     }
 
-                    var maxProb = vertexEvidence.Value.Max();
+                    var maxProb = nodeEvidence.Value.Max();
 
-                    vertexEvidence.Value.ForEach((v, i) =>
+                    nodeEvidence.Value.ForEach((v, i) =>
                     {
                         while (this.UserDistributionSeries.Count < i + 2)
                         {
@@ -331,7 +331,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetUserEvidence(Dict<object, VertexEvidence> vertexEvidences)
+        public void SetUserEvidence(Dict<object, NodeEvidence> vertexEvidences)
         {
             this.AnchorPoints = new ObservableCollection<CategoricalDataPoint>();
             this.UserDistributionSeries = new ObservableCollection<ObservableCollection<ProbabilityDataPoint>>();

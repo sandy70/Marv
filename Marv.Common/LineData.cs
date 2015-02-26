@@ -17,7 +17,7 @@ namespace Marv.Common
         private int endYear = DefaultYear;
         private Guid guid;
         private Dict<string, int, string, double[]> sectionBeliefs = new Dict<string, int, string, double[]>();
-        private Dict<string, int, string, VertexEvidence> sectionEvidences = new Dict<string, int, string, VertexEvidence>();
+        private Dict<string, int, string, NodeEvidence> sectionEvidences = new Dict<string, int, string, NodeEvidence>();
         private int startYear = DefaultYear;
 
         public int EndYear
@@ -66,7 +66,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, int, string, VertexEvidence> SectionEvidences
+        public Dict<string, int, string, NodeEvidence> SectionEvidences
         {
             get { return this.sectionEvidences; }
 
@@ -123,7 +123,7 @@ namespace Marv.Common
             return this.SectionBeliefs[sectionId];
         }
 
-        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetBeliefStatistic(Node node, INodeValueComputer valueComputer)
         {
             foreach (var sectionId in (IEnumerable<string>) this.sectionEvidences.Keys)
             {
@@ -133,7 +133,7 @@ namespace Marv.Common
             return null;
         }
 
-        public double[,] GetBeliefStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
+        public double[,] GetBeliefStatistic(Node node, INodeValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
             foreach (var sectionId in (IEnumerable<string>) this.sectionEvidences.Keys)
             {
@@ -143,12 +143,12 @@ namespace Marv.Common
             return null;
         }
 
-        public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
+        public Dict<int, string, NodeEvidence> GetEvidence(string sectionId)
         {
             return this.sectionEvidences[sectionId];
         }
 
-        public Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId)
+        public Task<Dict<int, string, NodeEvidence>> GetEvidenceAsync(string sectionId)
         {
             return Task.Run(() => this.sectionEvidences[sectionId]);
         }
@@ -164,7 +164,7 @@ namespace Marv.Common
             this.SectionBeliefs[sectionId] = sectionBelief;
         }
 
-        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        public void SetEvidence(string sectionId, Dict<int, string, NodeEvidence> sectionEvidence)
         {
             this.SectionEvidences[sectionId] = sectionEvidence;
         }
@@ -199,14 +199,14 @@ namespace Marv.Common
             {
                 foreach (var item in e.NewItems)
                 {
-                    var kvp = item as Kvp<string, Dict<int, string, VertexEvidence>>;
+                    var kvp = item as Kvp<string, Dict<int, string, NodeEvidence>>;
                     var yearEvidences = kvp.Value;
 
                     for (var year = this.StartYear; year <= this.EndYear; year++)
                     {
                         if (!yearEvidences.ContainsKey(year))
                         {
-                            yearEvidences[year] = new Dict<string, VertexEvidence>();
+                            yearEvidences[year] = new Dict<string, NodeEvidence>();
                         }
                     }
                 }

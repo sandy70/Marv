@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common
 {
-    public enum VertexEvidenceType
+    public enum NodeEvidenceType
     {
         Distribution,
         Invalid,

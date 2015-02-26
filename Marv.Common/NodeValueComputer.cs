@@ -2,91 +2,91 @@
 
 namespace Marv.Common
 {
-    public interface IVertexValueComputer
+    public interface INodeValueComputer
     {
-        double Compute(NetworkNode node, double[] newValue, double[] oldValue);
+        double Compute(Node node, double[] newValue, double[] oldValue);
     }
 
-    public class VertexEntropyComputer : IVertexValueComputer
+    public class NodeEntropyComputer : INodeValueComputer
     {
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return node.Entropy(newValue, oldValue);
         }
     }
 
-    public class VertexEntropyDifferenceComputer : IVertexValueComputer
+    public class NodeEntropyDifferenceComputer : INodeValueComputer
     {
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return node.EntropyDifference(newValue, oldValue);
         }
     }
 
-    public class VertexMeanComputer : IVertexValueComputer
+    public class NodeMeanComputer : INodeValueComputer
     {
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return node.Mean(newValue, oldValue);
         }
     }
 
-    public class VertexMeanDifferenceComputer : IVertexValueComputer
+    public class NodeMeanDifferenceComputer : INodeValueComputer
     {
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return node.MeanDifference(newValue, oldValue);
         }
     }
 
-    public class VertexStandardDeviationComputer : IVertexValueComputer
+    public class NodeStandardDeviationComputer : INodeValueComputer
     {
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return node.StandardDeviation(newValue, oldValue);
         }
     }
 
-    public class VertexStateComputer : IVertexValueComputer
+    public class NodeStateComputer : INodeValueComputer
     {
         private readonly int stateIndex;
 
-        public VertexStateComputer(int i)
+        public NodeStateComputer(int i)
         {
             this.stateIndex = i;
         }
 
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return newValue[this.stateIndex];
         }
     }
 
-    public class VertexStateDifferenceComputer : IVertexValueComputer
+    public class NodeStateDifferenceComputer : INodeValueComputer
     {
         private readonly int stateIndex;
 
-        public VertexStateDifferenceComputer(int i)
+        public NodeStateDifferenceComputer(int i)
         {
             this.stateIndex = i;
         }
 
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             return newValue[this.stateIndex] - oldValue[this.stateIndex];
         }
     }
 
-    public class VertexPercentileComputer : IVertexValueComputer
+    public class NodePercentileComputer : INodeValueComputer
     {
         private readonly double percentile;
 
-        public VertexPercentileComputer(double thePercentile)
+        public NodePercentileComputer(double thePercentile)
         {
             this.percentile = thePercentile;
         }
 
-        public double Compute(NetworkNode node, double[] newValue, double[] oldValue)
+        public double Compute(Node node, double[] newValue, double[] oldValue)
         {
             var totalArea = 0.0;
 

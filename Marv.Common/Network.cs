@@ -15,7 +15,7 @@ namespace Marv.Common
         private const string BeliefFileExtension = "marv-networkbelief";
         private const string EvidenceFileExtension = "marv-networkevidence";
 
-        public readonly KeyedCollection<NetworkNode> Nodes = new KeyedCollection<NetworkNode>();
+        public readonly KeyedCollection<Node> Nodes = new KeyedCollection<Node>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
         private string fileName;
@@ -135,7 +135,7 @@ namespace Marv.Common
 
                             currentNodeKey = line.Split(" ".ToArray(), 2).ToList()[1];
 
-                            network.Nodes.Add(new NetworkNode
+                            network.Nodes.Add(new Node
                             {
                                 Key = currentNodeKey
                             });
@@ -303,9 +303,9 @@ namespace Marv.Common
             throw new SmileException("No evidence is set on node " + nodeKey);
         }
 
-        public Dict<string, VertexEvidence> GetEvidences()
+        public Dict<string, NodeEvidence> GetEvidences()
         {
-            var graphData = new Dict<string, VertexEvidence>();
+            var graphData = new Dict<string, NodeEvidence>();
 
             foreach (var vertexKey in this.GetAllNodeIds())
             {
@@ -332,12 +332,12 @@ namespace Marv.Common
         {
             var states = this.Nodes[vertexKey].States;
 
-            if (this.Nodes[vertexKey].Type == VertexType.Interval)
+            if (this.Nodes[vertexKey].Type == Common.NodeType.Interval)
             {
                 return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
             }
 
-            if (this.Nodes[vertexKey].Type == VertexType.Numbered)
+            if (this.Nodes[vertexKey].Type == Common.NodeType.Numbered)
             {
                 return states.Select(state => state.Min).ToArray();
             }
@@ -350,7 +350,7 @@ namespace Marv.Common
             return this.Nodes[vertexKey].Mean(this.GetNodeValue(vertexKey));
         }
 
-        public NetworkNode GetNode(string nodeKey)
+        public Node GetNode(string nodeKey)
         {
             return this.Nodes[nodeKey];
         }
@@ -360,7 +360,7 @@ namespace Marv.Common
             return this.Nodes.Select(node => node.Key);
         }
 
-        public Dict<string, double[]> GetSensitivity(string targetNodeKey, Func<NetworkNode, double[], double[], double> statisticFunc)
+        public Dict<string, double[]> GetSensitivity(string targetNodeKey, Func<Node, double[], double[], double> statisticFunc)
         {
             var targetVertex = this.Nodes[targetNodeKey];
 
@@ -434,7 +434,7 @@ namespace Marv.Common
             return value;
         }
 
-        public Dict<string, double[]> GetSensitivity(string targetNodeKey, IVertexValueComputer computer)
+        public Dict<string, double[]> GetSensitivity(string targetNodeKey, INodeValueComputer computer)
         {
             return this.GetSensitivity(targetNodeKey, computer.Compute);
         }
@@ -444,7 +444,7 @@ namespace Marv.Common
             return this.Nodes[nodeKey].States.Select(state => state.Key).ToArray();
         }
 
-        public VertexType GetType(string nodeKey)
+        public Common.NodeType GetType(string nodeKey)
         {
             return this.Nodes[nodeKey].Type;
         }
@@ -536,7 +536,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, double[]> Run(Dict<string, VertexEvidence> vertexEvidences)
+        public Dict<string, double[]> Run(Dict<string, NodeEvidence> vertexEvidences)
         {
             this.ClearEvidence();
 
@@ -569,7 +569,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<int, string, double[]> Run(Dict<int, string, VertexEvidence> yearEvidences)
+        public Dict<int, string, double[]> Run(Dict<int, string, NodeEvidence> yearEvidences)
         {
             var yearBeliefs = new Dict<int, string, double[]>();
 
@@ -598,7 +598,7 @@ namespace Marv.Common
             return yearBeliefs;
         }
 
-        public Dict<string, int, string, double[]> Run(Dict<string, int, string, VertexEvidence> lineData, IProgress<double> progress = null)
+        public Dict<string, int, string, double[]> Run(Dict<string, int, string, NodeEvidence> lineData, IProgress<double> progress = null)
         {
             var sectionBeliefs = new Dict<string, int, string, double[]>();
 
@@ -629,12 +629,12 @@ namespace Marv.Common
 
             var vertexEvidence = this.Nodes[nodeKey].States.ParseEvidenceString(evidenceString);
 
-            if (vertexEvidence.Type == VertexEvidenceType.Null)
+            if (vertexEvidence.Type == NodeEvidenceType.Null)
             {
                 return;
             }
 
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            if (vertexEvidence.Type == NodeEvidenceType.Invalid)
             {
                 throw new InvalidEvidenceException("The evidence (" + evidenceString + ") is invalid for node " + nodeKey);
             }
@@ -652,7 +652,7 @@ namespace Marv.Common
             this.SetSoftEvidence(nodeKey, evidence);
         }
 
-        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        public void SetEvidence(Dict<string, NodeEvidence> vertexEvidences)
         {
             foreach (var nodeKey in vertexEvidences.Keys)
             {
@@ -818,7 +818,7 @@ namespace Marv.Common
             vertexEvidences.WriteJson(filePath);
         }
 
-        private string FormPotentialString(NetworkNode node, double[,] table, string[] parentNodeKeys, int row = 0, int col = 0, int level = 0)
+        private string FormPotentialString(Node node, double[,] table, string[] parentNodeKeys, int row = 0, int col = 0, int level = 0)
         {
             var potentialString = "";
 

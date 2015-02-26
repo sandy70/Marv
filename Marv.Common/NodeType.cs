@@ -1,6 +1,6 @@
 ﻿namespace Marv.Common
 {
-    public enum VertexType
+    public enum NodeType
     {
         Boolean,
         Interval,

@@ -7,15 +7,15 @@ using Marv.Common.Types;
 
 namespace Marv.Common
 {
-    public class NetworkNode : IKeyed
+    public class Node : IKeyed
     {
-        public readonly List<NetworkNode> Children = new List<NetworkNode>();
+        public readonly List<Node> Children = new List<Node>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
         private ObservableCollection<string> groups;
         private string headerOfGroup;
         private string inputNodeKey;
         private ObservableCollection<State> states;
-        private VertexType? type;
+        private NodeType? type;
 
         public string Expression { get; set; }
 
@@ -53,12 +53,12 @@ namespace Marv.Common
         {
             get
             {
-                if (this.Type == VertexType.Interval)
+                if (this.Type == NodeType.Interval)
                 {
                     return this.States.Select(state => state.Min).Concat(this.States.Last().Max.Yield()).ToArray();
                 }
 
-                if (this.Type == VertexType.Numbered)
+                if (this.Type == NodeType.Numbered)
                 {
                     return this.States.Select(state => state.Min).ToArray();
                 }
@@ -76,7 +76,7 @@ namespace Marv.Common
             get { return this.states ?? (this.states = this.ParseStates()); }
         }
 
-        public VertexType Type
+        public NodeType Type
         {
             get { return this.type ?? (this.type = this.ParseSubType()).Value; }
 
@@ -319,19 +319,19 @@ namespace Marv.Common
             return theStates;
         }
 
-        private VertexType ParseSubType()
+        private NodeType ParseSubType()
         {
             var typeString = this.ParseStringProperty("subtype");
 
             if (typeString.Equals("number"))
             {
-                return VertexType.Numbered;
+                return NodeType.Numbered;
             }
             if (typeString.Equals("interval"))
             {
-                return VertexType.Interval;
+                return NodeType.Interval;
             }
-            return VertexType.Labelled;
+            return NodeType.Labelled;
         }
     }
 }

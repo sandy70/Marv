@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
@@ -218,45 +217,17 @@ namespace Marv.Input
             return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
         }
 
-        private Dict<object, VertexEvidence> GetChartEvidence()
+        private void GraphControl_EvidenceEntered(object sender, NodeEvidence nodeEvidence)
         {
-            var vertexEvidences = new Dict<object, VertexEvidence>();
-
-            var isHorizontalAxisSections = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section;
-
-            var categories = isHorizontalAxisSections
-                                 ? this.LineData.SectionIds
-                                 : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
-
-            foreach (var category in categories)
-            {
-                var sectionId = isHorizontalAxisSections ? category as string : this.SelectedSectionId;
-                var year = isHorizontalAxisSections ? this.SelectedYear : (int) category;
-
-                if (sectionId == null)
-                {
-                    continue;
-                }
-
-                var vertexEvidence = this.LineData.GetEvidence(sectionId)[year][this.Graph.SelectedVertex.Key];
-
-                vertexEvidences[category] = vertexEvidence;
-            }
-
-            return vertexEvidences;
-        }
-
-        private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
-        {
-            if (vertexEvidence == null)
+            if (nodeEvidence == null)
             {
                 this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 this.LineDataControl.ClearSelectedCell();
             }
             else
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
-                this.LineDataControl.SetEvidence(vertexEvidence);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), nodeEvidence);
+                this.LineDataControl.SetEvidence(nodeEvidence);
             }
         }
 
@@ -265,7 +236,7 @@ namespace Marv.Input
             if (this.LineData == null)
             {
                 this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+                this.LineData.SetEvidence("Section 1", new Dict<int, string, NodeEvidence>());
             }
         }
 
@@ -295,7 +266,9 @@ namespace Marv.Input
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
         }
 
@@ -306,7 +279,7 @@ namespace Marv.Input
             var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? e.Category as string : this.SelectedSectionId;
             var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedYear : (int) e.Category;
 
-            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
+            if (vertexEvidence.Type != NodeEvidenceType.Invalid)
             {
                 var sectionEvidence = this.LineData.GetEvidence(sectionId);
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
@@ -319,7 +292,9 @@ namespace Marv.Input
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            var vertexEvidences = this.GetChartEvidence();
+            var vertexEvidences = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                      ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                      : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key);
 
             if (vertexEvidences == null || vertexEvidences.Count > 0)
             {

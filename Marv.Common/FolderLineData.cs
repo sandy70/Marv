@@ -118,12 +118,12 @@ namespace Marv.Common
             return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
         }
 
-        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node)
+        public double[,] GetBeliefStatistic(INodeValueComputer valueComputer, Node node)
         {
             return this.GetBeliefStatistic(valueComputer, node, this.GetSectionIds());
         }
 
-        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkNode node, IEnumerable<string> sectionIds)
+        public double[,] GetBeliefStatistic(INodeValueComputer valueComputer, Node node, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -160,7 +160,7 @@ namespace Marv.Common
             return statistic;
         }
 
-        public double[,] GetBeliefs(NetworkNode node, string sectionId, IEnumerable<int> years)
+        public double[,] GetBeliefs(Node node, string sectionId, IEnumerable<int> years)
         {
             var sectionBelief = this.GetBelief(sectionId);
 
@@ -180,7 +180,7 @@ namespace Marv.Common
             return beliefs;
         }
 
-        public double[,] GetBeliefs(NetworkNode node, IEnumerable<string> sectionIds, int year)
+        public double[,] GetBeliefs(Node node, IEnumerable<string> sectionIds, int year)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -202,24 +202,24 @@ namespace Marv.Common
             return beliefs;
         }
 
-        public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
+        public Dict<int, string, NodeEvidence> GetEvidence(string sectionId)
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
-            return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
+            return Utils.ReadJson<Dict<int, string, NodeEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
         }
 
-        public Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId)
+        public Task<Dict<int, string, NodeEvidence>> GetEvidenceAsync(string sectionId)
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
-            return Task.Run(() => Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence")));
+            return Task.Run(() => Utils.ReadJson<Dict<int, string, NodeEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence")));
         }
 
-        public double[,] GetEvidenceStatistic(NetworkNode node, IVertexValueComputer valueComputer)
+        public double[,] GetEvidenceStatistic(Node node, INodeValueComputer valueComputer)
         {
             return this.GetEvidenceStatistic(node, valueComputer, this.GetSectionIds());
         }
 
-        public double[,] GetEvidenceStatistic(NetworkNode node, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
+        public double[,] GetEvidenceStatistic(Node node, INodeValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -283,7 +283,7 @@ namespace Marv.Common
             sectionBelief.WriteJson(beliefFilePath);
         }
 
-        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
+        public void SetEvidence(string sectionId, Dict<int, string, NodeEvidence> sectionEvidence)
         {
             this.SectionIds.AddUnique(sectionId);
 

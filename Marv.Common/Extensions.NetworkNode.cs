@@ -5,14 +5,14 @@ namespace Marv.Common
 {
     public static partial class Extensions
     {
-        public static double Entropy(this NetworkNode node, double[] newValue, double[] oldValue = null)
+        public static double Entropy(this Node node, double[] newValue, double[] oldValue = null)
         {
             CheckValueArrayLength(node, newValue);
 
             return newValue.Entropy();
         }
 
-        public static double EntropyDifference(this NetworkNode node, double[] newValue, double[] oldValue = null)
+        public static double EntropyDifference(this Node node, double[] newValue, double[] oldValue = null)
         {
             CheckValueArrayLength(node, newValue);
             CheckValueArrayLength(node, oldValue);
@@ -20,7 +20,7 @@ namespace Marv.Common
             return newValue.Entropy() - oldValue.Entropy();
         }
 
-        public static double Mean(this NetworkNode node, double[] newValue, double[] oldValue = null)
+        public static double Mean(this Node node, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(node, newValue);
 
@@ -29,7 +29,7 @@ namespace Marv.Common
                          .Sum();
         }
 
-        public static double MeanDifference(this NetworkNode node, double[] newValue, double[] oldValue = null)
+        public static double MeanDifference(this Node node, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(node, newValue);
             CheckVertexStatisticComputable(node, oldValue);
@@ -37,7 +37,7 @@ namespace Marv.Common
             return node.Mean(newValue) - node.Mean(oldValue);
         }
 
-        public static double StandardDeviation(this NetworkNode node, double[] newValue, double[] oldValue = null)
+        public static double StandardDeviation(this Node node, double[] newValue, double[] oldValue = null)
         {
             CheckVertexStatisticComputable(node, newValue);
 
@@ -55,18 +55,18 @@ namespace Marv.Common
             return Math.Sqrt(stdev / node.States.Count);
         }
 
-        private static void CheckVertexStatisticComputable(NetworkNode node, double[] value)
+        private static void CheckVertexStatisticComputable(Node node, double[] value)
         {
             CheckValueArrayLength(node, value);
 
-            if (node.Type != VertexType.Interval)
+            if (node.Type != NodeType.Interval)
             {
                 var message = System.String.Format("Mean is undefined for non-interval type node [{0}].", node);
                 throw new InvalidValueException(message);
             }
         }
 
-        private static void CheckValueArrayLength(NetworkNode node, double[] value)
+        private static void CheckValueArrayLength(Node node, double[] value)
         {
             if (node.States.Count != value.Length)
             {

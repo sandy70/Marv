@@ -30,7 +30,7 @@ namespace Marv.Common
         private Dict<string, Point> positionsForGroup = new Dict<string, Point>();
         private string selectedGroup;
         private ObservableCollection<State> states = new ObservableCollection<State>();
-        private VertexType type = VertexType.Labelled;
+        private NodeType type = NodeType.Labelled;
         private string units = "";
 
         public double[] Belief
@@ -397,7 +397,7 @@ namespace Marv.Common
             }
         }
 
-        public VertexType Type
+        public NodeType Type
         {
             get { return this.type; }
 

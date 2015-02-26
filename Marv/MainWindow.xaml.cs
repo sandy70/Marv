@@ -266,7 +266,7 @@ namespace Marv
             if (this.LineData == null)
             {
                 this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
+                this.LineData.SetEvidence("Section 1", new Dict<int, string, NodeEvidence>());
             }
         }
 

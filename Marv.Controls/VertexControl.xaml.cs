@@ -134,21 +134,21 @@ namespace Marv.Controls
             }
         }
 
-        public void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
+        public void RaiseEvidenceEntered(NodeEvidence nodeEvidence = null)
         {
-            if (vertexEvidence == null)
+            if (nodeEvidence == null)
             {
-                vertexEvidence = new VertexEvidence
+                nodeEvidence = new NodeEvidence
                 {
                     Value = this.Vertex.Evidence,
-                    Type = VertexEvidenceType.Distribution,
+                    Type = NodeEvidenceType.Distribution,
                     Params = this.Vertex.Evidence
                 };
             }
 
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, vertexEvidence);
+                this.EvidenceEntered(this, nodeEvidence);
             }
         }
 
@@ -204,7 +204,7 @@ namespace Marv.Controls
 
         public event EventHandler<Command<VertexControl>> CommandExecuted;
 
-        public event EventHandler<VertexEvidence> EvidenceEntered;
+        public event EventHandler<NodeEvidence> EvidenceEntered;
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

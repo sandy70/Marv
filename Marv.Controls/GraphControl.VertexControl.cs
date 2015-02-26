@@ -19,7 +19,7 @@ namespace Marv.Controls
             }
         }
 
-        private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
+        private void VertexControl_EvidenceEntered(object sender, NodeEvidence e)
         {
             this.Run();
             this.RaiseEvidenceEntered(e);

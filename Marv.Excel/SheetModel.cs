@@ -10,7 +10,7 @@ namespace Marv.ExcelNew
     public class SheetModel
     {
         private List<string> columnHeaders = new List<string>();
-        private Dict<string, int, string, VertexEvidence> lineEvidence = new Dict<string, int, string, VertexEvidence>();
+        private Dict<string, int, string, NodeEvidence> lineEvidence = new Dict<string, int, string, NodeEvidence>();
         private Dict<string, int, string, double[]> lineValue = new Dict<string, int, string, double[]>();
         private Dict<int, string, string, double> modelEvidence = new Dict<int, string, string, double>();
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
@@ -26,7 +26,7 @@ namespace Marv.ExcelNew
 
         public Graph Graph { get; set; }
 
-        public Dict<string, int, string, VertexEvidence> LineEvidence
+        public Dict<string, int, string, NodeEvidence> LineEvidence
         {
             get { return this.lineEvidence; }
             set { this.lineEvidence = value; }
@@ -131,7 +131,7 @@ namespace Marv.ExcelNew
 
                 if (!sheetModel.LineEvidence.ContainsKey(sectionId))
                 {
-                    sheetModel.LineEvidence[sectionId] = new Dict<int, string, VertexEvidence>();
+                    sheetModel.LineEvidence[sectionId] = new Dict<int, string, NodeEvidence>();
                 }
 
                 // Get vertexKey
@@ -144,7 +144,7 @@ namespace Marv.ExcelNew
                 {
                     if (sheetModel.LineEvidence[sectionId].ContainsKey(year))
                     {
-                        sheetModel.LineEvidence[sectionId][year] = new Dict<string, VertexEvidence>();
+                        sheetModel.LineEvidence[sectionId][year] = new Dict<string, NodeEvidence>();
                     }
 
                     value = worksheet.Read(row, col);
@@ -156,7 +156,7 @@ namespace Marv.ExcelNew
                     }
                     else
                     {
-                        var vertexEvidence = new VertexEvidence
+                        var vertexEvidence = new NodeEvidence
                         {
                             Value = new double[vertex.States.Count]
                         };

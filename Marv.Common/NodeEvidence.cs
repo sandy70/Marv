@@ -5,13 +5,13 @@ using Newtonsoft.Json.Converters;
 
 namespace Marv.Common
 {
-    public class VertexEvidence
+    public class NodeEvidence
     {
         public double[] Params { get; set; }
         public string StateKey { get; set; }
 
         [JsonConverter(typeof (StringEnumConverter))]
-        public VertexEvidenceType Type { get; set; }
+        public NodeEvidenceType Type { get; set; }
 
         public double[] Value { get; set; }
 
@@ -45,32 +45,32 @@ namespace Marv.Common
                 return null;
             }
 
-            if (this.Type == VertexEvidenceType.Distribution)
+            if (this.Type == NodeEvidenceType.Distribution)
             {
                 return this.Params.String("{0:F2}");
             }
 
-            if (this.Type == VertexEvidenceType.Normal)
+            if (this.Type == NodeEvidenceType.Normal)
             {
                 return "NORM" + this.Params.String().Enquote('(', ')');
             }
 
-            if (this.Type == VertexEvidenceType.Number)
+            if (this.Type == NodeEvidenceType.Number)
             {
                 return this.Params[0].ToString();
             }
 
-            if (this.Type == VertexEvidenceType.Range)
+            if (this.Type == NodeEvidenceType.Range)
             {
                 return this.Params[0] + ":" + this.Params[1];
             }
 
-            if (this.Type == VertexEvidenceType.State)
+            if (this.Type == NodeEvidenceType.State)
             {
                 return this.StateKey;
             }
 
-            if (this.Type == VertexEvidenceType.Triangular)
+            if (this.Type == NodeEvidenceType.Triangular)
             {
                 return "TRI" + this.Params.String("{0:F2}").Enquote('(', ')');
             }

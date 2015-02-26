@@ -16,7 +16,7 @@ namespace Marv.Input
             {
                 if (e.OldString == null)
                 {
-                    this.LineData.SetEvidence(e.NewString, new Dict<int, string, VertexEvidence>());
+                    this.LineData.SetEvidence(e.NewString, new Dict<int, string, NodeEvidence>());
                 }
                 else
                 {
@@ -27,7 +27,7 @@ namespace Marv.Input
             }
             else
             {
-                var vertexEvidence = e.VertexEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
+                var vertexEvidence = e.NodeEvidence ?? this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewString);
 
                 e.CellModel.Data = vertexEvidence;
 
@@ -43,7 +43,7 @@ namespace Marv.Input
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            if (vertexEvidence.Type == NodeEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
@@ -52,7 +52,7 @@ namespace Marv.Input
 
         private void LineDataControl_RowAdded(object sender, string sectionId)
         {
-            this.LineData.SetEvidence(sectionId, new Dict<int, string, VertexEvidence>());
+            this.LineData.SetEvidence(sectionId, new Dict<int, string, NodeEvidence>());
         }
 
         private void LineDataControl_RowRemoved(object sender, string sectionId)
