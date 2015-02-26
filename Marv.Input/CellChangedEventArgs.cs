@@ -7,6 +7,6 @@ namespace Marv.Input
         public CellModel CellModel;
         public string NewString;
         public string OldString;
-        public NodeEvidence NodeEvidence;
+        public VertexEvidence VertexEvidence;
     }
 }

@@ -60,7 +60,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, double[]> Evidence
+        public Dict<string, VertexEvidence> Evidence
         {
             get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence); }
 
@@ -222,14 +222,6 @@ namespace Marv.Common
             return graph;
         }
 
-        public void ClearEvidence()
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.ClearEvidence();
-            }
-        }
-
         /// <summary>
         ///     Returns the key of the vertex which is the header of the give group.
         /// </summary>
@@ -362,12 +354,11 @@ namespace Marv.Common
             this.Belief = Network.Read(this.Network.FileName).Run(this.Evidence);
         }
 
-        public void SetEvidence(Dict<string, NodeEvidence> vertexEvidences)
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
         {
             foreach (var vertex in this.Vertices)
             {
-                vertex.Evidence = vertexEvidences[vertex.Key].Value;
-                vertex.EvidenceString = vertexEvidences[vertex.Key].ToString();
+                vertex.Evidence = vertexEvidences[vertex.Key];
             }
         }
 

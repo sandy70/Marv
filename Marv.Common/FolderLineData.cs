@@ -118,12 +118,12 @@ namespace Marv.Common
             return Utils.ReadJson<Dict<int, string, double[]>>(Path.Combine(this.rootDirPathPath, BeliefsDirName, sectionId + ".marv-sectionbelief"));
         }
 
-        public double[,] GetBeliefStatistic(INodeValueComputer valueComputer, Node node)
+        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkVertex networkVertex)
         {
-            return this.GetBeliefStatistic(valueComputer, node, this.GetSectionIds());
+            return this.GetBeliefStatistic(valueComputer, networkVertex, this.GetSectionIds());
         }
 
-        public double[,] GetBeliefStatistic(INodeValueComputer valueComputer, Node node, IEnumerable<string> sectionIds)
+        public double[,] GetBeliefStatistic(IVertexValueComputer valueComputer, NetworkVertex networkVertex, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -146,9 +146,9 @@ namespace Marv.Common
 
                 foreach (var year in sectionBelief.Keys)
                 {
-                    if (sectionBelief[year][node.Key] != null)
+                    if (sectionBelief[year][networkVertex.Key] != null)
                     {
-                        statistic[row, col] = valueComputer.Compute(node, sectionBelief[year][node.Key], null);
+                        statistic[row, col] = valueComputer.Compute(networkVertex, sectionBelief[year][networkVertex.Key], null);
                     }
 
                     col++;
@@ -160,11 +160,11 @@ namespace Marv.Common
             return statistic;
         }
 
-        public double[,] GetBeliefs(Node node, string sectionId, IEnumerable<int> years)
+        public double[,] GetBeliefs(NetworkVertex networkVertex, string sectionId, IEnumerable<int> years)
         {
             var sectionBelief = this.GetBelief(sectionId);
 
-            var nRows = node.States.Count;
+            var nRows = networkVertex.States.Count;
             var nCols = years.Count();
 
             var beliefs = new double[nRows, nCols];
@@ -173,19 +173,19 @@ namespace Marv.Common
             {
                 for (var row = 0; row < nRows; row++)
                 {
-                    beliefs[row, col] = sectionBelief[years.ElementAt(col)][node.Key][row];
+                    beliefs[row, col] = sectionBelief[years.ElementAt(col)][networkVertex.Key][row];
                 }
             }
 
             return beliefs;
         }
 
-        public double[,] GetBeliefs(Node node, IEnumerable<string> sectionIds, int year)
+        public double[,] GetBeliefs(NetworkVertex networkVertex, IEnumerable<string> sectionIds, int year)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
             var nRows = sectionIdList.Count();
-            var nCols = node.States.Count;
+            var nCols = networkVertex.States.Count;
 
             var beliefs = new double[nRows, nCols];
 
@@ -195,31 +195,31 @@ namespace Marv.Common
 
                 for (var col = 0; col < nCols; col++)
                 {
-                    beliefs[row, col] = sectionBelief[year][node.Key][col];
+                    beliefs[row, col] = sectionBelief[year][networkVertex.Key][col];
                 }
             }
 
             return beliefs;
         }
 
-        public Dict<int, string, NodeEvidence> GetEvidence(string sectionId)
+        public Dict<int, string, VertexEvidence> GetEvidence(string sectionId)
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
-            return Utils.ReadJson<Dict<int, string, NodeEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
+            return Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence"));
         }
 
-        public Task<Dict<int, string, NodeEvidence>> GetEvidenceAsync(string sectionId)
+        public Task<Dict<int, string, VertexEvidence>> GetEvidenceAsync(string sectionId)
         {
             Console.WriteLine("Getting evidence for section [{0}]", sectionId);
-            return Task.Run(() => Utils.ReadJson<Dict<int, string, NodeEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence")));
+            return Task.Run(() => Utils.ReadJson<Dict<int, string, VertexEvidence>>(Path.Combine(this.rootDirPathPath, EvidencesDirName, sectionId + ".marv-sectionevidence")));
         }
 
-        public double[,] GetEvidenceStatistic(Node node, INodeValueComputer valueComputer)
+        public double[,] GetEvidenceStatistic(NetworkVertex networkVertex, IVertexValueComputer valueComputer)
         {
-            return this.GetEvidenceStatistic(node, valueComputer, this.GetSectionIds());
+            return this.GetEvidenceStatistic(networkVertex, valueComputer, this.GetSectionIds());
         }
 
-        public double[,] GetEvidenceStatistic(Node node, INodeValueComputer valueComputer, IEnumerable<string> sectionIds)
+        public double[,] GetEvidenceStatistic(NetworkVertex networkVertex, IVertexValueComputer valueComputer, IEnumerable<string> sectionIds)
         {
             var sectionIdList = sectionIds as IList<string> ?? sectionIds.ToList();
 
@@ -242,9 +242,9 @@ namespace Marv.Common
 
                 foreach (var year in sectionEvidence.Keys)
                 {
-                    if (sectionEvidence[year][node.Key].Value != null)
+                    if (sectionEvidence[year][networkVertex.Key].Value != null)
                     {
-                        statistic[row, col] = valueComputer.Compute(node, sectionEvidence[year][node.Key].Value, null);
+                        statistic[row, col] = valueComputer.Compute(networkVertex, sectionEvidence[year][networkVertex.Key].Value, null);
                     }
 
                     col++;
@@ -283,7 +283,7 @@ namespace Marv.Common
             sectionBelief.WriteJson(beliefFilePath);
         }
 
-        public void SetEvidence(string sectionId, Dict<int, string, NodeEvidence> sectionEvidence)
+        public void SetEvidence(string sectionId, Dict<int, string, VertexEvidence> sectionEvidence)
         {
             this.SectionIds.AddUnique(sectionId);
 

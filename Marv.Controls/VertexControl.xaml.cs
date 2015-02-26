@@ -83,15 +83,20 @@ namespace Marv.Controls
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.Evidence = null;
-            this.Vertex.UpdateEvidenceString();
-            this.RaiseEvidenceEntered();
+            this.Vertex.Evidence = new VertexEvidence
+            {
+                Params = null,
+                Type = VertexEvidenceType.Null,
+                Value = null
+            };
+
+            this.RaiseEvidenceEntered(this.Vertex.Evidence);
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence.Value;
+            this.Vertex.Evidence = vertexEvidence;
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 
@@ -100,21 +105,11 @@ namespace Marv.Controls
             this.IsExpanded = !this.IsExpanded;
         }
 
-        private void RaiseEvidenceEntered(NodeEvidence nodeEvidence = null)
+        private void RaiseEvidenceEntered(VertexEvidence vertexEvidence)
         {
-            if (nodeEvidence == null)
-            {
-                nodeEvidence = new NodeEvidence
-                {
-                    Value = this.Vertex.Evidence,
-                    Type = NodeEvidenceType.Distribution,
-                    Params = this.Vertex.Evidence
-                };
-            }
-
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, nodeEvidence);
+                this.EvidenceEntered(this, vertexEvidence);
             }
         }
 
@@ -143,13 +138,10 @@ namespace Marv.Controls
         {
             if (Math.Abs(e - 100) < Common.Utils.Epsilon)
             {
-                this.Vertex.SetEvidence((sender as SliderProgressBar).DataContext as State);
+                this.Vertex.Evidence = this.Vertex.States.ParseEvidenceString(((sender as SliderProgressBar).DataContext as State).Key);
             }
 
-            this.Vertex.Normalize();
-            this.Vertex.UpdateEvidenceString();
-
-            this.RaiseEvidenceEntered();
+            this.RaiseEvidenceEntered(this.Vertex.Evidence);
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -157,26 +149,25 @@ namespace Marv.Controls
             var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
 
             var nodeEvidence = this.Vertex.IsNumeric
-                                   ? new NodeEvidence
+                                   ? new VertexEvidence
                                    {
                                        Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
-                                       Type = NodeEvidenceType.Range,
+                                       Type = VertexEvidenceType.Range,
                                        Value = evidenceValue
                                    }
-                                   : new NodeEvidence
+                                   : new VertexEvidence
                                    {
                                        Params = evidenceValue,
-                                       Type = NodeEvidenceType.Distribution,
+                                       Type = VertexEvidenceType.Distribution,
                                        Value = evidenceValue
                                    };
 
-            this.Vertex.Evidence = nodeEvidence.Value;
-            this.Vertex.EvidenceString = nodeEvidence.ToString();
+            this.Vertex.Evidence = nodeEvidence;
 
             this.RaiseEvidenceEntered(nodeEvidence);
         }
 
-        public event EventHandler<NodeEvidence> EvidenceEntered;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

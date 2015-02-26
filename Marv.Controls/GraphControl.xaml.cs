@@ -395,7 +395,6 @@ namespace Marv.Controls
         private void Open(string fileName)
         {
             this.Graph = Graph.Read(fileName);
-            this.Graph.Run();
         }
 
         private void Open()
@@ -420,11 +419,11 @@ namespace Marv.Controls
             this.Open();
         }
 
-        private void RaiseEvidenceEntered(NodeEvidence nodeEvidence = null)
+        private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
         {
             if (this.EvidenceEntered != null)
             {
-                this.EvidenceEntered(this, nodeEvidence);
+                this.EvidenceEntered(this, vertexEvidence);
             }
         }
 
@@ -559,7 +558,7 @@ namespace Marv.Controls
             this.Graph.Evidence.WriteJson(filePath);
         }
 
-        public event EventHandler<NodeEvidence> EvidenceEntered;
+        public event EventHandler<VertexEvidence> EvidenceEntered;
         public event EventHandler<ValueChangedEventArgs<Graph>> GraphChanged;
         public event EventHandler<Notification> NotificationClosed;
         public event EventHandler<Notification> NotificationOpened;

@@ -20,13 +20,13 @@ namespace Marv.Common
             return states.Select(state => dist.Cdf(state.SafeMax + Utils.Epsilon) - dist.Cdf(state.SafeMin - Utils.Epsilon)).Normalized().ToArray();
         }
 
-        public static NodeEvidence ParseEvidenceString(this IEnumerable<State> states, string anEvidenceString)
+        public static VertexEvidence ParseEvidenceString(this IEnumerable<State> states, string anEvidenceString)
         {
             if (string.IsNullOrWhiteSpace(anEvidenceString))
             {
-                return new NodeEvidence
+                return new VertexEvidence
                 {
-                    Type = NodeEvidenceType.Null
+                    Type = VertexEvidenceType.Null
                 };
             }
 
@@ -35,10 +35,10 @@ namespace Marv.Common
             // Check if string is the label of any of the states.
             if (stateList.Any(state => state.Key == anEvidenceString))
             {
-                return new NodeEvidence
+                return new VertexEvidence
                 {
                     Value = stateList.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
-                    Type = NodeEvidenceType.State,
+                    Type = VertexEvidenceType.State,
                     StateKey = stateList.Where(state => state.Key == anEvidenceString).Select(state => state.Key).First()
                 };
             }
@@ -46,10 +46,10 @@ namespace Marv.Common
             double value;
             if (double.TryParse(anEvidenceString, out value) && stateList.GetSafeMin() <= value && value <= stateList.GetSafeMax())
             {
-                return new NodeEvidence
+                return new VertexEvidence
                 {
                     Value = stateList.ParseEvidence(new DeltaDistribution(value)),
-                    Type = NodeEvidenceType.Number,
+                    Type = VertexEvidenceType.Number,
                     Params = new[]
                     {
                         value
@@ -57,8 +57,8 @@ namespace Marv.Common
                 };
             }
 
-            var evidenceParams = NodeEvidence.ParseEvidenceParams(anEvidenceString);
-            var evidenceType = NodeEvidenceType.Invalid;
+            var evidenceParams = VertexEvidence.ParseEvidenceParams(anEvidenceString);
+            var evidenceType = VertexEvidenceType.Invalid;
             double[] evidence = null;
 
             // Check for functions
@@ -67,13 +67,13 @@ namespace Marv.Common
                 evidenceParams.Sort();
 
                 evidence = stateList.ParseEvidence(new TriangularDistribution(evidenceParams[0], evidenceParams[1], evidenceParams[2]));
-                evidenceType = NodeEvidenceType.Triangular;
+                evidenceType = VertexEvidenceType.Triangular;
             }
 
             else if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
             {
                 evidence = stateList.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1]));
-                evidenceType = NodeEvidenceType.Normal;
+                evidenceType = VertexEvidenceType.Normal;
             }
 
             else if (anEvidenceString.Contains(":") && evidenceParams.Count == 2)
@@ -81,16 +81,16 @@ namespace Marv.Common
                 evidenceParams.Sort();
 
                 evidence = stateList.ParseEvidence(new UniformDistribution(evidenceParams[0], evidenceParams[1]));
-                evidenceType = NodeEvidenceType.Range;
+                evidenceType = VertexEvidenceType.Range;
             }
 
             else if (evidenceParams.Count == stateList.Count)
             {
                 evidence = evidenceParams.Normalized().ToArray();
-                evidenceType = NodeEvidenceType.Distribution;
+                evidenceType = VertexEvidenceType.Distribution;
             }
 
-            return new NodeEvidence
+            return new VertexEvidence
             {
                 Value = evidence,
                 Type = evidenceType,

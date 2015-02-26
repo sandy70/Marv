@@ -13,6 +13,7 @@ namespace Marv.Common
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
+        private VertexEvidence evidence;
         private string evidenceString;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
@@ -29,7 +30,7 @@ namespace Marv.Common
         private Dict<string, Point> positionsForGroup = new Dict<string, Point>();
         private string selectedGroup;
         private ObservableCollection<State> states = new ObservableCollection<State>();
-        private NodeType type = NodeType.Labelled;
+        private VertexType type = VertexType.Labelled;
         private string units = "";
 
         public double[] Belief
@@ -93,13 +94,15 @@ namespace Marv.Common
             }
         }
 
-        public double[] Evidence
+        public VertexEvidence Evidence
         {
-            get { return this.States.Select(state => state.Evidence).ToArray(); }
+            get { return this.evidence; }
 
             set
             {
-                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value[i]);
+                this.evidence = value;
+
+                this.States.ForEach((state, i) => state.Evidence = value == null || value.Value == null ? 0 : value.Value[i]);
                 this.RaisePropertyChanged();
             }
         }
@@ -223,7 +226,7 @@ namespace Marv.Common
 
         public bool IsNumeric
         {
-            get { return this.Type == NodeType.Interval || this.Type == NodeType.Numbered; }
+            get { return this.Type == VertexType.Interval || this.Type == VertexType.Numbered; }
         }
 
         public bool IsSelected
@@ -373,7 +376,7 @@ namespace Marv.Common
             }
         }
 
-        public NodeType Type
+        public VertexType Type
         {
             get { return this.type; }
 
@@ -401,40 +404,9 @@ namespace Marv.Common
             }
         }
 
-        public void ClearEvidence()
-        {
-            foreach (var state in this.States)
-            {
-                state.Evidence = 0;
-            }
-        }
-
-        public void Normalize()
-        {
-            this.Evidence = this.Evidence.Normalized().ToArray();
-        }
-
-        public void SetEvidence(State aState)
-        {
-            foreach (var state in this.States)
-            {
-                state.Evidence = state == aState ? 1 : 0;
-            }
-        }
-
         public override string ToString()
         {
-            return String.Format("[{0}:{1}]", this.Key, this.Name);
-        }
-
-        public void UpdateEvidenceString()
-        {
-            this.EvidenceString = this.Evidence.Sum() > 0 ? this.Evidence.String("{0:F2}") : null;
-        }
-
-        public void UpdateMostProbableState()
-        {
-            this.MostProbableState = this.States.MaxBy(state => state.Belief);
+            return String.Format("{0} [{1}]", this.Name, this.Key);
         }
 
         private void States_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -454,6 +426,11 @@ namespace Marv.Common
                     state.PropertyChanged -= this.state_PropertyChanged;
                 }
             }
+        }
+
+        private void UpdateMostProbableState()
+        {
+            this.MostProbableState = this.States.MaxBy(state => state.Belief);
         }
 
         private void state_PropertyChanged(object sender, PropertyChangedEventArgs e)

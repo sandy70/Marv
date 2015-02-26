@@ -105,7 +105,7 @@
     <Compile Include="Interpolators\LinearInterpolator.cs" />
     <Compile Include="LineSegment.cs" />
     <Compile Include="Network.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="NetworkVertex.cs" />
     <Compile Include="SectionBelief.cs" />
     <Compile Include="SectionEvidence.cs" />
     <Compile Include="State.cs" />
@@ -135,10 +135,10 @@
     <Compile Include="Distributions\UniformDistribution.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Vertex.cs" />
-    <Compile Include="NodeEvidence.cs" />
-    <Compile Include="NodeEvidenceType.cs" />
-    <Compile Include="NodeType.cs" />
-    <Compile Include="NodeValueComputer.cs" />
+    <Compile Include="VertexEvidence.cs" />
+    <Compile Include="VertexEvidenceType.cs" />
+    <Compile Include="VertexType.cs" />
+    <Compile Include="VertexValueComputer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\Warning.png">

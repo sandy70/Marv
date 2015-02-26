@@ -126,7 +126,7 @@ namespace Marv.Input
             InitializeComponent();
         }
 
-        public void AddRow(string sectionId, Dict<int, NodeEvidence> vertexEvidences)
+        public void AddRow(string sectionId, Dict<int, VertexEvidence> vertexEvidences)
         {
             var row = new Dynamic();
             row[CellModel.SectionIdHeader] = sectionId;
@@ -159,7 +159,7 @@ namespace Marv.Input
             }
         }
 
-        public void SetEvidence(string sectionId, int year, NodeEvidence nodeEvidence)
+        public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
         {
             var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader] as string == sectionId);
 
@@ -167,11 +167,11 @@ namespace Marv.Input
 
             if (!cellModel.IsColumnSectionId)
             {
-                this.SetEvidence(cellModel, nodeEvidence);
+                this.SetEvidence(cellModel, vertexEvidence);
             }
         }
 
-        public void SetEvidence(NodeEvidence nodeEvidence)
+        public void SetEvidence(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)
             {
@@ -179,7 +179,7 @@ namespace Marv.Input
 
                 if (!cellModel.IsColumnSectionId)
                 {
-                    this.SetEvidence(cellModel, nodeEvidence);
+                    this.SetEvidence(cellModel, vertexEvidence);
                 }
             }
         }
@@ -226,7 +226,7 @@ namespace Marv.Input
             var selectedRowIndex = this.Rows.IndexOf(selectedRow);
 
             this.Rows.Remove(selectedRow);
-            selectedRow[cellModel.Year.ToString()] = new NodeEvidence();
+            selectedRow[cellModel.Year.ToString()] = new VertexEvidence();
             this.Rows.Insert(selectedRowIndex, selectedRow);
 
             this.RaiseCellContentChanged(new CellChangedEventArgs
@@ -261,7 +261,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetEvidence(cellModel, selectedCellModel.Data as NodeEvidence);
+                    this.SetEvidence(cellModel, selectedCellModel.Data as VertexEvidence);
                 }
             }
         }
@@ -294,7 +294,7 @@ namespace Marv.Input
                 foreach (var row in this.Rows)
                 {
                     var cellModel = new CellModel(row, selectedCellModel.Header);
-                    this.SetEvidence(cellModel, (selectedCellModel.Data as NodeEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetEvidence(cellModel, (selectedCellModel.Data as NodeEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -374,7 +374,7 @@ namespace Marv.Input
                     if (year < oldStartYear || oldEndYear < year)
                     {
                         // Data does not exist in the old row
-                        newRow[year.ToString()] = new NodeEvidence();
+                        newRow[year.ToString()] = new VertexEvidence();
                     }
                     else
                     {
@@ -460,19 +460,19 @@ namespace Marv.Input
             }
         }
 
-        private void SetEvidence(CellModel cellModel, NodeEvidence nodeEvidence)
+        private void SetEvidence(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (cellModel.IsColumnSectionId)
             {
                 return;
             }
 
-            cellModel.Data = nodeEvidence;
+            cellModel.Data = vertexEvidence;
 
             this.RaiseCellContentChanged(new CellChangedEventArgs
             {
                 CellModel = cellModel,
-                NodeEvidence = cellModel.Data as NodeEvidence
+                VertexEvidence = cellModel.Data as VertexEvidence
             });
         }
 

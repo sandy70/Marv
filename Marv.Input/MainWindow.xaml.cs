@@ -217,17 +217,17 @@ namespace Marv.Input
             return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
         }
 
-        private void GraphControl_EvidenceEntered(object sender, NodeEvidence nodeEvidence)
+        private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            if (nodeEvidence == null)
+            if (vertexEvidence == null)
             {
                 this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 this.LineDataControl.ClearSelectedCell();
             }
             else
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), nodeEvidence);
-                this.LineDataControl.SetEvidence(nodeEvidence);
+                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
+                this.LineDataControl.SetEvidence(vertexEvidence);
             }
         }
 
@@ -236,7 +236,7 @@ namespace Marv.Input
             if (this.LineData == null)
             {
                 this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, NodeEvidence>());
+                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
         }
 
@@ -280,7 +280,7 @@ namespace Marv.Input
             var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? e.Category as string : this.SelectedSectionId;
             var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedYear : (int) e.Category;
 
-            if (vertexEvidence.Type != NodeEvidenceType.Invalid)
+            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
                 var sectionEvidence = this.LineData.GetEvidence(sectionId);
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;

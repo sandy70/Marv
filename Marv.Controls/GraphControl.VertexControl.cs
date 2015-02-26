@@ -6,7 +6,7 @@ namespace Marv.Controls
 {
     public partial class GraphControl
     {
-        private void VertexControl_EvidenceEntered(object sender, NodeEvidence e)
+        private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
         {
             this.Run();
             this.RaiseEvidenceEntered(e);
