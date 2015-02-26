@@ -162,7 +162,7 @@ namespace Marv.Input
         public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
         {
             var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader] as string == sectionId);
-            
+
             var cellModel = new CellModel(selectedRow, year.ToString());
 
             if (!cellModel.IsColumnSectionId)
@@ -428,11 +428,11 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseRowSelected(CellModel cellModel)
+        private void RaiseRowSelected(string sectionId)
         {
             if (this.RowSelected != null)
             {
-                this.RowSelected(this, cellModel);
+                this.RowSelected(this, sectionId);
             }
         }
 
@@ -497,22 +497,14 @@ namespace Marv.Input
             }
         }
 
-        public event EventHandler<CellModel> RowSelected;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler SelectedCellChanged;
-
-        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
-
         public event EventHandler<CellChangedEventArgs> CellContentChanged;
-
+        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<string> RowAdded;
-
         public event EventHandler<string> RowRemoved;
-
-        public event EventHandler<GridViewCellValidatingEventArgs> SectionIdValidating;
-
+        public event EventHandler<string> RowSelected;
         public event EventHandler<GridViewCellClipboardEventArgs> SectionIdPasting;
+        public event EventHandler<GridViewCellValidatingEventArgs> SectionIdValidating;
+        public event EventHandler SelectedCellChanged;
     }
 }

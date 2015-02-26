@@ -53,7 +53,7 @@ namespace Marv.Input
             {
                 this.CanUserInsertRows = true;
                 this.SelectionUnit = GridViewSelectionUnit.FullRow;
-                this.RaiseRowSelected(cellModel);
+                this.RaiseRowSelected(cellModel.SectionId);
                 return;
             }
 

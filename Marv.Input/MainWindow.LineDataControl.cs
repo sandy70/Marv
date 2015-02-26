@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using Marv.Common;
 using Marv.Common.Types;
 using Telerik.Windows.Controls;
@@ -34,7 +33,7 @@ namespace Marv.Input
 
                 var sectionId = e.CellModel.SectionId;
                 var year = e.CellModel.Year;
-                
+
                 this.LineData.SetEvidence(sectionId, year, this.Graph.SelectedVertex.Key, vertexEvidence);
                 this.LineDataChart.SetUserEvidence(this.GetChartCategory(sectionId, year), vertexEvidence);
             }
@@ -61,7 +60,7 @@ namespace Marv.Input
             this.LineData.RemoveSection(sectionId);
         }
 
-        private void LineDataControl_RowSelected(object sender, CellModel e)
+        private void LineDataControl_RowSelected(object sender, string sectionId)
         {
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
             this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
