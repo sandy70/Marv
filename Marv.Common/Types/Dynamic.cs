@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Marv
+namespace Marv.Common.Types
 {
     public class Dynamic : DynamicObject, INotifyPropertyChanged
     {
@@ -53,9 +53,9 @@ namespace Marv
 
             if (this.GetType().GetProperties().Count(info => info.Name.Equals(name)) == 0)
             {
-                if (dictionary.ContainsKey(name))
+                if (this.dictionary.ContainsKey(name))
                 {
-                    result = dictionary[name];
+                    result = this.dictionary[name];
                 }
                 else
                 {
@@ -74,7 +74,7 @@ namespace Marv
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var name = binder.Name;
-            return dictionary.TryGetValue(name, out result);
+            return this.dictionary.TryGetValue(name, out result);
         }
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
@@ -97,7 +97,7 @@ namespace Marv
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            dictionary[binder.Name] = value;
+            this.dictionary[binder.Name] = value;
             this.RaisePropertyChanged(binder.Name);
             return true;
         }

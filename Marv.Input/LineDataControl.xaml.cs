@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
@@ -158,15 +159,19 @@ namespace Marv.Input
             }
         }
 
-        public void SetCell(string sectionId, int year, VertexEvidence vertexEvidence)
+        public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
         {
-            var selectedRow = this.Rows.First(row => (new CellModel(row, year.ToString()).SectionId == sectionId));
+            var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader] as string == sectionId);
+
             var cellModel = new CellModel(selectedRow, year.ToString());
 
-            this.SetCell(cellModel, vertexEvidence);
+            if (!cellModel.IsColumnSectionId)
+            {
+                this.SetEvidence(cellModel, vertexEvidence);
+            }
         }
 
-        public void SetSelectedCells(VertexEvidence vertexEvidence)
+        public void SetEvidence(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)
             {
@@ -174,7 +179,7 @@ namespace Marv.Input
 
                 if (!cellModel.IsColumnSectionId)
                 {
-                    this.SetCell(cellModel, vertexEvidence);
+                    this.SetEvidence(cellModel, vertexEvidence);
                 }
             }
         }
@@ -256,7 +261,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, selectedCellModel.Data as VertexEvidence);
+                    this.SetEvidence(cellModel, selectedCellModel.Data as VertexEvidence);
                 }
             }
         }
@@ -268,7 +273,6 @@ namespace Marv.Input
                 return;
             }
 
-            var isRow = false;
             var sectionIds = new List<string>();
 
             foreach (var selectedCell in this.GridView.SelectedCells)
@@ -276,7 +280,7 @@ namespace Marv.Input
                 sectionIds.AddUnique(selectedCell.ToModel().SectionId);
             }
 
-            isRow = sectionIds.Count == 1;
+            var isRow = sectionIds.Count == 1;
 
             if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isRow)
             {
@@ -290,7 +294,7 @@ namespace Marv.Input
                 foreach (var row in this.Rows)
                 {
                     var cellModel = new CellModel(row, selectedCellModel.Header);
-                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -302,7 +306,6 @@ namespace Marv.Input
                 return;
             }
 
-            var isColumn = false;
             var indices = new List<int>();
 
             foreach (var selectedCell in this.GridView.SelectedCells)
@@ -310,7 +313,7 @@ namespace Marv.Input
                 indices.AddUnique(selectedCell.Column.DisplayIndex);
             }
 
-            isColumn = indices.Count == 1;
+            var isColumn = indices.Count == 1;
 
             if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isColumn)
             {
@@ -330,7 +333,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -350,7 +353,10 @@ namespace Marv.Input
                 this.StartYear = this.EndYear;
             }
 
-            this.Rows = this.GetNewRows((int) e.NewValue, (int) e.OldValue, this.StartYear, oldStartYear);
+            if (e.NewValue != null && e.OldValue != null)
+            {
+                this.Rows = this.GetNewRows((int) e.NewValue, (int) e.OldValue, this.StartYear, oldStartYear);
+            }
         }
 
         private ObservableCollection<Dynamic> GetNewRows(int newEndYear, int oldEndYear, int newStartYear, int oldStartYear)
@@ -398,22 +404,6 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
-        private void RaiseNotificationOpened(Notification notification)
-        {
-            if (this.NotificationOpened != null)
-            {
-                this.NotificationOpened(this, notification);
-            }
-        }
-
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -438,11 +428,11 @@ namespace Marv.Input
             }
         }
 
-        private void RaiseRowSelected(CellModel cellModel)
+        private void RaiseRowSelected(string sectionId)
         {
             if (this.RowSelected != null)
             {
-                this.RowSelected(this, cellModel);
+                this.RowSelected(this, sectionId);
             }
         }
 
@@ -470,7 +460,7 @@ namespace Marv.Input
             }
         }
 
-        private void SetCell(CellModel cellModel, VertexEvidence vertexEvidence)
+        private void SetEvidence(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (cellModel.IsColumnSectionId)
             {
@@ -501,29 +491,20 @@ namespace Marv.Input
                 this.EndYear = this.StartYear;
             }
 
-            this.Rows = this.GetNewRows(this.EndYear, oldEndYear, (int) e.NewValue, (int) e.OldValue);
+            if (e.NewValue != null && e.OldValue != null)
+            {
+                this.Rows = this.GetNewRows(this.EndYear, oldEndYear, (int) e.NewValue, (int) e.OldValue);
+            }
         }
 
-        public event EventHandler<CellModel> RowSelected;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<Notification> NotificationOpened;
-
-        public event EventHandler<Notification> NotificationClosed;
-
-        public event EventHandler SelectedCellChanged;
-
-        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
-
         public event EventHandler<CellChangedEventArgs> CellContentChanged;
-
+        public event EventHandler<GridViewCellValidatingEventArgs> CellValidating;
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<string> RowAdded;
-
         public event EventHandler<string> RowRemoved;
-
-        public event EventHandler<GridViewCellValidatingEventArgs> SectionIdValidating;
-
+        public event EventHandler<string> RowSelected;
         public event EventHandler<GridViewCellClipboardEventArgs> SectionIdPasting;
+        public event EventHandler<GridViewCellValidatingEventArgs> SectionIdValidating;
+        public event EventHandler SelectedCellChanged;
     }
 }

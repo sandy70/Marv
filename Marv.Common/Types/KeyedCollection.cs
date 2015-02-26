@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Marv
+namespace Marv.Common.Types
 {
     public class KeyedCollection<T> : ObservableCollection<T>, IKeyed where T : IKeyed
     {

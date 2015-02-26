@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Types;
+using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
@@ -11,19 +13,8 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty NotificationsProperty =
-            DependencyProperty.Register("Notifications", typeof (NotificationCollection), typeof (MainWindow), new PropertyMetadata(new NotificationCollection()));
-
-        public static readonly DependencyProperty SelectedSectionIdProperty =
-            DependencyProperty.Register("SelectedSectionId", typeof (string), typeof (MainWindow), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty SelectedYearProperty =
-            DependencyProperty.Register("SelectedYear", typeof (int), typeof (MainWindow), new PropertyMetadata(int.MinValue));
-
         private string chartTitle;
+        private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
@@ -31,8 +22,9 @@ namespace Marv.Input
         private bool isVertexControlVisible = true;
         private ILineData lineData;
         private string lineDataFileName;
-        private LocationCollection locations;
-        private Location selectedLocation;
+        private NotificationCollection notifications = new NotificationCollection();
+        private string selectedSectionId;
+        private int selectedYear;
 
         public string ChartTitle
         {
@@ -52,8 +44,18 @@ namespace Marv.Input
 
         public Graph Graph
         {
-            get { return (Graph) GetValue(GraphProperty); }
-            set { SetValue(GraphProperty, value); }
+            get { return this.graph; }
+
+            set
+            {
+                if (value.Equals(this.graph))
+                {
+                    return;
+                }
+
+                this.graph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public HorizontalAxisQuantity HorizontalAxisQuantity
@@ -152,66 +154,58 @@ namespace Marv.Input
             }
         }
 
-        public LocationCollection Locations
-        {
-            get { return this.locations; }
-
-            set
-            {
-                if (value.Equals(this.locations))
-                {
-                    return;
-                }
-
-                this.locations = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public NotificationCollection Notifications
         {
-            get { return (NotificationCollection) GetValue(NotificationsProperty); }
-            set { SetValue(NotificationsProperty, value); }
-        }
-
-        public Location SelectedLocation
-        {
-            get { return this.selectedLocation; }
+            get { return this.notifications; }
 
             set
             {
-                if (value.Equals(this.selectedLocation))
+                if (value.Equals(this.notifications))
                 {
                     return;
                 }
 
-                this.selectedLocation = value;
+                this.notifications = value;
                 this.RaisePropertyChanged();
             }
         }
 
         public string SelectedSectionId
         {
-            get { return (string) GetValue(SelectedSectionIdProperty); }
-            set { SetValue(SelectedSectionIdProperty, value); }
+            get { return this.selectedSectionId; }
+
+            set
+            {
+                if (value.Equals(this.selectedSectionId))
+                {
+                    return;
+                }
+
+                this.selectedSectionId = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public int SelectedYear
         {
-            get { return (int) GetValue(SelectedYearProperty); }
-            set { SetValue(SelectedYearProperty, value); }
+            get { return this.selectedYear; }
+
+            set
+            {
+                if (value.Equals(this.selectedYear))
+                {
+                    return;
+                }
+
+                this.selectedYear = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-
-            this.Loaded -= MainWindow_Loaded;
-            this.Loaded += MainWindow_Loaded;
-
-            this.Loaded -= MainWindow_Loaded_LineDataControl;
-            this.Loaded += MainWindow_Loaded_LineDataControl;
         }
 
         private object GetChartCategory()
@@ -224,36 +218,13 @@ namespace Marv.Input
             return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
         }
 
-        private Dict<object, VertexEvidence> GetChartEvidence()
-        {
-            var vertexEvidences = new Dict<object, VertexEvidence>();
-
-            var isHorizontalAxisSections = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section;
-
-            var categories = isHorizontalAxisSections
-                                 ? this.LineData.SectionIds
-                                 : Enumerable.Range(this.LineData.StartYear, this.LineData.EndYear - this.LineData.StartYear + 1).Select(i => i as object);
-
-            foreach (var category in categories)
-            {
-                var sectionId = isHorizontalAxisSections ? category as string : this.SelectedSectionId;
-                var year = isHorizontalAxisSections ? this.SelectedYear : (int) category;
-
-                if (sectionId == null)
-                {
-                    continue;
-                }
-
-                var vertexEvidence = this.LineData.GetEvidence(sectionId)[year][this.Graph.SelectedVertex.Key];
-
-                vertexEvidences[category] = vertexEvidence;
-            }
-
-            return vertexEvidences;
-        }
-
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
+            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.Graph.SelectedVertex != null)
+            {
+                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.Graph.SelectedVertex.Key] = vertexEvidence;
+            }
+
             if (vertexEvidence == null)
             {
                 this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
@@ -262,11 +233,11 @@ namespace Marv.Input
             else
             {
                 this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
-                this.LineDataControl.SetSelectedCells(vertexEvidence);
+                this.LineDataControl.SetEvidence(vertexEvidence);
             }
         }
 
-        private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)
+        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
         {
             if (this.LineData == null)
             {
@@ -298,10 +269,13 @@ namespace Marv.Input
                     return;
                 }
 
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+                var intervals = this.Graph.SelectedVertex.Intervals.ToArray();
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+
+                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
         }
 
@@ -319,26 +293,23 @@ namespace Marv.Input
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
                 this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
-                this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
+                this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
             }
         }
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            var vertexEvidences = this.GetChartEvidence();
-
-            if (vertexEvidences == null || vertexEvidences.Count > 0)
-            {
-                this.LineDataChart.SetUserEvidence(vertexEvidences);
-                this.UpdateChartTitle();
-            }
+            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+            this.UpdateChartTitle();
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -355,7 +326,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    this.LineData = Marv.LineData.Read(dialog.FileName);
+                    this.LineData = Common.LineData.Read(dialog.FileName);
                 }
             }
         }
@@ -364,7 +335,7 @@ namespace Marv.Input
         {
             var dialog = new SaveFileDialog
             {
-                Filter = Marv.LineData.FileDescription + "|*." + Marv.LineData.FileExtension,
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
             };
 
             var result = dialog.ShowDialog();
@@ -397,24 +368,6 @@ namespace Marv.Input
         {
             this.PropertyChanged -= MainWindow_PropertyChanged;
             this.PropertyChanged += MainWindow_PropertyChanged;
-
-            this.GraphControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.GraphControl.EvidenceEntered += GraphControl_EvidenceEntered;
-
-            this.GraphControl.GraphChanged -= GraphControl_GraphChanged;
-            this.GraphControl.GraphChanged += GraphControl_GraphChanged;
-
-            this.GraphControl.SelectionChanged -= GraphControl_SelectionChanged;
-            this.GraphControl.SelectionChanged += GraphControl_SelectionChanged;
-
-            this.LineDataChart.EvidenceGenerated -= LineDataChart_EvidenceGenerated;
-            this.LineDataChart.EvidenceGenerated += LineDataChart_EvidenceGenerated;
-
-            this.LineDataChart.HorizontalAxisQuantityChanged -= LineDataChart_HorizontalAxisQuantityChanged;
-            this.LineDataChart.HorizontalAxisQuantityChanged += LineDataChart_HorizontalAxisQuantityChanged;
-
-            this.VertexControl.EvidenceEntered -= GraphControl_EvidenceEntered;
-            this.VertexControl.EvidenceEntered += GraphControl_EvidenceEntered;
         }
 
         private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)

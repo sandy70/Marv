@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using Marv.Common.Types;
 
 namespace Marv.Common
 {
     public class LocationCollection : KeyedCollection<Location>
     {
         private LocationRect bounds;
-        private string name;
 
         /// <summary>
         ///     The geographic bounds of this collection of Locations. Bounds is updated everytime the collection changes.
@@ -25,32 +24,6 @@ namespace Marv.Common
                     this.bounds = value;
                     this.RaisePropertyChanged();
                 }
-            }
-        }
-
-        public string Name
-        {
-            get { return this.name; }
-
-            set
-            {
-                if (value.Equals(this.name))
-                {
-                    return;
-                }
-
-                this.name = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public LocationCollection() {}
-
-        public LocationCollection(IEnumerable<Location> locations)
-        {
-            foreach (var location in locations)
-            {
-                this.Add(location);
             }
         }
 
@@ -130,14 +103,6 @@ namespace Marv.Common
             }
         }
 
-        protected void RaiseValueChanged()
-        {
-            if (this.ValueChanged != null)
-            {
-                this.ValueChanged(this, new EventArgs());
-            }
-        }
-
         // Everytime the collection is changed, the bounds are updated.
         private void UpdateBounds()
         {
@@ -181,7 +146,5 @@ namespace Marv.Common
         {
             return new MapControl.LocationCollection(locations.Select(location => (MapControl.Location) location));
         }
-
-        public event EventHandler ValueChanged;
     }
 }

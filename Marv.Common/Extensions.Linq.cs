@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Marv.Common.Types;
 
 namespace Marv.Common
 {
@@ -61,7 +62,9 @@ namespace Marv.Common
 
             do
             {
-                if (hasRemainingItems = it.MoveNext())
+                hasRemainingItems = it.MoveNext();
+
+                if (hasRemainingItems)
                 {
                     cache.Enqueue(it.Current);
                     if (cache.Count > n)

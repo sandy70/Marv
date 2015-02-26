@@ -48,22 +48,12 @@ namespace Marv.Controls
         public SliderProgressBar()
         {
             InitializeComponent();
-
-            this.Loaded -= SliderProgressBar_Loaded;
-            this.Loaded += SliderProgressBar_Loaded;
-        }
-
-        public void RaiseValueEntered()
-        {
-            if (this.ValueEntered != null)
-            {
-                this.ValueEntered(this, this.Value);
-            }
         }
 
         private void ProgressBar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.Value = 100;
+            this.RaiseValueEntered();
         }
 
         private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -90,6 +80,14 @@ namespace Marv.Controls
             this.RaiseValueEntered();
         }
 
+        private void RaiseValueEntered()
+        {
+            if (this.ValueEntered != null)
+            {
+                this.ValueEntered(this, this.Value);
+            }
+        }
+
         private void SetValue(MouseEventArgs e)
         {
             if (!this.IsEditable)
@@ -98,21 +96,6 @@ namespace Marv.Controls
             }
 
             this.Value = (e.GetPosition(this.ProgressBar).X - 1) / (this.ProgressBar.ActualWidth - 2) * 100;
-        }
-
-        private void SliderProgressBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.ProgressBar.MouseDoubleClick -= ProgressBar_MouseDoubleClick;
-            this.ProgressBar.MouseDoubleClick += ProgressBar_MouseDoubleClick;
-
-            this.ProgressBar.MouseDown -= ProgressBar_MouseDown;
-            this.ProgressBar.MouseDown += ProgressBar_MouseDown;
-
-            this.ProgressBar.MouseMove -= ProgressBar_MouseMove;
-            this.ProgressBar.MouseMove += ProgressBar_MouseMove;
-
-            this.ProgressBar.MouseUp -= ProgressBar_MouseUp;
-            this.ProgressBar.MouseUp += ProgressBar_MouseUp;
         }
 
         public event EventHandler<double> ValueEntered;

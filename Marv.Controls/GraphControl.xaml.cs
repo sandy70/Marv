@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace Marv.Controls
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Marv.Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
+            DependencyProperty.Register("Graph", typeof (Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
 
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
@@ -31,9 +32,6 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
-
-        public static readonly DependencyProperty IsAutoRunEnabledProperty =
-            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
@@ -53,9 +51,11 @@ namespace Marv.Controls
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
-        private Marv.Graph displayGraph;
+        private Graph displayGraph;
         private string displayVertexKey;
+        private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
+        private bool isManipulationAdornerVisible;
         private string selectedGroup;
 
         public int AutoSaveDuration
@@ -72,7 +72,7 @@ namespace Marv.Controls
             set { this.SetValue(ConnectionColorProperty, value); }
         }
 
-        public Marv.Graph DisplayGraph
+        public Graph DisplayGraph
         {
             get { return this.displayGraph; }
 
@@ -88,25 +88,9 @@ namespace Marv.Controls
             }
         }
 
-        public string DisplayVertexKey
+        public Graph Graph
         {
-            get { return this.displayVertexKey; }
-
-            set
-            {
-                if (value.Equals(this.displayVertexKey))
-                {
-                    return;
-                }
-
-                this.displayVertexKey = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public Marv.Graph Graph
-        {
-            get { return (Marv.Graph) this.GetValue(GraphProperty); }
+            get { return (Graph) this.GetValue(GraphProperty); }
 
             set { this.SetValue(GraphProperty, value); }
         }
@@ -130,17 +114,27 @@ namespace Marv.Controls
             set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
         }
 
-        public bool IsAutoRunEnabled
-        {
-            get { return (bool) this.GetValue(IsAutoRunEnabledProperty); }
-            set { this.SetValue(IsAutoRunEnabledProperty, value); }
-        }
-
         public bool IsAutoSaveEnabled
         {
             get { return (bool) this.GetValue(IsAutoSaveEnabledProperty); }
 
             set { this.SetValue(IsAutoSaveEnabledProperty, value); }
+        }
+
+        public bool IsConnectorsManipulationEnabled
+        {
+            get { return this.isConnectorsManipulationEnabled; }
+
+            set
+            {
+                if (value.Equals(this.isConnectorsManipulationEnabled))
+                {
+                    return;
+                }
+
+                this.isConnectorsManipulationEnabled = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsDefaultGroupVisible
@@ -164,6 +158,22 @@ namespace Marv.Controls
             get { return (bool) this.GetValue(IsInputVisibleProperty); }
 
             set { this.SetValue(IsInputVisibleProperty, value); }
+        }
+
+        public bool IsManipulationAdornerVisible
+        {
+            get { return this.isManipulationAdornerVisible; }
+
+            set
+            {
+                if (value.Equals(this.isManipulationAdornerVisible))
+                {
+                    return;
+                }
+
+                this.isManipulationAdornerVisible = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsNavigationPaneVisible
@@ -199,15 +209,6 @@ namespace Marv.Controls
 
                 this.selectedGroup = value;
                 this.RaisePropertyChanged();
-
-                if (this.Graph.SelectedVertex != null)
-                {
-                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.SelectedVertex.Key);
-                }
-                else
-                {
-                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.GetHeaderVertexKey(this.SelectedGroup));
-                }
             }
         }
 
@@ -233,13 +234,13 @@ namespace Marv.Controls
                 return;
             }
 
-            var oldGraph = e.OldValue as Marv.Graph;
+            var oldGraph = e.OldValue as Graph;
 
-            control.RaiseGraphChanged(e.NewValue as Marv.Graph, oldGraph);
+            control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
 
             if (control.Graph.Vertices.Count > 0)
             {
-                control.Graph.SelectedVertex = control.Graph.GetSinkVertex();
+                control.Graph.SelectedVertex = control.Graph.GetSink();
             }
 
             control.SelectedGroup = control.Graph.DefaultGroup;
@@ -269,11 +270,6 @@ namespace Marv.Controls
             this.EnableVertexDragging();
         }
 
-        private void AutoRunButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.Run();
-        }
-
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
@@ -282,7 +278,6 @@ namespace Marv.Controls
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Evidence = null;
-            this.Run();
             this.RaiseEvidenceEntered();
         }
 
@@ -298,9 +293,9 @@ namespace Marv.Controls
 
         private void DisableConnectorEditing()
         {
+            this.IsConnectorsManipulationEnabled = false;
+            this.IsManipulationAdornerVisible = false;
             this.IsVerticesEnabled = true;
-            this.Diagram.IsConnectorsManipulationEnabled = false;
-            this.Diagram.IsManipulationAdornerVisible = false;
         }
 
         private void DisableVertexDragging()
@@ -318,9 +313,9 @@ namespace Marv.Controls
 
         private void EnableConnectorEditing()
         {
+            this.IsConnectorsManipulationEnabled = true;
+            this.IsManipulationAdornerVisible = true;
             this.IsVerticesEnabled = false;
-            this.Diagram.IsConnectorsManipulationEnabled = true;
-            this.Diagram.IsManipulationAdornerVisible = true;
         }
 
         private void EnableVertexDragging()
@@ -335,6 +330,21 @@ namespace Marv.Controls
         {
             this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
             this.UpdateLayout();
+        }
+
+        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.PropertyChanged -= GraphControl_PropertyChanged;
+            this.PropertyChanged += GraphControl_PropertyChanged;
+        }
+
+        private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedGroup")
+            {
+                var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
+                this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
+            }
         }
 
         private void InitializeAutoSave()
@@ -376,8 +386,7 @@ namespace Marv.Controls
 
         private void Open(string fileName)
         {
-            this.Graph = Marv.Graph.Read(fileName);
-            this.Graph.Run();
+            this.Graph = Graph.Read(fileName);
         }
 
         private void Open()
@@ -410,11 +419,16 @@ namespace Marv.Controls
             }
         }
 
-        private void RaiseGraphChanged(Marv.Graph newGraph, Marv.Graph oldGraph)
+        private void RaiseGraphChanged(Graph newGraph, Graph oldGraph)
         {
             if (this.GraphChanged != null)
             {
-                this.GraphChanged(this, newGraph, oldGraph);
+                this.GraphChanged(this,
+                    new ValueChangedEventArgs<Graph>
+                    {
+                        NewValue = newGraph,
+                        OldValue = oldGraph
+                    });
             }
         }
 
@@ -442,13 +456,11 @@ namespace Marv.Controls
             }
         }
 
-        private void Run()
+        private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsAutoRunEnabled && this.Graph != null)
+            if (this.Graph != null)
             {
-                Console.WriteLine("Running...");
-                this.Graph.Run();
-                Console.WriteLine("Run");
+                this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
             }
         }
 
@@ -477,13 +489,13 @@ namespace Marv.Controls
         {
             if (vertexKey == null)
             {
-                vertexKey = this.DisplayVertexKey;
+                vertexKey = this.displayVertexKey;
             }
 
             this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
             this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
 
-            this.DisplayVertexKey = vertexKey;
+            this.displayVertexKey = vertexKey;
         }
 
         private void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
@@ -536,16 +548,11 @@ namespace Marv.Controls
             this.Graph.Evidence.WriteJson(filePath);
         }
 
-        public event EventHandler<Vertex> SelectionChanged;
-
         public event EventHandler<VertexEvidence> EvidenceEntered;
-
-        public event EventHandler<Marv.Graph, Marv.Graph> GraphChanged;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<Notification> NotificationOpened;
-
+        public event EventHandler<ValueChangedEventArgs<Graph>> GraphChanged;
         public event EventHandler<Notification> NotificationClosed;
+        public event EventHandler<Notification> NotificationOpened;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<Vertex> SelectionChanged;
     }
 }

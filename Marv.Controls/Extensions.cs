@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using Marv.Common;
 
 namespace Marv.Controls
 {
@@ -59,6 +61,16 @@ namespace Marv.Controls
             return GetParent<T>(parentObject);
         }
 
+        public static IEnumerable<Location> ToLocations(this IEnumerable<Point> points, MapView mapView)
+        {
+            return points.Select<Point, Location>(point => mapView.ViewportPointToLocation(point));
+        }
+
+        public static IEnumerable<Point> ToPoints(this IEnumerable<Location> locations, MapView mapView)
+        {
+            return locations.Select(location => mapView.LocationToViewportPoint(location));
+        }
+
         /// <summary>
         ///     This method is an alternative to WPF's
         ///     <see cref="VisualTreeHelper.GetParent" /> method, which also
@@ -70,7 +82,7 @@ namespace Marv.Controls
         ///     The submitted item's parent, if available. Otherwise
         ///     null.
         /// </returns>
-        public static DependencyObject GetParentObject(this DependencyObject child)
+        private static DependencyObject GetParentObject(this DependencyObject child)
         {
             if (child == null)
             {
@@ -107,9 +119,4 @@ namespace Marv.Controls
             return VisualTreeHelper.GetParent(child);
         }
     }
-}
-
-namespace System.Windows
-{
-    public delegate void RoutedEventHandler<in TArgs>(object sender, TArgs e) where TArgs : RoutedEventArgs;
 }

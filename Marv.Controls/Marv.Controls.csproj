@@ -51,29 +51,15 @@
     <Reference Include="QuickGraph">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Data">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Graphviz">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
-    </Reference>
-    <Reference Include="QuickGraph.Serialization">
-      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Telerik.Windows.Controls, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <HintPath>..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Telerik.Windows.Controls.Chart, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.Chart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.Diagrams, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
@@ -91,10 +77,6 @@
     <Reference Include="Telerik.Windows.Controls.Navigation, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.Navigation.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Windows.Data, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Data.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Telerik.Windows.Diagrams.Core, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -122,18 +104,29 @@
     <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EllipseControl.xaml.cs">
+      <DependentUpon>EllipseControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EllipseControlBehavior.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GraphControl.Diagram.cs" />
     <Compile Include="GraphControl.VertexControl.cs" />
     <Compile Include="GraphControl.xaml.cs">
       <DependentUpon>GraphControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LocationCollectionViewModel.cs" />
+    <Compile Include="LocationEllipse.cs" />
+    <Compile Include="MapView.cs" />
     <Compile Include="NotificationControl\NotificationCloseButtonBehavior.cs" />
     <Compile Include="NotificationControl\NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="PasswordInput.xaml.cs">
       <DependentUpon>PasswordInput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PolylineControl.Cursor.cs" />
+    <Compile Include="PolylineControl.xaml.cs">
+      <DependentUpon>PolylineControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="PopupControl.xaml.cs">
       <DependentUpon>PopupControl.xaml</DependentUpon>
@@ -145,19 +138,23 @@
     <Compile Include="StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TileLayers.cs" />
     <Compile Include="TransitionControl\TransitionControInner.xaml.cs">
       <DependentUpon>TransitionControInner.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ValueChangedEventArgs.cs" />
     <Compile Include="VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VertexControlCommands.cs" />
-    <Compile Include="VertexControlExpandCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="EllipseControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -172,6 +169,10 @@
     <Page Include="PasswordInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PolylineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -199,19 +200,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marv.Common.Graph\Marv.Common.Graph.csproj">
-      <Project>{5ec15f8c-655c-4a46-a4cf-7af1eac94376}</Project>
-      <Name>Marv.Common.Graph</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
       <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
       <Name>Marv.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

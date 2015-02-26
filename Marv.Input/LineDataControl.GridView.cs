@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
@@ -52,7 +53,7 @@ namespace Marv.Input
             {
                 this.CanUserInsertRows = true;
                 this.SelectionUnit = GridViewSelectionUnit.FullRow;
-                this.RaiseRowSelected(cellModel);
+                this.RaiseRowSelected(cellModel.SectionId);
                 return;
             }
 

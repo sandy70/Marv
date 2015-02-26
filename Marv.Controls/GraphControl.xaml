@@ -1,15 +1,14 @@
 ﻿<UserControl x:Class="Marv.Controls.GraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:marv="clr-namespace:Marv;assembly=Marv.Common.Graph"
-             xmlns:graphControl="clr-namespace:Marv.Controls"
-             mc:Ignorable="d"
-             d:DesignHeight="128" d:DesignWidth="600"
-             Name="Root">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
+             xmlns:controls="clr-namespace:Marv.Controls"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="600"
+             Name="Root"
+             Loaded="GraphControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
@@ -95,11 +94,10 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
 
-                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
-                                         ToolTip="Runs the evidence into the network."
-                                         Checked="AutoRunButton_Checked">
+                <telerik:RadButton ToolTip="Runs the evidence into the network."
+                                   Click="RunButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
-                </telerik:RadToggleButton>
+                </telerik:RadButton>
 
                 <TextBlock Margin="8,4,4,4"
                            Text="Group"
@@ -119,10 +117,10 @@
                             AllowDelete="True"
                             GraphSource="{Binding ElementName=Root, Path=DisplayGraph}"
                             IsBackgroundSurfaceVisible="False"
-                            IsConnectorsManipulationEnabled="False"
+                            IsConnectorsManipulationEnabled="{Binding ElementName=Root, Path=IsConnectorsManipulationEnabled}"
                             IsEditable="False"
                             IsInformationAdornerVisible="False"
-                            IsManipulationAdornerVisible="False"
+                            IsManipulationAdornerVisible="{Binding ElementName=Root, Path=IsManipulationAdornerVisible}"
                             IsResizingEnabled="False"
                             IsRotationEnabled="False"
                             IsSnapToItemsEnabled="False"
@@ -168,22 +166,21 @@
 
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
-                            <DataTemplate DataType="marv:Vertex">
-                                <graphControl:VertexControl Background="#DDDDDD"
-                                                     Effect="{StaticResource DropShadow}"
-                                                     IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
-                                                     IsEvidenceVisible="True"
-                                                     IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
-                                                     IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
-                                                     IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type graphControl:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
-                                                     IsToolbarVisible="False"
-                                                     IsValueVisible="{Binding IsLocked}"
-                                                     Vertex="{Binding}"
-                                                     Width="256"
-                                                     CommandExecuted="VertexControl_CommandExecuted"
-                                                     EvidenceEntered="VertexControl_EvidenceEntered"
-                                                     MouseEnter="VertexControl_MouseEnter"
-                                                     MouseLeave="VertexControl_MouseLeave" />
+                            <DataTemplate DataType="common:Vertex">
+                                <controls:VertexControl Background="#DDDDDD"
+                                                        Effect="{StaticResource DropShadow}"
+                                                        IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
+                                                        IsEvidenceVisible="True"
+                                                        IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+                                                        IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
+                                                        IsToolbarVisible="False"
+                                                        IsValueVisible="{Binding IsLocked}"
+                                                        Vertex="{Binding}"
+                                                        Width="256"
+                                                        EvidenceEntered="VertexControl_EvidenceEntered"
+                                                        MouseEnter="VertexControl_MouseEnter"
+                                                        MouseLeave="VertexControl_MouseLeave"
+                                                        ShowGroupButtonClicked="VertexControl_ShowGroupButtonClicked" />
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

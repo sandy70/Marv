@@ -1,27 +1,13 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Marv.Common;
 
 namespace Marv.Controls
 {
     public partial class GraphControl
     {
-        private void VertexControl_CommandExecuted(object sender, Command<VertexControl> command)
-        {
-            this.Graph.SelectedVertex = (sender as VertexControl).Vertex;
-
-            if (command == VertexControlCommands.Expand)
-            {
-                this.UpdateLayout();
-            }
-            else if (command == VertexControlCommands.SubGraph)
-            {
-                this.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
-            }
-        }
-
         private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
         {
-            this.Run();
             this.RaiseEvidenceEntered(e);
         }
 
@@ -33,6 +19,11 @@ namespace Marv.Controls
         private void VertexControl_MouseLeave(object sender, MouseEventArgs e)
         {
             (sender as VertexControl).IsToolbarVisible = false;
+        }
+
+        private void VertexControl_ShowGroupButtonClicked(object sender, EventArgs e)
+        {
+            this.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
         }
     }
 }

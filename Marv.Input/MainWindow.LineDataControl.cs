@@ -1,14 +1,16 @@
 ﻿using System;
-using System.Windows;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
+        private bool isAxisAutoSwitched;
         private string lastSectionId;
         private int lastYear;
+        private HorizontalAxisQuantity previousAxisQuantity;
 
         private void LineDataControl_CellContentChanged(object sender, CellChangedEventArgs e)
         {
@@ -33,7 +35,7 @@ namespace Marv.Input
 
                 var sectionId = e.CellModel.SectionId;
                 var year = e.CellModel.Year;
-                
+
                 this.LineData.SetEvidence(sectionId, year, this.Graph.SelectedVertex.Key, vertexEvidence);
                 this.LineDataChart.SetUserEvidence(this.GetChartCategory(sectionId, year), vertexEvidence);
             }
@@ -50,16 +52,6 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataControl_NotificationClosed(object sender, Notification notification)
-        {
-            this.Notifications.Remove(notification);
-        }
-
-        private void LineDataControl_NotificationOpened(object sender, Notification notification)
-        {
-            this.Notifications.Add(notification);
-        }
-
         private void LineDataControl_RowAdded(object sender, string sectionId)
         {
             this.LineData.SetEvidence(sectionId, new Dict<int, string, VertexEvidence>());
@@ -70,10 +62,16 @@ namespace Marv.Input
             this.LineData.RemoveSection(sectionId);
         }
 
-        private void LineDataControl_RowSelected(object sender, CellModel e)
+        private void LineDataControl_RowSelected(object sender, string sectionId)
         {
+            this.isAxisAutoSwitched = true;
+            this.previousAxisQuantity = this.HorizontalAxisQuantity;
+
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
-            this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+
+            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
         }
 
         private void LineDataControl_SectionIdPasting(object sender, GridViewCellClipboardEventArgs e)
@@ -105,8 +103,14 @@ namespace Marv.Input
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
+            if (this.isAxisAutoSwitched)
+            {
+                this.isAxisAutoSwitched = false;
+                this.HorizontalAxisQuantity = this.previousAxisQuantity;
+            }
+
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
-            this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear]);
+            this.Graph.Evidence = this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear];
 
             var isSectionChanged = this.SelectedSectionId != this.lastSectionId;
             var isYearChanged = this.SelectedYear != this.lastYear;
@@ -114,45 +118,14 @@ namespace Marv.Input
             if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
                 (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartEvidence());
+                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
                 this.UpdateChartTitle();
             }
 
             this.lastSectionId = this.SelectedSectionId;
             this.lastYear = this.SelectedYear;
-        }
-
-        private void MainWindow_Loaded_LineDataControl(object sender, RoutedEventArgs e)
-        {
-            this.LineDataControl.CellContentChanged -= LineDataControl_CellContentChanged;
-            this.LineDataControl.CellContentChanged += LineDataControl_CellContentChanged;
-
-            this.LineDataControl.CellValidating -= LineDataControl_CellValidating;
-            this.LineDataControl.CellValidating += LineDataControl_CellValidating;
-
-            this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
-            this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
-
-            this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
-            this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
-
-            this.LineDataControl.RowAdded -= LineDataControl_RowAdded;
-            this.LineDataControl.RowAdded += LineDataControl_RowAdded;
-
-            this.LineDataControl.RowSelected -= LineDataControl_RowSelected;
-            this.LineDataControl.RowSelected += LineDataControl_RowSelected;
-
-            this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
-            this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
-
-            this.LineDataControl.SectionIdPasting -= LineDataControl_SectionIdPasting;
-            this.LineDataControl.SectionIdPasting += LineDataControl_SectionIdPasting;
-
-            this.LineDataControl.SectionIdValidating -= LineDataControl_SectionIdValidating;
-            this.LineDataControl.SectionIdValidating += LineDataControl_SectionIdValidating;
-
-            this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
-            this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
         }
     }
 }
