@@ -74,7 +74,8 @@ namespace Marv.Common
 
         public static double Entropy(this IEnumerable<double> array)
         {
-            return -array.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(array.Count());
+            var values = array as IList<double> ?? array.ToList();
+            return -values.Where(value => value > 0).Sum(value => value * Math.Log(value)) / Math.Log(values.Count());
         }
 
         public static Point GetOffset(this Rect viewport, Rect bounds, double pad = 0)
@@ -238,7 +239,14 @@ namespace Marv.Common
 
         public static LocationCollection ToLocationCollection(this IEnumerable<Location> locations)
         {
-            return new LocationCollection(locations);
+            var locationCollection = new LocationCollection();
+
+            foreach (var location in locations)
+            {
+                locationCollection.Add(location);
+            }
+
+            return locationCollection;
         }
 
         public static IEnumerable<string> Trimmed(this IEnumerable<string> untrimmed)

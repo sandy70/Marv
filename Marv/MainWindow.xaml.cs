@@ -261,7 +261,7 @@ namespace Marv
             this.Loaded += this.MainWindow_Loaded;
         }
 
-        private void GraphControl_GraphChanged(object sender, Graph newGraph, Graph oldGraph)
+        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
         {
             if (this.LineData == null)
             {

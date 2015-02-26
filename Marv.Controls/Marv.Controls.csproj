@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="TransitionControl\TransitionControl.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ValueChangedEventArgs.cs" />
     <Compile Include="VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>

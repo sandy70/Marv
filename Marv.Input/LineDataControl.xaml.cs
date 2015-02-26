@@ -269,7 +269,6 @@ namespace Marv.Input
                 return;
             }
 
-            var isRow = false;
             var sectionIds = new List<string>();
 
             foreach (var selectedCell in this.GridView.SelectedCells)
@@ -277,7 +276,7 @@ namespace Marv.Input
                 sectionIds.AddUnique(selectedCell.ToModel().SectionId);
             }
 
-            isRow = sectionIds.Count == 1;
+            var isRow = sectionIds.Count == 1;
 
             if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isRow)
             {
@@ -303,7 +302,6 @@ namespace Marv.Input
                 return;
             }
 
-            var isColumn = false;
             var indices = new List<int>();
 
             foreach (var selectedCell in this.GridView.SelectedCells)
@@ -311,7 +309,7 @@ namespace Marv.Input
                 indices.AddUnique(selectedCell.Column.DisplayIndex);
             }
 
-            isColumn = indices.Count == 1;
+            var isColumn = indices.Count == 1;
 
             if (this.GridView.SelectedCells[0].ToModel().IsColumnSectionId || !isColumn)
             {
@@ -351,7 +349,10 @@ namespace Marv.Input
                 this.StartYear = this.EndYear;
             }
 
-            this.Rows = this.GetNewRows((int) e.NewValue, (int) e.OldValue, this.StartYear, oldStartYear);
+            if (e.NewValue != null && e.OldValue != null)
+            {
+                this.Rows = this.GetNewRows((int) e.NewValue, (int) e.OldValue, this.StartYear, oldStartYear);
+            }
         }
 
         private ObservableCollection<Dynamic> GetNewRows(int newEndYear, int oldEndYear, int newStartYear, int oldStartYear)
@@ -396,22 +397,6 @@ namespace Marv.Input
             if (this.CellValidating != null)
             {
                 this.CellValidating(this, e);
-            }
-        }
-
-        private void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
-        private void RaiseNotificationOpened(Notification notification)
-        {
-            if (this.NotificationOpened != null)
-            {
-                this.NotificationOpened(this, notification);
             }
         }
 
@@ -502,16 +487,15 @@ namespace Marv.Input
                 this.EndYear = this.StartYear;
             }
 
-            this.Rows = this.GetNewRows(this.EndYear, oldEndYear, (int) e.NewValue, (int) e.OldValue);
+            if (e.NewValue != null && e.OldValue != null)
+            {
+                this.Rows = this.GetNewRows(this.EndYear, oldEndYear, (int) e.NewValue, (int) e.OldValue);
+            }
         }
 
         public event EventHandler<CellModel> RowSelected;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<Notification> NotificationOpened;
-
-        public event EventHandler<Notification> NotificationClosed;
 
         public event EventHandler SelectedCellChanged;
 
