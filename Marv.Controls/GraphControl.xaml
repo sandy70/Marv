@@ -1,15 +1,12 @@
 ﻿<UserControl x:Class="Marv.Controls.GraphControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:marv="clr-namespace:Marv;assembly=Marv.Common.Graph"
-             xmlns:graphControl="clr-namespace:Marv.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
-             mc:Ignorable="d"
-             d:DesignHeight="128" d:DesignWidth="600"
+             xmlns:controls="clr-namespace:Marv.Controls"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="600"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
@@ -170,13 +167,13 @@
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="common:Vertex">
-                                <graphControl:VertexControl Background="#DDDDDD"
+                                <controls:VertexControl Background="#DDDDDD"
                                                      Effect="{StaticResource DropShadow}"
                                                      IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
                                                      IsEvidenceVisible="True"
                                                      IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
                                                      IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
-                                                     IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type graphControl:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
+                                                     IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
                                                      IsToolbarVisible="False"
                                                      IsValueVisible="{Binding IsLocked}"
                                                      Vertex="{Binding}"

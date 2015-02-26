@@ -395,7 +395,7 @@ namespace Marv.Controls
             }
 
             var oldBinIndex = -1;
-            var polylineParts = new ObservableCollection<LocationCollection>();
+            var thePolylineParts = new ObservableCollection<LocationCollection>();
             LocationCollection locationCollection = null;
 
             foreach (var location in this.Locations)
@@ -418,7 +418,7 @@ namespace Marv.Controls
                         this.polylinePartValues[locationCollection] = locationValue;
                     }
 
-                    polylineParts.Add(locationCollection);
+                    thePolylineParts.Add(locationCollection);
                 }
                 else
                 {
@@ -431,24 +431,24 @@ namespace Marv.Controls
                 oldBinIndex = newBinIndex;
             }
 
-            this.PolylineParts = polylineParts;
+            this.PolylineParts = thePolylineParts;
         }
 
         private void UpdateSimplifiedPolylineParts()
         {
-            var mapView = this.GetParent<MapView>();
-            var simplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
+            var theMapView = this.GetParent<MapView>();
+            var newSimplifiedPolylineParts = new ObservableCollection<LocationCollectionViewModel>();
 
             if (this.PolylineParts != null)
             {
-                simplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
+                newSimplifiedPolylineParts.Add(this.PolylineParts.Select(locationCollection => new LocationCollectionViewModel
                 {
-                    Locations = Common.Extensions.ToLocationCollection(Common.Extensions.Reduce(locationCollection.ToPoints(mapView), 5).ToLocations(mapView)),
+                    Locations = locationCollection.ToPoints(theMapView).Reduce(5).ToLocations(theMapView).ToLocationCollection(),
                     Stroke = this.IsEnabled ? this.GetStroke(this.polylinePartValues[locationCollection]) : this.DisabledStroke
                 }));
             }
 
-            this.SimplifiedPolylineParts = simplifiedPolylineParts;
+            this.SimplifiedPolylineParts = newSimplifiedPolylineParts;
         }
 
         private void mapView_ViewportMoved(object sender, Location e)
