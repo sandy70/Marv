@@ -90,22 +90,6 @@ namespace Marv.Controls
             }
         }
 
-        public string DisplayVertexKey
-        {
-            get { return this.displayVertexKey; }
-
-            set
-            {
-                if (value.Equals(this.displayVertexKey))
-                {
-                    return;
-                }
-
-                this.displayVertexKey = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public Graph Graph
         {
             get { return (Graph) this.GetValue(GraphProperty); }
@@ -516,13 +500,13 @@ namespace Marv.Controls
         {
             if (vertexKey == null)
             {
-                vertexKey = this.DisplayVertexKey;
+                vertexKey = this.displayVertexKey;
             }
 
             this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
             this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
 
-            this.DisplayVertexKey = vertexKey;
+            this.displayVertexKey = vertexKey;
         }
 
         private void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)

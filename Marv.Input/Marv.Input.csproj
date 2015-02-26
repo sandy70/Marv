@@ -96,7 +96,8 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImageFileCache.WPF">
+    <Reference Include="ImageFileCache.WPF, Version=2.4.8.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\XAML.MapControl.2.4.8\lib\net45\ImageFileCache.WPF.dll</HintPath>
     </Reference>
     <Reference Include="MapControl.WPF, Version=2.4.8.0, Culture=neutral, PublicKeyToken=f26fcf0059638459, processorArchitecture=MSIL">
@@ -106,7 +107,6 @@
     <Reference Include="Marv.Smile.x64">
       <HintPath>..\packages\Smile\x64\Marv.Smile.x64.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
