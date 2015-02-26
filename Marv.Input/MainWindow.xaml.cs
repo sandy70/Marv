@@ -266,6 +266,7 @@ namespace Marv.Input
                 var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
+
                 this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
                                                        ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
                                                        : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
@@ -292,15 +293,10 @@ namespace Marv.Input
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            var vertexEvidences = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                      ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                      : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key);
-
-            if (vertexEvidences == null || vertexEvidences.Count > 0)
-            {
-                this.LineDataChart.SetUserEvidence(vertexEvidences);
-                this.UpdateChartTitle();
-            }
+            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+            this.UpdateChartTitle();
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
