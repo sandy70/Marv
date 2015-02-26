@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
-using Telerik.Windows.Controls;
 
 namespace Marv.Controls
 {
@@ -23,9 +22,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsInputVisibleProperty =
             DependencyProperty.Register("IsInputVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsSubGraphCommandVisibleProperty =
-            DependencyProperty.Register("IsSubGraphCommandVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false, ChangedIsSubGraphCommandVisible));
-
         public static readonly DependencyProperty IsToolbarVisibleProperty =
             DependencyProperty.Register("IsToolbarVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
@@ -34,27 +30,6 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (VertexControl), new PropertyMetadata(null));
-
-        private ObservableCollection<Command<VertexControl>> commands = new ObservableCollection<Command<VertexControl>>
-        {
-            VertexControlCommands.Expand
-        };
-
-        public ObservableCollection<Command<VertexControl>> Commands
-        {
-            get { return this.commands; }
-
-            set
-            {
-                if (value.Equals(this.commands))
-                {
-                    return;
-                }
-
-                this.commands = value;
-                this.RaisePropertyChanged();
-            }
-        }
 
         public bool IsEditable
         {
@@ -82,12 +57,6 @@ namespace Marv.Controls
             set { this.SetValue(IsInputVisibleProperty, value); }
         }
 
-        public bool IsSubGraphCommandVisible
-        {
-            get { return (bool) this.GetValue(IsSubGraphCommandVisibleProperty); }
-            set { this.SetValue(IsSubGraphCommandVisibleProperty, value); }
-        }
-
         public bool IsToolbarVisible
         {
             get { return (bool) this.GetValue(IsToolbarVisibleProperty); }
@@ -112,29 +81,26 @@ namespace Marv.Controls
             InitializeComponent();
         }
 
-        private static void ChangedIsSubGraphCommandVisible(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            var control = d as VertexControl;
-
-            if (control.IsSubGraphCommandVisible)
-            {
-                control.Commands.PushUnique(VertexControlCommands.SubGraph);
-            }
-            else
-            {
-                control.Commands.Remove(VertexControlCommands.SubGraph);
-            }
+            this.Vertex.Evidence = null;
+            this.Vertex.UpdateEvidenceString();
+            this.RaiseEvidenceEntered();
         }
 
-        public void RaiseCommandExecuted(Command<VertexControl> command)
+        private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (this.CommandExecuted != null)
-            {
-                this.CommandExecuted(this, command);
-            }
+            var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
+            this.Vertex.Evidence = vertexEvidence.Value;
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
-        public void RaiseEvidenceEntered(NodeEvidence nodeEvidence = null)
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsExpanded = !this.IsExpanded;
+        }
+
+        private void RaiseEvidenceEntered(NodeEvidence nodeEvidence = null)
         {
             if (nodeEvidence == null)
             {
@@ -152,7 +118,7 @@ namespace Marv.Controls
             }
         }
 
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
             {
@@ -160,18 +126,17 @@ namespace Marv.Controls
             }
         }
 
-        private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
+        private void RaiseShowGroupButtonClicked()
         {
-            this.Vertex.Evidence = null;
-            this.Vertex.UpdateEvidenceString();
-            this.RaiseEvidenceEntered();
+            if (this.ShowGroupButtonClicked != null)
+            {
+                this.ShowGroupButtonClicked(this, new EventArgs());
+            }
         }
 
-        private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
+        private void ShowGroupButton_Clicked(object sender, RoutedEventArgs e)
         {
-            var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence.Value;
-            this.RaiseEvidenceEntered(vertexEvidence);
+            this.RaiseShowGroupButtonClicked();
         }
 
         private void SliderProgressBar_ValueEntered(object sender, double e)
@@ -187,25 +152,34 @@ namespace Marv.Controls
             this.RaiseEvidenceEntered();
         }
 
-        private void ToolbarButton_Click(object sender, RoutedEventArgs e)
-        {
-            var command = (sender as RadButton).DataContext as Command<VertexControl>;
-
-            command.Excecute(this);
-
-            this.RaiseCommandExecuted(command);
-        }
-
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.Evidence = null;
-            this.RaiseEvidenceEntered();
-        }
+            var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
 
-        public event EventHandler<Command<VertexControl>> CommandExecuted;
+            var nodeEvidence = this.Vertex.IsNumeric
+                                   ? new NodeEvidence
+                                   {
+                                       Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
+                                       Type = NodeEvidenceType.Range,
+                                       Value = evidenceValue
+                                   }
+                                   : new NodeEvidence
+                                   {
+                                       Params = evidenceValue,
+                                       Type = NodeEvidenceType.Distribution,
+                                       Value = evidenceValue
+                                   };
+
+            this.Vertex.Evidence = nodeEvidence.Value;
+            this.Vertex.EvidenceString = nodeEvidence.ToString();
+
+            this.RaiseEvidenceEntered(nodeEvidence);
+        }
 
         public event EventHandler<NodeEvidence> EvidenceEntered;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler ShowGroupButtonClicked;
     }
 }

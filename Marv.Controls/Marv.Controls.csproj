@@ -148,8 +148,6 @@
     <Compile Include="VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VertexControlCommands.cs" />
-    <Compile Include="VertexControlExpandCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox.xaml">

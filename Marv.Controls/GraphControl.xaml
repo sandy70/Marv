@@ -168,20 +168,19 @@
                         <Setter.Value>
                             <DataTemplate DataType="common:Vertex">
                                 <controls:VertexControl Background="#DDDDDD"
-                                                     Effect="{StaticResource DropShadow}"
-                                                     IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
-                                                     IsEvidenceVisible="True"
-                                                     IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
-                                                     IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
-                                                     IsSubGraphCommandVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:GraphControl}}, Path=IsDefaultGroupVisible, Mode=TwoWay}"
-                                                     IsToolbarVisible="False"
-                                                     IsValueVisible="{Binding IsLocked}"
-                                                     Vertex="{Binding}"
-                                                     Width="256"
-                                                     CommandExecuted="VertexControl_CommandExecuted"
-                                                     EvidenceEntered="VertexControl_EvidenceEntered"
-                                                     MouseEnter="VertexControl_MouseEnter"
-                                                     MouseLeave="VertexControl_MouseLeave" />
+                                                        Effect="{StaticResource DropShadow}"
+                                                        IsEditable="{Binding IsLocked, Converter={StaticResource BooleanNot}}"
+                                                        IsEvidenceVisible="True"
+                                                        IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
+                                                        IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
+                                                        IsToolbarVisible="False"
+                                                        IsValueVisible="{Binding IsLocked}"
+                                                        Vertex="{Binding}"
+                                                        Width="256"
+                                                        EvidenceEntered="VertexControl_EvidenceEntered"
+                                                        MouseEnter="VertexControl_MouseEnter"
+                                                        MouseLeave="VertexControl_MouseLeave"
+                                                        ShowGroupButtonClicked="VertexControl_ShowGroupButtonClicked" />
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>

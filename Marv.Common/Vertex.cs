@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -138,21 +137,6 @@ namespace Marv.Common
             }
         }
 
-        public Dictionary<string, double> InitialBelief
-        {
-            get { return this.States.ToDictionary(state => state.Key, state => state.InitialBelief); }
-
-            set
-            {
-                foreach (var state in this.States)
-                {
-                    state.InitialBelief = value == null ? 0 : value[state.Key];
-                }
-
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string InputVertexKey
         {
             get { return this.inputVertexKey; }
@@ -237,17 +221,9 @@ namespace Marv.Common
             }
         }
 
-        public bool IsLogScale
+        public bool IsNumeric
         {
-            get
-            {
-                // Use Math.Abs here so that negative numbers work.
-                return this.States.Any(state =>
-                {
-                    var scale = Math.Abs(state.Max) / Math.Abs(state.Min);
-                    return state.Min != 0 && (scale < 0.1 || 10 < scale);
-                });
-            }
+            get { return this.Type == NodeType.Interval || this.Type == NodeType.Numbered; }
         }
 
         public bool IsSelected
