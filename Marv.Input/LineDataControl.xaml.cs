@@ -159,15 +159,19 @@ namespace Marv.Input
             }
         }
 
-        public void SetCell(string sectionId, int year, VertexEvidence vertexEvidence)
+        public void SetEvidence(string sectionId, int year, VertexEvidence vertexEvidence)
         {
-            var selectedRow = this.Rows.First(row => (new CellModel(row, year.ToString()).SectionId == sectionId));
+            var selectedRow = this.Rows.First(row => row[CellModel.SectionIdHeader] as string == sectionId);
+            
             var cellModel = new CellModel(selectedRow, year.ToString());
 
-            this.SetCell(cellModel, vertexEvidence);
+            if (!cellModel.IsColumnSectionId)
+            {
+                this.SetEvidence(cellModel, vertexEvidence);
+            }
         }
 
-        public void SetSelectedCells(VertexEvidence vertexEvidence)
+        public void SetEvidence(VertexEvidence vertexEvidence)
         {
             foreach (var cell in this.GridView.SelectedCells)
             {
@@ -175,7 +179,7 @@ namespace Marv.Input
 
                 if (!cellModel.IsColumnSectionId)
                 {
-                    this.SetCell(cellModel, vertexEvidence);
+                    this.SetEvidence(cellModel, vertexEvidence);
                 }
             }
         }
@@ -257,7 +261,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, selectedCellModel.Data as VertexEvidence);
+                    this.SetEvidence(cellModel, selectedCellModel.Data as VertexEvidence);
                 }
             }
         }
@@ -290,7 +294,7 @@ namespace Marv.Input
                 foreach (var row in this.Rows)
                 {
                     var cellModel = new CellModel(row, selectedCellModel.Header);
-                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -329,7 +333,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    this.SetCell(cellModel, (selectedCellModel.Data as VertexEvidence));
+                    this.SetEvidence(cellModel, (selectedCellModel.Data as VertexEvidence));
                 }
             }
         }
@@ -456,7 +460,7 @@ namespace Marv.Input
             }
         }
 
-        private void SetCell(CellModel cellModel, VertexEvidence vertexEvidence)
+        private void SetEvidence(CellModel cellModel, VertexEvidence vertexEvidence)
         {
             if (cellModel.IsColumnSectionId)
             {

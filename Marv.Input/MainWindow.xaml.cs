@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
 using Marv.Common.Types;
+using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 
@@ -205,9 +206,6 @@ namespace Marv.Input
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-
-            this.Loaded -= MainWindow_Loaded_LineDataControl;
-            this.Loaded += MainWindow_Loaded_LineDataControl;
         }
 
         private object GetChartCategory()
@@ -258,11 +256,11 @@ namespace Marv.Input
             else
             {
                 this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
-                this.LineDataControl.SetSelectedCells(vertexEvidence);
+                this.LineDataControl.SetEvidence(vertexEvidence);
             }
         }
 
-        private void GraphControl_GraphChanged(object sender, Graph oldGraph, Graph newGraph)
+        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
         {
             if (this.LineData == null)
             {
@@ -315,7 +313,7 @@ namespace Marv.Input
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
                 this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
-                this.LineDataControl.SetCell(sectionId, year, vertexEvidence);
+                this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
             }
         }
 

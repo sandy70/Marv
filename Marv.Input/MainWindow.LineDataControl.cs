@@ -51,16 +51,6 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataControl_NotificationClosed(object sender, Notification notification)
-        {
-            this.Notifications.Remove(notification);
-        }
-
-        private void LineDataControl_NotificationOpened(object sender, Notification notification)
-        {
-            this.Notifications.Add(notification);
-        }
-
         private void LineDataControl_RowAdded(object sender, string sectionId)
         {
             this.LineData.SetEvidence(sectionId, new Dict<int, string, VertexEvidence>());
@@ -121,39 +111,6 @@ namespace Marv.Input
 
             this.lastSectionId = this.SelectedSectionId;
             this.lastYear = this.SelectedYear;
-        }
-
-        private void MainWindow_Loaded_LineDataControl(object sender, RoutedEventArgs e)
-        {
-            this.LineDataControl.CellContentChanged -= LineDataControl_CellContentChanged;
-            this.LineDataControl.CellContentChanged += LineDataControl_CellContentChanged;
-
-            this.LineDataControl.CellValidating -= LineDataControl_CellValidating;
-            this.LineDataControl.CellValidating += LineDataControl_CellValidating;
-
-            this.LineDataControl.NotificationClosed -= LineDataControl_NotificationClosed;
-            this.LineDataControl.NotificationClosed += LineDataControl_NotificationClosed;
-
-            this.LineDataControl.NotificationOpened -= LineDataControl_NotificationOpened;
-            this.LineDataControl.NotificationOpened += LineDataControl_NotificationOpened;
-
-            this.LineDataControl.RowAdded -= LineDataControl_RowAdded;
-            this.LineDataControl.RowAdded += LineDataControl_RowAdded;
-
-            this.LineDataControl.RowSelected -= LineDataControl_RowSelected;
-            this.LineDataControl.RowSelected += LineDataControl_RowSelected;
-
-            this.LineDataControl.RowRemoved -= LineDataControl_RowRemoved;
-            this.LineDataControl.RowRemoved += LineDataControl_RowRemoved;
-
-            this.LineDataControl.SectionIdPasting -= LineDataControl_SectionIdPasting;
-            this.LineDataControl.SectionIdPasting += LineDataControl_SectionIdPasting;
-
-            this.LineDataControl.SectionIdValidating -= LineDataControl_SectionIdValidating;
-            this.LineDataControl.SectionIdValidating += LineDataControl_SectionIdValidating;
-
-            this.LineDataControl.SelectedCellChanged -= LineDataControl_SelectedCellChanged;
-            this.LineDataControl.SelectedCellChanged += LineDataControl_SelectedCellChanged;
         }
     }
 }

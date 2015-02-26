@@ -74,7 +74,15 @@
                                                    SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
                                                    SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
                                                    StartYear="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}" />
+                                                   Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}"
+                                                   CellContentChanged="LineDataControl_CellContentChanged"
+                                                   CellValidating="LineDataControl_CellValidating"
+                                                   RowAdded="LineDataControl_RowAdded"
+                                                   RowRemoved="LineDataControl_RowRemoved"
+                                                   RowSelected="LineDataControl_RowSelected"
+                                                   SectionIdPasting="LineDataControl_SectionIdPasting"
+                                                   SectionIdValidating="LineDataControl_SectionIdValidating"
+                                                   SelectedCellChanged="LineDataControl_SelectedCellChanged"/>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -102,8 +110,7 @@
                                 <RowDefinition Height="32" />
                             </Grid.RowDefinitions>
 
-                            <marv:GraphControl Name="GraphControl"
-                                               Grid.Row="0"
+                            <marv:GraphControl Grid.Row="0"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
                                                EvidenceEntered="GraphControl_EvidenceEntered"
