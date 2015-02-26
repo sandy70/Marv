@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -208,15 +209,6 @@ namespace Marv.Controls
 
                 this.selectedGroup = value;
                 this.RaisePropertyChanged();
-
-                if (this.Graph.SelectedVertex != null)
-                {
-                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.SelectedVertex.Key);
-                }
-                else
-                {
-                    this.UpdateDisplayGraph(this.SelectedGroup, this.Graph.GetHeaderVertexKey(this.SelectedGroup));
-                }
             }
         }
 
@@ -248,7 +240,7 @@ namespace Marv.Controls
 
             if (control.Graph.Vertices.Count > 0)
             {
-                control.Graph.SelectedVertex = control.Graph.GetSinkVertex();
+                control.Graph.SelectedVertex = control.Graph.GetSink();
             }
 
             control.SelectedGroup = control.Graph.DefaultGroup;
@@ -338,6 +330,21 @@ namespace Marv.Controls
         {
             this.DisplayGraph.IsExpanded = !this.DisplayGraph.IsMostlyExpanded;
             this.UpdateLayout();
+        }
+
+        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.PropertyChanged -= GraphControl_PropertyChanged;
+            this.PropertyChanged += GraphControl_PropertyChanged;
+        }
+
+        private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedGroup")
+            {
+                var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
+                this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
+            }
         }
 
         private void InitializeAutoSave()

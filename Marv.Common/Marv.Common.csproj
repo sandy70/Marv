@@ -94,6 +94,7 @@
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
     <Compile Include="ILineData.cs" />
+    <Compile Include="IVertex.cs" />
     <Compile Include="InvalidEvidenceException.cs" />
     <Compile Include="LineData.cs" />
     <Compile Include="Location.cs" />

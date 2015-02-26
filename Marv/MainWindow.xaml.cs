@@ -370,13 +370,10 @@ namespace Marv
 
             try
             {
-                var graphBelief = this.LineData.GetBelief(this.SelectedLocation.Key)[this.SelectedYear];
-                var graphEvidence = this.LineData.GetEvidence(this.SelectedLocation.Key)[this.SelectedYear];
-
-                this.Graph.Belief = graphBelief;
-                this.Graph.SetEvidence(graphEvidence);
+                this.Graph.Belief = this.LineData.GetBelief(this.SelectedLocation.Key)[this.SelectedYear];
+                this.Graph.Evidence = this.LineData.GetEvidence(this.SelectedLocation.Key)[this.SelectedYear];
             }
-            catch (Exception exp)
+            catch (Exception)
             {
                 this.Graph.Belief = null;
                 this.Graph.Evidence = null;

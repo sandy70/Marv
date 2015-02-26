@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using Marv.Common.Types;
 
 namespace Marv.Common
 {
-    public class Vertex : NotifyPropertyChanged, IKeyed
+    public class Vertex : NotifyPropertyChanged, IKeyed, IVertex
     {
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
@@ -153,6 +154,11 @@ namespace Marv.Common
                     this.RaisePropertyChanged();
                 }
             }
+        }
+
+        public IEnumerable<double> Intervals
+        {
+            get { return this.GetIntervals(); }
         }
 
         public bool IsDraggingEnabled

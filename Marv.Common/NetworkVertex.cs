@@ -7,7 +7,7 @@ using Marv.Common.Types;
 
 namespace Marv.Common
 {
-    public class NetworkVertex : IKeyed
+    public class NetworkVertex : IKeyed, IVertex
     {
         public readonly List<NetworkVertex> Children = new List<NetworkVertex>();
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
@@ -51,20 +51,7 @@ namespace Marv.Common
 
         public IEnumerable<double> Intervals
         {
-            get
-            {
-                if (this.Type == VertexType.Interval)
-                {
-                    return this.States.Select(state => state.Min).Concat(this.States.Last().Max.Yield()).ToArray();
-                }
-
-                if (this.Type == VertexType.Numbered)
-                {
-                    return this.States.Select(state => state.Min).ToArray();
-                }
-
-                return Enumerable.Range(0, this.States.Count + 1).Select(i => (double) i).ToArray();
-            }
+            get { return this.GetIntervals(); }
         }
 
         public string Key { get; set; }
@@ -141,7 +128,36 @@ namespace Marv.Common
             return htmlDesc;
         }
 
-        private ObservableCollection<State> GetLabelledStates()
+        private ObservableCollection<string> ParseGroups()
+        {
+            var newGroups = new ObservableCollection<string>();
+
+            if (this.Properties.ContainsKey("groups"))
+            {
+                var groupsValueString = this.Properties["groups"];
+
+                var parts = groupsValueString.Split(new[]
+                {
+                    '"', ','
+                },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                newGroups = new ObservableCollection<string>(parts);
+
+                if (!newGroups.Contains("all"))
+                {
+                    newGroups.Add("all");
+                }
+            }
+            else
+            {
+                newGroups.Add("all");
+            }
+
+            return newGroups;
+        }
+
+        private ObservableCollection<State> ParseLabelledStates()
         {
             string statesString;
             var stateString = "";
@@ -182,35 +198,6 @@ namespace Marv.Common
             }
 
             return theStates;
-        }
-
-        private ObservableCollection<string> ParseGroups()
-        {
-            var newGroups = new ObservableCollection<string>();
-
-            if (this.Properties.ContainsKey("groups"))
-            {
-                var groupsValueString = this.Properties["groups"];
-
-                var parts = groupsValueString.Split(new[]
-                {
-                    '"', ','
-                },
-                    StringSplitOptions.RemoveEmptyEntries);
-
-                newGroups = new ObservableCollection<string>(parts);
-
-                if (!newGroups.Contains("all"))
-                {
-                    newGroups.Add("all");
-                }
-            }
-            else
-            {
-                newGroups.Add("all");
-            }
-
-            return newGroups;
         }
 
         private Sequence<double> ParseStateRange(int stateIndex)
@@ -288,7 +275,7 @@ namespace Marv.Common
                 }
                 else if (subtype == "label")
                 {
-                    theStates = this.GetLabelledStates();
+                    theStates = this.ParseLabelledStates();
                 }
                 else if (subtype == "number")
                 {
@@ -313,7 +300,7 @@ namespace Marv.Common
             }
             else
             {
-                theStates = this.GetLabelledStates();
+                theStates = this.ParseLabelledStates();
             }
 
             return theStates;

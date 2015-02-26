@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
@@ -268,7 +269,7 @@ namespace Marv.Input
                     return;
                 }
 
-                var intervals = this.Graph.Network.GetIntervals(this.Graph.SelectedVertex.Key);
+                var intervals = this.Graph.SelectedVertex.Intervals.ToArray();
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
 

@@ -13,12 +13,12 @@ namespace Marv.Common
 
         public int EdgeCount
         {
-            get { return this.Edges.Count; }
+            get { return this.edges.Count; }
         }
 
         IEnumerable<Edge> IEdgeSet<Vertex, Edge>.Edges
         {
-            get { return this.Edges; }
+            get { return this.edges; }
         }
 
         public bool IsDirected
@@ -62,12 +62,12 @@ namespace Marv.Common
 
         public bool ContainsEdge(Vertex source, Vertex target)
         {
-            return this.Edges.Any(edge => edge.Source == source && edge.Target == target);
+            return this.edges.Any(edge => edge.Source == source && edge.Target == target);
         }
 
         public bool ContainsEdge(Edge edge)
         {
-            return this.Edges.Contains(edge);
+            return this.edges.Contains(edge);
         }
 
         public bool ContainsVertex(Vertex vertex)
@@ -77,22 +77,22 @@ namespace Marv.Common
 
         public int Degree(Vertex vertex)
         {
-            return this.Edges.Count(edge => edge.Source == vertex || edge.Target == vertex);
+            return this.edges.Count(edge => edge.Source == vertex || edge.Target == vertex);
         }
 
         public int InDegree(Vertex vertex)
         {
-            return this.Edges.Count(edge => edge.Target == vertex);
+            return this.edges.Count(edge => edge.Target == vertex);
         }
 
         public Edge InEdge(Vertex vertex, int index)
         {
-            return this.Edges.Where(edge => edge.Target == vertex).ElementAt(index);
+            return this.edges.Where(edge => edge.Target == vertex).ElementAt(index);
         }
 
         public IEnumerable<Edge> InEdges(Vertex vertex)
         {
-            return this.Edges.Where(edge => edge.Target == vertex);
+            return this.edges.Where(edge => edge.Target == vertex);
         }
 
         public bool IsInEdgesEmpty(Vertex vertex)
@@ -107,7 +107,7 @@ namespace Marv.Common
 
         public int OutDegree(Vertex vertex)
         {
-            return this.Edges.Count(edge => edge.Source == vertex);
+            return this.edges.Count(edge => edge.Source == vertex);
         }
 
         public Edge OutEdge(Vertex vertex, int index)
@@ -117,12 +117,12 @@ namespace Marv.Common
 
         public IEnumerable<Edge> OutEdges(Vertex vertex)
         {
-            return this.Edges.Where(edge => edge.Source == vertex);
+            return this.edges.Where(edge => edge.Source == vertex);
         }
 
         public bool TryGetEdge(Vertex source, Vertex target, out Edge outEdge)
         {
-            foreach (var edge in this.Edges)
+            foreach (var edge in this.edges)
             {
                 if (edge.Source == source && edge.Target == target)
                 {
@@ -137,7 +137,7 @@ namespace Marv.Common
 
         public bool TryGetEdges(Vertex source, Vertex target, out IEnumerable<Edge> outEdges)
         {
-            var foundEdges = this.Edges.Where(edge => edge.Source == source && edge.Target == target).ToList();
+            var foundEdges = this.edges.Where(edge => edge.Source == source && edge.Target == target).ToList();
 
             if (foundEdges.Count > 0)
             {
@@ -156,7 +156,7 @@ namespace Marv.Common
 
         public bool TryGetOutEdges(Vertex vertex, out IEnumerable<Edge> outEdges)
         {
-            return (outEdges = this.Edges.Where(edge => edge.Source == vertex)).Any();
+            return (outEdges = this.edges.Where(edge => edge.Source == vertex)).Any();
         }
     }
 }

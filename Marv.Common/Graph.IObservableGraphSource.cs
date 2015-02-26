@@ -18,13 +18,13 @@ namespace Marv.Common
         {
             get
             {
-                return this.Edges;
+                return this.edges;
             }
         }
 
         public void AddLink(ILink link)
         {
-            this.Edges.Add(link as Edge);
+            this.edges.Add(link as Edge);
         }
 
         public void AddNode(object node)
@@ -44,7 +44,7 @@ namespace Marv.Common
 
         public bool RemoveLink(ILink link)
         {
-            return this.Edges.Remove(link as Edge);
+            return this.edges.Remove(link as Edge);
         }
 
         public bool RemoveNode(object node)

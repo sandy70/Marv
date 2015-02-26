@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using Marv.Common.Types;
@@ -11,11 +9,9 @@ namespace Marv.Common
 {
     public partial class Graph : NotifyPropertyChanged
     {
+        private readonly ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
+
         private string defaultGroup;
-        private ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
-        private Guid guid;
-        private bool isExpanded = true;
-        private string key;
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
 
@@ -41,20 +37,6 @@ namespace Marv.Common
                 if (value != this.defaultGroup)
                 {
                     this.defaultGroup = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<Edge> Edges
-        {
-            get { return this.edges; }
-
-            set
-            {
-                if (value != this.edges)
-                {
-                    this.edges = value;
                     this.RaisePropertyChanged();
                 }
             }
@@ -88,28 +70,10 @@ namespace Marv.Common
             }
         }
 
-        public Guid Guid
-        {
-            get { return this.guid; }
-
-            set
-            {
-                if (value != this.guid)
-                {
-                    this.guid = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public bool IsExpanded
         {
-            get { return this.isExpanded; }
-
             set
             {
-                this.isExpanded = value;
-
                 foreach (var vertex in this.Vertices)
                 {
                     vertex.IsExpanded = value;
@@ -120,22 +84,6 @@ namespace Marv.Common
         public bool IsMostlyExpanded
         {
             get { return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2; }
-        }
-
-        public string Key
-        {
-            get { return this.key; }
-
-            set
-            {
-                if (value.Equals(this.key))
-                {
-                    return;
-                }
-
-                this.key = value;
-                this.RaisePropertyChanged();
-            }
         }
 
         public Network Network { get; private set; }
@@ -177,27 +125,25 @@ namespace Marv.Common
             };
 
             graph.DefaultGroup = graph.Network.ParseUserProperty("defaultgroup", "all");
-            graph.Guid = Guid.Parse(graph.Network.ParseUserProperty("guid", Guid.NewGuid().ToString()));
-            graph.Key = graph.Network.ParseUserProperty("key", "");
 
             // Add all the vertices
-            foreach (var networkNode in graph.Network.Nodes)
+            foreach (var networkVertex in graph.Network.Vertices)
             {
                 var vertex = new Vertex
                 {
-                    ConnectorPositions = networkNode.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
-                    Description = networkNode.ParseStringProperty("HR_HTML_Desc"),
-                    Groups = networkNode.Groups,
-                    HeaderOfGroup = networkNode.HeaderOfGroup,
-                    InputVertexKey = networkNode.InputNodeKey,
-                    IsExpanded = networkNode.ParseIsExpanded(),
-                    Key = networkNode.Key,
-                    Name = networkNode.ParseStringProperty("label"),
-                    Position = networkNode.ParsePosition(),
-                    PositionForGroup = networkNode.ParseJson<Dict<string, Point>>("PositionForGroup"),
-                    Units = networkNode.ParseStringProperty("units"),
-                    States = networkNode.States,
-                    Type = networkNode.Type
+                    ConnectorPositions = networkVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
+                    Description = networkVertex.ParseStringProperty("HR_HTML_Desc"),
+                    Groups = networkVertex.Groups,
+                    HeaderOfGroup = networkVertex.HeaderOfGroup,
+                    InputVertexKey = networkVertex.InputNodeKey,
+                    IsExpanded = networkVertex.ParseIsExpanded(),
+                    Key = networkVertex.Key,
+                    Name = networkVertex.ParseStringProperty("label"),
+                    Position = networkVertex.ParsePosition(),
+                    PositionForGroup = networkVertex.ParseJson<Dict<string, Point>>("PositionForGroup"),
+                    Units = networkVertex.ParseStringProperty("units"),
+                    States = networkVertex.States,
+                    Type = networkVertex.Type
                 };
 
                 vertex.IsHeader = !string.IsNullOrWhiteSpace(vertex.HeaderOfGroup);
@@ -211,31 +157,20 @@ namespace Marv.Common
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.Network.Nodes)
+            foreach (var srcVertex in graph.Network.Vertices)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
-                    graph.Edges.Add(new Edge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]));
+                    graph.edges.Add(new Edge(graph.Vertices[srcVertex.Key], graph.Vertices[dstVertex.Key]));
                 }
             }
 
             return graph;
         }
 
-        /// <summary>
-        ///     Returns the key of the vertex which is the header of the give group.
-        /// </summary>
-        /// <param name="group">The group of which the header is required.</param>
-        /// <returns>The key of the vertex which is the header of group.</returns>
-        public string GetHeaderVertexKey(string group)
+        public Vertex GetSink()
         {
-            var headerVertex = this.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == @group);
-            return headerVertex == null ? null : headerVertex.Key;
-        }
-
-        public Vertex GetSinkVertex()
-        {
-            return this.Vertices.First(vertex => this.Edges.All(edge => edge.Source != vertex));
+            return this.Vertices.First(vertex => this.edges.All(edge => edge.Source != vertex));
         }
 
         public Graph GetSubGraph(string group, string vertexKey = null)
@@ -296,7 +231,7 @@ namespace Marv.Common
                                     ConnectorPositions = connectorPostions ?? new EdgeConnectorPositions()
                                 };
 
-                                subGraph.Edges.AddUnique(newEdge);
+                                subGraph.edges.AddUnique(newEdge);
 
                                 src = edge.Target;
                             }
@@ -310,75 +245,21 @@ namespace Marv.Common
             return subGraph;
         }
 
-        public Dict<string, string, double> ReadValueCsv(string fileName)
-        {
-            var graphValue = new Dict<string, string, double>();
-
-            foreach (var line in File.ReadLines(fileName))
-            {
-                var vertexValue = new Dict<string, double>();
-
-                var parts = line.Split(new[]
-                {
-                    ','
-                });
-
-                var vertexKey = parts[0];
-
-                var vertex = this.Vertices[vertexKey];
-
-                // Ignore if the vertex key does not exist in the given graph
-                if (vertex == null)
-                {
-                    continue;
-                }
-
-                var nParts = parts.Count();
-
-                for (var p = 1; p < nParts; p++)
-                {
-                    // This assumes that states order is preserved
-                    var stateKey = vertex.States[p - 1].Key;
-
-                    vertexValue[stateKey] = Double.Parse(parts[p]);
-                }
-
-                graphValue[vertexKey] = vertexValue;
-            }
-
-            return graphValue;
-        }
-
-        public void Run()
-        {
-            this.Belief = Network.Read(this.Network.FileName).Run(this.Evidence);
-        }
-
-        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
-        {
-            foreach (var vertex in this.Vertices)
-            {
-                vertex.Evidence = vertexEvidences[vertex.Key];
-            }
-        }
-
         public void Write()
         {
             this.Write(this.Network.FileName);
         }
 
-        public void Write(string filePath)
+        private void Write(string filePath)
         {
             var userProperties = new List<string>
             {
                 "defaultgroup=" + this.DefaultGroup,
-                "guid=" + this.Guid,
-                "key=" + this.Key,
             };
 
             this.Network.Properties["HR_Desc"] = userProperties.String().Enquote();
 
-            foreach (var networkNode in this.Network.Nodes)
+            foreach (var networkNode in this.Network.Vertices)
             {
                 var vertex = this.Vertices[networkNode.Key];
 
