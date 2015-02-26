@@ -53,6 +53,7 @@ namespace Marv.Controls
         private void ProgressBar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.Value = 100;
+            this.RaiseValueEntered();
         }
 
         private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)

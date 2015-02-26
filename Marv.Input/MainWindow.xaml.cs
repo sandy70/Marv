@@ -219,6 +219,11 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
+            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.Graph.SelectedVertex != null)
+            {
+                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.Graph.SelectedVertex.Key] = vertexEvidence;
+            }
+
             if (vertexEvidence == null)
             {
                 this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());

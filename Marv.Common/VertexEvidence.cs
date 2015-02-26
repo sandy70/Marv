@@ -40,6 +40,11 @@ namespace Marv.Common
 
         public override string ToString()
         {
+            if (this.Type == VertexEvidenceType.State)
+            {
+                return this.StateKey;
+            }
+
             if (this.Params == null)
             {
                 return null;
@@ -63,11 +68,6 @@ namespace Marv.Common
             if (this.Type == VertexEvidenceType.Range)
             {
                 return this.Params[0] + ":" + this.Params[1];
-            }
-
-            if (this.Type == VertexEvidenceType.State)
-            {
-                return this.StateKey;
             }
 
             if (this.Type == VertexEvidenceType.Triangular)

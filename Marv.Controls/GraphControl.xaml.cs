@@ -451,7 +451,10 @@ namespace Marv.Controls
 
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
+            if (this.Graph != null)
+            {
+                this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

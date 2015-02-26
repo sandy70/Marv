@@ -136,11 +136,11 @@ namespace Marv.Controls
 
         private void SliderProgressBar_ValueEntered(object sender, double e)
         {
-            if (Math.Abs(e - 100) < Common.Utils.Epsilon)
-            {
-                this.Vertex.Evidence = this.Vertex.States.ParseEvidenceString(((sender as SliderProgressBar).DataContext as State).Key);
-            }
+            var evidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
+                                     ? ((sender as SliderProgressBar).DataContext as State).Key
+                                     : this.Vertex.States.Select(state => state.Evidence).String();
 
+            this.Vertex.Evidence = this.Vertex.States.ParseEvidenceString(evidenceString);
             this.RaiseEvidenceEntered(this.Vertex.Evidence);
         }
 
