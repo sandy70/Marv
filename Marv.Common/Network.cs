@@ -332,12 +332,12 @@ namespace Marv.Common
         {
             var states = this.Nodes[vertexKey].States;
 
-            if (this.Nodes[vertexKey].Type == Common.VertexType.Interval)
+            if (this.Nodes[vertexKey].Type == VertexType.Interval)
             {
                 return states.Select(state => state.Min).Concat(states.Last().Max.Yield()).ToArray();
             }
 
-            if (this.Nodes[vertexKey].Type == Common.VertexType.Numbered)
+            if (this.Nodes[vertexKey].Type == VertexType.Numbered)
             {
                 return states.Select(state => state.Min).ToArray();
             }
@@ -444,7 +444,7 @@ namespace Marv.Common
             return this.Nodes[nodeKey].States.Select(state => state.Key).ToArray();
         }
 
-        public Common.VertexType GetType(string nodeKey)
+        public VertexType GetType(string nodeKey)
         {
             return this.Nodes[nodeKey].Type;
         }
@@ -542,7 +542,10 @@ namespace Marv.Common
 
             foreach (var vertex in this.Nodes)
             {
-                if (vertexEvidences.ContainsKey(vertex.Key) && vertexEvidences[vertex.Key].Value != null && vertexEvidences[vertex.Key].Value.Sum() > 0)
+                if (vertexEvidences.ContainsKey(vertex.Key)
+                    && vertexEvidences[vertex.Key] != null
+                    && vertexEvidences[vertex.Key].Value != null
+                    && vertexEvidences[vertex.Key].Value.Sum() > 0)
                 {
                     // Hugin allows a node to have a single state. Smile doesn't. So Smile adds a state
                     // to the node silently. This causes the length of the evidence array to not match
@@ -875,6 +878,8 @@ namespace Marv.Common
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private enum NetworkFileLocation
         {
             Header,
@@ -883,7 +888,5 @@ namespace Marv.Common
             Potential,
             Root,
         };
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

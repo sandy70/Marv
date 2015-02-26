@@ -32,9 +32,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsAutoRunEnabledProperty =
-            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
-
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
@@ -114,12 +111,6 @@ namespace Marv.Controls
         {
             get { return (bool) this.GetValue(IsAutoLayoutEnabledProperty); }
             set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
-        }
-
-        public bool IsAutoRunEnabled
-        {
-            get { return (bool) this.GetValue(IsAutoRunEnabledProperty); }
-            set { this.SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
@@ -287,11 +278,6 @@ namespace Marv.Controls
             this.EnableVertexDragging();
         }
 
-        private void AutoRunButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.Run();
-        }
-
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
@@ -300,7 +286,6 @@ namespace Marv.Controls
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             this.Graph.Evidence = null;
-            this.Run();
             this.RaiseEvidenceEntered();
         }
 
@@ -464,14 +449,9 @@ namespace Marv.Controls
             }
         }
 
-        private void Run()
+        private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsAutoRunEnabled && this.Graph != null)
-            {
-                Console.WriteLine("Running...");
-                this.Graph.Run();
-                Console.WriteLine("Run");
-            }
+            this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

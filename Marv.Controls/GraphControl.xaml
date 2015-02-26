@@ -93,11 +93,10 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
                 </telerik:RadButton>
 
-                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoRunEnabled}"
-                                         ToolTip="Runs the evidence into the network."
-                                         Checked="AutoRunButton_Checked">
+                <telerik:RadButton ToolTip="Runs the evidence into the network."
+                                   Click="RunButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
-                </telerik:RadToggleButton>
+                </telerik:RadButton>
 
                 <TextBlock Margin="8,4,4,4"
                            Text="Group"
