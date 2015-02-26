@@ -7,8 +7,10 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
+        private bool isAxisAutoSwitched;
         private string lastSectionId;
         private int lastYear;
+        private HorizontalAxisQuantity previousAxisQuantity;
 
         private void LineDataControl_CellContentChanged(object sender, CellChangedEventArgs e)
         {
@@ -62,6 +64,9 @@ namespace Marv.Input
 
         private void LineDataControl_RowSelected(object sender, string sectionId)
         {
+            this.isAxisAutoSwitched = true;
+            this.previousAxisQuantity = this.HorizontalAxisQuantity;
+
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
 
             this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
@@ -98,6 +103,12 @@ namespace Marv.Input
 
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
+            if (this.isAxisAutoSwitched)
+            {
+                this.isAxisAutoSwitched = false;
+                this.HorizontalAxisQuantity = this.previousAxisQuantity;
+            }
+
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
             this.Graph.Evidence = this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear];
 
