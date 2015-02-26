@@ -55,7 +55,9 @@ namespace Marv.Controls
 
         private Graph displayGraph;
         private string displayVertexKey;
+        private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
+        private bool isManipulationAdornerVisible;
         private string selectedGroup;
 
         public int AutoSaveDuration
@@ -143,6 +145,22 @@ namespace Marv.Controls
             set { this.SetValue(IsAutoSaveEnabledProperty, value); }
         }
 
+        public bool IsConnectorsManipulationEnabled
+        {
+            get { return this.isConnectorsManipulationEnabled; }
+
+            set
+            {
+                if (value.Equals(this.isConnectorsManipulationEnabled))
+                {
+                    return;
+                }
+
+                this.isConnectorsManipulationEnabled = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public bool IsDefaultGroupVisible
         {
             get { return this.isDefaultGroupVisible; }
@@ -164,6 +182,22 @@ namespace Marv.Controls
             get { return (bool) this.GetValue(IsInputVisibleProperty); }
 
             set { this.SetValue(IsInputVisibleProperty, value); }
+        }
+
+        public bool IsManipulationAdornerVisible
+        {
+            get { return this.isManipulationAdornerVisible; }
+
+            set
+            {
+                if (value.Equals(this.isManipulationAdornerVisible))
+                {
+                    return;
+                }
+
+                this.isManipulationAdornerVisible = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public bool IsNavigationPaneVisible
@@ -298,9 +332,9 @@ namespace Marv.Controls
 
         private void DisableConnectorEditing()
         {
+            this.IsConnectorsManipulationEnabled = false;
+            this.IsManipulationAdornerVisible = false;
             this.IsVerticesEnabled = true;
-            this.Diagram.IsConnectorsManipulationEnabled = false;
-            this.Diagram.IsManipulationAdornerVisible = false;
         }
 
         private void DisableVertexDragging()
@@ -318,9 +352,9 @@ namespace Marv.Controls
 
         private void EnableConnectorEditing()
         {
+            this.IsConnectorsManipulationEnabled = true;
+            this.IsManipulationAdornerVisible = true;
             this.IsVerticesEnabled = false;
-            this.Diagram.IsConnectorsManipulationEnabled = true;
-            this.Diagram.IsManipulationAdornerVisible = true;
         }
 
         private void EnableVertexDragging()
@@ -541,16 +575,11 @@ namespace Marv.Controls
             this.Graph.Evidence.WriteJson(filePath);
         }
 
-        public event EventHandler<Vertex> SelectionChanged;
-
         public event EventHandler<VertexEvidence> EvidenceEntered;
-
         public event EventHandler<ValueChangedEventArgs<Graph>> GraphChanged;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<Notification> NotificationOpened;
-
         public event EventHandler<Notification> NotificationClosed;
+        public event EventHandler<Notification> NotificationOpened;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<Vertex> SelectionChanged;
     }
 }

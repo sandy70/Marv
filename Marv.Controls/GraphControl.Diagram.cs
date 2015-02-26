@@ -69,11 +69,11 @@ namespace Marv.Controls
         {
             if (this.IsAutoLayoutEnabled)
             {
-                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.UpdateLayout(true));
+                Common.Utils.Schedule(TimeSpan.FromMilliseconds(100), () => this.UpdateLayout(true));
             }
             else
             {
-                Common.Utils.Schedule(TimeSpan.FromMilliseconds(300), () => this.Diagram.AutoFit());
+                Common.Utils.Schedule(TimeSpan.FromMilliseconds(100), () => this.Diagram.AutoFit());
             }
         }
 
