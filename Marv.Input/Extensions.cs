@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Marv;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common.Types
 {
     public partial class Dict<TKey, TValue> : IDictionary<TKey, TValue>
     {

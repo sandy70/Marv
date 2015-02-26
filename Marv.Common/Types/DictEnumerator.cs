@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Marv
+namespace Marv.Common.Types
 {
     public sealed class DictEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>>
     {

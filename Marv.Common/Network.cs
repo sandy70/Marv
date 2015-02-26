@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Marv.Common.Types;
 using Smile;
 
 namespace Marv.Common
@@ -37,7 +38,7 @@ namespace Marv.Common
 
         public Dict<string, double[]> InitialBelief
         {
-            get { return this.Nodes.ToDict(vertex => vertex.Key, vertex => vertex.InitialBelief); }
+            get { return this.Nodes.ToDict(node => node.Key, node => node.InitialBelief); }
 
             set
             {
@@ -817,14 +818,6 @@ namespace Marv.Common
             vertexEvidences.WriteJson(filePath);
         }
 
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private string FormPotentialString(NetworkNode node, double[,] table, string[] parentNodeKeys, int row = 0, int col = 0, int level = 0)
         {
             var potentialString = "";
@@ -872,6 +865,14 @@ namespace Marv.Common
             }
 
             return potentialString;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private enum NetworkFileLocation

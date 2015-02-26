@@ -111,9 +111,9 @@
     <Compile Include="SectionBelief.cs" />
     <Compile Include="SectionEvidence.cs" />
     <Compile Include="State.cs" />
-    <Compile Include="Types\Dict\Dict.cs" />
-    <Compile Include="Types\Dict\Dict.IDictionary.cs" />
-    <Compile Include="Types\Dict\DictEnumerator.cs" />
+    <Compile Include="Types\Dict.cs" />
+    <Compile Include="Types\Dict.IDictionary.cs" />
+    <Compile Include="Types\DictEnumerator.cs" />
     <Compile Include="Distributions\DeltaDistribution.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="Types\IKeyed.cs" />
@@ -124,7 +124,7 @@
     <Compile Include="Distributions\TriangularDistribution.cs" />
     <Compile Include="Interpolators\CubicSplineInterpolator.cs" />
     <Compile Include="Interpolators\TriDiagonalMatrix.cs" />
-    <Compile Include="Types\Dict\Kvp.cs" />
+    <Compile Include="Types\Kvp.cs" />
     <Compile Include="Types\Dynamic.cs" />
     <Compile Include="GridFloatHeader.cs" />
     <Compile Include="GridFloatReader.cs" />

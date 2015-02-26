@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Types;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;

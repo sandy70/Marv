@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Marv.Common.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
@@ -69,57 +70,6 @@ namespace Marv.Common
         public static string Enquote(this string str)
         {
             return str.Enquote('"');
-        }
-
-        public static void RemoveEvidence(this ILineData lineData, string sectionId, int year, string vertexKey)
-        {
-            var sectionEvidence = lineData.GetEvidence(sectionId);
-            sectionEvidence[year][vertexKey] = null;
-            lineData.SetEvidence(sectionId, sectionEvidence);
-        }
-
-        public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, VertexEvidence vertexEvidence)
-        {
-            var sectionEvidence = lineData.GetEvidence(sectionId);
-
-            if (vertexEvidence.Type == VertexEvidenceType.Null)
-            {
-                sectionEvidence[year][vertexKey] = null;
-            }
-            else
-            {
-                sectionEvidence[year][vertexKey] = vertexEvidence;
-            }
-
-            lineData.SetEvidence(sectionId, sectionEvidence);
-        }
-
-        public static void WriteHcs(this Dict<string, VertexEvidence> evidences, string filePath)
-        {
-            using (var hcsFile = new StreamWriter(filePath))
-            {
-                foreach (var nodeKey in evidences.Keys)
-                {
-                    if (evidences[nodeKey].Value.Sum() > 0)
-                    {
-                        hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].Value.String(delim: " "));
-                    }
-                }
-            }
-        }
-
-        public static void WriteHcs(this Dict<string, double[]> evidences, string filePath)
-        {
-            using (var hcsFile = new StreamWriter(filePath))
-            {
-                foreach (var nodeKey in evidences.Keys)
-                {
-                    if (evidences[nodeKey].Sum() > 0)
-                    {
-                        hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].String(delim: " "));
-                    }
-                }
-            }
         }
 
         public static double Entropy(this IEnumerable<double> array)
@@ -234,6 +184,29 @@ namespace Marv.Common
                             .Concat(last);
         }
 
+        public static void RemoveEvidence(this ILineData lineData, string sectionId, int year, string vertexKey)
+        {
+            var sectionEvidence = lineData.GetEvidence(sectionId);
+            sectionEvidence[year][vertexKey] = null;
+            lineData.SetEvidence(sectionId, sectionEvidence);
+        }
+
+        public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, VertexEvidence vertexEvidence)
+        {
+            var sectionEvidence = lineData.GetEvidence(sectionId);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Null)
+            {
+                sectionEvidence[year][vertexKey] = null;
+            }
+            else
+            {
+                sectionEvidence[year][vertexKey] = vertexEvidence;
+            }
+
+            lineData.SetEvidence(sectionId, sectionEvidence);
+        }
+
         public static string String<T>(this IEnumerable<T> items, string format = "{0}", string delim = ",")
         {
             var str = "";
@@ -285,6 +258,34 @@ namespace Marv.Common
             using (var jsonTextWriter = new BsonWriter(File.Open(fileName, FileMode.Create)))
             {
                 serializer.Serialize(jsonTextWriter, _object);
+            }
+        }
+
+        public static void WriteHcs(this Dict<string, VertexEvidence> evidences, string filePath)
+        {
+            using (var hcsFile = new StreamWriter(filePath))
+            {
+                foreach (var nodeKey in evidences.Keys)
+                {
+                    if (evidences[nodeKey].Value.Sum() > 0)
+                    {
+                        hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].Value.String(delim: " "));
+                    }
+                }
+            }
+        }
+
+        public static void WriteHcs(this Dict<string, double[]> evidences, string filePath)
+        {
+            using (var hcsFile = new StreamWriter(filePath))
+            {
+                foreach (var nodeKey in evidences.Keys)
+                {
+                    if (evidences[nodeKey].Sum() > 0)
+                    {
+                        hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].String(delim: " "));
+                    }
+                }
             }
         }
 

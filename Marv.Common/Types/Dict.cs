@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common.Types
 {
     public partial class Dict<TKey, TValue> : ObservableCollection<Kvp<TKey, TValue>>
     {
@@ -25,7 +24,7 @@ namespace Marv
 
             set
             {
-                if (value as object == null)
+                if (value == null)
                 {
                     this.Remove(key);
                 }

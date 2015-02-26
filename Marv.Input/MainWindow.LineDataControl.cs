@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 
 namespace Marv.Input
