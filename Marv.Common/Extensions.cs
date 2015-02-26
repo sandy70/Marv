@@ -221,13 +221,6 @@ namespace Marv.Common
                             .Concat(last);
         }
 
-        public static void RemoveEvidence(this ILineData lineData, string sectionId, int year, string vertexKey)
-        {
-            var sectionEvidence = lineData.GetEvidence(sectionId);
-            sectionEvidence[year][vertexKey] = null;
-            lineData.SetEvidence(sectionId, sectionEvidence);
-        }
-
         public static void SetEvidence(this ILineData lineData, string sectionId, int year, string vertexKey, NodeEvidence nodeEvidence)
         {
             var sectionEvidence = lineData.GetEvidence(sectionId);

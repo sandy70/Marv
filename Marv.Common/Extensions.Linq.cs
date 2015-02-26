@@ -62,7 +62,9 @@ namespace Marv.Common
 
             do
             {
-                if (hasRemainingItems = it.MoveNext())
+                hasRemainingItems = it.MoveNext();
+
+                if (hasRemainingItems)
                 {
                     cache.Enqueue(it.Current);
                     if (cache.Count > n)

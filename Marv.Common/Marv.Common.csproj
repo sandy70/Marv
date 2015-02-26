@@ -88,7 +88,7 @@
     <Compile Include="Countries.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeConnectorPositions.cs" />
-    <Compile Include="Extensions.NetworkNode.cs" />
+    <Compile Include="Extensions.Node.cs" />
     <Compile Include="Extensions.State.cs" />
     <Compile Include="FolderLineData.cs" />
     <Compile Include="Graph.cs" />
