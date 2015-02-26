@@ -102,6 +102,7 @@ namespace Marv.Common
             {
                 this.evidence = value;
 
+                this.EvidenceString = value == null ? null : value.ToString();
                 this.States.ForEach((state, i) => state.Evidence = value == null || value.Value == null ? 0 : value.Value[i]);
                 this.RaisePropertyChanged();
             }

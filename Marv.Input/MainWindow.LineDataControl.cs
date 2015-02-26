@@ -99,7 +99,7 @@ namespace Marv.Input
         private void LineDataControl_SelectedCellChanged(object sender, EventArgs e)
         {
             this.Graph.Belief = this.LineData.GetBelief(this.SelectedSectionId)[this.SelectedYear];
-            this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear]);
+            this.Graph.Evidence = this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear];
 
             var isSectionChanged = this.SelectedSectionId != this.lastSectionId;
             var isYearChanged = this.SelectedYear != this.lastYear;
