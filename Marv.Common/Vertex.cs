@@ -14,7 +14,7 @@ namespace Marv.Common
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
-        private VertexEvidence evidence;
+        private double[] evidence;
         private string evidenceString;
         private ObservableCollection<string> groups = new ObservableCollection<string>();
         private string headerOfGroup;
@@ -95,7 +95,7 @@ namespace Marv.Common
             }
         }
 
-        public VertexEvidence Evidence
+        public double[] Evidence
         {
             get { return this.evidence; }
 
@@ -103,8 +103,7 @@ namespace Marv.Common
             {
                 this.evidence = value;
 
-                this.EvidenceString = value == null ? null : value.ToString();
-                this.States.ForEach((state, i) => state.Evidence = value == null || value.Value == null ? 0 : value.Value[i]);
+                this.States.ForEach((state, i) => state.Evidence = value == null ? 0 : value[i]);
                 this.RaisePropertyChanged();
             }
         }
@@ -409,6 +408,12 @@ namespace Marv.Common
                     this.RaisePropertyChanged();
                 }
             }
+        }
+
+        public void SetEvidence(VertexEvidence evidence)
+        {
+            this.Evidence = evidence.Value;
+            this.EvidenceString = evidence.ToString();
         }
 
         public override string ToString()

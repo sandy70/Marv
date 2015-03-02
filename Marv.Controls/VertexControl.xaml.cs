@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 
@@ -83,20 +84,21 @@ namespace Marv.Controls
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.Evidence = new VertexEvidence
+            this.Vertex.Evidence = null;
+            this.Vertex.EvidenceString = null;
+
+            this.RaiseEvidenceEntered(new VertexEvidence
             {
                 Params = null,
                 Type = VertexEvidenceType.Null,
                 Value = null
-            };
-
-            this.RaiseEvidenceEntered(this.Vertex.Evidence);
+            });
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence;
+            this.Vertex.Evidence = vertexEvidence.Value; 
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 
@@ -136,19 +138,22 @@ namespace Marv.Controls
 
         private void SliderProgressBar_ValueEntered(object sender, double e)
         {
-            var evidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
+            var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
                                      ? ((sender as SliderProgressBar).DataContext as State).Key
                                      : this.Vertex.States.Select(state => state.Evidence).String();
 
-            this.Vertex.Evidence = this.Vertex.States.ParseEvidenceString(evidenceString);
-            this.RaiseEvidenceEntered(this.Vertex.Evidence);
+            var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
+
+            this.Vertex.SetEvidence(vertexEvidence);
+
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
 
-            var nodeEvidence = this.Vertex.IsNumeric
+            var vertexEvidence = this.Vertex.IsNumeric
                                    ? new VertexEvidence
                                    {
                                        Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
@@ -162,9 +167,9 @@ namespace Marv.Controls
                                        Value = evidenceValue
                                    };
 
-            this.Vertex.Evidence = nodeEvidence;
+            this.Vertex.SetEvidence(vertexEvidence);
 
-            this.RaiseEvidenceEntered(nodeEvidence);
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;

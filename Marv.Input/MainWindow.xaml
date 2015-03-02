@@ -14,11 +14,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style x:Key="BarSeriesStyle" TargetType="Border">
-                <Setter Property="Background" Value="Red" />
-                <Setter Property="Opacity" Value="0.5" />
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -156,8 +151,7 @@
                             </telerik:RadComboBox>
 
                             <!-- Vertex Control -->
-                            <marv:VertexControl Name="VertexControl"
-                                                Grid.Row="1"
+                            <marv:VertexControl Grid.Row="1"
                                                 IsEditable="True"
                                                 IsEvidenceVisible="True"
                                                 IsInputVisible="True"

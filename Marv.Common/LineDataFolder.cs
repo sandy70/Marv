@@ -8,7 +8,7 @@ using Marv.Common.Types;
 
 namespace Marv.Common
 {
-    public class FolderLineData : NotifyPropertyChanged, ILineData
+    public class LineDataFolder : NotifyPropertyChanged, ILineData
     {
         private const string BeliefsDirName = "SectionBeliefs";
         private const string EvidencesDirName = "SectionEvidences";
@@ -74,9 +74,9 @@ namespace Marv.Common
             }
         }
 
-        public FolderLineData() {}
+        public LineDataFolder() {}
 
-        public FolderLineData(string theRootDirPath)
+        public LineDataFolder(string theRootDirPath)
         {
             this.rootDirPathPath = File.Exists(theRootDirPath) ? Path.GetDirectoryName(theRootDirPath) : theRootDirPath;
 
@@ -91,7 +91,7 @@ namespace Marv.Common
         public static ILineData Read(string filePath)
         {
             // This should read End, StartYears and Guid
-            var lineData = Utils.ReadJson<FolderLineData>(filePath);
+            var lineData = Utils.ReadJson<LineDataFolder>(filePath);
             lineData.rootDirPathPath = Path.GetDirectoryName(filePath);
 
             return lineData;

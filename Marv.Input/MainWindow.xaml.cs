@@ -322,7 +322,7 @@ namespace Marv.Input
                 if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
                 {
                     // This is a folder line data
-                    this.LineData = FolderLineData.Read(dialog.FileName);
+                    this.LineData = LineDataFolder.Read(dialog.FileName);
                 }
                 else
                 {

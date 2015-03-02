@@ -42,7 +42,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, VertexEvidence> Evidence
+        public Dict<string, double[]> Evidence
         {
             get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence); }
 
@@ -243,6 +243,14 @@ namespace Marv.Common
             subGraph.DefaultGroup = group;
 
             return subGraph;
+        }
+
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
+        {
+            foreach (var vertexKey in vertexEvidences.Keys)
+            {
+                this.Vertices[vertexKey].SetEvidence(vertexEvidences[vertexKey]);
+            }
         }
 
         public void Write()

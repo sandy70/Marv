@@ -11,7 +11,7 @@ namespace FixPoF
     {
         private static void Main(string[] args)
         {
-            var lineData = new FolderLineData(@"C:\Users\Vinod\Data\LongChang\Scenario08");
+            var lineData = new LineDataFolder(@"C:\Users\Vinod\Data\LongChang\Scenario08");
             var locationValues = new Dict<string, int, double>();
 
             foreach (var sectionId in lineData.SectionIds)

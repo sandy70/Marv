@@ -89,7 +89,7 @@
     <Compile Include="EdgeConnectorPositions.cs" />
     <Compile Include="Extensions.Vertex.cs" />
     <Compile Include="Extensions.State.cs" />
-    <Compile Include="FolderLineData.cs" />
+    <Compile Include="LineDataFolder.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="Graph.IBidirectionalGraph.cs" />
     <Compile Include="Graph.IObservableGraphSource.cs" />
