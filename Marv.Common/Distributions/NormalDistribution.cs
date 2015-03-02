@@ -1,6 +1,6 @@
 using System;
 
-namespace Marv
+namespace Marv.Common.Distributions
 {
     /// <summary>
     ///     Class NormalDist represents the normal (Gaussian) probability distribution
@@ -80,9 +80,9 @@ namespace Marv
         /// </summary>
         public double Mean
         {
-            get { return mean_; }
+            get { return this.mean_; }
 
-            set { mean_ = value; }
+            set { this.mean_ = value; }
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Marv
         /// <remarks>The variance of the density is the standard deviation squared.</remarks>
         public double Variance
         {
-            get { return (sigma_ * sigma_); }
+            get { return (this.sigma_ * this.sigma_); }
 
             set
             {
@@ -117,10 +117,10 @@ namespace Marv
                     var msg = string.Format("Expected variance > 0 in NormalDistribution. Found variance = {0}", value);
                     throw new Exception(msg);
                 }
-                sigma_ = Math.Sqrt(value);
-                oneOverSigma_ = 1.0 / sigma_;
-                oneOverSigmaSqr_ = oneOverSigma_ * oneOverSigma_;
-                c_ = oneOverSigma_ * OneOverRoot2Pi;
+                this.sigma_ = Math.Sqrt(value);
+                this.oneOverSigma_ = 1.0 / this.sigma_;
+                this.oneOverSigmaSqr_ = this.oneOverSigma_ * this.oneOverSigma_;
+                this.c_ = this.oneOverSigma_ * OneOverRoot2Pi;
             }
         }
 
@@ -136,8 +136,8 @@ namespace Marv
         /// <remarks>The variance of the distribution is the standard deviation squared.</remarks>
         public NormalDistribution(double mean, double var)
         {
-            mean_ = mean;
-            Variance = var;
+            this.mean_ = mean;
+            this.Variance = var;
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Marv
             int i;
             double del, temp, z, xden, xnum, y, xsq, min;
             double result, ccum;
-            var arg = (x - mean_) / sigma_;
+            var arg = (x - this.mean_) / this.sigma_;
 
             min = Double.Epsilon;
             z = arg;
@@ -256,11 +256,11 @@ namespace Marv
         /// <returns>The probability density function evaluated at <c>x</c>.</returns>
         public double Pdf(double x)
         {
-            var y = (x - mean_);
+            var y = (x - this.mean_);
             var xMinusMuSqr = y * y;
 
             // c_ is a constant equal to one over sigma times one over square root of 2 PI
-            return c_ * Math.Exp(-0.5 * xMinusMuSqr * oneOverSigmaSqr_);
+            return this.c_ * Math.Exp(-0.5 * xMinusMuSqr * this.oneOverSigmaSqr_);
         }
     }
 }

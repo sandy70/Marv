@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
@@ -6,7 +7,6 @@ using Marv.Common.Types;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
-using System.Linq;
 
 namespace Marv.Input
 {
@@ -116,7 +116,7 @@ namespace Marv.Input
         {
             var text = Clipboard.GetText(TextDataFormat.CommaSeparatedValue);
 
-            var lines = text.Trim().Split(new []{ "\r\n"}, StringSplitOptions.None);
+            var lines = text.Trim().Split(new[] { "\r\n" }, StringSplitOptions.None);
             var values = new string[lines.Count()][];
 
             var row = 0;
