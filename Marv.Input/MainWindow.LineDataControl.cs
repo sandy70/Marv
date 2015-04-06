@@ -115,6 +115,11 @@ namespace Marv.Input
             var isSectionChanged = this.SelectedSectionId != this.lastSectionId;
             var isYearChanged = this.SelectedYear != this.lastYear;
 
+            if (this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
+
             if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
                 (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
             {
