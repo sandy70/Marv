@@ -410,10 +410,18 @@ namespace Marv.Common
             }
         }
 
-        public void SetEvidence(VertexEvidence evidence)
+        public void SetEvidence(VertexEvidence anEvidence)
         {
-            this.Evidence = evidence.Value;
-            this.EvidenceString = evidence.ToString();
+            if (anEvidence != null)
+            {
+                this.Evidence = anEvidence.Value;
+                this.EvidenceString = anEvidence.ToString();
+            }
+            else
+            {
+                this.Evidence = null;
+                this.EvidenceString = null;
+            }
         }
 
         public override string ToString()
