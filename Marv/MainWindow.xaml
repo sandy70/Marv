@@ -56,7 +56,7 @@
                                                       Locations="{Binding ElementName=Root, Path=Locations}"
                                                       LocationValues="{Binding ElementName=Root, Path=SelectedYearLocationValues}"
                                                       SelectedLocation="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                      StrokeThickness="8"/>
+                                                      StrokeThickness="8" />
 
                                 <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=ReferenceLocations}"
                                                             Visibility="{Binding ElementName=Root, Path=IsReferenceLocationsVisible, Converter={StaticResource BooleanToVisibility}}">
@@ -69,11 +69,11 @@
                                             <Setter Property="HorizontalAlignment" Value="Left" />
 
                                             <Setter Property="VerticalAlignment" Value="Bottom" />
-                                            
+
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <mapControl:Pushpin Content="{Binding Path=Key}"/>
+                                                        <mapControl:Pushpin Content="{Binding Path=Key}" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
@@ -97,7 +97,7 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <mapControl:Pushpin Background="Gold"
-                                                                            Content="{Binding Path=Key}"/>
+                                                                            Content="{Binding Path=Key}" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
@@ -132,20 +132,20 @@
                                         Margin="8">
                                 <!-- Location Combo Box -->
                                 <telerik:RadComboBox CanAutocompleteSelectItems="False"
-                                                 CanKeyboardNavigationSelectItems="False"
-                                                 DisplayMemberPath="Key"
-                                                 Height="32"
-                                                 IsEditable="True"
-                                                 IsFilteringEnabled="True"
-                                                 IsSynchronizedWithCurrentItem="False"
-                                                 ItemsSource="{Binding ElementName=Root, Path=Locations}"
-                                                 Margin="4"
-                                                 OpenDropDownOnFocus="True"
-                                                 SelectedIndex="0"
-                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
-                                                 TextSearchMode="Contains"
-                                                 VerticalAlignment="Top"
-                                                 Width="96">
+                                                     CanKeyboardNavigationSelectItems="False"
+                                                     DisplayMemberPath="Key"
+                                                     Height="32"
+                                                     IsEditable="True"
+                                                     IsFilteringEnabled="True"
+                                                     IsSynchronizedWithCurrentItem="False"
+                                                     ItemsSource="{Binding ElementName=Root, Path=Locations}"
+                                                     Margin="4"
+                                                     OpenDropDownOnFocus="True"
+                                                     SelectedIndex="0"
+                                                     SelectedItem="{Binding ElementName=Root, Path=SelectedLocation, Mode=TwoWay}"
+                                                     TextSearchMode="Contains"
+                                                     VerticalAlignment="Top"
+                                                     Width="96">
                                     <telerik:RadComboBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <VirtualizingStackPanel />
@@ -157,7 +157,7 @@
                                           IsChecked="{Binding ElementName=Root, Path=IsReferenceLocationsVisible}"
                                           Margin="8" />
                             </StackPanel>
-                           
+
                         </Grid>
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
@@ -173,10 +173,10 @@
                             </Grid.RowDefinitions>
 
                             <marv:GraphControl Name="GraphControl"
-                                                       Grid.Row="0"
-                                                       Background="WhiteSmoke"
-                                                       Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
-                                                       IsAutoSaveEnabled="False" />
+                                               Grid.Row="0"
+                                               Background="WhiteSmoke"
+                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                               IsAutoSaveEnabled="False" />
 
                             <Grid Grid.Row="1"
                                   Height="32"

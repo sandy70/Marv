@@ -246,6 +246,14 @@ namespace Marv.Controls
             control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
+        public void Open(string fileName)
+        {
+            this.Graph = Graph.Read(fileName);
+
+            var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
+            this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
+        }
+
         public void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
@@ -382,11 +390,6 @@ namespace Marv.Controls
             };
 
             timer.Start();
-        }
-
-        private void Open(string fileName)
-        {
-            this.Graph = Graph.Read(fileName);
         }
 
         private void Open()

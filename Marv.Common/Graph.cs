@@ -247,9 +247,16 @@ namespace Marv.Common
 
         public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
         {
-            foreach (var vertexKey in vertexEvidences.Keys)
+            foreach (var vertex in this.Vertices)
             {
-                this.Vertices[vertexKey].SetEvidence(vertexEvidences[vertexKey]);
+                if (vertexEvidences.ContainsKey(vertex.Key))
+                {
+                    vertex.SetEvidence(vertexEvidences[vertex.Key]);
+                }
+                else
+                {
+                    vertex.SetEvidence(null);
+                }
             }
         }
 
