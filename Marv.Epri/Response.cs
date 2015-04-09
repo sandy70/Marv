@@ -2,6 +2,7 @@
 
 namespace Marv.Epri
 {
+    // Do not change the property names here because they must match the JSON response
     public class Response
     {
         public int count { get; set; }

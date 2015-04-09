@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,13 +27,13 @@ namespace Marv.Epri
             InitializeComponent();
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            const string url = @"http://devicecloud.digi.com/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/Sensor01.json?timeline=server&order=desc";
+            const string uri = @"http://devicecloud.digi.com/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/Sensor01.json?timeline=server&order=desc&size=50";
 
-            using (var webClient = new WebClient { Credentials = new NetworkCredential("vkhare13", "!Ncc1764") })
+            using (var httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential("vkhare13", "!Ncc1764") }))
             {
-                var response = JsonConvert.DeserializeObject<Response>(webClient.DownloadString(new Uri(url)));
+                var response = await JsonConvert.DeserializeObjectAsync<Response>(await httpClient.GetStringAsync(uri));
                 Console.WriteLine(response);
             }
         }
