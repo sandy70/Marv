@@ -9,6 +9,6 @@ namespace Marv.Epri
         public DateTime server_timestamp { get; set; }
         public string stream_id { get; set; }
         public DateTime timestamp { get; set; }
-        public string value { get; set; }
+        public int value { get; set; }
     }
 }
