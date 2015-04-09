@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Excel", "Marv.Excel\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.LightSensor", "Marv.LightSensor\Marv.LightSensor.csproj", "{5F07CE1A-4B63-405A-9413-F3EB603C712F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Epri", "Marv.Epri\Marv.Epri.csproj", "{95541152-78B7-407B-A4ED-90F5BE537D3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,19 @@ Global
 		{5F07CE1A-4B63-405A-9413-F3EB603C712F}.Release|x64.ActiveCfg = Release|x86
 		{5F07CE1A-4B63-405A-9413-F3EB603C712F}.Release|x86.ActiveCfg = Release|x86
 		{5F07CE1A-4B63-405A-9413-F3EB603C712F}.Release|x86.Build.0 = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|x64.ActiveCfg = Debug|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|x86.ActiveCfg = Debug|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Debug|x86.Build.0 = Debug|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|Any CPU.ActiveCfg = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|Mixed Platforms.Build.0 = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|x64.ActiveCfg = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|x86.ActiveCfg = Release|x86
+		{95541152-78B7-407B-A4ED-90F5BE537D3A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
