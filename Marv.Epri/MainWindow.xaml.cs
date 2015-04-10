@@ -23,9 +23,8 @@ namespace Marv.Epri
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
-
+        private Task<ObservableCollection<DataPoint>> downloadDataPointsTask;
         private NotificationCollection notifications = new NotificationCollection();
-
         private TimeSpan selectedTimeSpan;
 
         private Dict<string, TimeSpan> timespans = new Dict<string, TimeSpan>
@@ -111,17 +110,7 @@ namespace Marv.Epri
 
         private async void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var notification = new Notification
-            {
-                IsIndeterminate = true,
-                Description = "Loading..."
-            };
-
-            this.Notifications.Add(notification);
-
-            this.DataPoints = await this.DownloadDataPointsAsync();
-
-            this.Notifications.Remove(notification);
+            await this.UpdateDataPoints();
         }
 
         private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync()
@@ -160,17 +149,7 @@ namespace Marv.Epri
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var notification = new Notification
-            {
-                IsIndeterminate = true,
-                Description = "Loading..."
-            };
-
-            this.Notifications.Add(notification);
-
-            this.DataPoints = await this.DownloadDataPointsAsync();
-
-            this.Notifications.Remove(notification);
+            await this.UpdateDataPoints();
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -181,8 +160,13 @@ namespace Marv.Epri
             }
         }
 
-        private async void timer_Tick(object sender, EventArgs e)
+        private async Task UpdateDataPoints()
         {
+            if (this.downloadDataPointsTask != null && this.downloadDataPointsTask.Status == TaskStatus.Running)
+            {
+                this.downloadDataPointsTask.Wait();
+            }
+
             var notification = new Notification
             {
                 IsIndeterminate = true,
@@ -191,9 +175,14 @@ namespace Marv.Epri
 
             this.Notifications.Add(notification);
 
-            this.DataPoints = await this.DownloadDataPointsAsync();
+            this.DataPoints = await (this.downloadDataPointsTask = this.DownloadDataPointsAsync());
 
             this.Notifications.Remove(notification);
+        }
+
+        private async void timer_Tick(object sender, EventArgs e)
+        {
+            await this.UpdateDataPoints();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
