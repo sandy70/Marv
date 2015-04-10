@@ -27,7 +27,7 @@ namespace Marv.Controls
 
             set
             {
-                if (value.Equals(this.selectedNotification))
+                if (value != null && value.Equals(this.selectedNotification))
                 {
                     return;
                 }
