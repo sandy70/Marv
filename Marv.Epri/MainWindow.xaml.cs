@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -17,15 +18,19 @@ namespace Marv.Epri
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.Login, Settings.Default.Password) });
+
         private readonly DispatcherTimer timer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromMinutes(1),
+            Interval = TimeSpan.FromSeconds(60),
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
-        private Task<ObservableCollection<DataPoint>> downloadDataPointsTask;
+        private string device;
         private NotificationCollection notifications = new NotificationCollection();
+        private string selectedStream;
         private TimeSpan selectedTimeSpan;
+        private ObservableCollection<string> streams;
 
         private Dict<string, TimeSpan> timespans = new Dict<string, TimeSpan>
         {
@@ -67,6 +72,22 @@ namespace Marv.Epri
             }
         }
 
+        public string SelectedStream
+        {
+            get { return this.selectedStream; }
+
+            set
+            {
+                if (value.Equals(this.selectedStream))
+                {
+                    return;
+                }
+
+                this.selectedStream = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public TimeSpan SelectedTimeSpan
         {
             get { return this.selectedTimeSpan; }
@@ -79,6 +100,22 @@ namespace Marv.Epri
                 }
 
                 this.selectedTimeSpan = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> Streams
+        {
+            get { return this.streams; }
+
+            set
+            {
+                if (value.Equals(this.streams))
+                {
+                    return;
+                }
+
+                this.streams = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -108,16 +145,16 @@ namespace Marv.Epri
             this.timer.Start();
         }
 
-        private async void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            await this.UpdateDataPoints();
-        }
-
         private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync()
         {
+            if (this.httpClient != null)
+            {
+                this.httpClient.CancelPendingRequests();
+            }
+
             const string server = @"http://devicecloud.digi.com";
 
-            const string uriEndPoint = server + "/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/Sensor01.json";
+            var uriEndPoint = server + "/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/" + this.SelectedStream + ".json";
 
             var uri = uriEndPoint + "?" + Utils.FormRestArgs(new
             {
@@ -125,30 +162,69 @@ namespace Marv.Epri
                 timeline = "server"
             });
 
-            using (var httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.Login, Settings.Default.Password) }))
+            var downloadedPoints = new ObservableCollection<DataPoint>();
+
+            while (true)
             {
-                var downloadedPoints = new ObservableCollection<DataPoint>();
+                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri)));
 
-                while (true)
+                downloadedPoints.Add(response.list);
+
+                if (response.next_uri == null)
                 {
-                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response>(await httpClient.GetStringAsync(uri)));
-
-                    downloadedPoints.Add(response.list);
-
-                    if (response.next_uri == null)
-                    {
-                        break;
-                    }
-
-                    uri = server + response.next_uri;
+                    break;
                 }
 
-                return downloadedPoints;
+                uri = server + response.next_uri;
             }
+
+            return downloadedPoints;
+        }
+
+        private async Task<ObservableCollection<string>> DownloadStreamsAsync()
+        {
+            if (httpClient != null)
+            {
+                this.httpClient.CancelPendingRequests();
+            }
+
+            const string server = @"http://devicecloud.digi.com";
+
+            var uriEndPoint = server + "/ws/v1/streams/inventory.json?category=data";
+
+            var downloadedStreams = new ObservableCollection<string>();
+
+            while (true)
+            {
+                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<Stream>>(await httpClient.GetStringAsync(uriEndPoint)));
+
+                downloadedStreams.Add(response.list.Select(x => x.id.Split("/".ToArray())[1]));
+
+                if (response.next_uri == null)
+                {
+                    break;
+                }
+
+                uriEndPoint = server + response.next_uri;
+            }
+
+            return downloadedStreams;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            var notification = new Notification
+            {
+                IsIndeterminate = true,
+                Description = "Loading streams..."
+            };
+
+            this.Notifications.Add(notification);
+
+            this.Streams = await this.DownloadStreamsAsync();
+
+            this.Notifications.Remove(notification);
+
             await this.UpdateDataPoints();
         }
 
@@ -160,22 +236,39 @@ namespace Marv.Epri
             }
         }
 
+        private async void SteamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await this.UpdateDataPoints();
+        }
+
+        private async void TimeSpanComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await this.UpdateDataPoints();
+        }
+
         private async Task UpdateDataPoints()
         {
-            if (this.downloadDataPointsTask != null && this.downloadDataPointsTask.Status == TaskStatus.Running)
+            if (this.SelectedStream == null)
             {
-                this.downloadDataPointsTask.Wait();
+                return;
             }
 
             var notification = new Notification
             {
                 IsIndeterminate = true,
-                Description = "Loading..."
+                Description = "Loading data..."
             };
 
             this.Notifications.Add(notification);
 
-            this.DataPoints = await (this.downloadDataPointsTask = this.DownloadDataPointsAsync());
+            try
+            {
+                this.DataPoints = await this.DownloadDataPointsAsync();
+            }
+            catch (TaskCanceledException)
+            {
+                // do nothing
+            }
 
             this.Notifications.Remove(notification);
         }
