@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Epri.Properties;
@@ -16,6 +17,11 @@ namespace Marv.Epri
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private readonly DispatcherTimer timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMinutes(1),
+        };
+
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
 
         private NotificationCollection notifications = new NotificationCollection();
@@ -97,6 +103,10 @@ namespace Marv.Epri
         public MainWindow()
         {
             InitializeComponent();
+
+            this.timer.Tick += timer_Tick;
+
+            this.timer.Start();
         }
 
         private async void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,6 +179,21 @@ namespace Marv.Epri
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private async void timer_Tick(object sender, EventArgs e)
+        {
+            var notification = new Notification
+            {
+                IsIndeterminate = true,
+                Description = "Loading..."
+            };
+
+            this.Notifications.Add(notification);
+
+            this.DataPoints = await this.DownloadDataPointsAsync();
+
+            this.Notifications.Remove(notification);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
