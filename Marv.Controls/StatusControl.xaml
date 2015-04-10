@@ -41,7 +41,7 @@
     </StatusBar.ItemsPanel>
     
     <StatusBarItem Grid.Column="0">
-        <Image Visibility="{Binding ElementName=Root, Path=SelectedNotification.IsWarning}"
+        <Image Visibility="{Binding ElementName=Root, Path=SelectedNotification.IsWarning, Converter={StaticResource BooleanToVisibility}}"
                Source="/Marv.Common;component/Resources/Icons/Warning.png" />
     </StatusBarItem>
 
