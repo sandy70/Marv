@@ -130,7 +130,5 @@ namespace Marv.Controls
 
             timer.Start();
         }
-
-        
     }
 }

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="NetworkFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\ECDA_MODEL 2015 02 05 Clean.net</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\ECDA_MODEL 2015 02 05 Clean.net</Value>
     </Setting>
     <Setting Name="LineDataFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Data\Scenario08\Scenario08.marv-linedata</Value>

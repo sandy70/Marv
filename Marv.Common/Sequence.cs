@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marv.Common.Types
+namespace Marv.Common
 {
     public class Sequence<T> : IEnumerable<T> where T : IComparable<T>
     {

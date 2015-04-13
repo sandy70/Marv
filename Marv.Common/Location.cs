@@ -1,6 +1,4 @@
-﻿using Marv.Common.Types;
-
-namespace Marv.Common
+﻿namespace Marv.Common
 {
     public class Location : Dynamic, IKeyed
     {

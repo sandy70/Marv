@@ -25,7 +25,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\ECDA_MODEL 2015 02 05 Clean.net")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\ECDA_MODEL 2015 02 05 Clean.net")]
         public string NetworkFileName {
             get {
                 return ((string)(this["NetworkFileName"]));

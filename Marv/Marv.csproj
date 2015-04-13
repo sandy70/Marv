@@ -264,7 +264,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Marv.Input_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Marv.Common.Graph.Graph.datasource" />
     <None Include="Properties\Settings.settings">

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Types;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 

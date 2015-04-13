@@ -76,7 +76,7 @@ namespace Marv.Common
             if (networkVertex.States.Count != value.Length)
             {
                 var message = System.String.Format("The length of value array [{0}] should be = number of states in this node [{1}:{2}].", value.Length, networkVertex, networkVertex.States.Count);
-                throw new InvalidValueException(message);
+                throw new ArgumentException(message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace Marv.Common
             if (networkVertex.Type != VertexType.Interval)
             {
                 var message = System.String.Format("Mean is undefined for non-interval type node [{0}].", networkVertex);
-                throw new InvalidValueException(message);
+                throw new ArgumentException(message);
             }
         }
     }

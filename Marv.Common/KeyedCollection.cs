@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Marv.Common.Types
+namespace Marv.Common
 {
     public class KeyedCollection<T> : ObservableCollection<T>, IKeyed where T : IKeyed
     {
@@ -19,7 +19,7 @@ namespace Marv.Common.Types
 
         public IEnumerable<T> this[IEnumerable<string> keys]
         {
-            get { return keys.Select(aKey => this[aKey]); }
+            get { return keys.Select(aKey => this[(string) aKey]); }
         }
 
         public string Key

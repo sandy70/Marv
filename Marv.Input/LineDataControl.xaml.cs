@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Marv.Common;
-using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 

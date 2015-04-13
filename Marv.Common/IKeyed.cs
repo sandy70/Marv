@@ -1,4 +1,4 @@
-﻿namespace Marv.Common.Types
+﻿namespace Marv.Common
 {
     public interface IKeyed : IKeyed<string> {}
 
