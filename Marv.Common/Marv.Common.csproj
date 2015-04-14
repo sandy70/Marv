@@ -128,7 +128,6 @@
     <Compile Include="State.cs" />
     <Compile Include="Distributions\DeltaDistribution.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
-    <Compile Include="InvalidValueException.cs" />
     <Compile Include="NotificationCollection.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Distributions\TriangularDistribution.cs" />

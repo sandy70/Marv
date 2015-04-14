@@ -26,17 +26,18 @@ namespace Marv.Epri
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
         private string device;
+        private bool isDownloading;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
         private ObservableCollection<string> streams;
+        private Task<ObservableCollection<DataPoint>> task;
 
         private Dict<string, TimeSpan> timespans = new Dict<string, TimeSpan>
         {
             { "1 Hour", TimeSpan.FromHours(1) },
             { "6 Hours", TimeSpan.FromHours(6) },
             { "1 Day", TimeSpan.FromDays(1) },
-            { "7 Days", TimeSpan.FromDays(7) }
         };
 
         public ObservableCollection<DataPoint> DataPoints
@@ -146,11 +147,6 @@ namespace Marv.Epri
 
         private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync()
         {
-            if (this.httpClient != null)
-            {
-                this.httpClient.CancelPendingRequests();
-            }
-
             const string server = @"http://devicecloud.digi.com";
 
             var uriEndPoint = server + "/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/" + this.SelectedStream + ".json";
@@ -260,13 +256,9 @@ namespace Marv.Epri
 
             this.Notifications.Add(notification);
 
-            try
+            if (this.task == null || this.task.IsCompleted)
             {
-                this.DataPoints = await this.DownloadDataPointsAsync();
-            }
-            catch (TaskCanceledException)
-            {
-                // do nothing
+                this.DataPoints = await (this.task = this.DownloadDataPointsAsync());
             }
 
             this.Notifications.Remove(notification);
