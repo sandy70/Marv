@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using Marv.Common;
 using Marv.Epri.Properties;
 using Newtonsoft.Json;
+using Telerik.Charting;
 
 namespace Marv.Epri
 {
@@ -270,5 +271,10 @@ namespace Marv.Epri
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void DateTimeContinuousAxis_OnActualVisibleRangeChanged(object sender, DateTimeRangeChangedEventArgs e)
+        {
+            Console.WriteLine("DateTimeContinuousAxis_OnActualVisibleRangeChanged");
+        }
     }
 }

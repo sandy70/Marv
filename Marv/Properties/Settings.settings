@@ -6,19 +6,52 @@
       <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\ECDA_MODEL 2015 02 05 Clean.net</Value>
     </Setting>
     <Setting Name="LineDataFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\Scenario08\Scenario08.marv-linedata</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\Scenario08.marv-linedata</Value>
     </Setting>
     <Setting Name="LocationsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\Locations.csv</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Locations.csv</Value>
     </Setting>
     <Setting Name="LocationValuesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\Scenario08\LocationValues.json</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\Scenario08\LocationValues.json</Value>
     </Setting>
     <Setting Name="ReferenceLocationsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\ReferenceLocations.csv</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\ReferenceLocations.csv</Value>
     </Setting>
     <Setting Name="CriticalLocationsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data\CriticalLocations.csv</Value>
+      <Value Profile="(Default)">C:\Users\Vinod\Data\LongChang\CriticalLocations.csv</Value>
+    </Setting>
+    <Setting Name="StartYear" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1980</Value>
+    </Setting>
+    <Setting Name="EndYear" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2014</Value>
+    </Setting>
+    <Setting Name="FitToPad" Type="System.String" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="IsSensorButtonVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CacheDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\</Value>
+    </Setting>
+    <Setting Name="IsMapVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsYearSliderVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsMenuVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="IsLogoVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="InputFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Data\ADCO02\ADCO 7.xlsx</Value>
+    </Setting>
+    <Setting Name="IsPropertyGridVisible" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

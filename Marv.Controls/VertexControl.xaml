@@ -5,6 +5,7 @@
             xmlns:controls="clr-namespace:Marv.Controls"
             xmlns:converters="clr-namespace:Marv.Controls.Converters"
             Name="Root"
+            Margin="-1"
             Grid.IsSharedSizeScope="True"
             Orientation="Vertical">
     <StackPanel.Resources>
@@ -26,22 +27,20 @@
 
     <!-- Title -->
     <controls:EditableTextBox Background="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource IsSelectedToBackground}}"
-                              FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarger}}"
                               FontWeight="Bold"
-                              Margin="{Binding Source={StaticResource MarginSmall}}"
-                              Padding="{Binding Source={StaticResource MarginSmall}}"
+                              Margin="4"
                               Text="{Binding ElementName=Root, Path=Vertex.Name, Mode=TwoWay}"
                               VerticalAlignment="Center" />
 
     <!-- Accent -->
-    <Border Margin="5,0,5,0"
+    <Border Margin="4,0,4,0"
             Background="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource IsHeaderToBackground}}"
-            Height="{Binding Source={StaticResource MarginSmall}}" />
+            Height="4" />
 
     <!-- States -->
     <ItemsControl Name="StatesControl"
                   ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
-                  Margin="{Binding Source={StaticResource MarginSmall}}"
+                  Margin="4"
                   Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
@@ -53,16 +52,16 @@
 
                     <TextBlock Grid.Column="0"
                                Foreground="Black"
-                               Margin="5"
+                               Margin="0,0,4,0"
                                Text="{Binding Path=Key}"
-                               TextAlignment="Right"
-                               TextTrimming="CharacterEllipsis" />
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" />
 
                     <!-- Evidence -->
                     <controls:SliderProgressBar Grid.Column="1"
                                                 IsEditable="{Binding ElementName=Root, Path=IsEditable}"
                                                 IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
-                                                Margin="0"
+                                                Margin="0,0,0,4"
                                                 SliderForeground="YellowGreen"
                                                 Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                                 Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
@@ -74,7 +73,6 @@
                                                 IsEnabled="False"
                                                 IsHitTestVisible="False"
                                                 IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
-                                                Margin="0,0,0,3"
                                                 SliderForeground="#20aeff"
                                                 Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
                                                 Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
@@ -84,7 +82,7 @@
     </ItemsControl>
 
     <!-- Most Probable State -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
+    <Grid Margin="4"
           Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" />
@@ -92,21 +90,20 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
-                   Margin="5"
+                   Margin="0,0,4,0"
                    Text="{Binding ElementName=Root, Path=Vertex.MostProbableState.Key}"
-                   TextAlignment="Right"
-                   TextTrimming="CharacterEllipsis" />
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center" />
 
         <controls:SliderProgressBar Grid.Column="1"
                                     IsEditable="False"
-                                    Margin="1"
                                     SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
                                     Width="Auto"
                                     Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
     </Grid>
 
     <!-- Input -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
+    <Grid Margin="4"
           Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" />
@@ -140,8 +137,6 @@
 
         <TextBox Grid.Column="1"
                  telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                 Margin="{Binding Source={StaticResource MarginSmallest}}"
                  Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Center"
                  MaxWidth="200"
@@ -149,30 +144,24 @@
     </Grid>
 
     <!-- Units -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
+    <Grid Margin="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="One" />
             <ColumnDefinition SharedSizeGroup="Two" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0"
-                   FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
                    FontWeight="Bold"
-                   Margin="{Binding Source={StaticResource MarginSmall}}"
                    Text="Units:"
-                   TextAlignment="Right"
                    VerticalAlignment="Center" />
 
         <controls:EditableTextBox Grid.Column="1"
-                                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                                  Margin="{Binding Source={StaticResource MarginSmallest}}"
                                   Text="{Binding ElementName=Root, Path=Vertex.Units}"
                                   VerticalAlignment="Center" />
     </Grid>
 
     <!-- Description -->
-    <controls:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
-                              Margin="{Binding Source={StaticResource MarginSmall}}"
+    <controls:EditableTextBox Margin="4"
                               Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
                               Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
                               Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />

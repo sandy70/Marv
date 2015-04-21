@@ -176,7 +176,6 @@
                                                         IsToolbarVisible="False"
                                                         IsValueVisible="{Binding IsLocked}"
                                                         Vertex="{Binding}"
-                                                        Width="256"
                                                         EvidenceEntered="VertexControl_EvidenceEntered"
                                                         MouseEnter="VertexControl_MouseEnter"
                                                         MouseLeave="VertexControl_MouseLeave"

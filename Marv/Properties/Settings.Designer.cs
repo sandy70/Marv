@@ -37,7 +37,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\Scenario08\\Scenario08.marv-linedata")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\Scenario08.marv-linedata")]
         public string LineDataFileName {
             get {
                 return ((string)(this["LineDataFileName"]));
@@ -49,7 +49,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\Locations.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Locations.csv")]
         public string LocationsFileName {
             get {
                 return ((string)(this["LocationsFileName"]));
@@ -61,7 +61,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\Scenario08\\LocationValues.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\Scenario08\\LocationValues.json")]
         public string LocationValuesFileName {
             get {
                 return ((string)(this["LocationValuesFileName"]));
@@ -73,7 +73,7 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\ReferenceLocations.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\ReferenceLocations.csv")]
         public string ReferenceLocationsFileName {
             get {
                 return ((string)(this["ReferenceLocationsFileName"]));
@@ -85,13 +85,145 @@ namespace Marv.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data\\CriticalLocations.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\LongChang\\CriticalLocations.csv")]
         public string CriticalLocationsFileName {
             get {
                 return ((string)(this["CriticalLocationsFileName"]));
             }
             set {
                 this["CriticalLocationsFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1980")]
+        public string StartYear {
+            get {
+                return ((string)(this["StartYear"]));
+            }
+            set {
+                this["StartYear"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2014")]
+        public string EndYear {
+            get {
+                return ((string)(this["EndYear"]));
+            }
+            set {
+                this["EndYear"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public string FitToPad {
+            get {
+                return ((string)(this["FitToPad"]));
+            }
+            set {
+                this["FitToPad"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string IsSensorButtonVisible {
+            get {
+                return ((string)(this["IsSensorButtonVisible"]));
+            }
+            set {
+                this["IsSensorButtonVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\")]
+        public string CacheDirectory {
+            get {
+                return ((string)(this["CacheDirectory"]));
+            }
+            set {
+                this["CacheDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public string IsMapVisible {
+            get {
+                return ((string)(this["IsMapVisible"]));
+            }
+            set {
+                this["IsMapVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public string IsYearSliderVisible {
+            get {
+                return ((string)(this["IsYearSliderVisible"]));
+            }
+            set {
+                this["IsYearSliderVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string IsMenuVisible {
+            get {
+                return ((string)(this["IsMenuVisible"]));
+            }
+            set {
+                this["IsMenuVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string IsLogoVisible {
+            get {
+                return ((string)(this["IsLogoVisible"]));
+            }
+            set {
+                this["IsLogoVisible"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Data\\ADCO02\\ADCO 7.xlsx")]
+        public string InputFileName {
+            get {
+                return ((string)(this["InputFileName"]));
+            }
+            set {
+                this["InputFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string IsPropertyGridVisible {
+            get {
+                return ((string)(this["IsPropertyGridVisible"]));
+            }
+            set {
+                this["IsPropertyGridVisible"] = value;
             }
         }
     }
