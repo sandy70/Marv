@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Marv.Controls.StateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Marv.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="Root">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="Black" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition SharedSizeGroup="StateControl01" />
+            <ColumnDefinition SharedSizeGroup="StateControl02" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0"
+                   Foreground="Black"
+                   Margin="0,0,4,0"
+                   Text="{Binding Path=Key}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center" />
+
+        <!-- Evidence -->
+        <controls:SliderProgressBar Grid.Column="1"
+                                    IsEditable="{Binding ElementName=Root, Path=IsEditable}"
+                                    IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
+                                    Margin="0,0,0,4"
+                                    SliderForeground="YellowGreen"
+                                    Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
+                                    Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
+                                    ValueEntered="SliderProgressBar_OnValueEntered" />
+
+        <!-- Value -->
+        <controls:SliderProgressBar Grid.Column="1"
+                                    IsEditable="False"
+                                    IsEnabled="False"
+                                    IsHitTestVisible="False"
+                                    IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                    SliderForeground="#20aeff"
+                                    Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                    Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
+    </Grid>
+</UserControl>
