@@ -15,12 +15,13 @@
 
 
     <Grid>
-        <TextBlock Margin="2"
+        <TextBlock Margin="{Binding ElementName=Root, Path=TextMargin}"
                    Text="{Binding Text, ElementName=Root, Mode=TwoWay}"
                    TextWrapping="Wrap"
                    Visibility="{Binding IsEditable, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}" />
 
         <TextBox Name="TextBox"
+                 Margin="{Binding ElementName=Root, Path=TextMargin}"
                  Text="{Binding Text, ElementName=Root, Mode=TwoWay}"
                  TextWrapping="Wrap"
                  Visibility="{Binding IsEditable, ElementName=Root, Converter={StaticResource ResourceKey=BooleanToVisibility}}" />
