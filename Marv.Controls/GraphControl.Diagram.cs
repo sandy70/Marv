@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Threading;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
-using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Controls
 {
@@ -81,11 +77,5 @@ namespace Marv.Controls
         {
             this.RaiseSelectionChanged(this.Graph.SelectedVertex);
         }
-
-        private void Diagram_ShapeClicked(object sender, ShapeRoutedEventArgs e)
-        {
-            this.BringShapeToFront(e.Shape);
-        }
-
     }
 }

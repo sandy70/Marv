@@ -465,7 +465,10 @@ namespace Marv.Controls
 
         private void RadDiagramShape_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.BringShapeToFront(sender as IShape);
+            var radDiagramShape = sender as RadDiagramShape;
+
+            this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
+            this.BringShapeToFront(radDiagramShape);
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)

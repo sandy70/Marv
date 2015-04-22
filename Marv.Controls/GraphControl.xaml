@@ -132,8 +132,7 @@
                             ConnectionManipulationStarted="Diagram_ConnectionManipulationStarted"
                             DiagramLayoutComplete="Diagram_DiagramLayoutComplete"
                             GraphSourceChanged="Diagram_GraphSourceChanged"
-                            SelectionChanged="Diagram_SelectionChanged"
-                            ShapeClicked="Diagram_ShapeClicked">
+                            SelectionChanged="Diagram_SelectionChanged">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
