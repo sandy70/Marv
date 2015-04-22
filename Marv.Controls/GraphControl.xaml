@@ -8,7 +8,8 @@
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="600"
              Name="Root"
-             Loaded="GraphControl_Loaded">
+             Loaded="GraphControl_Loaded"
+             Unloaded="GraphControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>

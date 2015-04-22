@@ -404,6 +404,11 @@ namespace Marv.Controls
             }
         }
 
+        private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Write();
+        }
+
         private void InitializeAutoSave()
         {
             var timer = new DispatcherTimer
