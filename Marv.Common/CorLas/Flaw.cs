@@ -1,4 +1,4 @@
-﻿namespace Marv
+﻿namespace Marv.Common.CorLas
 {
     // Just a test comment.
     public class Flaw

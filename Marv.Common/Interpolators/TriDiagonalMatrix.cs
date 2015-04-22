@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace Marv
+namespace Marv.Common.Interpolators
 {
     /// <summary>
     ///     A tri-diagonal matrix has non-zero entries only on the main diagonal, the diagonal above the main (super), and the
@@ -48,7 +48,7 @@ namespace Marv
 
                 if (di == 0)
                 {
-                    return B[row];
+                    return this.B[row];
                 }
                 if (di == -1)
                 {
@@ -68,17 +68,17 @@ namespace Marv
 
                 if (di == 0)
                 {
-                    B[row] = value;
+                    this.B[row] = value;
                 }
                 else if (di == -1)
                 {
-                    Debug.Assert(row < N - 1);
-                    C[row] = value;
+                    Debug.Assert(row < this.N - 1);
+                    this.C[row] = value;
                 }
                 else if (di == 1)
                 {
                     Debug.Assert(row > 0);
-                    A[row] = value;
+                    this.A[row] = value;
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace Marv
         {
             get
             {
-                return (A != null ? A.Length : 0);
+                return (this.A != null ? this.A.Length : 0);
             }
         }
 
@@ -128,20 +128,20 @@ namespace Marv
 
             // cPrime
             var cPrime = new float[n];
-            cPrime[0] = C[0] / B[0];
+            cPrime[0] = this.C[0] / this.B[0];
 
             for (var i = 1; i < n; i++)
             {
-                cPrime[i] = C[i] / (B[i] - cPrime[i - 1] * A[i]);
+                cPrime[i] = this.C[i] / (this.B[i] - cPrime[i - 1] * this.A[i]);
             }
 
             // dPrime
             var dPrime = new float[n];
-            dPrime[0] = d[0] / B[0];
+            dPrime[0] = d[0] / this.B[0];
 
             for (var i = 1; i < n; i++)
             {
-                dPrime[i] = (d[i] - dPrime[i - 1] * A[i]) / (B[i] - cPrime[i - 1] * A[i]);
+                dPrime[i] = (d[i] - dPrime[i - 1] * this.A[i]) / (this.B[i] - cPrime[i - 1] * this.A[i]);
             }
 
             // Back substitution
@@ -168,14 +168,14 @@ namespace Marv
                 var s = new StringBuilder();
                 var formatString = "{0" + fmt + "}";
 
-                for (var r = 0; r < N; r++)
+                for (var r = 0; r < this.N; r++)
                 {
                     s.Append(prefix);
 
-                    for (var c = 0; c < N; c++)
+                    for (var c = 0; c < this.N; c++)
                     {
                         s.AppendFormat(formatString, this[r, c]);
-                        if (c < N - 1) s.Append(", ");
+                        if (c < this.N - 1) s.Append(", ");
                     }
 
                     s.AppendLine();
