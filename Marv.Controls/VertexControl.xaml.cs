@@ -1,14 +1,12 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
 
 namespace Marv.Controls
 {
-    public partial class VertexControl : INotifyPropertyChanged
+    public partial class VertexControl
     {
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
@@ -114,14 +112,6 @@ namespace Marv.Controls
             }
         }
 
-        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private void RaiseShowGroupButtonClicked()
         {
             if (this.ShowGroupButtonClicked != null)
@@ -133,19 +123,6 @@ namespace Marv.Controls
         private void ShowGroupButton_Clicked(object sender, RoutedEventArgs e)
         {
             this.RaiseShowGroupButtonClicked();
-        }
-
-        private void SliderProgressBar_ValueEntered(object sender, double e)
-        {
-            var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
-                                       ? ((sender as SliderProgressBar).DataContext as State).Key
-                                       : this.Vertex.States.Select(state => state.Evidence).String();
-
-            var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
-
-            this.Vertex.SetEvidence(vertexEvidence);
-
-            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         private void StateControl_OnValueEntered(object sender, double e)
@@ -185,8 +162,6 @@ namespace Marv.Controls
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public event EventHandler ShowGroupButtonClicked;
     }
