@@ -14,7 +14,6 @@
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <converters:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />
             <converters:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
             <converters:BooleanToBrushConverter x:Key="IsSelectedToBackground" TrueBrush="#aaaaaa" FalseBrush="#dddddd" />
             <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
@@ -44,63 +43,19 @@
                   Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="One" />
-                        <ColumnDefinition SharedSizeGroup="Two" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0"
-                               Foreground="Black"
-                               Margin="0,0,4,0"
-                               Text="{Binding Path=Key}"
-                               TextTrimming="CharacterEllipsis"
-                               VerticalAlignment="Center" />
-
-                    <!-- Evidence -->
-                    <controls:SliderProgressBar Grid.Column="1"
-                                                IsEditable="{Binding ElementName=Root, Path=IsEditable}"
-                                                IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
-                                                Margin="0,0,0,4"
-                                                SliderForeground="YellowGreen"
-                                                Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
-                                                Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
-                                                ValueEntered="SliderProgressBar_ValueEntered" />
-
-                    <!-- Value -->
-                    <controls:SliderProgressBar Grid.Column="1"
-                                                IsEditable="False"
-                                                IsEnabled="False"
-                                                IsHitTestVisible="False"
-                                                IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
-                                                SliderForeground="#20aeff"
-                                                Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
-                </Grid>
+                <controls:StateControl IsEditable="{Binding ElementName=Root, Path=IsEditable}"
+                                       IsEvidenceVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                       IsValueVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                       State="{Binding}"
+                                       ValueEntered="StateControl_OnValueEntered" />
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
 
     <!-- Most Probable State -->
-    <Grid Margin="4"
-          Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" />
-            <ColumnDefinition SharedSizeGroup="Two" />
-        </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Column="0"
-                   Margin="0,0,4,0"
-                   Text="{Binding ElementName=Root, Path=Vertex.MostProbableState.Key}"
-                   TextTrimming="CharacterEllipsis"
-                   VerticalAlignment="Center" />
-
-        <controls:SliderProgressBar Grid.Column="1"
-                                    IsEditable="False"
-                                    SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
-                                    Width="Auto"
-                                    Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
-    </Grid>
+    <controls:StateControl Margin="4"
+                           State="{Binding ElementName=Root, Path=Vertex.MostProbableState}"
+                           Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}" />
 
     <!-- Input -->
     <Grid Margin="4"

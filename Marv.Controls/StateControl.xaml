@@ -28,7 +28,7 @@
         <TextBlock Grid.Column="0"
                    Foreground="Black"
                    Margin="0,0,4,0"
-                   Text="{Binding Path=Key}"
+                   Text="{Binding ElementName=Root, Path=State.Key}"
                    TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center" />
 
@@ -38,7 +38,7 @@
                                     IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
                                     Margin="0,0,0,4"
                                     SliderForeground="YellowGreen"
-                                    Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
+                                    Value="{Binding ElementName=Root, Path=State.Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                     Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
                                     ValueEntered="SliderProgressBar_OnValueEntered" />
 
@@ -49,7 +49,7 @@
                                     IsHitTestVisible="False"
                                     IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
                                     SliderForeground="#20aeff"
-                                    Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
+                                    Value="{Binding ElementName=Root, Path=State.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
                                     Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
     </Grid>
 </UserControl>

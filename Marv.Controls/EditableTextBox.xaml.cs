@@ -15,10 +15,6 @@ namespace Marv.Controls
         public EditableTextBox()
         {
             InitializeComponent();
-
-            this.KeyDown += EditableTextBox_KeyDown;
-            this.LostFocus += EditableTextBox_LostFocus;
-            this.MouseDown += EditableTextBox_MouseDown;
         }
 
         public bool IsEditable

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 
@@ -98,7 +97,7 @@ namespace Marv.Controls
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence.Value; 
+            this.Vertex.Evidence = vertexEvidence.Value;
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 
@@ -139,8 +138,21 @@ namespace Marv.Controls
         private void SliderProgressBar_ValueEntered(object sender, double e)
         {
             var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
-                                     ? ((sender as SliderProgressBar).DataContext as State).Key
-                                     : this.Vertex.States.Select(state => state.Evidence).String();
+                                       ? ((sender as SliderProgressBar).DataContext as State).Key
+                                       : this.Vertex.States.Select(state => state.Evidence).String();
+
+            var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
+
+            this.Vertex.SetEvidence(vertexEvidence);
+
+            this.RaiseEvidenceEntered(vertexEvidence);
+        }
+
+        private void StateControl_OnValueEntered(object sender, double e)
+        {
+            var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
+                                       ? ((sender as SliderProgressBar).DataContext as State).Key
+                                       : this.Vertex.States.Select(state => state.Evidence).String();
 
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
 
@@ -154,18 +166,18 @@ namespace Marv.Controls
             var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
 
             var vertexEvidence = this.Vertex.IsNumeric
-                                   ? new VertexEvidence
-                                   {
-                                       Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
-                                       Type = VertexEvidenceType.Range,
-                                       Value = evidenceValue
-                                   }
-                                   : new VertexEvidence
-                                   {
-                                       Params = evidenceValue,
-                                       Type = VertexEvidenceType.Distribution,
-                                       Value = evidenceValue
-                                   };
+                                     ? new VertexEvidence
+                                     {
+                                         Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
+                                         Type = VertexEvidenceType.Range,
+                                         Value = evidenceValue
+                                     }
+                                     : new VertexEvidence
+                                     {
+                                         Params = evidenceValue,
+                                         Type = VertexEvidenceType.Distribution,
+                                         Value = evidenceValue
+                                     };
 
             this.Vertex.SetEvidence(vertexEvidence);
 

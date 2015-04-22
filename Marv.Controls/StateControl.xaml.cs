@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Windows;
+using Marv.Common;
 
 namespace Marv.Controls
 {
     public partial class StateControl
     {
-        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register("IsEditable", typeof (bool), typeof (StateControl), new PropertyMetadata(false));
-        public static readonly DependencyProperty IsEvidenceVisibleProperty = DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsValueVisibleProperty = DependencyProperty.Register("IsValueVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsEditableProperty =
+            DependencyProperty.Register("IsEditable", typeof (bool), typeof (StateControl), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty IsEvidenceVisibleProperty =
+            DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsValueVisibleProperty =
+            DependencyProperty.Register("IsValueVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty StateProperty =
+            DependencyProperty.Register("State", typeof (State), typeof (StateControl), new PropertyMetadata(null));
 
         public bool IsEditable
         {
@@ -25,6 +34,12 @@ namespace Marv.Controls
         {
             get { return (bool) GetValue(IsValueVisibleProperty); }
             set { SetValue(IsValueVisibleProperty, value); }
+        }
+
+        public State State
+        {
+            get { return (State) GetValue(StateProperty); }
+            set { SetValue(StateProperty, value); }
         }
 
         public StateControl()
