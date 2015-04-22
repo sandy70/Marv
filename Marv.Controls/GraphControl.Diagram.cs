@@ -84,51 +84,8 @@ namespace Marv.Controls
 
         private void Diagram_ShapeClicked(object sender, ShapeRoutedEventArgs e)
         {
-            // Add the clicked shape to the list of shapes to bring to front
-            var shapeList = new List<IDiagramItem>
-            {
-                e.Shape
-            };
-
-            // Change color of connections
-            var graphControl = this.Diagram.GetParent<GraphControl>();
-
-            foreach (var conn in this.Diagram.Connections)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
-            }
-
-            foreach (var conn in e.Shape.IncomingLinks)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
-            }
-
-            foreach (var conn in e.Shape.OutgoingLinks)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
-            }
-
-            this.Diagram.BringToFront(shapeList);
-
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-
-            timer.Tick += (o, args) =>
-            {
-                if (!e.Shape.Bounds.IsInBounds(this.Diagram.Viewport))
-                {
-                    var offset = this.Diagram.Viewport.GetOffset(e.Shape.Bounds, 20);
-
-                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
-                }
-
-                timer.Stop();
-            };
-
-            timer.Start();
+            this.BringShapeToFront(e.Shape);
         }
+
     }
 }

@@ -163,7 +163,8 @@
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsDraggingEnabled}" />
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Root, Path=IsVerticesEnabled}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-
+                    <EventSetter Event="PreviewMouseDown" Handler="RadDiagramShape_PreviewMouseDown" />
+                    
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="common:Vertex">
