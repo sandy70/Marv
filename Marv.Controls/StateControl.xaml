@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:Marv.Controls"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="32" d:DesignWidth="300"
              Name="Root">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -50,6 +50,6 @@
                                     IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
                                     SliderForeground="#20aeff"
                                     Value="{Binding ElementName=Root, Path=State.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                    Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
+                                    Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}"/>
     </Grid>
 </UserControl>
