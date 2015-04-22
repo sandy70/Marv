@@ -95,7 +95,7 @@ namespace Marv.Controls
                 return;
             }
 
-            this.Value = (e.GetPosition(this.ProgressBar).X - 1) / (this.ProgressBar.ActualWidth - 2) * 100;
+            this.Value = (e.GetPosition(this).X - 1) / (this.ActualWidth - 2) * 100;
         }
 
         public event EventHandler<double> ValueEntered;
