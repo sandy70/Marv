@@ -8,7 +8,8 @@
         Name="Root"
         Title="MARV - Multi-Analytic Risk Visualization"
         WindowState="Maximized"
-        KeyDown="MainWindow_KeyDown">
+        KeyDown="MainWindow_KeyDown"
+        Loaded="MainWindow_Loaded">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

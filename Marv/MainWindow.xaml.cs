@@ -257,7 +257,6 @@ namespace Marv
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-            this.Loaded += this.MainWindow_Loaded;
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
