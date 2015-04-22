@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Marv.Common.Distributions;
+using Marv.Common.Types;
 using Smile;
 
 namespace Marv.Common

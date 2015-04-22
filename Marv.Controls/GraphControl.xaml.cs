@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;

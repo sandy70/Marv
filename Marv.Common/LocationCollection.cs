@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using Marv.Common.Types;
 
 namespace Marv.Common
 {

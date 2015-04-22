@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Common.Types;
 using Newtonsoft.Json;
 using Telerik.Windows.Controls;
 

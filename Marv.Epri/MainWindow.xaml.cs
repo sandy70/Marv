@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Common.Types;
 using Marv.Epri.Properties;
 using Newtonsoft.Json;
 using Telerik.Charting;

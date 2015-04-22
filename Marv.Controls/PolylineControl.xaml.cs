@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Common.Types;
 
 namespace Marv.Controls
 {

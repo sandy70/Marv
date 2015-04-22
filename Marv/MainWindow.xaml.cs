@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 using Marv.Controls;
 using Marv.Properties;
 using Telerik.Windows.Controls;

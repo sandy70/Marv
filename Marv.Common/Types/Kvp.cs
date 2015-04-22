@@ -1,4 +1,4 @@
-﻿namespace Marv.Common
+﻿namespace Marv.Common.Types
 {
     public class Kvp<TKey, TValue> : NotifyPropertyChanged, IKeyed<TKey>
     {

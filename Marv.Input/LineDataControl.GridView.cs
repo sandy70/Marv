@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;

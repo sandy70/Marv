@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marv.Common.Types;
 
 namespace Marv.Common
 {
