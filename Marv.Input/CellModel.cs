@@ -1,5 +1,4 @@
 ﻿using System;
-using Marv;
 using Marv.Common;
 using Marv.Common.Types;
 using Telerik.Windows.Controls;
@@ -9,43 +8,20 @@ namespace Marv.Input
 {
     public class CellModel
     {
-        private int year;
+        public const string SectionIdHeader = "Section ID";
 
         public object Data
         {
-            get
-            {
-                return this.Row[this.Header];
-            }
+            get { return this.Row[this.Header]; }
 
-            set
-            {
-                this.Row[this.Header] = value;
-            }
+            set { this.Row[this.Header] = value; }
         }
 
         public string Header { get; private set; }
         public bool IsColumnSectionId { get; private set; }
         public Dynamic Row { get; private set; }
         public string SectionId { get; private set; }
-
-        public int Year
-        {
-            get
-            {
-                if (this.year < 0)
-                {
-                    throw new InvalidValueException(String.Format("CellModel.Header [{0}] cannot be parsed to a valid Year.", this.Header));
-                }
-
-                return this.year;
-            }
-
-            private set
-            {
-                this.year = value;
-            }
-        }
+        public int Year { get; private set; }
 
         public CellModel(Dynamic row, string header)
         {
@@ -61,7 +37,5 @@ namespace Marv.Input
         public CellModel(GridViewCellInfo cellInfo) : this(cellInfo.Item as Dynamic, cellInfo.Column.Header as string) {}
 
         public CellModel(GridViewCell cell) : this(cell.ParentRow.DataContext as Dynamic, cell.Column.Header as string) {}
-
-        public const string SectionIdHeader = "Section ID";
     }
 }

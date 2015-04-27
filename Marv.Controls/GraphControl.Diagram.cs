@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Threading;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
-using Telerik.Windows.Diagrams.Core;
 
 namespace Marv.Controls
 {
@@ -81,56 +77,5 @@ namespace Marv.Controls
         {
             this.RaiseSelectionChanged(this.Graph.SelectedVertex);
         }
-
-        private void Diagram_ShapeClicked(object sender, ShapeRoutedEventArgs e)
-        {
-            // Add the clicked shape to the list of shapes to bring to front
-            var shapeList = new List<IDiagramItem>
-            {
-                e.Shape
-            };
-
-            // Change color of connections
-            var graphControl = this.Diagram.GetParent<GraphControl>();
-
-            foreach (var conn in this.Diagram.Connections)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.ConnectionColor);
-            }
-
-            foreach (var conn in e.Shape.IncomingLinks)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.IncomingConnectionHighlightColor);
-            }
-
-            foreach (var conn in e.Shape.OutgoingLinks)
-            {
-                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(graphControl.OutgoingConnectionHighlightColor);
-            }
-
-            this.Diagram.BringToFront(shapeList);
-
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-
-            timer.Tick += (o, args) =>
-            {
-                if (!e.Shape.Bounds.IsInBounds(this.Diagram.Viewport))
-                {
-                    var offset = this.Diagram.Viewport.GetOffset(e.Shape.Bounds, 20);
-
-                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
-                }
-
-                timer.Stop();
-            };
-
-            timer.Start();
-        }
-
-        
     }
 }

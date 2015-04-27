@@ -258,16 +258,6 @@ namespace Marv
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
-            this.Loaded += this.MainWindow_Loaded;
-        }
-
-        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
-        {
-            if (this.LineData == null)
-            {
-                this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
-            }
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -293,9 +283,6 @@ namespace Marv
                 notifier.NotificationOpened += this.notifier_NotificationOpened;
             }
 
-            this.GraphControl.GraphChanged -= this.GraphControl_GraphChanged;
-            this.GraphControl.GraphChanged += this.GraphControl_GraphChanged;
-
             this.MapView.Loaded -= this.MapView_Loaded;
             this.MapView.Loaded += this.MapView_Loaded;
 
@@ -306,8 +293,8 @@ namespace Marv
             this.YearSlider.ValueChanged += this.YearSlider_ValueChanged;
 
             this.CriticalLocations = LocationCollection.ReadCsv(Settings.Default.CriticalLocationsFileName);
-            this.Graph = Graph.Read(Settings.Default.NetworkFileName);
-            this.LineData = FolderLineData.Read(Settings.Default.LineDataFileName);
+            this.GraphControl.Open(Settings.Default.NetworkFileName);
+            this.LineData = LineDataFolder.Read(Settings.Default.LineDataFileName);
             this.Locations = LocationCollection.ReadCsv(Settings.Default.LocationsFileName);
             this.locationValues = Utils.ReadJson<Dict<string, int, double>>(Settings.Default.LocationValuesFileName);
             this.ReferenceLocations = LocationCollection.ReadCsv(Settings.Default.ReferenceLocationsFileName);
@@ -371,7 +358,7 @@ namespace Marv
             try
             {
                 this.Graph.Belief = this.LineData.GetBelief(this.SelectedLocation.Key)[this.SelectedYear];
-                this.Graph.Evidence = this.LineData.GetEvidence(this.SelectedLocation.Key)[this.SelectedYear];
+                this.Graph.SetEvidence(this.LineData.GetEvidence(this.SelectedLocation.Key)[this.SelectedYear]);
             }
             catch (Exception)
             {

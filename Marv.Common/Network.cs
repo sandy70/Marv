@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Marv.Common.Distributions;
 using Marv.Common.Types;
 using Smile;
 
@@ -260,6 +261,8 @@ namespace Marv.Common
 
         public Dict<string, double[]> GetBeliefs()
         {
+            this.UpdateBeliefs();
+
             var nodeBelief = new Dict<string, double[]>();
 
             foreach (var nodeKey in this.GetAllNodeIds())
@@ -535,7 +538,6 @@ namespace Marv.Common
 
             try
             {
-                this.UpdateBeliefs();
                 return this.GetBeliefs();
             }
             catch (SmileException)
@@ -674,6 +676,23 @@ namespace Marv.Common
             }
         }
 
+        public void Write()
+        {
+            this.Write(this.FileName);
+        }
+
+        public void Write(string filePath)
+        {
+            if (Path.GetExtension(filePath) == "enet")
+            {
+                this.WriteEncrypted(filePath);
+            }
+            else
+            {
+                this.Write(new StreamWriter(Path.ChangeExtension(filePath, "net")));
+            }
+        }
+
         public void Write(StreamWriter streamWriter)
         {
             using (streamWriter)
@@ -745,18 +764,6 @@ namespace Marv.Common
 
                     streamWriter.WriteLine();
                 }
-            }
-        }
-
-        public void Write(string filePath)
-        {
-            if (Path.GetExtension(filePath) == "enet")
-            {
-                this.WriteEncrypted(filePath);
-            }
-            else
-            {
-                this.Write(new StreamWriter(Path.ChangeExtension(filePath, "net")));
             }
         }
 

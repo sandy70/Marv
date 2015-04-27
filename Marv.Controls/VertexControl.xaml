@@ -1,19 +1,17 @@
-﻿<StackPanel x:Class="Marv.Controls.VertexControl"
-            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-            xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            xmlns:controls="clr-namespace:Marv.Controls"
-            xmlns:converters="clr-namespace:Marv.Controls.Converters"
-            Name="Root"
-            Grid.IsSharedSizeScope="True"
-            Orientation="Vertical">
-    <StackPanel.Resources>
+﻿<UserControl x:Class="Marv.Controls.VertexControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:controls="clr-namespace:Marv.Controls"
+             xmlns:converters="clr-namespace:Marv.Controls.Converters"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Name="Root"
+             Margin="-1">
+    <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <converters:BooleanToBrushConverter x:Key="IsEvidenceEnteredToBrush" TrueBrush="YellowGreen" FalseBrush="#20aeff" />
             <converters:BooleanToBrushConverter x:Key="IsHeaderToBackground" TrueBrush="#b11d01" FalseBrush="#20aeff" />
             <converters:BooleanToBrushConverter x:Key="IsSelectedToBackground" TrueBrush="#aaaaaa" FalseBrush="#dddddd" />
             <telerik:Windows8TouchTheme x:Key="Windows8TouchTheme" />
@@ -22,225 +20,175 @@
                 <Setter Property="Foreground" Value="Black" />
             </Style>
         </ResourceDictionary>
-    </StackPanel.Resources>
+    </UserControl.Resources>
+    
+    <StackPanel Grid.IsSharedSizeScope="True"
+                Margin="0,0,0,2"
+                Orientation="Vertical">
+        <!-- Title -->
+        <controls:EditableTextBox Background="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource IsSelectedToBackground}}"
+                                  FontWeight="Bold"
+                                  Text="{Binding ElementName=Root, Path=Vertex.Name, Mode=TwoWay}"
+                                  TextMargin="4,2,4,2"
+                                  VerticalAlignment="Center" />
 
-    <!-- Title -->
-    <controls:EditableTextBox Background="{Binding ElementName=Root, Path=Vertex.IsSelected, Converter={StaticResource IsSelectedToBackground}}"
-                              FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarger}}"
-                              FontWeight="Bold"
-                              Margin="{Binding Source={StaticResource MarginSmall}}"
-                              Padding="{Binding Source={StaticResource MarginSmall}}"
-                              Text="{Binding ElementName=Root, Path=Vertex.Name, Mode=TwoWay}"
-                              VerticalAlignment="Center" />
+        <!-- Accent -->
+        <Border Background="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource IsHeaderToBackground}}"
+                Height="4" />
 
-    <!-- Accent -->
-    <Border Margin="5,0,5,0"
-            Background="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource IsHeaderToBackground}}"
-            Height="{Binding Source={StaticResource MarginSmall}}" />
+        <!-- States -->
+        <ItemsControl Name="StatesControl"
+                      ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
+                      Margin="4"
+                      Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:StateControl IsEditable="{Binding ElementName=Root, Path=IsEditable}"
+                                           IsEvidenceVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                           IsValueVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                           State="{Binding}"
+                                           ValueEntered="StateControl_OnValueEntered" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-    <!-- States -->
-    <ItemsControl Name="StatesControl"
-                  ItemsSource="{Binding ElementName=Root, Path=Vertex.States}"
-                  Margin="{Binding Source={StaticResource MarginSmall}}"
-                  Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="One" />
-                        <ColumnDefinition SharedSizeGroup="Two" />
-                    </Grid.ColumnDefinitions>
+        <!-- Most Probable State -->
+        <controls:StateControl IsEditable="False"
+                               IsEvidenceVisible="True"
+                               IsValueVisible="True"
+                               Margin="4"
+                               State="{Binding ElementName=Root, Path=Vertex.MostProbableState}"
+                               Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}" />
 
-                    <TextBlock Grid.Column="0"
-                               Foreground="Black"
-                               Margin="5"
-                               Text="{Binding Path=Key}"
-                               TextAlignment="Right"
-                               TextTrimming="CharacterEllipsis" />
-
-                    <!-- Evidence -->
-                    <controls:SliderProgressBar Grid.Column="1"
-                                                IsEditable="{Binding ElementName=Root, Path=IsEditable}"
-                                                IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
-                                                Margin="0"
-                                                SliderForeground="YellowGreen"
-                                                Value="{Binding Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
-                                                Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
-                                                ValueEntered="SliderProgressBar_ValueEntered" />
-
-                    <!-- Value -->
-                    <controls:SliderProgressBar Grid.Column="1"
-                                                IsEditable="False"
-                                                IsEnabled="False"
-                                                IsHitTestVisible="False"
-                                                IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
-                                                Margin="0,0,0,3"
-                                                SliderForeground="#20aeff"
-                                                Value="{Binding Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                                Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}" />
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
-
-    <!-- Most Probable State -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" />
-            <ColumnDefinition SharedSizeGroup="Two" />
-        </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Column="0"
-                   Margin="5"
-                   Text="{Binding ElementName=Root, Path=Vertex.MostProbableState.Key}"
-                   TextAlignment="Right"
-                   TextTrimming="CharacterEllipsis" />
-
-        <controls:SliderProgressBar Grid.Column="1"
-                                    IsEditable="False"
-                                    Margin="1"
-                                    SliderForeground="{Binding ElementName=Root, Path=Vertex.IsEvidenceEntered, Converter={StaticResource IsEvidenceEnteredToBrush}}"
-                                    Width="Auto"
-                                    Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
-    </Grid>
-
-    <!-- Input -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}"
-          Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" />
-            <ColumnDefinition SharedSizeGroup="Two" />
-        </Grid.ColumnDefinitions>
-
-        <Grid Grid.Column="0">
+        <!-- Input -->
+        <Grid Margin="4"
+              Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition SharedSizeGroup="One" />
+                <ColumnDefinition SharedSizeGroup="Two" />
             </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Grid.Column="0"
-                               Background="{Binding Source={StaticResource BackgroundDark}}"
-                               Content="="
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                               Margin="{Binding Source={StaticResource MarginSmallest}}"
-                               Click="UniformEvidenceButton_Click" />
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-            <telerik:RadButton Grid.Column="1"
-                               Background="{Binding Source={StaticResource BackgroundDark}}"
-                               Content="X"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                               Margin="{Binding Source={StaticResource MarginSmallest}}"
-                               Click="ClearEvidenceButton_Click" />
+                <telerik:RadButton Grid.Column="0"
+                                   Background="{Binding Source={StaticResource BackgroundDark}}"
+                                   Content="="
+                                   FontWeight="Bold"
+                                   Foreground="Black"
+                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                   Margin="{Binding Source={StaticResource MarginSmallest}}"
+                                   Click="UniformEvidenceButton_Click" />
+
+                <telerik:RadButton Grid.Column="1"
+                                   Background="{Binding Source={StaticResource BackgroundDark}}"
+                                   Content="X"
+                                   FontWeight="Bold"
+                                   Foreground="Black"
+                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                   Margin="{Binding Source={StaticResource MarginSmallest}}"
+                                   Click="ClearEvidenceButton_Click" />
+            </Grid>
+
+            <TextBox Grid.Column="1"
+                     telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
+                     Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Center"
+                     MaxWidth="200"
+                     KeyUp="EvidenceStringTextBox_KeyUp" />
         </Grid>
 
-        <TextBox Grid.Column="1"
-                 telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                 FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                 Margin="{Binding Source={StaticResource MarginSmallest}}"
-                 Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"
-                 MaxWidth="200"
-                 KeyUp="EvidenceStringTextBox_KeyUp" />
-    </Grid>
+        <!-- Units -->
+        <Grid Margin="4,0,4,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="One" />
+                <ColumnDefinition SharedSizeGroup="Two" />
+            </Grid.ColumnDefinitions>
 
-    <!-- Units -->
-    <Grid Margin="{Binding Source={StaticResource MarginSmall}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="One" />
-            <ColumnDefinition SharedSizeGroup="Two" />
-        </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                       FontWeight="Bold"
+                       Margin="0,0,4,0"
+                       Text="Units:"
+                       VerticalAlignment="Center" />
 
-        <TextBlock Grid.Column="0"
-                   FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                   FontWeight="Bold"
-                   Margin="{Binding Source={StaticResource MarginSmall}}"
-                   Text="Units:"
-                   TextAlignment="Right"
-                   VerticalAlignment="Center" />
+            <controls:EditableTextBox Grid.Column="1"
+                                      Text="{Binding ElementName=Root, Path=Vertex.Units}"
+                                      VerticalAlignment="Center" />
+        </Grid>
 
-        <controls:EditableTextBox Grid.Column="1"
-                                  FontSize="{Binding Source={StaticResource ResourceKey=FontSizeLarge}}"
-                                  Margin="{Binding Source={StaticResource MarginSmallest}}"
-                                  Text="{Binding ElementName=Root, Path=Vertex.Units}"
-                                  VerticalAlignment="Center" />
-    </Grid>
+        <!-- Description -->
+        <controls:EditableTextBox Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
+                                  Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
+                                  Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
 
-    <!-- Description -->
-    <controls:EditableTextBox FontSize="{Binding Source={StaticResource ResourceKey=FontSizeMedium}}"
-                              Margin="{Binding Source={StaticResource MarginSmall}}"
-                              Text="{Binding ElementName=Root, Path=Vertex.Description, Mode=TwoWay}"
-                              Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibility}}"
-                              Width="{Binding ElementName=StatesControl, Path=ActualWidth}" />
+        <!-- Toolbar -->
+        <StackPanel HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=Root, Path=IsToolbarVisible}"
+                                     Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0"
+                                                                    Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
 
-    <!-- Toolbar -->
-    <StackPanel HorizontalAlignment="Center"
-                Orientation="Horizontal"
-                Visibility="Collapsed">
-        <StackPanel.Style>
-            <Style TargetType="StackPanel">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ElementName=Root, Path=IsToolbarVisible}"
-                                 Value="True">
-                        <DataTrigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
-                                        <DiscreteObjectKeyFrame KeyTime="0:0:0"
-                                                                Value="{x:Static Visibility.Visible}" />
-                                    </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                         From="0"
+                                                         Duration="0:0:.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
 
-                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
-                                                     From="0"
-                                                     Duration="0:0:.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
+                                                         To="0"
+                                                         Duration="0:0:.2" />
 
-                        <DataTrigger.ExitActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY"
-                                                     To="0"
-                                                     Duration="0:0:.2" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:.2"
+                                                                    Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
 
-                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
-                                        <DiscreteObjectKeyFrame KeyTime="0:0:.2"
-                                                                Value="{x:Static Visibility.Collapsed}" />
-                                    </ObjectAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </DataTrigger.ExitActions>
-                    </DataTrigger>
-                </Style.Triggers>
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <ScaleTransform x:Name="transform" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Style>
 
-                <Setter Property="LayoutTransform">
-                    <Setter.Value>
-                        <ScaleTransform x:Name="transform" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </StackPanel.Style>
+            <telerik:RadButton Background="{StaticResource BackgroundDark}"
+                               Height="32"
+                               Padding="0"
+                               Width="32"
+                               Click="ExpandButton_Click">
+                <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
+            </telerik:RadButton>
 
-        <telerik:RadButton Background="{StaticResource BackgroundDark}"
-                           Height="32"
-                           Padding="0"
-                           Width="32"
-                           Click="ExpandButton_Click">
-            <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
-        </telerik:RadButton>
-
-        <telerik:RadButton Background="{StaticResource BackgroundDark}"
-                           Height="32"
-                           Padding="0"
-                           Visibility="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource BooleanToVisibility}}"
-                           Width="32"
-                           Click="ShowGroupButton_Clicked">
-            <Image Source="/Marv.Common;component/Resources/Icons/SubGraph.png" />
-        </telerik:RadButton>
+            <telerik:RadButton Background="{StaticResource BackgroundDark}"
+                               Height="32"
+                               Padding="0"
+                               Visibility="{Binding ElementName=Root, Path=Vertex.IsHeader, Converter={StaticResource BooleanToVisibility}}"
+                               Width="32"
+                               Click="ShowGroupButton_Clicked">
+                <Image Source="/Marv.Common;component/Resources/Icons/SubGraph.png" />
+            </telerik:RadButton>
+        </StackPanel>
     </StackPanel>
-</StackPanel>
+</UserControl>

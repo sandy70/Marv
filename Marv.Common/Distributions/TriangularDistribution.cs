@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marv
+namespace Marv.Common.Distributions
 {
     public class TriangularDistribution : IDistribution
     {

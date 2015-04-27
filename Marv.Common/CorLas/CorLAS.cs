@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Marv
+namespace Marv.Common.CorLas
 {
     public class CorLas
     {

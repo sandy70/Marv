@@ -1,4 +1,4 @@
-﻿namespace Marv
+﻿namespace Marv.Common.Interpolators
 {
     public interface IInterpolator
     {

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Marv.Common.Distributions;
+using Marv.Common.Types;
 
 namespace Marv.Common
 {
@@ -70,7 +72,7 @@ namespace Marv.Common
                 evidenceType = VertexEvidenceType.Triangular;
             }
 
-            else if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2)
+            else if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2 && evidenceParams[1] > 0)
             {
                 evidence = stateList.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1]));
                 evidenceType = VertexEvidenceType.Normal;

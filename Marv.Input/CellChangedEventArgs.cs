@@ -1,4 +1,5 @@
 ﻿using Marv.Common;
+using Marv.Common.Types;
 
 namespace Marv.Input
 {

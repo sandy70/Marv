@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<Distribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Version>2015.1.401.45</Version>
+  <Trial>false</Trial>
+  <Dependencies>
+    <Project>5f07ce1a-4b63-405a-9413-f3eb603c712f</Project>
+    <Project>25fa0630-c0c2-4125-a36e-cca19b5541f1</Project>
+    <Project>dff71548-2ff5-4f28-9257-da991e4e97d3</Project>
+    <Project>35ce9790-cdd1-4ee1-aa58-94a5f9ebd0b3</Project>
+    <Project>37506e1a-457b-4186-8c4f-11ba0e7aa78e</Project>
+    <Project>95541152-78b7-407b-a4ed-90f5be537d3a</Project>
+  </Dependencies>
+  <NoXaml>false</NoXaml>
+</Distribution>

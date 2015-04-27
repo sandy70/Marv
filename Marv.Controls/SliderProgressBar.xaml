@@ -8,9 +8,9 @@
     </UserControl.Resources>
 
     <Grid>
-        <telerik:RadProgressBar Name="ProgressBar"
-                                Foreground="{Binding SliderForeground, ElementName=Root}"
-                                Minimum="0" Maximum="100"
+        <telerik:RadProgressBar Foreground="{Binding SliderForeground, ElementName=Root}"
+                                Maximum="100"
+                                Minimum="0" 
                                 Value="{Binding ElementName=Root, Path=Value, Mode=TwoWay}"
                                 MouseDoubleClick="ProgressBar_MouseDoubleClick"
                                 MouseDown="ProgressBar_MouseDown"
@@ -19,7 +19,8 @@
 
         <Viewbox IsHitTestVisible="False"
                  Margin="2"
-                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 HorizontalAlignment="Center" 
+                 VerticalAlignment="Center"
                  Visibility="{Binding ElementName=Root, Path=IsTextVisible, Converter={StaticResource BooleanToVisibility}}">
             <TextBlock Foreground="Black"
                        Text="{Binding Value, StringFormat=F1, ElementName=Root}" />

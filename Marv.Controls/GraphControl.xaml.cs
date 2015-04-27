@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
+using Telerik.Windows.Controls;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
@@ -44,6 +47,9 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty NetworkProperty =
+            DependencyProperty.Register("Network", typeof (Network), typeof (GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
@@ -189,6 +195,12 @@ namespace Marv.Controls
             set { this.SetValue(IsVerticesEnabledProperty, value); }
         }
 
+        public Network Network
+        {
+            get { return (Network) GetValue(NetworkProperty); }
+            set { SetValue(NetworkProperty, value); }
+        }
+
         public Color OutgoingConnectionHighlightColor
         {
             get { return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty); }
@@ -246,6 +258,17 @@ namespace Marv.Controls
             control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
+        public void Open(string fileName)
+        {
+            this.Network = Network.Read(fileName);
+
+            this.Graph = Graph.Read(this.Network);
+            this.Graph.Belief = this.Network.GetBeliefs();
+
+            var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
+            this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
+        }
+
         public void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
@@ -273,6 +296,52 @@ namespace Marv.Controls
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
+        }
+
+        private void BringShapeToFront(IShape shape)
+        {
+            // Bring shape to front
+            this.Diagram.BringToFront(new List<IDiagramItem>
+            {
+                shape
+            });
+
+            // Change color of connections
+            foreach (var conn in this.Diagram.Connections)
+            {
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(this.ConnectionColor);
+            }
+
+            foreach (var conn in shape.IncomingLinks)
+            {
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(this.IncomingConnectionHighlightColor);
+            }
+
+            foreach (var conn in shape.OutgoingLinks)
+            {
+                (conn as RadDiagramConnection).Stroke = new SolidColorBrush(this.OutgoingConnectionHighlightColor);
+            }
+
+            // Pan shape into view if required
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(150)
+            };
+
+            timer.Tick += (o, args) =>
+            {
+                if (!shape.Bounds.IsInBounds(this.Diagram.Viewport))
+                {
+                    var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
+
+                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
+                }
+
+                timer.Stop();
+            };
+
+            timer.Start();
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -347,6 +416,11 @@ namespace Marv.Controls
             }
         }
 
+        private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.Graph.Write(this.Network);
+        }
+
         private void InitializeAutoSave()
         {
             var timer = new DispatcherTimer
@@ -360,11 +434,11 @@ namespace Marv.Controls
                 {
                     try
                     {
-                        this.Graph.Write();
+                        this.Graph.Write(this.Network);
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        var fileName = this.Graph.Network.FileName;
+                        var fileName = this.Network.FileName;
 
                         var fileInfo = new FileInfo(fileName);
 
@@ -382,11 +456,6 @@ namespace Marv.Controls
             };
 
             timer.Start();
-        }
-
-        private void Open(string fileName)
-        {
-            this.Graph = Graph.Read(fileName);
         }
 
         private void Open()
@@ -409,6 +478,14 @@ namespace Marv.Controls
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             this.Open();
+        }
+
+        private void RadDiagramShape_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var radDiagramShape = sender as RadDiagramShape;
+
+            this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
+            this.BringShapeToFront(radDiagramShape);
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
@@ -460,13 +537,13 @@ namespace Marv.Controls
         {
             if (this.Graph != null)
             {
-                this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
+                this.Graph.Belief = this.Network.Run(this.Graph.Evidence);
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Write();
+            this.Graph.Write(this.Network);
         }
 
         private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)

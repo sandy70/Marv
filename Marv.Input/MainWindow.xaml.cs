@@ -22,6 +22,7 @@ namespace Marv.Input
         private bool isVertexControlVisible = true;
         private ILineData lineData;
         private string lineDataFileName;
+        private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
         private int selectedYear;
@@ -150,6 +151,22 @@ namespace Marv.Input
                 }
 
                 this.lineData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Network Network
+        {
+            get { return this.network; }
+
+            set
+            {
+                if (value.Equals(this.network))
+                {
+                    return;
+                }
+
+                this.network = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -322,7 +339,7 @@ namespace Marv.Input
                 if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
                 {
                     // This is a folder line data
-                    this.LineData = FolderLineData.Read(dialog.FileName);
+                    this.LineData = LineDataFolder.Read(dialog.FileName);
                 }
                 else
                 {
@@ -399,7 +416,7 @@ namespace Marv.Input
             foreach (var sectionId in this.LineData.SectionIds)
             {
                 var sectionEvidence = this.lineData.GetEvidence(sectionId);
-                this.lineData.SetBelief(sectionId, this.Graph.Network.Run(sectionEvidence));
+                this.lineData.SetBelief(sectionId, this.Network.Run(sectionEvidence));
             }
         }
 
@@ -407,7 +424,7 @@ namespace Marv.Input
         {
             var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            var sectionBelief = this.Graph.Network.Run(sectionEvidence);
+            var sectionBelief = this.Network.Run(sectionEvidence);
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);

@@ -10,7 +10,6 @@ namespace Marv.Common
     public partial class Graph : NotifyPropertyChanged
     {
         private readonly ObservableCollection<Edge> edges = new ObservableCollection<Edge>();
-
         private string defaultGroup;
         private Vertex selectedVertex;
         private KeyedCollection<Vertex> vertices = new KeyedCollection<Vertex>();
@@ -42,7 +41,7 @@ namespace Marv.Common
             }
         }
 
-        public Dict<string, VertexEvidence> Evidence
+        public Dict<string, double[]> Evidence
         {
             get { return this.Vertices.ToDict(vertex => vertex.Key, vertex => vertex.Evidence); }
 
@@ -86,8 +85,6 @@ namespace Marv.Common
             get { return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2; }
         }
 
-        public Network Network { get; private set; }
-
         public Vertex SelectedVertex
         {
             get { return this.selectedVertex; }
@@ -116,18 +113,16 @@ namespace Marv.Common
             }
         }
 
-        public static Graph Read(string fileName)
+        public static Graph Read(Network network)
         {
             //Network.Decrypt(fileName);
             var graph = new Graph
             {
-                Network = Network.Read(fileName)
+                DefaultGroup = network.ParseUserProperty("defaultgroup", "all")
             };
 
-            graph.DefaultGroup = graph.Network.ParseUserProperty("defaultgroup", "all");
-
             // Add all the vertices
-            foreach (var networkVertex in graph.Network.Vertices)
+            foreach (var networkVertex in network.Vertices)
             {
                 var vertex = new Vertex
                 {
@@ -157,7 +152,7 @@ namespace Marv.Common
             }
 
             // Add all the edges
-            foreach (var srcVertex in graph.Network.Vertices)
+            foreach (var srcVertex in network.Vertices)
             {
                 foreach (var dstVertex in srcVertex.Children)
                 {
@@ -245,21 +240,24 @@ namespace Marv.Common
             return subGraph;
         }
 
-        public void Write()
+        public void SetEvidence(Dict<string, VertexEvidence> vertexEvidences)
         {
-            this.Write(this.Network.FileName);
+            foreach (var vertex in this.Vertices)
+            {
+                vertex.SetEvidence(vertexEvidences.ContainsKey(vertex.Key) ? vertexEvidences[vertex.Key] : null);
+            }
         }
 
-        private void Write(string filePath)
+        public void Write(Network network)
         {
             var userProperties = new List<string>
             {
                 "defaultgroup=" + this.DefaultGroup,
             };
 
-            this.Network.Properties["HR_Desc"] = userProperties.String().Enquote();
+            network.Properties["HR_Desc"] = userProperties.String().Enquote();
 
-            foreach (var networkNode in this.Network.Vertices)
+            foreach (var networkNode in network.Vertices)
             {
                 var vertex = this.Vertices[networkNode.Key];
 
@@ -276,7 +274,7 @@ namespace Marv.Common
                 networkNode.Properties.Remove("isheaderofgroup");
             }
 
-            this.Network.Write(filePath);
+            network.Write();
         }
     }
 }

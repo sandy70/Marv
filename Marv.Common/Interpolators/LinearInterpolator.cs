@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common.Interpolators
 {
     public class LinearInterpolator : IInterpolator
     {
@@ -16,7 +16,7 @@ namespace Marv
 
             if (x.Count < 2 || y.Count < 2 || x.Count != y.Count)
             {
-                throw new InvalidValueException("Number of X and Y coordinates should be equal and > 2");
+                throw new ArgumentException("Number of X and Y coordinates should be equal and > 2");
             }
 
             for (var i = 0; i < x.Count(); i++)

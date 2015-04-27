@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Marv;
 
 namespace Marv.Controls
 {
@@ -9,40 +8,33 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (EditableTextBox), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty TextMarginProperty =
+            DependencyProperty.Register("TextMargin", typeof (Thickness), typeof (EditableTextBox), new PropertyMetadata(null));
+
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof (string), typeof (EditableTextBox), new PropertyMetadata(null));
 
-        public EditableTextBox()
-        {
-            InitializeComponent();
-
-            this.KeyDown += EditableTextBox_KeyDown;
-            this.LostFocus += EditableTextBox_LostFocus;
-            this.MouseDown += EditableTextBox_MouseDown;
-        }
-
         public bool IsEditable
         {
-            get
-            {
-                return (bool) GetValue(IsEditableProperty);
-            }
-            set
-            {
-                SetValue(IsEditableProperty, value);
-            }
+            get { return (bool) GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
         }
 
         public string Text
         {
-            get
-            {
-                return (string) GetValue(TextProperty);
-            }
-            set
-            {
-                SetValue(TextProperty, value);
-            }
+            get { return (string) GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public Thickness TextMargin
+        {
+            get { return (Thickness) GetValue(TextMarginProperty); }
+            set { SetValue(TextMarginProperty, value); }
+        }
+
+        public EditableTextBox()
+        {
+            InitializeComponent();
         }
 
         private void EditableTextBox_KeyDown(object sender, KeyEventArgs e)

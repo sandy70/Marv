@@ -1,14 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 
 namespace Marv.Controls
 {
-    public partial class VertexControl : INotifyPropertyChanged
+    public partial class VertexControl
     {
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
@@ -83,20 +82,21 @@ namespace Marv.Controls
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Vertex.Evidence = new VertexEvidence
+            this.Vertex.Evidence = null;
+            this.Vertex.EvidenceString = null;
+
+            this.RaiseEvidenceEntered(new VertexEvidence
             {
                 Params = null,
                 Type = VertexEvidenceType.Null,
                 Value = null
-            };
-
-            this.RaiseEvidenceEntered(this.Vertex.Evidence);
+            });
         }
 
         private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence;
+            this.Vertex.Evidence = vertexEvidence.Value;
             this.RaiseEvidenceEntered(vertexEvidence);
         }
 
@@ -113,14 +113,6 @@ namespace Marv.Controls
             }
         }
 
-        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (this.PropertyChanged != null && propertyName != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         private void RaiseShowGroupButtonClicked()
         {
             if (this.ShowGroupButtonClicked != null)
@@ -134,42 +126,43 @@ namespace Marv.Controls
             this.RaiseShowGroupButtonClicked();
         }
 
-        private void SliderProgressBar_ValueEntered(object sender, double e)
+        private void StateControl_OnValueEntered(object sender, double e)
         {
-            var evidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
-                                     ? ((sender as SliderProgressBar).DataContext as State).Key
-                                     : this.Vertex.States.Select(state => state.Evidence).String();
+            var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
+                                       ? ((sender as SliderProgressBar).DataContext as State).Key
+                                       : this.Vertex.States.Select(state => state.Evidence).String();
 
-            this.Vertex.Evidence = this.Vertex.States.ParseEvidenceString(evidenceString);
-            this.RaiseEvidenceEntered(this.Vertex.Evidence);
+            var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
+
+            this.Vertex.SetEvidence(vertexEvidence);
+
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
         {
             var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
 
-            var nodeEvidence = this.Vertex.IsNumeric
-                                   ? new VertexEvidence
-                                   {
-                                       Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
-                                       Type = VertexEvidenceType.Range,
-                                       Value = evidenceValue
-                                   }
-                                   : new VertexEvidence
-                                   {
-                                       Params = evidenceValue,
-                                       Type = VertexEvidenceType.Distribution,
-                                       Value = evidenceValue
-                                   };
+            var vertexEvidence = this.Vertex.IsNumeric
+                                     ? new VertexEvidence
+                                     {
+                                         Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
+                                         Type = VertexEvidenceType.Range,
+                                         Value = evidenceValue
+                                     }
+                                     : new VertexEvidence
+                                     {
+                                         Params = evidenceValue,
+                                         Type = VertexEvidenceType.Distribution,
+                                         Value = evidenceValue
+                                     };
 
-            this.Vertex.Evidence = nodeEvidence;
+            this.Vertex.SetEvidence(vertexEvidence);
 
-            this.RaiseEvidenceEntered(nodeEvidence);
+            this.RaiseEvidenceEntered(vertexEvidence);
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public event EventHandler ShowGroupButtonClicked;
     }

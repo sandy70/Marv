@@ -10,7 +10,7 @@ using Location = Marv.Common.Location;
 
 namespace Marv.Controls
 {
-    public class MapView : MapControl.Map
+    public class MapView : Map
     {
         public static readonly DependencyProperty StartBoundsProperty =
             DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
@@ -48,7 +48,7 @@ namespace Marv.Controls
 
         public MapView()
         {
-            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, "./");
+            TileImageLoader.Cache = new ImageFileCache(TileImageLoader.DefaultCacheName, Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
             this.Loaded -= this.MapView_Loaded;
             this.Loaded += this.MapView_Loaded;

@@ -52,7 +52,7 @@
 
             <ToolBar Height="32">
                 <telerik:RadButton Content="Add Sections"
-                                   Click="AddSectionsButton_Click"/>
+                                   Click="AddSectionsButton_Click" />
 
                 <telerik:RadNumericUpDown LargeChange="10" SmallChange="1"
                                           Maximum="10000"
@@ -99,6 +99,7 @@
         <telerik:RadGridView Name="GridView"
                              Grid.Row="1"
                              AutoGenerateColumns="True"
+                             CanUserFreezeColumns="False"
                              CanUserInsertRows="{Binding ElementName=Root, Path=CanUserInsertRows}"
                              CanUserReorderColumns="False"
                              CanUserSortColumns="False"
@@ -112,7 +113,7 @@
                              SelectionMode="Extended"
                              SelectionUnit="{Binding ElementName=Root, Path=SelectionUnit}"
                              RowIndicatorVisibility="Collapsed"
-                             
+
                              AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                              CellEditEnded="GridView_CellEditEnded"
                              CellValidating="GridView_CellValidating"

@@ -14,11 +14,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style x:Key="BarSeriesStyle" TargetType="Border">
-                <Setter Property="Background" Value="Red" />
-                <Setter Property="Opacity" Value="0.5" />
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -113,6 +108,7 @@
                             <marv:GraphControl Grid.Row="0"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                               Network="{Binding ElementName=Root, Path=Network}"
                                                EvidenceEntered="GraphControl_EvidenceEntered"
                                                GraphChanged="GraphControl_GraphChanged"
                                                SelectionChanged="GraphControl_SelectionChanged" />
@@ -156,8 +152,7 @@
                             </telerik:RadComboBox>
 
                             <!-- Vertex Control -->
-                            <marv:VertexControl Name="VertexControl"
-                                                Grid.Row="1"
+                            <marv:VertexControl Grid.Row="1"
                                                 IsEditable="True"
                                                 IsEvidenceVisible="True"
                                                 IsInputVisible="True"

@@ -1,7 +1,6 @@
 ﻿using System;
-using Marv.Common;
 
-namespace Marv
+namespace Marv.Common.Interpolators
 {
     /// <summary>
     ///     Cubic spline interpolation.
@@ -52,7 +51,7 @@ namespace Marv
         /// <param name="debug">Turn on console output. Default is false.</param>
         public CubicSplineInterpolator(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
         {
-            Fit(x, y, startSlope, endSlope, debug);
+            this.Fit(x, y, startSlope, endSlope, debug);
         }
 
         #endregion
@@ -66,7 +65,7 @@ namespace Marv
         /// </summary>
         private void CheckAlreadyFitted()
         {
-            if (a == null)
+            if (this.a == null)
             {
                 throw new Exception("Fit must be called before you can evaluate.");
             }
@@ -81,9 +80,9 @@ namespace Marv
         /// <returns>The y value.</returns>
         private float EvalSpline(float x, int j, bool debug = false)
         {
-            var dx = xOrig[j + 1] - xOrig[j];
-            var t = (x - xOrig[j]) / dx;
-            var y = (1 - t) * yOrig[j] + t * yOrig[j + 1] + t * (1 - t) * (a[j] * (1 - t) + b[j] * t); // equation 9
+            var dx = this.xOrig[j + 1] - this.xOrig[j];
+            var t = (x - this.xOrig[j]) / dx;
+            var y = (1 - t) * this.yOrig[j] + t * this.yOrig[j + 1] + t * (1 - t) * (this.a[j] * (1 - t) + this.b[j] * t); // equation 9
             if (debug)
             {
                 Console.WriteLine("xs = {0}, j = {1}, t = {2}", x, j, t);
@@ -98,12 +97,12 @@ namespace Marv
         /// </summary>
         private int GetNextXIndex(float x)
         {
-            if (x < xOrig[this.lastIndex])
+            if (x < this.xOrig[this.lastIndex])
             {
                 throw new ArgumentException("The X values to evaluate must be sorted.");
             }
 
-            while ((this.lastIndex < xOrig.Length - 2) && (x > xOrig[this.lastIndex + 1]))
+            while ((this.lastIndex < this.xOrig.Length - 2) && (x > this.xOrig[this.lastIndex + 1]))
             {
                 this.lastIndex++;
             }
@@ -211,17 +210,17 @@ namespace Marv
             {
                 dx1 = x[i] - x[i - 1];
                 dy1 = y[i] - y[i - 1];
-                a[i - 1] = k[i - 1] * dx1 - dy1; // equation 10 from the article
-                b[i - 1] = -k[i] * dx1 + dy1; // equation 11 from the article
+                this.a[i - 1] = k[i - 1] * dx1 - dy1; // equation 10 from the article
+                this.b[i - 1] = -k[i] * dx1 + dy1; // equation 11 from the article
             }
 
             if (debug)
             {
-                Console.WriteLine("a: {0}", a.String());
+                Console.WriteLine("a: {0}", this.a.String());
             }
             if (debug)
             {
-                Console.WriteLine("b: {0}", b.String());
+                Console.WriteLine("b: {0}", this.b.String());
             }
         }
 
@@ -240,8 +239,8 @@ namespace Marv
         /// <returns>The computed y values for each xs.</returns>
         public float[] FitAndEval(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
         {
-            Fit(x, y, startSlope, endSlope, debug);
-            return Eval(xs, debug);
+            this.Fit(x, y, startSlope, endSlope, debug);
+            return this.Eval(xs, debug);
         }
 
         #endregion
@@ -268,7 +267,7 @@ namespace Marv
         /// <returns>The computed y values for each x.</returns>
         public float[] Eval(float[] x, bool debug = false)
         {
-            CheckAlreadyFitted();
+            this.CheckAlreadyFitted();
 
             var n = x.Length;
             var y = new float[n];
@@ -277,10 +276,10 @@ namespace Marv
             for (var i = 0; i < n; i++)
             {
                 // Find which spline can be used to compute this x (by simultaneous traverse)
-                var j = GetNextXIndex(x[i]);
+                var j = this.GetNextXIndex(x[i]);
 
                 // Evaluate using j'th spline
-                y[i] = EvalSpline(x[i], j, debug);
+                y[i] = this.EvalSpline(x[i], j, debug);
             }
 
             return y;
@@ -298,7 +297,7 @@ namespace Marv
         /// <returns>The computed y values for each x.</returns>
         public float[] EvalSlope(float[] x, bool debug = false)
         {
-            CheckAlreadyFitted();
+            this.CheckAlreadyFitted();
 
             var n = x.Length;
             var qPrime = new float[n];
@@ -307,17 +306,17 @@ namespace Marv
             for (var i = 0; i < n; i++)
             {
                 // Find which spline can be used to compute this x (by simultaneous traverse)
-                var j = GetNextXIndex(x[i]);
+                var j = this.GetNextXIndex(x[i]);
 
                 // Evaluate using j'th spline
-                var dx = xOrig[j + 1] - xOrig[j];
-                var dy = yOrig[j + 1] - yOrig[j];
-                var t = (x[i] - xOrig[j]) / dx;
+                var dx = this.xOrig[j + 1] - this.xOrig[j];
+                var dy = this.yOrig[j + 1] - this.yOrig[j];
+                var t = (x[i] - this.xOrig[j]) / dx;
 
                 // From equation 5 we could also compute q' (qp) which is the slope at this x
                 qPrime[i] = dy / dx
-                            + (1 - 2 * t) * (a[j] * (1 - t) + b[j] * t) / dx
-                            + t * (1 - t) * (b[j] - a[j]) / dx;
+                            + (1 - 2 * t) * (this.a[j] * (1 - t) + this.b[j] * t) / dx
+                            + t * (1 - t) * (this.b[j] - this.a[j]) / dx;
 
                 if (debug)
                 {

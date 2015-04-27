@@ -8,7 +8,8 @@
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="600"
              Name="Root"
-             Loaded="GraphControl_Loaded">
+             Loaded="GraphControl_Loaded"
+             Unloaded="GraphControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </UserControl.Resources>
@@ -132,8 +133,7 @@
                             ConnectionManipulationStarted="Diagram_ConnectionManipulationStarted"
                             DiagramLayoutComplete="Diagram_DiagramLayoutComplete"
                             GraphSourceChanged="Diagram_GraphSourceChanged"
-                            SelectionChanged="Diagram_SelectionChanged"
-                            ShapeClicked="Diagram_ShapeClicked">
+                            SelectionChanged="Diagram_SelectionChanged">
 
             <telerik:RadDiagram.ConnectionStyle>
                 <Style TargetType="telerik:RadDiagramConnection">
@@ -163,7 +163,8 @@
                     <Setter Property="IsDraggingEnabled" Value="{Binding IsDraggingEnabled}" />
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Root, Path=IsVerticesEnabled}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-
+                    <EventSetter Event="PreviewMouseDown" Handler="RadDiagramShape_PreviewMouseDown" />
+                    
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="common:Vertex">
@@ -176,7 +177,6 @@
                                                         IsToolbarVisible="False"
                                                         IsValueVisible="{Binding IsLocked}"
                                                         Vertex="{Binding}"
-                                                        Width="256"
                                                         EvidenceEntered="VertexControl_EvidenceEntered"
                                                         MouseEnter="VertexControl_MouseEnter"
                                                         MouseLeave="VertexControl_MouseLeave"
