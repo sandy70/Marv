@@ -53,7 +53,10 @@
         </ItemsControl>
 
         <!-- Most Probable State -->
-        <controls:StateControl Margin="4"
+        <controls:StateControl IsEditable="False"
+                               IsEvidenceVisible="True"
+                               IsValueVisible="True"
+                               Margin="4"
                                State="{Binding ElementName=Root, Path=Vertex.MostProbableState}"
                                Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}" />
 

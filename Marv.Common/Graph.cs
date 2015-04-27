@@ -249,14 +249,7 @@ namespace Marv.Common
         {
             foreach (var vertex in this.Vertices)
             {
-                if (vertexEvidences.ContainsKey(vertex.Key))
-                {
-                    vertex.SetEvidence(vertexEvidences[vertex.Key]);
-                }
-                else
-                {
-                    vertex.SetEvidence(null);
-                }
+                vertex.SetEvidence(vertexEvidences.ContainsKey(vertex.Key) ? vertexEvidences[vertex.Key] : null);
             }
         }
 

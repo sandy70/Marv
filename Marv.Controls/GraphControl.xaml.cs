@@ -253,6 +253,7 @@ namespace Marv.Controls
         public void Open(string fileName)
         {
             this.Graph = Graph.Read(fileName);
+            this.Graph.Belief = this.Graph.Network.GetBeliefs();
 
             var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
             this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
