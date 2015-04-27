@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Types;
+using Marv.LightSensor.Properties;
 using Newtonsoft.Json;
 using Telerik.Windows.Controls;
 
@@ -14,6 +17,7 @@ namespace Marv.LightSensor
     public partial class MainWindow : INotifyPropertyChanged
     {
         private Graph graph;
+        private NotificationCollection notifications = new NotificationCollection();
         private double value;
 
         public Graph Graph
@@ -28,6 +32,22 @@ namespace Marv.LightSensor
                 }
 
                 this.graph = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public NotificationCollection Notifications
+        {
+            get { return this.notifications; }
+
+            set
+            {
+                if (value.Equals(this.notifications))
+                {
+                    return;
+                }
+
+                this.notifications = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -63,20 +83,19 @@ namespace Marv.LightSensor
             timer.Start();
         }
 
-        private XivelyFeed GetXivelyFeed()
+        private async Task<XivelyFeed> GetXivelyFeedAsync()
         {
-            const string url = @"https://api.xively.com/v2/feeds/1758963438.json?datastreams=Sensor03";
+            const string url = @"https://api.xively.com/v2/feeds/1758963438.json?datastreams=Sensor03&X-ApiKey=iH1MTJKiDhHyAjqWgQ54j3ljdXSgYodF4UoITAGL4A6QhHhs";
 
-            using (var webClient = new WebClient())
+            using (var webClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.UserName, Settings.Default.Password) }))
             {
-                webClient.Headers.Add("X-ApiKey", "iH1MTJKiDhHyAjqWgQ54j3ljdXSgYodF4UoITAGL4A6QhHhs");
-                return JsonConvert.DeserializeObject<XivelyFeed>(webClient.DownloadString(new Uri(url)));
+                return JsonConvert.DeserializeObject<XivelyFeed>(await webClient.GetStringAsync(url));
             }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.GraphControl.Open(@"C:\Users\Vinod\Data\Misc\XivelyLight.net");
+            this.GraphControl.Open(Settings.Default.NetworkFileName);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -87,9 +106,19 @@ namespace Marv.LightSensor
             }
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        private async void timer_Tick(object sender, EventArgs e)
         {
-            this.Value = this.GetXivelyFeed().DataStreams[0].current_value;
+            var notification = new Notification
+            {
+                IsIndeterminate = true,
+                Description = "Loading data..."
+            };
+
+            this.Notifications.Add(notification);
+
+            this.Value = (await this.GetXivelyFeedAsync()).DataStreams[0].current_value;
+
+            this.Notifications.Remove(notification);
 
             if (this.Graph != null)
             {
