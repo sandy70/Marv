@@ -76,7 +76,7 @@ namespace Marv.LightSensor
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Graph = Graph.Read(@"C:\Users\Vinod\Data\Misc\XivelyLight.net");
+            this.GraphControl.Open(@"C:\Users\Vinod\Data\Misc\XivelyLight.net");
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
