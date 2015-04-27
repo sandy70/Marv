@@ -261,6 +261,8 @@ namespace Marv.Common
 
         public Dict<string, double[]> GetBeliefs()
         {
+            this.UpdateBeliefs();
+
             var nodeBelief = new Dict<string, double[]>();
 
             foreach (var nodeKey in this.GetAllNodeIds())
