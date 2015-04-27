@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Marv.Common;
-using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
@@ -48,6 +47,9 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty IsVerticesEnabledProperty =
             DependencyProperty.Register("IsVerticesEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty NetworkProperty =
+            DependencyProperty.Register("Network", typeof (Network), typeof (GraphControl), new PropertyMetadata(null));
 
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
@@ -193,6 +195,12 @@ namespace Marv.Controls
             set { this.SetValue(IsVerticesEnabledProperty, value); }
         }
 
+        public Network Network
+        {
+            get { return (Network) GetValue(NetworkProperty); }
+            set { SetValue(NetworkProperty, value); }
+        }
+
         public Color OutgoingConnectionHighlightColor
         {
             get { return (Color) this.GetValue(OutgoingConnectionHighlightColorProperty); }
@@ -252,8 +260,10 @@ namespace Marv.Controls
 
         public void Open(string fileName)
         {
-            this.Graph = Graph.Read(fileName);
-            this.Graph.Belief = this.Graph.Network.GetBeliefs();
+            this.Network = Network.Read(fileName);
+
+            this.Graph = Graph.Read(this.Network);
+            this.Graph.Belief = this.Network.GetBeliefs();
 
             var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
             this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
@@ -408,7 +418,7 @@ namespace Marv.Controls
 
         private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            this.Graph.Write();
+            this.Graph.Write(this.Network);
         }
 
         private void InitializeAutoSave()
@@ -424,11 +434,11 @@ namespace Marv.Controls
                 {
                     try
                     {
-                        this.Graph.Write();
+                        this.Graph.Write(this.Network);
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        var fileName = this.Graph.Network.FileName;
+                        var fileName = this.Network.FileName;
 
                         var fileInfo = new FileInfo(fileName);
 
@@ -527,13 +537,13 @@ namespace Marv.Controls
         {
             if (this.Graph != null)
             {
-                this.Graph.Belief = this.Graph.Network.Run(this.Graph.Evidence);
+                this.Graph.Belief = this.Network.Run(this.Graph.Evidence);
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Graph.Write();
+            this.Graph.Write(this.Network);
         }
 
         private void SaveEvidenceButton_Click(object sender, RoutedEventArgs e)

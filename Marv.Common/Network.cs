@@ -538,7 +538,6 @@ namespace Marv.Common
 
             try
             {
-                this.UpdateBeliefs();
                 return this.GetBeliefs();
             }
             catch (SmileException)
@@ -677,6 +676,23 @@ namespace Marv.Common
             }
         }
 
+        public void Write()
+        {
+            this.Write(this.FileName);
+        }
+
+        public void Write(string filePath)
+        {
+            if (Path.GetExtension(filePath) == "enet")
+            {
+                this.WriteEncrypted(filePath);
+            }
+            else
+            {
+                this.Write(new StreamWriter(Path.ChangeExtension(filePath, "net")));
+            }
+        }
+
         public void Write(StreamWriter streamWriter)
         {
             using (streamWriter)
@@ -748,18 +764,6 @@ namespace Marv.Common
 
                     streamWriter.WriteLine();
                 }
-            }
-        }
-
-        public void Write(string filePath)
-        {
-            if (Path.GetExtension(filePath) == "enet")
-            {
-                this.WriteEncrypted(filePath);
-            }
-            else
-            {
-                this.Write(new StreamWriter(Path.ChangeExtension(filePath, "net")));
             }
         }
 

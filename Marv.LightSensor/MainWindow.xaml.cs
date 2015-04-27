@@ -17,6 +17,7 @@ namespace Marv.LightSensor
     public partial class MainWindow : INotifyPropertyChanged
     {
         private Graph graph;
+        private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private double value;
 
@@ -32,6 +33,22 @@ namespace Marv.LightSensor
                 }
 
                 this.graph = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Network Network
+        {
+            get { return this.network; }
+
+            set
+            {
+                if (value.Equals(this.network))
+                {
+                    return;
+                }
+
+                this.network = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -127,7 +144,7 @@ namespace Marv.LightSensor
                     { "Value", this.Graph.Vertices["Value"].States.ParseEvidenceString(this.Value.ToString()) }
                 };
 
-                this.Graph.Belief = this.Graph.Network.Run(vertexEvidences);
+                this.Graph.Belief = this.Network.Run(vertexEvidences);
                 this.Graph.SetEvidence(vertexEvidences);
             }
         }

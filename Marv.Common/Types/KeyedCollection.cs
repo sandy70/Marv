@@ -19,7 +19,7 @@ namespace Marv.Common.Types
 
         public IEnumerable<T> this[IEnumerable<string> keys]
         {
-            get { return keys.Select(aKey => this[(string) aKey]); }
+            get { return keys.Select(aKey => this[aKey]); }
         }
 
         public string Key
