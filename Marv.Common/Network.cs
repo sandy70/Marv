@@ -254,7 +254,7 @@ namespace Marv.Common
             this.Vertices[nodeKey].Groups.Clear();
         }
 
-        public double[] GetBelief(string vertexKey)
+        public double[] GetBeliefs(string vertexKey)
         {
             return this.GetNodeValue(vertexKey);
         }
@@ -672,7 +672,7 @@ namespace Marv.Common
 
             foreach (var node in this.Vertices)
             {
-                node.InitialBelief = this.GetBelief(node.Key);
+                node.InitialBelief = this.GetBeliefs(node.Key);
             }
         }
 

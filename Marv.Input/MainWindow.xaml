@@ -157,7 +157,7 @@
                                                 IsEvidenceVisible="True"
                                                 IsInputVisible="True"
                                                 IsToolbarVisible="False"
-                                                IsValueVisible="False"
+                                                IsBeliefVisible="False"
                                                 Margin="5"
                                                 Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
                                                 Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource ResourceKey=NullToVisibility}}" 

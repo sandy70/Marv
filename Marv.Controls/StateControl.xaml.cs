@@ -6,17 +6,23 @@ namespace Marv.Controls
 {
     public partial class StateControl
     {
+        public static readonly DependencyProperty IsBeliefVisibleProperty =
+            DependencyProperty.Register("IsBeliefVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (StateControl), new PropertyMetadata(false));
 
         public static readonly DependencyProperty IsEvidenceVisibleProperty =
             DependencyProperty.Register("IsEvidenceVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty IsValueVisibleProperty =
-            DependencyProperty.Register("IsValueVisible", typeof (bool), typeof (StateControl), new PropertyMetadata(true));
-
         public static readonly DependencyProperty StateProperty =
             DependencyProperty.Register("State", typeof (State), typeof (StateControl), new PropertyMetadata(null));
+
+        public bool IsBeliefVisible
+        {
+            get { return (bool) GetValue(IsBeliefVisibleProperty); }
+            set { SetValue(IsBeliefVisibleProperty, value); }
+        }
 
         public bool IsEditable
         {
@@ -28,12 +34,6 @@ namespace Marv.Controls
         {
             get { return (bool) GetValue(IsEvidenceVisibleProperty); }
             set { SetValue(IsEvidenceVisibleProperty, value); }
-        }
-
-        public bool IsValueVisible
-        {
-            get { return (bool) GetValue(IsValueVisibleProperty); }
-            set { SetValue(IsValueVisibleProperty, value); }
         }
 
         public State State

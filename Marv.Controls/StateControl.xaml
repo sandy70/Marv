@@ -34,22 +34,22 @@
 
         <!-- Evidence -->
         <controls:SliderProgressBar Grid.Column="1"
-                                    IsEditable="{Binding ElementName=Root, Path=IsEditable}"
+                                    IsEditable="{Binding ElementName=Root, Path=IsEditable, Mode=TwoWay}"
                                     IsTextVisible="{Binding ElementName=Root, Path=IsEvidenceVisible}"
-                                    Margin="0,0,0,4"
                                     SliderForeground="YellowGreen"
                                     Value="{Binding ElementName=Root, Path=State.Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                     Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
                                     ValueEntered="SliderProgressBar_OnValueEntered" />
 
-        <!-- Value -->
+        <!-- Belief -->
         <controls:SliderProgressBar Grid.Column="1"
                                     IsEditable="False"
                                     IsEnabled="False"
                                     IsHitTestVisible="False"
-                                    IsTextVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                                    IsTextVisible="{Binding ElementName=Root, Path=IsBeliefVisible}"
+                                    Margin="0,0,0,4"
                                     SliderForeground="#20aeff"
                                     Value="{Binding ElementName=Root, Path=State.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}"
-                                    Visibility="{Binding ElementName=Root, Path=IsValueVisible, Converter={StaticResource BooleanToVisibility}}"/>
+                                    Visibility="{Binding ElementName=Root, Path=IsBeliefVisible, Converter={StaticResource BooleanToVisibility}}"/>
     </Grid>
 </UserControl>

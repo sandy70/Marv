@@ -10,14 +10,14 @@ using System.Windows.Markup;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DNV GL")]
 [assembly: AssemblyProduct("Marv.Common")]
-[assembly: AssemblyCopyright("Copyright © DNV GL 2013")]
+[assembly: AssemblyCopyright("Copyright © DNV GL 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+[assembly: ComVisible(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("52965437-655d-4a71-8c8d-b34057e07db5")]

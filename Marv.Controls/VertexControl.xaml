@@ -43,9 +43,9 @@
                       Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource BooleanToVisibility}}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <controls:StateControl IsEditable="{Binding ElementName=Root, Path=IsEditable}"
-                                           IsEvidenceVisible="{Binding ElementName=Root, Path=IsValueVisible}"
-                                           IsValueVisible="{Binding ElementName=Root, Path=IsValueVisible}"
+                    <controls:StateControl IsEditable="{Binding ElementName=Root, Path=IsEditable, Mode=TwoWay}"
+                                           IsEvidenceVisible="{Binding ElementName=Root, Path=IsEvidenceVisible, Mode=TwoWay}"
+                                           IsBeliefVisible="{Binding ElementName=Root, Path=IsBeliefVisible, Mode=TwoWay}"
                                            State="{Binding}"
                                            ValueEntered="StateControl_OnValueEntered" />
                 </DataTemplate>
@@ -55,7 +55,7 @@
         <!-- Most Probable State -->
         <controls:StateControl IsEditable="False"
                                IsEvidenceVisible="True"
-                               IsValueVisible="True"
+                               IsBeliefVisible="True"
                                Margin="4"
                                State="{Binding ElementName=Root, Path=Vertex.MostProbableState}"
                                Visibility="{Binding ElementName=Root, Path=IsExpanded, Converter={StaticResource ResourceKey=BooleanToVisibilityReversed}}" />
