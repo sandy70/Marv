@@ -10,7 +10,7 @@ using System.Windows.Markup;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DNV GL")]
 [assembly: AssemblyProduct("Marv.Common")]
-[assembly: AssemblyCopyright("Copyright © DNV GL 2013")]
+[assembly: AssemblyCopyright("Copyright © DNV GL 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

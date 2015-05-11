@@ -175,7 +175,7 @@
                                                         IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
                                                         IsInputVisible="{Binding ElementName=Root, Path=IsInputVisible}"
                                                         IsToolbarVisible="False"
-                                                        IsValueVisible="{Binding IsLocked}"
+                                                        IsBeliefVisible="{Binding IsLocked}"
                                                         Vertex="{Binding}"
                                                         EvidenceEntered="VertexControl_EvidenceEntered"
                                                         MouseEnter="VertexControl_MouseEnter"

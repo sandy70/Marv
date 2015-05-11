@@ -70,6 +70,7 @@ namespace Marv.Controls
         {
             if (e.LeftButton == MouseButtonState.Pressed && !isDoubleClick)
             {
+                Console.WriteLine("ProgressBar_MouseMove");
                 this.SetValue(e);
                 e.Handled = true;
             }
@@ -90,12 +91,16 @@ namespace Marv.Controls
 
         private void SetValue(MouseEventArgs e)
         {
+            Console.WriteLine("SetValue");
+
             if (!this.IsEditable)
             {
                 return;
             }
 
             this.Value = (e.GetPosition(this).X - 1) / (this.ActualWidth - 2) * 100;
+
+            Console.WriteLine(this.Value);
         }
 
         public event EventHandler<double> ValueEntered;

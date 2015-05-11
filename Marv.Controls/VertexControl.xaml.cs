@@ -3,12 +3,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Types;
 
 namespace Marv.Controls
 {
     public partial class VertexControl
     {
+        public static readonly DependencyProperty IsBeliefVisibleProperty =
+            DependencyProperty.Register("IsBeliefVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
+
         public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
@@ -24,11 +26,14 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsToolbarVisibleProperty =
             DependencyProperty.Register("IsToolbarVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsValueVisibleProperty =
-            DependencyProperty.Register("IsValueVisible", typeof (bool), typeof (VertexControl), new PropertyMetadata(true));
-
         public static readonly DependencyProperty VertexProperty =
             DependencyProperty.Register("Vertex", typeof (Vertex), typeof (VertexControl), new PropertyMetadata(null));
+
+        public bool IsBeliefVisible
+        {
+            get { return (bool) this.GetValue(IsBeliefVisibleProperty); }
+            set { this.SetValue(IsBeliefVisibleProperty, value); }
+        }
 
         public bool IsEditable
         {
@@ -60,13 +65,6 @@ namespace Marv.Controls
         {
             get { return (bool) this.GetValue(IsToolbarVisibleProperty); }
             set { this.SetValue(IsToolbarVisibleProperty, value); }
-        }
-
-        public bool IsValueVisible
-        {
-            get { return (bool) this.GetValue(IsValueVisibleProperty); }
-
-            set { this.SetValue(IsValueVisibleProperty, value); }
         }
 
         public Vertex Vertex
@@ -129,7 +127,7 @@ namespace Marv.Controls
         private void StateControl_OnValueEntered(object sender, double e)
         {
             var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
-                                       ? ((sender as SliderProgressBar).DataContext as State).Key
+                                       ? (sender as StateControl).State.Key
                                        : this.Vertex.States.Select(state => state.Evidence).String();
 
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);

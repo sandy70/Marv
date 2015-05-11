@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Marv.Common</RootNamespace>
     <AssemblyName>Marv.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -60,7 +60,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Marv.Smile.x64">
-      <HintPath>..\packages\Smile\x64\Marv.Smile.x64.dll</HintPath>
+      <HintPath>..\lib\Smile\x64\Marv.Smile.x64.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
