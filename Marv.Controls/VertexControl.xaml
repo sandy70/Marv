@@ -93,7 +93,7 @@
             <TextBlock Grid.Column="0"
                        Foreground="Black"
                        Margin="0,0,4,0"
-                       Text="{Binding Path=Key}"
+                       Text="{Binding ElementName=Root, Path=Vertex.MostProbableState.Key}"
                        TextTrimming="CharacterEllipsis"
                        VerticalAlignment="Center" />
 
