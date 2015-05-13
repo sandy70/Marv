@@ -47,8 +47,7 @@
       <HintPath>..\packages\XAML.MapControl.2.4.10\lib\net45\MapControl.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Marv.Smile.x64, Version=1.1.5504.22279, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Marv.Smile.x64">
       <HintPath>..\lib\Smile\x64\Marv.Smile.x64.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -148,9 +147,6 @@
     <Compile Include="SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StateControl.xaml.cs">
-      <DependentUpon>StateControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
@@ -193,10 +189,6 @@
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="StateControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="VertexControl.xaml">
       <Generator>MSBuild:Compile</Generator>

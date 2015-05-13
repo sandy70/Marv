@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Types;
 
 namespace Marv.Controls
 {
@@ -10,6 +9,11 @@ namespace Marv.Controls
         private void VertexControl_EvidenceEntered(object sender, VertexEvidence e)
         {
             this.RaiseEvidenceEntered(e);
+        }
+
+        private void VertexControl_ExpandButtonClicked(object sender, EventArgs e)
+        {
+            this.UpdateLayout();
         }
 
         private void VertexControl_MouseEnter(object sender, MouseEventArgs e)
