@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -560,6 +561,14 @@ namespace Marv.Controls
             }
 
             this.WriteEvidences(openFileDialog.FileName);
+        }
+
+        private void SelectedVertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.Graph.SelectedVertex != null)
+            {
+                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+            }
         }
 
         private void UpdateDisplayGraph(string group, string vertexKey = null)

@@ -21,12 +21,13 @@ namespace Marv.ExcelNew
             this.CustomTaskPane.VisibleChanged += customTaskPane_VisibleChanged;
         }
 
-        void customTaskPane_VisibleChanged(object sender, EventArgs e)
+        private void customTaskPane_VisibleChanged(object sender, EventArgs e)
         {
             Globals.Ribbons.Ribbon.ToggleMarvPaneButton.Checked = this.CustomTaskPane.Visible;
         }
 
         #region VSTO generated code
+
         /// <summary>
         ///     Required method for Designer support - do not modify
         ///     the contents of this method with the code editor.
@@ -36,6 +37,7 @@ namespace Marv.ExcelNew
             this.Startup += this.ThisAddIn_Startup;
             this.Shutdown += this.ThisAddIn_Shutdown;
         }
+
         #endregion
     }
 }

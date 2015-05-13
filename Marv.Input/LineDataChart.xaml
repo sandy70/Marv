@@ -59,7 +59,8 @@
                                      ItemsSource="{Binding Source={StaticResource HorizontalAxisQuantities}}"
                                      SelectedIndex="0"
                                      SelectedItem="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
-                                     Width="96" />
+                                     Width="96"
+                                     SelectionChanged="HorizontalAxisQuantityComboBox_SelectionChanged"/>
 
                 <CheckBox Content="Log Y-Axis"
                           IsChecked="{Binding ElementName=Root, Path=IsLog, Mode=TwoWay}"

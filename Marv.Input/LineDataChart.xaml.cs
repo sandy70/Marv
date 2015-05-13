@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Interpolators;
@@ -662,5 +663,11 @@ namespace Marv.Input
         public event EventHandler<EvidenceGeneratedEventArgs> EvidenceGenerated;
 
         public event EventHandler<HorizontalAxisQuantity> HorizontalAxisQuantityChanged;
+
+        private void HorizontalAxisQuantityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.XTitle = this.HorizontalAxisQuantity.ToString();
+            this.RaiseHorizontalAxisQuantityChanged(this.HorizontalAxisQuantity);
+        }
     }
 }
