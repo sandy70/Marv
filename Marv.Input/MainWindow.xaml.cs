@@ -281,12 +281,12 @@ namespace Marv.Input
                     }
                 }
 
-                if (this.Graph.SelectedVertex == null)
+                if (selectedVertex == null)
                 {
                     return;
                 }
 
-                var intervals = this.Graph.SelectedVertex.Intervals.ToArray();
+                var intervals = selectedVertex.Intervals.ToArray();
 
                 this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
 
