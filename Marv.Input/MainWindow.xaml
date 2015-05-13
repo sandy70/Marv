@@ -116,55 +116,8 @@
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
 
-                <!-- Vertex -->
-                <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Node"
-                                     IsHidden="{Binding ElementName=Root, Path=IsVertexControlVisible, Converter={StaticResource BooleanNot}}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
 
-                            <!-- Vertex Combo Box -->
-                            <telerik:RadComboBox Grid.Row="0" Grid.ColumnSpan="2"
-                                                 CanAutocompleteSelectItems="False"
-                                                 CanKeyboardNavigationSelectItems="False"
-                                                 IsEditable="True"
-                                                 IsFilteringEnabled="True"
-                                                 IsSynchronizedWithCurrentItem="False"
-                                                 ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
-                                                 Margin="4"
-                                                 OpenDropDownOnFocus="True"
-                                                 SelectedIndex="0"
-                                                 SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                                 TextSearchMode="Contains">
-                                <telerik:RadComboBox.ItemTemplate>
-                                    <DataTemplate DataType="common:Vertex">
-                                        <TextBlock>
-                                            <Run Text="{Binding Name}" />
-                                            <Run Text=" [" />
-                                            <Run Text="{Binding Key}" />
-                                            <Run Text="]" />
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </telerik:RadComboBox.ItemTemplate>
-                            </telerik:RadComboBox>
-
-                            <!-- Vertex Control -->
-                            <marv:VertexControl Grid.Row="1"
-                                                IsEditable="True"
-                                                IsEvidenceVisible="True"
-                                                IsInputVisible="True"
-                                                IsToolbarVisible="False"
-                                                IsBeliefVisible="False"
-                                                Margin="5"
-                                                Vertex="{Binding ElementName=Root, Path=Graph.SelectedVertex}"
-                                                Visibility="{Binding ElementName=Root, Path=Graph.SelectedVertex, Converter={StaticResource ResourceKey=NullToVisibility}}" 
-                                                EvidenceEntered="GraphControl_EvidenceEntered"/>
-                        </Grid>
-                    </telerik:RadPane>
-                </telerik:RadPaneGroup>
+             
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 

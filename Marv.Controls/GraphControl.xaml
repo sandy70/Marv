@@ -109,6 +109,19 @@
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
                                      Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
+
+                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                     SelectedIndex="0"
+                                     
+                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                                     SelectionChanged="SelectedVertexComboxBox_SelectionChanged"
+                                     CanKeyboardNavigationSelectItems="False"
+                                     IsEditable="True"
+                                     IsFilteringEnabled="True"
+                                     IsSynchronizedWithCurrentItem="False" 
+                                     Margin="0,4"
+                                     OpenDropDownOnFocus="True"
+                                     TextSearchMode="Contains" Width="121"/>
             </ToolBar>
         </ToolBarTray>
 
@@ -164,7 +177,7 @@
                     <Setter Property="IsEnabled" Value="{Binding ElementName=Root, Path=IsVerticesEnabled}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                     <EventSetter Event="PreviewMouseDown" Handler="RadDiagramShape_PreviewMouseDown" />
-                    
+
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
                             <DataTemplate DataType="common:Vertex">
