@@ -226,7 +226,6 @@
     <EmbeddedResource Include="WpfHost.resx">
       <DependentUpon>WpfHost.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Marv.ExcelNew_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

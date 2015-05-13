@@ -147,9 +147,6 @@
     <Compile Include="SliderProgressBar.xaml.cs">
       <DependentUpon>SliderProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StateControl.xaml.cs">
-      <DependentUpon>StateControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
@@ -192,10 +189,6 @@
     <Page Include="PopupControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="StateControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="VertexControl.xaml">
       <Generator>MSBuild:Compile</Generator>

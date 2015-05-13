@@ -9,6 +9,8 @@ namespace Marv.Controls.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null) return 0;
+
             var original = (double)value;
 
             if (original < 0)

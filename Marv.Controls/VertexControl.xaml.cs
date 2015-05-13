@@ -104,6 +104,18 @@ namespace Marv.Controls
             this.RaiseExpandButtonClicked();
         }
 
+        private void LockButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.IsBeliefVisible = false;
+            this.IsEditable = true;
+        }
+
+        private void LockButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.IsBeliefVisible = true;
+            this.IsEditable = false;
+        }
+
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence)
         {
             if (this.EvidenceEntered != null)
@@ -136,7 +148,7 @@ namespace Marv.Controls
         private void StateControl_OnValueEntered(object sender, double e)
         {
             var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
-                                       ? (sender as StateControl).State.Key
+                                       ? ((sender as SliderProgressBar).DataContext as State).Key
                                        : this.Vertex.States.Select(state => state.Evidence).String();
 
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);

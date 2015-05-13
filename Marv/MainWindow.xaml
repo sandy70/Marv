@@ -176,7 +176,7 @@
                             <marv:GraphControl Name="GraphControl"
                                                Grid.Row="0"
                                                Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                               Graph="{Binding ElementName=Root, Path=Graph}"
                                                IsAutoSaveEnabled="False" />
 
                             <Grid Grid.Row="1"
