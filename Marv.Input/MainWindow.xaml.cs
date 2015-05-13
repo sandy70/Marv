@@ -19,7 +19,6 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
-        private bool isVertexControlVisible = true;
         private ILineData lineData;
         private string lineDataFileName;
         private Network network;
@@ -119,22 +118,6 @@ namespace Marv.Input
                 }
 
                 this.isLineDataControlVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsVertexControlVisible
-        {
-            get { return this.isVertexControlVisible; }
-
-            set
-            {
-                if (value.Equals(this.isVertexControlVisible))
-                {
-                    return;
-                }
-
-                this.isVertexControlVisible = value;
                 this.RaisePropertyChanged();
             }
         }
