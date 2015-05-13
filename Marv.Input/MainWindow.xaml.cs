@@ -399,7 +399,9 @@ namespace Marv.Input
             foreach (var sectionId in this.LineData.SectionIds)
             {
                 var sectionEvidence = this.lineData.GetEvidence(sectionId);
-                this.lineData.SetBelief(sectionId, this.Network.Run(sectionEvidence));
+                var sectionBelief = this.Network.Run(sectionEvidence);
+
+                this.lineData.SetBelief(sectionId, sectionBelief);
             }
         }
 
