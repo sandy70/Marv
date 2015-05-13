@@ -97,7 +97,6 @@ namespace Marv.Controls
         public Graph Graph
         {
             get { return (Graph) this.GetValue(GraphProperty); }
-
             set { this.SetValue(GraphProperty, value); }
         }
 
@@ -261,12 +260,9 @@ namespace Marv.Controls
         public void Open(string fileName)
         {
             this.Network = Network.Read(fileName);
-
+            
             this.Graph = Graph.Read(this.Network);
             this.Graph.Belief = this.Network.GetBeliefs();
-
-            var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
-            this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
         }
 
         public void RaiseNotificationClosed(Notification notification)

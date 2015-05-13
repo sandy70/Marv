@@ -101,6 +101,7 @@ namespace Marv.Controls
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.IsExpanded = !this.IsExpanded;
+            this.RaiseExpandButtonClicked();
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence)
@@ -108,6 +109,14 @@ namespace Marv.Controls
             if (this.EvidenceEntered != null)
             {
                 this.EvidenceEntered(this, vertexEvidence);
+            }
+        }
+
+        private void RaiseExpandButtonClicked()
+        {
+            if (this.ExpandButtonClicked != null)
+            {
+                this.ExpandButtonClicked(this, new EventArgs());
             }
         }
 
@@ -161,7 +170,7 @@ namespace Marv.Controls
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
-
+        public event EventHandler ExpandButtonClicked;
         public event EventHandler ShowGroupButtonClicked;
     }
 }

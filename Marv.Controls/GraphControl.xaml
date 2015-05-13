@@ -180,6 +180,7 @@
                                                         EvidenceEntered="VertexControl_EvidenceEntered"
                                                         MouseEnter="VertexControl_MouseEnter"
                                                         MouseLeave="VertexControl_MouseLeave"
+                                                        ExpandButtonClicked="VertexControl_ExpandButtonClicked"
                                                         ShowGroupButtonClicked="VertexControl_ShowGroupButtonClicked" />
                             </DataTemplate>
                         </Setter.Value>
