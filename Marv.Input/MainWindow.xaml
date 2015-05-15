@@ -62,22 +62,7 @@
                         <telerik:RadPane Header="Input"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
-                            <local:LineDataControl x:Name="LineDataControl"
-                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
-                                                   IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
-                                                   NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
-                                                   SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
-                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}"
-                                                   CellContentChanged="LineDataControl_CellContentChanged"
-                                                   CellValidating="LineDataControl_CellValidating"
-                                                   RowAdded="LineDataControl_RowAdded"
-                                                   RowRemoved="LineDataControl_RowRemoved"
-                                                   RowSelected="LineDataControl_RowSelected"
-                                                   SectionIdPasting="LineDataControl_SectionIdPasting"
-                                                   SectionIdValidating="LineDataControl_SectionIdValidating"
-                                                   SelectedCellChanged="LineDataControl_SelectedCellChanged"/>
+                            <telerik:RadGridView ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
