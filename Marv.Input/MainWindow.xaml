@@ -62,7 +62,14 @@
                         <telerik:RadPane Header="Input"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Input Grid View -->
-                            <telerik:RadGridView ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}" />
+                            <telerik:RadGridView CanUserFreezeColumns="False"
+                                                 CanUserInsertRows="True"
+                                                 CanUserSortColumns="False"
+                                                 GroupRenderMode="Flat"
+                                                 ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}"
+                                                 NewRowPosition="Bottom"
+                                                 RowIndicatorVisibility="Collapsed"
+                                                 ShowGroupPanel="False" />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -74,7 +81,7 @@
                                                      HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
                                                      Title="{Binding ElementName=Root, Path=ChartTitle}"
                                                      EvidenceGenerated="LineDataChart_EvidenceGenerated"
-                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged"/>
+                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -102,7 +109,6 @@
                 </telerik:RadPaneGroup>
 
 
-             
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 

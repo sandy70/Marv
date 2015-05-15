@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -281,6 +282,7 @@ namespace Marv.Input
                     this.Table.Columns.Add("ID", typeof (string));
                     this.Table.Columns.Add("From", typeof (double));
                     this.Table.Columns.Add("To", typeof (double));
+                    this.Table.Columns.Add(DateTime.Now.ToString(), typeof (string));
 
                     this.Table.Rows.Add(this.Graph.SelectedVertex.Key, 0, 100);
 
