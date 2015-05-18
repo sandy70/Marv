@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Calendar;
 
 namespace Marv.Input
 {
@@ -17,6 +20,9 @@ namespace Marv.Input
     {
         private string chartTitle;
         private DataSet dataSet = new DataSet();
+        private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
+        private List<DateTime> dates;
+        private DateTime endDate = new DateTime(2011, 1, 1);
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
@@ -28,7 +34,7 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
         private int selectedYear;
-
+        private DateTime startDate = new DateTime(2010, 1, 1);
         private DataTable table;
 
         public string ChartTitle
@@ -43,6 +49,38 @@ namespace Marv.Input
                 }
 
                 this.chartTitle = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public DateSelectionMode DateSelectionMode
+        {
+            get { return this.dateSelectionMode; }
+
+            set
+            {
+                if (value.Equals(this.dateSelectionMode))
+                {
+                    return;
+                }
+
+                this.dateSelectionMode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public DateTime EndDate
+        {
+            get { return this.endDate; }
+
+            set
+            {
+                if (value.Equals(this.endDate))
+                {
+                    return;
+                }
+
+                this.endDate = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -207,6 +245,22 @@ namespace Marv.Input
             }
         }
 
+        public DateTime StartDate
+        {
+            get { return this.startDate; }
+
+            set
+            {
+                if (value.Equals(this.startDate))
+                {
+                    return;
+                }
+
+                this.startDate = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public DataTable Table
         {
             get { return this.table; }
@@ -227,6 +281,40 @@ namespace Marv.Input
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
+        }
+
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.dates = new List<DateTime>();
+
+            var date = this.StartDate;
+
+            while (date < this.EndDate)
+            {
+                var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
+                {
+                    { DateSelectionMode.Year, date.AddYears },
+                    { DateSelectionMode.Month, date.AddMonths },
+                    { DateSelectionMode.Day, i => date.AddDays(i) }
+                };
+
+                this.dates.Add(date);
+                date = incrementFuncs[this.DateSelectionMode](1);
+            }
+
+            this.dates.Add(date);
+
+            this.dataSet = new DataSet();
+
+            this.UpdateTable();
+        }
+
+        private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.StartDate > this.EndDate)
+            {
+                this.StartDate = this.EndDate;
+            }
         }
 
         private object GetChartCategory()
@@ -269,26 +357,7 @@ namespace Marv.Input
 
         private async void GraphControl_SelectionChanged(object sender, Vertex e)
         {
-            if (this.Graph.SelectedVertex != null)
-            {
-                if (this.dataSet.Tables.Contains(this.Graph.SelectedVertex.Key))
-                {
-                    this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
-                }
-                else
-                {
-                    this.Table = new DataTable(this.Graph.SelectedVertex.Key);
-
-                    this.Table.Columns.Add("ID", typeof (string));
-                    this.Table.Columns.Add("From", typeof (double));
-                    this.Table.Columns.Add("To", typeof (double));
-                    this.Table.Columns.Add(DateTime.Now.ToString(), typeof (string));
-
-                    this.Table.Rows.Add(this.Graph.SelectedVertex.Key, 0, 100);
-
-                    this.dataSet.Tables.Add(this.Table);
-                }
-            }
+            this.UpdateTable();
 
             if (this.LineData != null)
             {
@@ -319,6 +388,28 @@ namespace Marv.Input
                                                        ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
                                                        : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
+        }
+
+        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
+        {
+            var headerString = e.Column.Header as string;
+            
+            double val;
+
+            if (!headerString.StartsWith("T") || headerString.Length != 9 || !double.TryParse(headerString.Substring(1, 8), out val))
+            {
+                return;
+            }
+
+            e.Column.Header = new TextBlock
+            {
+                Text = headerString.Substring(5, 2) + "/" + headerString.Substring(7, 2) + "/" + headerString.Substring(1, 4)
+            };
+        }
+
+        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+        {
+            Console.WriteLine(e.Cell.DataColumn.DataMemberBinding.Path.Path);
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
@@ -457,9 +548,52 @@ namespace Marv.Input
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
+        private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.StartDate > this.EndDate)
+            {
+                this.EndDate = this.StartDate;
+            }
+        }
+
         private void UpdateChartTitle()
         {
             this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
+        }
+
+        private void UpdateTable()
+        {
+            if (this.Graph.SelectedVertex != null)
+            {
+                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
+
+                if (this.Table == null)
+                {
+                    if (this.dates == null)
+                    {
+                        this.dates = new List<DateTime>
+                        {
+                            this.StartDate,
+                            this.EndDate
+                        };
+                    }
+
+                    this.Table = new DataTable(this.Graph.SelectedVertex.Key);
+
+                    this.Table.Columns.Add("ID", typeof (string));
+                    this.Table.Columns.Add("From", typeof (double));
+                    this.Table.Columns.Add("Tonightes", typeof (double));
+
+                    foreach (var date in this.dates)
+                    {
+                        this.Table.Columns.Add(date.ToString("TyyyyMMdd"), typeof (string));
+                    }
+
+                    this.Table.Rows.Add("Section 1");
+
+                    this.dataSet.Tables.Add(this.Table);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
