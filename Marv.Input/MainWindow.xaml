@@ -1,10 +1,11 @@
 ﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:calendar="clr-namespace:Telerik.Windows.Controls.Calendar;assembly=Telerik.Windows.Controls.Input"
         xmlns:local="clr-namespace:Marv.Input"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized"
@@ -61,23 +62,72 @@
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="Input"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanNot}}">
-                            <!-- Input Grid View -->
-                            <local:LineDataControl x:Name="LineDataControl"
-                                                   EndYear="{Binding ElementName=Root, Path=LineData.EndYear, Mode=TwoWay}"
-                                                   IsEnabled="{Binding ElementName=Root, Path=LineData, Converter={StaticResource NullToBooleanReversed}}"
-                                                   NetworkFileName="{Binding ElementName=Root, Path=Graph.Network.FileName, Mode=TwoWay}"
-                                                   SelectedSectionId="{Binding ElementName=Root, Path=SelectedSectionId, Mode=TwoWay}"
-                                                   SelectedYear="{Binding ElementName=Root, Path=SelectedYear, Mode=TwoWay}"
-                                                   StartYear="{Binding ElementName=Root, Path=LineData.StartYear, Mode=TwoWay}"
-                                                   Visibility="{Binding ElementName=Root, Path=IsLineDataControlVisible, Converter={StaticResource BooleanToVisibility}}"
-                                                   CellContentChanged="LineDataControl_CellContentChanged"
-                                                   CellValidating="LineDataControl_CellValidating"
-                                                   RowAdded="LineDataControl_RowAdded"
-                                                   RowRemoved="LineDataControl_RowRemoved"
-                                                   RowSelected="LineDataControl_RowSelected"
-                                                   SectionIdPasting="LineDataControl_SectionIdPasting"
-                                                   SectionIdValidating="LineDataControl_SectionIdValidating"
-                                                   SelectedCellChanged="LineDataControl_SelectedCellChanged"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <ToolBarTray Grid.Row="0">
+                                    <!-- Define timeline toolbar  -->
+                                    <ToolBar>
+                                        <ToolBar.Resources>
+                                            <ObjectDataProvider MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}"
+                                                                x:Key="DateSelectionModes">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="calendar:DateSelectionMode" />
+                                                </ObjectDataProvider.MethodParameters>
+                                            </ObjectDataProvider>
+                                        </ToolBar.Resources>
+                                        <TextBlock Margin="4"
+                                                   Text="Start Time"
+                                                   VerticalAlignment="Center" />
+
+                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=StartDate}"
+                                                                   SelectionChanged="StartDateTimePicker_SelectionChanged" />
+
+                                        <TextBlock Margin="4"
+                                                   Text="End Time"
+                                                   VerticalAlignment="Center" />
+
+                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=EndDate}"
+                                                                   SelectionChanged="EndDateTimePicker_SelectionChanged"/>
+
+                                        <TextBlock Margin="4"
+                                                   Text="Interval"
+                                                   VerticalAlignment="Center" />
+
+                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
+                                                             SelectedIndex="0"
+                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}"/>
+                                        
+                                        <Button Content="Apply"
+                                                Padding="4"
+                                                Click="ApplyButton_Click"/>
+                                    </ToolBar>
+                                </ToolBarTray>
+
+                                <!-- Input Grid View -->
+                                <telerik:RadGridView Grid.Row="1"
+                                                     CanUserFreezeColumns="False"
+                                                     CanUserInsertRows="True"
+                                                     CanUserSortColumns="False"
+                                                     GroupRenderMode="Flat"
+                                                     IsFilteringAllowed="False"
+                                                     ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}"
+                                                     NewRowPosition="Bottom"
+                                                     RowIndicatorVisibility="Collapsed"
+                                                     ShowGroupPanel="False"
+                                                     AutoGeneratingColumn="GridView_AutoGeneratingColumn"
+                                                     CellEditEnded="GridView_CellEditEnded">
+                                    
+                                </telerik:RadGridView>
+                            </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -89,7 +139,7 @@
                                                      HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
                                                      Title="{Binding ElementName=Root, Path=ChartTitle}"
                                                      EvidenceGenerated="LineDataChart_EvidenceGenerated"
-                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged"/>
+                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -108,7 +158,7 @@
                             <marv:GraphControl Grid.Row="0"
                                                Background="WhiteSmoke"
                                                Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
-                                               Network="{Binding ElementName=Root, Path=Network}"
+                                               Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                                EvidenceEntered="GraphControl_EvidenceEntered"
                                                GraphChanged="GraphControl_GraphChanged"
                                                SelectionChanged="GraphControl_SelectionChanged" />
@@ -117,7 +167,6 @@
                 </telerik:RadPaneGroup>
 
 
-             
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 

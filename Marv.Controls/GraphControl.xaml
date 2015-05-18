@@ -114,12 +114,11 @@
                                      SelectedIndex="0"
                                      
                                      SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                     SelectionChanged="SelectedVertexComboxBox_SelectionChanged"
+                                     SelectionChanged="VertexComboxBox_SelectionChanged"
                                      CanKeyboardNavigationSelectItems="False"
                                      IsEditable="True"
                                      IsFilteringEnabled="True"
                                      IsSynchronizedWithCurrentItem="False" 
-                                     Margin="0,4"
                                      OpenDropDownOnFocus="True"
                                      TextSearchMode="Contains" Width="121"/>
             </ToolBar>
