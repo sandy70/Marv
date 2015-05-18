@@ -250,11 +250,6 @@ namespace Marv.Controls
 
             control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
 
-            if (control.Graph.Vertices.Count > 0)
-            {
-                control.Graph.SelectedVertex = control.Graph.GetSink();
-            }
-
             control.SelectedGroup = control.Graph.DefaultGroup;
         }
 
@@ -410,6 +405,8 @@ namespace Marv.Controls
             {
                 var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
                 this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
+
+                this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
             }
         }
 
@@ -559,9 +556,9 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void SelectedVertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.Graph.SelectedVertex != null)
+            if (this.Graph.SelectedVertex != null && !this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
             {
                 this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
             }
