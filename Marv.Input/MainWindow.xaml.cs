@@ -28,6 +28,7 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
+        private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
         private Network network;
@@ -177,6 +178,22 @@ namespace Marv.Input
                 }
 
                 this.isLineDataControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsTimelineToolbarVisible
+        {
+            get { return this.isTimelineToolbarVisible; }
+
+            set
+            {
+                if (value.Equals(this.isTimelineToolbarVisible))
+                {
+                    return;
+                }
+
+                this.isTimelineToolbarVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -347,6 +364,11 @@ namespace Marv.Input
             this.dataSet = new DataSet();
 
             this.UpdateTable();
+        }
+
+        private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsTimelineToolbarVisible = true;
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)

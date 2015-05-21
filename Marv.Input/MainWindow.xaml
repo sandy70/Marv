@@ -35,8 +35,13 @@
 
                 <MenuItem Header="SaveAs"
                           Click="LineDataSaveAsMenuItem_Click" />
+                
+                <Separator />
+                
+                <MenuItem Header="Define Timeline"
+                          Click="DefineTimelineMenuItem_Click"></MenuItem>
             </MenuItem>
-
+            
             <MenuItem Header="Run">
                 <MenuItem Header="Section"
                           Click="RunSectionMenuItem_Click" />
@@ -69,8 +74,8 @@
                                 </Grid.RowDefinitions>
 
                                 <ToolBarTray Grid.Row="0">
-                                    <!-- Define timeline toolbar  -->
-                                    <ToolBar>
+                                    <!-- Define timeline toolbar -->
+                                    <ToolBar Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}"
