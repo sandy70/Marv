@@ -74,7 +74,7 @@
                                 </Grid.RowDefinitions>
 
                                 <ToolBarTray Grid.Row="0">
-                                    <!-- Define timeline toolbar -->
+                                    <!-- Define Timeline Toolbar -->
                                     <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
                                              Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <ToolBar.Resources>
@@ -146,13 +146,11 @@
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
-                            <Grid>
                                 <local:LineDataChart x:Name="LineDataChart"
                                                      HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
                                                      Title="{Binding ElementName=Root, Path=ChartTitle}"
                                                      EvidenceGenerated="LineDataChart_EvidenceGenerated"
                                                      HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged" />
-                            </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
@@ -161,24 +159,14 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="32" />
-                            </Grid.RowDefinitions>
-
-                            <marv:GraphControl Grid.Row="0"
-                                               Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
-                                               Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
-                                               EvidenceEntered="GraphControl_EvidenceEntered"
-                                               GraphChanged="GraphControl_GraphChanged"
-                                               SelectionChanged="GraphControl_SelectionChanged" />
-                        </Grid>
+                        <marv:GraphControl Background="WhiteSmoke"
+                                           Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                                           Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
+                                           EvidenceEntered="GraphControl_EvidenceEntered"
+                                           GraphChanged="GraphControl_GraphChanged"
+                                           SelectionChanged="GraphControl_SelectionChanged" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
-
-
             </telerik:RadSplitContainer>
         </telerik:RadDocking>
 

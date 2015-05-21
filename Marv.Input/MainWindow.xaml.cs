@@ -22,7 +22,7 @@ namespace Marv.Input
         private DataSet dataSet = new DataSet();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates;
-        private DateTime endDate = new DateTime(2011, 1, 1);
+        private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
@@ -35,7 +35,7 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
         private int selectedYear;
-        private DateTime startDate = new DateTime(2010, 1, 1);
+        private DateTime startDate = DateTime.Now;
         private LineDataTable table;
         private LineDataSet lineDataSet = new LineDataSet();
       
@@ -346,15 +346,15 @@ namespace Marv.Input
 
             var date = this.StartDate;
 
+            var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
+            {
+                { DateSelectionMode.Year, date.AddYears },
+                { DateSelectionMode.Month, date.AddMonths },
+                { DateSelectionMode.Day, i => date.AddDays(i) }
+            };
+
             while (date < this.EndDate)
             {
-                var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
-                {
-                    { DateSelectionMode.Year, date.AddYears },
-                    { DateSelectionMode.Month, date.AddMonths },
-                    { DateSelectionMode.Day, i => date.AddDays(i) }
-                };
-
                 this.dates.Add(date);
                 date = incrementFuncs[this.DateSelectionMode](1);
             }
@@ -783,8 +783,7 @@ namespace Marv.Input
                     {
                         this.dates = new List<DateTime>
                         {
-                            this.StartDate,
-                            this.EndDate
+                            DateTime.Now
                         };
                     }
 
