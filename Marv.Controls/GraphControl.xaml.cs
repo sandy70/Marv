@@ -633,5 +633,7 @@ namespace Marv.Controls
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<Vertex> SelectionChanged;
+
+   
     }
 }
