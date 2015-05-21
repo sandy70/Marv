@@ -35,13 +35,13 @@
 
                 <MenuItem Header="SaveAs"
                           Click="LineDataSaveAsMenuItem_Click" />
-                
+
                 <Separator />
-                
+
                 <MenuItem Header="Define Timeline"
-                          Click="DefineTimelineMenuItem_Click"></MenuItem>
+                          Click="DefineTimelineMenuItem_Click" />
             </MenuItem>
-            
+
             <MenuItem Header="Run">
                 <MenuItem Header="Section"
                           Click="RunSectionMenuItem_Click" />
@@ -75,7 +75,8 @@
 
                                 <ToolBarTray Grid.Row="0">
                                     <!-- Define timeline toolbar -->
-                                    <ToolBar Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
+                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
+                                             Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}"
@@ -101,7 +102,7 @@
                                         <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
                                                                    InputMode="DatePicker"
                                                                    SelectedValue="{Binding ElementName=Root, Path=EndDate}"
-                                                                   SelectionChanged="EndDateTimePicker_SelectionChanged"/>
+                                                                   SelectionChanged="EndDateTimePicker_SelectionChanged" />
 
                                         <TextBlock Margin="4"
                                                    Text="Interval"
@@ -109,15 +110,15 @@
 
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
                                                              SelectedIndex="0"
-                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}"/>
-                                        
+                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}" />
+
                                         <Button Content="Apply"
                                                 Padding="4"
-                                                Click="ApplyButton_Click"/>
-                                        
+                                                Click="ApplyButton_Click" />
+
                                         <Button Content="Close"
                                                 Padding="4"
-                                                Click="CloseButton_Click"></Button>
+                                                Click="CloseButton_Click" />
                                     </ToolBar>
                                 </ToolBarTray>
 
