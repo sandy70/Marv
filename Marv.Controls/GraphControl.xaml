@@ -12,8 +12,10 @@
              Unloaded="GraphControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+       
     </UserControl.Resources>
-
+   
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -21,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <ToolBarTray Grid.Row="0"
-                     IsLocked="False">
+                     IsLocked="False" Margin="0,0,-179,0">
             <ToolBarTray.Resources>
                 <Style TargetType="telerik:RadButton">
                     <Setter Property="Height" Value="32" />
@@ -63,7 +65,7 @@
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0"
-                     Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
+                     Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}" Margin="0,0,-134,0">
                 <telerik:RadButton ToolTip="Opens a preexisting network."
                                    Click="OpenButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
@@ -121,7 +123,16 @@
                                      IsSynchronizedWithCurrentItem="False" 
                                      OpenDropDownOnFocus="True"
                                      TextSearchMode="Contains" Width="121"/>
+                <TextBox Height="40" 
+                         IsReadOnly ="True"
+                         Margin="0"
+                         TextWrapping="Wrap"
+                         Text="{Binding ElementName=Root, Path=Network.FileName, Converter= {StaticResource FilePathToFileName}}"
+                         VerticalAlignment="Top"
+                         Width="181"/>
+  
             </ToolBar>
+
         </ToolBarTray>
 
         <telerik:RadDiagram Name="Diagram"
