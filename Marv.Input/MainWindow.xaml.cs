@@ -366,6 +366,11 @@ namespace Marv.Input
             this.UpdateTable();
         }
 
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsTimelineToolbarVisible = false;
+        }
+
         private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.IsTimelineToolbarVisible = true;

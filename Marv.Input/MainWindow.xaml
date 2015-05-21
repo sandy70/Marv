@@ -114,6 +114,10 @@
                                         <Button Content="Apply"
                                                 Padding="4"
                                                 Click="ApplyButton_Click"/>
+                                        
+                                        <Button Content="Close"
+                                                Padding="4"
+                                                Click="CloseButton_Click"></Button>
                                     </ToolBar>
                                 </ToolBarTray>
 
