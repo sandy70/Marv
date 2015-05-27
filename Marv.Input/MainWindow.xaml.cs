@@ -36,6 +36,20 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = new DateTime(2010, 1, 1);
         private LineDataTable table;
+        private LineDataSet lineDataSet = new LineDataSet();
+      
+        public  LineDataSet LineDataSet
+        {
+            get { return lineDataSet; }
+            set
+            {
+                lineDataSet = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
+        
+       
         // private double defaultTo;
         // private double defaultFrom;
 
@@ -279,6 +293,8 @@ namespace Marv.Input
             }
         }
 
+
+
 /*        public double DefaultFrom
         {
             get { return this.defaultFrom; }
@@ -382,7 +398,7 @@ namespace Marv.Input
         private async void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();
-
+            
             if (this.LineData != null)
             {
                 var selectedVertex = this.Graph.SelectedVertex;
@@ -562,6 +578,14 @@ namespace Marv.Input
                             }
                           break;
             }
+
+        /*    var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
+            }*/
           
         }
 
@@ -688,13 +712,19 @@ namespace Marv.Input
                 var sectionBelief = this.Network.Run(sectionEvidence);
 
                 this.lineData.SetBelief(sectionId, sectionBelief);
+                
             }
+
+             DataSet mergedDataSet =  this.lineDataSet.GetMergerdDataSet(this.dataSet);
+            
+
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
+            
             var sectionBelief = this.Network.Run(sectionEvidence);
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
