@@ -136,17 +136,31 @@
                                                      ShowGroupPanel="False"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
-                                                     CellValidating="GridView_CellValidating">
-                                    
-                                </telerik:RadGridView>
-                               </Grid>
+                                                     CellValidating="GridView_CellValidating" />
+                            </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
-                                <telerik:RadCartesianChart />
+                            <telerik:RadCartesianChart>
+                                <telerik:RadCartesianChart.HorizontalAxis>
+                                    <telerik:LinearAxis Maximum="100"
+                                                        Minimum="0" />
+                                </telerik:RadCartesianChart.HorizontalAxis>
+
+                                <telerik:RadCartesianChart.VerticalAxis>
+                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMax}"
+                                                        Minimum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMin}" />
+                                </telerik:RadCartesianChart.VerticalAxis>
+                                
+                                <telerik:RadCartesianChart.Series>
+                                    <telerik:ScatterPointSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
+                                                                XValueBinding="XValue"
+                                                                YValueBinding="YValue" />
+                                </telerik:RadCartesianChart.Series>
+                            </telerik:RadCartesianChart>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>

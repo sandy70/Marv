@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
@@ -11,8 +12,10 @@ using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
 using Microsoft.Win32;
+using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
@@ -37,8 +40,8 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private DataTable table;
-        private LineDataSet lineDataSet = new LineDataSet();
-      
+        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
+        private NumericalAxis verticalAxis;
         public  LineDataSet LineDataSet
         {
             get { return lineDataSet; }
@@ -308,7 +311,37 @@ namespace Marv.Input
             }
         }
 
+        public ObservableCollection<ScatterDataPoint> UserNumberPoints
+        {
+            get { return this.userNumberPoints; }
 
+            set
+            {
+                if (value.Equals(this.userNumberPoints))
+                {
+                    return;
+                }
+
+                this.userNumberPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public NumericalAxis VerticalAxis
+        {
+            get { return this.verticalAxis; }
+
+            set
+            {
+                if (value.Equals(this.verticalAxis))
+                {
+                    return;
+                }
+
+                this.verticalAxis = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public MainWindow()
         {
@@ -456,7 +489,18 @@ namespace Marv.Input
             {
                 var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
 
+                if (vertexEvidence.Type == VertexEvidenceType.Number)
+                {
+                    var dataRow = (e.Cell.ParentRow.DataContext as DataRowView).Row;
+                    var from = (double) dataRow["From"];
+                    var to = (double) dataRow["To"];
 
+                    this.UserNumberPoints.Add(new ScatterDataPoint
+                    {
+                        XValue = (from + to) / 2,
+                        YValue = vertexEvidence.Params[0]
+                    });
+                }
             }
         }
 
