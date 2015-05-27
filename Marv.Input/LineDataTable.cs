@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace Marv.Input
 {
@@ -11,8 +6,7 @@ namespace Marv.Input
     {
         public LineDataTable(string tableName) : base(tableName)
         {
-            this.RowChanged +=LineDataTable_RowChanged;
-           
+            this.RowChanged += LineDataTable_RowChanged;
         }
 
         private void LineDataTable_RowChanged(object sender, DataRowChangeEventArgs e)
@@ -33,8 +27,6 @@ namespace Marv.Input
                     e.Row["To"] = previousRow["To"];
                 }
             }
-
         }
-
     }
 }

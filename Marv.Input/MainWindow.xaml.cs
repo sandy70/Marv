@@ -468,12 +468,12 @@ namespace Marv.Input
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             DateTime dateTime;
-            
+
             var columnName = e.Cell.Column.UniqueName;
-            
+
             if (columnName.TryParse(out dateTime))
             {
-                var vertexEvidence = (e.Cell.ParentRow.DataContext as DataRowView).Row[columnName] as VertexEvidence;
+                var vertexEvidence = e.Cell.Value as VertexEvidence;
 
                 if (vertexEvidence.Type == VertexEvidenceType.Number)
                 {
@@ -604,7 +604,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    dataRowView.Row[colName] = vertexEvidence; 
+                    dataRowView.Row[colName] = vertexEvidence;
                 }
             }
         }
@@ -788,7 +788,7 @@ namespace Marv.Input
                         };
                     }
 
-                    this.Table = new DataTable(this.Graph.SelectedVertex.Key);
+                    this.Table = new LineDataTable(this.Graph.SelectedVertex.Key);
 
                     this.Table.Columns.Add("ID", typeof (string));
                     this.Table.Columns.Add("From", typeof (double));
@@ -799,7 +799,7 @@ namespace Marv.Input
                         this.Table.Columns.Add(date.String(), typeof (VertexEvidence));
                     }
 
-                    this.Table.Rows.Add("Section 1", 0, 10, new VertexEvidence { Params = new []{0.0, 5, 6}, Type = VertexEvidenceType.Triangular});
+                    this.Table.Rows.Add("Section 1");
 
                     this.Table.PrimaryKey = new[] { this.Table.Columns["ID"] }; // Setting "Section ID" as the primary key of the data table
 

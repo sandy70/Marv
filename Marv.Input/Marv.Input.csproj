@@ -203,6 +203,9 @@
     <Compile Include="LineDataSet.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LineDataTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainWindow.LineDataControl.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="RowAddedEventArgs.cs" />
