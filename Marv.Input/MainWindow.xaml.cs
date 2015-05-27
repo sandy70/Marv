@@ -36,7 +36,7 @@ namespace Marv.Input
         private string selectedSectionId;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
-        private LineDataTable table;
+        private DataTable table;
         private LineDataSet lineDataSet = new LineDataSet();
       
         public  LineDataSet LineDataSet
@@ -51,8 +51,6 @@ namespace Marv.Input
         
         
        
-        // private double defaultTo;
-        // private double defaultFrom;
 
         public string ChartTitle
         {
@@ -294,7 +292,7 @@ namespace Marv.Input
             }
         }
 
-        public LineDataTable Table
+        public DataTable Table
         {
             get { return this.table; }
 
@@ -311,28 +309,6 @@ namespace Marv.Input
         }
 
 
-
-/*        public double DefaultFrom
-        {
-            get { return this.defaultFrom; }
-
-            set
-            {
-                this.defaultFrom = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double DefaultTo
-        {
-            get { return this.defaultTo; }
-
-            set
-            {
-                this.defaultTo = value;
-                this.RaisePropertyChanged();
-            }
-        }*/
 
         public MainWindow()
         {
@@ -422,7 +398,7 @@ namespace Marv.Input
             }
         }
 
-        private async void GraphControl_SelectionChanged(object sender, Vertex e)
+        private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();
             
@@ -432,15 +408,15 @@ namespace Marv.Input
 
                 //this.LineDataControl.ClearRows();
 
-                foreach (var sectionId in this.LineData.SectionIds)
-                {
-                    var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
+                //foreach (var sectionId in this.LineData.SectionIds)
+                //{
+                //    // var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
 
-                    if (selectedVertex != null)
-                    {
-                        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
-                    }
-                }
+                //    if (selectedVertex != null)
+                //    {
+                //        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
+                //    }
+                //}
 
                 if (selectedVertex == null)
                 {
@@ -461,23 +437,20 @@ namespace Marv.Input
         {
             var headerString = e.Column.Header as string;
 
-            double val;
+            DateTime dateTime;
 
-            if (!headerString.StartsWith("T") || headerString.Length != 9 || !double.TryParse(headerString.Substring(1, 8), out val))
+            if (headerString.TryParse(out dateTime))
             {
-                return;
+                e.Column.Header = new TextBlock
+                {
+                    Text = dateTime.ToShortDateString()
+                };
             }
-
-            e.Column.Header = new TextBlock
-            {
-                Text = headerString.Substring(5, 2) + "/" + headerString.Substring(7, 2) + "/" + headerString.Substring(1, 4)
-            };
         }
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             Console.WriteLine(e.Cell.DataColumn.DataMemberBinding.Path.Path);
-
         }
 
         private void InputGridView_OnCellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -489,123 +462,106 @@ namespace Marv.Input
             switch (colName)
             {
                 case "ID":
-                
-                           
-                           var foundRow = this.Table.Rows.Find(e.NewValue.ToString());
 
-                            if (foundRow != null)
-                            {
-                                e.IsValid = false;
-                                MessageBox.Show("section already exists. Create a new one");
-                       
-                            }
-                             break;
-                
+                    var foundRow = this.Table.Rows.Find(e.NewValue.ToString());
+
+                    if (foundRow != null)
+                    {
+                        e.IsValid = false;
+                        MessageBox.Show("section already exists. Create a new one");
+                    }
+                    break;
+
                 case "From":
 
-                            if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
+                    if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
+                    {
+                        var fromValue = (double) e.NewValue;
+
+                        if (!DBNull.Value.Equals(dataRowView.Row["To"]))
+                        {
+                            var toValue = (double) dataRowView.Row["To"];
+
+                            if (fromValue > toValue && toValue != 0)
                             {
-                                var fromValue = (double) e.NewValue;
-                 
-                                if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                                {
-                                        var toValue = (double)dataRowView.Row["To"];
-
-                                        if (fromValue > toValue && toValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                           
-                                        }
-                                 }
+                                e.IsValid = false;
                             }
-                            else
+                        }
+                    }
+                    else
+                    {
+                        var index = this.Table.Rows.IndexOf(dataRowView.Row);
+
+                        var previousRow = this.Table.Rows[index - 1];
+
+                        var fromValue = (double) e.NewValue;
+
+                        if (!DBNull.Value.Equals(previousRow["To"]))
+                        {
+                            var previousToValue = (double) previousRow["To"];
+
+                            if (fromValue < previousToValue && previousToValue != 0)
                             {
-                                var index = this.Table.Rows.IndexOf(dataRowView.Row);
-                   
-                                var previousRow = this.Table.Rows[index - 1];
-
-                                var fromValue = (double) e.NewValue;
-
-                                if (!DBNull.Value.Equals(previousRow["To"]))
-                                {
-                        
-                                        var previousToValue = (double) previousRow["To"];
-
-                                        if (fromValue < previousToValue && previousToValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                            
-                                        }
-                        
-                                }
-                                if (! DBNull.Value.Equals(dataRowView.Row["To"]))
-                                {
-                        
-                                        var toValue = (double) dataRowView.Row["To"];
-
-                                        if (fromValue > toValue && toValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                
-                                        }
-                                        
-                                }
+                                e.IsValid = false;
                             }
+                        }
+                        if (! DBNull.Value.Equals(dataRowView.Row["To"]))
+                        {
+                            var toValue = (double) dataRowView.Row["To"];
 
-                            break;
+                            if (fromValue > toValue && toValue != 0)
+                            {
+                                e.IsValid = false;
+                            }
+                        }
+                    }
+
+                    break;
                 case "To":
 
-                            if (this.Table.Rows.IndexOf(dataRowView.Row) == this.Table.Rows.Count - 1) 
+                    if (this.Table.Rows.IndexOf(dataRowView.Row) == this.Table.Rows.Count - 1)
+                    {
+                        var toValue = (double) e.NewValue;
+
+                        if (!DBNull.Value.Equals(dataRowView.Row["From"]))
+                        {
+                            var fromValue = (double) dataRowView.Row["From"];
+
+                            if (toValue < fromValue && fromValue != 0)
                             {
-                                var toValue = (double) e.NewValue;
-
-                                if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                                {
-                        
-                                        var fromValue = (double) dataRowView.Row["From"];
-
-                                        if (toValue < fromValue && fromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
-                                }
+                                e.IsValid = false;
                             }
-                            else
+                        }
+                    }
+                    else
+                    {
+                        var index = this.Table.Rows.IndexOf(dataRowView.Row);
+                        var nextRow = this.Table.Rows[index + 1];
+
+                        var toValue = (double) e.NewValue;
+
+                        if (!DBNull.Value.Equals(nextRow["From"]))
+                        {
+                            var nextFromValue = (double) nextRow["From"];
+
+                            if (toValue > nextFromValue && nextFromValue != 0)
                             {
-                                var index = this.Table.Rows.IndexOf(dataRowView.Row);
-                                var nextRow = this.Table.Rows[index + 1];
-
-                                var toValue = (double) e.NewValue;
-
-                                if (!DBNull.Value.Equals(nextRow["From"]))
-                                {
-                        
-                                        var nextFromValue = (double) nextRow["From"];
-
-                                        if (toValue > nextFromValue && nextFromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
-                                }
-
-                                if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                                {
-                        
-                                        var fromValue = (double) dataRowView.Row["From"];
-
-                                        if (toValue < fromValue && fromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
-
-                                }
+                                e.IsValid = false;
                             }
-                          break;
+                        }
+
+                        if (!DBNull.Value.Equals(dataRowView.Row["From"]))
+                        {
+                            var fromValue = (double) dataRowView.Row["From"];
+
+                            if (toValue < fromValue && fromValue != 0)
+                            {
+                                e.IsValid = false;
+                            }
+                        }
+                    }
+                    break;
             }
-
         /*    var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
             if (vertexEvidence.Type == VertexEvidenceType.Invalid)
@@ -707,7 +663,7 @@ namespace Marv.Input
             this.PropertyChanged += MainWindow_PropertyChanged;
         }
 
-        private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "LineData")
             {
@@ -715,10 +671,10 @@ namespace Marv.Input
                 {
                     //this.LineDataControl.ClearRows();
 
-                    foreach (var sectionId in this.LineData.SectionIds)
-                    {
-                        //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
-                    }
+                    //foreach (var sectionId in this.LineData.SectionIds)
+                    //{
+                    //    //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                    //}
                 }
             }
         }
@@ -775,7 +731,7 @@ namespace Marv.Input
         {
             if (this.Graph.SelectedVertex != null)
             {
-                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key] as LineDataTable;
+                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
 
                 if (this.Table == null)
                 {
@@ -787,7 +743,7 @@ namespace Marv.Input
                         };
                     }
 
-                    this.Table = new LineDataTable(this.Graph.SelectedVertex.Key);
+                    this.Table = new DataTable(this.Graph.SelectedVertex.Key);
 
                     this.Table.Columns.Add("ID", typeof (string));
                     this.Table.Columns.Add("From", typeof (double));
@@ -795,11 +751,11 @@ namespace Marv.Input
 
                     foreach (var date in this.dates)
                     {
-                        this.Table.Columns.Add(date.ToString("TyyyyMMdd"), typeof (string));
+                        this.Table.Columns.Add(date.String(), typeof (string));
                     }
 
                     this.Table.Rows.Add("Section 1");
-                    
+
                     this.Table.PrimaryKey = new[] { this.Table.Columns["ID"] }; // Setting "Section ID" as the primary key of the data table
 
                     this.dataSet.Tables.Add(this.Table);
@@ -808,6 +764,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
     }
 }
