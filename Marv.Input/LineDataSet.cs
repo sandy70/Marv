@@ -39,7 +39,6 @@ namespace Marv.Input
             }
 
             this.NewList.Sort(); // sorting the new list
-
          
             foreach (DataTable table in tables)
             {

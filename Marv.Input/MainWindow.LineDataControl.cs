@@ -37,7 +37,7 @@ namespace Marv.Input
                 var year = e.CellModel.Year;
 
                 this.LineData.SetEvidence(sectionId, year, this.Graph.SelectedVertex.Key, vertexEvidence);
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(sectionId, year), vertexEvidence);
+                // this.LineDataChart.SetUserEvidence(this.GetChartCategory(sectionId, year), vertexEvidence);
             }
         }
 
@@ -69,9 +69,9 @@ namespace Marv.Input
 
             this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
 
-            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+            //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
         }
 
         private void LineDataControl_SectionIdPasting(object sender, GridViewCellClipboardEventArgs e)
@@ -123,9 +123,9 @@ namespace Marv.Input
             if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
                 (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
             {
-                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
                 this.UpdateChartTitle();
             }
 

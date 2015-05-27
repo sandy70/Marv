@@ -38,22 +38,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mc-base">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-base.dll</HintPath>
+      <HintPath>..\lib\MultiCorp\mc-base.dll</HintPath>
     </Reference>
     <Reference Include="mc-composition">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-composition.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-condensation">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-condensation.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-corrosion">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-corrosion.dll</HintPath>
+      <HintPath>..\lib\MultiCorp\mc-composition.dll</HintPath>
     </Reference>
     <Reference Include="mc-corrosioncase">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-corrosioncase.dll</HintPath>
+      <HintPath>..\lib\MultiCorp\mc-corrosioncase.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-flow">
+      <HintPath>..\lib\MultiCorp\mc-flow.dll</HintPath>
     </Reference>
     <Reference Include="mc-modeling">
-      <HintPath>..\..\..\Downloads\Multicorp DLL (unreleased)\mc-modeling.dll</HintPath>
+      <HintPath>..\lib\MultiCorp\mc-modeling.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

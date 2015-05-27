@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
@@ -11,8 +12,11 @@ using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
 using Microsoft.Win32;
+using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
+using Telerik.Windows.Controls.ChartView;
+using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -22,36 +26,24 @@ namespace Marv.Input
         private DataSet dataSet = new DataSet();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates;
-        private DateTime endDate = new DateTime(2011, 1, 1);
+        private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
+        private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
+        private LineDataSet lineDataSet;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
         private int selectedYear;
-        private DateTime startDate = new DateTime(2010, 1, 1);
-        private LineDataTable table;
-        private LineDataSet lineDataSet = new LineDataSet();
-      
-        public  LineDataSet LineDataSet
-        {
-            get { return lineDataSet; }
-            set
-            {
-                lineDataSet = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
-        
-       
-        // private double defaultTo;
-        // private double defaultFrom;
+        private DateTime startDate = DateTime.Now;
+        private DataTable table;
+        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
+        private NumericalAxis verticalAxis;
 
         public string ChartTitle
         {
@@ -181,6 +173,22 @@ namespace Marv.Input
             }
         }
 
+        public bool IsTimelineToolbarVisible
+        {
+            get { return this.isTimelineToolbarVisible; }
+
+            set
+            {
+                if (value.Equals(this.isTimelineToolbarVisible))
+                {
+                    return;
+                }
+
+                this.isTimelineToolbarVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public ILineData LineData
         {
             get { return this.lineData; }
@@ -193,6 +201,16 @@ namespace Marv.Input
                 }
 
                 this.lineData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public LineDataSet LineDataSet
+        {
+            get { return lineDataSet; }
+            set
+            {
+                lineDataSet = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -277,7 +295,7 @@ namespace Marv.Input
             }
         }
 
-        public LineDataTable Table
+        public DataTable Table
         {
             get { return this.table; }
 
@@ -293,29 +311,21 @@ namespace Marv.Input
             }
         }
 
-
-
-/*        public double DefaultFrom
+        public ObservableCollection<ScatterDataPoint> UserNumberPoints
         {
-            get { return this.defaultFrom; }
+            get { return this.userNumberPoints; }
 
             set
             {
-                this.defaultFrom = value;
+                if (value.Equals(this.userNumberPoints))
+                {
+                    return;
+                }
+
+                this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
         }
-
-        public double DefaultTo
-        {
-            get { return this.defaultTo; }
-
-            set
-            {
-                this.defaultTo = value;
-                this.RaisePropertyChanged();
-            }
-        }*/
 
         public MainWindow()
         {
@@ -329,15 +339,15 @@ namespace Marv.Input
 
             var date = this.StartDate;
 
+            var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
+            {
+                { DateSelectionMode.Year, date.AddYears },
+                { DateSelectionMode.Month, date.AddMonths },
+                { DateSelectionMode.Day, i => date.AddDays(i) }
+            };
+
             while (date < this.EndDate)
             {
-                var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
-                {
-                    { DateSelectionMode.Year, date.AddYears },
-                    { DateSelectionMode.Month, date.AddMonths },
-                    { DateSelectionMode.Day, i => date.AddDays(i) }
-                };
-
                 this.dates.Add(date);
                 date = incrementFuncs[this.DateSelectionMode](1);
             }
@@ -347,6 +357,16 @@ namespace Marv.Input
             this.dataSet = new DataSet();
 
             this.UpdateTable();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsTimelineToolbarVisible = false;
+        }
+
+        private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.IsTimelineToolbarVisible = true;
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -376,13 +396,8 @@ namespace Marv.Input
 
             if (vertexEvidence == null)
             {
-                this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
+                // this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 // this.LineDataControl.ClearSelectedCell();
-            }
-            else
-            {
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
-                // this.LineDataControl.SetEvidence(vertexEvidence);
             }
         }
 
@@ -395,25 +410,25 @@ namespace Marv.Input
             }
         }
 
-        private async void GraphControl_SelectionChanged(object sender, Vertex e)
+        private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();
-            
+
             if (this.LineData != null)
             {
                 var selectedVertex = this.Graph.SelectedVertex;
 
                 //this.LineDataControl.ClearRows();
 
-                foreach (var sectionId in this.LineData.SectionIds)
-                {
-                    var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
+                //foreach (var sectionId in this.LineData.SectionIds)
+                //{
+                //    // var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
 
-                    if (selectedVertex != null)
-                    {
-                        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
-                    }
-                }
+                //    if (selectedVertex != null)
+                //    {
+                //        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
+                //    }
+                //}
 
                 if (selectedVertex == null)
                 {
@@ -422,171 +437,188 @@ namespace Marv.Input
 
                 var intervals = selectedVertex.Intervals.ToArray();
 
-                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
+                //this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
 
-                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
+        }
+
+        private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
+        {
+            e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             var headerString = e.Column.Header as string;
 
-            double val;
+            DateTime dateTime;
 
-            if (!headerString.StartsWith("T") || headerString.Length != 9 || !double.TryParse(headerString.Substring(1, 8), out val))
+            if (headerString.TryParse(out dateTime))
             {
-                return;
+                e.Column.Header = new TextBlock
+                {
+                    Text = dateTime.ToShortDateString()
+                };
             }
-
-            e.Column.Header = new TextBlock
-            {
-                Text = headerString.Substring(5, 2) + "/" + headerString.Substring(7, 2) + "/" + headerString.Substring(1, 4)
-            };
         }
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            Console.WriteLine(e.Cell.DataColumn.DataMemberBinding.Path.Path);
+            DateTime dateTime;
 
+            var columnName = e.Cell.Column.UniqueName;
+
+            if (columnName.TryParse(out dateTime))
+            {
+                var vertexEvidence = e.Cell.Value as VertexEvidence;
+
+                if (vertexEvidence.Type == VertexEvidenceType.Number)
+                {
+                    var dataRow = (e.Cell.ParentRow.DataContext as DataRowView).Row;
+                    var from = (double) dataRow["From"];
+                    var to = (double) dataRow["To"];
+
+                    this.UserNumberPoints.Add(new ScatterDataPoint
+                    {
+                        XValue = (from + to) / 2,
+                        YValue = vertexEvidence.Params[0]
+                    });
+                }
+            }
         }
 
-        private void InputGridView_OnCellValidating(object sender, GridViewCellValidatingEventArgs e)
+        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var dataRowView = e.Cell.DataContext as DataRowView;
 
             var colName = e.Cell.Column.UniqueName;
 
-            switch (colName)
+            if (colName == "ID")
             {
-                case "ID":
-                
-                           
-                           var foundRow = this.Table.Rows.Find(e.NewValue.ToString());
+                var foundRow = this.Table.Rows.Find(e.NewValue.ToString());
 
-                            if (foundRow != null)
-                            {
-                                e.IsValid = false;
-                                MessageBox.Show("section already exists. Create a new one");
-                       
-                            }
-                             break;
-                
-                case "From":
+                if (foundRow != null)
+                {
+                    e.IsValid = false;
+                    MessageBox.Show("section already exists. Create a new one");
+                }
+            }
+            else if (colName == "From")
+            {
+                if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
+                {
+                    var fromValue = (double) e.NewValue;
 
-                            if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
-                            {
-                                var fromValue = (double) e.NewValue;
-                 
-                                if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                                {
-                                        var toValue = (double)dataRowView.Row["To"];
+                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
+                    {
+                        var toValue = (double) dataRowView.Row["To"];
 
-                                        if (fromValue > toValue && toValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                           
-                                        }
-                                 }
-                            }
-                            else
-                            {
-                                var index = this.Table.Rows.IndexOf(dataRowView.Row);
-                   
-                                var previousRow = this.Table.Rows[index - 1];
+                        if (fromValue > toValue && toValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
+                }
+                else
+                {
+                    var index = this.Table.Rows.IndexOf(dataRowView.Row);
 
-                                var fromValue = (double) e.NewValue;
+                    var previousRow = this.Table.Rows[index - 1];
 
-                                if (!DBNull.Value.Equals(previousRow["To"]))
-                                {
-                        
-                                        var previousToValue = (double) previousRow["To"];
+                    var fromValue = (double) e.NewValue;
 
-                                        if (fromValue < previousToValue && previousToValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                            
-                                        }
-                        
-                                }
-                                if (! DBNull.Value.Equals(dataRowView.Row["To"]))
-                                {
-                        
-                                        var toValue = (double) dataRowView.Row["To"];
+                    if (!DBNull.Value.Equals(previousRow["To"]))
+                    {
+                        var previousToValue = (double) previousRow["To"];
 
-                                        if (fromValue > toValue && toValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                
-                                        }
-                                        
-                                }
-                            }
+                        if (fromValue < previousToValue && previousToValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
+                    if (! DBNull.Value.Equals(dataRowView.Row["To"]))
+                    {
+                        var toValue = (double) dataRowView.Row["To"];
 
-                            break;
-                case "To":
+                        if (fromValue > toValue && toValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
+                }
+            }
+            else if (colName == "To")
+            {
+                if (this.Table.Rows.IndexOf(dataRowView.Row) == this.Table.Rows.Count - 1)
+                {
+                    var toValue = (double) e.NewValue;
 
-                            if (this.Table.Rows.IndexOf(dataRowView.Row) == this.Table.Rows.Count - 1) 
-                            {
-                                var toValue = (double) e.NewValue;
+                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
+                    {
+                        var fromValue = (double) dataRowView.Row["From"];
 
-                                if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                                {
-                        
-                                        var fromValue = (double) dataRowView.Row["From"];
+                        if (toValue < fromValue && fromValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
+                }
+                else
+                {
+                    var index = this.Table.Rows.IndexOf(dataRowView.Row);
+                    var nextRow = this.Table.Rows[index + 1];
 
-                                        if (toValue < fromValue && fromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
-                                }
-                            }
-                            else
-                            {
-                                var index = this.Table.Rows.IndexOf(dataRowView.Row);
-                                var nextRow = this.Table.Rows[index + 1];
+                    var toValue = (double) e.NewValue;
 
-                                var toValue = (double) e.NewValue;
+                    if (!DBNull.Value.Equals(nextRow["From"]))
+                    {
+                        var nextFromValue = (double) nextRow["From"];
 
-                                if (!DBNull.Value.Equals(nextRow["From"]))
-                                {
-                        
-                                        var nextFromValue = (double) nextRow["From"];
+                        if (toValue > nextFromValue && nextFromValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
 
-                                        if (toValue > nextFromValue && nextFromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
-                                }
+                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
+                    {
+                        var fromValue = (double) dataRowView.Row["From"];
 
-                                if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                                {
-                        
-                                        var fromValue = (double) dataRowView.Row["From"];
+                        if (toValue < fromValue && fromValue != 0)
+                        {
+                            e.IsValid = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
-                                        if (toValue < fromValue && fromValue !=0)
-                                        {
-                                            e.IsValid = false;
-                                        }
-                        
+                if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+                {
+                    e.IsValid = false;
+                }
+                else
+                {
+                    dataRowView.Row[colName] = vertexEvidence;
+                }
+            }
+        }
 
-                                }
-                            }
-                          break;
+        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        {
+            if (e.NewCell == null)
+            {
+                return;
             }
 
-        /*    var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+            var row = (e.NewCell.ParentRow.DataContext as DataRowView).Row;
 
-            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-            {
-                e.IsValid = false;
-                e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
-            }*/
-          
+            Console.WriteLine("Row: " + this.Table.Rows.IndexOf(row) + ", Column: " + e.NewCell.Column.UniqueName);
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
@@ -602,16 +634,16 @@ namespace Marv.Input
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
-                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
+                // this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
                 //this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
             }
         }
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+            //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             this.UpdateChartTitle();
         }
 
@@ -680,7 +712,7 @@ namespace Marv.Input
             this.PropertyChanged += MainWindow_PropertyChanged;
         }
 
-        private async void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "LineData")
             {
@@ -688,10 +720,10 @@ namespace Marv.Input
                 {
                     //this.LineDataControl.ClearRows();
 
-                    foreach (var sectionId in this.LineData.SectionIds)
-                    {
-                        //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
-                    }
+                    //foreach (var sectionId in this.LineData.SectionIds)
+                    //{
+                    //    //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
+                    //}
                 }
             }
         }
@@ -712,19 +744,15 @@ namespace Marv.Input
                 var sectionBelief = this.Network.Run(sectionEvidence);
 
                 this.lineData.SetBelief(sectionId, sectionBelief);
-                
             }
 
-             DataSet mergedDataSet =  this.lineDataSet.GetMergerdDataSet(this.dataSet);
-            
-
+            var mergedDataSet = this.lineDataSet.GetMergerdDataSet(this.dataSet);
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            
             var sectionBelief = this.Network.Run(sectionEvidence);
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
@@ -748,7 +776,7 @@ namespace Marv.Input
         {
             if (this.Graph.SelectedVertex != null)
             {
-                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key] as LineDataTable;
+                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
 
                 if (this.Table == null)
                 {
@@ -756,8 +784,7 @@ namespace Marv.Input
                     {
                         this.dates = new List<DateTime>
                         {
-                            this.StartDate,
-                            this.EndDate
+                            DateTime.Now
                         };
                     }
 
@@ -769,11 +796,11 @@ namespace Marv.Input
 
                     foreach (var date in this.dates)
                     {
-                        this.Table.Columns.Add(date.ToString("TyyyyMMdd"), typeof (string));
+                        this.Table.Columns.Add(date.String(), typeof (VertexEvidence));
                     }
 
                     this.Table.Rows.Add("Section 1");
-                    
+
                     this.Table.PrimaryKey = new[] { this.Table.Columns["ID"] }; // Setting "Section ID" as the primary key of the data table
 
                     this.dataSet.Tables.Add(this.Table);
@@ -782,6 +809,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
     }
 }
