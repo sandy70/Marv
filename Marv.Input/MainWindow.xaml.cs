@@ -468,10 +468,12 @@ namespace Marv.Input
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
             DateTime dateTime;
-
-            if (e.Cell.Column.UniqueName.TryParse(out dateTime))
+            
+            var columnName = e.Cell.Column.UniqueName;
+            
+            if (columnName.TryParse(out dateTime))
             {
-                var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
+                var vertexEvidence = (e.Cell.ParentRow.DataContext as DataRowView).Row[columnName] as VertexEvidence;
 
                 if (vertexEvidence.Type == VertexEvidenceType.Number)
                 {
@@ -595,7 +597,15 @@ namespace Marv.Input
             else
             {
                 var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
-                e.IsValid = vertexEvidence.Type != VertexEvidenceType.Invalid;
+
+                if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+                {
+                    e.IsValid = false;
+                }
+                else
+                {
+                    dataRowView.Row[colName] = vertexEvidence; 
+                }
             }
         }
 
@@ -786,10 +796,10 @@ namespace Marv.Input
 
                     foreach (var date in this.dates)
                     {
-                        this.Table.Columns.Add(date.String(), typeof (string));
+                        this.Table.Columns.Add(date.String(), typeof (VertexEvidence));
                     }
 
-                    this.Table.Rows.Add("Section 1");
+                    this.Table.Rows.Add("Section 1", 0, 10, new VertexEvidence { Params = new []{0.0, 5, 6}, Type = VertexEvidenceType.Triangular});
 
                     this.Table.PrimaryKey = new[] { this.Table.Columns["ID"] }; // Setting "Section ID" as the primary key of the data table
 

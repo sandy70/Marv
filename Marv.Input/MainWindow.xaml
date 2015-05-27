@@ -133,6 +133,7 @@
                                                      NewRowPosition="Bottom"
                                                      RowIndicatorVisibility="Collapsed"
                                                      ShowGroupPanel="False"
+                                                     ValidatesOnDataErrors="None"
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
