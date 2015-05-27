@@ -34,6 +34,7 @@ namespace Marv.Input
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
+        private LineDataSet lineDataSet;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
@@ -42,18 +43,6 @@ namespace Marv.Input
         private DataTable table;
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
         private NumericalAxis verticalAxis;
-        public  LineDataSet LineDataSet
-        {
-            get { return lineDataSet; }
-            set
-            {
-                lineDataSet = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
-        
-       
 
         public string ChartTitle
         {
@@ -215,6 +204,16 @@ namespace Marv.Input
             }
         }
 
+        public LineDataSet LineDataSet
+        {
+            get { return lineDataSet; }
+            set
+            {
+                lineDataSet = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public Network Network
         {
             get { return this.network; }
@@ -327,22 +326,6 @@ namespace Marv.Input
             }
         }
 
-        public NumericalAxis VerticalAxis
-        {
-            get { return this.verticalAxis; }
-
-            set
-            {
-                if (value.Equals(this.verticalAxis))
-                {
-                    return;
-                }
-
-                this.verticalAxis = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
@@ -415,11 +398,6 @@ namespace Marv.Input
                 // this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 // this.LineDataControl.ClearSelectedCell();
             }
-            else
-            {
-                // this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
-                // this.LineDataControl.SetEvidence(vertexEvidence);
-            }
         }
 
         private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
@@ -434,7 +412,7 @@ namespace Marv.Input
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();
-            
+
             if (this.LineData != null)
             {
                 var selectedVertex = this.Graph.SelectedVertex;
@@ -613,14 +591,13 @@ namespace Marv.Input
                     }
                     break;
             }
-        /*    var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
+            /*    var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
             if (vertexEvidence.Type == VertexEvidenceType.Invalid)
             {
                 e.IsValid = false;
                 e.ErrorMessage = "Not a correct value or range of values. Press ESC to cancel.";
             }*/
-          
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -758,19 +735,15 @@ namespace Marv.Input
                 var sectionBelief = this.Network.Run(sectionEvidence);
 
                 this.lineData.SetBelief(sectionId, sectionBelief);
-                
             }
 
-             DataSet mergedDataSet =  this.lineDataSet.GetMergerdDataSet(this.dataSet);
-            
-
+            var mergedDataSet = this.lineDataSet.GetMergerdDataSet(this.dataSet);
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            
             var sectionBelief = this.Network.Run(sectionEvidence);
 
             this.Graph.Belief = sectionBelief[this.SelectedYear];
