@@ -16,6 +16,7 @@ using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
+using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -442,6 +443,11 @@ namespace Marv.Input
                 //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
                 //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
+        }
+
+        private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
+        {
+            e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
