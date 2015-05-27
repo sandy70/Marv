@@ -125,7 +125,6 @@
                                 <!-- Input Grid View -->
                                 <telerik:RadGridView Grid.Row="1"
                                                      CanUserFreezeColumns="False"
-                                                     Name="InputGridView"
                                                      CanUserInsertRows="True"
                                                      CanUserSortColumns="False"
                                                      GroupRenderMode="Flat"
@@ -136,7 +135,8 @@
                                                      ShowGroupPanel="False"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
-                                                     CellValidating="GridView_CellValidating" />
+                                                     CellValidating="GridView_CellValidating"
+                                                     CurrentCellChanged="GridView_CurrentCellChanged"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

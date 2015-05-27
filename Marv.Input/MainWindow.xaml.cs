@@ -623,6 +623,18 @@ namespace Marv.Input
           
         }
 
+        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
+        {
+            if (e.NewCell == null)
+            {
+                return;
+            }
+
+            var row = (e.NewCell.ParentRow.DataContext as DataRowView).Row;
+
+            Console.WriteLine("Row: " + this.Table.Rows.IndexOf(row) + ", Column: " + e.NewCell.Column.UniqueName);
+        }
+
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
