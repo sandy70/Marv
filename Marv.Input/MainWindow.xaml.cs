@@ -379,12 +379,12 @@ namespace Marv.Input
 
             if (vertexEvidence == null)
             {
-                this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
+                // this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 // this.LineDataControl.ClearSelectedCell();
             }
             else
             {
-                this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
+                // this.LineDataChart.SetUserEvidence(this.GetChartCategory(), vertexEvidence);
                 // this.LineDataControl.SetEvidence(vertexEvidence);
             }
         }
@@ -425,11 +425,11 @@ namespace Marv.Input
 
                 var intervals = selectedVertex.Intervals.ToArray();
 
-                this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
+                //this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
 
-                this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+                //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
         }
 
@@ -450,10 +450,17 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            Console.WriteLine(e.Cell.DataColumn.DataMemberBinding.Path.Path);
+            DateTime dateTime;
+
+            if (e.Cell.Column.UniqueName.TryParse(out dateTime))
+            {
+                var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
+
+
+            }
         }
 
-        private void InputGridView_OnCellValidating(object sender, GridViewCellValidatingEventArgs e)
+        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var dataRowView = e.Cell.DataContext as DataRowView;
 
@@ -585,16 +592,16 @@ namespace Marv.Input
                 sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
                 this.LineData.SetEvidence(sectionId, sectionEvidence);
 
-                this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
+                // this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
                 //this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
             }
         }
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                                                   ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                                                   : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
+            //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             this.UpdateChartTitle();
         }
 

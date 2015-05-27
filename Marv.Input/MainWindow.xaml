@@ -136,7 +136,7 @@
                                                      ShowGroupPanel="False"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
-                                                     CellValidating="InputGridView_OnCellValidating">
+                                                     CellValidating="GridView_CellValidating">
                                     
                                 </telerik:RadGridView>
                                </Grid>
@@ -146,11 +146,7 @@
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
-                                <local:LineDataChart x:Name="LineDataChart"
-                                                     HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
-                                                     Title="{Binding ElementName=Root, Path=ChartTitle}"
-                                                     EvidenceGenerated="LineDataChart_EvidenceGenerated"
-                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged" />
+                                <telerik:RadCartesianChart />
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
