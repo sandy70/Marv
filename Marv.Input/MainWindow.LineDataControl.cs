@@ -72,7 +72,7 @@ namespace Marv.Input
             //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
             //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
             //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
-        }
+       }
 
         private void LineDataControl_SectionIdPasting(object sender, GridViewCellClipboardEventArgs e)
         {
