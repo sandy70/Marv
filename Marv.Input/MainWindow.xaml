@@ -179,7 +179,7 @@
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
-                                                     CurrentCellChanged="GridView_CurrentCellChanged"
+                                                     CurrentCellChanged="GridView_CurrentCellChanged"/>
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"/>
                             </Grid>
                         </telerik:RadPane>
@@ -188,7 +188,11 @@
                     <telerik:RadPaneGroup>
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
-                            <telerik:RadCartesianChart>
+                            <telerik:RadCartesianChart Name="Chart">
+                                <telerik:RadCartesianChart.Behaviors>
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="Horizontal"/>
+                                </telerik:RadCartesianChart.Behaviors>
+                                
                                 <telerik:RadCartesianChart.HorizontalAxis>
                                     <telerik:LinearAxis Maximum="100"
                                                         Minimum="0" />
@@ -198,11 +202,13 @@
                                     <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMax}"
                                                         Minimum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMin}" />
                                 </telerik:RadCartesianChart.VerticalAxis>
-                                
+
                                 <telerik:RadCartesianChart.Series>
-                                    <telerik:ScatterPointSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
-                                                                XValueBinding="XValue"
-                                                                YValueBinding="YValue" />
+                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
+                                                               Stroke="Goldenrod"
+                                                               StrokeThickness="2"
+                                                               XValueBinding="XValue"
+                                                               YValueBinding="YValue" />
                                 </telerik:RadCartesianChart.Series>
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>

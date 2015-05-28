@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
@@ -46,7 +47,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private DataTable table;
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
-        private NumericalAxis verticalAxis;
 
         public string ChartTitle
         {
@@ -550,20 +550,83 @@ namespace Marv.Input
 
             var columnName = e.Cell.Column.UniqueName;
 
+            // If this is a DateTime column
             if (columnName.TryParse(out dateTime))
             {
-                var vertexEvidence = (e.Cell.ParentRow.DataContext as DataRowView).Row[columnName] as VertexEvidence;
+                var dataRow = (e.Cell.ParentRow.DataContext as DataRowView).Row;
+                var from = (double) dataRow["From"];
+                var to = (double) dataRow["To"];
+                var vertexEvidence = dataRow[columnName] as VertexEvidence;
+
+                // Remove older annotations
+                this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
+
+                // Add empty data point to initialize chart
+                if (this.UserNumberPoints.Count == 0)
+                {
+                    this.UserNumberPoints.Add(new ScatterDataPoint());
+                }
 
                 if (vertexEvidence.Type == VertexEvidenceType.Number)
                 {
-                    var dataRow = (e.Cell.ParentRow.DataContext as DataRowView).Row;
-                    var from = (double) dataRow["From"];
-                    var to = (double) dataRow["To"];
-
-                    this.UserNumberPoints.Add(new ScatterDataPoint
+                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
                     {
-                        XValue = (from + to) / 2,
-                        YValue = vertexEvidence.Params[0]
+                        HorizontalFrom = from,
+                        HorizontalTo = to,
+                        Stroke = new SolidColorBrush(Colors.Goldenrod),
+                        StrokeThickness = 2,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[0],
+                        VerticalTo = vertexEvidence.Params[0],
+                    });
+                }
+                else if (vertexEvidence.Type == VertexEvidenceType.Range)
+                {
+                    this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+                    {
+                        Fill = new SolidColorBrush(Colors.Goldenrod),
+                        HorizontalFrom = from,
+                        HorizontalTo = to,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[0],
+                        VerticalTo = vertexEvidence.Params[1],
+                    });
+                }
+                else
+                {
+                    var maxValue = vertexEvidence.Value.Max();
+
+                    var selectedVertex = this.Graph.SelectedVertex;
+
+                    var fill = new LinearGradientBrush
+                    {
+                        StartPoint = new Point(0, 0),
+                        EndPoint = new Point(0, 1)
+                    };
+
+                    vertexEvidence.Value.ForEach((value, i) =>
+                    {
+                        fill.GradientStops.Add(new GradientStop
+                        {
+                            Offset = selectedVertex.Intervals.ElementAt(i) / selectedVertex.SafeMax,
+                            Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                        });
+
+                        fill.GradientStops.Add(new GradientStop
+                        {
+                            Offset = selectedVertex.Intervals.ElementAt(i + 1) / selectedVertex.SafeMax,
+                            Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                        });
+                    });
+
+                    this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+                    {
+                        Fill = fill,
+                        HorizontalFrom = from,
+                        HorizontalTo = to,
+                        Tag = dataRow,
+                        VerticalFrom = selectedVertex.SafeMin,
+                        VerticalTo = selectedVertex.SafeMax
                     });
                 }
             }
