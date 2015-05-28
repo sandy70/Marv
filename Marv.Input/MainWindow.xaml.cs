@@ -18,6 +18,7 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
 using Telerik.Windows.Controls.GridView;
+using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 
 namespace Marv.Input
 {
@@ -26,6 +27,7 @@ namespace Marv.Input
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
         private string chartTitle;
+        private GridViewColumn currentColumn;
         private DataSet dataSet = new DataSet();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates;
@@ -61,6 +63,22 @@ namespace Marv.Input
                 }
 
                 this.chartTitle = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public GridViewColumn CurrentColumn
+        {
+            get { return this.currentColumn; }
+
+            set
+            {
+                if (value.Equals(this.currentColumn))
+                {
+                    return;
+                }
+
+                this.currentColumn = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -494,35 +512,16 @@ namespace Marv.Input
         {
             this.UpdateTable();
 
-            if (this.LineData != null)
+            this.Chart.Annotations.Remove(annotation => true);
+
+            var columnName = this.CurrentColumn == null ? this.oldColumnName : this.CurrentColumn.UniqueName;
+
+            if (columnName == null)
             {
-                var selectedVertex = this.Graph.SelectedVertex;
-
-                //this.LineDataControl.ClearRows();
-
-                //foreach (var sectionId in this.LineData.SectionIds)
-                //{
-                //    // var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
-
-                //    if (selectedVertex != null)
-                //    {
-                //        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
-                //    }
-                //}
-
-                if (selectedVertex == null)
-                {
-                    return;
-                }
-
-                var intervals = selectedVertex.Intervals.ToArray();
-
-                //this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
-
-                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
-                //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+                return;
             }
+
+            this.Plot(columnName);
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -853,6 +852,14 @@ namespace Marv.Input
                     //    //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
                     //}
                 }
+            }
+        }
+
+        private void Plot(string columnName)
+        {
+            foreach (var row in this.Table.Rows)
+            {
+                this.Plot(row as DataRow, columnName);
             }
         }
 

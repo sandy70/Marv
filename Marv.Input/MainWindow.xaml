@@ -164,6 +164,7 @@
                                                      CanUserInsertRows="True"
                                                      CanUserSortColumns="False"
                                                      ClipboardCopyMode="All"
+                                                     CurrentColumn="{Binding ElementName=Root, Path=CurrentColumn}"
                                                      ClipboardPasteMode="Default"
                                                      FrozenColumnCount="2"
                                                      GroupRenderMode="Flat"
