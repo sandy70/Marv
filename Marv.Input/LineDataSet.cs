@@ -6,13 +6,10 @@ namespace Marv.Input
 {
     public class LineDataSet : DataSet
     {
-        public DataSet MergedDataSet { get; set; }
-        public List<double> NewList { get; set; }
-
         public DataSet GetMergerdDataSet(DataSet unMergedSet)
         {
-            this.MergedDataSet = new DataSet();
-            this.NewList = new List<double>();
+            DataSet mergedDataSet = new DataSet();
+            List<double> newList = new List<double>();
 
             var tables = unMergedSet.Tables;
 
@@ -28,42 +25,42 @@ namespace Marv.Input
 
                     if ((!DBNull.Value.Equals(from) && from != null))
                     {
-                        this.NewList.Add((double) from);
+                        newList.Add((double)from);
                     }
 
                     if ((!DBNull.Value.Equals(to) && to != null))
                     {
-                        this.NewList.Add((double) to);
+                        newList.Add((double)to);
                     }
                 }
             }
 
-            this.NewList.Sort(); // sorting the new list
+            newList.Sort(); // sorting the new list
          
             foreach (DataTable table in tables)
             {
-                var modifiedTable = GetModifiedTable(table, tables);
+                var modifiedTable = GetModifiedTable(table, tables, newList);
 
                 if (modifiedTable != null)
                 {
-                    this.MergedDataSet.Tables.Add(modifiedTable);
+                    mergedDataSet.Tables.Add(modifiedTable);
                 }
             }
 
-            return this.MergedDataSet;
+            return mergedDataSet;
         }
 
-        private DataTable GetModifiedTable(DataTable table, DataTableCollection tables)
+        private DataTable GetModifiedTable(DataTable table, DataTableCollection tables, List<double> newList)
         {
             var newTable = new DataTable();
 
             foreach (DataColumn col in table.Columns)
             {
-                if (col.ColumnName == "ID")
+                /*if (col.ColumnName == "ID")
                 {
                     newTable.Columns.Add("ID", typeof (string));
-                }
-                else if (col.ColumnName == "From")
+                }*/
+                if (col.ColumnName == "From")
                 {
                     newTable.Columns.Add("From", typeof (double));
                 }
@@ -77,14 +74,14 @@ namespace Marv.Input
                 }
             }
 
-            if (this.NewList != null)
+            if (newList != null)
             {
                 var i = 0;
-                while (i < NewList.Count - 1)
+                while (i < newList.Count - 1)
                 {
                     var newRow = newTable.NewRow();
-                    newRow["From"] = NewList[i];
-                    newRow["To"] = NewList[i + 1];
+                    newRow["From"] = newList[i];
+                    newRow["To"] = newList[i + 1];
                    
                     newTable.Rows.Add(newRow);
                     i++;
@@ -163,7 +160,7 @@ namespace Marv.Input
                         if ((double) newrow["From"] >= (double) oldrow["From"] &&
                             (double) newrow["To"] <= (double) oldrow["To"])
                         {
-                            var count = 3;
+                            var count = 2; // skipping "ID", "From" and "To" coloumns
 
                             while(count < newTable.Columns.Count)
                             {

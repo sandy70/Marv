@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -35,7 +35,7 @@ namespace Marv.Input
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
-        private LineDataSet lineDataSet;
+        private LineDataSet lineDataSet = new LineDataSet();
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedSectionId;
@@ -473,7 +473,7 @@ namespace Marv.Input
 
             if (columnName.TryParse(out dateTime))
             {
-                var vertexEvidence = e.Cell.Value as VertexEvidence;
+                var vertexEvidence = (e.Cell.ParentRow.DataContext as DataRowView).Row[columnName] as VertexEvidence;
 
                 if (vertexEvidence.Type == VertexEvidenceType.Number)
                 {
@@ -493,20 +493,10 @@ namespace Marv.Input
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var dataRowView = e.Cell.DataContext as DataRowView;
-
+            var i = this.Table.Rows.IndexOf(dataRowView.Row);
             var colName = e.Cell.Column.UniqueName;
 
-            if (colName == "ID")
-            {
-                var foundRow = this.Table.Rows.Find(e.NewValue.ToString());
-
-                if (foundRow != null)
-                {
-                    e.IsValid = false;
-                    MessageBox.Show("section already exists. Create a new one");
-                }
-            }
-            else if (colName == "From")
+            if (colName == "From" && i != -1)
             {
                 if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
                 {
@@ -516,12 +506,13 @@ namespace Marv.Input
                     {
                         var toValue = (double) dataRowView.Row["To"];
 
-                        if (fromValue > toValue && toValue != 0)
+                        if (fromValue > toValue)
                         {
                             e.IsValid = false;
                         }
                     }
                 }
+
                 else
                 {
                     var index = this.Table.Rows.IndexOf(dataRowView.Row);
@@ -539,7 +530,7 @@ namespace Marv.Input
                             e.IsValid = false;
                         }
                     }
-                    if (! DBNull.Value.Equals(dataRowView.Row["To"]))
+                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
                     {
                         var toValue = (double) dataRowView.Row["To"];
 
@@ -550,7 +541,7 @@ namespace Marv.Input
                     }
                 }
             }
-            else if (colName == "To")
+            else if (colName == "To" && i != -1)
             {
                 if (this.Table.Rows.IndexOf(dataRowView.Row) == this.Table.Rows.Count - 1)
                 {
@@ -591,6 +582,22 @@ namespace Marv.Input
                         {
                             e.IsValid = false;
                         }
+                    }
+                }
+            }
+            else if (i == -1)
+            {
+                var lastRow = this.Table.Rows[this.Table.Rows.Count - 1];
+
+                var newValue = (double) e.NewValue;
+
+                if (!DBNull.Value.Equals(lastRow["To"]))
+                {
+                    var previousToValue = (double) lastRow["To"];
+
+                    if (newValue < previousToValue && previousToValue != 0)
+                    {
+                        e.IsValid = false;
                     }
                 }
             }
@@ -790,7 +797,6 @@ namespace Marv.Input
 
                     this.Table = new LineDataTable(this.Graph.SelectedVertex.Key);
 
-                    this.Table.Columns.Add("ID", typeof (string));
                     this.Table.Columns.Add("From", typeof (double));
                     this.Table.Columns.Add("To", typeof (double));
 
@@ -799,9 +805,7 @@ namespace Marv.Input
                         this.Table.Columns.Add(date.String(), typeof (VertexEvidence));
                     }
 
-                    this.Table.Rows.Add("Section 1");
-
-                    this.Table.PrimaryKey = new[] { this.Table.Columns["ID"] }; // Setting "Section ID" as the primary key of the data table
+                    this.Table.Rows.Add(0, 0);
 
                     this.dataSet.Tables.Add(this.Table);
                 }

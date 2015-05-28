@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 
 namespace Marv.Input
 {
@@ -13,18 +14,14 @@ namespace Marv.Input
         {
             if (e.Action == DataRowAction.Add)
             {
-                var index = this.Rows.IndexOf(e.Row);
-
-                if (index == 0)
+                if (!DBNull.Value.Equals(e.Row["To"]))
                 {
-                    e.Row["From"] = 0;
-                    e.Row["To"] = 0;
+                    e.Row["From"] = e.Row["To"];
                 }
-                else
+
+                else if (!DBNull.Value.Equals(e.Row["From"]))
                 {
-                    var previousRow = this.Rows[index - 1];
-                    e.Row["From"] = previousRow["To"];
-                    e.Row["To"] = previousRow["To"];
+                    e.Row["To"] = e.Row["From"];
                 }
             }
         }
