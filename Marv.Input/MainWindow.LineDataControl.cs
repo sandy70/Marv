@@ -67,9 +67,9 @@ namespace Marv.Input
             this.isAxisAutoSwitched = true;
             this.previousAxisQuantity = this.HorizontalAxisQuantity;
 
-            this.HorizontalAxisQuantity = HorizontalAxisQuantity.Year;
+            this.HorizontalAxisQuantity = HorizontalAxisQuantity.Time;
 
-            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
             //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
             //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
        }
@@ -120,10 +120,10 @@ namespace Marv.Input
                 return;
             }
 
-            if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Year) ||
-                (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section))
+            if ((isSectionChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Time) ||
+                (isYearChanged && this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance))
             {
-                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
                 //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
                 //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
                 this.UpdateChartTitle();

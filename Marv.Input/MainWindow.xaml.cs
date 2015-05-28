@@ -31,7 +31,7 @@ namespace Marv.Input
         private List<DateTime> dates;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
-        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
+        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
         private bool isCellSelected;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
@@ -458,12 +458,12 @@ namespace Marv.Input
 
         private object GetChartCategory()
         {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedSectionId : this.SelectedYear as object;
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
         private object GetChartCategory(string sectionId, int year)
         {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? sectionId : year as object;
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -518,7 +518,7 @@ namespace Marv.Input
 
                 //this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
 
-                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
                 //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
                 //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             }
@@ -827,8 +827,8 @@ namespace Marv.Input
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
 
-            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? e.Category as string : this.SelectedSectionId;
-            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedYear : (int) e.Category;
+            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? e.Category as string : this.SelectedSectionId;
+            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedYear : (int) e.Category;
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -843,7 +843,7 @@ namespace Marv.Input
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
             //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
             //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             this.UpdateChartTitle();
@@ -971,7 +971,7 @@ namespace Marv.Input
 
         private void UpdateChartTitle()
         {
-            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
+            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
         }
 
         private void UpdateTable()

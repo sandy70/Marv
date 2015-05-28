@@ -2,7 +2,7 @@
 {
     public enum HorizontalAxisQuantity
     {
-        Section,
-        Year
+        Distance,
+        Time
     }
 }

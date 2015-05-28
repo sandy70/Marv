@@ -190,9 +190,9 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <telerik:RadCartesianChart Name="Chart">
                                 <telerik:RadCartesianChart.Behaviors>
-                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="Horizontal"/>
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="Horizontal" />
                                 </telerik:RadCartesianChart.Behaviors>
-                                
+
                                 <telerik:RadCartesianChart.HorizontalAxis>
                                     <telerik:LinearAxis Maximum="100"
                                                         Minimum="0" />
