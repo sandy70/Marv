@@ -49,8 +49,6 @@
                 <MenuItem Header="Line"
                           Click="RunLineMenuItem_Click" />
             </MenuItem>
-            
-
         </Menu>
 
         <telerik:RadDocking Grid.Row="1"
@@ -171,7 +169,7 @@
                                                      IsFilteringAllowed="False"
                                                      ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}"
                                                      NewRowPosition="Bottom"
-                                                     RowIndicatorVisibility="Collapsed"
+                                                     SelectionUnit="Mixed"
                                                      SelectionUnit="Cell"
                                                      SelectionMode="Extended"
                                                      ShowGroupPanel="False"
