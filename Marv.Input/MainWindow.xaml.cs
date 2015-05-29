@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -49,7 +49,10 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private DataTable table;
-        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
+        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
+        {
+            new ScatterDataPoint()
+        };
 
         public string ChartTitle
         {
@@ -233,16 +236,6 @@ namespace Marv.Input
                 }
 
                 this.lineData = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public LineDataSet LineDataSet
-        {
-            get { return lineDataSet; }
-            set
-            {
-                lineDataSet = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -876,12 +869,6 @@ namespace Marv.Input
 
             // Remove older annotations
             this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
-
-            // Add empty data point to initialize chart
-            if (this.UserNumberPoints.Count == 0)
-            {
-                this.UserNumberPoints.Add(new ScatterDataPoint());
-            }
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
