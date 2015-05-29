@@ -41,14 +41,16 @@ namespace Marv.Input
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
-        private LineDataSet lineDataSet = new LineDataSet();
+        private double maximum = 100;
+        private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string oldColumnName;
         private string selectedSectionId;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
-        private DataTable table;
+        private LineDataTable table;
+
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -240,6 +242,38 @@ namespace Marv.Input
             }
         }
 
+        public double Maximum
+        {
+            get { return this.maximum; }
+
+            set
+            {
+                if (value.Equals(this.maximum))
+                {
+                    return;
+                }
+
+                this.maximum = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double Minimum
+        {
+            get { return this.minimum; }
+
+            set
+            {
+                if (value.Equals(this.minimum))
+                {
+                    return;
+                }
+
+                this.minimum = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public Network Network
         {
             get { return this.network; }
@@ -320,7 +354,7 @@ namespace Marv.Input
             }
         }
 
-        public DataTable Table
+        public LineDataTable Table
         {
             get { return this.table; }
 
@@ -547,6 +581,11 @@ namespace Marv.Input
             if (columnName.TryParse(out dateTime))
             {
                 this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
+            }
+            else
+            {
+                this.Maximum = this.Table.GetMaximum();
+                this.Minimum = this.Table.GetMinimum();
             }
         }
 
@@ -869,19 +908,32 @@ namespace Marv.Input
 
             // Remove older annotations
             this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
+            this.UserNumberPoints.Remove(point => point.Label == dataRow);
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
-                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                if (from == to)
                 {
-                    HorizontalFrom = @from,
-                    HorizontalTo = to,
-                    Stroke = new SolidColorBrush(Colors.Goldenrod),
-                    StrokeThickness = 2,
-                    Tag = dataRow,
-                    VerticalFrom = vertexEvidence.Params[0],
-                    VerticalTo = vertexEvidence.Params[0],
-                });
+                    this.UserNumberPoints.Add(new ScatterDataPoint
+                    {
+                        Label = dataRow,
+                        XValue = from,
+                        YValue = vertexEvidence.Params[0]
+                    });
+                }
+                else
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                    {
+                        HorizontalFrom = @from,
+                        HorizontalTo = to,
+                        Stroke = new SolidColorBrush(Colors.Goldenrod),
+                        StrokeThickness = 2,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[0],
+                        VerticalTo = vertexEvidence.Params[0],
+                    });
+                }
             }
             else if (vertexEvidence.Type == VertexEvidenceType.Range)
             {
@@ -982,7 +1034,7 @@ namespace Marv.Input
         {
             if (this.Graph.SelectedVertex != null)
             {
-                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
+                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key] as LineDataTable;
 
                 if (this.Table == null)
                 {

@@ -193,8 +193,8 @@
                                 </telerik:RadCartesianChart.Behaviors>
 
                                 <telerik:RadCartesianChart.HorizontalAxis>
-                                    <telerik:LinearAxis Maximum="100"
-                                                        Minimum="0" />
+                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
+                                                        Minimum="{Binding ElementName=Root, Path=Minimum}" />
                                 </telerik:RadCartesianChart.HorizontalAxis>
 
                                 <telerik:RadCartesianChart.VerticalAxis>
@@ -203,11 +203,9 @@
                                 </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
-                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
-                                                               Stroke="Goldenrod"
-                                                               StrokeThickness="2"
-                                                               XValueBinding="XValue"
-                                                               YValueBinding="YValue" />
+                                    <telerik:ScatterPointSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
+                                                                XValueBinding="XValue"
+                                                                YValueBinding="YValue" />
                                 </telerik:RadCartesianChart.Series>
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
