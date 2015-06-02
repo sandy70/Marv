@@ -49,6 +49,8 @@
                 <MenuItem Header="Line"
                           Click="RunLineMenuItem_Click" />
             </MenuItem>
+            
+
         </Menu>
 
         <telerik:RadDocking Grid.Row="1"
@@ -138,8 +140,14 @@
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
+                                                     CurrentCellChanged="GridView_CurrentCellChanged"
+                                                     SelectionUnit="Cell"
+                                                     SelectionMode="Extended"
                                                      CellValidating="GridView_CellValidating"
-                                                     CurrentCellChanged="GridView_CurrentCellChanged"/>
+                                                     CopyingCellClipboardContent="GridView_CopyingCellClipboardContent"
+                                                     PastingCellClipboardContent="GridView_PastingCellClipboardContent"
+                                                     ClipboardCopyMode="All"
+                                                     ClipboardPasteMode="Default"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

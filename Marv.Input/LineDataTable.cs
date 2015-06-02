@@ -14,6 +14,8 @@ namespace Marv.Input
         {
             if (e.Action == DataRowAction.Add)
             {
+                Console.WriteLine("row added");
+                /*
                 if (!DBNull.Value.Equals(e.Row["To"]))
                 {
                     e.Row["From"] = e.Row["To"];
@@ -22,7 +24,7 @@ namespace Marv.Input
                 else if (!DBNull.Value.Equals(e.Row["From"]))
                 {
                     e.Row["To"] = e.Row["From"];
-                }
+                }*/
             }
         }
     }
