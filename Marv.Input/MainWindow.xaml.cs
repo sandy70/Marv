@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
@@ -19,6 +20,7 @@ using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
 using Telerik.Windows.Controls.GridView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
+using Path = System.IO.Path;
 
 namespace Marv.Input
 {
@@ -582,11 +584,6 @@ namespace Marv.Input
             {
                 this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
             }
-            else
-            {
-                this.Maximum = this.Table.GetMaximum();
-                this.Minimum = this.Table.GetMinimum();
-            }
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
@@ -780,6 +777,12 @@ namespace Marv.Input
             return isvalid;
         }
 
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            this.Maximum = this.Table.GetMaximum();
+            this.Minimum = this.Table.GetMinimum();
+        }
+
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
@@ -897,6 +900,9 @@ namespace Marv.Input
 
         private void Plot(DataRow dataRow, string columnName)
         {
+            var fillBrush = new SolidColorBrush(Colors.Goldenrod);
+            var strokeBrush = new SolidColorBrush(Colors.DarkGoldenrod);
+
             var from = (double) dataRow["From"];
             var to = (double) dataRow["To"];
             var vertexEvidence = dataRow[columnName] as VertexEvidence;
@@ -908,17 +914,27 @@ namespace Marv.Input
 
             // Remove older annotations
             this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
-            this.UserNumberPoints.Remove(point => point.Label == dataRow);
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
                 if (from == to)
                 {
-                    this.UserNumberPoints.Add(new ScatterDataPoint
+                    this.Chart.Annotations.Add(new CartesianCustomAnnotation
                     {
-                        Label = dataRow,
-                        XValue = from,
-                        YValue = vertexEvidence.Params[0]
+                        Content = new Ellipse
+                        {
+                            Fill = fillBrush,
+                            Height = 8,
+                            Stroke = strokeBrush,
+                            Width = 8,
+                        },
+
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalValue = (from + to) / 2,
+                        Tag = dataRow,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalValue = vertexEvidence.Params[0],
+                        ZIndex = 100
                     });
                 }
                 else
@@ -927,7 +943,7 @@ namespace Marv.Input
                     {
                         HorizontalFrom = @from,
                         HorizontalTo = to,
-                        Stroke = new SolidColorBrush(Colors.Goldenrod),
+                        Stroke = fillBrush,
                         StrokeThickness = 2,
                         Tag = dataRow,
                         VerticalFrom = vertexEvidence.Params[0],
@@ -939,15 +955,16 @@ namespace Marv.Input
             {
                 this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                 {
-                    Fill = new SolidColorBrush(Colors.Goldenrod),
+                    Fill = fillBrush,
                     HorizontalFrom = @from,
                     HorizontalTo = to,
+                    Stroke = strokeBrush,
                     Tag = dataRow,
                     VerticalFrom = vertexEvidence.Params[0],
                     VerticalTo = vertexEvidence.Params[1],
                 });
             }
-            else
+            else if (vertexEvidence.Type != VertexEvidenceType.Null)
             {
                 var maxValue = vertexEvidence.Value.Max();
 
@@ -979,6 +996,7 @@ namespace Marv.Input
                     Fill = fill,
                     HorizontalFrom = @from,
                     HorizontalTo = to,
+                    Stroke = strokeBrush,
                     Tag = dataRow,
                     VerticalFrom = selectedVertex.SafeMin,
                     VerticalTo = selectedVertex.SafeMax

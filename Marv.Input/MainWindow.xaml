@@ -176,8 +176,9 @@
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
-                                                     CurrentCellChanged="GridView_CurrentCellChanged"/>
-                                                     PastingCellClipboardContent="GridView_PastingCellClipboardContent"/>
+                                                     CurrentCellChanged="GridView_CurrentCellChanged" 
+                                                     PastingCellClipboardContent="GridView_PastingCellClipboardContent"
+                                                     RowEditEnded="GridView_RowEditEnded"/>
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -204,15 +205,7 @@
                                 <telerik:RadCartesianChart.Series>
                                     <telerik:ScatterPointSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
                                                                 XValueBinding="XValue"
-                                                                YValueBinding="YValue">
-                                        <telerik:ScatterPointSeries.PointTemplate>
-                                            <DataTemplate>
-                                                <Ellipse Width="10"
-                                                         Height="10"
-                                                         Fill="Goldenrod" />
-                                            </DataTemplate>
-                                        </telerik:ScatterPointSeries.PointTemplate>
-                                    </telerik:ScatterPointSeries>
+                                                                YValueBinding="YValue" />
                                 </telerik:RadCartesianChart.Series>
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
