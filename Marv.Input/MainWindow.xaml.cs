@@ -398,15 +398,15 @@ namespace Marv.Input
 
             var date = this.StartDate;
 
-            var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
-            {
-                { DateSelectionMode.Year, date.AddYears },
-                { DateSelectionMode.Month, date.AddMonths },
-                { DateSelectionMode.Day, i => date.AddDays(i) }
-            };
-
             while (date < this.EndDate)
             {
+                var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
+                {
+                    { DateSelectionMode.Year, date.AddYears },
+                    { DateSelectionMode.Month, date.AddMonths },
+                    { DateSelectionMode.Day, i => date.AddDays(i) }
+                };
+
                 this.dates.Add(date);
                 date = incrementFuncs[this.DateSelectionMode](1);
             }

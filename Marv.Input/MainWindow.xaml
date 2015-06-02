@@ -108,7 +108,6 @@
                                                    VerticalAlignment="Center" />
 
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
-                                                             SelectedIndex="0"
                                                              SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}" />
                                       
                                         <Button Content="Apply"
