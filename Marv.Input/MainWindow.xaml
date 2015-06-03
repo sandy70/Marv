@@ -122,8 +122,9 @@
                                                 Padding="4"
                                                 Click="CloseButton_Click" />
                                     </ToolBar>
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
-                                             Visibility="Visible">
+                                    <ToolBar    Name="CopyFuncToolBar"
+                                                IsEnabled="{Binding ElementName=Root, Path= IsCellSelected}"
+                                                Visibility="Visible">
                                         
                                         <telerik:RadButton Name="CopyAcrossColButton"
                                                            Background="{StaticResource BackgroundDark}"

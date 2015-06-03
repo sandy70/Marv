@@ -31,6 +31,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
+        private bool isCellSelected;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -123,6 +124,16 @@ namespace Marv.Input
                 }
 
                 this.horizontalAxisQuantity = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsCellSelected
+        {
+            get { return this.isCellSelected; }
+            set
+            {
+                isCellSelected = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -592,6 +603,15 @@ namespace Marv.Input
                 }
             }
 
+            if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
+            {
+                this.IsCellSelected = true;
+            }
+            else
+            {
+                this.IsCellSelected = false;
+            }
+
             Console.WriteLine("Row: " + this.Table.Rows.IndexOf(row) + ", Column: " + e.NewCell.Column.UniqueName);
         }
 
@@ -624,7 +644,6 @@ namespace Marv.Input
                 if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
                 {
                     var fromValue = Convert.ToDouble(val);
-
                     if (!DBNull.Value.Equals(dataRowView.Row["To"]))
                     {
                         var toValue = (double) dataRowView.Row["To"];
