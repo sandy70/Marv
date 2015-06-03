@@ -18,7 +18,6 @@ using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
-using Telerik.Windows.Controls.GridView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 using Path = System.IO.Path;
 
@@ -26,10 +25,9 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private readonly LineDataSet lineDataSet = new LineDataSet();
-
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
+        private readonly LineDataSet lineDataSet = new LineDataSet();
         private string chartTitle;
         private GridViewColumn currentColumn;
         private DataSet dataSet = new DataSet();
@@ -38,7 +36,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
-        private bool isCellSelected;
+        private bool isCellToolbarVisible;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -156,12 +154,12 @@ namespace Marv.Input
             }
         }
 
-        public bool IsCellSelected
+        public bool IsCellToolbarVisible
         {
-            get { return this.isCellSelected; }
+            get { return this.isCellToolbarVisible; }
             set
             {
-                isCellSelected = value;
+                this.isCellToolbarVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -427,7 +425,7 @@ namespace Marv.Input
             this.IsTimelineToolbarVisible = false;
         }
 
-        private void CopyAcrossAll_OnClick(object sender, RoutedEventArgs e)
+        private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
             if (selectedRow != null)
             {
@@ -452,7 +450,7 @@ namespace Marv.Input
             }
         }
 
-        private void CopyAcrossCol_OnClick(object sender, RoutedEventArgs e)
+        private void CopyAcrossCol_Click(object sender, RoutedEventArgs e)
         {
             if (selectedRow != null)
             {
@@ -471,7 +469,7 @@ namespace Marv.Input
             }
         }
 
-        private void CopyAcrossRow_OnClick(object sender, RoutedEventArgs e)
+        private void CopyAcrossRow_Click(object sender, RoutedEventArgs e)
         {
             if (selectedRow != null)
             {
@@ -553,236 +551,6 @@ namespace Marv.Input
             }
 
             this.Plot(columnName);
-        }
-
-        private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
-        {
-            e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
-        }
-
-        private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
-        {
-            var headerString = e.Column.Header as string;
-
-            DateTime dateTime;
-
-            if (headerString.TryParse(out dateTime))
-            {
-                e.Column.Header = new TextBlock
-                {
-                    Text = dateTime.ToShortDateString()
-                };
-            }
-        }
-
-        private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
-        {
-            DateTime dateTime;
-
-            var columnName = e.Cell.Column.UniqueName;
-
-            // If this is a DateTime column
-            if (columnName.TryParse(out dateTime))
-            {
-                this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
-            }
-        }
-
-        private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
-        {
-            var dataRowView = e.Cell.DataContext as DataRowView;
-            var index = this.Table.Rows.IndexOf(dataRowView.Row);
-            var colName = e.Cell.Column.UniqueName;
-            var val = e.NewValue;
-
-            var isvalid = IsCellDataValid(dataRowView, index, colName, val);
-
-            if (!isvalid)
-            {
-                e.IsValid = false;
-            }
-        }
-
-        private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
-        {
-            if (e.NewCell == null)
-            {
-                return;
-            }
-
-            var row = (e.NewCell.ParentRow.DataContext as DataRowView).Row;
-
-            selectedRow = row;
-
-            foreach (DataColumn col in this.Table.Columns)
-            {
-                if (col.ColumnName == e.NewCell.Column.UniqueName)
-                {
-                    selectedColumn = col;
-                }
-            }
-
-            if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
-            {
-                this.IsCellSelected = true;
-            }
-            else
-            {
-                this.IsCellSelected = false;
-            }
-
-            Console.WriteLine("Row: " + this.Table.Rows.IndexOf(row) + ", Column: " + e.NewCell.Column.UniqueName);
-        }
-
-        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
-        {
-            var dataRowView = e.Cell.Item as DataRowView;
-            var colName = e.Cell.Column.UniqueName;
-
-            if (e.Value != null)
-            {
-                var val = e.Value.ToString();
-
-                if (colName != "From" && colName != "To")
-                {
-                    if (dataRowView.Row != null)
-                    {
-                        var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
-                        dataRowView.Row[colName] = vertexEvidence;
-                    }
-                }
-            }
-        }
-
-        private bool IsCellDataValid(DataRowView dataRowView, int index, string colName, object val)
-        {
-            var isvalid = true;
-
-            if (colName == "From" && index != -1)
-            {
-                if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
-                {
-                    var fromValue = Convert.ToDouble(val);
-                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                    {
-                        var toValue = (double) dataRowView.Row["To"];
-
-                        if (fromValue > toValue)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-
-                else
-                {
-                    var previousRow = this.Table.Rows[index - 1];
-
-                    var fromValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(previousRow["To"]))
-                    {
-                        var previousToValue = (double) previousRow["To"];
-
-                        if (fromValue < previousToValue && previousToValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                    {
-                        var toValue = (double) dataRowView.Row["To"];
-
-                        if (fromValue > toValue && toValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else if (colName == "To" && index != -1)
-            {
-                if (index == this.Table.Rows.Count - 1)
-                {
-                    var toValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                    {
-                        var fromValue = (double) dataRowView.Row["From"];
-
-                        if (toValue < fromValue && fromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-                else
-                {
-                    var nextRow = this.Table.Rows[index + 1];
-
-                    var toValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(nextRow["From"]))
-                    {
-                        var nextFromValue = (double) nextRow["From"];
-
-                        if (toValue > nextFromValue && nextFromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-
-                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                    {
-                        var fromValue = (double) dataRowView.Row["From"];
-
-                        if (toValue < fromValue && fromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else if (index == -1)
-            {
-                var lastRow = this.Table.Rows[this.Table.Rows.Count - 1];
-
-                if (colName == "From" || colName == "To")
-                {
-                    var newValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(lastRow["To"]))
-                    {
-                        var previousToValue = (double) lastRow["To"];
-
-                        if (newValue < previousToValue && previousToValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val as string);
-
-                if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-                {
-                    isvalid = false;
-                }
-                else
-                {
-                    dataRowView.Row[colName] = vertexEvidence;
-                }
-            }
-
-            return isvalid;
-        }
-
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
-        {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
@@ -930,7 +698,6 @@ namespace Marv.Input
                             Stroke = strokeBrush,
                             Width = 8,
                         },
-
                         HorizontalAlignment = HorizontalAlignment.Center,
                         HorizontalValue = (from + to) / 2,
                         Tag = dataRow,
