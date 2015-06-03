@@ -790,7 +790,7 @@ namespace Marv.Input
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
             Console.WriteLine("GridView_RowValidating");
-            e.IsValid = false;
+            e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)

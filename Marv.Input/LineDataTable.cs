@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -60,6 +61,15 @@ namespace Marv.Input
                     e.Row["To"] = e.Row["From"];
                 }*/
             }
+        }
+
+        public bool IsValid(DataRow row)
+        {
+            // Check if the given row is valid
+            var contains = this.Rows.Cast<DataRow>().Contains(row);
+            Console.WriteLine(contains);
+
+            return true;
         }
     }
 }
