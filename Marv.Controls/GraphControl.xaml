@@ -6,16 +6,14 @@
              xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
              xmlns:controls="clr-namespace:Marv.Controls"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-             mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="600"
+             mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="1024"
              Name="Root"
              Loaded="GraphControl_Loaded"
              Unloaded="GraphControl_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
-       
     </UserControl.Resources>
-   
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,22 +21,13 @@
         </Grid.RowDefinitions>
 
         <ToolBarTray Grid.Row="0"
-                     IsLocked="False" Margin="0,0,-179,0">
+                     IsLocked="False">
             <ToolBarTray.Resources>
-                <Style TargetType="telerik:RadButton">
-                    <Setter Property="Height" Value="32" />
-                    <Setter Property="Width" Value="32" />
-                </Style>
-
-                <Style TargetType="telerik:RadToggleButton">
-                    <Setter Property="Height" Value="32" />
-                    <Setter Property="Width" Value="32" />
-                </Style>
+                <ResourceDictionary Source="/Marv.Controls;component/ToolbarTrayStyle.xaml" />
             </ToolBarTray.Resources>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0">
-
                 <telerik:RadButton IsCancel="True"
                                    Visibility="{Binding ElementName=Root, Path=IsDefaultGroupVisible, Converter={StaticResource BooleanToVisibilityReversed}}"
                                    Click="BackButton_Click">
@@ -65,7 +54,7 @@
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
                      Band="0"
-                     Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}" Margin="0,0,-134,0">
+                     Visibility="{Binding ElementName=Root, Path=IsAdvancedToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                 <telerik:RadButton ToolTip="Opens a preexisting network."
                                    Click="OpenButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Open.png" />
@@ -114,25 +103,22 @@
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                      SelectedIndex="0"
-                                     
                                      SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
                                      SelectionChanged="VertexComboxBox_SelectionChanged"
                                      CanKeyboardNavigationSelectItems="False"
                                      IsEditable="True"
                                      IsFilteringEnabled="True"
-                                     IsSynchronizedWithCurrentItem="False" 
+                                     IsSynchronizedWithCurrentItem="False"
                                      OpenDropDownOnFocus="True"
-                                     TextSearchMode="Contains" Width="121"/>
-                <TextBox Height="40" 
-                         IsReadOnly ="True"
+                                     TextSearchMode="Contains"
+                                     Width="128" />
+
+                <TextBox IsReadOnly="True"
                          Margin="0"
                          TextWrapping="Wrap"
                          Text="{Binding ElementName=Root, Path=Network.FileName, Converter= {StaticResource FilePathToFileName}}"
-                         VerticalAlignment="Top"
-                         Width="181"/>
-  
+                         VerticalAlignment="Top" />
             </ToolBar>
-
         </ToolBarTray>
 
         <telerik:RadDiagram Name="Diagram"
