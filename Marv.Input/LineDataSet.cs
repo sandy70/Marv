@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Marv.Common;
 
 namespace Marv.Input
 {
@@ -8,9 +9,8 @@ namespace Marv.Input
     {
         public DataSet GetMergerdDataSet(DataSet unMergedSet)
         {
-            DataSet mergedDataSet = new DataSet();
-            List<double> newList = new List<double>();
-
+            var mergedDataSet = new DataSet();
+            var newList = new List<double>();
             var tables = unMergedSet.Tables;
 
             // Generate a list which holds the modified section ranges
@@ -25,18 +25,18 @@ namespace Marv.Input
 
                     if ((!DBNull.Value.Equals(from) && from != null))
                     {
-                        newList.Add((double)from);
+                        newList.Add((double) from);
                     }
 
                     if ((!DBNull.Value.Equals(to) && to != null))
                     {
-                        newList.Add((double)to);
+                        newList.Add((double) to);
                     }
                 }
             }
 
             newList.Sort(); // sorting the new list
-         
+
             foreach (DataTable table in tables)
             {
                 var modifiedTable = GetModifiedTable(table, tables, newList);
@@ -56,10 +56,6 @@ namespace Marv.Input
 
             foreach (DataColumn col in table.Columns)
             {
-                /*if (col.ColumnName == "ID")
-                {
-                    newTable.Columns.Add("ID", typeof (string));
-                }*/
                 if (col.ColumnName == "From")
                 {
                     newTable.Columns.Add("From", typeof (double));
@@ -82,7 +78,7 @@ namespace Marv.Input
                     var newRow = newTable.NewRow();
                     newRow["From"] = newList[i];
                     newRow["To"] = newList[i + 1];
-                   
+
                     newTable.Rows.Add(newRow);
                     i++;
                 }
@@ -92,7 +88,7 @@ namespace Marv.Input
 
             // identifying the spurious rows to be deleted
             var deleteRows = new List<DataRow>();
-           
+
             foreach (DataRow newrow in newTable.Rows)
             {
                 if (newrow["From"].Equals(newrow["To"]))
@@ -113,7 +109,6 @@ namespace Marv.Input
                                     deleteRows.Add(newrow);
                                 }
                             }
-                           
                         }
                     }
                 }
@@ -139,12 +134,11 @@ namespace Marv.Input
             {
                 foreach (DataColumn col in newTable.Columns)
                 {
-                    Console.Write("{0}-", row[col] );
+                    Console.Write("{0}-", row[col]);
                 }
 
                 Console.WriteLine("");
             }
-
 
             return newTable;
         }
@@ -160,16 +154,14 @@ namespace Marv.Input
                         if ((double) newrow["From"] >= (double) oldrow["From"] &&
                             (double) newrow["To"] <= (double) oldrow["To"])
                         {
-                            var count = 2; // skipping "ID", "From" and "To" coloumns
+                            var count = 2; // skipping "From" and "To" coloumns
 
-                            while(count < newTable.Columns.Count)
+                            while (count < newTable.Columns.Count)
                             {
                                 newrow[count] = oldrow[count];
                                 count++;
                             }
-
                         }
-                      
                     }
                 }
             }
