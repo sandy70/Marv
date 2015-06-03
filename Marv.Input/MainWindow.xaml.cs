@@ -590,6 +590,8 @@ namespace Marv.Input
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
+            Console.WriteLine("GridView_CellValidating");
+
             var dataRowView = e.Cell.DataContext as DataRowView;
             var index = this.Table.Rows.IndexOf(dataRowView.Row);
             var colName = e.Cell.Column.UniqueName;
@@ -785,6 +787,12 @@ namespace Marv.Input
             this.Minimum = this.Table.GetMinimum();
         }
 
+        private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
+        {
+            Console.WriteLine("GridView_RowValidating");
+            e.IsValid = false;
+        }
+
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
@@ -930,7 +938,6 @@ namespace Marv.Input
                             Stroke = strokeBrush,
                             Width = 8,
                         },
-
                         HorizontalAlignment = HorizontalAlignment.Center,
                         HorizontalValue = (from + to) / 2,
                         Tag = dataRow,
