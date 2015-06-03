@@ -34,11 +34,13 @@ namespace Marv.Input
             DateTime dateTime;
 
             var columnName = e.Cell.Column.UniqueName;
+            var row = (e.Cell.ParentRow.Item as DataRowView).Row;
 
             // If this is a DateTime column
             if (columnName.TryParse(out dateTime))
             {
-                this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
+                this.Graph.SelectedVertex.SetEvidence(row[columnName] as VertexEvidence);
+                this.Plot(row, columnName);
             }
         }
 
