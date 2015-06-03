@@ -178,7 +178,7 @@
                                                      CurrentCellChanged="GridView_CurrentCellChanged" 
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded" 
-                                                     RowValidating="GridView_RowValidating"/>
+                                                     RowValidating="GridView_RowValidating" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
