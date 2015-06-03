@@ -26,10 +26,9 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private readonly LineDataSet lineDataSet = new LineDataSet();
-
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
+        private readonly LineDataSet lineDataSet = new LineDataSet();
         private string chartTitle;
         private GridViewColumn currentColumn;
         private DataSet dataSet = new DataSet();
@@ -590,8 +589,6 @@ namespace Marv.Input
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            Console.WriteLine("GridView_CellValidating");
-
             var dataRowView = e.Cell.DataContext as DataRowView;
             var index = this.Table.Rows.IndexOf(dataRowView.Row);
             var colName = e.Cell.Column.UniqueName;
@@ -654,6 +651,18 @@ namespace Marv.Input
                     }
                 }
             }
+        }
+
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            this.Maximum = this.Table.GetMaximum();
+            this.Minimum = this.Table.GetMinimum();
+        }
+
+        private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
+        {
+            Console.WriteLine("GridView_RowValidating");
+            e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
         }
 
         private bool IsCellDataValid(DataRowView dataRowView, int index, string colName, object val)
@@ -779,18 +788,6 @@ namespace Marv.Input
             }
 
             return isvalid;
-        }
-
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
-        {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
-        }
-
-        private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
-        {
-            Console.WriteLine("GridView_RowValidating");
-            e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)

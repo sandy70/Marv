@@ -109,7 +109,7 @@
 
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
                                                              SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}" />
-                                      
+
                                         <Button Content="Apply"
                                                 Padding="4"
                                                 Click="ApplyButton_Click" />
@@ -118,10 +118,11 @@
                                                 Padding="4"
                                                 Click="CloseButton_Click" />
                                     </ToolBar>
-                                    <ToolBar    Name="CopyFuncToolBar"
-                                                IsEnabled="{Binding ElementName=Root, Path= IsCellSelected}"
-                                                Visibility="Visible">
-                                        
+                                    
+                                    <ToolBar Name="CopyFuncToolBar"
+                                             IsEnabled="{Binding ElementName=Root, Path= IsCellSelected}"
+                                             Visibility="Visible">
+
                                         <telerik:RadButton Name="CopyAcrossColButton"
                                                            Background="{StaticResource BackgroundDark}"
                                                            Height="22"
@@ -137,7 +138,7 @@
                                                            Height="22"
                                                            Padding="0"
                                                            Visibility="Visible"
-                                                           Width="22" 
+                                                           Width="22"
                                                            Click="CopyAcrossRow_OnClick">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRow.png" />
                                         </telerik:RadButton>
@@ -147,7 +148,7 @@
                                                            Height="22"
                                                            Padding="0"
                                                            Visibility="Visible"
-                                                           Width="22" 
+                                                           Width="22"
                                                            Click="CopyAcrossAll_OnClick">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
@@ -175,9 +176,9 @@
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
-                                                     CurrentCellChanged="GridView_CurrentCellChanged" 
+                                                     CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
-                                                     RowEditEnded="GridView_RowEditEnded" 
+                                                     RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating" />
                             </Grid>
                         </telerik:RadPane>
@@ -218,7 +219,7 @@
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
                         <marv:GraphControl Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
-                                           
+
                                            EvidenceEntered="GraphControl_EvidenceEntered"
                                            GraphChanged="GraphControl_GraphChanged"
                                            SelectionChanged="GraphControl_SelectionChanged" />
