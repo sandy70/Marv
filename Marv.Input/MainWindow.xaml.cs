@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
@@ -17,20 +19,25 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
 using Telerik.Windows.Controls.GridView;
+using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
+using Path = System.IO.Path;
 
 namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private readonly LineDataSet lineDataSet = new LineDataSet();
+
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
         private string chartTitle;
+        private GridViewColumn currentColumn;
         private DataSet dataSet = new DataSet();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
-        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Section;
+        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
         private bool isCellSelected;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
@@ -38,15 +45,20 @@ namespace Marv.Input
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
-        private LineDataSet lineDataSet = new LineDataSet();
+        private double maximum = 100;
+        private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
+        private string oldColumnName;
         private string selectedSectionId;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
-        private DataTable table;
-        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
-        private NumericalAxis verticalAxis;
+        private LineDataTable table;
+
+        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
+        {
+            new ScatterDataPoint()
+        };
 
         public string ChartTitle
         {
@@ -60,6 +72,22 @@ namespace Marv.Input
                 }
 
                 this.chartTitle = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public GridViewColumn CurrentColumn
+        {
+            get { return this.currentColumn; }
+
+            set
+            {
+                if (value.Equals(this.currentColumn))
+                {
+                    return;
+                }
+
+                this.currentColumn = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -218,12 +246,34 @@ namespace Marv.Input
             }
         }
 
-        public LineDataSet LineDataSet
+        public double Maximum
         {
-            get { return lineDataSet; }
+            get { return this.maximum; }
+
             set
             {
-                lineDataSet = value;
+                if (value.Equals(this.maximum))
+                {
+                    return;
+                }
+
+                this.maximum = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double Minimum
+        {
+            get { return this.minimum; }
+
+            set
+            {
+                if (value.Equals(this.minimum))
+                {
+                    return;
+                }
+
+                this.minimum = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -308,7 +358,7 @@ namespace Marv.Input
             }
         }
 
-        public DataTable Table
+        public LineDataTable Table
         {
             get { return this.table; }
 
@@ -352,15 +402,15 @@ namespace Marv.Input
 
             var date = this.StartDate;
 
-            var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
-            {
-                { DateSelectionMode.Year, date.AddYears },
-                { DateSelectionMode.Month, date.AddMonths },
-                { DateSelectionMode.Day, i => date.AddDays(i) }
-            };
-
             while (date < this.EndDate)
             {
+                var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
+                {
+                    { DateSelectionMode.Year, date.AddYears },
+                    { DateSelectionMode.Month, date.AddMonths },
+                    { DateSelectionMode.Day, i => date.AddDays(i) }
+                };
+
                 this.dates.Add(date);
                 date = incrementFuncs[this.DateSelectionMode](1);
             }
@@ -458,12 +508,12 @@ namespace Marv.Input
 
         private object GetChartCategory()
         {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedSectionId : this.SelectedYear as object;
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedSectionId : this.SelectedYear as object;
         }
 
         private object GetChartCategory(string sectionId, int year)
         {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? sectionId : year as object;
+            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? sectionId : year as object;
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -493,35 +543,16 @@ namespace Marv.Input
         {
             this.UpdateTable();
 
-            if (this.LineData != null)
+            this.Chart.Annotations.Remove(annotation => true);
+
+            var columnName = this.CurrentColumn == null ? this.oldColumnName : this.CurrentColumn.UniqueName;
+
+            if (columnName == null)
             {
-                var selectedVertex = this.Graph.SelectedVertex;
-
-                //this.LineDataControl.ClearRows();
-
-                //foreach (var sectionId in this.LineData.SectionIds)
-                //{
-                //    // var sectionEvidence = await this.LineData.GetEvidenceAsync(sectionId);
-
-                //    if (selectedVertex != null)
-                //    {
-                //        //this.LineDataControl.AddRow(sectionId, sectionEvidence[null, selectedVertex.Key]);
-                //    }
-                //}
-
-                if (selectedVertex == null)
-                {
-                    return;
-                }
-
-                var intervals = selectedVertex.Intervals.ToArray();
-
-                //this.LineDataChart.SetVerticalAxis(selectedVertex.SafeMax, selectedVertex.SafeMin, intervals);
-
-                //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
-                //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-                //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
+                return;
             }
+
+            this.Plot(columnName);
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -550,22 +581,10 @@ namespace Marv.Input
 
             var columnName = e.Cell.Column.UniqueName;
 
+            // If this is a DateTime column
             if (columnName.TryParse(out dateTime))
             {
-                var vertexEvidence = (e.Cell.ParentRow.DataContext as DataRowView).Row[columnName] as VertexEvidence;
-
-                if (vertexEvidence.Type == VertexEvidenceType.Number)
-                {
-                    var dataRow = (e.Cell.ParentRow.DataContext as DataRowView).Row;
-                    var from = (double) dataRow["From"];
-                    var to = (double) dataRow["To"];
-
-                    this.UserNumberPoints.Add(new ScatterDataPoint
-                    {
-                        XValue = (from + to) / 2,
-                        YValue = vertexEvidence.Params[0]
-                    });
-                }
+                this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
             }
         }
 
@@ -760,12 +779,18 @@ namespace Marv.Input
             return isvalid;
         }
 
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            this.Maximum = this.Table.GetMaximum();
+            this.Minimum = this.Table.GetMinimum();
+        }
+
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
         {
             var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
 
-            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? e.Category as string : this.SelectedSectionId;
-            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? this.SelectedYear : (int) e.Category;
+            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? e.Category as string : this.SelectedSectionId;
+            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedYear : (int) e.Category;
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -780,7 +805,7 @@ namespace Marv.Input
 
         private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
         {
-            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section
+            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
             //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
             //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
             this.UpdateChartTitle();
@@ -867,6 +892,120 @@ namespace Marv.Input
             }
         }
 
+        private void Plot(string columnName)
+        {
+            foreach (var row in this.Table.Rows)
+            {
+                this.Plot(row as DataRow, columnName);
+            }
+        }
+
+        private void Plot(DataRow dataRow, string columnName)
+        {
+            var fillBrush = new SolidColorBrush(Colors.Goldenrod);
+            var strokeBrush = new SolidColorBrush(Colors.DarkGoldenrod);
+
+            var from = (double) dataRow["From"];
+            var to = (double) dataRow["To"];
+            var vertexEvidence = dataRow[columnName] as VertexEvidence;
+
+            if (vertexEvidence == null)
+            {
+                return;
+            }
+
+            // Remove older annotations
+            this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
+
+            if (vertexEvidence.Type == VertexEvidenceType.Number)
+            {
+                if (from == to)
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomAnnotation
+                    {
+                        Content = new Ellipse
+                        {
+                            Fill = fillBrush,
+                            Height = 8,
+                            Stroke = strokeBrush,
+                            Width = 8,
+                        },
+
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalValue = (from + to) / 2,
+                        Tag = dataRow,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalValue = vertexEvidence.Params[0],
+                        ZIndex = 100
+                    });
+                }
+                else
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                    {
+                        HorizontalFrom = @from,
+                        HorizontalTo = to,
+                        Stroke = fillBrush,
+                        StrokeThickness = 2,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[0],
+                        VerticalTo = vertexEvidence.Params[0],
+                    });
+                }
+            }
+            else if (vertexEvidence.Type == VertexEvidenceType.Range)
+            {
+                this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+                {
+                    Fill = fillBrush,
+                    HorizontalFrom = @from,
+                    HorizontalTo = to,
+                    Stroke = strokeBrush,
+                    Tag = dataRow,
+                    VerticalFrom = vertexEvidence.Params[0],
+                    VerticalTo = vertexEvidence.Params[1],
+                });
+            }
+            else if (vertexEvidence.Type != VertexEvidenceType.Null)
+            {
+                var maxValue = vertexEvidence.Value.Max();
+
+                var selectedVertex = this.Graph.SelectedVertex;
+
+                var fill = new LinearGradientBrush
+                {
+                    StartPoint = new Point(0, 0),
+                    EndPoint = new Point(0, 1)
+                };
+
+                vertexEvidence.Value.ForEach((value, i) =>
+                {
+                    fill.GradientStops.Add(new GradientStop
+                    {
+                        Offset = selectedVertex.Intervals.ElementAt(i) / selectedVertex.SafeMax,
+                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                    });
+
+                    fill.GradientStops.Add(new GradientStop
+                    {
+                        Offset = selectedVertex.Intervals.ElementAt(i + 1) / selectedVertex.SafeMax,
+                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                    });
+                });
+
+                this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+                {
+                    Fill = fill,
+                    HorizontalFrom = @from,
+                    HorizontalTo = to,
+                    Stroke = strokeBrush,
+                    Tag = dataRow,
+                    VerticalFrom = selectedVertex.SafeMin,
+                    VerticalTo = selectedVertex.SafeMax
+                });
+            }
+        }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -908,14 +1047,14 @@ namespace Marv.Input
 
         private void UpdateChartTitle()
         {
-            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Section ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
+            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
         }
 
         private void UpdateTable()
         {
             if (this.Graph.SelectedVertex != null)
             {
-                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key];
+                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key] as LineDataTable;
 
                 if (this.Table == null)
                 {

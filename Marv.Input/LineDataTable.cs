@@ -10,6 +10,40 @@ namespace Marv.Input
             this.RowChanged += LineDataTable_RowChanged;
         }
 
+        public double GetMaximum()
+        {
+            var max = double.MinValue;
+
+            foreach (DataRow row in this.Rows)
+            {
+                var value = Math.Max((double) row["From"], (double) row["To"]);
+
+                if (value > max)
+                {
+                    max = value;
+                }
+            }
+
+            return max;
+        }
+
+        public double GetMinimum()
+        {
+            var min = double.MaxValue;
+
+            foreach (DataRow row in this.Rows)
+            {
+                var value = Math.Min((double) row["From"], (double) row["To"]);
+
+                if (value < min)
+                {
+                    min = value;
+                }
+            }
+
+            return min;
+        }
+
         private void LineDataTable_RowChanged(object sender, DataRowChangeEventArgs e)
         {
             if (e.Action == DataRowAction.Add)

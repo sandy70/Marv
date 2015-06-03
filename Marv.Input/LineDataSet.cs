@@ -11,6 +11,7 @@ namespace Marv.Input
         {
             var mergedDataSet = new DataSet();
             var newList = new List<double>();
+
             var tables = unMergedSet.Tables;
 
             // Generate a list which holds the modified section ranges
@@ -56,6 +57,10 @@ namespace Marv.Input
 
             foreach (DataColumn col in table.Columns)
             {
+                /*if (col.ColumnName == "ID")
+                {
+                    newTable.Columns.Add("ID", typeof (string));
+                }*/
                 if (col.ColumnName == "From")
                 {
                     newTable.Columns.Add("From", typeof (double));
@@ -109,6 +114,7 @@ namespace Marv.Input
                                     deleteRows.Add(newrow);
                                 }
                             }
+                           
                         }
                     }
                 }
@@ -140,6 +146,7 @@ namespace Marv.Input
                 Console.WriteLine("");
             }
 
+
             return newTable;
         }
 
@@ -161,7 +168,9 @@ namespace Marv.Input
                                 newrow[count] = oldrow[count];
                                 count++;
                             }
+
                         }
+                      
                     }
                 }
             }
