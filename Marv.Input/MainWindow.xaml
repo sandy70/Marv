@@ -168,7 +168,6 @@
                                                      ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}"
                                                      NewRowPosition="Bottom"
                                                      SelectionUnit="Mixed"
-                                                     SelectionUnit="Cell"
                                                      SelectionMode="Extended"
                                                      ShowGroupPanel="False"
                                                      ValidatesOnDataErrors="None"

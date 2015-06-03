@@ -26,6 +26,8 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private readonly LineDataSet lineDataSet = new LineDataSet();
+
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
         private string chartTitle;
