@@ -39,6 +39,8 @@ namespace Marv.Input
 
             foreach (var row in this.Rows.Cast<DataRow>())
             {
+                var from = row["From"];
+                var to = row["To"];
 
                 if (@from != DBNull.Value)
                 {
@@ -46,8 +48,8 @@ namespace Marv.Input
                 }
 
                 if (to != DBNull.Value)
-                {                    
-                	values.Add((double) to);
+                {
+                    values.Add((double) to);
                 }
             }
             return values;
