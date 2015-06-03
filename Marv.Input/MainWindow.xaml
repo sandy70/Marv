@@ -119,7 +119,7 @@
                                                 Click="CloseButton_Click" />
                                     </ToolBar>
                                     
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=IsCellSelected}">
+                                    <ToolBar Visibility="{Binding ElementName=Root, Path=IsCellToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <telerik:RadButton Background="{StaticResource BackgroundDark}"
                                                            Height="22"
                                                            Padding="0"

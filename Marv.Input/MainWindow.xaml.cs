@@ -36,7 +36,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
-        private bool isCellSelected;
+        private bool isCellToolbarVisible;
         private bool isGraphControlVisible = true;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -154,12 +154,12 @@ namespace Marv.Input
             }
         }
 
-        public bool IsCellSelected
+        public bool IsCellToolbarVisible
         {
-            get { return this.isCellSelected; }
+            get { return this.isCellToolbarVisible; }
             set
             {
-                isCellSelected = value;
+                this.isCellToolbarVisible = value;
                 this.RaisePropertyChanged();
             }
         }

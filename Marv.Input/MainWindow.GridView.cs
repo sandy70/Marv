@@ -88,11 +88,11 @@ namespace Marv.Input
             if (e.NewCell.Column.UniqueName.TryParse(out dateTime))
             {
                 // this is a date time column
-                this.IsCellSelected = true;
+                this.IsCellToolbarVisible = true;
             }
             else
             {
-                this.IsCellSelected = false;
+                this.IsCellToolbarVisible = false;
             }
         }
 
