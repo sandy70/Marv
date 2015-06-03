@@ -589,16 +589,35 @@ namespace Marv.Input
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            var dataRowView = e.Cell.DataContext as DataRowView;
-            var index = this.Table.Rows.IndexOf(dataRowView.Row);
-            var colName = e.Cell.Column.UniqueName;
-            var val = e.NewValue;
+            var row = (e.Row.Item as DataRowView).Row;
+            var columnName = e.Cell.Column.UniqueName;
+            var selectedVertex = this.Graph.SelectedVertex;
 
-            var isvalid = IsCellDataValid(dataRowView, index, colName, val);
+            DateTime dateTime;
 
-            if (!isvalid)
+            if (columnName.TryParse(out dateTime))
             {
-                e.IsValid = false;
+                // This is a vertex evidence cell
+                var vertexEvidence = selectedVertex.States.ParseEvidenceString(e.NewValue as string);
+
+                if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessage = "Invalid evidence for node " + selectedVertex.Key;
+                }
+                else
+                {
+                    row[columnName] = vertexEvidence;
+                }
+            }
+            else
+            {
+                // this is a location cell
+                if (e.NewValue.GetType() != this.Table.Columns[columnName].DataType)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessage = "Invalid value for column " + columnName;
+                }
             }
         }
 
@@ -663,131 +682,6 @@ namespace Marv.Input
         {
             Console.WriteLine("GridView_RowValidating");
             e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
-        }
-
-        private bool IsCellDataValid(DataRowView dataRowView, int index, string colName, object val)
-        {
-            var isvalid = true;
-
-            if (colName == "From" && index != -1)
-            {
-                if (this.Table.Rows.IndexOf(dataRowView.Row) == 0)
-                {
-                    var fromValue = Convert.ToDouble(val);
-                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                    {
-                        var toValue = (double) dataRowView.Row["To"];
-
-                        if (fromValue > toValue)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-
-                else
-                {
-                    var previousRow = this.Table.Rows[index - 1];
-
-                    var fromValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(previousRow["To"]))
-                    {
-                        var previousToValue = (double) previousRow["To"];
-
-                        if (fromValue < previousToValue && previousToValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                    if (!DBNull.Value.Equals(dataRowView.Row["To"]))
-                    {
-                        var toValue = (double) dataRowView.Row["To"];
-
-                        if (fromValue > toValue && toValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else if (colName == "To" && index != -1)
-            {
-                if (index == this.Table.Rows.Count - 1)
-                {
-                    var toValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                    {
-                        var fromValue = (double) dataRowView.Row["From"];
-
-                        if (toValue < fromValue && fromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-                else
-                {
-                    var nextRow = this.Table.Rows[index + 1];
-
-                    var toValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(nextRow["From"]))
-                    {
-                        var nextFromValue = (double) nextRow["From"];
-
-                        if (toValue > nextFromValue && nextFromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-
-                    if (!DBNull.Value.Equals(dataRowView.Row["From"]))
-                    {
-                        var fromValue = (double) dataRowView.Row["From"];
-
-                        if (toValue < fromValue && fromValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else if (index == -1)
-            {
-                var lastRow = this.Table.Rows[this.Table.Rows.Count - 1];
-
-                if (colName == "From" || colName == "To")
-                {
-                    var newValue = Convert.ToDouble(val);
-
-                    if (!DBNull.Value.Equals(lastRow["To"]))
-                    {
-                        var previousToValue = (double) lastRow["To"];
-
-                        if (newValue < previousToValue && previousToValue != 0)
-                        {
-                            isvalid = false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val as string);
-
-                if (vertexEvidence.Type == VertexEvidenceType.Invalid)
-                {
-                    isvalid = false;
-                }
-                else
-                {
-                    dataRowView.Row[colName] = vertexEvidence;
-                }
-            }
-
-            return isvalid;
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
