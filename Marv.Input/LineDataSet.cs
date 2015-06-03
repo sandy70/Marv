@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using Marv.Common;
 
 namespace Marv.Input
 {
@@ -10,7 +11,6 @@ namespace Marv.Input
         {
             var mergedDataSet = new DataSet();
             var newList = new List<double>();
-
             var tables = unMergedSet.Tables;
 
             // Generate a list which holds the modified section ranges
@@ -154,7 +154,7 @@ namespace Marv.Input
                         if ((double) newrow["From"] >= (double) oldrow["From"] &&
                             (double) newrow["To"] <= (double) oldrow["To"])
                         {
-                            var count = 2; // skipping "ID", "From" and "To" coloumns
+                            var count = 2; // skipping "From" and "To" coloumns
 
                             while (count < newTable.Columns.Count)
                             {
