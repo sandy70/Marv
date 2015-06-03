@@ -1,65 +1,58 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace Marv.Input
 {
     public class LineDataTable : DataTable
     {
-        public LineDataTable(string tableName) : base(tableName)
-        {
-            this.RowChanged += LineDataTable_RowChanged;
-        }
+        public LineDataTable(string tableName) : base(tableName) {}
 
         public double GetMaximum()
         {
-            var max = double.MinValue;
-
-            foreach (DataRow row in this.Rows)
-            {
-                var value = Math.Max((double) row["From"], (double) row["To"]);
-
-                if (value > max)
-                {
-                    max = value;
-                }
-            }
-
-            return max;
+            return this.GetFromToValues().Max();
         }
 
         public double GetMinimum()
         {
-            var min = double.MaxValue;
-
-            foreach (DataRow row in this.Rows)
-            {
-                var value = Math.Min((double) row["From"], (double) row["To"]);
-
-                if (value < min)
-                {
-                    min = value;
-                }
-            }
-
-            return min;
+            return this.GetFromToValues().Min();
         }
 
-        private void LineDataTable_RowChanged(object sender, DataRowChangeEventArgs e)
+        public bool IsValid(DataRow row)
         {
-            if (e.Action == DataRowAction.Add)
+            // Check if the given row is valid
+            var from = row["From"];
+            var to = row["To"];
+
+            if (from != DBNull.Value && to != DBNull.Value)
             {
-                Console.WriteLine("row added");
-                /*
-                if (!DBNull.Value.Equals(e.Row["To"]))
+                return (double) from <= (double) to;
+            }
+
+            return true;
+        }
+
+        private IEnumerable<double> GetFromToValues()
+        {
+            var values = new List<double>();
+
+            foreach (var row in this.Rows.Cast<DataRow>())
+            {
+                var from = row["From"];
+                var to = row["To"];
+
+                if (@from != DBNull.Value)
                 {
-                    e.Row["From"] = e.Row["To"];
+                    values.Add((double) @from);
                 }
 
-                else if (!DBNull.Value.Equals(e.Row["From"]))
+                if (to != DBNull.Value)
                 {
-                    e.Row["To"] = e.Row["From"];
-                }*/
+                    values.Add((double) to);
+                }
             }
+            return values;
         }
     }
 }
