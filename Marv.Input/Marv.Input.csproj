@@ -206,6 +206,7 @@
     <Compile Include="LineDataTable.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="MainWindow.LineDataControl.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
