@@ -83,20 +83,11 @@ namespace Marv.Input
                 return;
             }
 
-            var row = (e.NewCell.ParentRow.Item as DataRowView).Row;
+            DateTime dateTime;
 
-            selectedRow = row;
-
-            foreach (DataColumn col in this.Table.Columns)
+            if (e.NewCell.Column.UniqueName.TryParse(out dateTime))
             {
-                if (col.ColumnName == e.NewCell.Column.UniqueName)
-                {
-                    selectedColumn = col;
-                }
-            }
-
-            if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
-            {
+                // this is a date time column
                 this.IsCellSelected = true;
             }
             else
