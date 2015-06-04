@@ -80,22 +80,20 @@ namespace Marv.Input
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell == null)
+            var gridViewCell = e.NewCell;
+
+            if (gridViewCell == null)
             {
                 return;
             }
 
+            var gridViewColumn = gridViewCell.Column;
+
+            this.selectedColumnName = gridViewColumn.UniqueName;
+
             DateTime dateTime;
 
-            if (e.NewCell.Column.UniqueName.TryParse(out dateTime))
-            {
-                // this is a date time column
-                this.IsCellToolbarVisible = true;
-            }
-            else
-            {
-                this.IsCellToolbarVisible = false;
-            }
+            this.IsCellToolbarVisible = gridViewColumn.UniqueName.TryParse(out dateTime);
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
