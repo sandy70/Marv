@@ -26,7 +26,6 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private static DataColumn selectedColumn;
-        private readonly LineDataSet lineDataSet = new LineDataSet();
         private string chartTitle;
         private GridViewColumn currentColumn;
         private Dict<string, EvidenceTable> dataSet = new Dict<string, EvidenceTable>();
@@ -53,7 +52,7 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-
+        private Dict<string, EvidenceTable> mergedEvidenceSet;
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -788,7 +787,7 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-            // var mergedDataSet = this.lineDataSet.GetMergerdDataSet(this.dataSet);
+            this.mergedEvidenceSet = Utils.Merge(this.dataSet);
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -825,11 +824,7 @@ namespace Marv.Input
 
             if (this.Table == null)
             {
-                this.dataSet.Add(this.Graph.SelectedVertex.Key,
-                    this.Table = new EvidenceTable(this.dates)
-                    {
-                        new EvidenceRow()
-                    });
+                this.dataSet.Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
         }
 

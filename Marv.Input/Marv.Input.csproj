@@ -195,32 +195,11 @@
     <Compile Include="EvidenceGeneratedEventArgs.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
-    <Compile Include="LineDataChart.xaml.cs">
-      <DependentUpon>LineDataChart.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="LineDataControl.GridView.cs" />
-    <Compile Include="LineDataControl.xaml.cs">
-      <DependentUpon>LineDataControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="LineDataSet.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="LineDataTable.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MainWindow.GridView.cs" />
-    <Compile Include="MainWindow.LineDataControl.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
-    <Page Include="LineDataChart.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="LineDataControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

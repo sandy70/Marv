@@ -8,11 +8,17 @@ namespace Marv.Input
 {
     public class EvidenceTable : ObservableCollection<EvidenceRow>
     {
-        private readonly IEnumerable<DateTime> dateTimes;
+        private IEnumerable<DateTime> dateTimes;
+
+        public IEnumerable<DateTime> DateTimes
+        {
+            get { return this.dateTimes; }
+            private set { this.dateTimes = value; }
+        }
 
         public EvidenceTable(IEnumerable<DateTime> theDateTimes)
         {
-            this.dateTimes = theDateTimes;
+            this.DateTimes = theDateTimes;
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

@@ -114,10 +114,8 @@ namespace Marv.Input
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
-            Console.WriteLine("GridView_RowValidating");
-            
             var evidenceRow = e.Row.Item as EvidenceRow;
-            
+
             e.IsValid = evidenceRow.From <= evidenceRow.To;
         }
     }
