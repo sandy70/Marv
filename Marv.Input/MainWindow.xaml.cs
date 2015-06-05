@@ -500,16 +500,6 @@ namespace Marv.Input
             }
         }
 
-        private object GetChartCategory()
-        {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedSectionId : this.SelectedYear as object;
-        }
-
-        private object GetChartCategory(string sectionId, int year)
-        {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? sectionId : year as object;
-        }
-
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
             if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.Graph.SelectedVertex != null)
@@ -547,32 +537,6 @@ namespace Marv.Input
             }
 
             this.Plot(columnName);
-        }
-
-        private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
-        {
-            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
-
-            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? e.Category as string : this.SelectedSectionId;
-            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedYear : (int) e.Category;
-
-            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
-            {
-                var sectionEvidence = this.LineData.GetEvidence(sectionId);
-                sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
-                this.LineData.SetEvidence(sectionId, sectionEvidence);
-
-                // this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
-                //this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
-            }
-        }
-
-        private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
-        {
-            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
-            //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-            //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
-            this.UpdateChartTitle();
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
