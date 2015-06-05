@@ -29,7 +29,7 @@ namespace Marv.Input
         private readonly LineDataSet lineDataSet = new LineDataSet();
         private string chartTitle;
         private GridViewColumn currentColumn;
-        private Dict<string, ObservableCollection<EvidenceRow>> dataSet = new Dict<string, ObservableCollection<EvidenceRow>>();
+        private Dict<string, EvidenceTable> dataSet = new Dict<string, EvidenceTable>();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private DateTime endDate = DateTime.Now;
@@ -52,7 +52,7 @@ namespace Marv.Input
         private string selectedSectionId;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
-        private ObservableCollection<EvidenceRow> table;
+        private EvidenceTable table;
 
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
@@ -357,7 +357,7 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<EvidenceRow> Table
+        public EvidenceTable Table
         {
             get { return this.table; }
 
@@ -416,7 +416,7 @@ namespace Marv.Input
 
             this.dates.Add(date);
 
-            this.dataSet = new Dict<string, ObservableCollection<EvidenceRow>>();
+            this.dataSet = new Dict<string, EvidenceTable>();
 
             this.UpdateTable();
         }
@@ -823,9 +823,12 @@ namespace Marv.Input
 
             this.Table = this.dataSet[this.Graph.SelectedVertex.Key];
 
-            if (this.Table.Count == 0)
+            if (this.Table == null)
             {
-                this.Table.Add(new EvidenceRow(this.dates));
+                this.Table = new EvidenceTable(this.dates)
+                {
+                    new EvidenceRow()
+                };
             }
         }
 

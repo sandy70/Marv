@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Marv.Common.Types;
 
 namespace Marv.Input
@@ -10,7 +8,7 @@ namespace Marv.Input
         private double from;
         private double to;
 
-        [Display(Order=0)]
+        [Display(Order = 0)]
         public double From
         {
             get { return this.from; }
@@ -27,7 +25,7 @@ namespace Marv.Input
             }
         }
 
-        [Display(Order=1)]
+        [Display(Order = 1)]
         public double To
         {
             get { return this.to; }
@@ -43,15 +41,5 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
-
-        public EvidenceRow(IEnumerable<DateTime> dateTimes)
-        {
-            foreach (var dateTime in dateTimes)
-            {
-                this[dateTime.String()] = "";
-            }
-        }
-
-        public EvidenceRow() {}
     }
 }

@@ -194,6 +194,7 @@
     <Compile Include="CellModel.cs" />
     <Compile Include="EvidenceGeneratedEventArgs.cs" />
     <Compile Include="EvidenceRow.cs" />
+    <Compile Include="EvidenceTable.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>
