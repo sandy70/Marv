@@ -20,7 +20,7 @@ namespace Marv.Input
             var headerString = e.Column.Header as string;
 
             DateTime dateTime;
-
+            
             if (headerString.TryParse(out dateTime))
             {
                 e.Column.Header = new TextBlock
@@ -32,14 +32,14 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-            DateTime dateTime;
-
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
 
-            // If this is a DateTime column
+            DateTime dateTime;
+
             if (columnName.TryParse(out dateTime))
             {
+                // If this is a DateTime column
                 this.Graph.SelectedVertex.SetEvidence(row[columnName] as VertexEvidence);
                 this.Plot(row, columnName);
             }
@@ -55,7 +55,7 @@ namespace Marv.Input
 
             if (columnName.TryParse(out dateTime))
             {
-                // This is a vertex evidence cell
+                // This is a date time column and vertex evidence cell
                 var vertexEvidence = selectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
                 if (vertexEvidence.Type == VertexEvidenceType.Invalid)
@@ -110,24 +110,17 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            // this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-            // this.Minimum = this.Table.Min(row => Math.Max(row.From, row.To));
+            this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+            this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
             Console.WriteLine("GridView_RowValidating");
             
-            var evidenceRow = (e.Row.Item as EvidenceRow);
-
-            if (evidenceRow.From != null && evidenceRow.To != null)
-            {
-                e.IsValid = evidenceRow.From <= evidenceRow.To;
-            }
-            else
-            {
-                e.IsValid = true;
-            }
+            var evidenceRow = e.Row.Item as EvidenceRow;
+            
+            e.IsValid = evidenceRow.From <= evidenceRow.To;
         }
     }
 }

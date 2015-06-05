@@ -825,10 +825,11 @@ namespace Marv.Input
 
             if (this.Table == null)
             {
-                this.Table = new EvidenceTable(this.dates)
-                {
-                    new EvidenceRow()
-                };
+                this.dataSet.Add(this.Graph.SelectedVertex.Key,
+                    this.Table = new EvidenceTable(this.dates)
+                    {
+                        new EvidenceRow()
+                    });
             }
         }
 
