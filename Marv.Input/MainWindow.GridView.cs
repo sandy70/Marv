@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -19,7 +20,7 @@ namespace Marv.Input
             var headerString = e.Column.Header as string;
 
             DateTime dateTime;
-
+            
             if (headerString.TryParse(out dateTime))
             {
                 e.Column.Header = new TextBlock
@@ -31,20 +32,24 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
+            var columnName = e.Cell.Column.UniqueName;
+            var row = e.Cell.ParentRow.Item as EvidenceRow;
+            var selectedVertex = this.Graph.SelectedVertex;
+
             DateTime dateTime;
 
-            var columnName = e.Cell.Column.UniqueName;
-
-            // If this is a DateTime column
             if (columnName.TryParse(out dateTime))
             {
-                this.Plot((e.Cell.ParentRow.DataContext as DataRowView).Row, columnName);
+                // This is a date time column and vertex evidence cell
+                
+                row[columnName] = selectedVertex.States.ParseEvidenceString(e.NewData as string);
+
+                this.Plot(row, columnName);
             }
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            var row = (e.Row.Item as DataRowView).Row;
             var columnName = e.Cell.Column.UniqueName;
             var selectedVertex = this.Graph.SelectedVertex;
 
@@ -52,7 +57,7 @@ namespace Marv.Input
 
             if (columnName.TryParse(out dateTime))
             {
-                // This is a vertex evidence cell
+                // This is a date time column and vertex evidence cell
                 var vertexEvidence = selectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
                 if (vertexEvidence.Type == VertexEvidenceType.Invalid)
@@ -60,40 +65,25 @@ namespace Marv.Input
                     e.IsValid = false;
                     e.ErrorMessage = "Invalid evidence for node " + selectedVertex.Key;
                 }
-                else
-                {
-                    row[columnName] = vertexEvidence;
-                }
-            }
-            else
-            {
-                // this is a location cell
-                if (e.NewValue.GetType() != this.Table.Columns[columnName].DataType)
-                {
-                    e.IsValid = false;
-                    e.ErrorMessage = "Invalid value for column " + columnName;
-                }
             }
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
         {
-            if (e.NewCell == null)
+            var gridViewCell = e.NewCell;
+
+            if (gridViewCell == null)
             {
                 return;
             }
 
+            var gridViewColumn = gridViewCell.Column;
+
+            this.selectedColumnName = gridViewColumn.UniqueName;
+
             DateTime dateTime;
 
-            if (e.NewCell.Column.UniqueName.TryParse(out dateTime))
-            {
-                // this is a date time column
-                this.IsCellToolbarVisible = true;
-            }
-            else
-            {
-                this.IsCellToolbarVisible = false;
-            }
+            this.IsCellToolbarVisible = gridViewColumn.UniqueName.TryParse(out dateTime);
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
@@ -118,14 +108,15 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
+            this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+            this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
-            Console.WriteLine("GridView_RowValidating");
-            e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
+            var evidenceRow = e.Row.Item as EvidenceRow;
+
+            e.IsValid = evidenceRow.From <= evidenceRow.To;
         }
     }
 }

@@ -25,9 +25,20 @@ namespace Marv.Common.Types
             if (this.ContainsKey(key))
             {
                 var oldKvp = this.dictionary[key];
-                oldKvp.Value = value;
 
-                this.Values.Replace(oldKvp.Value, value);
+                if (oldKvp.Value == null)
+                {
+                    var index = this.Keys.IndexOf(key);
+
+                    oldKvp.Value = value;
+                    this.Values.RemoveAt(index);
+                    this.Values.Insert(index, value);
+                }
+                else
+                {
+                    oldKvp.Value = value;
+                    this.Values.Replace(oldKvp.Value, value);
+                }
             }
             else
             {

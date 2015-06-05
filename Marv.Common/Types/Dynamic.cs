@@ -42,11 +42,6 @@ namespace Marv.Common.Types
             return this.dictionary.Keys;
         }
 
-        public void Remove(string propertyName)
-        {
-            this.dictionary.Remove(propertyName);
-        }
-
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
             var name = (string) indexes[0];
@@ -73,8 +68,20 @@ namespace Marv.Common.Types
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var name = binder.Name;
-            return this.dictionary.TryGetValue(name, out result);
+            if (this.GetType().GetProperties().Any(info => info.Name.Equals(binder.Name)))
+            {
+                result = this.GetType().GetProperty(binder.Name).GetValue(this);
+                return true;
+            }
+
+            if (this.dictionary.ContainsKey(binder.Name))
+            {
+                result = this.dictionary[binder.Name];
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)

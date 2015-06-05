@@ -26,13 +26,11 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private static DataColumn selectedColumn;
-        private static DataRow selectedRow;
-        private readonly LineDataSet lineDataSet = new LineDataSet();
         private string chartTitle;
         private GridViewColumn currentColumn;
-        private DataSet dataSet = new DataSet();
+        private Dict<string, EvidenceTable> dataSet = new Dict<string, EvidenceTable>();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
-        private List<DateTime> dates;
+        private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
@@ -48,11 +46,13 @@ namespace Marv.Input
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string oldColumnName;
+        private string selectedColumnName;
+        private EvidenceRow selectedRow;
         private string selectedSectionId;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
-        private LineDataTable table;
-
+        private EvidenceTable table;
+        private Dict<string, EvidenceTable> mergedEvidenceSet;
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -356,7 +356,7 @@ namespace Marv.Input
             }
         }
 
-        public LineDataTable Table
+        public EvidenceTable Table
         {
             get { return this.table; }
 
@@ -415,7 +415,7 @@ namespace Marv.Input
 
             this.dates.Add(date);
 
-            this.dataSet = new DataSet();
+            this.dataSet = new Dict<string, EvidenceTable>();
 
             this.UpdateTable();
         }
@@ -431,18 +431,15 @@ namespace Marv.Input
             {
                 if (selectedColumn != null)
                 {
-                    var val = selectedRow[selectedColumn];
+                    var val = selectedRow[selectedColumn.ColumnName];
 
                     if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
                     {
-                        foreach (DataRow row in this.Table.Rows)
+                        foreach (var row in this.Table)
                         {
-                            foreach (DataColumn column in this.Table.Columns)
+                            foreach (var column in row.GetDynamicMemberNames())
                             {
-                                if (column.ColumnName != "From" && column.ColumnName != "To")
-                                {
-                                    row[column] = val;
-                                }
+                                row[column] = val;
                             }
                         }
                     }
@@ -452,41 +449,40 @@ namespace Marv.Input
 
         private void CopyAcrossCol_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedRow != null)
+            if (this.selectedColumnName == null || this.selectedRow == null)
             {
-                if (selectedColumn != null)
-                {
-                    var val = selectedRow[selectedColumn];
+                return;
+            }
 
-                    if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
-                    {
-                        foreach (DataRow row in this.Table.Rows)
-                        {
-                            row[selectedColumn] = val;
-                        }
-                    }
+            var val = selectedRow[this.selectedColumnName];
+
+            DateTime dateTime;
+
+            if (this.selectedColumnName.TryParse(out dateTime))
+            {
+                foreach (var row in this.Table)
+                {
+                    row[this.selectedColumnName] = val;
                 }
             }
         }
 
         private void CopyAcrossRow_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedRow != null)
+            if (this.selectedColumnName == null || this.selectedRow == null)
             {
-                if (selectedColumn != null)
-                {
-                    var val = selectedRow[selectedColumn];
+                return;
+            }
 
-                    if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
-                    {
-                        foreach (DataColumn col in this.Table.Columns)
-                        {
-                            if (col.ColumnName != "From" && col.ColumnName != "To")
-                            {
-                                selectedRow[col] = val;
-                            }
-                        }
-                    }
+            var val = this.selectedRow[this.selectedColumnName];
+
+            DateTime dateTime;
+
+            if (this.selectedColumnName.TryParse(out dateTime))
+            {
+                foreach (var columnName in this.selectedRow.GetDynamicMemberNames())
+                {
+                    this.selectedRow[columnName] = val;
                 }
             }
         }
@@ -502,16 +498,6 @@ namespace Marv.Input
             {
                 this.StartDate = this.EndDate;
             }
-        }
-
-        private object GetChartCategory()
-        {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedSectionId : this.SelectedYear as object;
-        }
-
-        private object GetChartCategory(string sectionId, int year)
-        {
-            return this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? sectionId : year as object;
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -551,32 +537,6 @@ namespace Marv.Input
             }
 
             this.Plot(columnName);
-        }
-
-        private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
-        {
-            var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(e.EvidenceString);
-
-            var sectionId = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? e.Category as string : this.SelectedSectionId;
-            var year = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? this.SelectedYear : (int) e.Category;
-
-            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
-            {
-                var sectionEvidence = this.LineData.GetEvidence(sectionId);
-                sectionEvidence[year][this.Graph.SelectedVertex.Key] = vertexEvidence;
-                this.LineData.SetEvidence(sectionId, sectionEvidence);
-
-                // this.LineDataChart.SetUserEvidence(e.Category, vertexEvidence);
-                //this.LineDataControl.SetEvidence(sectionId, year, vertexEvidence);
-            }
-        }
-
-        private void LineDataChart_HorizontalAxisQuantityChanged(object sender, HorizontalAxisQuantity e)
-        {
-            //this.LineDataChart.SetUserEvidence(this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance
-            //                                       ? this.LineData.GetEvidence(null, this.SelectedYear, this.Graph.SelectedVertex.Key)
-            //                                       : this.LineData.GetEvidence(this.SelectedSectionId, null, this.Graph.SelectedVertex.Key));
-            this.UpdateChartTitle();
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -662,13 +622,13 @@ namespace Marv.Input
 
         private void Plot(string columnName)
         {
-            foreach (var row in this.Table.Rows)
+            foreach (var row in this.Table)
             {
-                this.Plot(row as DataRow, columnName);
+                this.Plot(row, columnName);
             }
         }
 
-        private void Plot(DataRow dataRow, string columnName)
+        private void Plot(EvidenceRow dataRow, string columnName)
         {
             var fillBrush = new SolidColorBrush(Colors.Goldenrod);
             var strokeBrush = new SolidColorBrush(Colors.DarkGoldenrod);
@@ -791,7 +751,7 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-            var mergedDataSet = this.lineDataSet.GetMergerdDataSet(this.dataSet);
+            this.mergedEvidenceSet = Utils.Merge(this.dataSet);
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -819,34 +779,16 @@ namespace Marv.Input
 
         private void UpdateTable()
         {
-            if (this.Graph.SelectedVertex != null)
+            if (this.Graph.SelectedVertex == null)
             {
-                this.Table = this.dataSet.Tables[this.Graph.SelectedVertex.Key] as LineDataTable;
+                return;
+            }
 
-                if (this.Table == null)
-                {
-                    if (this.dates == null)
-                    {
-                        this.dates = new List<DateTime>
-                        {
-                            DateTime.Now
-                        };
-                    }
+            this.Table = this.dataSet[this.Graph.SelectedVertex.Key];
 
-                    this.Table = new LineDataTable(this.Graph.SelectedVertex.Key);
-
-                    this.Table.Columns.Add("From", typeof (double));
-                    this.Table.Columns.Add("To", typeof (double));
-
-                    foreach (var date in this.dates)
-                    {
-                        this.Table.Columns.Add(date.String(), typeof (VertexEvidence));
-                    }
-
-                    this.Table.Rows.Add(0, 0);
-
-                    this.dataSet.Tables.Add(this.Table);
-                }
+            if (this.Table == null)
+            {
+                this.dataSet.Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
         }
 
