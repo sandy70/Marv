@@ -131,6 +131,7 @@
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
@@ -192,6 +193,7 @@
     <Compile Include="CellChangedEventArgs.cs" />
     <Compile Include="CellModel.cs" />
     <Compile Include="EvidenceGeneratedEventArgs.cs" />
+    <Compile Include="EvidenceRow.cs" />
     <Compile Include="LineDataChart.xaml.cs">
       <DependentUpon>LineDataChart.xaml</DependentUpon>
     </Compile>

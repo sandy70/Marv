@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -34,7 +35,7 @@ namespace Marv.Input
             DateTime dateTime;
 
             var columnName = e.Cell.Column.UniqueName;
-            var row = (e.Cell.ParentRow.Item as DataRowView).Row;
+            var row = e.Cell.ParentRow.Item as EvidenceRow;
 
             // If this is a DateTime column
             if (columnName.TryParse(out dateTime))
@@ -46,7 +47,7 @@ namespace Marv.Input
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            var row = (e.Row.Item as DataRowView).Row;
+            var row = e.Row.Item as EvidenceRow;
             var columnName = e.Cell.Column.UniqueName;
             var selectedVertex = this.Graph.SelectedVertex;
 
@@ -65,15 +66,6 @@ namespace Marv.Input
                 else
                 {
                     row[columnName] = vertexEvidence;
-                }
-            }
-            else
-            {
-                // this is a location cell
-                if (e.NewValue.GetType() != this.Table.Columns[columnName].DataType)
-                {
-                    e.IsValid = false;
-                    e.ErrorMessage = "Invalid value for column " + columnName;
                 }
             }
         }
@@ -118,14 +110,24 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
+            // this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+            // this.Minimum = this.Table.Min(row => Math.Max(row.From, row.To));
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
             Console.WriteLine("GridView_RowValidating");
-            e.IsValid = this.Table.IsValid((e.Row.Item as DataRowView).Row);
+            
+            var evidenceRow = (e.Row.Item as EvidenceRow);
+
+            if (evidenceRow.From != null && evidenceRow.To != null)
+            {
+                e.IsValid = evidenceRow.From <= evidenceRow.To;
+            }
+            else
+            {
+                e.IsValid = true;
+            }
         }
     }
 }

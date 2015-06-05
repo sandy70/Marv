@@ -1,13 +1,17 @@
-﻿using Marv.Common.Types;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Marv.Common.Types;
 
 namespace Marv.Input
 {
     public class EvidenceRow : Dynamic
     {
-        private double? from;
-        private double? to;
+        private double from;
+        private double to;
 
-        public double? From
+        [Display(Order=0)]
+        public double From
         {
             get { return this.from; }
 
@@ -23,7 +27,8 @@ namespace Marv.Input
             }
         }
 
-        public double? To
+        [Display(Order=1)]
+        public double To
         {
             get { return this.to; }
 
@@ -38,5 +43,15 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
+
+        public EvidenceRow(IEnumerable<DateTime> dateTimes)
+        {
+            foreach (var dateTime in dateTimes)
+            {
+                this[dateTime.String()] = "";
+            }
+        }
+
+        public EvidenceRow() {}
     }
 }
