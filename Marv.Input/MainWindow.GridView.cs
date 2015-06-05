@@ -34,20 +34,22 @@ namespace Marv.Input
         {
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
+            var selectedVertex = this.Graph.SelectedVertex;
 
             DateTime dateTime;
 
             if (columnName.TryParse(out dateTime))
             {
-                // If this is a DateTime column
-                this.Graph.SelectedVertex.SetEvidence(row[columnName] as VertexEvidence);
+                // This is a date time column and vertex evidence cell
+                
+                row[columnName] = selectedVertex.States.ParseEvidenceString(e.NewData as string);
+
                 this.Plot(row, columnName);
             }
         }
 
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
-            var row = e.Row.Item as EvidenceRow;
             var columnName = e.Cell.Column.UniqueName;
             var selectedVertex = this.Graph.SelectedVertex;
 
@@ -62,10 +64,6 @@ namespace Marv.Input
                 {
                     e.IsValid = false;
                     e.ErrorMessage = "Invalid evidence for node " + selectedVertex.Key;
-                }
-                else
-                {
-                    row[columnName] = vertexEvidence;
                 }
             }
         }
