@@ -133,20 +133,6 @@
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
-                    <telerik:RadPaneGroup>
-                        <telerik:RadPane Header="DataPlot"
-                                         IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
-                            <Grid>
-                                <local:LineDataChart x:Name="LineDataChart"
-                                                     HorizontalAxisQuantity="{Binding ElementName=Root, Path=HorizontalAxisQuantity, Mode=TwoWay}"
-                                                     Title="{Binding ElementName=Root, Path=ChartTitle}"
-                                                     EvidenceGenerated="LineDataChart_EvidenceGenerated"
-                                                     HorizontalAxisQuantityChanged="LineDataChart_HorizontalAxisQuantityChanged" />
-                            </Grid>
-                        </telerik:RadPane>
-                    </telerik:RadPaneGroup>
-                </telerik:RadSplitContainer>
-
                 <!-- Graph and  timeline -->
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network"

@@ -73,6 +73,10 @@
                                 </Grid.RowDefinitions>
 
                                 <ToolBarTray Grid.Row="0">
+                                    <ToolBarTray.Resources>
+                                        <ResourceDictionary Source="/Marv.Controls;component/ToolbarTrayStyle.xaml" />
+                                    </ToolBarTray.Resources>
+
                                     <!-- Define Timeline Toolbar -->
                                     <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
                                              Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
@@ -85,6 +89,7 @@
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
                                         </ToolBar.Resources>
+
                                         <TextBlock Margin="4"
                                                    Text="Start Time"
                                                    VerticalAlignment="Center" />
@@ -108,47 +113,30 @@
                                                    VerticalAlignment="Center" />
 
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
-                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}" />
-                                      
-                                        <Button Content="Apply"
-                                                Padding="4"
-                                                Click="ApplyButton_Click" />
+                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}" 
+                                                             Width="64" />
 
-                                        <Button Content="Close"
-                                                Padding="4"
-                                                Click="CloseButton_Click" />
+                                        <telerik:RadButton Content="Apply"
+                                                           Padding="4"
+                                                           Width="64"
+                                                           Click="ApplyButton_Click" />
+
+                                        <telerik:RadButton Content="Close"
+                                                           Padding="4"
+                                                           Width="64"
+                                                           Click="CloseButton_Click" />
                                     </ToolBar>
-                                    <ToolBar    Name="CopyFuncToolBar"
-                                                IsEnabled="{Binding ElementName=Root, Path= IsCellSelected}"
-                                                Visibility="Visible">
-                                        
-                                        <telerik:RadButton Name="CopyAcrossColButton"
-                                                           Background="{StaticResource BackgroundDark}"
-                                                           Height="22"
-                                                           Padding="0"
-                                                           Visibility="Visible"
-                                                           Width="22"
-                                                           Click="CopyAcrossCol_OnClick">
+
+                                    <ToolBar Visibility="{Binding ElementName=Root, Path=IsCellToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
+                                        <telerik:RadButton Click="CopyAcrossCol_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
                                         </telerik:RadButton>
 
-                                        <telerik:RadButton Name="CopyAcrossRowButton"
-                                                           Background="{StaticResource BackgroundDark}"
-                                                           Height="22"
-                                                           Padding="0"
-                                                           Visibility="Visible"
-                                                           Width="22" 
-                                                           Click="CopyAcrossRow_OnClick">
+                                        <telerik:RadButton Click="CopyAcrossRow_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossRow.png" />
                                         </telerik:RadButton>
 
-                                        <telerik:RadButton Name="CopyAcrossAll"
-                                                           Background="{StaticResource BackgroundDark}"
-                                                           Height="22"
-                                                           Padding="0"
-                                                           Visibility="Visible"
-                                                           Width="22" 
-                                                           Click="CopyAcrossAll_OnClick">
+                                        <telerik:RadButton Click="CopyAcrossAll_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
                                     </ToolBar>
@@ -165,7 +153,7 @@
                                                      FrozenColumnCount="2"
                                                      GroupRenderMode="Flat"
                                                      IsFilteringAllowed="False"
-                                                     ItemsSource="{Binding ElementName=Root, Path=Table.DefaultView}"
+                                                     ItemsSource="{Binding ElementName=Root, Path=Table}"
                                                      NewRowPosition="Bottom"
                                                      SelectionUnit="Mixed"
                                                      SelectionMode="Extended"
@@ -175,9 +163,10 @@
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
-                                                     CurrentCellChanged="GridView_CurrentCellChanged" 
+                                                     CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
-                                                     RowEditEnded="GridView_RowEditEnded"/>
+                                                     RowEditEnded="GridView_RowEditEnded"
+                                                     RowValidating="GridView_RowValidating" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -215,7 +204,8 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Network"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:GraphControl Background="WhiteSmoke"
+                        <marv:GraphControl Name="GraphControl"
+                                           Background="WhiteSmoke"
                                            Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
