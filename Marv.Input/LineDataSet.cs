@@ -38,9 +38,11 @@ namespace Marv.Input
 
             newList.Sort(); // sorting the new list
 
+
+
             foreach (DataTable table in tables)
             {
-                var modifiedTable = GetModifiedTable(table, tables, newList);
+                var modifiedTable = GetModifiedTable(table as LineDataTable, tables, newList);
 
                 if (modifiedTable != null)
                 {
@@ -48,12 +50,15 @@ namespace Marv.Input
                 }
             }
 
+
+
+
             return mergedDataSet;
         }
 
-        private DataTable GetModifiedTable(DataTable table, DataTableCollection tables, List<double> newList)
+        private DataTable GetModifiedTable(LineDataTable table, DataTableCollection tables, List<double> newList)
         {
-            var newTable = new DataTable();
+            var newTable =  new LineDataTable(table.TableName);
 
             foreach (DataColumn col in table.Columns)
             {
@@ -71,7 +76,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    newTable.Columns.Add(col.ColumnName, typeof (string));
+                    newTable.Columns.Add(col.ColumnName, typeof (VertexEvidence));
                 }
             }
 
@@ -150,7 +155,7 @@ namespace Marv.Input
             return newTable;
         }
 
-        private DataTable PopulateData(DataTable newTable, DataTable table)
+        private LineDataTable PopulateData(LineDataTable newTable, LineDataTable table)
         {
             if (newTable != null && table != null)
             {
@@ -165,7 +170,10 @@ namespace Marv.Input
 
                             while (count < newTable.Columns.Count)
                             {
-                                newrow[count] = oldrow[count];
+                                var evidence = new VertexEvidence();
+                                evidence.Value = (oldrow[count] as VertexEvidence ).Value;
+                               // newrow[count] = oldrow[count];
+                                newrow[count] = evidence ;
                                 count++;
                             }
 

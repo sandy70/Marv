@@ -10,17 +10,25 @@ namespace Marv.Input
             this.RowChanged += LineDataTable_RowChanged;
         }
 
+        public LineDataTable()
+        {
+            
+        }
+
         public double GetMaximum()
         {
             var max = double.MinValue;
 
             foreach (DataRow row in this.Rows)
             {
-                var value = Math.Max((double) row["From"], (double) row["To"]);
-
-                if (value > max)
+                if (!DBNull.Value.Equals(row["From"]) && !DBNull.Value.Equals(row["To"]))
                 {
-                    max = value;
+                    var value = Math.Max((double) row["From"], (double) row["To"]);
+
+                    if (value > max)
+                    {
+                        max = value;
+                    }
                 }
             }
 
@@ -33,11 +41,14 @@ namespace Marv.Input
 
             foreach (DataRow row in this.Rows)
             {
-                var value = Math.Min((double) row["From"], (double) row["To"]);
-
-                if (value < min)
+                if (!DBNull.Value.Equals(row["From"]) && !DBNull.Value.Equals(row["To"]))
                 {
-                    min = value;
+                    var value = Math.Min((double) row["From"], (double) row["To"]);
+
+                    if (value < min)
+                    {
+                        min = value;
+                    }
                 }
             }
 

@@ -24,12 +24,13 @@ using Path = System.IO.Path;
 
 namespace Marv.Input
 {
+    
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private readonly LineDataSet lineDataSet = new LineDataSet();
-
         private static DataColumn selectedColumn;
         private static DataRow selectedRow;
+        private readonly LineDataSet lineDataSet = new LineDataSet();
+       // private DataSet BeliefDataSet=null;
         private string chartTitle;
         private GridViewColumn currentColumn;
         private DataSet dataSet = new DataSet();
@@ -54,7 +55,6 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private LineDataTable table;
-
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -654,6 +654,12 @@ namespace Marv.Input
             }
         }
 
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            this.Maximum = this.Table.GetMaximum();
+            this.Minimum = this.Table.GetMinimum();
+        }
+
         private bool IsCellDataValid(DataRowView dataRowView, int index, string colName, object val)
         {
             var isvalid = true;
@@ -777,12 +783,6 @@ namespace Marv.Input
             }
 
             return isvalid;
-        }
-
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
-        {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
         }
 
         private void LineDataChart_EvidenceGenerated(object sender, EvidenceGeneratedEventArgs e)
@@ -930,7 +930,6 @@ namespace Marv.Input
                             Stroke = strokeBrush,
                             Width = 8,
                         },
-
                         HorizontalAlignment = HorizontalAlignment.Center,
                         HorizontalValue = (from + to) / 2,
                         Tag = dataRow,
@@ -1005,7 +1004,7 @@ namespace Marv.Input
                 });
             }
         }
-
+    
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -1014,6 +1013,7 @@ namespace Marv.Input
             }
         }
 
+       
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var sectionId in this.LineData.SectionIds)
@@ -1024,7 +1024,10 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-            var mergedDataSet = this.lineDataSet.GetMergerdDataSet(this.dataSet);
+         
+
+
+
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1044,6 +1047,14 @@ namespace Marv.Input
                 this.EndDate = this.StartDate;
             }
         }
+
+   /*     private void UpDateBeliefDataSet(Dict<string, double[]> nodeBelief, int rowCount, int colCount)
+        {
+            foreach (var nodeKey in nodeBelief.Keys)
+            {
+                var row = this.BeliefDataSet.Tables[nodeKey].Rows[rowCount];
+            }
+        }*/
 
         private void UpdateChartTitle()
         {
