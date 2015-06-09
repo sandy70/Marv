@@ -1,0 +1,7 @@
+﻿<Window x:Class="Marv.NetworkViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://dnvgl.com/marv"
+        Title="MainWindow" Height="350" Width="525">
+    <controls:GraphControl />
+</Window>
