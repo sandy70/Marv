@@ -5,7 +5,9 @@
         xmlns:properties="clr-namespace:Marv.NetworkViewer.Properties"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         Name="Root"
-        Title="MARV - Theft Model" Height="350" Width="525">
+        Title="MARV - Theft Model"
+        WindowState="Maximized"
+        Height="350" Width="525">
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </Window.Resources>
@@ -20,7 +22,8 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
         
-        <controls:GraphControl Grid.Row="0">
+        <controls:GraphControl Grid.Row="0"
+                               IsAutoRunEnabled="True">
             <controls:GraphControl.Source>
                 <MultiBinding Converter="{StaticResource PathCombineConverter}">
                     <Binding Source="{x:Static properties:Settings.Default}" Path="RootFolder" />
