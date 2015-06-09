@@ -38,6 +38,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsAutoRunEnabledProperty =
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
@@ -122,6 +125,12 @@ namespace Marv.Controls
         {
             get { return (bool) this.GetValue(IsAutoLayoutEnabledProperty); }
             set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
+        }
+
+        public bool IsAutoRunEnabled
+        {
+            get { return (bool) GetValue(IsAutoRunEnabledProperty); }
+            set { SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
@@ -521,6 +530,16 @@ namespace Marv.Controls
             if (this.EvidenceEntered != null)
             {
                 this.EvidenceEntered(this, vertexEvidence);
+            }
+
+            if (!this.IsAutoRunEnabled)
+            {
+                return;
+            }
+
+            if (this.Graph != null)
+            {
+                this.Graph.Belief = this.Network.Run(this.Graph.Evidence);
             }
         }
 
