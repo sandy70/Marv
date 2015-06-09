@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using Marv.Common;
 
 namespace Marv.Controls
@@ -91,13 +90,6 @@ namespace Marv.Controls
             });
         }
 
-        private void EvidenceStringTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            var vertexEvidence = this.Vertex.States.ParseEvidenceString(this.Vertex.EvidenceString);
-            this.Vertex.Evidence = vertexEvidence.Value;
-            this.RaiseEvidenceEntered(vertexEvidence);
-        }
-
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             this.IsExpanded = !this.IsExpanded;
@@ -152,29 +144,6 @@ namespace Marv.Controls
                                        : this.Vertex.States.Select(state => state.Evidence).String();
 
             var vertexEvidence = this.Vertex.States.ParseEvidenceString(anEvidenceString);
-
-            this.Vertex.SetEvidence(vertexEvidence);
-
-            this.RaiseEvidenceEntered(vertexEvidence);
-        }
-
-        private void UniformEvidenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            var evidenceValue = this.Vertex.States.Select(state => 1.0).Normalized().ToArray();
-
-            var vertexEvidence = this.Vertex.IsNumeric
-                                     ? new VertexEvidence
-                                     {
-                                         Params = new[] { this.Vertex.SafeMin, this.Vertex.SafeMax },
-                                         Type = VertexEvidenceType.Range,
-                                         Value = evidenceValue
-                                     }
-                                     : new VertexEvidence
-                                     {
-                                         Params = evidenceValue,
-                                         Type = VertexEvidenceType.Distribution,
-                                         Value = evidenceValue
-                                     };
 
             this.Vertex.SetEvidence(vertexEvidence);
 

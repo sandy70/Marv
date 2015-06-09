@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Marv.NetworkViewer.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="NetworkFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">THeft060515.net</Value>
+    </Setting>
+    <Setting Name="RootFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\Vinod\Data\Exxon</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

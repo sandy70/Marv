@@ -1,0 +1,39 @@
+﻿<Window x:Class="Marv.NetworkViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://dnvgl.com/marv"
+        xmlns:properties="clr-namespace:Marv.NetworkViewer.Properties"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        Name="Root"
+        Title="MARV - Theft Model"
+        WindowState="Maximized"
+        Height="350" Width="525">
+    <Window.Resources>
+        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+    </Window.Resources>
+    
+    <i:Interaction.Behaviors>
+        <controls:WindowNotificationBehavior Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />
+    </i:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <controls:GraphControl Grid.Row="0"
+                               IsAutoRunEnabled="True">
+            <controls:GraphControl.Source>
+                <MultiBinding Converter="{StaticResource PathCombineConverter}">
+                    <Binding Source="{x:Static properties:Settings.Default}" Path="RootFolder" />
+                    <Binding Source="{x:Static properties:Settings.Default}" Path="NetworkFileName" />
+                </MultiBinding>
+            </controls:GraphControl.Source>
+        </controls:GraphControl>
+        
+        <controls:StatusControl Grid.Row="1"
+                                Height="32"
+                                Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />
+    </Grid>
+</Window>

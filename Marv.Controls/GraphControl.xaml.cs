@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Marv.Common;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
@@ -37,6 +39,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty IsAutoLayoutEnabledProperty =
             DependencyProperty.Register("IsAutoLayoutEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty IsAutoRunEnabledProperty =
+            DependencyProperty.Register("IsAutoRunEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(false));
+
         public static readonly DependencyProperty IsAutoSaveEnabledProperty =
             DependencyProperty.Register("IsAutoSaveEnabled", typeof (bool), typeof (GraphControl), new PropertyMetadata(true));
 
@@ -57,6 +62,9 @@ namespace Marv.Controls
 
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
 
         private Graph displayGraph;
         private string displayVertexKey;
@@ -118,6 +126,12 @@ namespace Marv.Controls
         {
             get { return (bool) this.GetValue(IsAutoLayoutEnabledProperty); }
             set { this.SetValue(IsAutoLayoutEnabledProperty, value); }
+        }
+
+        public bool IsAutoRunEnabled
+        {
+            get { return (bool) GetValue(IsAutoRunEnabledProperty); }
+            set { SetValue(IsAutoRunEnabledProperty, value); }
         }
 
         public bool IsAutoSaveEnabled
@@ -231,6 +245,12 @@ namespace Marv.Controls
             set { this.SetValue(ShapeOpacityProperty, value); }
         }
 
+        public string Source
+        {
+            get { return (string) GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
         public GraphControl()
         {
             InitializeComponent();
@@ -256,8 +276,17 @@ namespace Marv.Controls
         public void Open(string fileName)
         {
             this.Network = Network.Read(fileName);
-            
+
             this.Graph = Graph.Read(this.Network);
+            this.Graph.Belief = this.Network.GetBeliefs();
+        }
+
+        public async Task OpenAsync(string fileName)
+        {
+            this.Network = await Task.Run(() => Network.Read(fileName));
+
+            var network = this.Network;
+            this.Graph = await Task.Run(() => Graph.Read(network));
             this.Graph.Belief = this.Network.GetBeliefs();
         }
 
@@ -290,13 +319,38 @@ namespace Marv.Controls
             this.SelectedGroup = this.Graph.DefaultGroup;
         }
 
-        private void BringShapeToFront(IShape shape)
+        private void BringIntoView(RadDiagramItem shape)
+        {
+            // Bring shape to view.
+            // We cannot use the default BringIntoView() becuase the shape is only partially obscured
+
+            // If shape is within viewport, do nothing.
+            if (shape.Bounds.IsInBounds(this.Diagram.Viewport))
+            {
+                return;
+            }
+
+            var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
+
+            // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+            this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
+
+            var animation = new DoubleAnimation
+            {
+                AutoReverse = true,
+                Duration = TimeSpan.FromMilliseconds(300),
+                From = 1,
+                To = 0.3,
+                RepeatBehavior = new RepeatBehavior(3)
+            };
+
+            shape.BeginAnimation(OpacityProperty, animation);
+        }
+
+        private void BringToFront(IShape shape)
         {
             // Bring shape to front
-            this.Diagram.BringToFront(new List<IDiagramItem>
-            {
-                shape
-            });
+            this.Diagram.BringToFront(shape.Yield());
 
             // Change color of connections
             foreach (var conn in this.Diagram.Connections)
@@ -313,27 +367,6 @@ namespace Marv.Controls
             {
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(this.OutgoingConnectionHighlightColor);
             }
-
-            // Pan shape into view if required
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-
-            timer.Tick += (o, args) =>
-            {
-                if (!shape.Bounds.IsInBounds(this.Diagram.Viewport))
-                {
-                    var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
-
-                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
-                }
-
-                timer.Stop();
-            };
-
-            timer.Start();
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -393,10 +426,25 @@ namespace Marv.Controls
             this.UpdateLayout();
         }
 
-        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        private async void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.PropertyChanged -= GraphControl_PropertyChanged;
             this.PropertyChanged += GraphControl_PropertyChanged;
+
+            if (!string.IsNullOrWhiteSpace(this.Source))
+            {
+                var notification = new Notification
+                {
+                    IsIndeterminate = true,
+                    Description = "Opening network..."
+                };
+
+                this.RaiseNotificationOpened(notification);
+
+                await this.OpenAsync(this.Source);
+
+                this.RaiseNotificationClosed(notification);
+            }
         }
 
         private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -479,7 +527,8 @@ namespace Marv.Controls
             var radDiagramShape = sender as RadDiagramShape;
 
             this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
-            this.BringShapeToFront(radDiagramShape);
+            this.BringIntoView(radDiagramShape);
+            this.BringToFront(radDiagramShape);
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
@@ -487,6 +536,16 @@ namespace Marv.Controls
             if (this.EvidenceEntered != null)
             {
                 this.EvidenceEntered(this, vertexEvidence);
+            }
+
+            if (!this.IsAutoRunEnabled)
+            {
+                return;
+            }
+
+            if (this.Graph != null)
+            {
+                this.Graph.Belief = this.Network.Run(this.Graph.Evidence);
             }
         }
 
@@ -556,14 +615,6 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (this.Graph.SelectedVertex != null && !this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
-            {
-                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
-            }
-        }
-
         private void UpdateDisplayGraph(string group, string vertexKey = null)
         {
             if (vertexKey == null)
@@ -616,6 +667,21 @@ namespace Marv.Controls
             }
         }
 
+        private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
+
+            if (!this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
+            {
+                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+            }
+
+            
+        }
+
         private void WriteEvidences(string filePath)
         {
             if (Path.GetExtension(filePath) == ".hcs")
@@ -633,7 +699,5 @@ namespace Marv.Controls
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<Vertex> SelectionChanged;
-
-   
     }
 }

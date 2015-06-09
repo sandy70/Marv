@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Epri", "Marv.Epri\Marv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.MultiCorp", "Marv.MultiCorp\Marv.MultiCorp.csproj", "{CFF8B76C-0885-4F90-8346-3A0AF52276E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.NetworkViewer", "Marv.NetworkViewer\Marv.NetworkViewer.csproj", "{63143CA6-6AA5-473B-B798-3FE1C0F42416}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,18 @@ Global
 		{CFF8B76C-0885-4F90-8346-3A0AF52276E9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CFF8B76C-0885-4F90-8346-3A0AF52276E9}.Release|x64.ActiveCfg = Release|Any CPU
 		{CFF8B76C-0885-4F90-8346-3A0AF52276E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|x64.ActiveCfg = Release|Any CPU
+		{63143CA6-6AA5-473B-B798-3FE1C0F42416}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
