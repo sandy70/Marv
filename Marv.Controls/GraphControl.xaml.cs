@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -270,6 +271,15 @@ namespace Marv.Controls
             this.Graph.Belief = this.Network.GetBeliefs();
         }
 
+        public async Task OpenAsync(string fileName)
+        {
+            this.Network = await Task.Run(() => Network.Read(fileName));
+
+            var network = this.Network;
+            this.Graph = await Task.Run(() => Graph.Read(network));
+            this.Graph.Belief = this.Network.GetBeliefs();
+        }
+
         public void RaiseNotificationClosed(Notification notification)
         {
             if (this.NotificationClosed != null)
@@ -402,14 +412,24 @@ namespace Marv.Controls
             this.UpdateLayout();
         }
 
-        private void GraphControl_Loaded(object sender, RoutedEventArgs e)
+        private async void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.PropertyChanged -= GraphControl_PropertyChanged;
             this.PropertyChanged += GraphControl_PropertyChanged;
 
             if (!string.IsNullOrWhiteSpace(this.Source))
             {
-                this.Open(this.Source);
+                var notification = new Notification
+                {
+                    IsIndeterminate = true,
+                    Description = "Opening network..."
+                };
+
+                this.RaiseNotificationOpened(notification);
+
+                await this.OpenAsync(this.Source);
+
+                this.RaiseNotificationClosed(notification);
             }
         }
 

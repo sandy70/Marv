@@ -162,6 +162,7 @@
     <Compile Include="VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowNotificationBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox.xaml">
