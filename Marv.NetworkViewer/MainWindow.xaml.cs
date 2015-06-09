@@ -1,4 +1,7 @@
-﻿using Telerik.Windows.Controls;
+﻿using System.IO;
+using System.Windows;
+using Marv.NetworkViewer.Properties;
+using Telerik.Windows.Controls;
 
 namespace Marv.NetworkViewer
 {
@@ -8,6 +11,11 @@ namespace Marv.NetworkViewer
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
