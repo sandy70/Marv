@@ -22,13 +22,13 @@
     <marv:DecimalPercentalConverter x:Key="DecimalPercentalConverter" />
     <marv:DoubleToBrushConverter x:Key="DoubleToBrush" />
     <marv:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
+    <marv:FilePathToFileNameConverter x:Key="FilePathToFileName"/>
     <marv:IntToVisibilityConverter x:Key="IntToVisibility" />
     <marv:NullToBooleanConverter x:Key="NullToBoolean" />
     <marv:NullToBooleanConverter x:Key="NullToBooleanReversed" IsReversed="True" />
     <marv:NullToVisibilityConverter x:Key="NullToVisibility" />
     <marv:NullToVisibilityConverter x:Key="NullToVisibilityReversed" IsReversed="True" />
-    <marv:FilePathToFileNameConverter x:Key="FilePathToFileName"/>
-
+    <marv:PathCombineConverter x:Key="PathCombineConverter" />
     <marv:LocationCollectionConverter x:Key="LocationCollectionConverter" />
     <marv:LocationConverter x:Key="LocationConverter" />
     
