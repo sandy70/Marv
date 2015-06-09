@@ -58,6 +58,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
+
         private Graph displayGraph;
         private string displayVertexKey;
         private bool isConnectorsManipulationEnabled;
@@ -231,6 +234,12 @@ namespace Marv.Controls
             set { this.SetValue(ShapeOpacityProperty, value); }
         }
 
+        public string Source
+        {
+            get { return (string) GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
         public GraphControl()
         {
             InitializeComponent();
@@ -256,7 +265,7 @@ namespace Marv.Controls
         public void Open(string fileName)
         {
             this.Network = Network.Read(fileName);
-            
+
             this.Graph = Graph.Read(this.Network);
             this.Graph.Belief = this.Network.GetBeliefs();
         }
@@ -397,6 +406,11 @@ namespace Marv.Controls
         {
             this.PropertyChanged -= GraphControl_PropertyChanged;
             this.PropertyChanged += GraphControl_PropertyChanged;
+
+            if (!string.IsNullOrWhiteSpace(this.Source))
+            {
+                this.Open(this.Source);
+            }
         }
 
         private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -556,14 +570,6 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (this.Graph.SelectedVertex != null && !this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
-            {
-                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
-            }
-        }
-
         private void UpdateDisplayGraph(string group, string vertexKey = null)
         {
             if (vertexKey == null)
@@ -616,6 +622,14 @@ namespace Marv.Controls
             }
         }
 
+        private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.Graph.SelectedVertex != null && !this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
+            {
+                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+            }
+        }
+
         private void WriteEvidences(string filePath)
         {
             if (Path.GetExtension(filePath) == ".hcs")
@@ -633,7 +647,5 @@ namespace Marv.Controls
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<Vertex> SelectionChanged;
-
-   
     }
 }
