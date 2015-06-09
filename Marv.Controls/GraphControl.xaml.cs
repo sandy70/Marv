@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Marv.Common;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
 using Orientation = Telerik.Windows.Diagrams.Core.Orientation;
 
@@ -318,7 +319,7 @@ namespace Marv.Controls
             this.SelectedGroup = this.Graph.DefaultGroup;
         }
 
-        private void BringIntoView(RadDiagramShape shape)
+        private void BringIntoView(RadDiagramItem shape)
         {
             // Bring shape to view.
             // We cannot use the default BringIntoView() becuase the shape is only partially obscured
