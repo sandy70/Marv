@@ -44,12 +44,37 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/AutoFit.png" />
                 </telerik:RadButton>
 
+                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsNavigationPaneVisible}"
+                                         ToolTip="Show/Hide navigation pane.">
+                    <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
+                </telerik:RadToggleButton>
+
                 <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsAutoLayoutEnabled, Mode=TwoWay}"
                                          ToolTip="Layout Automatically"
                                          Checked="AutoLayoutButton_Checked"
                                          Unchecked="AutoLayoutButton_Unchecked">
                     <Image Source="/Marv.Common;component/Resources/Icons/Layout.png" />
                 </telerik:RadToggleButton>
+
+                <TextBlock Margin="8,4,4,4"
+                           Text="Group"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
+
+                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
+                                     SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
+                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"
+                                     Width="64"/>
+
+                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
+                                     IsFilteringEnabled="True"
+                                     OpenDropDownOnFocus="True"
+                                     SelectedIndex="0"
+                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                                     TextSearchMode="Contains"
+                                     Width="192"
+                                     SelectionChanged="VertexComboxBox_SelectionChanged" />
             </ToolBar>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"
@@ -76,10 +101,7 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
                 </telerik:RadToggleButton>
 
-                <telerik:RadToggleButton IsChecked="{Binding ElementName=Root, Path=IsNavigationPaneVisible}"
-                                         ToolTip="Show/Hide navigation pane.">
-                    <Image Source="/Marv.Common;component/Resources/Icons/Navigation.png" />
-                </telerik:RadToggleButton>
+               
 
                 <telerik:RadButton ToolTip="Clears the evidence in the network."
                                    Click="ClearEvidenceButton_Click">
@@ -91,33 +113,9 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadButton>
 
-                <TextBlock Margin="8,4,4,4"
-                           Text="Group"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"
-                           Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
-
-                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
-                                     SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
-                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
-
-                <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
-                                     SelectedIndex="0"
-                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                     CanKeyboardNavigationSelectItems="False"
-                                     IsEditable="True"
-                                     IsFilteringEnabled="True"
-                                     IsSynchronizedWithCurrentItem="False"
-                                     OpenDropDownOnFocus="True"
-                                     TextSearchMode="Contains"
-                                     Width="128"
-                                     SelectionChanged="VertexComboxBox_SelectionChanged" />
-
-                <TextBox IsReadOnly="True"
-                         Margin="0"
-                         TextWrapping="Wrap"
-                         Text="{Binding ElementName=Root, Path=Network.FileName, Converter= {StaticResource FilePathToFileName}}"
-                         VerticalAlignment="Top" />
+                <TextBlock TextWrapping="Wrap"
+                           Text="{Binding ElementName=Root, Path=Network.FileName, Converter= {StaticResource FilePathToFileName}}"
+                           VerticalAlignment="Top" />
             </ToolBar>
         </ToolBarTray>
 
