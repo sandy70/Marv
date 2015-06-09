@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Marv.Common;
 using Telerik.Windows.Controls;
@@ -321,13 +322,28 @@ namespace Marv.Controls
         {
             // Bring shape to view.
             // We cannot use the default BringIntoView() becuase the shape is only partially obscured
-            if (!shape.Bounds.IsInBounds(this.Diagram.Viewport))
-            {
-                var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
 
-                // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
+            // If shape is within viewport, do nothing.
+            if (shape.Bounds.IsInBounds(this.Diagram.Viewport))
+            {
+                return;
             }
+
+            var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
+
+            // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+            this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
+
+            var animation = new DoubleAnimation
+            {
+                AutoReverse = true,
+                Duration = TimeSpan.FromMilliseconds(300),
+                From = 1,
+                To = 0.3,
+                RepeatBehavior = new RepeatBehavior(3)
+            };
+
+            shape.BeginAnimation(OpacityProperty, animation);
         }
 
         private void BringToFront(IShape shape)
@@ -652,10 +668,17 @@ namespace Marv.Controls
 
         private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.Graph.SelectedVertex != null && !this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
+            if (this.Graph.SelectedVertex == null)
+            {
+                return;
+            }
+
+            if (!this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
             {
                 this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
             }
+
+            
         }
 
         private void WriteEvidences(string filePath)
