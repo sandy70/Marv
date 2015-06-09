@@ -234,6 +234,7 @@
             <telerik:RadButton Background="{StaticResource BackgroundDark}"
                                Height="32"
                                Padding="0"
+                               ToolTip="Expand/Collapse details view for this node."
                                Width="32"
                                Click="ExpandButton_Click">
                 <Image Source="/Marv.Common;component/Resources/Icons/Expand.png" />
@@ -252,6 +253,7 @@
                                      Background="{StaticResource BackgroundDark}"
                                      Height="32"
                                      Padding="0"
+                                     ToolTip="Lock/Unlock this node to enter evidence distribution."
                                      Width="32"
                                      Checked="LockButton_Checked"
                                      Unchecked="LockButton_Unchecked">
@@ -270,6 +272,15 @@
                     </Image.Style>
                 </Image>
             </telerik:RadToggleButton>
+
+            <telerik:RadButton Background="{StaticResource BackgroundDark}"
+                               Height="32"
+                               Padding="0"
+                               ToolTip="Clear evidence for this node."
+                               Width="32"
+                               Click="ClearEvidenceButton_Click">
+                <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
+            </telerik:RadButton>
         </StackPanel>
     </StackPanel>
 </UserControl>
