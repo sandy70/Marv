@@ -117,48 +117,6 @@
                                         Value="{Binding ElementName=Root, Path=Vertex.MostProbableState.Belief, Converter={StaticResource ResourceKey=DecimalToPercentage}}" />
         </Grid>
 
-        <!-- Input -->
-        <Grid Margin="4"
-              Visibility="{Binding ElementName=Root, Path=IsInputVisible, Converter={StaticResource BooleanToVisibility}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition SharedSizeGroup="StateControl01" />
-                <ColumnDefinition SharedSizeGroup="StateControl02" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <telerik:RadButton Grid.Column="0"
-                                   Background="{Binding Source={StaticResource BackgroundDark}}"
-                                   Content="="
-                                   FontWeight="Bold"
-                                   Foreground="Black"
-                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                   Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
-                                   Click="UniformEvidenceButton_Click" />
-
-                <telerik:RadButton Grid.Column="1"
-                                   Background="{Binding Source={StaticResource BackgroundDark}}"
-                                   Content="X"
-                                   FontWeight="Bold"
-                                   Foreground="Black"
-                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                   Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
-                                   Click="ClearEvidenceButton_Click" />
-            </Grid>
-
-            <TextBox Grid.Column="1"
-                     telerik:StyleManager.Theme="{StaticResource Windows8TouchTheme}"
-                     Text="{Binding ElementName=Root, Path=Vertex.EvidenceString, UpdateSourceTrigger=PropertyChanged}"
-                     VerticalAlignment="Center"
-                     Margin="1"
-                     MaxWidth="200"
-                     KeyUp="EvidenceStringTextBox_KeyUp" />
-        </Grid>
-
         <!-- Units -->
         <Grid Margin="4,0,4,0">
             <Grid.ColumnDefinitions>
