@@ -80,7 +80,7 @@ namespace Marv.Controls
 
             if (selectedShape != null && !this.Diagram.IsInViewport(selectedShape))
             {
-                this.Diagram.BringIntoView(selectedShape, this.Diagram.Zoom);
+                this.BringIntoView(selectedShape);
             }
 
             this.RaiseSelectionChanged(this.Graph.SelectedVertex);

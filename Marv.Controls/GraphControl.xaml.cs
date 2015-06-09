@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -318,13 +317,23 @@ namespace Marv.Controls
             this.SelectedGroup = this.Graph.DefaultGroup;
         }
 
-        private void BringShapeToFront(IShape shape)
+        private void BringIntoView(RadDiagramShape shape)
+        {
+            // Bring shape to view.
+            // We cannot use the default BringIntoView() becuase the shape is only partially obscured
+            if (!shape.Bounds.IsInBounds(this.Diagram.Viewport))
+            {
+                var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
+
+                // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
+                this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
+            }
+        }
+
+        private void BringToFront(IShape shape)
         {
             // Bring shape to front
-            this.Diagram.BringToFront(new List<IDiagramItem>
-            {
-                shape
-            });
+            this.Diagram.BringToFront(shape.Yield());
 
             // Change color of connections
             foreach (var conn in this.Diagram.Connections)
@@ -341,27 +350,6 @@ namespace Marv.Controls
             {
                 (conn as RadDiagramConnection).Stroke = new SolidColorBrush(this.OutgoingConnectionHighlightColor);
             }
-
-            // Pan shape into view if required
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(150)
-            };
-
-            timer.Tick += (o, args) =>
-            {
-                if (!shape.Bounds.IsInBounds(this.Diagram.Viewport))
-                {
-                    var offset = this.Diagram.Viewport.GetOffset(shape.Bounds, 20);
-
-                    // Extension OffsetRect is part of Telerik.Windows.Diagrams.Core
-                    this.Diagram.BringIntoView(this.Diagram.Viewport.OffsetRect(offset.X, offset.Y));
-                }
-
-                timer.Stop();
-            };
-
-            timer.Start();
         }
 
         private void ClearEvidenceButton_Click(object sender, RoutedEventArgs e)
@@ -522,7 +510,8 @@ namespace Marv.Controls
             var radDiagramShape = sender as RadDiagramShape;
 
             this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
-            this.BringShapeToFront(radDiagramShape);
+            this.BringIntoView(radDiagramShape);
+            this.BringToFront(radDiagramShape);
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
