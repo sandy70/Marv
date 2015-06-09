@@ -104,14 +104,14 @@
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                      SelectedIndex="0"
                                      SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
-                                     SelectionChanged="VertexComboxBox_SelectionChanged"
                                      CanKeyboardNavigationSelectItems="False"
                                      IsEditable="True"
                                      IsFilteringEnabled="True"
                                      IsSynchronizedWithCurrentItem="False"
                                      OpenDropDownOnFocus="True"
                                      TextSearchMode="Contains"
-                                     Width="128" />
+                                     Width="128"
+                                     SelectionChanged="VertexComboxBox_SelectionChanged" />
 
                 <TextBox IsReadOnly="True"
                          Margin="0"
