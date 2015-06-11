@@ -519,6 +519,7 @@ namespace Marv.Common
             {
                 if (vertexEvidences.ContainsKey(vertex.Key)
                     && vertexEvidences[vertex.Key] != null
+                    && vertexEvidences[vertex.Key].Type != VertexEvidenceType.Null
                     && vertexEvidences[vertex.Key].Value != null
                     && vertexEvidences[vertex.Key].Value.Sum() > 0)
                 {
