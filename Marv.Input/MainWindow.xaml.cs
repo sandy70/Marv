@@ -23,12 +23,12 @@ using Path = System.IO.Path;
 
 namespace Marv.Input
 {
-    
     public partial class MainWindow : INotifyPropertyChanged
     {
         private static DataColumn selectedColumn;
-        private readonly LineDataSet lineDataSet = new LineDataSet();
-       // private DataSet BeliefDataSet=null;
+        private Dict<string, EvidenceTable> beliefDataSet;
+        // private readonly LineDataSet lineDataSet = new LineDataSet();
+        // private DataSet BeliefDataSet=null;
         private string chartTitle;
         private GridViewColumn currentColumn;
         private Dict<string, EvidenceTable> dataSet = new Dict<string, EvidenceTable>();
@@ -45,6 +45,7 @@ namespace Marv.Input
         private ILineData lineData;
         private string lineDataFileName;
         private double maximum = 100;
+        private Dict<string, EvidenceTable> mergedEvidenceSet;
         private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
@@ -55,7 +56,7 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private Dict<string, EvidenceTable> mergedEvidenceSet;
+
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -430,13 +431,11 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedRow != null)
-            {
-                if (selectedColumn != null)
-                {
-                    var val = selectedRow[selectedColumn.ColumnName];
+           
+                
+                    var val = selectedRow[selectedColumnName];
 
-                    if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
+                    if (selectedColumnName != "From" && selectedColumnName != "To")
                     {
                         foreach (var row in this.Table)
                         {
@@ -446,8 +445,8 @@ namespace Marv.Input
                             }
                         }
                     }
-                }
-            }
+                
+            
         }
 
         private void CopyAcrossCol_Click(object sender, RoutedEventArgs e)
@@ -486,6 +485,37 @@ namespace Marv.Input
                 foreach (var columnName in this.selectedRow.GetDynamicMemberNames())
                 {
                     this.selectedRow[columnName] = val;
+                }
+            }
+        }
+
+        private void CreateNewBeliefDataSet()
+        {
+            if (this.beliefDataSet == null)
+            {
+                var evidenceDateTime = this.mergedEvidenceSet.Values[0].DateTimes;
+                var noOfEvidenceRows = this.mergedEvidenceSet.Values[0].Count;
+
+                this.beliefDataSet = new Dict<string, EvidenceTable>();
+
+                foreach (var vertex in this.Network.Vertices)
+                {
+                    var beliefTable = new EvidenceTable(evidenceDateTime);
+
+                    var i = 0;
+                    while (i <= noOfEvidenceRows - 1)
+                    {
+                        var beliefRow = new EvidenceRow
+                        {
+                            From = this.mergedEvidenceSet[0].Value[0].From,
+                            To = this.mergedEvidenceSet[0].Value[0].To
+                        };
+
+                        beliefTable.Add(beliefRow);
+                        i++;
+                    }
+
+                    this.beliefDataSet.Add(vertex.Key, beliefTable);
                 }
             }
         }
@@ -542,11 +572,11 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        /* private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
             this.Maximum = this.Table.GetMaximum();
             this.Minimum = this.Table.GetMinimum();
-        }
+        }*/
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -741,7 +771,7 @@ namespace Marv.Input
                 });
             }
         }
-    
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -750,7 +780,6 @@ namespace Marv.Input
             }
         }
 
-       
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var sectionId in this.LineData.SectionIds)
@@ -763,8 +792,52 @@ namespace Marv.Input
 
             this.mergedEvidenceSet = Utils.Merge(this.dataSet);
 
+            var vertexEvidences = new Dict<string, VertexEvidence>();
+            var noOfEvidenceRows = this.mergedEvidenceSet.Values[0].Count;
+            var itr = this.mergedEvidenceSet.Values[0].DateTimes.GetEnumerator();
 
+            var noOfDateTimes = 0;
+            while (itr.MoveNext())
+            {
+                noOfDateTimes++;
+            }
 
+            for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
+            {
+                for (var dateTimecount = 0; dateTimecount < noOfDateTimes; dateTimecount++)
+                {
+                    foreach (var kvp in this.mergedEvidenceSet)
+                    {
+                        var nodeKey = kvp.Key;
+                        var evidenceTable = kvp.Value;
+
+                        var dateTimeColumnName = evidenceTable[rowCount].GetDynamicMemberNames().ToList()[dateTimecount];
+                        var evidence = evidenceTable[rowCount][dateTimeColumnName] as VertexEvidence;
+
+                        vertexEvidences.Add(nodeKey, evidence);
+                    }
+
+                    var nodeBelief = this.Network.Run(vertexEvidences);
+
+                    if (this.beliefDataSet == null)
+                    {
+                        this.CreateNewBeliefDataSet();
+                    }
+
+                    foreach (var kvp in nodeBelief)
+                    {
+                        var nodeKey = kvp.Key;
+                        var val = kvp.Value;
+
+                        var beliefTable = beliefDataSet[nodeKey];
+                        var beliefRow = beliefTable[rowCount];
+
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = val;
+                    }
+
+                    vertexEvidences.Clear();
+                }
+            }
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -784,14 +857,6 @@ namespace Marv.Input
                 this.EndDate = this.StartDate;
             }
         }
-
-   /*     private void UpDateBeliefDataSet(Dict<string, double[]> nodeBelief, int rowCount, int colCount)
-        {
-            foreach (var nodeKey in nodeBelief.Keys)
-            {
-                var row = this.BeliefDataSet.Tables[nodeKey].Rows[rowCount];
-            }
-        }*/
 
         private void UpdateChartTitle()
         {

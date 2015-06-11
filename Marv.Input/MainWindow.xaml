@@ -139,6 +139,10 @@
                                         <telerik:RadButton Click="CopyAcrossAll_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
+
+                                        <telerik:RadButton Click="Validate_Click">
+                                            <Image Source="/Marv.Common;component/Resources/Icons/Validate.png" />
+                                        </telerik:RadButton>
                                     </ToolBar>
                                 </ToolBarTray>
 

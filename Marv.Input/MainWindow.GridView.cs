@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
-using System.Linq;
 
 namespace Marv.Input
 {
@@ -20,7 +21,7 @@ namespace Marv.Input
             var headerString = e.Column.Header as string;
 
             DateTime dateTime;
-            
+
             if (headerString.TryParse(out dateTime))
             {
                 e.Column.Header = new TextBlock
@@ -41,7 +42,7 @@ namespace Marv.Input
             if (columnName.TryParse(out dateTime))
             {
                 // This is a date time column and vertex evidence cell
-                
+
                 row[columnName] = selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
                 this.Plot(row, columnName);
@@ -77,6 +78,8 @@ namespace Marv.Input
                 return;
             }
 
+            this.selectedRow = e.NewCell.ParentRow.Item as EvidenceRow;
+
             var gridViewColumn = gridViewCell.Column;
 
             this.selectedColumnName = gridViewColumn.UniqueName;
@@ -88,7 +91,7 @@ namespace Marv.Input
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
-            var dataRowView = e.Cell.Item as DataRowView;
+            var evidenceRow = e.Cell.Item as EvidenceRow;
             var colName = e.Cell.Column.UniqueName;
 
             if (e.Value != null)
@@ -97,11 +100,17 @@ namespace Marv.Input
 
                 if (colName != "From" && colName != "To")
                 {
-                    if (dataRowView.Row != null)
+                    if (evidenceRow != null)
                     {
                         var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
-                        dataRowView.Row[colName] = vertexEvidence;
+
+                        evidenceRow[colName] = vertexEvidence;
                     }
+                }
+
+                else
+                {
+                    evidenceRow[colName] = Convert.ToDouble(val);
                 }
             }
         }
@@ -117,6 +126,29 @@ namespace Marv.Input
             var evidenceRow = e.Row.Item as EvidenceRow;
 
             e.IsValid = evidenceRow.From <= evidenceRow.To;
+        }
+
+        private void Validate_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedVertexKey = this.Graph.SelectedVertex.Key;
+
+            var evidenceTable = this.dataSet[selectedVertexKey];
+            var fromToList = new List<double>();
+
+            foreach (var evidenceRow in evidenceTable)
+            {
+                fromToList.Add(evidenceRow.From);
+                fromToList.Add(evidenceRow.To);
+            }
+
+            for (var i = 0; i < fromToList.Count - 1; i++)
+            {
+                if (fromToList[i] > fromToList[i + 1])
+                {
+                    // style the row here (pending work)
+                    MessageBox.Show("Invalid input in row " + i / 2);
+                }
+            }
         }
     }
 }

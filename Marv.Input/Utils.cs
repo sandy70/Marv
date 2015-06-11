@@ -57,7 +57,7 @@ namespace Marv.Input
 
                     foreach (var columnName in columnNames)
                     {
-                        mergedEvidenceRow[columnName] = unmergedEvidenceRow == null ? null : unmergedEvidenceRow[columnName];
+                        mergedEvidenceRow[columnName] = unmergedEvidenceRow == null ? new VertexEvidence { Type = VertexEvidenceType.Null } : unmergedEvidenceRow[columnName];
                     }
                 }
 
