@@ -500,7 +500,7 @@ namespace Marv.Controls
             timer.Start();
         }
 
-        private void Open()
+        private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -514,12 +514,17 @@ namespace Marv.Controls
                 return;
             }
 
-            this.Open(openFileDialog.FileName);
-        }
+            var notification = new Notification
+            {
+                IsIndeterminate = true,
+                Description = "Opening network..."
+            };
 
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Open();
+            this.RaiseNotificationOpened(notification);
+
+            await this.OpenAsync(openFileDialog.FileName);
+
+            this.RaiseNotificationClosed(notification);
         }
 
         private void RadDiagramShape_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -678,8 +683,6 @@ namespace Marv.Controls
             {
                 this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
             }
-
-            
         }
 
         private void WriteEvidences(string filePath)
