@@ -114,6 +114,7 @@
     <Compile Include="Converters\LocationConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\PathCombineConverter.cs" />
     <Compile Include="EditableTextBox.xaml.cs">
       <DependentUpon>EditableTextBox.xaml</DependentUpon>
     </Compile>
@@ -161,6 +162,7 @@
     <Compile Include="VertexControl.xaml.cs">
       <DependentUpon>VertexControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowNotificationBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EditableTextBox.xaml">

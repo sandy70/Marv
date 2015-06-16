@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
@@ -75,6 +76,13 @@ namespace Marv.Controls
 
         private void Diagram_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var selectedShape = this.Diagram.Shapes.Cast<RadDiagramShape>().FirstOrDefault(shape => shape.DataContext == this.Graph.SelectedVertex);
+
+            if (selectedShape != null && !this.Diagram.IsInViewport(selectedShape))
+            {
+                this.BringIntoView(selectedShape);
+            }
+
             this.RaiseSelectionChanged(this.Graph.SelectedVertex);
         }
     }
