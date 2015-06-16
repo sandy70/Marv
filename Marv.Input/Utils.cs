@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Marv.Common;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 
 namespace Marv.Input
 {
@@ -13,8 +17,10 @@ namespace Marv.Input
             var newList = new List<double>();
 
             // Generate a list which holds the modified section ranges
-            foreach (var evidenceTable in unmergedEvidenceSet.Values)
+            foreach (var kvp in unmergedEvidenceSet)
             {
+                var evidenceTable = kvp.Value;
+                
                 foreach (var evidenceRow in evidenceTable)
                 {
                     newList.Add(evidenceRow.From);

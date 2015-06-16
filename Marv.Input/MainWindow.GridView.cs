@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
+using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
 
@@ -87,18 +88,30 @@ namespace Marv.Input
             DateTime dateTime;
 
             this.IsCellToolbarVisible = gridViewColumn.UniqueName.TryParse(out dateTime);
+
+            if (this.selectedColumnName.TryParse(out dateTime))
+            {
+                this.Plot(this.selectedColumnName);
+            }
         }
 
-        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
+        private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            var evidenceRow = e.Cell.Item as EvidenceRow;
-            var colName = e.Cell.Column.UniqueName;
-
-            if (e.Value != null)
+            foreach (var pastedCell in this.pastedCells)
             {
-                var val = e.Value.ToString();
+                var evidenceRow = pastedCell.Cell.Item as EvidenceRow;
+                var colName = pastedCell.Cell.Column.UniqueName;
 
-                if (colName != "From" && colName != "To")
+                if (pastedCell.Value == null)
+                {
+                    continue;
+                }
+
+                var val = pastedCell.Value.ToString();
+
+                DateTime dateTime;
+
+                if (colName.TryParse(out dateTime))
                 {
                     if (evidenceRow != null)
                     {
@@ -112,6 +125,18 @@ namespace Marv.Input
                 {
                     evidenceRow[colName] = Convert.ToDouble(val);
                 }
+            }
+            this.Validate();
+            this.pastedCells.Clear();
+        }
+
+        private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
+        {
+            var cellModel = e.Cell.ToModel();
+
+            if (!e.Cancel)
+            {
+                this.pastedCells.Add(e);
             }
         }
 
@@ -128,11 +153,12 @@ namespace Marv.Input
             e.IsValid = evidenceRow.From <= evidenceRow.To;
         }
 
-        private void Validate_Click(object sender, RoutedEventArgs e)
+        private bool Validate()
         {
             var selectedVertexKey = this.Graph.SelectedVertex.Key;
 
-            var evidenceTable = this.dataSet[selectedVertexKey];
+            var evidenceTable = this.lineDataObj[this.selectedTheme][selectedVertexKey];
+
             var fromToList = new List<double>();
 
             foreach (var evidenceRow in evidenceTable)
@@ -147,8 +173,16 @@ namespace Marv.Input
                 {
                     // style the row here (pending work)
                     MessageBox.Show("Invalid input in row " + i / 2);
+                    return false;
                 }
             }
+
+            return true;
+        }
+
+        private void ValidateButton_Click(object sender, RoutedEventArgs e)
+        {
+            var isValid = this.Validate();
         }
     }
 }

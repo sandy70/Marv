@@ -110,6 +110,7 @@ namespace Marv.Common
         public static ILineData Read(string filePath)
         {
             return Utils.ReadJson<LineData>(filePath);
+           
         }
 
         public void ChangeSectionId(string oldId, string newId)

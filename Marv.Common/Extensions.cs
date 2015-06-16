@@ -304,7 +304,14 @@ namespace Marv.Common
             {
                 foreach (var nodeKey in evidences.Keys)
                 {
-                    if (evidences[nodeKey].Value.Sum() > 0)
+                    var vertexEvidence = evidences[nodeKey];
+
+                    if (vertexEvidence.Type == VertexEvidenceType.Null)
+                    {
+                        continue;
+                    }
+
+                    if (vertexEvidence.Value.Sum() > 0)
                     {
                         hcsFile.WriteLine("{0}: ({1})", nodeKey, evidences[nodeKey].Value.String(delim: " "));
                     }
@@ -343,7 +350,5 @@ namespace Marv.Common
                 }
             }
         }
-
-
     }
 }
