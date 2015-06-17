@@ -59,8 +59,8 @@
       <HintPath>..\packages\XAML.MapControl.2.4.10\lib\net45\MapControl.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Marv.Smile.x64">
-      <HintPath>..\lib\Smile\x64\Marv.Smile.x64.dll</HintPath>
+    <Reference Include="Marv.Smile.x86">
+      <HintPath>..\lib\Smile\x86\Marv.Smile.x86.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
