@@ -15,7 +15,7 @@ namespace Marv.Input
         private void DataThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
-            
+
             if (this.Graph != null)
             {
                 this.UpdateTable();

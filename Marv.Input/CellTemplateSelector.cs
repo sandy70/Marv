@@ -18,7 +18,7 @@ namespace Marv.Input
             var cell = container as GridViewCell;
             var evidenceRow = cell.ParentRow.Item as EvidenceRow;
             var column = cell.Column;
-            
+
             try
             {
                 if (column.UniqueName == "From")
@@ -42,7 +42,7 @@ namespace Marv.Input
 
                     if (cellValue is VertexEvidence)
                     {
-                        var vertexEvidence = cellValue as VertexEvidence; 
+                        var vertexEvidence = cellValue as VertexEvidence;
 
                         if (vertexEvidence.Value == null)
                         {
@@ -62,7 +62,6 @@ namespace Marv.Input
                             XValue = i,
                             YValue = y
                         });
-                        evidenceRow.IsActive = false;
                     }
 
                     return this.SparkLineTemplate;

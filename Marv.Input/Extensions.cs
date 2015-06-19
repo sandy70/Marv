@@ -1,6 +1,4 @@
 ﻿using System;
-using Telerik.Windows.Controls;
-using Telerik.Windows.Controls.GridView;
 
 namespace Marv.Input
 {
@@ -11,7 +9,7 @@ namespace Marv.Input
             return dateTime.ToString("DyyyyMMddThhmmss");
         }
 
-      public static bool TryParse(this string str, out DateTime dateTime)
+        public static bool TryParse(this string str, out DateTime dateTime)
         {
             int date;
             int time;

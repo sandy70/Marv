@@ -34,6 +34,7 @@ namespace Marv.Input
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
         private bool isCellToolbarVisible;
         private bool isGraphControlVisible = true;
+        private bool isGridViewReadOnly;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
@@ -54,23 +55,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
 
-
-        private bool isGridViewReadOnly;
-
-        public bool IsGridViewReadOnly
-        {
-            get { return this.isGridViewReadOnly; }
-            set
-            {
-                if (value.Equals(this.isGridViewReadOnly))
-                {
-                    return;
-                }
-                this.isGridViewReadOnly = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
         {
             new ScatterDataPoint()
@@ -198,6 +182,20 @@ namespace Marv.Input
             }
         }
 
+        public bool IsGridViewReadOnly
+        {
+            get { return this.isGridViewReadOnly; }
+            set
+            {
+                if (value.Equals(this.isGridViewReadOnly))
+                {
+                    return;
+                }
+                this.isGridViewReadOnly = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public bool IsLineDataChartVisible
         {
             get { return this.isLineDataChartVisible; }
@@ -230,7 +228,6 @@ namespace Marv.Input
             }
         }
 
-        
         public bool IsTimelineToolbarVisible
         {
             get { return this.isTimelineToolbarVisible; }

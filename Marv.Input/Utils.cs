@@ -73,7 +73,7 @@ namespace Marv.Input
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
         {
             var values = new ObservableCollection<EvidenceTable>();
-           
+
             foreach (var kvp in evidenceSet)
             {
                 values.Add(kvp.Value);

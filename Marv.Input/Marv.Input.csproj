@@ -191,7 +191,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CellChangedEventArgs.cs" />
-    <Compile Include="CellModel.cs" />
     <Compile Include="DataTheme.cs" />
     <Compile Include="EvidenceGeneratedEventArgs.cs" />
     <Compile Include="EvidenceRow.cs" />
