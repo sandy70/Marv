@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Marv.Common;
-using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows.Controls.GridView;
 
@@ -11,35 +10,70 @@ namespace Marv.Input
 {
     public class CellTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate Template { get; set; }
+        public DataTemplate InValidTemplate { get; set; }
+        public DataTemplate SparkLineTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var cell = container as GridViewCell;
-
+            var evidenceRow = cell.ParentRow.Item as EvidenceRow;
+            var column = cell.Column;
+            
             try
             {
-                var cellModel = cell.ToModel();
+                if (column.UniqueName == "From")
+                {
+                    cell.Tag = evidenceRow.From;
+                }
 
-                if (cellModel.IsColumnSectionId)
+                else if (column.UniqueName == "To")
+                {
+                    cell.Tag = evidenceRow.To;
+                }
+
+                else
+                {
+                    var cellValue = evidenceRow[column.UniqueName];
+
+                    if (cellValue == null)
+                    {
+                        return null;
+                    }
+
+                    if (cellValue is VertexEvidence)
+                    {
+                        var vertexEvidence = cellValue as VertexEvidence; 
+
+                        if (vertexEvidence.Value == null)
+                        {
+                            return null;
+                        }
+
+                        cell.Tag = vertexEvidence.Value.Select((y, i) => new ScatterDataPoint
+                        {
+                            XValue = i,
+                            YValue = y
+                        });
+                    }
+                    else if (cellValue is double[])
+                    {
+                        cell.Tag = (cellValue as double[]).Select((y, i) => new ScatterDataPoint
+                        {
+                            XValue = i,
+                            YValue = y
+                        });
+                        evidenceRow.IsActive = false;
+                    }
+
+                    return this.SparkLineTemplate;
+                }
+
+                if (evidenceRow.IsValid)
                 {
                     return null;
                 }
 
-                var evidence = cellModel.Data as VertexEvidence;
-
-                if (evidence == null || evidence.Value == null)
-                {
-                    return null;
-                }
-
-                cell.Tag = evidence.Value.Select((y, i) => new ScatterDataPoint
-                {
-                    XValue = i,
-                    YValue = y
-                });
-
-                return this.Template;
+                return this.InValidTemplate;
             }
             catch (NullReferenceException)
             {

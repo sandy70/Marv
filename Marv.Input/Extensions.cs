@@ -11,17 +11,7 @@ namespace Marv.Input
             return dateTime.ToString("DyyyyMMddThhmmss");
         }
 
-        public static CellModel ToModel(this GridViewCell cell)
-        {
-            return new CellModel(cell);
-        }
-
-        public static CellModel ToModel(this GridViewCellInfo cellInfo)
-        {
-            return new CellModel(cellInfo);
-        }
-
-        public static bool TryParse(this string str, out DateTime dateTime)
+      public static bool TryParse(this string str, out DateTime dateTime)
         {
             int date;
             int time;

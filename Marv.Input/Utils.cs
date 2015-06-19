@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using Marv.Common;
 using Marv.Common.Types;
-using Newtonsoft.Json;
 
 namespace Marv.Input
 {
@@ -20,7 +17,7 @@ namespace Marv.Input
             foreach (var kvp in unmergedEvidenceSet)
             {
                 var evidenceTable = kvp.Value;
-                
+
                 foreach (var evidenceRow in evidenceTable)
                 {
                     newList.Add(evidenceRow.From);
@@ -47,7 +44,7 @@ namespace Marv.Input
                     var evidenceRow = new EvidenceRow { From = newList[i], To = newList[i + 1] };
 
                     // If this is a point feature an no table contains it, then don't add.
-                    if (newList[i] == newList[i + 1] && !unmergedEvidenceSet.Contains(evidenceRow))
+                    if (!unmergedEvidenceSet.Contains(evidenceRow) && newList[i] == newList[i + 1])
                     {
                         continue;
                     }
@@ -75,7 +72,14 @@ namespace Marv.Input
 
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
         {
-            return evidenceSet.Values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+            var values = new ObservableCollection<EvidenceTable>();
+           
+            foreach (var kvp in evidenceSet)
+            {
+                values.Add(kvp.Value);
+            }
+
+            return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
         }
     }
 }

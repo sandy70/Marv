@@ -12,6 +12,16 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
+        private void DataThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
+            
+            if (this.Graph != null)
+            {
+                this.UpdateTable();
+            }
+        }
+
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
@@ -20,6 +30,8 @@ namespace Marv.Input
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
         {
             var headerString = e.Column.Header as string;
+
+            e.Column.CellTemplateSelector = (CellTemplateSelector) this.FindResource("CellTemplateSelector");
 
             DateTime dateTime;
 
@@ -91,6 +103,7 @@ namespace Marv.Input
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
+                this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
             }
         }
@@ -132,8 +145,6 @@ namespace Marv.Input
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
         {
-            var cellModel = e.Cell.ToModel();
-
             if (!e.Cancel)
             {
                 this.pastedCells.Add(e);
@@ -151,9 +162,10 @@ namespace Marv.Input
             var evidenceRow = e.Row.Item as EvidenceRow;
 
             e.IsValid = evidenceRow.From <= evidenceRow.To;
+            evidenceRow.IsValid = e.IsValid;
         }
 
-        private bool Validate()
+        private void Validate()
         {
             var selectedVertexKey = this.Graph.SelectedVertex.Key;
 
@@ -169,20 +181,13 @@ namespace Marv.Input
 
             for (var i = 0; i < fromToList.Count - 1; i++)
             {
-                if (fromToList[i] > fromToList[i + 1])
-                {
-                    // style the row here (pending work)
-                    MessageBox.Show("Invalid input in row " + i / 2);
-                    return false;
-                }
+                evidenceTable[i / 2].IsValid = !(fromToList[i] > fromToList[i + 1]);
             }
-
-            return true;
         }
 
         private void ValidateButton_Click(object sender, RoutedEventArgs e)
         {
-            var isValid = this.Validate();
+            this.Validate();
         }
     }
 }
