@@ -11,7 +11,7 @@
     <Window.Resources>
         <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
     </Window.Resources>
-    
+
     <i:Interaction.Behaviors>
         <controls:WindowNotificationBehavior Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />
     </i:Interaction.Behaviors>
@@ -21,7 +21,7 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <controls:GraphControl Grid.Row="0"
                                IsAutoRunEnabled="True">
             <controls:GraphControl.Source>
@@ -31,7 +31,7 @@
                 </MultiBinding>
             </controls:GraphControl.Source>
         </controls:GraphControl>
-        
+
         <controls:StatusControl Grid.Row="1"
                                 Height="32"
                                 Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}" />

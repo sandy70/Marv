@@ -25,18 +25,6 @@ namespace Marv.NetworkViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("THeft060515.net")]
-        public string NetworkFileName {
-            get {
-                return ((string)(this["NetworkFileName"]));
-            }
-            set {
-                this["NetworkFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Vinod\\Data\\Exxon")]
         public string RootFolder {
             get {
@@ -44,6 +32,18 @@ namespace Marv.NetworkViewer.Properties {
             }
             set {
                 this["RootFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("THeft060515.net")]
+        public string NetworkFileName {
+            get {
+                return ((string)(this["NetworkFileName"]));
+            }
+            set {
+                this["NetworkFileName"] = value;
             }
         }
     }
