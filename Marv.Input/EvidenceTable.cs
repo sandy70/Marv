@@ -8,13 +8,15 @@ namespace Marv.Input
 {
     public class EvidenceTable : ObservableCollection<EvidenceRow>
     {
-        private IEnumerable<DateTime> dateTimes;
+        private IEnumerable<DateTime> dateTimes = new List<DateTime>();
 
         public IEnumerable<DateTime> DateTimes
         {
             get { return this.dateTimes; }
             private set { this.dateTimes = value; }
         }
+
+        public EvidenceTable() {}
 
         public EvidenceTable(IEnumerable<DateTime> theDateTimes)
         {

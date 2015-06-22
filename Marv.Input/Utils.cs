@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Marv.Common;
 using Marv.Common.Types;
@@ -13,8 +14,10 @@ namespace Marv.Input
             var newList = new List<double>();
 
             // Generate a list which holds the modified section ranges
-            foreach (var evidenceTable in unmergedEvidenceSet.Values)
+            foreach (var kvp in unmergedEvidenceSet)
             {
+                var evidenceTable = kvp.Value;
+
                 foreach (var evidenceRow in evidenceTable)
                 {
                     newList.Add(evidenceRow.From);
@@ -41,7 +44,7 @@ namespace Marv.Input
                     var evidenceRow = new EvidenceRow { From = newList[i], To = newList[i + 1] };
 
                     // If this is a point feature an no table contains it, then don't add.
-                    if (newList[i] == newList[i + 1] && !unmergedEvidenceSet.Contains(evidenceRow))
+                    if (!unmergedEvidenceSet.Contains(evidenceRow) && newList[i] == newList[i + 1])
                     {
                         continue;
                     }
@@ -57,7 +60,7 @@ namespace Marv.Input
 
                     foreach (var columnName in columnNames)
                     {
-                        mergedEvidenceRow[columnName] = unmergedEvidenceRow == null ? null : unmergedEvidenceRow[columnName];
+                        mergedEvidenceRow[columnName] = unmergedEvidenceRow == null ? new VertexEvidence { Type = VertexEvidenceType.Null } : unmergedEvidenceRow[columnName];
                     }
                 }
 
@@ -69,7 +72,14 @@ namespace Marv.Input
 
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
         {
-            return evidenceSet.Values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+            var values = new ObservableCollection<EvidenceTable>();
+
+            foreach (var kvp in evidenceSet)
+            {
+                values.Add(kvp.Value);
+            }
+
+            return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
         }
     }
 }
