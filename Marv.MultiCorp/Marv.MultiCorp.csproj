@@ -37,7 +37,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mc-base">
+    <Reference Include="mc-base, Version=5.2.105.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\MultiCorp\mc-base.dll</HintPath>
     </Reference>
     <Reference Include="mc-composition">
