@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
@@ -24,11 +25,13 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private const double Tolerance = 0.1;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private string chartTitle;
         private GridViewColumn currentColumn;
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
+        private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
@@ -54,11 +57,7 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-
-        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
-        {
-            new ScatterDataPoint()
-        };
+        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
 
         public string ChartTitle
         {
@@ -104,6 +103,17 @@ namespace Marv.Input
                 }
 
                 this.dateSelectionMode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ScatterDataPoint DraggedPoint
+        {
+            get { return this.draggedPoint; }
+
+            set
+            {
+                this.draggedPoint = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -446,6 +456,89 @@ namespace Marv.Input
             this.UpdateTable();
         }
 
+        private void Chart_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var mousePosition = e.GetPosition(this.Chart);
+            var tuple = this.Chart.ConvertPointToData(mousePosition);
+
+            var range = (double) tuple.FirstValue;
+            var value = (double) tuple.SecondValue;
+
+            var userDataPoint = new ScatterDataPoint
+            {
+                XValue = range,
+                YValue = value
+            };
+
+            // Insert the userDataPoint in appropriate position
+            var i = 0;
+
+            while (i < this.UserNumberPoints.Count)
+            {
+                if (!(this.UserNumberPoints[i].XValue < userDataPoint.XValue))
+                {
+                    this.UserNumberPoints.Insert(i, userDataPoint);
+                    return;
+                }
+
+                i++;
+            }
+            this.UserNumberPoints.Add(userDataPoint);
+        }
+
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var chart = (RadCartesianChart) sender;
+
+                var data = chart.ConvertPointToData(e.GetPosition(chart));
+
+                this.draggedPoint.YValue = (double) (data.SecondValue);
+
+                ScatterDataPoint replacePoint = null;
+
+                foreach (var userPoint in this.userNumberPoints)
+                {
+                    if (userPoint.XValue.Equals(this.draggedPoint.XValue))
+                    {
+                        replacePoint = userPoint;
+                    }
+                }
+
+                this.userNumberPoints.Replace(replacePoint, this.DraggedPoint);
+            }
+        }
+
+        private void Chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var data = this.Chart.ConvertPointToData(position);
+            var firstUserPoint = this.UserNumberPoints.First();
+            var lastUserPoint = this.UserNumberPoints.Last();
+
+            var selectedDataPoint = new ScatterDataPoint
+            {
+                XValue = (double) data.FirstValue,
+                YValue = (double) data.SecondValue
+            };
+
+            var deletePoints = new ObservableCollection<ScatterDataPoint>();
+            foreach (var scatterDataPoint in this.UserNumberPoints.Except(firstUserPoint).Except(lastUserPoint))
+            {
+                if (Utils.Distance(selectedDataPoint, scatterDataPoint) < Tolerance)
+                {
+                    deletePoints.Add(scatterDataPoint);
+                }
+            }
+
+            foreach (var scatterDataPoint in deletePoints)
+            {
+                this.userNumberPoints.Remove(scatterDataPoint);
+            }
+
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.IsTimelineToolbarVisible = false;
@@ -542,6 +635,11 @@ namespace Marv.Input
         private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.IsTimelineToolbarVisible = true;
+        }
+
+        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -647,25 +745,6 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            /* if (this.lineDataFileName == null)
-            {
-                this.LineDataSaveAs();
-            }
-            else
-            {
-                this.LineData.Write(this.lineDataFileName);
-            }*/
-
-            /* if (this.lineDataObjFileName == null)
-            {
-                this.LineDataSaveAs();
-            }
-            else
-            {
-                this.lineDataObj.WriteJson(this.lineDataObjFileName);
-            
-            }*/
-
             this.LineDataSaveAs();
         }
 

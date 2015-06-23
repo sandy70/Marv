@@ -35,6 +35,11 @@
                     </DataTemplate>
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
+
+            <DataTemplate x:Key="EllipsePointTemplate">
+                <Ellipse Cursor="Hand" Width="8" Height="8" Fill="Goldenrod" Stroke="DarkGoldenrod" StrokeThickness="1" MouseDown="Ellipse_MouseDown" />
+            </DataTemplate>
+            
         </ResourceDictionary>
     </Window.Resources>
 
@@ -216,9 +221,7 @@
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted">
-
-
-                            
+                          
                                 </telerik:RadGridView>
                             </Grid>
                         </telerik:RadPane>
@@ -228,9 +231,12 @@
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Chart -->
-                            <telerik:RadCartesianChart Name="Chart">
+                            <telerik:RadCartesianChart Name="Chart"
+                                                       MouseDoubleClick="Chart_MouseDoubleClick"
+                                                       MouseMove="Chart_MouseMove"
+                                                       MouseRightButtonDown="Chart_MouseRightButtonDown">
                                 <telerik:RadCartesianChart.Behaviors>
-                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="Horizontal" />
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="None"  PanMode="None" />
                                 </telerik:RadCartesianChart.Behaviors>
 
                                 <telerik:RadCartesianChart.HorizontalAxis>
@@ -244,9 +250,12 @@
                                 </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
-                                    <telerik:ScatterPointSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
+                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
                                                                 XValueBinding="XValue"
-                                                                YValueBinding="YValue" />
+                                                                YValueBinding="YValue"
+                                                                PointTemplate="{StaticResource EllipsePointTemplate}" 
+                                                                IsHitTestVisible="True"
+                                                                Cursor="Hand" />
                                 </telerik:RadCartesianChart.Series>
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
