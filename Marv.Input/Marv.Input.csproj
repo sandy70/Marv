@@ -190,9 +190,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CellChangedEventArgs.cs" />
     <Compile Include="DataTheme.cs" />
-    <Compile Include="EvidenceGeneratedEventArgs.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
