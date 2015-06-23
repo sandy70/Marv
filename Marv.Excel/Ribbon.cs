@@ -25,7 +25,8 @@ namespace Marv.ExcelNew
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var graph = Graph.Read(dialog.FileName);
+                var network = Network.Read(dialog.FileName);
+                var graph = Graph.Read(network);
             }
         }
 

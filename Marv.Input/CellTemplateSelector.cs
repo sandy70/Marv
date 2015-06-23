@@ -21,49 +21,45 @@ namespace Marv.Input
 
             try
             {
-                if (column.UniqueName == "From")
+                var cellValue = evidenceRow[column.UniqueName];
+
+                if (cellValue == null)
                 {
-                    cell.Tag = evidenceRow.From;
+                    return null;
                 }
 
-                else if (column.UniqueName == "To")
+                if (cellValue is VertexEvidence)
                 {
-                    cell.Tag = evidenceRow.To;
-                }
+                    var vertexEvidence = cellValue as VertexEvidence;
 
-                else
-                {
-                    var cellValue = evidenceRow[column.UniqueName];
-
-                    if (cellValue == null)
+                    if (vertexEvidence.Value == null)
                     {
                         return null;
                     }
 
-                    if (cellValue is VertexEvidence)
+                    cell.Tag = vertexEvidence.Value.Select((y, i) => new ScatterDataPoint
                     {
-                        var vertexEvidence = cellValue as VertexEvidence;
-
-                        if (vertexEvidence.Value == null)
-                        {
-                            return null;
-                        }
-
-                        cell.Tag = vertexEvidence.Value.Select((y, i) => new ScatterDataPoint
-                        {
-                            XValue = i,
-                            YValue = y
-                        });
-                    }
-                    else if (cellValue is double[])
+                        XValue = i,
+                        YValue = y
+                    });
+                }
+                else if (cellValue is double[])
+                {
+                    cell.Tag = (cellValue as double[]).Select((y, i) => new ScatterDataPoint
                     {
-                        cell.Tag = (cellValue as double[]).Select((y, i) => new ScatterDataPoint
-                        {
-                            XValue = i,
-                            YValue = y
-                        });
-                    }
+                        XValue = i,
+                        YValue = y
+                    });
+                }
+                else
+                {
+                    cell.Tag = cellValue;
+                }
 
+                DateTime dateTime;
+
+                if (column.UniqueName.TryParse(out dateTime))
+                {
                     return this.SparkLineTemplate;
                 }
 

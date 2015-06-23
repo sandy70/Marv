@@ -35,7 +35,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
-        private bool isCellToolbarVisible;
+        private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isLineDataChartVisible = true;
@@ -166,12 +166,12 @@ namespace Marv.Input
             }
         }
 
-        public bool IsCellToolbarVisible
+        public bool IsCellToolbarEnabled
         {
-            get { return this.isCellToolbarVisible; }
+            get { return this.isCellToolbarEnabled; }
             set
             {
-                this.isCellToolbarVisible = value;
+                this.isCellToolbarEnabled = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -536,7 +536,6 @@ namespace Marv.Input
             {
                 this.userNumberPoints.Remove(scatterDataPoint);
             }
-
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
