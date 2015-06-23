@@ -264,7 +264,7 @@
 
                 <!-- Graph and  timeline -->
                 <telerik:RadPaneGroup>
-                    <telerik:RadPane Header="Network"
+                    <telerik:RadPane Header="{Binding ElementName=Root, Path=Network.FileName, StringFormat={}{0}}"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
                         <marv:GraphControl Name="GraphControl"
                                            Background="WhiteSmoke"
