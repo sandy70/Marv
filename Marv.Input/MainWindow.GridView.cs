@@ -99,7 +99,7 @@ namespace Marv.Input
 
             DateTime dateTime;
 
-            this.IsCellToolbarVisible = gridViewColumn.UniqueName.TryParse(out dateTime);
+            this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {

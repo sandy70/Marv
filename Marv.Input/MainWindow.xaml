@@ -154,8 +154,7 @@
                                                            Click="CloseButton_Click" />
                                     </ToolBar>
 
-                                    <ToolBar Visibility="{Binding ElementName=Root, Path=IsCellToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
-
+                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}"
