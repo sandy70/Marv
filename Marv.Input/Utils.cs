@@ -1,13 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Marv.Common;
 using Marv.Common.Types;
+using Telerik.Charting;
 
 namespace Marv.Input
 {
     public static class Utils
     {
+        public static double Distance(ScatterDataPoint p1, ScatterDataPoint p2)
+        {
+            if (p1.YValue != null && p2.YValue != null)
+            {
+                return Math.Sqrt(Math.Pow(p1.XValue - p2.XValue, 2) + Math.Pow((double) p1.YValue - (double) p2.YValue, 2));
+            }
+            return 0;
+        }
+
         public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet)
         {
             var mergedEvidenceSet = new Dict<string, EvidenceTable>();
