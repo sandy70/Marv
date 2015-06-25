@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Marv.Common;
+using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
@@ -20,6 +22,11 @@ namespace Marv.Input
             {
                 this.UpdateTable();
             }
+        }
+
+        private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.DraggedPoint = null;
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -99,7 +106,7 @@ namespace Marv.Input
 
             DateTime dateTime;
 
-            this.IsCellToolbarVisible = gridViewColumn.UniqueName.TryParse(out dateTime);
+            this.isCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
@@ -129,7 +136,6 @@ namespace Marv.Input
                     if (evidenceRow != null)
                     {
                         var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
-
                         evidenceRow[colName] = vertexEvidence;
                     }
                 }
@@ -163,6 +169,71 @@ namespace Marv.Input
 
             e.IsValid = evidenceRow.From <= evidenceRow.To;
             evidenceRow.IsValid = e.IsValid;
+        }
+
+        private void Intepolate_Click(object sender, RoutedEventArgs e)
+        {
+            var minMaxValues = this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key].GetMinMaxUserValues();
+
+            this.MinUserValue = minMaxValues["Minimum"];
+            this.MaxUserValue = minMaxValues["Maximum"];
+
+            var maxLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = this.MaxUserValue
+            };
+            var maxLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = this.MaxUserValue
+            };
+
+            this.MaxNumberPoints.Clear();
+            this.MaxNumberPoints.Add(maxLineStartPoint);
+            this.MaxNumberPoints.Add(maxLineEndPoint);
+
+            this.UserNumberPoints[InterpolatorType.Maximum].Clear();
+            this.UserNumberPoints[InterpolatorType.Maximum].Add(maxLineStartPoint);
+            this.UserNumberPoints[InterpolatorType.Maximum].Add(maxLineEndPoint);
+
+            var modeLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+            };
+            var modeLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+            };
+
+            this.ModeNumberPoints.Clear();
+            this.ModeNumberPoints.Add(modeLineStartPoint);
+            this.ModeNumberPoints.Add(modeLineEndPoint);
+
+            this.UserNumberPoints[InterpolatorType.Mode].Clear();
+            this.UserNumberPoints[InterpolatorType.Mode].Add(modeLineStartPoint);
+            this.UserNumberPoints[InterpolatorType.Mode].Add(modeLineEndPoint);
+
+            var minLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = this.MinUserValue,
+            };
+            var minLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = this.MinUserValue,
+            };
+
+            this.MinNumberPoints.Clear();
+            this.MinNumberPoints.Add(minLineStartPoint);
+            this.MinNumberPoints.Add(minLineEndPoint);
+
+            this.UserNumberPoints[InterpolatorType.Minimum].Clear();
+            this.UserNumberPoints[InterpolatorType.Minimum].Add(minLineStartPoint);
+            this.UserNumberPoints[InterpolatorType.Minimum].Add(minLineEndPoint);
         }
 
         private void Validate()

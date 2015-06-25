@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using Marv.Common;
 using Marv.Common.Types;
 using Telerik.Charting;
+using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public static class Utils
     {
+        public  const double Infinity =  10E+09;
         public static double Distance(ScatterDataPoint p1, ScatterDataPoint p2)
         {
             if (p1.YValue != null && p2.YValue != null)
@@ -17,6 +20,19 @@ namespace Marv.Input
                 return Math.Sqrt(Math.Pow(p1.XValue - p2.XValue, 2) + Math.Pow((double) p1.YValue - (double) p2.YValue, 2));
             }
             return 0;
+        }
+
+        public static ScatterDataPoint GetScatterDataPoint(this RadCartesianChart chart, Point position)
+        {
+            var data = chart.ConvertPointToData(position);
+
+            var selectedDataPoint = new ScatterDataPoint
+            {
+                XValue = (double) data.FirstValue,
+                YValue = (double) data.SecondValue
+            };
+
+            return selectedDataPoint;
         }
 
         public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet)
@@ -79,6 +95,32 @@ namespace Marv.Input
             }
 
             return mergedEvidenceSet;
+        }
+
+        public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable)
+        {
+            double minUserValue = Utils.Infinity;
+            double maxUserValue = 0;
+            var minMaxUserValues = new Dict<string, double>();
+            foreach (var row in userTable)
+            {
+                foreach (var dateTime in userTable.DateTimes)
+                {
+                    var evidence = row[dateTime.String()] as VertexEvidence;
+
+                    if (evidence == null)
+                    {
+                        continue;
+                    }
+                    maxUserValue = Math.Max(maxUserValue, evidence.Params.Max());
+                    minUserValue = Math.Min(minUserValue, evidence.Params.Min());
+
+                    minMaxUserValues.Add("Maximum", maxUserValue);
+                    minMaxUserValues.Add("Minimum", minUserValue);
+                }
+            }
+
+            return minMaxUserValues;
         }
 
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
