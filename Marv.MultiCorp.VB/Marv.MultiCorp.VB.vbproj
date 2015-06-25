@@ -64,6 +64,9 @@
     <Reference Include="mc-flow">
       <HintPath>..\lib\MultiCorp\mc-flow.dll</HintPath>
     </Reference>
+    <Reference Include="mc-license">
+      <HintPath>..\lib\MultiCorp\mc-license.dll</HintPath>
+    </Reference>
     <Reference Include="mc-modeling">
       <HintPath>..\lib\MultiCorp\mc-modeling.dll</HintPath>
     </Reference>
@@ -126,6 +129,14 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mc-corrsim.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="topcorp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
