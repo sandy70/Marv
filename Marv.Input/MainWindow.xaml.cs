@@ -519,6 +519,7 @@ namespace Marv.Input
                     this.userNumberPoints.Add(InterpolatorType.Mode, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
                     this.userNumberPoints.Add(InterpolatorType.Minimum, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
                 }
+
                 this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
@@ -555,6 +556,36 @@ namespace Marv.Input
             this.UpdateTable();
         }
 
+        private void Chart_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var mousePosition = e.GetPosition(this.Chart);
+            var tuple = this.Chart.ConvertPointToData(mousePosition);
+
+            var range = (double) tuple.FirstValue;
+            var value = (double) tuple.SecondValue;
+
+            var userDataPoint = new ScatterDataPoint
+            {
+                XValue = range,
+                YValue = value
+            };
+
+            // Insert the userDataPoint in appropriate position
+            var i = 0;
+
+            while (i < this.UserNumberPoints.Count)
+            {
+                if (!(this.UserNumberPoints[i].XValue < userDataPoint.XValue))
+                {
+                    this.UserNumberPoints.Insert(i, userDataPoint);
+                    return;
+                }
+
+                i++;
+            }
+            this.UserNumberPoints.Add(userDataPoint);
+        }
+
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
             if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
@@ -576,6 +607,27 @@ namespace Marv.Input
                 }
 
                 if (this.SelectedLine.Equals(InterpolatorType.Maximum))
+                this.userNumberPoints.Replace(replacePoint, this.DraggedPoint);
+            }
+        }
+
+        private void Chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(this.Chart);
+            var data = this.Chart.ConvertPointToData(position);
+            var firstUserPoint = this.UserNumberPoints.First();
+            var lastUserPoint = this.UserNumberPoints.Last();
+
+            var selectedDataPoint = new ScatterDataPoint
+            {
+                XValue = (double) data.FirstValue,
+                YValue = (double) data.SecondValue
+            };
+
+            var deletePoints = new ObservableCollection<ScatterDataPoint>();
+            foreach (var scatterDataPoint in this.UserNumberPoints.Except(firstUserPoint).Except(lastUserPoint))
+            {
+                if (Utils.Distance(selectedDataPoint, scatterDataPoint) < Tolerance)
                 {
                     this.MaxNumberPoints.Replace(replacePoint, this.DraggedPoint);
                 }
@@ -587,6 +639,12 @@ namespace Marv.Input
                 {
                     this.MinNumberPoints.Replace(replacePoint, this.DraggedPoint);
                 }
+            }
+
+            foreach (var scatterDataPoint in deletePoints)
+            {
+                this.userNumberPoints.Remove(scatterDataPoint);
+            }
 
                 this.userNumberPoints[this.SelectedLine].Replace(replacePoint, this.DraggedPoint);
             }

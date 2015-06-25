@@ -106,7 +106,7 @@ namespace Marv.Input
 
             DateTime dateTime;
 
-            this.isCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
+            this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {

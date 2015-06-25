@@ -65,7 +65,7 @@
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
                                      Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"
-                                     Width="64"/>
+                                     Width="64" />
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                      IsFilteringEnabled="True"
@@ -101,8 +101,6 @@
                     <Image Source="/Marv.Common;component/Resources/Icons/Connector.png" />
                 </telerik:RadToggleButton>
 
-               
-
                 <telerik:RadButton ToolTip="Clears the evidence in the network."
                                    Click="ClearEvidenceButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Clear.png" />
@@ -112,10 +110,6 @@
                                    Click="RunButton_Click">
                     <Image Source="/Marv.Common;component/Resources/Icons/Run.png" />
                 </telerik:RadButton>
-
-                <TextBlock TextWrapping="Wrap"
-                           Text="{Binding ElementName=Root, Path=Network.FileName, Converter= {StaticResource FilePathToFileName}}"
-                           VerticalAlignment="Top" />
             </ToolBar>
         </ToolBarTray>
 

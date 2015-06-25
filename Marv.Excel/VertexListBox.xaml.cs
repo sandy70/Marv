@@ -125,7 +125,7 @@ namespace Marv.ExcelNew
 
             if (dialog.ShowDialog() == true)
             {
-                this.Vertices = Graph.Read(this.fileName = dialog.FileName).Vertices;
+                this.Vertices = Graph.Read(Network.Read(this.fileName = dialog.FileName)).Vertices;
             }
         }
 

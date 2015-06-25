@@ -9,8 +9,9 @@ namespace Marv.ExcelNew
 {
     public class SheetModel
     {
+        private readonly Dict<string, int, string, VertexEvidence> lineEvidence = new Dict<string, int, string, VertexEvidence>();
+
         private List<string> columnHeaders = new List<string>();
-        private Dict<string, int, string, VertexEvidence> lineEvidence = new Dict<string, int, string, VertexEvidence>();
         private Dict<string, int, string, double[]> lineValue = new Dict<string, int, string, double[]>();
         private Dict<int, string, string, double> modelEvidence = new Dict<int, string, string, double>();
         private Dictionary<string, object> sheetHeaders = new Dictionary<string, object>();
@@ -24,12 +25,11 @@ namespace Marv.ExcelNew
 
         public int EndYear { get; set; }
 
-        public Graph Graph { get; set; }
+        private Graph Graph { get; set; }
 
-        public Dict<string, int, string, VertexEvidence> LineEvidence
+        private Dict<string, int, string, VertexEvidence> LineEvidence
         {
             get { return this.lineEvidence; }
-            set { this.lineEvidence = value; }
         }
 
         public Dict<string, int, string, double[]> LineValue
@@ -45,6 +45,8 @@ namespace Marv.ExcelNew
         }
 
         public Dict<int, string, string, double> ModelValue { get; set; }
+
+        private Network Network { get; set; }
 
         public Dictionary<string, object> SheetHeaders
         {
@@ -106,7 +108,8 @@ namespace Marv.ExcelNew
             sheetModel.EndYear = Convert.ToInt32(sheetModel.SheetHeaders["End Year"]);
 
             var fileName = sheetModel.SheetHeaders["Network File"].ToString();
-            sheetModel.Graph = Graph.Read(fileName);
+            sheetModel.Network = Network.Read(fileName);
+            sheetModel.Graph = Graph.Read(sheetModel.Network);
 
             // For the vertex blocks we work with find.
             Range firstFind = null;
@@ -142,11 +145,6 @@ namespace Marv.ExcelNew
 
                 for (var year = sheetModel.StartYear; year <= sheetModel.EndYear; year++)
                 {
-                    if (sheetModel.LineEvidence[sectionId].ContainsKey(year))
-                    {
-                        sheetModel.LineEvidence[sectionId][year] = new Dict<string, VertexEvidence>();
-                    }
-
                     value = worksheet.Read(row, col);
 
                     if (value != null)
@@ -197,9 +195,10 @@ namespace Marv.ExcelNew
 
         public void Run()
         {
-            foreach (var sectionId in this.LineEvidence.Keys)
+            foreach (var kvp in this.LineEvidence)
             {
-                this.LineValue[sectionId] = this.Graph.Network.Run(this.LineEvidence[sectionId]);
+                var sectionId = kvp.Key;
+                this.LineValue[sectionId] = this.Network.Run(this.LineEvidence[sectionId]);
             }
         }
 
