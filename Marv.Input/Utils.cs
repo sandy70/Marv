@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace Marv.Input
 {
     public static class Utils
     {
-        public  const double Infinity =  10E+09;
+        public const double Infinity = 10E+09;
+
         public static double Distance(ScatterDataPoint p1, ScatterDataPoint p2)
         {
             if (p1.YValue != null && p2.YValue != null)
@@ -20,6 +22,32 @@ namespace Marv.Input
                 return Math.Sqrt(Math.Pow(p1.XValue - p2.XValue, 2) + Math.Pow((double) p1.YValue - (double) p2.YValue, 2));
             }
             return 0;
+        }
+
+        public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable)
+        {
+            var minUserValue = Infinity;
+            double maxUserValue = 0;
+            var minMaxUserValues = new Dict<string, double>();
+            foreach (var row in userTable)
+            {
+                foreach (var dateTime in userTable.DateTimes)
+                {
+                    var evidence = row[dateTime.String()] as VertexEvidence;
+
+                    if (evidence == null)
+                    {
+                        continue;
+                    }
+                    maxUserValue = Math.Max(maxUserValue, evidence.Params.Max());
+                    minUserValue = Math.Min(minUserValue, evidence.Params.Min());
+
+                    minMaxUserValues.Add("Maximum", maxUserValue);
+                    minMaxUserValues.Add("Minimum", minUserValue);
+                }
+            }
+
+            return minMaxUserValues;
         }
 
         public static ScatterDataPoint GetScatterDataPoint(this RadCartesianChart chart, Point position)
@@ -97,32 +125,6 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable)
-        {
-            double minUserValue = Utils.Infinity;
-            double maxUserValue = 0;
-            var minMaxUserValues = new Dict<string, double>();
-            foreach (var row in userTable)
-            {
-                foreach (var dateTime in userTable.DateTimes)
-                {
-                    var evidence = row[dateTime.String()] as VertexEvidence;
-
-                    if (evidence == null)
-                    {
-                        continue;
-                    }
-                    maxUserValue = Math.Max(maxUserValue, evidence.Params.Max());
-                    minUserValue = Math.Min(minUserValue, evidence.Params.Min());
-
-                    minMaxUserValues.Add("Maximum", maxUserValue);
-                    minMaxUserValues.Add("Minimum", minUserValue);
-                }
-            }
-
-            return minMaxUserValues;
-        }
-
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
         {
             var values = new ObservableCollection<EvidenceTable>();
@@ -133,6 +135,24 @@ namespace Marv.Input
             }
 
             return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+        }
+
+        public static IEnumerable<double> GetXCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
+        {
+            var coords = numberPoints.Select(scatterDataPoint => scatterDataPoint.XValue).ToList();
+            IEnumerable<double> xCoords = coords;
+
+            return xCoords;
+        }
+
+        public static IEnumerable<double> GetYCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
+        {
+            var coords = numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue).ToList();
+           
+            var newYCords = coords.Cast<double>().ToList();
+
+            IEnumerable<double> yCoords = newYCords;
+            return yCoords;
         }
     }
 }

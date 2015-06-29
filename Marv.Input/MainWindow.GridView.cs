@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -27,6 +28,7 @@ namespace Marv.Input
         private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             this.DraggedPoint = null;
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -175,6 +177,11 @@ namespace Marv.Input
         {
             var minMaxValues = this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key].GetMinMaxUserValues();
 
+            this.PlotInterpolatorLines(minMaxValues);
+        }
+
+        private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
+        {
             this.MinUserValue = minMaxValues["Minimum"];
             this.MaxUserValue = minMaxValues["Maximum"];
 

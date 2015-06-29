@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
-        private bool isCellToolbarEnabled= true;
+        private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isLineDataChartVisible = true;
@@ -417,21 +418,6 @@ namespace Marv.Input
             }
         }
 
-        //public ObservableCollection<ScatterDataPoint> SelectedNumberPoints
-        //{
-        //    get { return this.selectedNumberPoints; }
-
-        //    set
-        //    {
-        //        if (value.Equals(this.selectedNumberPoints))
-        //        {
-        //            return;
-        //        }
-        //        this.selectedNumberPoints = value;
-        //        this.RaisePropertyChanged();
-        //    }
-        //}
-
         public string SelectedSectionId
         {
             get { return this.selectedSectionId; }
@@ -556,45 +542,15 @@ namespace Marv.Input
             this.UpdateTable();
         }
 
-        private void Chart_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var mousePosition = e.GetPosition(this.Chart);
-            var tuple = this.Chart.ConvertPointToData(mousePosition);
-
-            var range = (double) tuple.FirstValue;
-            var value = (double) tuple.SecondValue;
-
-            var userDataPoint = new ScatterDataPoint
-            {
-                XValue = range,
-                YValue = value
-            };
-
-            // Insert the userDataPoint in appropriate position
-            var i = 0;
-
-            while (i < this.UserNumberPoints.Count)
-            {
-                if (!(this.UserNumberPoints[i].XValue < userDataPoint.XValue))
-                {
-                    this.UserNumberPoints.Insert(i, userDataPoint);
-                    return;
-                }
-
-                i++;
-            }
-            this.UserNumberPoints.Add(userDataPoint);
-        }
-
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
             if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
             {
-                var chart = (RadCartesianChart) sender;
+                var chart = (RadCartesianChart)sender;
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                this.draggedPoint.YValue = (double) (data.SecondValue);
+                this.draggedPoint.YValue = (double)(data.SecondValue);
 
                 ScatterDataPoint replacePoint = null;
 
@@ -607,27 +563,6 @@ namespace Marv.Input
                 }
 
                 if (this.SelectedLine.Equals(InterpolatorType.Maximum))
-                this.userNumberPoints.Replace(replacePoint, this.DraggedPoint);
-            }
-        }
-
-        private void Chart_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var position = e.GetPosition(this.Chart);
-            var data = this.Chart.ConvertPointToData(position);
-            var firstUserPoint = this.UserNumberPoints.First();
-            var lastUserPoint = this.UserNumberPoints.Last();
-
-            var selectedDataPoint = new ScatterDataPoint
-            {
-                XValue = (double) data.FirstValue,
-                YValue = (double) data.SecondValue
-            };
-
-            var deletePoints = new ObservableCollection<ScatterDataPoint>();
-            foreach (var scatterDataPoint in this.UserNumberPoints.Except(firstUserPoint).Except(lastUserPoint))
-            {
-                if (Utils.Distance(selectedDataPoint, scatterDataPoint) < Tolerance)
                 {
                     this.MaxNumberPoints.Replace(replacePoint, this.DraggedPoint);
                 }
@@ -639,12 +574,6 @@ namespace Marv.Input
                 {
                     this.MinNumberPoints.Replace(replacePoint, this.DraggedPoint);
                 }
-            }
-
-            foreach (var scatterDataPoint in deletePoints)
-            {
-                this.userNumberPoints.Remove(scatterDataPoint);
-            }
 
                 this.userNumberPoints[this.SelectedLine].Replace(replacePoint, this.DraggedPoint);
             }
@@ -657,6 +586,10 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
+            if (!this.SelectedTheme.Equals(DataTheme.User))
+            {
+                return;
+            }
             var val = selectedRow[selectedColumnName];
 
             DateTime dateTime;
@@ -793,6 +726,7 @@ namespace Marv.Input
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -829,6 +763,15 @@ namespace Marv.Input
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();
+
+            this.MaxNumberPoints.Clear();
+            this.MaxNumberPoints.Add(new ScatterDataPoint());
+
+            this.MinNumberPoints.Clear();
+            this.MinNumberPoints.Add(new ScatterDataPoint());
+
+            this.ModeNumberPoints.Clear();
+            this.ModeNumberPoints.Add(new ScatterDataPoint());
 
             this.Chart.Annotations.Remove(annotation => true);
 
@@ -951,16 +894,18 @@ namespace Marv.Input
         private void MaximumLine_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.SelectedLine = InterpolatorType.Maximum;
-
+            
             var mousePosition = e.GetPosition(this.Chart);
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void MaximumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.SelectedLine = InterpolatorType.Maximum;
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void MaximumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -971,6 +916,7 @@ namespace Marv.Input
             var selectedDataPoint = this.Chart.GetScatterDataPoint(position);
 
             this.DeleteScatterDataPoint(selectedDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void MinimumLine_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -981,11 +927,13 @@ namespace Marv.Input
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void MinimumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.SelectedLine = InterpolatorType.Minimum;
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void MinimumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -995,6 +943,7 @@ namespace Marv.Input
             var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
 
             this.DeleteScatterDataPoint(selectedDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void ModeLine_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -1005,11 +954,13 @@ namespace Marv.Input
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void ModeLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.SelectedLine = InterpolatorType.Mode;
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void ModeLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -1019,6 +970,7 @@ namespace Marv.Input
             var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
 
             this.DeleteScatterDataPoint(selectedDataPoint);
+            Console.WriteLine(this.SelectedLine);
         }
 
         private void Plot(string columnName)
@@ -1155,8 +1107,19 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-            this.lineDataObj[DataTheme.Merged] = Utils.Merge(this.lineDataObj[DataTheme.User]);
 
+            try
+            {
+                if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
+                {
+                    this.lineDataObj[DataTheme.Merged] = Utils.Merge(this.lineDataObj[this.SelectedTheme]);
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Can run the model only for user or interpolated data set");
+            }
+            
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
             var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
@@ -1271,5 +1234,63 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void Done_Click(object sender, RoutedEventArgs e)
+        {
+
+            var xCoordsMaximum = this.UserNumberPoints[InterpolatorType.Maximum].GetXCoords();
+            var yCoordsMaximum = this.UserNumberPoints[InterpolatorType.Maximum].GetYCoords();
+
+            var maxLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
+            
+            var xCoordsMode = this.UserNumberPoints[InterpolatorType.Mode].GetXCoords();
+            var yCoordsMode = this.UserNumberPoints[InterpolatorType.Mode].GetYCoords();
+
+            var modeLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMode, yCoordsMode);
+
+            var xCoordsMinimum = this.UserNumberPoints[InterpolatorType.Minimum].GetXCoords();
+            var yCoordsMinimum = this.UserNumberPoints[InterpolatorType.Minimum].GetYCoords();
+
+            var minLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
+           
+            var interpolatedTable = new EvidenceTable(this.dates);
+            this.lineDataObj[DataTheme.Interpolated].Add(this.Graph.SelectedVertex.Key, interpolatedTable);
+
+            foreach (var userEvidenceTable in this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key])
+            {
+             
+                    var midRangeValue = (userEvidenceTable.From + userEvidenceTable.To) / 2;
+
+                    var yInterpolatedMin = Math.Round(minLinInterpolator.Eval(midRangeValue), 2);
+                    var yInterpolatedMode = Math.Round(modeLinInterpolator.Eval(midRangeValue), 2);
+                    var yInterpolatedMax = Math.Round(maxLinInterpolator.Eval(midRangeValue), 2);
+               
+                    var val =  "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")" ;
+
+                    var interpolatedRow = new EvidenceRow { From = userEvidenceTable.From, To = userEvidenceTable.To };
+
+                    interpolatedTable.Add(interpolatedRow);
+
+                    foreach (var date in this.dates)
+                    {
+                        interpolatedRow[date.String()] = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
+                    }
+
+                
+
+            }
+            this.MaxNumberPoints.Clear();
+            this.MaxNumberPoints.Add(new ScatterDataPoint());
+
+            this.MinNumberPoints.Clear();
+            this.MinNumberPoints.Add(new ScatterDataPoint());
+
+            this.ModeNumberPoints.Clear();
+            this.ModeNumberPoints.Add(new ScatterDataPoint());
+
+            this.UserNumberPoints.Clear();
+        }
+
+  
     }
 }
