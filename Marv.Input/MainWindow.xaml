@@ -111,7 +111,7 @@
                                     </ToolBarTray.Resources>
 
                                     <!-- Define Timeline Toolbar -->
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
+                                    <ToolBar Band ="1" IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
                                              Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
@@ -161,7 +161,7 @@
                                                            Click="CloseButton_Click" />
                                     </ToolBar>
 
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
+                                    <ToolBar  Band ="2"  BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}"
@@ -208,6 +208,32 @@
                                                            Width="50"
                                                            Click="Done_Click" />
 
+                                    </ToolBar>
+                                    <ToolBar Band="2"
+                                             BandIndex="1"
+                                             IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
+                                        
+                                        <Label Name="MaxVal" Width="50" Content="MaxVal">
+                                          
+                                        </Label>
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue">
+
+                                        </TextBox>
+                                        <Label Name="MinVal" Width="50" Content="MinVal">
+
+                                        </Label>
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue">
+
+                                        </TextBox>
+                                        <Label Name="Range" Width="50" Content="Range">
+
+                                        </Label>
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue">
+
+                                        </TextBox>
                                     </ToolBar>
                                 </ToolBarTray>
 
