@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A0AA151E-99FD-4CDD-A17D-CAF2A65BEF73}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Marv.MultiCorp</RootNamespace>
+    <AssemblyName>Marv.MultiCorp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mc-base">
+      <HintPath>..\lib\MultiCorp\mc-base.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-composition">
+      <HintPath>..\lib\MultiCorp\mc-composition.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-condensation">
+      <HintPath>..\lib\MultiCorp\mc-condensation.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-corrosion">
+      <HintPath>..\lib\MultiCorp\mc-corrosion.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-corrosioncase">
+      <HintPath>..\lib\MultiCorp\mc-corrosioncase.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-flow">
+      <HintPath>..\lib\MultiCorp\mc-flow.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-license">
+      <HintPath>..\lib\MultiCorp\mc-license.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-modeling">
+      <HintPath>..\lib\MultiCorp\mc-modeling.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-thermocorp">
+      <HintPath>..\lib\MultiCorp\mc-thermocorp.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-ui">
+      <HintPath>..\lib\MultiCorp\mc-ui.dll</HintPath>
+    </Reference>
+    <Reference Include="mc-util">
+      <HintPath>..\lib\MultiCorp\mc-util.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DFORRTD.DLL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mc-corrsim.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MSVCRTD.DLL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="topcorp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
