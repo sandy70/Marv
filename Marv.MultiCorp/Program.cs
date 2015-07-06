@@ -16,7 +16,7 @@ namespace Marv.MultiCorp
     {
         private static void Main()
         {
-            MulticorpRunner.initialize();
+            Utils.Initialize();
 
             for (var i = 0; i < 10; i++)
             {

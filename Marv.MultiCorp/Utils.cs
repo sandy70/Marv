@@ -1,4 +1,5 @@
-﻿using edu.ohiou.icmt.modeling.globalresources;
+﻿using edu.ohiou.icmt;
+using edu.ohiou.icmt.modeling.globalresources;
 using edu.ohiou.icmt.modeling.param;
 using edu.ohiou.icmt.multicorp.basemodel;
 using edu.ohiou.icmt.multicorp.factory;
@@ -118,6 +119,11 @@ namespace Marv.MultiCorp
             }
 
             return flow.getParameter(NameList.FLOW_PATTERN).getValue().ToString();
+        }
+
+        public static void Initialize()
+        {
+            MulticorpRunner.initialize();
         }
     }
 }
