@@ -35,47 +35,27 @@
     <Reference Include="mc-base">
       <HintPath>..\lib\MultiCorp\mc-base.dll</HintPath>
     </Reference>
-    <Reference Include="mc-composition">
-      <HintPath>..\lib\MultiCorp\mc-composition.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-condensation">
-      <HintPath>..\lib\MultiCorp\mc-condensation.dll</HintPath>
-    </Reference>
     <Reference Include="mc-corrosion">
       <HintPath>..\lib\MultiCorp\mc-corrosion.dll</HintPath>
     </Reference>
     <Reference Include="mc-corrosioncase">
       <HintPath>..\lib\MultiCorp\mc-corrosioncase.dll</HintPath>
     </Reference>
-    <Reference Include="mc-flow">
-      <HintPath>..\lib\MultiCorp\mc-flow.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-license">
-      <HintPath>..\lib\MultiCorp\mc-license.dll</HintPath>
-    </Reference>
     <Reference Include="mc-modeling">
       <HintPath>..\lib\MultiCorp\mc-modeling.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-thermocorp">
-      <HintPath>..\lib\MultiCorp\mc-thermocorp.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-ui">
-      <HintPath>..\lib\MultiCorp\mc-ui.dll</HintPath>
-    </Reference>
-    <Reference Include="mc-util">
-      <HintPath>..\lib\MultiCorp\mc-util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GasOilWaterFlowParameters.cs" />
+    <Compile Include="GasWaterFlowParameters.cs" />
+    <Compile Include="OilWaterFlowParameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -88,6 +68,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="MSVCRTD.DLL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MulticorpProperties.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="multicorp_default_input.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="topcorp.dll">
