@@ -265,7 +265,6 @@
                     <telerik:RadPane Header="{Binding ElementName=Root, Path=Network.FileName}"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
                         <marv:GraphControl Background="WhiteSmoke"
-                                           Graph="{Binding ElementName=Root, Path=Graph, Mode=OneWay}"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
                                            GraphChanged="GraphControl_GraphChanged"

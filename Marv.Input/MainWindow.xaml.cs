@@ -61,22 +61,6 @@ namespace Marv.Input
         private EvidenceTable table;
         private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>();
 
-        public string ChartTitle
-        {
-            get { return this.chartTitle; }
-
-            set
-            {
-                if (value.Equals(this.chartTitle))
-                {
-                    return;
-                }
-
-                this.chartTitle = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public GridViewColumn CurrentColumn
         {
             get { return this.currentColumn; }
@@ -132,38 +116,6 @@ namespace Marv.Input
                 }
 
                 this.endDate = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public Graph Graph
-        {
-            get { return this.graph; }
-
-            set
-            {
-                if (value.Equals(this.graph))
-                {
-                    return;
-                }
-
-                this.graph = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public HorizontalAxisQuantity HorizontalAxisQuantity
-        {
-            get { return this.horizontalAxisQuantity; }
-
-            set
-            {
-                if (value.Equals(this.horizontalAxisQuantity))
-                {
-                    return;
-                }
-
-                this.horizontalAxisQuantity = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -977,7 +929,6 @@ namespace Marv.Input
 
             var sectionBelief = this.Network.Run(sectionEvidence);
 
-            this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 

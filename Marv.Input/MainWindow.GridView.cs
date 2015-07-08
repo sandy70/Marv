@@ -16,7 +16,7 @@ namespace Marv.Input
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
 
-            if (this.Graph != null)
+            if (this.SelectedVertex != null)
             {
                 this.UpdateTable();
             }
