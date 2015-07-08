@@ -70,7 +70,6 @@ namespace Marv.Controls
             DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
 
         private Graph displayGraph;
-        private string displayVertexKey;
         private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
         private bool isManipulationAdornerVisible;
@@ -288,10 +287,7 @@ namespace Marv.Controls
 
             control.SelectedGroup = graph.DefaultGroup;
 
-            var selectedVertex = control.SelectedVertex ?? graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == control.SelectedGroup);
-            control.UpdateDisplayGraph(selectedVertex == null ? null : selectedVertex.Key);
-
-            control.SelectedVertex = control.DisplayGraph.GetSink();
+            control.UpdateDisplayGraph();
         }
 
         public void Open(string fileName)
@@ -338,12 +334,7 @@ namespace Marv.Controls
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
-
-            var selectedVertex = this.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
-
-            this.UpdateDisplayGraph(selectedVertex == null ? null : selectedVertex.Key);
-
-            this.SelectedVertex = this.DisplayGraph.GetSink();
+            this.UpdateDisplayGraph();
         }
 
         private void BringIntoView(RadDiagramItem shape)
@@ -474,6 +465,11 @@ namespace Marv.Controls
         private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
         {
             this.Graph.Write(this.Network);
+        }
+
+        private void GroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateDisplayGraph();
         }
 
         private void InitializeAutoSave()
@@ -634,17 +630,15 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void UpdateDisplayGraph(string vertexKey = null)
+        private void UpdateDisplayGraph()
         {
-            if (vertexKey == null)
-            {
-                vertexKey = this.displayVertexKey;
-            }
-
             this.DisplayGraph = this.Graph.GetSubGraph(this.SelectedGroup);
             this.IsDefaultGroupVisible = this.SelectedGroup == this.Graph.DefaultGroup;
 
-            this.displayVertexKey = vertexKey;
+            if (!this.DisplayGraph.ContainsVertex(this.SelectedVertex))
+            {
+                this.SelectedVertex = this.DisplayGraph.GetSink();
+            }
         }
 
         private void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
@@ -699,7 +693,7 @@ namespace Marv.Controls
                                          ? this.SelectedVertex.Groups.Except("all").First()
                                          : this.SelectedVertex.Groups.First();
 
-                this.UpdateDisplayGraph(this.SelectedVertex == null ? null : this.SelectedVertex.Key);
+                this.UpdateDisplayGraph();
             }
         }
 
