@@ -27,9 +27,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty ConnectionColorProperty =
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
-
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
@@ -70,6 +67,7 @@ namespace Marv.Controls
             DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
 
         private Graph displayGraph;
+        private Graph graph;
         private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
         private bool isManipulationAdornerVisible;
@@ -107,8 +105,18 @@ namespace Marv.Controls
 
         public Graph Graph
         {
-            get { return (Graph) this.GetValue(GraphProperty); }
-            set { this.SetValue(GraphProperty, value); }
+            get { return this.graph; }
+
+            set
+            {
+                if (value.Equals(this.graph))
+                {
+                    return;
+                }
+
+                this.graph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Color IncomingConnectionHighlightColor
