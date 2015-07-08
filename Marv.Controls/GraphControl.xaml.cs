@@ -273,31 +273,6 @@ namespace Marv.Controls
             this.InitializeAutoSave();
         }
 
-        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as GraphControl;
-
-            if (control == null)
-            {
-                return;
-            }
-
-            var graph = control.Graph;
-
-            if (graph == null)
-            {
-                return;
-            }
-
-            var oldGraph = e.OldValue as Graph;
-
-            control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
-
-            control.SelectedGroup = graph.DefaultGroup;
-
-            control.UpdateDisplayGraph();
-        }
-
         public void Open(string fileName)
         {
             this.Network = Network.Read(fileName);
@@ -572,19 +547,6 @@ namespace Marv.Controls
             }
         }
 
-        private void RaiseGraphChanged(Graph newGraph, Graph oldGraph)
-        {
-            if (this.GraphChanged != null)
-            {
-                this.GraphChanged(this,
-                    new ValueChangedEventArgs<Graph>
-                    {
-                        NewValue = newGraph,
-                        OldValue = oldGraph
-                    });
-            }
-        }
-
         private void RaiseNotificationOpened(Notification notification)
         {
             if (this.NotificationOpened != null)
@@ -717,7 +679,6 @@ namespace Marv.Controls
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
-        public event EventHandler<ValueChangedEventArgs<Graph>> GraphChanged;
         public event EventHandler<Notification> NotificationClosed;
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;

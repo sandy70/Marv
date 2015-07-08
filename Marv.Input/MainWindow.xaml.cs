@@ -633,15 +633,6 @@ namespace Marv.Input
             }
         }
 
-        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
-        {
-            if (this.LineData == null)
-            {
-                this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
-            }
-        }
-
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
             this.UpdateTable();

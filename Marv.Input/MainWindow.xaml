@@ -267,7 +267,6 @@
                         <marv:GraphControl Background="WhiteSmoke"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
-                                           GraphChanged="GraphControl_GraphChanged"
                                            SelectionChanged="GraphControl_SelectionChanged" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
