@@ -25,15 +25,12 @@ namespace Marv.Input
         private double baseTableMax;
         private double baseTableMin;
         private double baseTableRange;
-        private string chartTitle;
         private GridViewColumn currentColumn;
         private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
-        private Graph graph;
-        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -836,7 +833,6 @@ namespace Marv.Input
             this.Chart.Annotations.Remove(annotation => true);
             this.UpdateTable();
         }
-
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
