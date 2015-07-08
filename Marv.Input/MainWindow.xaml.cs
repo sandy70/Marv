@@ -26,7 +26,10 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const double Tolerance = 0.1;
+        
+        private readonly string oldColumnName;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+
         private string chartTitle;
         private GridViewColumn currentColumn;
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
@@ -42,18 +45,17 @@ namespace Marv.Input
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
-        private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
         private double maximum = 100;
         private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
-        private string oldColumnName;
         private string selectedColumnName;
         private EvidenceRow selectedRow;
         private string selectedSectionId;
         private DataTheme selectedTheme = DataTheme.User;
+        private Vertex selectedVertex;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
@@ -361,6 +363,22 @@ namespace Marv.Input
             }
         }
 
+        public Vertex SelectedVertex
+        {
+            get { return this.selectedVertex; }
+
+            set
+            {
+                if (value.Equals(this.selectedVertex))
+                {
+                    return;
+                }
+
+                this.selectedVertex = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public int SelectedYear
         {
             get { return this.selectedYear; }
@@ -651,9 +669,9 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.Graph.SelectedVertex != null)
+            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.SelectedVertex != null)
             {
-                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.SelectedVertex.Key] = vertexEvidence;
             }
 
             if (vertexEvidence == null)
@@ -747,28 +765,6 @@ namespace Marv.Input
             this.LineDataSaveAs();
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.PropertyChanged -= MainWindow_PropertyChanged;
-            this.PropertyChanged += MainWindow_PropertyChanged;
-        }
-
-        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "LineData")
-            {
-                if (this.LineData != null)
-                {
-                    //this.LineDataControl.ClearRows();
-
-                    //foreach (var sectionId in this.LineData.SectionIds)
-                    //{
-                    //    //this.LineDataControl.AddRow(sectionId, (await this.LineData.GetEvidenceAsync(sectionId))[null, this.Graph.SelectedVertex.Key]);
-                    //}
-                }
-            }
-        }
-
         private void Plot(string columnName)
         {
             foreach (var row in this.Table)
@@ -846,8 +842,6 @@ namespace Marv.Input
             {
                 var maxValue = vertexEvidence.Value.Max();
 
-                var selectedVertex = this.Graph.SelectedVertex;
-
                 var fill = new LinearGradientBrush
                 {
                     StartPoint = new Point(0, 0),
@@ -858,13 +852,13 @@ namespace Marv.Input
                 {
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = selectedVertex.Intervals.ElementAt(i) / selectedVertex.SafeMax,
+                        Offset = this.SelectedVertex.Intervals.ElementAt(i) / this.SelectedVertex.SafeMax,
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
 
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = selectedVertex.Intervals.ElementAt(i + 1) / selectedVertex.SafeMax,
+                        Offset = this.SelectedVertex.Intervals.ElementAt(i + 1) / this.SelectedVertex.SafeMax,
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
                 });
@@ -876,8 +870,8 @@ namespace Marv.Input
                     HorizontalTo = to,
                     Stroke = strokeBrush,
                     Tag = dataRow,
-                    VerticalFrom = selectedVertex.SafeMin,
-                    VerticalTo = selectedVertex.SafeMax
+                    VerticalFrom = this.SelectedVertex.SafeMin,
+                    VerticalTo = this.SelectedVertex.SafeMax
                 });
             }
         }
@@ -995,23 +989,18 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateChartTitle()
-        {
-            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
-        }
-
         private void UpdateTable()
         {
-            if (this.Graph.SelectedVertex == null)
+            if (this.SelectedVertex == null)
             {
                 return;
             }
 
-            this.Table = this.lineDataObj[this.SelectedTheme][this.Graph.SelectedVertex.Key];
+            this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
 
             if (this.Table == null || this.Table.Count == 0)
             {
-                this.lineDataObj[this.SelectedTheme].Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
+                this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
         }
 

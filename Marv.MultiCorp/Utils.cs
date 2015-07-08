@@ -29,6 +29,7 @@ namespace Marv.MultiCorp
             cCase.getParameter(NameList.GAS_DENSITY).setValue(parameters.GasDensity);
             cCase.getParameter(NameList.SECTION_DIAMETER).setValue(parameters.InternalDiameter);
             cCase.getParameter(NameList.SECTION_INCLINATION).setValue(parameters.Inclination);
+            cCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(parameters.InterfacialTension);
             cCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(parameters.MixtureVelocity);
             cCase.getParameter(NameList.OIL_DENSITY).setValue(parameters.OilDensity);
             cCase.getParameter(NameList.OIL_VISCOSITY).setValue(parameters.OilViscosity);
@@ -97,7 +98,7 @@ namespace Marv.MultiCorp
             cCase.onFlowTypeChanged();
 
             //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
+            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Line_run);
             cCase.onSimulationTypeChanged();
 
             cCase.getParameter(NameList.INPUT_TYPE).setValue(FlowModel.InputTypes.Velocity);

@@ -60,6 +60,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
 
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
@@ -238,6 +241,12 @@ namespace Marv.Controls
             }
         }
 
+        public Vertex SelectedVertex
+        {
+            get { return (Vertex) GetValue(SelectedVertexProperty); }
+            set { SetValue(SelectedVertexProperty, value); }
+        }
+
         public double ShapeOpacity
         {
             get { return (double) this.GetValue(ShapeOpacityProperty); }
@@ -261,7 +270,14 @@ namespace Marv.Controls
         {
             var control = d as GraphControl;
 
-            if (control == null || control.Graph == null)
+            if (control == null)
+            {
+                return;
+            }
+
+            var graph = control.Graph;
+
+            if (graph == null)
             {
                 return;
             }
@@ -270,7 +286,12 @@ namespace Marv.Controls
 
             control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
 
-            control.SelectedGroup = control.Graph.DefaultGroup;
+            control.SelectedGroup = graph.DefaultGroup;
+
+            var selectedVertex = control.SelectedVertex ?? graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == control.SelectedGroup);
+            control.UpdateDisplayGraph(selectedVertex == null ? null : selectedVertex.Key);
+
+            control.SelectedVertex = control.DisplayGraph.GetSink();
         }
 
         public void Open(string fileName)
@@ -317,6 +338,12 @@ namespace Marv.Controls
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
+
+            var selectedVertex = this.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
+
+            this.UpdateDisplayGraph(selectedVertex == null ? null : selectedVertex.Key);
+
+            this.SelectedVertex = this.DisplayGraph.GetSink();
         }
 
         private void BringIntoView(RadDiagramItem shape)
@@ -428,9 +455,6 @@ namespace Marv.Controls
 
         private async void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.PropertyChanged -= GraphControl_PropertyChanged;
-            this.PropertyChanged += GraphControl_PropertyChanged;
-
             if (!string.IsNullOrWhiteSpace(this.Source))
             {
                 var notification = new Notification
@@ -444,17 +468,6 @@ namespace Marv.Controls
                 await this.OpenAsync(this.Source);
 
                 this.RaiseNotificationClosed(notification);
-            }
-        }
-
-        private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedGroup")
-            {
-                var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
-                this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
-
-                this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
             }
         }
 
@@ -531,9 +544,10 @@ namespace Marv.Controls
         {
             var radDiagramShape = sender as RadDiagramShape;
 
-            this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
             this.BringIntoView(radDiagramShape);
             this.BringToFront(radDiagramShape);
+
+            this.SelectedVertex = radDiagramShape.DataContext as Vertex;
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
@@ -620,15 +634,15 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void UpdateDisplayGraph(string group, string vertexKey = null)
+        private void UpdateDisplayGraph(string vertexKey = null)
         {
             if (vertexKey == null)
             {
                 vertexKey = this.displayVertexKey;
             }
 
-            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
-            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
+            this.DisplayGraph = this.Graph.GetSubGraph(this.SelectedGroup);
+            this.IsDefaultGroupVisible = this.SelectedGroup == this.Graph.DefaultGroup;
 
             this.displayVertexKey = vertexKey;
         }
@@ -674,14 +688,18 @@ namespace Marv.Controls
 
         private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.Graph.SelectedVertex == null)
+            if (this.SelectedVertex == null)
             {
                 return;
             }
 
-            if (!this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
+            if (!this.SelectedVertex.Groups.Contains(this.SelectedGroup))
             {
-                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+                this.SelectedGroup = this.SelectedVertex.Groups.Count > 1
+                                         ? this.SelectedVertex.Groups.Except("all").First()
+                                         : this.SelectedVertex.Groups.First();
+
+                this.UpdateDisplayGraph(this.SelectedVertex == null ? null : this.SelectedVertex.Key);
             }
         }
 

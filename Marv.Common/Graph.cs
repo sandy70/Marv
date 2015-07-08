@@ -85,20 +85,6 @@ namespace Marv.Common
             get { return this.Vertices.Count(vertex => vertex.IsExpanded) > this.Vertices.Count / 2; }
         }
 
-        public Vertex SelectedVertex
-        {
-            get { return this.selectedVertex; }
-
-            set
-            {
-                if (value != this.selectedVertex)
-                {
-                    this.selectedVertex = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-
         public KeyedCollection<Vertex> Vertices
         {
             get { return this.vertices; }
@@ -168,7 +154,7 @@ namespace Marv.Common
             return this.Vertices.First(vertex => this.edges.All(edge => edge.Source != vertex));
         }
 
-        public Graph GetSubGraph(string group, string vertexKey = null)
+        public Graph GetSubGraph(string group)
         {
             // Extract the header vertices
             var subGraph = new Graph();
@@ -190,15 +176,9 @@ namespace Marv.Common
                 }
             }
 
-            if (vertexKey != null)
+            foreach (var vertex in subGraph.Vertices)
             {
-                var defaultGroupPosition = this.Vertices[vertexKey].PositionForGroup[this.DefaultGroup];
-                var positionOffset = this.Vertices[vertexKey].PositionForGroup[group] - defaultGroupPosition;
-
-                foreach (var vertex in subGraph.Vertices)
-                {
-                    vertex.DisplayPosition = vertex.PositionForGroup[group] - positionOffset;
-                }
+                vertex.DisplayPosition = vertex.PositionForGroup[group];
             }
 
             // Process for each pair and add edges
