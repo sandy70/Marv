@@ -16,7 +16,7 @@ namespace Marv.Input
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
 
-            if (this.Graph != null)
+            if (this.SelectedVertex != null)
             {
                 this.UpdateTable();
             }
@@ -48,7 +48,6 @@ namespace Marv.Input
         {
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
-            var selectedVertex = this.Graph.SelectedVertex;
 
             DateTime dateTime;
 
@@ -56,7 +55,7 @@ namespace Marv.Input
             {
                 // This is a date time column and vertex evidence cell
 
-                row[columnName] = selectedVertex.States.ParseEvidenceString(e.NewData as string);
+                row[columnName] = this.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
 
                 this.Plot(row, columnName);
             }
@@ -65,19 +64,18 @@ namespace Marv.Input
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var columnName = e.Cell.Column.UniqueName;
-            var selectedVertex = this.Graph.SelectedVertex;
 
             DateTime dateTime;
 
             if (columnName.TryParse(out dateTime))
             {
                 // This is a date time column and vertex evidence cell
-                var vertexEvidence = selectedVertex.States.ParseEvidenceString(e.NewValue as string);
+                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
                 if (vertexEvidence.Type == VertexEvidenceType.Invalid)
                 {
                     e.IsValid = false;
-                    e.ErrorMessage = "Invalid evidence for node " + selectedVertex.Key;
+                    e.ErrorMessage = "Invalid evidence for node " + this.SelectedVertex.Key;
                 }
             }
         }
@@ -128,7 +126,7 @@ namespace Marv.Input
                 {
                     if (evidenceRow != null)
                     {
-                        var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
+                        var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
 
                         evidenceRow[colName] = vertexEvidence;
                     }
@@ -167,7 +165,7 @@ namespace Marv.Input
 
         private void Validate()
         {
-            var selectedVertexKey = this.Graph.SelectedVertex.Key;
+            var selectedVertexKey = this.SelectedVertex.Key;
 
             var evidenceTable = this.lineDataObj[this.selectedTheme][selectedVertexKey];
 

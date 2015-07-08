@@ -8,8 +8,7 @@
         xmlns:input="clr-namespace:Marv.Input"
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized"
-        Loaded="MainWindow_Loaded">
+        WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -244,8 +243,8 @@
                                 </telerik:RadCartesianChart.HorizontalAxis>
 
                                 <telerik:RadCartesianChart.VerticalAxis>
-                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMax}"
-                                                        Minimum="{Binding ElementName=Root, Path=Graph.SelectedVertex.SafeMin}" />
+                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=SelectedVertex.SafeMax}"
+                                                        Minimum="{Binding ElementName=Root, Path=SelectedVertex.SafeMin}" />
                                 </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
@@ -265,12 +264,9 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="{Binding ElementName=Root, Path=Network.FileName}"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:GraphControl Name="GraphControl"
-                                           Background="WhiteSmoke"
-                                           Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
+                        <marv:GraphControl Background="WhiteSmoke"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
-                                           GraphChanged="GraphControl_GraphChanged"
                                            SelectionChanged="GraphControl_SelectionChanged" />
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>

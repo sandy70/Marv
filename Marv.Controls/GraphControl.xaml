@@ -60,18 +60,19 @@
                            Text="Group"
                            FontWeight="Bold"
                            VerticalAlignment="Center"
-                           Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}" />
+                           Visibility="{Binding ElementName=Root, Path=DisplayGraph, Converter={StaticResource NullToVisibility}}" />
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
-                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"
-                                     Width="64" />
+                                     Visibility="{Binding ElementName=Root, Path=DisplayGraph, Converter={StaticResource NullToVisibility}}"
+                                     Width="64"
+                                     SelectionChanged="GroupComboBox_SelectionChanged"/>
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                      IsFilteringEnabled="True"
                                      OpenDropDownOnFocus="True"
                                      SelectedIndex="0"
-                                     SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                                     SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                      TextSearchMode="Contains"
                                      Width="192"
                                      SelectionChanged="VertexComboxBox_SelectionChanged" />
@@ -128,7 +129,7 @@
                             IsSnapToItemsEnabled="False"
                             IsSnapToGridEnabled="False"
                             SelectionMode="Single"
-                            SelectedItem="{Binding ElementName=Root, Path=Graph.SelectedVertex, Mode=TwoWay}"
+                            SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                             CommandExecuted="Diagram_CommandExecuted"
                             ConnectionManipulationCompleted="Diagram_ConnectionManipulationCompleted"
                             ConnectionManipulationStarted="Diagram_ConnectionManipulationStarted"

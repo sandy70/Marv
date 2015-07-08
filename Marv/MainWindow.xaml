@@ -145,7 +145,6 @@
 
                             <marv:GraphControl Grid.Row="0"
                                                Background="WhiteSmoke"
-                                               Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
                                                Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                                EvidenceEntered="GraphControl_EvidenceEntered"
                                                GraphChanged="GraphControl_GraphChanged"

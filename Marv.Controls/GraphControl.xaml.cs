@@ -27,9 +27,6 @@ namespace Marv.Controls
         public static readonly DependencyProperty ConnectionColorProperty =
             DependencyProperty.Register("ConnectionColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.LightSlateGray));
 
-        public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof (Graph), typeof (GraphControl), new PropertyMetadata(null, ChangedGraph));
-
         public static readonly DependencyProperty IncomingConnectionHighlightColorProperty =
             DependencyProperty.Register("IncomingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.SkyBlue));
 
@@ -60,6 +57,9 @@ namespace Marv.Controls
         public static readonly DependencyProperty OutgoingConnectionHighlightColorProperty =
             DependencyProperty.Register("OutgoingConnectionHighlightColor", typeof (Color), typeof (GraphControl), new PropertyMetadata(Colors.Red));
 
+        public static readonly DependencyProperty SelectedVertexProperty =
+            DependencyProperty.Register("SelectedVertex", typeof (Vertex), typeof (GraphControl), new PropertyMetadata(null));
+
         public static readonly DependencyProperty ShapeOpacityProperty =
             DependencyProperty.Register("ShapeOpacity", typeof (double), typeof (GraphControl), new PropertyMetadata(1.0));
 
@@ -67,7 +67,7 @@ namespace Marv.Controls
             DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
 
         private Graph displayGraph;
-        private string displayVertexKey;
+        private Graph graph;
         private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
         private bool isManipulationAdornerVisible;
@@ -105,8 +105,18 @@ namespace Marv.Controls
 
         public Graph Graph
         {
-            get { return (Graph) this.GetValue(GraphProperty); }
-            set { this.SetValue(GraphProperty, value); }
+            get { return this.graph; }
+
+            set
+            {
+                if (value.Equals(this.graph))
+                {
+                    return;
+                }
+
+                this.graph = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public Color IncomingConnectionHighlightColor
@@ -238,6 +248,12 @@ namespace Marv.Controls
             }
         }
 
+        public Vertex SelectedVertex
+        {
+            get { return (Vertex) GetValue(SelectedVertexProperty); }
+            set { SetValue(SelectedVertexProperty, value); }
+        }
+
         public double ShapeOpacity
         {
             get { return (double) this.GetValue(ShapeOpacityProperty); }
@@ -257,45 +273,12 @@ namespace Marv.Controls
             this.InitializeAutoSave();
         }
 
-        private static void ChangedGraph(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = d as GraphControl;
-
-            if (control == null || control.Graph == null)
-            {
-                return;
-            }
-
-            var oldGraph = e.OldValue as Graph;
-
-            control.RaiseGraphChanged(e.NewValue as Graph, oldGraph);
-
-            control.SelectedGroup = control.Graph.DefaultGroup;
-        }
-
         public void Open(string fileName)
         {
             this.Network = Network.Read(fileName);
 
             this.Graph = Graph.Read(this.Network);
             this.Graph.Belief = this.Network.GetBeliefs();
-        }
-
-        public async Task OpenAsync(string fileName)
-        {
-            this.Network = await Task.Run(() => Network.Read(fileName));
-
-            var network = this.Network;
-            this.Graph = await Task.Run(() => Graph.Read(network));
-            this.Graph.Belief = this.Network.GetBeliefs();
-        }
-
-        public void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
         }
 
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
@@ -317,6 +300,7 @@ namespace Marv.Controls
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.SelectedGroup = this.Graph.DefaultGroup;
+            this.UpdateDisplayGraph();
         }
 
         private void BringIntoView(RadDiagramItem shape)
@@ -428,9 +412,6 @@ namespace Marv.Controls
 
         private async void GraphControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.PropertyChanged -= GraphControl_PropertyChanged;
-            this.PropertyChanged += GraphControl_PropertyChanged;
-
             if (!string.IsNullOrWhiteSpace(this.Source))
             {
                 var notification = new Notification
@@ -447,20 +428,14 @@ namespace Marv.Controls
             }
         }
 
-        private void GraphControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedGroup")
-            {
-                var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
-                this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
-
-                this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
-            }
-        }
-
         private void GraphControl_Unloaded(object sender, RoutedEventArgs e)
         {
             this.Graph.Write(this.Network);
+        }
+
+        private void GroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateDisplayGraph();
         }
 
         private void InitializeAutoSave()
@@ -500,6 +475,17 @@ namespace Marv.Controls
             timer.Start();
         }
 
+        private async Task OpenAsync(string fileName)
+        {
+            this.Network = await Task.Run(() => Network.Read(fileName));
+
+            var network = this.Network;
+            this.Graph = await Task.Run(() => Graph.Read(network));
+            this.Graph.Belief = this.Network.GetBeliefs();
+
+            this.SelectedGroup = this.Graph.DefaultGroup;
+        }
+
         private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -531,9 +517,10 @@ namespace Marv.Controls
         {
             var radDiagramShape = sender as RadDiagramShape;
 
-            this.Graph.SelectedVertex = radDiagramShape.DataContext as Vertex;
             this.BringIntoView(radDiagramShape);
             this.BringToFront(radDiagramShape);
+
+            this.SelectedVertex = radDiagramShape.DataContext as Vertex;
         }
 
         private void RaiseEvidenceEntered(VertexEvidence vertexEvidence = null)
@@ -554,16 +541,11 @@ namespace Marv.Controls
             }
         }
 
-        private void RaiseGraphChanged(Graph newGraph, Graph oldGraph)
+        private void RaiseNotificationClosed(Notification notification)
         {
-            if (this.GraphChanged != null)
+            if (this.NotificationClosed != null)
             {
-                this.GraphChanged(this,
-                    new ValueChangedEventArgs<Graph>
-                    {
-                        NewValue = newGraph,
-                        OldValue = oldGraph
-                    });
+                this.NotificationClosed(this, notification);
             }
         }
 
@@ -620,17 +602,15 @@ namespace Marv.Controls
             this.WriteEvidences(openFileDialog.FileName);
         }
 
-        private void UpdateDisplayGraph(string group, string vertexKey = null)
+        private void UpdateDisplayGraph()
         {
-            if (vertexKey == null)
+            this.DisplayGraph = this.Graph.GetSubGraph(this.SelectedGroup);
+            this.IsDefaultGroupVisible = this.SelectedGroup == this.Graph.DefaultGroup;
+
+            if (!this.DisplayGraph.ContainsVertex(this.SelectedVertex))
             {
-                vertexKey = this.displayVertexKey;
+                this.SelectedVertex = this.DisplayGraph.GetSink();
             }
-
-            this.DisplayGraph = this.Graph.GetSubGraph(group, vertexKey);
-            this.IsDefaultGroupVisible = @group == this.Graph.DefaultGroup;
-
-            this.displayVertexKey = vertexKey;
         }
 
         private void UpdateLayout(bool isAutoFitDone = false, bool isAsync = true)
@@ -674,14 +654,18 @@ namespace Marv.Controls
 
         private void VertexComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.Graph.SelectedVertex == null)
+            if (this.SelectedVertex == null)
             {
                 return;
             }
 
-            if (!this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
+            if (!this.SelectedVertex.Groups.Contains(this.SelectedGroup))
             {
-                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+                this.SelectedGroup = this.SelectedVertex.Groups.Count > 1
+                                         ? this.SelectedVertex.Groups.Except("all").First()
+                                         : this.SelectedVertex.Groups.First();
+
+                this.UpdateDisplayGraph();
             }
         }
 
@@ -697,7 +681,6 @@ namespace Marv.Controls
         }
 
         public event EventHandler<VertexEvidence> EvidenceEntered;
-        public event EventHandler<ValueChangedEventArgs<Graph>> GraphChanged;
         public event EventHandler<Notification> NotificationClosed;
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;

@@ -29,6 +29,7 @@ namespace Marv.Controls
         private void VertexControl_ShowGroupButtonClicked(object sender, EventArgs e)
         {
             this.SelectedGroup = (sender as VertexControl).Vertex.HeaderOfGroup;
+            this.UpdateDisplayGraph();
         }
     }
 }
