@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
@@ -23,43 +23,51 @@ using Path = System.IO.Path;
 
 namespace Marv.Input
 {
-    
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private static DataColumn selectedColumn;
-        private readonly LineDataSet lineDataSet = new LineDataSet();
-       // private DataSet BeliefDataSet=null;
+        private const double Tolerance = 1;
+        private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private string chartTitle;
         private GridViewColumn currentColumn;
-        private Dict<string, EvidenceTable> dataSet = new Dict<string, EvidenceTable>();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
+        private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
-        private bool isCellToolbarVisible;
+<<<<<<< HEAD
+        private bool isCellToolbarEnabled= true;
+=======
+        private bool isCellToolbarEnabled;
+>>>>>>> upstream/master
         private bool isGraphControlVisible = true;
+        private bool isGridViewReadOnly;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private string lineDataFileName;
+        private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
+        private string lineDataObjFileName;
+        private ObservableCollection<ScatterDataPoint> maxNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
+        private double maxUserValue;
         private double maximum = 100;
+        private ObservableCollection<ScatterDataPoint> minNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
+        private double minUserValue;
         private double minimum = 100;
+        private ObservableCollection<ScatterDataPoint> modeNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string oldColumnName;
         private string selectedColumnName;
+        private InterpolatorType selectedLine;
         private EvidenceRow selectedRow;
         private string selectedSectionId;
+        private DataTheme selectedTheme = DataTheme.User;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private Dict<string, EvidenceTable> mergedEvidenceSet;
-        private ObservableCollection<ScatterDataPoint> userNumberPoints = new ObservableCollection<ScatterDataPoint>
-        {
-            new ScatterDataPoint()
-        };
+        private Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>> userNumberPoints = new Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>>();
 
         public string ChartTitle
         {
@@ -105,6 +113,17 @@ namespace Marv.Input
                 }
 
                 this.dateSelectionMode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ScatterDataPoint DraggedPoint
+        {
+            get { return this.draggedPoint; }
+
+            set
+            {
+                this.draggedPoint = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -157,12 +176,16 @@ namespace Marv.Input
             }
         }
 
-        public bool IsCellToolbarVisible
+        public bool IsCellToolbarEnabled
         {
-            get { return this.isCellToolbarVisible; }
+            get { return this.isCellToolbarEnabled; }
             set
             {
-                this.isCellToolbarVisible = value;
+<<<<<<< HEAD
+                this.isCellToolbarEnabled =  value;
+=======
+                this.isCellToolbarEnabled = value;
+>>>>>>> upstream/master
                 this.RaisePropertyChanged();
             }
         }
@@ -179,6 +202,20 @@ namespace Marv.Input
                 }
 
                 this.isGraphControlVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsGridViewReadOnly
+        {
+            get { return this.isGridViewReadOnly; }
+            set
+            {
+                if (value.Equals(this.isGridViewReadOnly))
+                {
+                    return;
+                }
+                this.isGridViewReadOnly = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -247,6 +284,32 @@ namespace Marv.Input
             }
         }
 
+        public ObservableCollection<ScatterDataPoint> MaxNumberPoints
+        {
+            get { return this.maxNumberPoints; }
+            set
+            {
+                this.maxNumberPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double MaxUserValue
+        {
+            get { return this.maxUserValue; }
+
+            set
+            {
+                if (this.maxUserValue.Equals(value))
+                {
+                    return;
+                }
+
+                this.maxUserValue = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public double Maximum
         {
             get { return this.maximum; }
@@ -263,6 +326,32 @@ namespace Marv.Input
             }
         }
 
+        public ObservableCollection<ScatterDataPoint> MinNumberPoints
+        {
+            get { return this.minNumberPoints; }
+            set
+            {
+                this.minNumberPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double MinUserValue
+        {
+            get { return this.minUserValue; }
+
+            set
+            {
+                if (this.minUserValue.Equals(value))
+                {
+                    return;
+                }
+
+                this.minUserValue = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public double Minimum
         {
             get { return this.minimum; }
@@ -275,6 +364,16 @@ namespace Marv.Input
                 }
 
                 this.minimum = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<ScatterDataPoint> ModeNumberPoints
+        {
+            get { return this.modeNumberPoints; }
+            set
+            {
+                this.modeNumberPoints = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -311,6 +410,36 @@ namespace Marv.Input
             }
         }
 
+        public InterpolatorType SelectedLine
+        {
+            get { return this.selectedLine; }
+
+            set
+            {
+                if (value.Equals(this.selectedLine))
+                {
+                    return;
+                }
+                this.selectedLine = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        //public ObservableCollection<ScatterDataPoint> SelectedNumberPoints
+        //{
+        //    get { return this.selectedNumberPoints; }
+
+        //    set
+        //    {
+        //        if (value.Equals(this.selectedNumberPoints))
+        //        {
+        //            return;
+        //        }
+        //        this.selectedNumberPoints = value;
+        //        this.RaisePropertyChanged();
+        //    }
+        //}
+
         public string SelectedSectionId
         {
             get { return this.selectedSectionId; }
@@ -323,6 +452,17 @@ namespace Marv.Input
                 }
 
                 this.selectedSectionId = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public DataTheme SelectedTheme
+        {
+            get { return this.selectedTheme; }
+
+            set
+            {
+                this.selectedTheme = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -375,17 +515,18 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<ScatterDataPoint> UserNumberPoints
+        public Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>> UserNumberPoints
         {
             get { return this.userNumberPoints; }
 
             set
             {
-                if (value.Equals(this.userNumberPoints))
+                if (userNumberPoints.Count == 0)
                 {
-                    return;
+                    this.userNumberPoints.Add(InterpolatorType.Maximum, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
+                    this.userNumberPoints.Add(InterpolatorType.Mode, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
+                    this.userNumberPoints.Add(InterpolatorType.Minimum, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
                 }
-
                 this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
@@ -418,9 +559,45 @@ namespace Marv.Input
 
             this.dates.Add(date);
 
-            this.dataSet = new Dict<string, EvidenceTable>();
-
+            this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
             this.UpdateTable();
+        }
+
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var chart = (RadCartesianChart) sender;
+
+                var data = chart.ConvertPointToData(e.GetPosition(chart));
+
+                this.draggedPoint.YValue = (double) (data.SecondValue);
+
+                ScatterDataPoint replacePoint = null;
+
+                foreach (var userPoint in this.userNumberPoints[this.SelectedLine])
+                {
+                    if (userPoint.XValue.Equals(this.draggedPoint.XValue))
+                    {
+                        replacePoint = userPoint;
+                    }
+                }
+
+                if (this.SelectedLine.Equals(InterpolatorType.Maximum))
+                {
+                    this.MaxNumberPoints.Replace(replacePoint, this.DraggedPoint);
+                }
+                else if (this.SelectedLine.Equals(InterpolatorType.Mode))
+                {
+                    this.ModeNumberPoints.Replace(replacePoint, this.DraggedPoint);
+                }
+                else
+                {
+                    this.MinNumberPoints.Replace(replacePoint, this.DraggedPoint);
+                }
+
+                this.userNumberPoints[this.SelectedLine].Replace(replacePoint, this.DraggedPoint);
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -430,21 +607,16 @@ namespace Marv.Input
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedRow != null)
-            {
-                if (selectedColumn != null)
-                {
-                    var val = selectedRow[selectedColumn.ColumnName];
+            var val = selectedRow[selectedColumnName];
 
-                    if (selectedColumn.ColumnName != "From" && selectedColumn.ColumnName != "To")
+            DateTime dateTime;
+            if (selectedColumnName.TryParse(out dateTime))
+            {
+                foreach (var row in this.Table)
+                {
+                    foreach (var column in row.GetDynamicMemberNames())
                     {
-                        foreach (var row in this.Table)
-                        {
-                            foreach (var column in row.GetDynamicMemberNames())
-                            {
-                                row[column] = val;
-                            }
-                        }
+                        row[column] = val;
                     }
                 }
             }
@@ -490,9 +662,87 @@ namespace Marv.Input
             }
         }
 
+        private void CreateNewBeliefDataSet()
+        {
+            if (this.lineDataObj[DataTheme.Beliefs].Count == 0)
+            {
+                var evidenceDateTime = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes;
+                var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
+
+                this.lineDataObj[DataTheme.Beliefs] = new Dict<string, EvidenceTable>();
+
+                foreach (var vertex in this.Network.Vertices)
+                {
+                    var beliefTable = new EvidenceTable(evidenceDateTime);
+
+                    var i = 0;
+                    while (i <= noOfEvidenceRows - 1)
+                    {
+                        var beliefRow = new EvidenceRow
+                        {
+                            From = this.lineDataObj[DataTheme.Merged][0].Value[i].From,
+                            To = this.lineDataObj[DataTheme.Merged][0].Value[i].To
+                        };
+
+                        beliefTable.Add(beliefRow);
+                        i++;
+                    }
+
+                    this.lineDataObj[DataTheme.Beliefs].Add(vertex.Key, beliefTable);
+                }
+            }
+        }
+
         private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.IsTimelineToolbarVisible = true;
+        }
+
+        private void DeleteScatterDataPoint(ScatterDataPoint deletePoint)
+        {
+            var closestPoint = this.UserNumberPoints[this.SelectedLine][0];
+            var closestPointDistance = Utils.Distance(closestPoint, deletePoint);
+
+            foreach (var scatterDataPoint in this.UserNumberPoints[this.SelectedLine])
+            {
+                closestPointDistance = Math.Min(closestPointDistance, Utils.Distance(scatterDataPoint, deletePoint));
+
+                if (closestPointDistance < Tolerance)
+                {
+                    closestPoint = scatterDataPoint;
+                    break;
+                }
+            }
+
+            if (!(closestPointDistance < Tolerance))
+            {
+                return;
+            }
+
+            if (this.SelectedLine.Equals(InterpolatorType.Maximum))
+            {
+                this.MaxNumberPoints.Remove(closestPoint);
+            }
+
+            else if (this.SelectedLine.Equals(InterpolatorType.Mode))
+            {
+                this.ModeNumberPoints.Remove(closestPoint);
+            }
+
+            else if (this.SelectedLine.Equals(InterpolatorType.Minimum))
+            {
+                this.MinNumberPoints.Remove(closestPoint);
+            }
+
+            if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedLine] != null)
+            {
+                this.UserNumberPoints[this.SelectedLine].Remove(closestPoint);
+            }
+        }
+
+        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -542,10 +792,35 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        private void InsertDataPoint(ScatterDataPoint userDataPoint)
         {
-            this.Maximum = this.Table.GetMaximum();
-            this.Minimum = this.Table.GetMinimum();
+            var i = 0;
+
+            while (i < this.UserNumberPoints[this.SelectedLine].Count)
+            {
+                if (!(this.UserNumberPoints[this.SelectedLine][i].XValue < userDataPoint.XValue))
+                {
+                    if (this.SelectedLine.Equals(InterpolatorType.Maximum))
+                    {
+                        this.MaxNumberPoints.Insert(i, userDataPoint);
+                    }
+                    else if (this.SelectedLine.Equals(InterpolatorType.Mode))
+                    {
+                        this.ModeNumberPoints.Insert(i, userDataPoint);
+                    }
+
+                    else if (this.SelectedLine.Equals(InterpolatorType.Minimum))
+                    {
+                        this.MinNumberPoints.Insert(i, userDataPoint);
+                    }
+                    this.UserNumberPoints[this.SelectedLine].Insert(i, userDataPoint);
+
+                    return;
+                }
+
+                i++;
+            }
+            this.UserNumberPoints[this.SelectedLine].Add(userDataPoint);
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -558,7 +833,7 @@ namespace Marv.Input
 
             if (dialog.ShowDialog() == true)
             {
-                this.lineDataFileName = dialog.FileName;
+                this.lineDataObjFileName = dialog.FileName;
 
                 var directoryName = Path.GetDirectoryName(dialog.FileName);
 
@@ -569,7 +844,7 @@ namespace Marv.Input
                 }
                 else
                 {
-                    this.LineData = Common.LineData.Read(dialog.FileName);
+                    this.lineDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, EvidenceTable>>(dialog.FileName);
                 }
             }
         }
@@ -585,8 +860,9 @@ namespace Marv.Input
 
             if (result == true)
             {
-                this.lineDataFileName = dialog.FileName;
-                this.LineData.Write(this.lineDataFileName);
+                this.lineDataObjFileName = dialog.FileName;
+
+                this.lineDataObj.WriteJson(this.lineDataObjFileName);
             }
         }
 
@@ -597,14 +873,7 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (this.lineDataFileName == null)
-            {
-                this.LineDataSaveAs();
-            }
-            else
-            {
-                this.LineData.Write(this.lineDataFileName);
-            }
+            this.LineDataSaveAs();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -627,6 +896,79 @@ namespace Marv.Input
                     //}
                 }
             }
+        }
+
+        private void MaximumLine_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Maximum;
+
+            var mousePosition = e.GetPosition(this.Chart);
+            var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
+
+            this.InsertDataPoint(userDataPoint);
+        }
+
+        private void MaximumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Maximum;
+        }
+
+        private void MaximumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Maximum;
+
+            var position = e.GetPosition(this.Chart);
+            var selectedDataPoint = this.Chart.GetScatterDataPoint(position);
+
+            this.DeleteScatterDataPoint(selectedDataPoint);
+        }
+
+        private void MinimumLine_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Minimum;
+
+            var mousePosition = e.GetPosition(this.Chart);
+            var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
+
+            this.InsertDataPoint(userDataPoint);
+        }
+
+        private void MinimumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Minimum;
+        }
+
+        private void MinimumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Minimum;
+
+            var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
+
+            this.DeleteScatterDataPoint(selectedDataPoint);
+        }
+
+        private void ModeLine_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Mode;
+
+            var mousePosition = e.GetPosition(this.Chart);
+            var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
+
+            this.InsertDataPoint(userDataPoint);
+        }
+
+        private void ModeLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Mode;
+        }
+
+        private void ModeLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SelectedLine = InterpolatorType.Mode;
+
+            var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
+
+            this.DeleteScatterDataPoint(selectedDataPoint);
         }
 
         private void Plot(string columnName)
@@ -652,7 +994,7 @@ namespace Marv.Input
             }
 
             // Remove older annotations
-            this.Chart.Annotations.Remove(annotation => annotation.Tag == dataRow);
+            this.Chart.Annotations.Remove(annotation => annotation.Tag.Equals(dataRow));
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
@@ -672,7 +1014,7 @@ namespace Marv.Input
                         Tag = dataRow,
                         VerticalAlignment = VerticalAlignment.Center,
                         VerticalValue = vertexEvidence.Params[0],
-                        ZIndex = 100
+                        ZIndex = -200
                     });
                 }
                 else
@@ -686,6 +1028,7 @@ namespace Marv.Input
                         Tag = dataRow,
                         VerticalFrom = vertexEvidence.Params[0],
                         VerticalTo = vertexEvidence.Params[0],
+                        ZIndex = -200
                     });
                 }
             }
@@ -700,6 +1043,7 @@ namespace Marv.Input
                     Tag = dataRow,
                     VerticalFrom = vertexEvidence.Params[0],
                     VerticalTo = vertexEvidence.Params[1],
+                    ZIndex = -200
                 });
             }
             else if (vertexEvidence.Type != VertexEvidenceType.Null)
@@ -737,11 +1081,12 @@ namespace Marv.Input
                     Stroke = strokeBrush,
                     Tag = dataRow,
                     VerticalFrom = selectedVertex.SafeMin,
-                    VerticalTo = selectedVertex.SafeMax
+                    VerticalTo = selectedVertex.SafeMax,
+                    ZIndex = -200
                 });
             }
         }
-    
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -750,7 +1095,6 @@ namespace Marv.Input
             }
         }
 
-       
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var sectionId in this.LineData.SectionIds)
@@ -761,10 +1105,81 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-            this.mergedEvidenceSet = Utils.Merge(this.dataSet);
+            this.lineDataObj[DataTheme.Merged] = Utils.Merge(this.lineDataObj[DataTheme.User]);
 
+            var vertexEvidences = new Dict<string, VertexEvidence>();
+            var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
+            var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
 
+            var noOfDateTimes = 0;
+            while (itr.MoveNext())
+            {
+                noOfDateTimes++;
+            }
 
+            for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
+            {
+                for (var dateTimecount = 0; dateTimecount < noOfDateTimes; dateTimecount++)
+                {
+                    foreach (var kvp in this.lineDataObj[DataTheme.Merged])
+                    {
+                        var nodeKey = kvp.Key;
+                        var evidenceTable = kvp.Value;
+
+                        var dateTimeColumnName = evidenceTable[rowCount].GetDynamicMemberNames().ToList()[dateTimecount];
+                        var evidence = evidenceTable[rowCount][dateTimeColumnName] as VertexEvidence;
+
+                        vertexEvidences.Add(nodeKey, evidence);
+                    }
+
+                    var nodeBelief = this.Network.Run(vertexEvidences);
+
+                    if (this.lineDataObj[DataTheme.Beliefs].Count == 0)
+                    {
+                        this.CreateNewBeliefDataSet();
+                    }
+
+                    foreach (var kvp in nodeBelief)
+                    {
+                        var nodeKey = kvp.Key;
+                        var val = kvp.Value;
+
+                        var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
+                        var beliefRow = beliefTable[rowCount];
+
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = val;
+                    }
+
+                    vertexEvidences.Clear();
+                }
+            }
+
+            // printing beliefDataSet
+            foreach (var kvp in lineDataObj[DataTheme.Beliefs])
+            {
+                var beliefTable = kvp.Value;
+                var nodeKey = kvp.Key;
+                Console.WriteLine("Table={0}", nodeKey);
+                foreach (var beliefRow in beliefTable)
+                {
+                    var colNameCollection = beliefRow.GetDynamicMemberNames().ToList();
+
+                    foreach (var col in colNameCollection)
+                    {
+                        var valueArray = beliefRow[col] as double[];
+                        Console.Write("[");
+                        foreach (var val in valueArray)
+                        {
+                            Console.Write("{0},", Math.Round(val, 2));
+                        }
+                        Console.Write("]");
+                    }
+
+                    Console.Write(":");
+                }
+                Console.WriteLine("");
+                Console.WriteLine("------------");
+            }
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -785,14 +1200,6 @@ namespace Marv.Input
             }
         }
 
-   /*     private void UpDateBeliefDataSet(Dict<string, double[]> nodeBelief, int rowCount, int colCount)
-        {
-            foreach (var nodeKey in nodeBelief.Keys)
-            {
-                var row = this.BeliefDataSet.Tables[nodeKey].Rows[rowCount];
-            }
-        }*/
-
         private void UpdateChartTitle()
         {
             this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
@@ -805,11 +1212,11 @@ namespace Marv.Input
                 return;
             }
 
-            this.Table = this.dataSet[this.Graph.SelectedVertex.Key];
+            this.Table = this.lineDataObj[this.SelectedTheme][this.Graph.SelectedVertex.Key];
 
-            if (this.Table == null)
+            if (this.Table == null || this.Table.Count == 0)
             {
-                this.dataSet.Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
+                this.lineDataObj[this.SelectedTheme].Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
         }
 

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -12,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Marv.Controls;
 using Microsoft.Win32;
@@ -28,14 +27,19 @@ namespace Marv.Input
     {
         private const double Tolerance = 1;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+        private double baseTableMax;
+        private double baseTableMin;
+        private double baseTableRange;
         private string chartTitle;
         private GridViewColumn currentColumn;
+        private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
+        private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
@@ -46,25 +50,67 @@ namespace Marv.Input
         private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
-        private ObservableCollection<ScatterDataPoint> maxNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
         private double maxUserValue;
         private double maximum = 100;
-        private ObservableCollection<ScatterDataPoint> minNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
         private double minUserValue;
         private double minimum = 100;
-        private ObservableCollection<ScatterDataPoint> modeNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private string oldColumnName;
         private string selectedColumnName;
-        private InterpolatorType selectedLine;
+        private string selectedLine;
         private EvidenceRow selectedRow;
         private string selectedSectionId;
         private DataTheme selectedTheme = DataTheme.User;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>> userNumberPoints = new Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>>();
+        private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+
+        public double BaseTableMax
+        {
+            get { return this.baseTableMax; }
+            set
+            {
+                if (value.Equals(this.baseTableMax))
+                {
+                    return;
+                }
+
+                this.baseTableMax = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double BaseTableMin
+        {
+            get { return this.baseTableMin; }
+            set
+            {
+                if (value.Equals(this.baseTableMin))
+                {
+                    return;
+                }
+
+                this.baseTableMin = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double BaseTableRange
+        {
+            get { return this.baseTableRange; }
+            set
+            {
+                if (value.Equals(this.baseTableRange))
+                {
+                    return;
+                }
+
+                this.baseTableRange = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public string ChartTitle
         {
@@ -94,6 +140,17 @@ namespace Marv.Input
                 }
 
                 this.currentColumn = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public InterpolatorDataPoints CurrentInterpolatorDataPoints
+        {
+            get { return this.currentInterpolatorDataPoints; }
+
+            set
+            {
+                this.currentInterpolatorDataPoints = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -178,7 +235,7 @@ namespace Marv.Input
             get { return this.isCellToolbarEnabled; }
             set
             {
-                this.isCellToolbarEnabled =  value;
+                this.isCellToolbarEnabled = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -277,16 +334,6 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<ScatterDataPoint> MaxNumberPoints
-        {
-            get { return this.maxNumberPoints; }
-            set
-            {
-                this.maxNumberPoints = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public double MaxUserValue
         {
             get { return this.maxUserValue; }
@@ -315,16 +362,6 @@ namespace Marv.Input
                 }
 
                 this.maximum = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<ScatterDataPoint> MinNumberPoints
-        {
-            get { return this.minNumberPoints; }
-            set
-            {
-                this.minNumberPoints = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -361,16 +398,6 @@ namespace Marv.Input
             }
         }
 
-        public ObservableCollection<ScatterDataPoint> ModeNumberPoints
-        {
-            get { return this.modeNumberPoints; }
-            set
-            {
-                this.modeNumberPoints = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public Network Network
         {
             get { return this.network; }
@@ -403,7 +430,7 @@ namespace Marv.Input
             }
         }
 
-        public InterpolatorType SelectedLine
+        public string SelectedLine
         {
             get { return this.selectedLine; }
 
@@ -493,19 +520,12 @@ namespace Marv.Input
             }
         }
 
-        public Dict<InterpolatorType, ObservableCollection<ScatterDataPoint>> UserNumberPoints
+        public Dict<string, string, InterpolatorDataPoints> UserNumberPoints
         {
             get { return this.userNumberPoints; }
 
             set
             {
-                if (userNumberPoints.Count == 0)
-                {
-                    this.userNumberPoints.Add(InterpolatorType.Maximum, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
-                    this.userNumberPoints.Add(InterpolatorType.Mode, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
-                    this.userNumberPoints.Add(InterpolatorType.Minimum, new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() });
-                }
-
                 this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
@@ -546,36 +566,25 @@ namespace Marv.Input
         {
             if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
             {
-                var chart = (RadCartesianChart)sender;
+                var chart = (RadCartesianChart) sender;
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                this.draggedPoint.YValue = (double)(data.SecondValue);
+                this.DraggedPoint.YValue = (double) (data.SecondValue);
 
                 ScatterDataPoint replacePoint = null;
 
-                foreach (var userPoint in this.userNumberPoints[this.SelectedLine])
+                var currentLine = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine);
+
+                foreach (var userPoint in currentLine)
                 {
-                    if (userPoint.XValue.Equals(this.draggedPoint.XValue))
+                    if (userPoint.XValue.Equals(this.DraggedPoint.XValue))
                     {
                         replacePoint = userPoint;
                     }
                 }
 
-                if (this.SelectedLine.Equals(InterpolatorType.Maximum))
-                {
-                    this.MaxNumberPoints.Replace(replacePoint, this.DraggedPoint);
-                }
-                else if (this.SelectedLine.Equals(InterpolatorType.Mode))
-                {
-                    this.ModeNumberPoints.Replace(replacePoint, this.DraggedPoint);
-                }
-                else
-                {
-                    this.MinNumberPoints.Replace(replacePoint, this.DraggedPoint);
-                }
-
-                this.userNumberPoints[this.SelectedLine].Replace(replacePoint, this.DraggedPoint);
+                this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
         }
 
@@ -683,10 +692,14 @@ namespace Marv.Input
 
         private void DeleteScatterDataPoint(ScatterDataPoint deletePoint)
         {
-            var closestPoint = this.UserNumberPoints[this.SelectedLine][0];
+            var currentLine = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine);
+            this.currentInterpolatorDataPoints = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName];
+
+            var closestPoint = currentLine[0];
+
             var closestPointDistance = Utils.Distance(closestPoint, deletePoint);
 
-            foreach (var scatterDataPoint in this.UserNumberPoints[this.SelectedLine])
+            foreach (var scatterDataPoint in currentLine)
             {
                 closestPointDistance = Math.Min(closestPointDistance, Utils.Distance(scatterDataPoint, deletePoint));
 
@@ -702,31 +715,66 @@ namespace Marv.Input
                 return;
             }
 
-            if (this.SelectedLine.Equals(InterpolatorType.Maximum))
+            if (this.UserNumberPoints[this.Graph.SelectedVertex.Key] != null)
             {
-                this.MaxNumberPoints.Remove(closestPoint);
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Remove(closestPoint);
+            }
+        }
+
+        private void Done_Click(object sender, RoutedEventArgs e)
+        {
+            var xCoordsMaximum = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetXCoords();
+            var yCoordsMaximum = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetYCoords();
+
+            var maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
+
+            var xCoordsMode = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetXCoords();
+            var yCoordsMode = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetYCoords();
+
+            var modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
+
+            var xCoordsMinimum = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetXCoords();
+            var yCoordsMinimum = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetYCoords();
+
+            var minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
+
+            EvidenceTable interpolatedTable = null;
+
+            if (this.lineDataObj[DataTheme.Interpolated].Keys.Any(nodeKey => nodeKey.Equals(this.Graph.SelectedVertex.Key)))
+            {
+                interpolatedTable = this.lineDataObj[DataTheme.Interpolated][this.Graph.SelectedVertex.Key];
+            }
+            else
+            {
+                interpolatedTable = new EvidenceTable(this.dates);
+
+                foreach (var userEvidenceRow in this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key])
+                {
+                    var interpolatedRow = new EvidenceRow { From = userEvidenceRow.From, To = userEvidenceRow.To };
+                    interpolatedTable.Add(interpolatedRow);
+                }
+                this.lineDataObj[DataTheme.Interpolated].Add(this.Graph.SelectedVertex.Key, interpolatedTable);
             }
 
-            else if (this.SelectedLine.Equals(InterpolatorType.Mode))
+            foreach (var interpolatedRow in interpolatedTable)
             {
-                this.ModeNumberPoints.Remove(closestPoint);
+                var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
+
+                var yInterpolatedMin = Math.Round(minLinInterpolator.Eval(midRangeValue), 2);
+                var yInterpolatedMode = Math.Round(modeLinInterpolator.Eval(midRangeValue), 2);
+                var yInterpolatedMax = Math.Round(maxLinInterpolator.Eval(midRangeValue), 2);
+
+                var val = "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")";
+
+                interpolatedRow[this.selectedColumnName] = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
             }
 
-            else if (this.SelectedLine.Equals(InterpolatorType.Minimum))
-            {
-                this.MinNumberPoints.Remove(closestPoint);
-            }
-
-            if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedLine] != null)
-            {
-                this.UserNumberPoints[this.SelectedLine].Remove(closestPoint);
-            }
+            // Should currentInterpolator datapoints and usernumberpoints be cleared ???
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -735,6 +783,11 @@ namespace Marv.Input
             {
                 this.StartDate = this.EndDate;
             }
+        }
+
+        private void Go_Click(object sender, RoutedEventArgs e)
+        {
+            this.isBaseTableAvailable = true;
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -764,14 +817,15 @@ namespace Marv.Input
         {
             this.UpdateTable();
 
-            this.MaxNumberPoints.Clear();
-            this.MaxNumberPoints.Add(new ScatterDataPoint());
+            if (this.UserNumberPoints != null)
+            {
+                var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.Graph.SelectedVertex.Key));
 
-            this.MinNumberPoints.Clear();
-            this.MinNumberPoints.Add(new ScatterDataPoint());
-
-            this.ModeNumberPoints.Clear();
-            this.ModeNumberPoints.Add(new ScatterDataPoint());
+                if (vertexAvailable)
+                {
+                    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName];
+                }
+            }
 
             this.Chart.Annotations.Remove(annotation => true);
 
@@ -787,33 +841,16 @@ namespace Marv.Input
 
         private void InsertDataPoint(ScatterDataPoint userDataPoint)
         {
-            var i = 0;
+            this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName];
 
-            while (i < this.UserNumberPoints[this.SelectedLine].Count)
+            var currentLine = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine);
+
+            var index = currentLine.GetXCoords().IndexOf(xcoord => xcoord > userDataPoint.XValue);
+
+            if (currentLine != null)
             {
-                if (!(this.UserNumberPoints[this.SelectedLine][i].XValue < userDataPoint.XValue))
-                {
-                    if (this.SelectedLine.Equals(InterpolatorType.Maximum))
-                    {
-                        this.MaxNumberPoints.Insert(i, userDataPoint);
-                    }
-                    else if (this.SelectedLine.Equals(InterpolatorType.Mode))
-                    {
-                        this.ModeNumberPoints.Insert(i, userDataPoint);
-                    }
-
-                    else if (this.SelectedLine.Equals(InterpolatorType.Minimum))
-                    {
-                        this.MinNumberPoints.Insert(i, userDataPoint);
-                    }
-                    this.UserNumberPoints[this.SelectedLine].Insert(i, userDataPoint);
-
-                    return;
-                }
-
-                i++;
+                currentLine.Insert(index, userDataPoint);
             }
-            this.UserNumberPoints[this.SelectedLine].Add(userDataPoint);
         }
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -893,84 +930,75 @@ namespace Marv.Input
 
         private void MaximumLine_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Maximum;
-            
+            this.SelectedLine = Utils.MaxInterpolatorLine;
+
             var mousePosition = e.GetPosition(this.Chart);
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void MaximumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Maximum;
-            Console.WriteLine(this.SelectedLine);
+            this.SelectedLine = Utils.MaxInterpolatorLine;
         }
 
         private void MaximumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Maximum;
+            this.SelectedLine = Utils.MaxInterpolatorLine;
 
             var position = e.GetPosition(this.Chart);
             var selectedDataPoint = this.Chart.GetScatterDataPoint(position);
 
             this.DeleteScatterDataPoint(selectedDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void MinimumLine_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Minimum;
+            this.SelectedLine = Utils.MinInterpolatorLine;
 
             var mousePosition = e.GetPosition(this.Chart);
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void MinimumLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Minimum;
-            Console.WriteLine(this.SelectedLine);
+            this.SelectedLine = Utils.MinInterpolatorLine;
         }
 
         private void MinimumLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Minimum;
+            this.SelectedLine = Utils.MinInterpolatorLine;
 
             var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
 
             this.DeleteScatterDataPoint(selectedDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void ModeLine_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Mode;
+            this.SelectedLine = Utils.ModeInterpolatorLine;
 
             var mousePosition = e.GetPosition(this.Chart);
             var userDataPoint = this.Chart.GetScatterDataPoint(mousePosition);
 
             this.InsertDataPoint(userDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void ModeLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Mode;
-            Console.WriteLine(this.SelectedLine);
+            this.SelectedLine = Utils.ModeInterpolatorLine;
         }
 
         private void ModeLine_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.SelectedLine = InterpolatorType.Mode;
+            this.SelectedLine = Utils.ModeInterpolatorLine;
 
             var selectedDataPoint = this.Chart.GetScatterDataPoint(e.GetPosition(this.Chart));
 
             this.DeleteScatterDataPoint(selectedDataPoint);
-            Console.WriteLine(this.SelectedLine);
         }
 
         private void Plot(string columnName)
@@ -1107,19 +1135,26 @@ namespace Marv.Input
                 this.lineData.SetBelief(sectionId, sectionBelief);
             }
 
-
             try
             {
                 if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
                 {
-                    this.lineDataObj[DataTheme.Merged] = Utils.Merge(this.lineDataObj[this.SelectedTheme]);
+                    List<double> baseRowsList = null;
+
+                    if (this.isBaseTableAvailable)
+                    {
+                        baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
+                    }
+
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList).UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+                    this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
             }
             catch (Exception exception)
             {
                 Console.WriteLine("Can run the model only for user or interpolated data set");
             }
-            
+
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
             var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
@@ -1234,63 +1269,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void Done_Click(object sender, RoutedEventArgs e)
-        {
-
-            var xCoordsMaximum = this.UserNumberPoints[InterpolatorType.Maximum].GetXCoords();
-            var yCoordsMaximum = this.UserNumberPoints[InterpolatorType.Maximum].GetYCoords();
-
-            var maxLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
-            
-            var xCoordsMode = this.UserNumberPoints[InterpolatorType.Mode].GetXCoords();
-            var yCoordsMode = this.UserNumberPoints[InterpolatorType.Mode].GetYCoords();
-
-            var modeLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMode, yCoordsMode);
-
-            var xCoordsMinimum = this.UserNumberPoints[InterpolatorType.Minimum].GetXCoords();
-            var yCoordsMinimum = this.UserNumberPoints[InterpolatorType.Minimum].GetYCoords();
-
-            var minLinInterpolator = new Common.Interpolators.LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
-           
-            var interpolatedTable = new EvidenceTable(this.dates);
-            this.lineDataObj[DataTheme.Interpolated].Add(this.Graph.SelectedVertex.Key, interpolatedTable);
-
-            foreach (var userEvidenceTable in this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key])
-            {
-             
-                    var midRangeValue = (userEvidenceTable.From + userEvidenceTable.To) / 2;
-
-                    var yInterpolatedMin = Math.Round(minLinInterpolator.Eval(midRangeValue), 2);
-                    var yInterpolatedMode = Math.Round(modeLinInterpolator.Eval(midRangeValue), 2);
-                    var yInterpolatedMax = Math.Round(maxLinInterpolator.Eval(midRangeValue), 2);
-               
-                    var val =  "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")" ;
-
-                    var interpolatedRow = new EvidenceRow { From = userEvidenceTable.From, To = userEvidenceTable.To };
-
-                    interpolatedTable.Add(interpolatedRow);
-
-                    foreach (var date in this.dates)
-                    {
-                        interpolatedRow[date.String()] = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
-                    }
-
-                
-
-            }
-            this.MaxNumberPoints.Clear();
-            this.MaxNumberPoints.Add(new ScatterDataPoint());
-
-            this.MinNumberPoints.Clear();
-            this.MinNumberPoints.Add(new ScatterDataPoint());
-
-            this.ModeNumberPoints.Clear();
-            this.ModeNumberPoints.Add(new ScatterDataPoint());
-
-            this.UserNumberPoints.Clear();
-        }
-
-  
     }
 }

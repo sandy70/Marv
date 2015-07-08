@@ -454,7 +454,6 @@ namespace Marv.Controls
                 var selectedVertex = this.Graph.SelectedVertex ?? this.Graph.Vertices.FirstOrDefault(vertex => vertex.HeaderOfGroup == this.SelectedGroup);
                 this.UpdateDisplayGraph(this.SelectedGroup, selectedVertex == null ? null : selectedVertex.Key);
 
-                this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
             }
         }
 
@@ -681,7 +680,7 @@ namespace Marv.Controls
 
             if (!this.Graph.SelectedVertex.Groups.Contains(this.SelectedGroup))
             {
-                this.SelectedGroup = this.Graph.SelectedVertex.Groups[0];
+                this.SelectedGroup = this.Graph.SelectedVertex.Groups.Except("all").First();
             }
         }
 
@@ -702,5 +701,10 @@ namespace Marv.Controls
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<Vertex> SelectionChanged;
+
+        private void GroupsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
+        }
     }
 }

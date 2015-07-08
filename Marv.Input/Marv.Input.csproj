@@ -194,7 +194,7 @@
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="InterpolatorType.cs" />
+    <Compile Include="InterpolatorDataPoints.cs" />
     <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
