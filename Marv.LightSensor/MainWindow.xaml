@@ -14,7 +14,6 @@
 
         <marv:GraphControl Name="GraphControl"
                            Grid.Row="0"
-                           Graph="{Binding ElementName=Root, Path=Graph, Mode=TwoWay}"
                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"/>
 
         <Viewbox Grid.Row="1">
