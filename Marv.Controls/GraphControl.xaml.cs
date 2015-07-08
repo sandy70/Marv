@@ -281,23 +281,6 @@ namespace Marv.Controls
             this.Graph.Belief = this.Network.GetBeliefs();
         }
 
-        public async Task OpenAsync(string fileName)
-        {
-            this.Network = await Task.Run(() => Network.Read(fileName));
-
-            var network = this.Network;
-            this.Graph = await Task.Run(() => Graph.Read(network));
-            this.Graph.Belief = this.Network.GetBeliefs();
-        }
-
-        public void RaiseNotificationClosed(Notification notification)
-        {
-            if (this.NotificationClosed != null)
-            {
-                this.NotificationClosed(this, notification);
-            }
-        }
-
         private void AutoFitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Diagram.AutoFit(new Thickness(10));
@@ -492,6 +475,17 @@ namespace Marv.Controls
             timer.Start();
         }
 
+        private async Task OpenAsync(string fileName)
+        {
+            this.Network = await Task.Run(() => Network.Read(fileName));
+
+            var network = this.Network;
+            this.Graph = await Task.Run(() => Graph.Read(network));
+            this.Graph.Belief = this.Network.GetBeliefs();
+
+            this.SelectedGroup = this.Graph.DefaultGroup;
+        }
+
         private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -544,6 +538,14 @@ namespace Marv.Controls
             if (this.Graph != null)
             {
                 this.Graph.Belief = this.Network.Run(this.Graph.Evidence);
+            }
+        }
+
+        private void RaiseNotificationClosed(Notification notification)
+        {
+            if (this.NotificationClosed != null)
+            {
+                this.NotificationClosed(this, notification);
             }
         }
 
