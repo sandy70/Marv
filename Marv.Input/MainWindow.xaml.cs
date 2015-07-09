@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const double Tolerance = 1;
+        
+        private readonly string oldColumnName;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private double baseTableMax;
         private double baseTableMin;
@@ -56,12 +59,13 @@ namespace Marv.Input
         private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
-        private string oldColumnName;
+
         private string selectedColumnName;
         private string selectedLine;
         private EvidenceRow selectedRow;
         private string selectedSectionId;
         private DataTheme selectedTheme = DataTheme.User;
+        private Vertex selectedVertex;
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
@@ -472,6 +476,22 @@ namespace Marv.Input
             }
         }
 
+        public Vertex SelectedVertex
+        {
+            get { return this.selectedVertex; }
+
+            set
+            {
+                if (value.Equals(this.selectedVertex))
+                {
+                    return;
+                }
+
+                this.selectedVertex = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public int SelectedYear
         {
             get { return this.selectedYear; }
@@ -526,6 +546,11 @@ namespace Marv.Input
 
             set
             {
+                if (value.Equals(this.userNumberPoints))
+                {
+                    return;
+                }
+
                 this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
@@ -560,6 +585,36 @@ namespace Marv.Input
 
             this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
             this.UpdateTable();
+        }
+
+        private void Chart_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var mousePosition = e.GetPosition(this.Chart);
+            var tuple = this.Chart.ConvertPointToData(mousePosition);
+
+            var range = (double) tuple.FirstValue;
+            var value = (double) tuple.SecondValue;
+
+            var userDataPoint = new ScatterDataPoint
+            {
+                XValue = range,
+                YValue = value
+            };
+
+            // Insert the userDataPoint in appropriate position
+            var i = 0;
+
+            while (i < this.UserNumberPoints.Count)
+            {
+                if (!(this.UserNumberPoints[i].XValue < userDataPoint.XValue))
+                {
+                    this.UserNumberPoints.Insert(i, userDataPoint);
+                    return;
+                }
+
+                i++;
+            }
+            this.UserNumberPoints.Add(userDataPoint);
         }
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
@@ -792,24 +847,15 @@ namespace Marv.Input
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.Graph.SelectedVertex != null)
+            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.SelectedVertex != null)
             {
-                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.Graph.SelectedVertex.Key] = vertexEvidence;
+                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.SelectedVertex.Key] = vertexEvidence;
             }
 
             if (vertexEvidence == null)
             {
                 // this.LineDataChart.RemoveUserEvidence(this.GetChartCategory());
                 // this.LineDataControl.ClearSelectedCell();
-            }
-        }
-
-        private void GraphControl_GraphChanged(object sender, ValueChangedEventArgs<Graph> e)
-        {
-            if (this.LineData == null)
-            {
-                this.LineData = new LineData();
-                this.LineData.SetEvidence("Section 1", new Dict<int, string, VertexEvidence>());
             }
         }
 
@@ -1079,9 +1125,6 @@ namespace Marv.Input
             else if (vertexEvidence.Type != VertexEvidenceType.Null)
             {
                 var maxValue = vertexEvidence.Value.Max();
-
-                var selectedVertex = this.Graph.SelectedVertex;
-
                 var fill = new LinearGradientBrush
                 {
                     StartPoint = new Point(0, 0),
@@ -1092,13 +1135,13 @@ namespace Marv.Input
                 {
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = selectedVertex.Intervals.ElementAt(i) / selectedVertex.SafeMax,
+                        Offset = this.SelectedVertex.Intervals.ElementAt(i) / this.SelectedVertex.SafeMax,
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
 
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = selectedVertex.Intervals.ElementAt(i + 1) / selectedVertex.SafeMax,
+                        Offset = this.SelectedVertex.Intervals.ElementAt(i + 1) / this.SelectedVertex.SafeMax,
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
                 });
@@ -1110,8 +1153,8 @@ namespace Marv.Input
                     HorizontalTo = to,
                     Stroke = strokeBrush,
                     Tag = dataRow,
-                    VerticalFrom = selectedVertex.SafeMin,
-                    VerticalTo = selectedVertex.SafeMax,
+                    VerticalFrom = this.SelectedVertex.SafeMin,
+                    VerticalTo = this.SelectedVertex.SafeMax
                     ZIndex = -200
                 });
             }
@@ -1236,7 +1279,6 @@ namespace Marv.Input
 
             var sectionBelief = this.Network.Run(sectionEvidence);
 
-            this.Graph.Belief = sectionBelief[this.SelectedYear];
             this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
@@ -1248,23 +1290,18 @@ namespace Marv.Input
             }
         }
 
-        private void UpdateChartTitle()
-        {
-            this.ChartTitle = this.HorizontalAxisQuantity == HorizontalAxisQuantity.Distance ? "Year: " + this.SelectedYear : "Section: " + this.SelectedSectionId;
-        }
-
         private void UpdateTable()
         {
-            if (this.Graph.SelectedVertex == null)
+            if (this.SelectedVertex == null)
             {
                 return;
             }
 
-            this.Table = this.lineDataObj[this.SelectedTheme][this.Graph.SelectedVertex.Key];
+            this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
 
             if (this.Table == null || this.Table.Count == 0)
             {
-                this.lineDataObj[this.SelectedTheme].Add(this.Graph.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
+                this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
         }
 

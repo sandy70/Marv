@@ -76,14 +76,14 @@ namespace Marv.Controls
 
         private void Diagram_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedShape = this.Diagram.Shapes.Cast<RadDiagramShape>().FirstOrDefault(shape => shape.DataContext == this.Graph.SelectedVertex);
+            var selectedShape = this.Diagram.Shapes.Cast<RadDiagramShape>().FirstOrDefault(shape => shape.DataContext == this.SelectedVertex);
 
             if (selectedShape != null && !this.Diagram.IsInViewport(selectedShape))
             {
                 this.BringIntoView(selectedShape);
             }
 
-            this.RaiseSelectionChanged(this.Graph.SelectedVertex);
+            this.RaiseSelectionChanged(this.SelectedVertex);
         }
     }
 }

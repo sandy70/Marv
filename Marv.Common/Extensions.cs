@@ -6,6 +6,7 @@ using System.Windows;
 using Marv.Common.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
+using QuickGraph.Algorithms.RankedShortestPath;
 
 namespace Marv.Common
 {

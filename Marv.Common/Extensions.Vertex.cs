@@ -33,7 +33,7 @@ namespace Marv.Common
                 return vertex.States.Select(state => state.Min).ToArray();
             }
 
-            return Enumerable.Range(0, vertex.States.Count + 1).Select(i => (double) i).ToArray();
+            return Enumerable.Range(0, vertex.States.Count).Select(i => (double) i).ToArray();
         }
 
         public static double Mean(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
