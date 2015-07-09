@@ -198,7 +198,6 @@
     <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

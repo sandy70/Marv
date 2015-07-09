@@ -685,10 +685,5 @@ namespace Marv.Controls
         public event EventHandler<Notification> NotificationOpened;
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<Vertex> SelectionChanged;
-
-        private void GroupsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.SelectedVertex = this.DisplayGraph.GetSink();
-        }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
+using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -25,6 +26,7 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const double Tolerance = 1;
+
 
         private readonly string oldColumnName;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
