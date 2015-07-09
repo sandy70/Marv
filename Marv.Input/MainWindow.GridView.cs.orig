@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -18,7 +19,7 @@ namespace Marv.Input
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
 
-            if (this.Graph != null)
+            if (this.SelectedVertex != null)
             {
                 this.UpdateTable();
             }
@@ -55,7 +56,6 @@ namespace Marv.Input
         {
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
-            var selectedVertex = this.Graph.SelectedVertex;
 
             DateTime dateTime;
 
@@ -63,7 +63,7 @@ namespace Marv.Input
             {
                 // This is a date time column and vertex evidence cell
 
-                row[columnName] = selectedVertex.States.ParseEvidenceString(e.NewData as string);
+                row[columnName] = this.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
 
                 this.Plot(row, columnName);
             }
@@ -72,19 +72,18 @@ namespace Marv.Input
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var columnName = e.Cell.Column.UniqueName;
-            var selectedVertex = this.Graph.SelectedVertex;
 
             DateTime dateTime;
 
             if (columnName.TryParse(out dateTime))
             {
                 // This is a date time column and vertex evidence cell
-                var vertexEvidence = selectedVertex.States.ParseEvidenceString(e.NewValue as string);
+                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewValue as string);
 
                 if (vertexEvidence.Type == VertexEvidenceType.Invalid)
                 {
                     e.IsValid = false;
-                    e.ErrorMessage = "Invalid evidence for node " + selectedVertex.Key;
+                    e.ErrorMessage = "Invalid evidence for node " + this.SelectedVertex.Key;
                 }
             }
         }
@@ -106,14 +105,25 @@ namespace Marv.Input
 
             DateTime dateTime;
 
-<<<<<<< HEAD
-            this.isCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
-=======
             this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
->>>>>>> upstream/master
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
+                if (this.UserNumberPoints != null && this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName] != null)
+                {
+                    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName];
+                }
+                else
+                {
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
+
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
+                }
+
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
             }
@@ -133,13 +143,22 @@ namespace Marv.Input
 
                 var val = pastedCell.Value.ToString();
 
+                if (colName.Equals(val))
+                {
+                    continue;
+                }
                 DateTime dateTime;
 
                 if (colName.TryParse(out dateTime))
                 {
                     if (evidenceRow != null)
                     {
+<<<<<<< HEAD
                         var vertexEvidence = this.Graph.SelectedVertex.States.ParseEvidenceString(val);
+=======
+                        var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
+
+>>>>>>> upstream/master
                         evidenceRow[colName] = vertexEvidence;
                     }
                 }
@@ -177,8 +196,37 @@ namespace Marv.Input
 
         private void Intepolate_Click(object sender, RoutedEventArgs e)
         {
-            var minMaxValues = this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key].GetMinMaxUserValues();
+            if (this.Graph.SelectedVertex.Type == VertexType.Labelled || this.Graph.SelectedVertex.Type == VertexType.Boolean)
+            {
+                return;
+            }
+            if (this.UserNumberPoints == null)
+            {
+                this.UserNumberPoints = new Dict<string, string, InterpolatorDataPoints>();
+            }
 
+            var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.Graph.SelectedVertex.Key));
+
+            if (!vertexAvailable)
+            {
+                var dateColumns = new Dict<string, InterpolatorDataPoints>();
+
+                foreach (var dateTime in this.dates)
+                {
+                    dateColumns.Add(dateTime.String(), new InterpolatorDataPoints());
+                }
+                this.UserNumberPoints.Add(this.Graph.SelectedVertex.Key, dateColumns);
+            }
+
+            this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName];
+
+            var minMaxValues = this.lineDataObj[DataTheme.User][this.Graph.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
+
+            this.PlotInterpolatorLines(minMaxValues);
+        }
+
+        private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
+        {
             this.MinUserValue = minMaxValues["Minimum"];
             this.MaxUserValue = minMaxValues["Maximum"];
 
@@ -193,13 +241,12 @@ namespace Marv.Input
                 YValue = this.MaxUserValue
             };
 
-            this.MaxNumberPoints.Clear();
-            this.MaxNumberPoints.Add(maxLineStartPoint);
-            this.MaxNumberPoints.Add(maxLineEndPoint);
-
-            this.UserNumberPoints[InterpolatorType.Maximum].Clear();
-            this.UserNumberPoints[InterpolatorType.Maximum].Add(maxLineStartPoint);
-            this.UserNumberPoints[InterpolatorType.Maximum].Add(maxLineEndPoint);
+            if (this.UserNumberPoints != null && this.UserNumberPoints[this.Graph.SelectedVertex.Key] != null)
+            {
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Clear();
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineStartPoint);
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineEndPoint);
+            }
 
             var modeLineStartPoint = new ScatterDataPoint
             {
@@ -212,13 +259,12 @@ namespace Marv.Input
                 YValue = (this.MaxUserValue + this.MinUserValue) / 2,
             };
 
-            this.ModeNumberPoints.Clear();
-            this.ModeNumberPoints.Add(modeLineStartPoint);
-            this.ModeNumberPoints.Add(modeLineEndPoint);
-
-            this.UserNumberPoints[InterpolatorType.Mode].Clear();
-            this.UserNumberPoints[InterpolatorType.Mode].Add(modeLineStartPoint);
-            this.UserNumberPoints[InterpolatorType.Mode].Add(modeLineEndPoint);
+            if (this.UserNumberPoints != null && this.UserNumberPoints[this.Graph.SelectedVertex.Key] != null)
+            {
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Clear();
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineStartPoint);
+                this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineEndPoint);
+            }
 
             var minLineStartPoint = new ScatterDataPoint
             {
@@ -231,18 +277,19 @@ namespace Marv.Input
                 YValue = this.MinUserValue,
             };
 
-            this.MinNumberPoints.Clear();
-            this.MinNumberPoints.Add(minLineStartPoint);
-            this.MinNumberPoints.Add(minLineEndPoint);
+            if (this.UserNumberPoints == null || this.UserNumberPoints[this.Graph.SelectedVertex.Key] == null)
+            {
+                return;
+            }
 
-            this.UserNumberPoints[InterpolatorType.Minimum].Clear();
-            this.UserNumberPoints[InterpolatorType.Minimum].Add(minLineStartPoint);
-            this.UserNumberPoints[InterpolatorType.Minimum].Add(minLineEndPoint);
+            this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Clear();
+            this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineStartPoint);
+            this.UserNumberPoints[this.Graph.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineEndPoint);
         }
 
         private void Validate()
         {
-            var selectedVertexKey = this.Graph.SelectedVertex.Key;
+            var selectedVertexKey = this.SelectedVertex.Key;
 
             var evidenceTable = this.lineDataObj[this.selectedTheme][selectedVertexKey];
 

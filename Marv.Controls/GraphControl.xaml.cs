@@ -688,7 +688,7 @@ namespace Marv.Controls
 
         private void GroupsCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.Graph.SelectedVertex = this.DisplayGraph.GetSink();
+            this.SelectedVertex = this.DisplayGraph.GetSink();
         }
     }
 }
