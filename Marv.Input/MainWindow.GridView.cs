@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Marv.Common;
+using Marv.Common.Types;
+using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
@@ -20,6 +23,11 @@ namespace Marv.Input
             {
                 this.UpdateTable();
             }
+        }
+
+        private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.DraggedPoint = null;
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -101,6 +109,21 @@ namespace Marv.Input
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
+                if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] != null)
+                {
+                    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
+                }
+                else
+                {
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
+
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
+                }
+
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
             }
@@ -120,6 +143,10 @@ namespace Marv.Input
 
                 var val = pastedCell.Value.ToString();
 
+                if (colName.Equals(val))
+                {
+                    continue;
+                }
                 DateTime dateTime;
 
                 if (colName.TryParse(out dateTime))
@@ -127,7 +154,6 @@ namespace Marv.Input
                     if (evidenceRow != null)
                     {
                         var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
-
                         evidenceRow[colName] = vertexEvidence;
                     }
                 }
@@ -161,6 +187,99 @@ namespace Marv.Input
 
             e.IsValid = evidenceRow.From <= evidenceRow.To;
             evidenceRow.IsValid = e.IsValid;
+        }
+
+        private void Intepolate_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
+            {
+                return;
+            }
+            if (this.UserNumberPoints == null)
+            {
+                this.UserNumberPoints = new Dict<string, string, InterpolatorDataPoints>();
+            }
+
+            var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+
+            if (!vertexAvailable)
+            {
+                var dateColumns = new Dict<string, InterpolatorDataPoints>();
+
+                foreach (var dateTime in this.dates)
+                {
+                    dateColumns.Add(dateTime.String(), new InterpolatorDataPoints());
+                }
+                this.UserNumberPoints.Add(this.SelectedVertex.Key, dateColumns);
+            }
+
+            this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
+
+            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
+
+            this.PlotInterpolatorLines(minMaxValues);
+        }
+
+        private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
+        {
+            this.MinUserValue = minMaxValues["Minimum"];
+            this.MaxUserValue = minMaxValues["Maximum"];
+
+            var maxLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = this.MaxUserValue
+            };
+            var maxLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = this.MaxUserValue
+            };
+
+            if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key] != null)
+            {
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Clear();
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineStartPoint);
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineEndPoint);
+            }
+
+            var modeLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+            };
+            var modeLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+            };
+
+            if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key] != null)
+            {
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Clear();
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineStartPoint);
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineEndPoint);
+            }
+
+            var minLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.Minimum,
+                YValue = this.MinUserValue,
+            };
+            var minLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.Maximum,
+                YValue = this.MinUserValue,
+            };
+
+            if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)
+            {
+                return;
+            }
+
+            this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Clear();
+            this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineStartPoint);
+            this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineEndPoint);
         }
 
         private void Validate()

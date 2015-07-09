@@ -19,26 +19,33 @@
                 <input:CellTemplateSelector.InValidTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                                               TextDecorations="underline"
-                                                               Foreground="Red"/>
+                                   TextDecorations="underline"
+                                   Foreground="Red" />
                     </DataTemplate>
                 </input:CellTemplateSelector.InValidTemplate>
 
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
                         <telerik:RadColumnSparkline ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                                                                XValuePath="XValue"
-                                                                                YValuePath="YValue"
-                                                                                Height="20"
-                                                                                Width="60" />
+                                                    XValuePath="XValue"
+                                                    YValuePath="YValue"
+                                                    Height="20"
+                                                    Width="60" />
                     </DataTemplate>
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
 
             <DataTemplate x:Key="EllipsePointTemplate">
-                <Ellipse Cursor="Hand" Width="8" Height="8" Fill="Goldenrod" Stroke="DarkGoldenrod" StrokeThickness="1" MouseDown="Ellipse_MouseDown" />
+                <Ellipse Cursor="Hand"
+                         Width="8"
+                         Height="8"
+                         Fill="Goldenrod"
+                         Stroke="DarkGoldenrod"
+                         StrokeThickness="1"
+                         MouseDown="Ellipse_MouseDown"
+                         MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
             </DataTemplate>
-            
+
         </ResourceDictionary>
     </Window.Resources>
 
@@ -103,7 +110,7 @@
                                     </ToolBarTray.Resources>
 
                                     <!-- Define Timeline Toolbar -->
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
+                                    <ToolBar Band="1" IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
                                              Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
@@ -153,7 +160,7 @@
                                                            Click="CloseButton_Click" />
                                     </ToolBar>
 
-                                    <ToolBar IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
+                                    <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}"
@@ -189,6 +196,41 @@
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
+
+                                        <telerik:RadButton Content="Interpolate"
+                                                           FontWeight="Bold"
+                                                           Width="100"
+                                                           Click="Intepolate_Click" />
+
+                                        <telerik:RadButton Content="Done"
+                                                           FontWeight="Bold"
+                                                           Name="Done"
+                                                           Width="50"
+                                                           Click="Done_Click" />
+
+                                    </ToolBar>
+                                    <ToolBar Band="2"
+                                             BandIndex="1"
+                                             IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
+
+                                        <Label Name="MinVal" Width="50" Content="MinVal" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}" />
+                                        <Label Name="MaxVal" Width="50" Content="MaxVal" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}" />
+                                        <Label Name="Range" Width="50" Content="Range" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}" />
+                                        <telerik:RadButton Content="Go"
+                                                           FontWeight="Bold"
+                                                           Height="22"
+                                                           Name="Go"
+                                                           Width="30"
+                                                           Click="Go_Click" />
                                     </ToolBar>
                                 </ToolBarTray>
 
@@ -218,9 +260,7 @@
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating"
-                                                     Pasted="GridView_Pasted">
-                          
-                                </telerik:RadGridView>
+                                                     Pasted="GridView_Pasted" />
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -230,11 +270,9 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Chart -->
                             <telerik:RadCartesianChart Name="Chart"
-                                                       MouseDoubleClick="Chart_MouseDoubleClick"
-                                                       MouseMove="Chart_MouseMove"
-                                                       MouseRightButtonDown="Chart_MouseRightButtonDown">
+                                                       MouseMove="Chart_MouseMove">
                                 <telerik:RadCartesianChart.Behaviors>
-                                    <telerik:ChartPanAndZoomBehavior ZoomMode="None"  PanMode="None" />
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="None" PanMode="None" />
                                 </telerik:RadCartesianChart.Behaviors>
 
                                 <telerik:RadCartesianChart.HorizontalAxis>
@@ -248,13 +286,43 @@
                                 </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
-                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=UserNumberPoints}"
-                                                                XValueBinding="XValue"
-                                                                YValueBinding="YValue"
-                                                                PointTemplate="{StaticResource EllipsePointTemplate}" 
-                                                                IsHitTestVisible="True"
-                                                                Cursor="Hand" />
+
+                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
+                                                               Name="MaximumLine"
+                                                               XValueBinding="XValue"
+                                                               YValueBinding="YValue"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                               IsHitTestVisible="True"
+                                                               MouseLeftButtonDown="MaximumLine_MouseLeftButtonDown"
+                                                               MouseDoubleClick="MaximumLine_DoubleClick"
+                                                               MouseRightButtonDown="MaximumLine_MouseRightButtonDown"
+                                                               Cursor="Hand" />
+
+                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
+                                                               Name="ModeLine"
+                                                               XValueBinding="XValue"
+                                                               YValueBinding="YValue"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                               IsHitTestVisible="True"
+                                                               MouseLeftButtonDown="ModeLine_MouseLeftButtonDown"
+                                                               MouseDoubleClick="ModeLine_DoubleClick"
+                                                               MouseRightButtonDown="ModeLine_MouseRightButtonDown"
+                                                               Cursor="Hand" />
+
+                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
+                                                               Name="MinimumLine"
+                                                               XValueBinding="XValue"
+                                                               YValueBinding="YValue"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                               IsHitTestVisible="True"
+                                                               MouseLeftButtonDown="MinimumLine_MouseLeftButtonDown"
+                                                               MouseDoubleClick="MinimumLine_DoubleClick"
+                                                               MouseRightButtonDown="MinimumLine_MouseRightButtonDown"
+                                                               Cursor="Hand" />
+
                                 </telerik:RadCartesianChart.Series>
+
+
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
