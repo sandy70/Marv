@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Marv.Common.Distributions;
 using Marv.Common.Types;
@@ -50,7 +51,7 @@ namespace Marv.Common
             {
                 return new VertexEvidence
                 {
-                    Value = stateList.ParseEvidence(new DeltaDistribution(value)),
+                    Value =  stateList.ParseEvidence(new DeltaDistribution(value)).Select(doubleVal=>Math.Round(doubleVal,2)).ToArray(),
                     Type = VertexEvidenceType.Number,
                     Params = new[]
                     {
@@ -68,13 +69,13 @@ namespace Marv.Common
             {
                 evidenceParams.Sort();
 
-                evidence = stateList.ParseEvidence(new TriangularDistribution(evidenceParams[0], evidenceParams[1], evidenceParams[2]));
+                evidence = stateList.ParseEvidence(new TriangularDistribution(evidenceParams[0], evidenceParams[1], evidenceParams[2])).Select(doubleVal=>Math.Round(doubleVal,2)).ToArray();
                 evidenceType = VertexEvidenceType.Triangular;
             }
 
             else if (anEvidenceString.ToLowerInvariant().Contains("norm") && evidenceParams.Count == 2 && evidenceParams[1] > 0)
             {
-                evidence = stateList.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1]));
+                evidence = stateList.ParseEvidence(new NormalDistribution(evidenceParams[0], evidenceParams[1])).Select(doubleVal => Math.Round(doubleVal, 2)).ToArray();
                 evidenceType = VertexEvidenceType.Normal;
             }
 
@@ -82,13 +83,13 @@ namespace Marv.Common
             {
                 evidenceParams.Sort();
 
-                evidence = stateList.ParseEvidence(new UniformDistribution(evidenceParams[0], evidenceParams[1]));
+                evidence = stateList.ParseEvidence(new UniformDistribution(evidenceParams[0], evidenceParams[1])).Select(doubleVal => Math.Round(doubleVal, 2)).ToArray();
                 evidenceType = VertexEvidenceType.Range;
             }
 
             else if (evidenceParams.Count == stateList.Count)
             {
-                evidence = evidenceParams.Normalized().ToArray();
+                evidence = evidenceParams.Normalized().Select(doubleVal => Math.Round(doubleVal, 2)).ToArray();
                 evidenceType = VertexEvidenceType.Distribution;
             }
 

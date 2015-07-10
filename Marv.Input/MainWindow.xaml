@@ -334,6 +334,7 @@
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
                         <marv:GraphControl Background="WhiteSmoke"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
+                                           SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
                                            SelectionChanged="GraphControl_SelectionChanged" />
                     </telerik:RadPane>

@@ -114,16 +114,21 @@ namespace Marv.Input
                 {
                     this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
                 }
+
                 else
                 {
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
-
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints = null;
                 }
+                //else
+                //{
+                //    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
+                //    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
+                //    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
+
+                //    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
+                //    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
+                //    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
+                //}
 
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
@@ -147,6 +152,16 @@ namespace Marv.Input
                 if (colName.Equals(val))
                 {
                     continue;
+                }
+
+                if (colName == "From")
+                {
+                    evidenceRow.From = Convert.ToDouble(val);
+                }
+
+                if (colName == "To")
+                {
+                    evidenceRow.To = Convert.ToDouble(val);
                 }
                 DateTime dateTime;
 
@@ -180,6 +195,9 @@ namespace Marv.Input
         {
             this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
             this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+
+         //   this.Tolerance = 0.005 * this.Maximum;
+
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
