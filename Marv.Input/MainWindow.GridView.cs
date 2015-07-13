@@ -57,7 +57,6 @@ namespace Marv.Input
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
 
-
             DateTime dateTime;
 
             if (columnName.TryParse(out dateTime))
@@ -115,20 +114,20 @@ namespace Marv.Input
                     this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
                 }
 
+                    //else
+                    //{
+                    //    this.CurrentInterpolatorDataPoints = null;
+                    //}
                 else
                 {
-                    this.CurrentInterpolatorDataPoints = null;
-                }
-                //else
-                //{
-                //    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
-                //    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
-                //    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
 
-                //    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
-                //    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
-                //    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
-                //}
+                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
+                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
+                }
 
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
@@ -179,6 +178,7 @@ namespace Marv.Input
                     evidenceRow[colName] = Convert.ToDouble(val);
                 }
             }
+
             this.Validate();
             this.pastedCells.Clear();
         }
@@ -195,9 +195,6 @@ namespace Marv.Input
         {
             this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
             this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
-
-         //   this.Tolerance = 0.005 * this.Maximum;
-
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
@@ -314,6 +311,8 @@ namespace Marv.Input
                 fromToList.Add(evidenceRow.From);
                 fromToList.Add(evidenceRow.To);
             }
+
+            foreach (var pastedCell in this.pastedCells) {}
 
             for (var i = 0; i < fromToList.Count - 1; i++)
             {

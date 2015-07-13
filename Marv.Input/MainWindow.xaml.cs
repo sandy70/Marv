@@ -12,7 +12,6 @@ using System.Windows.Shapes;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
-using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -25,7 +24,7 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private const double Tolerance=5;
+        private const double Tolerance = 5;
         private readonly string oldColumnName;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private double baseTableMax;
@@ -33,7 +32,7 @@ namespace Marv.Input
         private double baseTableRange;
         private string chartTitle;
         private GridViewColumn currentColumn;
-        private InterpolatorDataPoints currentInterpolatorDataPoints;
+        private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
@@ -572,7 +571,7 @@ namespace Marv.Input
                     }
                 }
 
-              //  this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
+                this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
         }
@@ -679,15 +678,16 @@ namespace Marv.Input
             this.IsTimelineToolbarVisible = true;
         }
 
-        private void DeleteScatterDataPoint( Point deletePoint)
+        private void DeleteScatterDataPoint(Point deletePoint)
         {
             var currentLine = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine);
+
             this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
 
             var firstPoint = this.Chart.GetPointOnChart(currentLine[0]);
 
             var closestPointDistance = Utils.Distance(firstPoint, deletePoint);
-            
+
             ScatterDataPoint closestScatterPoint = null;
             foreach (var scatterDataPoint in currentLine)
             {
@@ -712,7 +712,7 @@ namespace Marv.Input
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Remove(closestScatterPoint);
             }
         }
-        
+
         private void Done_Click(object sender, RoutedEventArgs e)
         {
             var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetXCoords();
@@ -805,7 +805,7 @@ namespace Marv.Input
                 this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
                 this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
             }
-           
+
             if (this.UserNumberPoints != null)
             {
                 var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
@@ -817,12 +817,10 @@ namespace Marv.Input
 
             var columnName = this.CurrentColumn == null ? this.oldColumnName : this.CurrentColumn.UniqueName;
 
-     
             if (columnName == null)
             {
                 return;
             }
-     
 
             this.Plot(columnName);
         }
@@ -887,13 +885,11 @@ namespace Marv.Input
         private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
-
         }
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
-
         }
 
         private void MaximumLine_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -916,7 +912,7 @@ namespace Marv.Input
             this.SelectedLine = Utils.MaxInterpolatorLine;
 
             var selectedPoint = e.GetPosition(this.Chart);
-           
+
             this.DeleteScatterDataPoint(selectedPoint);
         }
 
@@ -1088,13 +1084,13 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var sectionId in this.LineData.SectionIds)
-            {
-                var sectionEvidence = this.lineData.GetEvidence(sectionId);
-                var sectionBelief = this.Network.Run(sectionEvidence);
+            //foreach (var sectionId in this.LineData.SectionIds)
+            //{
+            //    var sectionEvidence = this.lineData.GetEvidence(sectionId);
+            //    var sectionBelief = this.Network.Run(sectionEvidence);
 
-                this.lineData.SetBelief(sectionId, sectionBelief);
-            }
+            //    this.lineData.SetBelief(sectionId, sectionBelief);
+            //}
 
             try
             {
