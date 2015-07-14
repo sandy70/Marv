@@ -58,8 +58,12 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="Line Data">
+
                 <MenuItem Header="Open"
                           Click="LineDataOpenMenuItem_Click" />
+
+                <MenuItem Header="New"
+                          Click="LineDataNewMenuItem_OnClick" />
 
                 <MenuItem Header="Save"
                           Click="LineDataSaveMenuItem_Click" />
@@ -336,7 +340,8 @@
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
-                                           SelectionChanged="GraphControl_SelectionChanged" />
+                                           SelectionChanged="GraphControl_SelectionChanged"/>
+
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
             </telerik:RadSplitContainer>
