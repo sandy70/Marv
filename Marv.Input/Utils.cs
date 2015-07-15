@@ -14,9 +14,9 @@ namespace Marv.Input
     {
         public const double Infinity = 10E+09;
         public const double MinusInfinity = 10E-09;
-        public const string MaxInterpolatorLine = "Maximum";
-        public const string MinInterpolatorLine = "Minimum";
-        public const string ModeInterpolatorLine = "Mode";
+        public const string MaxInterpolatorLine = "MaximumLine";
+        public const string MinInterpolatorLine = "MinimumLine";
+        public const string ModeInterpolatorLine = "ModeLine";
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {

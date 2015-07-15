@@ -6,6 +6,8 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:input="clr-namespace:Marv.Input"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized">
@@ -297,10 +299,14 @@
                                                                YValueBinding="YValue"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               MouseLeftButtonDown="MaximumLine_MouseLeftButtonDown"
-                                                               MouseDoubleClick="MaximumLine_DoubleClick"
-                                                               MouseRightButtonDown="MaximumLine_MouseRightButtonDown"
-                                                               Cursor="Hand" />
+                                                               Cursor="Hand">
+
+                                        <i:Interaction.Behaviors>
+                                            <input:InterpolatorsBehaviour />
+                                        </i:Interaction.Behaviors>
+                                        
+                                    </telerik:ScatterLineSeries>
+
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
                                                                Name="ModeLine"
@@ -308,10 +314,13 @@
                                                                YValueBinding="YValue"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               MouseLeftButtonDown="ModeLine_MouseLeftButtonDown"
-                                                               MouseDoubleClick="ModeLine_DoubleClick"
-                                                               MouseRightButtonDown="ModeLine_MouseRightButtonDown"
-                                                               Cursor="Hand" />
+                                                               Cursor="Hand">
+                                                            
+                                        <i:Interaction.Behaviors>
+                                            <input:InterpolatorsBehaviour />
+                                        </i:Interaction.Behaviors>
+                                        
+                                    </telerik:ScatterLineSeries>
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
                                                                Name="MinimumLine"
@@ -319,14 +328,15 @@
                                                                YValueBinding="YValue"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               MouseLeftButtonDown="MinimumLine_MouseLeftButtonDown"
-                                                               MouseDoubleClick="MinimumLine_DoubleClick"
-                                                               MouseRightButtonDown="MinimumLine_MouseRightButtonDown"
-                                                               Cursor="Hand" />
+                                                               Cursor="Hand">
+
+                                        <i:Interaction.Behaviors>
+                                            <input:InterpolatorsBehaviour />
+                                        </i:Interaction.Behaviors>
+                                        
+                                    </telerik:ScatterLineSeries>
 
                                 </telerik:RadCartesianChart.Series>
-
-
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -340,7 +350,7 @@
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"
-                                           SelectionChanged="GraphControl_SelectionChanged"/>
+                                           SelectionChanged="GraphControl_SelectionChanged" />
 
                     </telerik:RadPane>
                 </telerik:RadPaneGroup>
