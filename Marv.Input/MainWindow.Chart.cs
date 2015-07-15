@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
@@ -20,8 +21,45 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                this.DraggedPoint.YValue = (double) (data.SecondValue);
 
+                if (this.SelectedLine == Utils.MaxInterpolatorLine )
+                {
+                  foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
+                    {
+                        if (!((double)data.SecondValue > scatterPoint.YValue))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                else if (this.SelectedLine == Utils.ModeInterpolatorLine)
+                {
+                    foreach (var scatterPointMax in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.MaxInterpolatorLine))
+                    {
+                        foreach (var scatterPointMin in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.MinInterpolatorLine))
+                        {
+                            if (!((double)(data.SecondValue) < scatterPointMax.YValue && (double)(data.SecondValue) > scatterPointMin.YValue))
+                            {
+                                return;
+                            }
+                        }
+                        
+                    }
+                }
+
+                else
+                {
+                    foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
+                    {
+                        if (!((double)data.SecondValue < scatterPoint.YValue))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                this.DraggedPoint.YValue = (double) (data.SecondValue);
                 ScatterDataPoint replacePoint = null;
 
                 this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];

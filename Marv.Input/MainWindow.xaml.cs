@@ -60,7 +60,7 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
-
+        
         public double BaseTableMax
         {
             get { return this.baseTableMax; }
@@ -665,20 +665,9 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetXCoords();
-            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetYCoords();
+            LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
-            var maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
-
-            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetXCoords();
-            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetYCoords();
-
-            var modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
-
-            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetXCoords();
-            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetYCoords();
-
-            var minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
+            this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
 
             EvidenceTable interpolatedTable = null;
 
@@ -712,6 +701,24 @@ namespace Marv.Input
             }
 
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
+        }
+
+        private void GetLinearInterpolators( out LinearInterpolator maxLinInterpolator, out LinearInterpolator modeLinInterpolator, out LinearInterpolator minLinInterpolator)
+        {
+            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetXCoords();
+            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetYCoords();
+
+             maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
+
+            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetXCoords();
+            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetYCoords();
+
+             modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
+
+            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetXCoords();
+            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetYCoords();
+
+             minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
