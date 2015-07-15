@@ -133,6 +133,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -195,6 +196,8 @@
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InterpolatorDataPoints.cs" />
+    <Compile Include="InterpolatorsBehaviour.cs" />
+    <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />

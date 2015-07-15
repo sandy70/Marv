@@ -14,9 +14,9 @@ namespace Marv.Input
     {
         public const double Infinity = 10E+09;
         public const double MinusInfinity = 10E-09;
-        public const string MaxInterpolatorLine = "Maximum";
-        public const string MinInterpolatorLine = "Minimum";
-        public const string ModeInterpolatorLine = "Mode";
+        public const string MaxInterpolatorLine = "MaximumLine";
+        public const string MinInterpolatorLine = "MinimumLine";
+        public const string ModeInterpolatorLine = "ModeLine";
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
@@ -40,6 +40,10 @@ namespace Marv.Input
             return 0;
         }
 
+        public static double Distance(Point p1, Point p2)
+        {
+            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+        }
         public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable, string selectedColumnName)
         {
             var minUserValue = Infinity;
@@ -76,6 +80,13 @@ namespace Marv.Input
             return selectedDataPoint;
         }
 
+        public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)
+        {
+            var dataTuple = new DataTuple(scatterPoint.XValue, scatterPoint.YValue );
+            var point = chart.ConvertDataToPoint(dataTuple);
+
+            return point;
+        }
         public static IEnumerable<double> GetXCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
         {
             var coords = numberPoints.Select(scatterDataPoint => scatterDataPoint.XValue).ToList();

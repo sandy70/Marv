@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 
 namespace Marv.Input
 {
@@ -10,6 +11,7 @@ namespace Marv.Input
         private double to;
 
         [Display(Order = 0)]
+        [JsonProperty]
         public double From
         {
             get { return this.from; }
@@ -27,6 +29,7 @@ namespace Marv.Input
         }
 
         [Display(Order = 1)]
+        [JsonProperty]
         public double To
         {
             get { return this.to; }

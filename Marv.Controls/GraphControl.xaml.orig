@@ -64,9 +64,15 @@
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Groups}"
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedGroup}"
+<<<<<<< HEAD
+                                     Visibility="{Binding ElementName=Root, Path=SelectedGroup, Converter={StaticResource NullToVisibility}}"
+                                     Width="64"
+                                     SelectionChanged="GroupsCombobox_SelectionChanged"/>
+=======
                                      Visibility="{Binding ElementName=Root, Path=DisplayGraph, Converter={StaticResource NullToVisibility}}"
                                      Width="64"
-                                     SelectionChanged="GroupComboBox_SelectionChanged" />
+                                     SelectionChanged="GroupComboBox_SelectionChanged"/>
+>>>>>>> upstream/master
 
                 <telerik:RadComboBox ItemsSource="{Binding ElementName=Root, Path=Graph.Vertices}"
                                      IsFilteringEnabled="True"
