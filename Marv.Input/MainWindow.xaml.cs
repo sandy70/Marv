@@ -885,7 +885,24 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.LineDataSaveAs();
+            //this.LineDataSaveAs();
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                var evidenceRow = new EvidenceRow { From = 0, To = 10 };
+                evidenceRow["Hello"] = 90;
+                evidenceRow.WriteJson(dialog.FileName);
+
+                var newRow = Marv.Common.Utils.ReadJson<EvidenceRow>(dialog.FileName);
+                Console.WriteLine(newRow);
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
