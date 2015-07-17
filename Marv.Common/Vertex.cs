@@ -22,8 +22,10 @@ namespace Marv.Common
         private bool isDraggingEnabled = true;
         private bool isExpanded;
         private bool isHeader;
+        private bool isInterpolateEvidenceComplete;
         private bool isLocked = true;
         private bool isSelected;
+        private bool isUserEvidenceComplete;
         private string key;
         private State mostProbableState;
         private string name;
@@ -206,6 +208,17 @@ namespace Marv.Common
             }
         }
 
+        public bool IsInterpolateEvidenceComplete
+        {
+            get { return this.isInterpolateEvidenceComplete; }
+
+            set
+            {
+                this.isInterpolateEvidenceComplete = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public bool IsLocked
         {
             get { return this.isLocked; }
@@ -247,6 +260,17 @@ namespace Marv.Common
                 }
 
                 this.isSelected = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsUserEvidenceComplete
+        {
+            get { return this.isUserEvidenceComplete; }
+
+            set
+            {
+                this.isUserEvidenceComplete = value;
                 this.RaisePropertyChanged();
             }
         }

@@ -60,6 +60,17 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private bool isInterpolateClicked =false;
+
+        public bool IsInterpolateClicked
+        {
+            get { return this.isInterpolateClicked; }
+            set
+            {
+                this.isInterpolateClicked = value;
+                this.RaisePropertyChanged();
+            }
+        }
         
         public double BaseTableMax
         {
@@ -665,6 +676,7 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
+            
             LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
             this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
@@ -698,8 +710,10 @@ namespace Marv.Input
                 var val = "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")";
 
                 interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
+               
             }
-
+            this.SelectedVertex.IsInterpolateEvidenceComplete = true;
+            this.IsInterpolateClicked = false;
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
         }
 
@@ -777,7 +791,7 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void LineDataNewMenuItem_OnClick(object sender, RoutedEventArgs e)
+        private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var result = LineDataSaveAs();
 
@@ -856,13 +870,6 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var sectionId in this.LineData.SectionIds)
-            {
-                var sectionEvidence = this.lineData.GetEvidence(sectionId);
-                var sectionBelief = this.Network.Run(sectionEvidence);
-
-                this.lineData.SetBelief(sectionId, sectionBelief);
-            }
 
             try
             {
@@ -934,11 +941,11 @@ namespace Marv.Input
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
+            //var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            var sectionBelief = this.Network.Run(sectionEvidence);
+            //var sectionBelief = this.Network.Run(sectionEvidence);
 
-            this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
+            //this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)

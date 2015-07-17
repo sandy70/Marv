@@ -48,6 +48,8 @@ namespace Marv.Input
         private void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             mainWindow.SelectedLine = this.AssociatedObject.Name;
+
+           
         }
 
         private void AssociatedObject_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

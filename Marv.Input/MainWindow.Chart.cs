@@ -4,7 +4,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
-using Marv.Common.Interpolators;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
@@ -21,12 +20,11 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-
-                if (this.SelectedLine == Utils.MaxInterpolatorLine )
+                if (this.SelectedLine == Utils.MaxInterpolatorLine)
                 {
-                  foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
+                    foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
                     {
-                        if (!((double)data.SecondValue > scatterPoint.YValue))
+                        if (!((double) data.SecondValue > scatterPoint.YValue))
                         {
                             return;
                         }
@@ -39,12 +37,11 @@ namespace Marv.Input
                     {
                         foreach (var scatterPointMin in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.MinInterpolatorLine))
                         {
-                            if (!((double)(data.SecondValue) < scatterPointMax.YValue && (double)(data.SecondValue) > scatterPointMin.YValue))
+                            if (!((double) (data.SecondValue) < scatterPointMax.YValue && (double) (data.SecondValue) > scatterPointMin.YValue))
                             {
                                 return;
                             }
                         }
-                        
                     }
                 }
 
@@ -52,7 +49,7 @@ namespace Marv.Input
                 {
                     foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
                     {
-                        if (!((double)data.SecondValue < scatterPoint.YValue))
+                        if (!((double) data.SecondValue < scatterPoint.YValue))
                         {
                             return;
                         }
