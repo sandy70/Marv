@@ -6,12 +6,34 @@
              xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
              xmlns:controls="clr-namespace:Marv.Controls"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:converters="clr-namespace:Marv.Controls.Converters"
              mc:Ignorable="d" d:DesignHeight="128" d:DesignWidth="1024"
              Name="Root"
              Loaded="GraphControl_Loaded"
              Unloaded="GraphControl_Unloaded">
     <UserControl.Resources>
-        <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:MultiValueToBrushConverter x:Key="MultiValueToBrushConverter">
+                <converters:MultiValueToBrushConverter.TrueBrush>
+                    <SolidColorBrush Color="Green" />
+                </converters:MultiValueToBrushConverter.TrueBrush>
+
+                <converters:MultiValueToBrushConverter.PartialTrueBrush>
+                    <SolidColorBrush Color="Goldenrod" />
+                </converters:MultiValueToBrushConverter.PartialTrueBrush>
+                
+                <converters:MultiValueToBrushConverter.FalseBrush>
+                    
+                    <SolidColorBrush Color="Red" />
+                </converters:MultiValueToBrushConverter.FalseBrush>
+            </converters:MultiValueToBrushConverter>
+
+        </ResourceDictionary>
+
     </UserControl.Resources>
 
     <Grid>
@@ -75,7 +97,20 @@
                                      SelectedItem="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                      TextSearchMode="Contains"
                                      Width="192"
-                                     SelectionChanged="VertexComboxBox_SelectionChanged" />
+                                     SelectionChanged="VertexComboxBox_SelectionChanged">
+                    <telerik:RadComboBox.ItemTemplate>
+                        <DataTemplate DataType="common:Vertex">
+                            <TextBlock Text="{Binding Path=Name}">
+                                <TextBlock.Foreground>
+                                    <MultiBinding Converter="{StaticResource MultiValueToBrushConverter}">
+                                        <Binding Path="IsUserEvidenceComplete" />
+                                        <Binding Path="IsInterpolateEvidenceComplete" />
+                                    </MultiBinding>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DataTemplate>
+                    </telerik:RadComboBox.ItemTemplate>
+                </telerik:RadComboBox>
             </ToolBar>
 
             <ToolBar telerik:RadToolBarTray.IsLocked="False"

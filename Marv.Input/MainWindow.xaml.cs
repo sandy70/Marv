@@ -60,7 +60,18 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private bool isInterpolateClicked =false;
 
+        public bool IsInterpolateClicked
+        {
+            get { return this.isInterpolateClicked; }
+            set
+            {
+                this.isInterpolateClicked = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
         public double BaseTableMax
         {
             get { return this.baseTableMax; }
@@ -665,20 +676,10 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetXCoords();
-            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Maximum").GetYCoords();
+            
+            LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
-            var maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
-
-            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetXCoords();
-            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Mode").GetYCoords();
-
-            var modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
-
-            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetXCoords();
-            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("Minimum").GetYCoords();
-
-            var minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
+            this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
 
             EvidenceTable interpolatedTable = null;
 
@@ -709,9 +710,29 @@ namespace Marv.Input
                 var val = "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")";
 
                 interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
+               
             }
-
+            this.SelectedVertex.IsInterpolateEvidenceComplete = true;
+            this.IsInterpolateClicked = false;
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
+        }
+
+        private void GetLinearInterpolators( out LinearInterpolator maxLinInterpolator, out LinearInterpolator modeLinInterpolator, out LinearInterpolator minLinInterpolator)
+        {
+            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetXCoords();
+            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetYCoords();
+
+             maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
+
+            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetXCoords();
+            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetYCoords();
+
+             modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
+
+            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetXCoords();
+            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetYCoords();
+
+             minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -770,7 +791,7 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void LineDataNewMenuItem_OnClick(object sender, RoutedEventArgs e)
+        private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var result = LineDataSaveAs();
 
@@ -849,13 +870,6 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var sectionId in this.LineData.SectionIds)
-            {
-                var sectionEvidence = this.lineData.GetEvidence(sectionId);
-                var sectionBelief = this.Network.Run(sectionEvidence);
-
-                this.lineData.SetBelief(sectionId, sectionBelief);
-            }
 
             try
             {
@@ -927,11 +941,11 @@ namespace Marv.Input
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
+            //var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            var sectionBelief = this.Network.Run(sectionEvidence);
+            //var sectionBelief = this.Network.Run(sectionEvidence);
 
-            this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
+            //this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)

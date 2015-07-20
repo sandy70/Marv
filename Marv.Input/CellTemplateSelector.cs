@@ -65,6 +65,7 @@ namespace Marv.Input
 
                 if (evidenceRow.IsValid)
                 {
+                    
                     return null;
                 }
 

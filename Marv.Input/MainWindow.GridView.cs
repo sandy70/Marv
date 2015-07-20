@@ -62,10 +62,14 @@ namespace Marv.Input
             if (columnName.TryParse(out dateTime))
             {
                 // This is a date time column and vertex evidence cell
-
-                row[columnName] = this.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
-
-                this.Plot(row, columnName);
+                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
+                if (vertexEvidence.Type != VertexEvidenceType.Invalid)
+                {
+                    row[columnName] = vertexEvidence;
+                    this.Plot(row, columnName);
+                    this.SelectedVertex.IsUserEvidenceComplete = true;
+                }
+                
             }
         }
 
@@ -170,6 +174,7 @@ namespace Marv.Input
                     {
                         var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
                         evidenceRow[colName] = vertexEvidence;
+                        
                     }
                 }
 
@@ -178,7 +183,7 @@ namespace Marv.Input
                     evidenceRow[colName] = Convert.ToDouble(val);
                 }
             }
-
+            this.SelectedVertex.IsUserEvidenceComplete = true;
             this.Validate();
             this.pastedCells.Clear();
         }
@@ -207,6 +212,8 @@ namespace Marv.Input
 
         private void Intepolate_Click(object sender, RoutedEventArgs e)
         {
+            this.IsInterpolateClicked = true;
+
             if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {
                 return;
@@ -234,7 +241,8 @@ namespace Marv.Input
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
 
             this.PlotInterpolatorLines(minMaxValues);
-        }
+
+         }
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {
