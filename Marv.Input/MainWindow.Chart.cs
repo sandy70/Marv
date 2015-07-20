@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -20,40 +21,9 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                if (this.SelectedLine == Utils.MaxInterpolatorLine)
+                if (! IsWithInRange(data))
                 {
-                    foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
-                    {
-                        if (!((double) data.SecondValue > scatterPoint.YValue))
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                else if (this.SelectedLine == Utils.ModeInterpolatorLine)
-                {
-                    foreach (var scatterPointMax in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.MaxInterpolatorLine))
-                    {
-                        foreach (var scatterPointMin in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.MinInterpolatorLine))
-                        {
-                            if (!((double) (data.SecondValue) < scatterPointMax.YValue && (double) (data.SecondValue) > scatterPointMin.YValue))
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                else
-                {
-                    foreach (var scatterPoint in this.CurrentInterpolatorDataPoints.GetNumberPoints(Utils.ModeInterpolatorLine))
-                    {
-                        if (!((double) data.SecondValue < scatterPoint.YValue))
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
 
                 this.DraggedPoint.YValue = (double) (data.SecondValue);
@@ -74,11 +44,87 @@ namespace Marv.Input
                 this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
+
+            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked)
+            {
+                var chart = (RadCartesianChart) sender;
+
+                var dynamicPoint = e.GetPosition(chart);
+
+                this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName];
+
+                var currentLine = this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine);
+
+                ScatterDataPoint replacePoint = null;
+
+                foreach (var scatterPoint in currentLine)
+                {
+                    var linePoint = this.Chart.GetPointOnChart(scatterPoint);
+
+                    if (Math.Round(linePoint.X) == (Math.Round(dynamicPoint.X)) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
+                    {
+                        replacePoint = scatterPoint;
+                    }
+                }
+
+                if (IsWithInRange(this.Chart.ConvertPointToData(dynamicPoint)))
+                {
+                    currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
+                }
+            }
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
+        }
+
+        private bool IsWithInRange(DataTuple data)
+        {
+            var currentLine = this.CurrentInterpolatorDataPoints;
+
+            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
+            var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
+            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
+
+            if (this.SelectedLine == Utils.MaxInterpolatorLine)
+            {
+                foreach (var scatterPoint in currentMode)
+                {
+                    if (!((double) data.SecondValue > scatterPoint.YValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (this.SelectedLine == Utils.ModeInterpolatorLine)
+            {
+                foreach (var scatterPointMax in currentMax)
+                {
+                    foreach (var scatterPointMin in currentMin)
+                    {
+                        if (!((double) (data.SecondValue) < scatterPointMax.YValue && 
+                            (double) (data.SecondValue) > scatterPointMin.YValue))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            else
+            {
+                foreach (var scatterPoint in currentMode)
+                {
+                    if (!((double) data.SecondValue < scatterPoint.YValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private void Plot(string columnName)

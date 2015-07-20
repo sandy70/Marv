@@ -20,6 +20,7 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private readonly string oldColumnName;
+        private const int ModifyTolerance = 100;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private double baseTableMax;
         private double baseTableMin;
@@ -40,6 +41,18 @@ namespace Marv.Input
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
+        private bool isInterpolateClicked;
+
+        public bool IsInterpolateClicked
+        {
+            get { return isInterpolateClicked; }
+            set
+            {
+                isInterpolateClicked = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
         private ILineData lineData;
         private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
@@ -60,17 +73,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
-        private bool isInterpolateClicked =false;
-
-        public bool IsInterpolateClicked
-        {
-            get { return this.isInterpolateClicked; }
-            set
-            {
-                this.isInterpolateClicked = value;
-                this.RaisePropertyChanged();
-            }
-        }
         
         public double BaseTableMax
         {
@@ -676,7 +678,6 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            
             LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
             this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
@@ -710,29 +711,10 @@ namespace Marv.Input
                 var val = "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")";
 
                 interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
-               
             }
             this.SelectedVertex.IsInterpolateEvidenceComplete = true;
             this.IsInterpolateClicked = false;
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
-        }
-
-        private void GetLinearInterpolators( out LinearInterpolator maxLinInterpolator, out LinearInterpolator modeLinInterpolator, out LinearInterpolator minLinInterpolator)
-        {
-            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetXCoords();
-            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetYCoords();
-
-             maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
-
-            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetXCoords();
-            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetYCoords();
-
-             modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
-
-            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetXCoords();
-            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetYCoords();
-
-             minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -741,6 +723,24 @@ namespace Marv.Input
             {
                 this.StartDate = this.EndDate;
             }
+        }
+
+        private void GetLinearInterpolators(out LinearInterpolator maxLinInterpolator, out LinearInterpolator modeLinInterpolator, out LinearInterpolator minLinInterpolator)
+        {
+            var xCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetXCoords();
+            var yCoordsMaximum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MaximumLine").GetYCoords();
+
+            maxLinInterpolator = new LinearInterpolator(xCoordsMaximum, yCoordsMaximum);
+
+            var xCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetXCoords();
+            var yCoordsMode = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("ModeLine").GetYCoords();
+
+            modeLinInterpolator = new LinearInterpolator(xCoordsMode, yCoordsMode);
+
+            var xCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetXCoords();
+            var yCoordsMinimum = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints("MinimumLine").GetYCoords();
+
+            minLinInterpolator = new LinearInterpolator(xCoordsMinimum, yCoordsMinimum);
         }
 
         private void Go_Click(object sender, RoutedEventArgs e)
@@ -870,7 +870,6 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
