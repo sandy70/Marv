@@ -19,8 +19,8 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private readonly string oldColumnName;
         private const int ModifyTolerance = 100;
+        private readonly string oldColumnName;
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private double baseTableMax;
         private double baseTableMin;
@@ -38,21 +38,11 @@ namespace Marv.Input
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
+        private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
-        private bool isInterpolateClicked;
 
-        public bool IsInterpolateClicked
-        {
-            get { return isInterpolateClicked; }
-            set
-            {
-                isInterpolateClicked = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
         private ILineData lineData;
         private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
@@ -73,7 +63,39 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
-        
+        private ICommand cellEditCommand;
+        private List<ICommand> commandStack = new List<ICommand>();
+        private int currentCommand;
+
+        public int CurrentCommand
+        {
+            get { return this.currentCommand; }
+
+            set
+            {
+                if (this.currentCommand == value)
+                {
+                    return;
+                }
+
+                this.currentCommand = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        public ICommand CellEditCommand 
+        {
+            get { return this.cellEditCommand; }
+
+            set
+            {
+             
+
+                this.cellEditCommand = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+
         public double BaseTableMax
         {
             get { return this.baseTableMax; }
@@ -257,6 +279,16 @@ namespace Marv.Input
                     return;
                 }
                 this.isGridViewReadOnly = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsInterpolateClicked
+        {
+            get { return isInterpolateClicked; }
+            set
+            {
+                isInterpolateClicked = value;
                 this.RaisePropertyChanged();
             }
         }

@@ -7,6 +7,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:input="clr-namespace:Marv.Input"
+        xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 
         Name="Root"
@@ -37,7 +38,13 @@
                     </DataTemplate>
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
-
+            
+            <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter">
+                <converters:BooleanToBrushConverter.FalseBrush>
+                    <SolidColorBrush Color="Red" />
+                </converters:BooleanToBrushConverter.FalseBrush>
+                
+            </converters:BooleanToBrushConverter>
             <DataTemplate x:Key="EllipsePointTemplate">
                 <Ellipse Cursor="Hand"
                          Width="8"
@@ -73,6 +80,9 @@
 
                 <MenuItem Header="SaveAs"
                           Click="LineDataSaveAsMenuItem_Click" />
+
+                <MenuItem Header="Undo"
+                          Click="Undo_Click" />
 
                 <Separator />
 
@@ -268,6 +278,20 @@
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted" />
+                                    <!--<telerik:RadGridView.Columns>
+                                        <telerik:GridViewDataColumn DataMemberBinding="{Binding From}">
+                                            <telerik:GridViewDataColumn.CellEditTemplate>
+                                               <DataTemplate DataType="input:EvidenceRow">
+                                                    <TextBlock Text="{Binding Path=From}"
+                                                               Foreground="{Binding Path=IsValid, Converter={StaticResource BooleanToBrushConverter}}" />    
+                                               </DataTemplate>
+                                            </telerik:GridViewDataColumn.CellEditTemplate>
+                                            
+                                         </telerik:GridViewDataColumn>
+                                        <telerik:GridViewDataColumn DataMemberBinding="{Binding To}" />
+                                       
+                                    </telerik:RadGridView.Columns>
+                                    </telerik:RadGridView>-->
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>

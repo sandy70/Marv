@@ -97,6 +97,7 @@
     <Compile Include="EdgeConnectorPositions.cs" />
     <Compile Include="Extensions.Vertex.cs" />
     <Compile Include="Extensions.State.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="IKeyed.cs" />
     <Compile Include="LineDataFolder.cs" />
     <Compile Include="Graph.cs" />
