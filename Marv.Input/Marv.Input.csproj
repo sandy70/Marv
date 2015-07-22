@@ -191,6 +191,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CellEditCommand.cs" />
     <Compile Include="DataTheme.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />

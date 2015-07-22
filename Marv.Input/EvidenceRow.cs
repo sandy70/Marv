@@ -7,6 +7,7 @@ namespace Marv.Input
     public class EvidenceRow : Dynamic
     {
         [Display(AutoGenerateField = false)] public bool IsValid = true;
+
         private double from;
         private double to;
 

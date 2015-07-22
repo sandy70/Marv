@@ -98,6 +98,7 @@
                                      TextSearchMode="Contains"
                                      Width="192"
                                      SelectionChanged="VertexComboxBox_SelectionChanged">
+                    
                     <telerik:RadComboBox.ItemTemplate>
                         <DataTemplate DataType="common:Vertex">
                             <TextBlock Text="{Binding Path=Name}">

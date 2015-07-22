@@ -73,8 +73,6 @@ namespace Marv.Controls
         private bool isManipulationAdornerVisible;
         private string selectedGroup;
 
- 
-
         public int AutoSaveDuration
         {
             get { return (int) this.GetValue(AutoSaveDurationProperty); }

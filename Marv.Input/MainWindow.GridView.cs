@@ -56,20 +56,16 @@ namespace Marv.Input
         {
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
+            var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
+            var command = new CellEditCommand(this.SelectedVertex, e);
 
-            DateTime dateTime;
+            command.Execute();
+            this.commandStack.Add(command);
+            this.CurrentCommand = this.commandStack.Count - 1;
 
-            if (columnName.TryParse(out dateTime))
+            if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
-                // This is a date time column and vertex evidence cell
-                var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(e.NewData as string);
-                if (vertexEvidence.Type != VertexEvidenceType.Invalid)
-                {
-                    row[columnName] = vertexEvidence;
-                    this.Plot(row, columnName);
-                    this.SelectedVertex.IsUserEvidenceComplete = true;
-                }
-                
+                this.Plot(row, columnName);
             }
         }
 
@@ -174,7 +170,6 @@ namespace Marv.Input
                     {
                         var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
                         evidenceRow[colName] = vertexEvidence;
-                        
                     }
                 }
 
@@ -241,8 +236,7 @@ namespace Marv.Input
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
 
             this.PlotInterpolatorLines(minMaxValues);
-
-         }
+        }
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {
@@ -304,6 +298,25 @@ namespace Marv.Input
             this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Clear();
             this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineStartPoint);
             this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineEndPoint);
+        }
+
+        private void Undo_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.CurrentCommand < 0)
+            {
+                return;
+            }
+
+            var command = this.commandStack[this.CurrentCommand];
+            var isDone = command.Undo();
+
+            if (!isDone)
+            {
+                return;
+            }
+
+            this.commandStack.Remove(command);
+            this.CurrentCommand = this.commandStack.Count - 1;
         }
 
         private void Validate()
