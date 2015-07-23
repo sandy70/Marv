@@ -155,9 +155,9 @@ namespace Marv.Input
             if (this.commandStack.Count >= 100)
             {
                 this.commandStack.RemoveAt(0);
-                this.commandStack.Add(command);
+            
             }
-
+            this.commandStack.Add(command);
             this.CurrentCommand = this.commandStack.Count - 1;
 
             this.SelectedVertex.IsUserEvidenceComplete = true;
