@@ -57,9 +57,19 @@ namespace Marv.Input
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
-            var command = new CellEditCommand(this.SelectedVertex, e);
 
+            if (e.NewData.Equals(e.OldData))
+            {
+                return;
+            }
+
+            var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
+
+            if (this.commandStack.Count >= 100)
+            {
+                this.commandStack.RemoveAt(0);
+            }
             this.commandStack.Add(command);
             this.CurrentCommand = this.commandStack.Count - 1;
 
@@ -136,48 +146,20 @@ namespace Marv.Input
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            foreach (var pastedCell in this.pastedCells)
+            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues);
+
+            command.Execute();
+
+            this.oldValues.Clear();
+
+            if (this.commandStack.Count >= 100)
             {
-                var evidenceRow = pastedCell.Cell.Item as EvidenceRow;
-                var colName = pastedCell.Cell.Column.UniqueName;
-
-                if (pastedCell.Value == null)
-                {
-                    continue;
-                }
-
-                var val = pastedCell.Value.ToString();
-
-                if (colName.Equals(val))
-                {
-                    continue;
-                }
-
-                if (colName == "From")
-                {
-                    evidenceRow.From = Convert.ToDouble(val);
-                }
-
-                if (colName == "To")
-                {
-                    evidenceRow.To = Convert.ToDouble(val);
-                }
-                DateTime dateTime;
-
-                if (colName.TryParse(out dateTime))
-                {
-                    if (evidenceRow != null)
-                    {
-                        var vertexEvidence = this.SelectedVertex.States.ParseEvidenceString(val);
-                        evidenceRow[colName] = vertexEvidence;
-                    }
-                }
-
-                else
-                {
-                    evidenceRow[colName] = Convert.ToDouble(val);
-                }
+                this.commandStack.RemoveAt(0);
+                this.commandStack.Add(command);
             }
+
+            this.CurrentCommand = this.commandStack.Count - 1;
+
             this.SelectedVertex.IsUserEvidenceComplete = true;
             this.Validate();
             this.pastedCells.Clear();
@@ -188,6 +170,12 @@ namespace Marv.Input
             if (!e.Cancel)
             {
                 this.pastedCells.Add(e);
+
+                var colname = e.Cell.Column.UniqueName;
+                var row = e.Cell.Item as EvidenceRow;
+                var oldValue = row[colname];
+
+                this.oldValues.Add(oldValue);
             }
         }
 

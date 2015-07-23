@@ -20,13 +20,17 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const int ModifyTolerance = 100;
+        private readonly List<ICommand> commandStack = new List<ICommand>(100);
         private readonly string oldColumnName;
+        private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private double baseTableMax;
         private double baseTableMin;
         private double baseTableRange;
+        private ICommand cellEditCommand;
         private string chartTitle;
         private GridViewColumn currentColumn;
+        private int currentCommand;
         private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
@@ -42,7 +46,6 @@ namespace Marv.Input
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
-
         private ILineData lineData;
         private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
@@ -63,38 +66,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
-        private ICommand cellEditCommand;
-        private List<ICommand> commandStack = new List<ICommand>();
-        private int currentCommand;
-
-        public int CurrentCommand
-        {
-            get { return this.currentCommand; }
-
-            set
-            {
-                if (this.currentCommand == value)
-                {
-                    return;
-                }
-
-                this.currentCommand = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        public ICommand CellEditCommand 
-        {
-            get { return this.cellEditCommand; }
-
-            set
-            {
-             
-
-                this.cellEditCommand = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
 
         public double BaseTableMax
         {
@@ -141,6 +112,17 @@ namespace Marv.Input
             }
         }
 
+        public ICommand CellEditCommand
+        {
+            get { return this.cellEditCommand; }
+
+            set
+            {
+                this.cellEditCommand = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public GridViewColumn CurrentColumn
         {
             get { return this.currentColumn; }
@@ -153,6 +135,22 @@ namespace Marv.Input
                 }
 
                 this.currentColumn = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public int CurrentCommand
+        {
+            get { return this.currentCommand; }
+
+            set
+            {
+                if (this.currentCommand == value)
+                {
+                    return;
+                }
+
+                this.currentCommand = value;
                 this.RaisePropertyChanged();
             }
         }

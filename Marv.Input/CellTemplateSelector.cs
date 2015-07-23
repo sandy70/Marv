@@ -65,12 +65,10 @@ namespace Marv.Input
 
                 if (evidenceRow.IsValid)
                 {
-
                     return null;
                 }
 
                 return this.InValidTemplate;
-             
             }
             catch (NullReferenceException)
             {

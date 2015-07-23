@@ -200,6 +200,7 @@
     <Compile Include="InterpolatorsBehaviour.cs" />
     <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />
+    <Compile Include="PasteCommand.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
     <Compile Include="Utils.cs" />
