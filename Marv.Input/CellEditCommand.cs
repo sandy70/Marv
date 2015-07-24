@@ -29,13 +29,14 @@ namespace Marv.Input
             if (ColumnName.TryParse(out dateTime))
             {
                 Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
-
-                this.SelectedVertex.IsUserEvidenceComplete = true;
+               
             }
             else
             {
                 Row[ColumnName] = Convert.ToDouble(NewData.ToString());
             }
+
+            this.SelectedVertex.IsUserEvidenceComplete = true;
         }
 
         public bool Undo()
