@@ -254,6 +254,7 @@
                                 <telerik:RadGridView Grid.Row="1"
                                                      CanUserFreezeColumns="False"
                                                      CanUserInsertRows="True"
+                                                     CanUserDeleteRows="True"
                                                      CanUserSortColumns="False"
                                                      ClipboardCopyMode="All"
                                                      CurrentColumn="{Binding ElementName=Root, Path=CurrentColumn}"

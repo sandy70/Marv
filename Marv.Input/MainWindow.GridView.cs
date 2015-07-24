@@ -33,6 +33,9 @@ namespace Marv.Input
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
+
+            var table = this.Table;
+            var val = e.NewObject;
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -146,16 +149,18 @@ namespace Marv.Input
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues);
+            var list = new List<AddRowCommand>();
+
+            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues, this.AddRowCommands);
 
             command.Execute();
 
             this.oldValues.Clear();
+            this.AddRowCommands = list;
 
             if (this.commandStack.Count >= 100)
             {
                 this.commandStack.RemoveAt(0);
-            
             }
             this.commandStack.Add(command);
             this.CurrentCommand = this.commandStack.Count - 1;
@@ -326,6 +331,11 @@ namespace Marv.Input
             for (var i = 0; i < fromToList.Count - 1; i++)
             {
                 evidenceTable[i / 2].IsValid = !(fromToList[i] > fromToList[i + 1]);
+
+                if (!evidenceTable[i / 2].IsValid)
+                {
+                    MessageBox.Show("Row no" + i / 2 + " is invalid");
+                }
             }
         }
 
