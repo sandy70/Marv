@@ -30,7 +30,7 @@ namespace Marv.Input
             {
                 Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
 
-                Console.WriteLine();
+                this.SelectedVertex.IsUserEvidenceComplete = true;
             }
             else
             {
