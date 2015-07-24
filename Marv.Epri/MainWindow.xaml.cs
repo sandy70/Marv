@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,8 @@ namespace Marv.Epri
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private const string StreamId = "00000000-00000000-00409DFF-FF88AC6C";
+
         private readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.Login, Settings.Default.Password) });
 
         private readonly DispatcherTimer timer = new DispatcherTimer
@@ -40,6 +43,7 @@ namespace Marv.Epri
             { "1 Hour", TimeSpan.FromHours(1) },
             { "6 Hours", TimeSpan.FromHours(6) },
             { "1 Day", TimeSpan.FromDays(1) },
+            { "2 Day", TimeSpan.FromDays(2) }
         };
 
         public ObservableCollection<DataPoint> DataPoints
@@ -147,11 +151,16 @@ namespace Marv.Epri
             this.timer.Start();
         }
 
+        private void DateTimeContinuousAxis_OnActualVisibleRangeChanged(object sender, DateTimeRangeChangedEventArgs e)
+        {
+            Console.WriteLine("DateTimeContinuousAxis_OnActualVisibleRangeChanged");
+        }
+
         private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync()
         {
             const string server = @"http://devicecloud.digi.com";
 
-            var uriEndPoint = server + "/ws/v1/streams/history/00000000-00000000-00409DFF-FF88AC6C/" + this.SelectedStream + ".json";
+            var uriEndPoint = server + "/ws/v1/streams/history/" + StreamId + "/" + this.SelectedStream + ".json";
 
             var uri = uriEndPoint + "?" + Utils.FormRestArgs(new
             {
@@ -163,16 +172,24 @@ namespace Marv.Epri
 
             while (true)
             {
-                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri)));
-
-                downloadedPoints.Add(response.list);
-
-                if (response.next_uri == null)
+                try
                 {
-                    break;
-                }
+                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri)));
 
-                uri = server + response.next_uri;
+                    downloadedPoints.Add(response.list);
+
+                    if (response.next_uri == null)
+                    {
+                        break;
+                    }
+
+                    uri = server + response.next_uri;
+                }
+                catch (HttpRequestException exception)
+                {
+                    Thread.Sleep(100);
+                    Console.WriteLine(exception.Message);
+                }
             }
 
             return downloadedPoints;
@@ -272,10 +289,5 @@ namespace Marv.Epri
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void DateTimeContinuousAxis_OnActualVisibleRangeChanged(object sender, DateTimeRangeChangedEventArgs e)
-        {
-            Console.WriteLine("DateTimeContinuousAxis_OnActualVisibleRangeChanged");
-        }
     }
 }
