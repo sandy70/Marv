@@ -31,6 +31,10 @@
                       SelectedValue="{Binding ElementName=Root, Path=SelectedTimeSpan}"
                       SelectedValuePath="Value"
                       SelectionChanged="TimeSpanComboBox_SelectionChanged" />
+            
+            <telerik:RadButton Content="Save"
+                               Width="64"
+                               Click="SaveButton_Click"/>
         </ToolBar>
 
         <telerik:RadCartesianChart Grid.Row="1">

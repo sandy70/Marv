@@ -25,6 +25,11 @@ namespace Marv.Epri
             }
         }
 
+        public DateTime Local_TimeStamp
+        {
+            get { return this.Server_TimeStamp + (DateTime.Now - DateTime.UtcNow); }
+        }
+
         public int Value
         {
             get { return this.value; }

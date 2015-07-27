@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,7 @@ using System.Windows.Threading;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Epri.Properties;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Telerik.Charting;
 
@@ -247,6 +249,20 @@ namespace Marv.Epri
             if (this.PropertyChanged != null && propertyName.Length > 0)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "Comma Sepated Values|*.csv"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var csvWriter = new CsvHelper.CsvWriter(new StreamWriter(dialog.FileName));
+                csvWriter.WriteRecords(this.DataPoints);
             }
         }
 
