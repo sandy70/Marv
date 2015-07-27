@@ -888,6 +888,10 @@ namespace Marv.Input
             }
 
             this.lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
+            this.BaseTableMax = 0;
+            this.BaseTableMin = 0;
+            this.BaseTableRange = 0;
+
             this.Chart.Annotations.Remove(annotation => true);
             this.UpdateTable();
         }
