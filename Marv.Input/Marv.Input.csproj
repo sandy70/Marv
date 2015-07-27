@@ -191,6 +191,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddRowCommand.cs" />
     <Compile Include="CellEditCommand.cs" />
     <Compile Include="DataTheme.cs" />
     <Compile Include="EvidenceRow.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="InterpolatorsBehaviour.cs" />
     <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />
+    <Compile Include="PasteCommand.cs" />
     <Compile Include="ProbabilityDataPoint.cs" />
     <Compile Include="HorizontalAxisQuantity.cs" />
     <Compile Include="Utils.cs" />

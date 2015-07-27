@@ -6,46 +6,61 @@ namespace Marv.Input
 {
     public class CellEditCommand : ICommand
     {
+        public string ColumnName { get; set; }
         public GridViewCellEditEndedEventArgs E { get; set; }
-
+        public object NewData { get; set; }
+        public object OldData { get; set; }
+        public EvidenceRow Row { get; set; }
         public Vertex SelectedVertex { get; set; }
 
-        public CellEditCommand(Vertex selVertex, GridViewCellEditEndedEventArgs e)
+        public CellEditCommand(EvidenceRow row, string colName, Vertex selVertex, object newData, object oldData)
         {
+            this.Row = row;
+            this.ColumnName = colName;
             this.SelectedVertex = selVertex;
-            this.E = e;
+            this.NewData = newData;
+            this.OldData = oldData;
         }
 
         public void Execute()
         {
-            var columnName = E.Cell.Column.UniqueName;
-            var row = E.Cell.ParentRow.Item as EvidenceRow;
             DateTime dateTime;
 
-            if (columnName.TryParse(out dateTime))
+            if (ColumnName.TryParse(out dateTime))
             {
-                row[columnName] = this.SelectedVertex.States.ParseEvidenceString(E.NewData as string);
-
-                this.SelectedVertex.IsUserEvidenceComplete = true;
+                Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
+               
             }
-
             else
             {
-                row[columnName] = (double) E.NewData;
+                Row[ColumnName] = Convert.ToDouble(NewData.ToString());
             }
+
+            this.SelectedVertex.IsUserEvidenceComplete = true;
         }
 
         public bool Undo()
         {
-            var columnName = E.Cell.Column.UniqueName;
-            var row = E.Cell.ParentRow.Item as EvidenceRow;
-
-            if (row == null) // if the ParentRow is a new row, then the Item of new row returns null
+            if (Row == null)
             {
                 return false;
             }
 
-            row[columnName] = this.E.OldData;
+            DateTime dateTime;
+            if (ColumnName.TryParse(out dateTime))
+            {
+                if (!OldData.Equals(""))
+                {
+                    Row[ColumnName] = OldData;
+                }
+                else
+                {
+                    Row[ColumnName] = "";
+                }
+                return true;
+            }
+
+            Row[ColumnName] = OldData;
             return true;
         }
     }

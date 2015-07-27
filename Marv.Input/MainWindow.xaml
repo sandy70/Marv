@@ -81,9 +81,6 @@
                 <MenuItem Header="SaveAs"
                           Click="LineDataSaveAsMenuItem_Click" />
 
-                <MenuItem Header="Undo"
-                          Click="Undo_Click" />
-
                 <Separator />
 
                 <MenuItem Header="Define Timeline"
@@ -188,7 +185,9 @@
 
                                             </ObjectDataProvider>
                                         </ToolBar.Resources>
-
+                                        <telerik:RadButton Click="Undo_Click">
+                                            <Image Source="/Marv.Common;component/Resources/Icons/Back.png " />
+                                        </telerik:RadButton>
                                         <telerik:RadButton Click="CopyAcrossCol_Click">
 
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossCol.png" />
@@ -255,6 +254,7 @@
                                 <telerik:RadGridView Grid.Row="1"
                                                      CanUserFreezeColumns="False"
                                                      CanUserInsertRows="True"
+                                                     CanUserDeleteRows="True"
                                                      CanUserSortColumns="False"
                                                      ClipboardCopyMode="All"
                                                      CurrentColumn="{Binding ElementName=Root, Path=CurrentColumn}"
@@ -278,20 +278,7 @@
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted" />
-                                    <!--<telerik:RadGridView.Columns>
-                                        <telerik:GridViewDataColumn DataMemberBinding="{Binding From}">
-                                            <telerik:GridViewDataColumn.CellEditTemplate>
-                                               <DataTemplate DataType="input:EvidenceRow">
-                                                    <TextBlock Text="{Binding Path=From}"
-                                                               Foreground="{Binding Path=IsValid, Converter={StaticResource BooleanToBrushConverter}}" />    
-                                               </DataTemplate>
-                                            </telerik:GridViewDataColumn.CellEditTemplate>
-                                            
-                                         </telerik:GridViewDataColumn>
-                                        <telerik:GridViewDataColumn DataMemberBinding="{Binding To}" />
-                                       
-                                    </telerik:RadGridView.Columns>
-                                    </telerik:RadGridView>-->
+                        
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
