@@ -49,8 +49,8 @@
                 <Ellipse Cursor="Hand"
                          Width="8"
                          Height="8"
-                         Fill="Goldenrod"
-                         Stroke="DarkGoldenrod"
+                         Fill="Green"
+                         Stroke="DarkGreen"
                          StrokeThickness="1"
                          MouseDown="Ellipse_MouseDown"
                          MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
@@ -229,15 +229,15 @@
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
 
-                                        <Label Name="MinVal" Width="50" Content="MinVal" />
+                                        <Label Name="Start" Width="70" Content="Start(Mts)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMin}" />
-                                        <Label Name="MaxVal" Width="50" Content="MaxVal" />
+                                        <Label Name="End" Width="70" Content="End(Mts)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMax}" />
-                                        <Label Name="Range" Width="50" Content="Range" />
+                                        <Label Name="Range" Width="75"  Content="Range(Mts)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableRange}" />
@@ -288,9 +288,9 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Chart -->
                             <telerik:RadCartesianChart Name="Chart"
-                                                       MouseMove="Chart_MouseMove">
+                                                       MouseMove="Chart_MouseMove" >
                                 <telerik:RadCartesianChart.Behaviors>
-                                    <telerik:ChartPanAndZoomBehavior ZoomMode="None" PanMode="None" />
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
                                   
                                 </telerik:RadCartesianChart.Behaviors>
 
@@ -319,7 +319,6 @@
                                         </i:Interaction.Behaviors>
                                         
                                     </telerik:ScatterLineSeries>
-
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
                                                                Name="ModeLine"
