@@ -30,12 +30,13 @@ namespace Marv.Input
             {
                 Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
 
-                Console.WriteLine();
             }
             else
             {
-                Row[ColumnName] = Convert.ToDouble(NewData.ToString());
+                Row[ColumnName] = NewData.ToString() == "" ? 0 : Convert.ToDouble(NewData.ToString());
+
             }
+            this.SelectedVertex.IsUserEvidenceComplete = true;
         }
 
         public bool Undo()
