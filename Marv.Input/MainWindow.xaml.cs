@@ -21,7 +21,7 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const int ModifyTolerance = 200;
-        private readonly List<ICommand> commandStack = new List<ICommand>(100);
+        private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
@@ -41,7 +41,7 @@ namespace Marv.Input
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
-        private HorizontalAxisQuantity horizontalAxisQuantity = HorizontalAxisQuantity.Distance;
+        private HorizontalAxisQuantity horizontalAxisQuantity;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -955,7 +955,24 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.LineDataSaveAs();
+            //this.LineDataSaveAs();
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                var evidenceRow = new EvidenceRow { From = 0, To = 10 };
+                evidenceRow["Hello"] = 90;
+                evidenceRow.WriteJson(dialog.FileName);
+
+                var newRow = Common.Utils.ReadJson<EvidenceRow>(dialog.FileName);
+                Console.WriteLine(newRow);
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
