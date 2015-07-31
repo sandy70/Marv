@@ -151,7 +151,7 @@ namespace Marv.Input
 
             // Remove older annotations
 
-            //   this.Chart.Annotations.Remove(annotation => annotation.Tag.Equals(dataRow));
+            this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
@@ -220,18 +220,16 @@ namespace Marv.Input
                     fill.GradientStops.Add(new GradientStop
                     {
                         Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
-                        Color = Color.FromArgb((byte)(value / maxValue * 255), 218, 165, 32)
-
+                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
 
                     fill.GradientStops.Add(new GradientStop
                     {
                         Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i - 1) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
-                        Color = Color.FromArgb((byte)(value / maxValue * 255), 218, 165, 32)
+                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
                 }
-                
-              
+
                 this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                 {
                     Fill = fill,
