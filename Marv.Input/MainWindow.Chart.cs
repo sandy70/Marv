@@ -104,8 +104,8 @@ namespace Marv.Input
                 {
                     foreach (var scatterPointMin in currentMin)
                     {
-                        if (!((double) (data.SecondValue) < scatterPointMax.YValue && 
-                            (double) (data.SecondValue) > scatterPointMin.YValue))
+                        if (!((double) (data.SecondValue) < scatterPointMax.YValue &&
+                              (double) (data.SecondValue) > scatterPointMin.YValue))
                         {
                             return false;
                         }
@@ -150,7 +150,8 @@ namespace Marv.Input
             }
 
             // Remove older annotations
-            this.Chart.Annotations.Remove(annotation => annotation.Tag.Equals(dataRow));
+
+            //   this.Chart.Annotations.Remove(annotation => annotation.Tag.Equals(dataRow));
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {

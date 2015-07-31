@@ -13,7 +13,7 @@ namespace Marv.Input
         public IEnumerable<DateTime> DateTimes
         {
             get { return this.dateTimes; }
-            private set { this.dateTimes = value; }
+            set { this.dateTimes = value; }
         }
 
         public EvidenceTable() {}

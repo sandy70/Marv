@@ -150,6 +150,7 @@
     <Compile Include="VertexValueComputer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Icons\Undo.png" />
     <Resource Include="Resources\Icons\Validate.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

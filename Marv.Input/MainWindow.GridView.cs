@@ -34,8 +34,7 @@ namespace Marv.Input
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
 
-            var table = this.Table;
-            var val = e.NewObject;
+            this.CreatedRowsCount++;
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -149,14 +148,15 @@ namespace Marv.Input
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            var list = new List<AddRowCommand>();
-
-            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues, this.AddRowCommands);
+            var newRowsCount = this.AddRowCommandsCount;
+            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues, (newRowsCount - this.CreatedRowsCount), this.Table);
 
             command.Execute();
 
             this.oldValues.Clear();
-            this.AddRowCommands = list;
+
+            this.AddRowCommandsCount = 0;
+            this.CreatedRowsCount = 0;
 
             if (this.commandStack.Count >= 100)
             {
@@ -186,8 +186,8 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-            this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+            this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+            this.Minimum = Math.Max(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
@@ -238,12 +238,12 @@ namespace Marv.Input
 
             var maxLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
+                XValue = Math.Min(this.Minimum,this.BaseTableMin),
                 YValue = this.MaxUserValue
             };
             var maxLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
+                XValue = Math.Max(this.Maximum,this.BaseTableMax),
                 YValue = this.MaxUserValue
             };
 
@@ -256,12 +256,12 @@ namespace Marv.Input
 
             var modeLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
+                XValue = Math.Min(this.Minimum, this.BaseTableMin),
                 YValue = (this.MaxUserValue + this.MinUserValue) / 2,
             };
             var modeLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
+                XValue = Math.Max(this.Maximum, this.BaseTableMax),
                 YValue = (this.MaxUserValue + this.MinUserValue) / 2,
             };
 
@@ -274,12 +274,12 @@ namespace Marv.Input
 
             var minLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
+                XValue = Math.Min(this.Minimum, this.BaseTableMin),
                 YValue = this.MinUserValue,
             };
             var minLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
+                XValue = Math.Max(this.Maximum, this.BaseTableMax),
                 YValue = this.MinUserValue,
             };
 
@@ -301,15 +301,17 @@ namespace Marv.Input
             }
 
             var command = this.commandStack[this.CurrentCommand];
-            var isDone = command.Undo();
 
-            if (!isDone)
+            if (command.Undo())
             {
-                return;
+                this.commandStack.Remove(command);
+                this.CurrentCommand = this.commandStack.Count - 1;
             }
 
-            this.commandStack.Remove(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
+            if (this.CurrentCommand < 0)
+            {
+                this.SelectedVertex.IsUserEvidenceComplete = false;
+            }
         }
 
         private void Validate()

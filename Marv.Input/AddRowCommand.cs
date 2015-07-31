@@ -4,12 +4,10 @@ namespace Marv.Input
 {
     public class AddRowCommand : ICommand
     {
-        public EvidenceRow NewRow { get; set; }
         public EvidenceTable Table { get; set; }
 
-        public AddRowCommand(EvidenceRow row, EvidenceTable table)
+        public AddRowCommand(EvidenceTable table)
         {
-            this.NewRow = row;
             this.Table = table;
         }
 
@@ -17,11 +15,12 @@ namespace Marv.Input
 
         public bool Undo()
         {
-            if (this.Table.Contains(NewRow))
+            if (this.Table.Count == 0)
             {
-                this.Table.Remove(NewRow);
+                return false;
             }
 
+            this.Table.RemoveAt(this.Table.Count - 1);
             return true;
         }
     }

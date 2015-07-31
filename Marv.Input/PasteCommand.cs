@@ -7,19 +7,20 @@ namespace Marv.Input
 {
     internal class PasteCommand : ICommand
     {
-        public List<AddRowCommand> AddRowCommandsList = new List<AddRowCommand>();
         public List<CellEditCommand> CellEditCommandsList = new List<CellEditCommand>();
+        public int NewPastedRowsCount;
         public List<GridViewCellClipboardEventArgs> PastedCells { get; set; }
         public List<Object> PreviousValues { get; set; }
-
         public Vertex SelectedVertex { get; set; }
+        public EvidenceTable Table { get; set; }
 
-        public PasteCommand(Vertex selVertex, List<GridViewCellClipboardEventArgs> pastedCells, List<Object> oldValues, List<AddRowCommand> addRowCommands)
+        public PasteCommand(Vertex selVertex, List<GridViewCellClipboardEventArgs> pastedCells, List<Object> oldValues, int newPastedRowsCount, EvidenceTable table)
         {
             this.SelectedVertex = selVertex;
             this.PastedCells = pastedCells;
             this.PreviousValues = oldValues;
-            AddRowCommandsList = addRowCommands;
+            this.NewPastedRowsCount = newPastedRowsCount;
+            this.Table = table;
         }
 
         public void Execute()
@@ -41,18 +42,23 @@ namespace Marv.Input
         {
             var isUndoSuccess = true;
 
+            while (NewPastedRowsCount > 0)
+            {
+                this.Table.RemoveAt(this.Table.Count - 1);
+                NewPastedRowsCount--;
+            }
+
             foreach (var cellEditCommand in this.CellEditCommandsList)
             {
-                foreach (var addrowCommand in AddRowCommandsList)
+                if (this.Table.Contains(cellEditCommand.Row))
                 {
-                    if (addrowCommand.NewRow.Equals(cellEditCommand.Row))
-                    {
-                        addrowCommand.Undo();
-                        break;
-                    }
+                    isUndoSuccess = isUndoSuccess && cellEditCommand.Undo();
                 }
+            }
 
-                isUndoSuccess = isUndoSuccess && cellEditCommand.Undo();
+            if (!isUndoSuccess)
+            {
+                return false;
             }
 
             return true;
