@@ -213,21 +213,25 @@ namespace Marv.Input
                     EndPoint = new Point(0, 1)
                 };
 
-                vertexEvidence.Value.ForEach((value, i) =>
+                for (var i = vertexEvidence.Value.Count(); i > 0; i--)
                 {
+                    var value = vertexEvidence.Value[i - 1];
+
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = this.SelectedVertex.Intervals.ElementAt(i) / this.SelectedVertex.SafeMax,
-                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
+                        Color = Color.FromArgb((byte)(value / maxValue * 255), 218, 165, 32)
+
                     });
 
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = this.SelectedVertex.Intervals.ElementAt(i + 1) / this.SelectedVertex.SafeMax,
-                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i - 1) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
+                        Color = Color.FromArgb((byte)(value / maxValue * 255), 218, 165, 32)
                     });
-                });
-
+                }
+                
+              
                 this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                 {
                     Fill = fill,
