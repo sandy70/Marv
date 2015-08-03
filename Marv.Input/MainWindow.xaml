@@ -10,21 +10,31 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized"
-        
-        Loaded="MainWindow_Loaded">
+        WindowState="Maximized">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter">
+                <converters:BooleanToBrushConverter.FalseBrush>
+                    <SolidColorBrush Color="Red" />
+                </converters:BooleanToBrushConverter.FalseBrush>
+
+                <converters:BooleanToBrushConverter.TrueBrush>
+                    <SolidColorBrush Color="Black" />
+                </converters:BooleanToBrushConverter.TrueBrush>
+            </converters:BooleanToBrushConverter>
+
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
+
                 <input:CellTemplateSelector.InValidTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                   TextDecorations="underline"
-                                   Foreground="Red" />
+                    <DataTemplate DataType="input:EvidenceRow">
+                        <TextBlock  Foreground="{Binding Path=IsValid, Converter={StaticResource BooleanToBrushConverter}}"
+                                    Text="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
+                                    TextDecorations="underline"/>
                     </DataTemplate>
                 </input:CellTemplateSelector.InValidTemplate>
 
@@ -39,12 +49,6 @@
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
 
-            <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter">
-                <converters:BooleanToBrushConverter.FalseBrush>
-                    <SolidColorBrush Color="Red" />
-                </converters:BooleanToBrushConverter.FalseBrush>
-
-            </converters:BooleanToBrushConverter>
             <DataTemplate x:Key="EllipsePointTemplate">
                 <Ellipse Cursor="Hand"
                          Width="8"
