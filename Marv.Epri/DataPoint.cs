@@ -22,6 +22,7 @@ namespace Marv.Epri
 
                 this.server_timestamp = value;
                 this.RaisePropertyChanged();
+                this.RaisePropertyChanged("Local_TimeStamp");
             }
         }
 

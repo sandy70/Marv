@@ -44,7 +44,7 @@
                                                  PanMode="Horizontal" />
 
                 <telerik:ChartTrackBallBehavior ShowIntersectionPoints="True"
-                                                ShowTrackInfo="True" />
+                                                ShowTrackInfo="True"/>
             </telerik:RadCartesianChart.Behaviors>
 
             <telerik:LineSeries CategoryBinding="Server_TimeStamp"
@@ -52,7 +52,7 @@
                                 ItemsSource="{Binding ElementName=Root, Path=DataPoints}">
                 <telerik:LineSeries.TrackBallInfoTemplate>
                     <DataTemplate>
-                        <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="True"
+                        <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
                                                  DescriptionPanelVisibility="Collapsed"
                                                  FieldIndicatorVisibility="Collapsed"
                                                  Height="Auto" Width="Auto"
@@ -61,7 +61,12 @@
                                                  Item="{Binding}"
                                                  Margin="8"
                                                  SearchBoxVisibility="Collapsed"
-                                                 SortAndGroupButtonsVisibility="Collapsed" />
+                                                 SortAndGroupButtonsVisibility="Collapsed">
+                            <telerik:RadPropertyGrid.PropertyDefinitions>
+                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Server_TimeStamp}" DisplayName="Time" />
+                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Value}" DisplayName="Value" />
+                            </telerik:RadPropertyGrid.PropertyDefinitions>
+                        </telerik:RadPropertyGrid>
                     </DataTemplate>
                 </telerik:LineSeries.TrackBallInfoTemplate>
             </telerik:LineSeries>

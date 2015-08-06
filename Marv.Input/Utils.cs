@@ -12,7 +12,6 @@ namespace Marv.Input
 {
     public static class Utils
     {
-        public const double Infinity = 10E+09;
         public const string MaxInterpolatorLine = "MaximumLine";
         public const string MinInterpolatorLine = "MinimumLine";
         public const double MinusInfinity = 10E-09;
@@ -21,11 +20,10 @@ namespace Marv.Input
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
             var baseRowsList = new List<double>();
-            var i = baseMin;
-            while (i < baseMax)
+
+            for (var i = baseMin; i <= baseMax; i += baseRange)
             {
                 baseRowsList.Add(i);
-                i = i + baseRange;
             }
 
             return baseRowsList;
@@ -37,6 +35,7 @@ namespace Marv.Input
             {
                 return Math.Sqrt(Math.Pow(p1.XValue - p2.XValue, 2) + Math.Pow((double) p1.YValue - (double) p2.YValue, 2));
             }
+
             return 0;
         }
 
@@ -47,9 +46,11 @@ namespace Marv.Input
 
         public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable, string selectedColumnName)
         {
-            var minUserValue = Infinity;
-            var maxUserValue = MinusInfinity;
+            var minUserValue = double.MaxValue;
+            var maxUserValue = double.MinValue;
+
             var minMaxUserValues = new Dict<string, double>();
+
             foreach (var row in userTable)
             {
                 var evidence = row[selectedColumnName] as VertexEvidence;
@@ -58,6 +59,7 @@ namespace Marv.Input
                 {
                     continue;
                 }
+
                 maxUserValue = Math.Max(maxUserValue, evidence.Params.Max());
                 minUserValue = Math.Min(minUserValue, evidence.Params.Min());
 
@@ -91,20 +93,12 @@ namespace Marv.Input
 
         public static IEnumerable<double> GetXCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
         {
-            var coords = numberPoints.Select(scatterDataPoint => scatterDataPoint.XValue).ToList();
-            IEnumerable<double> xCoords = coords;
-
-            return xCoords;
+            return numberPoints.Select(scatterDataPoint => scatterDataPoint.XValue);
         }
 
         public static IEnumerable<double> GetYCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
         {
-            var coords = numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue).ToList();
-
-            var newYCords = coords.Cast<double>().ToList();
-
-            IEnumerable<double> yCoords = newYCords;
-            return yCoords;
+            return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
         public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList)

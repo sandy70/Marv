@@ -70,7 +70,6 @@ namespace Marv.Controls
         {
             if (e.LeftButton == MouseButtonState.Pressed && !isDoubleClick)
             {
-                Console.WriteLine("ProgressBar_MouseMove");
                 this.SetValue(e);
                 e.Handled = true;
             }
