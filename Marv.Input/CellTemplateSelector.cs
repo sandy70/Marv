@@ -69,6 +69,8 @@ namespace Marv.Input
                 }
 
                 return this.InValidTemplate;
+
+              
             }
             catch (NullReferenceException)
             {

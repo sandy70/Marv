@@ -21,7 +21,7 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                if (! IsWithInRange(data))
+                if (!IsWithInRange(data))
                 {
                     return;
                 }

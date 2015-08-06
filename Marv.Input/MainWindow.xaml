@@ -255,7 +255,8 @@
                                 </ToolBarTray>
 
                                 <!-- Input Grid View -->
-                                <telerik:RadGridView Grid.Row="1"
+                                <telerik:RadGridView Name="GridView"
+                                                     Grid.Row="1"
                                                      CanUserFreezeColumns="False"
                                                      CanUserInsertRows="True"
                                                      CanUserDeleteRows="True"

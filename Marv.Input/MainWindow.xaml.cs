@@ -31,7 +31,6 @@ namespace Marv.Input
         private double baseTableMin;
         private double baseTableRange;
         private ICommand cellEditCommand;
-        private string chartTitle;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
@@ -585,7 +584,7 @@ namespace Marv.Input
                 this.table = value;
                 this.RaisePropertyChanged();
 
-                this.table.CollectionChanged += table_CollectionChanged;
+                this.Table.CollectionChanged += Table_CollectionChanged;
             }
         }
 
@@ -611,26 +610,20 @@ namespace Marv.Input
             InitializeComponent();
         }
 
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected void Table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             var action = e.Action;
 
-            if (action == NotifyCollectionChangedAction.Add)
+            if (action != NotifyCollectionChangedAction.Add)
             {
-                var command = new AddRowCommand(this.Table);
-
-                if (this.commandStack.Count >= 100)
-                {
-                    this.commandStack.RemoveAt(0);
-                }
-
-                this.AddRowCommandsCount++;
-
-                this.commandStack.Add(command);
-                this.CurrentCommand = this.commandStack.Count - 1;
+                return;
             }
 
-            else if (action == NotifyCollectionChangedAction.Remove) {}
+            var command = new AddRowCommand(this.Table);
+
+            this.AddRowCommandsCount++;
+
+            this.UpdateCommandStack(command);
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -655,6 +648,7 @@ namespace Marv.Input
             this.dates.Add(date);
 
             this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
+
             this.UpdateTable();
         }
 
@@ -830,8 +824,7 @@ namespace Marv.Input
         private void Go_Click(object sender, RoutedEventArgs e)
         {
             this.isBaseTableAvailable = true;
-            this.Minimum = Utils.Infinity;
-            this.Maximum = Utils.MinusInfinity;
+
             this.Minimum = Math.Min(this.Minimum, this.BaseTableMin);
             this.Maximum = Math.Max(this.Maximum, this.BaseTableMax);
 
@@ -846,7 +839,10 @@ namespace Marv.Input
             {
                 var selectRow = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].FirstOrDefault(row => row.Equals(this.selectedRow));
 
-                selectRow[this.SelectedColumnName] = vertexEvidence;
+                if (selectRow != null)
+                {
+                    selectRow[this.SelectedColumnName] = vertexEvidence;
+                }
             }
 
             if (vertexEvidence == null)
@@ -862,8 +858,16 @@ namespace Marv.Input
 
             if (this.Table.Count != 0)
             {
-                this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-                this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                if (this.isBaseTableAvailable)
+                {
+                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+                }
+                else
+                {
+                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                }
             }
 
             if (this.UserNumberPoints != null)
@@ -887,12 +891,7 @@ namespace Marv.Input
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var result = LineDataSaveAs();
-
-            //if (!result.Equals(true))
-            //{
-            //    return;
-            //}
+            this.LineDataSaveAs();
 
             this.lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
             this.BaseTableMax = 0;
@@ -929,7 +928,7 @@ namespace Marv.Input
             }
         }
 
-        private bool? LineDataSaveAs()
+        private void LineDataSaveAs()
         {
             var dialog = new SaveFileDialog
             {
@@ -944,8 +943,6 @@ namespace Marv.Input
 
                 this.lineDataObj.WriteJson(this.lineDataObjFileName);
             }
-
-            return result;
         }
 
         private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -955,24 +952,7 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //this.LineDataSaveAs();
-
-            var dialog = new SaveFileDialog
-            {
-                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
-            };
-
-            var result = dialog.ShowDialog();
-
-            if (result == true)
-            {
-                var evidenceRow = new EvidenceRow { From = 0, To = 10 };
-                evidenceRow["Hello"] = 90;
-                evidenceRow.WriteJson(dialog.FileName);
-
-                var newRow = Common.Utils.ReadJson<EvidenceRow>(dialog.FileName);
-                Console.WriteLine(newRow);
-            }
+            this.LineDataSaveAs();
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
@@ -996,7 +976,10 @@ namespace Marv.Input
                         baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
                     }
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList).UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList);
+
+                    mergedDataSet = mergedDataSet.UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
             }
@@ -1070,12 +1053,25 @@ namespace Marv.Input
             }
         }
 
+        private void UpdateCommandStack(ICommand command)
+        {
+            if (this.commandStack.Count >= 100)
+            {
+                this.commandStack.RemoveAt(0);
+            }
+
+            this.commandStack.Add(command);
+            this.CurrentCommand = this.commandStack.Count - 1;
+        }
+
         private void UpdateTable()
         {
             if (this.SelectedVertex == null)
             {
                 return;
             }
+
+            this.GridView.CommitEdit();
 
             this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
 

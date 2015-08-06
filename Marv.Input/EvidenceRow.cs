@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Marv.Common.Types;
 using Newtonsoft.Json;
 
@@ -7,9 +6,8 @@ namespace Marv.Input
 {
     public class EvidenceRow : Dynamic
     {
-        [Display(AutoGenerateField = false)] public bool IsValid = true;
-
         private double from;
+        private bool isValid = true;
         private double to;
 
         [Display(Order = 0)]
@@ -26,6 +24,17 @@ namespace Marv.Input
                 }
 
                 this.from = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public bool IsValid
+        {
+            get { return this.isValid; }
+            set
+            {
+                this.isValid = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -50,7 +59,12 @@ namespace Marv.Input
 
         public bool Contains(EvidenceRow other)
         {
-            return this.From <= other.From && other.To <= this.To;
+            if (!other.From.Equals(other.To))
+            {
+                return this.From <= other.From && other.To <= this.To;
+            }
+
+            return this.From.Equals(other.From) && this.To.Equals(other.To);
         }
 
         public override bool Equals(object obj)

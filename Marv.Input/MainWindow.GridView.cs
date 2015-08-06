@@ -60,7 +60,7 @@ namespace Marv.Input
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
-            if (e.NewData.Equals(e.OldData))
+            if (e.NewData.ToString().Equals(e.OldData.ToString()))
             {
                 return;
             }
@@ -68,12 +68,7 @@ namespace Marv.Input
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
-            if (this.commandStack.Count >= 100)
-            {
-                this.commandStack.RemoveAt(0);
-            }
-            this.commandStack.Add(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
+            this.UpdateCommandStack(command);
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -157,15 +152,9 @@ namespace Marv.Input
 
             this.AddRowCommandsCount = 0;
             this.CreatedRowsCount = 0;
-
-            if (this.commandStack.Count >= 100)
-            {
-                this.commandStack.RemoveAt(0);
-            }
-            this.commandStack.Add(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
-
+            this.UpdateCommandStack(command);
             this.SelectedVertex.IsUserEvidenceComplete = true;
+
             this.Validate();
             this.pastedCells.Clear();
         }
@@ -186,8 +175,16 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
-            this.Minimum = Math.Max(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+            if (this.isBaseTableAvailable)
+            {
+                this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+            }
+            else
+            {
+                this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+            }
         }
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
@@ -238,12 +235,12 @@ namespace Marv.Input
 
             var maxLineStartPoint = new ScatterDataPoint
             {
-                XValue = Math.Min(this.Minimum,this.BaseTableMin),
+                XValue = this.Minimum,
                 YValue = this.MaxUserValue
             };
             var maxLineEndPoint = new ScatterDataPoint
             {
-                XValue = Math.Max(this.Maximum,this.BaseTableMax),
+                XValue = this.Maximum,
                 YValue = this.MaxUserValue
             };
 
@@ -256,12 +253,12 @@ namespace Marv.Input
 
             var modeLineStartPoint = new ScatterDataPoint
             {
-                XValue = Math.Min(this.Minimum, this.BaseTableMin),
+                XValue = this.Minimum,
                 YValue = (this.MaxUserValue + this.MinUserValue) / 2,
             };
             var modeLineEndPoint = new ScatterDataPoint
             {
-                XValue = Math.Max(this.Maximum, this.BaseTableMax),
+                XValue = this.Maximum,
                 YValue = (this.MaxUserValue + this.MinUserValue) / 2,
             };
 
@@ -274,12 +271,12 @@ namespace Marv.Input
 
             var minLineStartPoint = new ScatterDataPoint
             {
-                XValue = Math.Min(this.Minimum, this.BaseTableMin),
+                XValue = this.Minimum,
                 YValue = this.MinUserValue,
             };
             var minLineEndPoint = new ScatterDataPoint
             {
-                XValue = Math.Max(this.Maximum, this.BaseTableMax),
+                XValue = this.Maximum,
                 YValue = this.MinUserValue,
             };
 
@@ -328,16 +325,9 @@ namespace Marv.Input
                 fromToList.Add(evidenceRow.To);
             }
 
-            foreach (var pastedCell in this.pastedCells) {}
-
             for (var i = 0; i < fromToList.Count - 1; i++)
             {
                 evidenceTable[i / 2].IsValid = !(fromToList[i] > fromToList[i + 1]);
-
-                if (!evidenceTable[i / 2].IsValid)
-                {
-                    MessageBox.Show("Row no" + i / 2 + " is invalid");
-                }
             }
         }
 

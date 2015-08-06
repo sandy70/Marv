@@ -6,7 +6,6 @@ namespace Marv.Input
     public class CellEditCommand : ICommand
     {
         public string ColumnName { get; set; }
-        // public GridViewCellEditEndedEventArgs E { get; set; }
         public object NewData { get; set; }
         public object OldData { get; set; }
         public EvidenceRow Row { get; set; }
@@ -42,7 +41,6 @@ namespace Marv.Input
             if (Row == null)
             {
                 return false;
-               
             }
 
             DateTime dateTime;
