@@ -12,9 +12,7 @@
 
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized"
-        
-        Loaded="MainWindow_Loaded">
+        WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

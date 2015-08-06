@@ -64,7 +64,7 @@
                                                     SliderForeground="YellowGreen"
                                                     Value="{Binding Path=Evidence, Converter={StaticResource ResourceKey=DecimalToPercentage}, Mode=TwoWay}"
                                                     Visibility="{Binding ElementName=Root, Path=IsEvidenceVisible, Converter={StaticResource BooleanToVisibility}}"
-                                                    ValueEntered="StateControl_OnValueEntered" />
+                                                    ValueEntered="SliderProgressBar_ValueEntered" />
 
                         <!-- Belief -->
                         <controls:SliderProgressBar Grid.Column="1"

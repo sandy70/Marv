@@ -137,8 +137,13 @@ namespace Marv.Controls
             this.RaiseShowGroupButtonClicked();
         }
 
-        private void StateControl_OnValueEntered(object sender, double e)
+        private void SliderProgressBar_ValueEntered(object sender, double e)
         {
+            if (!this.IsEditable)
+            {
+                return;
+            }
+
             var anEvidenceString = Math.Abs(e - 100) < Common.Utils.Epsilon && this.Vertex.Type != VertexType.Interval
                                        ? ((sender as SliderProgressBar).DataContext as State).Key
                                        : this.Vertex.States.Select(state => state.Evidence).String();
