@@ -10,7 +10,8 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        KeyDown="MainWindow_KeyDown">
 
     <Window.Resources>
         <ResourceDictionary>

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
@@ -15,6 +16,7 @@ using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
+using ICommand = Marv.Common.ICommand;
 
 namespace Marv.Input
 {
@@ -924,6 +926,7 @@ namespace Marv.Input
                 else
                 {
                     this.lineDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, EvidenceTable>>(dialog.FileName);
+
                 }
             }
         }
@@ -952,7 +955,31 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.LineDataSaveAs();
+            if (this.lineDataObjFileName == null)
+            {
+                this.LineDataSaveAs();
+            }
+            else
+            {
+                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+            }
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.S || !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
+            if (this.lineDataObjFileName == null)
+            {
+                this.LineDataSaveAs();
+            }
+            else
+            {
+                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
