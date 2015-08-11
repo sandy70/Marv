@@ -72,10 +72,7 @@ namespace Marv.Input
 
         public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)
         {
-            var dataTuple = new DataTuple(scatterPoint.XValue, scatterPoint.YValue);
-            var point = chart.ConvertDataToPoint(dataTuple);
-
-            return point;
+            return chart.ConvertDataToPoint(new DataTuple(scatterPoint.XValue, scatterPoint.YValue));
         }
 
         public static ScatterDataPoint GetScatterDataPoint(this RadCartesianChart chart, Point position)
@@ -146,7 +143,7 @@ namespace Marv.Input
                     {
                         continue;
                     }
-                   
+
                     // multiple inputs for a single point feature is allowed 
                     if (unmergedEvidenceSet.Contains(evidenceRow) && newList[i] == newList[i + 1])
                     {
@@ -198,7 +195,12 @@ namespace Marv.Input
 
                         foreach (var columnName in columnNames)
                         {
-                            mergedEvidenceRow[columnName] = interpolatedRow[columnName];
+                            var vertexEvidence = interpolatedRow[columnName] as VertexEvidence;
+                            if (vertexEvidence == null)
+                            {
+                                continue;
+                            }
+                            mergedEvidenceRow[columnName] = vertexEvidence;
                         }
                     }
                 }

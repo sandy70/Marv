@@ -926,7 +926,7 @@ namespace Marv.Input
                 else
                 {
                     this.lineDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, EvidenceTable>>(dialog.FileName);
-
+                    this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
                 }
             }
         }

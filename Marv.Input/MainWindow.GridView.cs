@@ -60,11 +60,6 @@ namespace Marv.Input
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
-            if (e.NewData.ToString().Equals(e.OldData.ToString()))
-            {
-                return;
-            }
-
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
@@ -121,10 +116,10 @@ namespace Marv.Input
                     this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
                 }
 
-                    //else
-                    //{
-                    //    this.CurrentInterpolatorDataPoints = null;
-                    //}
+            //else
+            // {
+            //            this.CurrentInterpolatorDataPoints = null;
+            //}
                 else
                 {
                     this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
@@ -152,6 +147,7 @@ namespace Marv.Input
 
             this.AddRowCommandsCount = 0;
             this.CreatedRowsCount = 0;
+
             this.UpdateCommandStack(command);
             this.SelectedVertex.IsUserEvidenceComplete = true;
 

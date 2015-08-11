@@ -234,15 +234,15 @@
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
 
-                                        <Label Name="Start" Width="70" Content="Start(Mts)" />
+                                        <Label Name="Start" Width="70" Content="Start(m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMin}" />
-                                        <Label Name="End" Width="70" Content="End(Mts)" />
+                                        <Label Name="End" Width="70" Content="End(m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMax}" />
-                                        <Label Name="Range" Width="75" Content="Range(Mts)" />
+                                        <Label Name="Range" Width="75" Content="Range(m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableRange}" />

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
@@ -45,33 +45,33 @@ namespace Marv.Input
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
 
-            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked)
-            {
-                var chart = (RadCartesianChart) sender;
+            //else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked)
+            //{
+            //    var chart = (RadCartesianChart) sender;
 
-                var dynamicPoint = e.GetPosition(chart);
+            //    var dynamicPoint = e.GetPosition(chart);
 
-                this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName];
+            //    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName];
 
-                var currentLine = this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine);
+            //    var currentLine = this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine);
 
-                ScatterDataPoint replacePoint = null;
+            //    ScatterDataPoint replacePoint = null;
 
-                foreach (var scatterPoint in currentLine)
-                {
-                    var linePoint = this.Chart.GetPointOnChart(scatterPoint);
+            //    foreach (var scatterPoint in currentLine)
+            //    {
+            //        var linePoint = this.Chart.GetPointOnChart(scatterPoint);
 
-                    if (Math.Round(linePoint.X) == (Math.Round(dynamicPoint.X)) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
-                    {
-                        replacePoint = scatterPoint;
-                    }
-                }
+            //        if (Math.Round(linePoint.X) == (Math.Round(dynamicPoint.X)) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
+            //        {
+            //            replacePoint = scatterPoint;
+            //        }
+            //    }
 
-                if (IsWithInRange(this.Chart.ConvertPointToData(dynamicPoint)))
-                {
-                    currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
-                }
-            }
+            //    if (IsWithInRange(this.Chart.ConvertPointToData(dynamicPoint)))
+            //    {
+            //        currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
+            //    }
+            //}
         }
 
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
@@ -87,41 +87,24 @@ namespace Marv.Input
             var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
             var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
 
-            if (this.SelectedLine == Utils.MaxInterpolatorLine)
+            var maxLinInterpolator = new LinearInterpolator(currentMax.GetXCoords(), currentMax.GetYCoords());
+            var modeLinInterpolator = new LinearInterpolator(currentMode.GetXCoords(), currentMode.GetYCoords());
+            var minLinInterpolator = new LinearInterpolator(currentMin.GetXCoords(), currentMin.GetYCoords());
+
+            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
             {
-                foreach (var scatterPoint in currentMode)
-                {
-                    if (!((double) data.SecondValue > scatterPoint.YValue))
-                    {
-                        return false;
-                    }
-                }
+                return false;
             }
 
-            else if (this.SelectedLine == Utils.ModeInterpolatorLine)
+            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
+                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
             {
-                foreach (var scatterPointMax in currentMax)
-                {
-                    foreach (var scatterPointMin in currentMin)
-                    {
-                        if (!((double) (data.SecondValue) < scatterPointMax.YValue &&
-                              (double) (data.SecondValue) > scatterPointMin.YValue))
-                        {
-                            return false;
-                        }
-                    }
-                }
+                return false;
             }
 
-            else
+            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
             {
-                foreach (var scatterPoint in currentMode)
-                {
-                    if (!((double) data.SecondValue < scatterPoint.YValue))
-                    {
-                        return false;
-                    }
-                }
+                return false;
             }
 
             return true;
