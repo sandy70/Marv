@@ -29,6 +29,16 @@
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
 
+            <converters:BooleanToBrushConverter x:Key="InterpolatorLineCrossConverter">
+                <converters:BooleanToBrushConverter.FalseBrush>
+                    <SolidColorBrush Color="Green" />
+                </converters:BooleanToBrushConverter.FalseBrush>
+
+                <converters:BooleanToBrushConverter.TrueBrush>
+                    <SolidColorBrush Color="Red" />
+                </converters:BooleanToBrushConverter.TrueBrush>
+            </converters:BooleanToBrushConverter>
+
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
 
                 <input:CellTemplateSelector.InValidTemplate>
@@ -234,15 +244,15 @@
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
 
-                                        <Label Name="Start" Width="70" Content="Start(m)" />
+                                        <Label Name="Start" Width="70" Content="Start (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMin}" />
-                                        <Label Name="End" Width="70" Content="End(m)" />
+                                        <Label Name="End" Width="70" Content="End (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMax}" />
-                                        <Label Name="Range" Width="75" Content="Range(m)" />
+                                        <Label Name="Range" Width="75" Content="Range (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableRange}" />
@@ -295,11 +305,13 @@
                             <!-- Chart -->
                             <telerik:RadCartesianChart Name="Chart"
                                                        MouseMove="Chart_MouseMove">
+                                
                                 <telerik:RadCartesianChart.Behaviors>
                                     <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
 
                                 </telerik:RadCartesianChart.Behaviors>
-
+                               
+                                
                                 <telerik:RadCartesianChart.HorizontalAxis>
                                     <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
                                                         Minimum="{Binding ElementName=Root, Path=Minimum}" />
@@ -312,14 +324,15 @@
 
                                 <telerik:RadCartesianChart.Series>
 
-                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
+                                    <telerik:ScatterLineSeries Cursor="Hand"
+                                                               ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
                                                                Name="MaximumLine"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               Cursor="Hand"
-                                                               Stroke="Green">
+                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                              
 
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
@@ -332,7 +345,7 @@
                                                                Name="ModeLine"
                                                                ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                               Stroke="Green"
+                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue">
 
@@ -349,16 +362,20 @@
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand"
-                                                               Stroke="Green">
+                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
 
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
+                                        
+                                        
 
                                     </telerik:ScatterLineSeries>
 
                                 </telerik:RadCartesianChart.Series>
+                              
                             </telerik:RadCartesianChart>
+                            
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>

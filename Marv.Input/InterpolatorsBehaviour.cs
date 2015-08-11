@@ -92,13 +92,19 @@ namespace Marv.Input
             {
                 mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName].GetNumberPoints(mainWindow.SelectedLine).Remove(closestScatterPoint);
             }
+
+            mainWindow.IsLineCross = !mainWindow.CurrentInterpolatorDataPoints.IsWithInRange();
         }
 
         private void InsertDataPoint(ScatterDataPoint userDataPoint)
         {
             mainWindow.CurrentInterpolatorDataPoints = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName];
 
-            var currentLine = mainWindow.CurrentInterpolatorDataPoints.GetNumberPoints(mainWindow.SelectedLine);
+            //if (this.mainWindow.SelectedLine == null)
+            //{
+            //    return;
+            //}
+            var currentLine = this.mainWindow.CurrentInterpolatorDataPoints.GetNumberPoints(this.mainWindow.SelectedLine);
 
             if (currentLine != null)
             {

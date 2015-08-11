@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -219,6 +220,37 @@ namespace Marv.Input
             }
 
             return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+        }
+
+        public static bool IsWithInRange(this InterpolatorDataPoints currentInterpolatorDataPoints)
+        {
+            var currentLine = currentInterpolatorDataPoints;
+
+            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
+            var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
+            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
+
+            var maxLinInterpolator = new LinearInterpolator(currentMax.GetXCoords(), currentMax.GetYCoords());
+            var modeLinInterpolator = new LinearInterpolator(currentMode.GetXCoords(), currentMode.GetYCoords());
+            var minLinInterpolator = new LinearInterpolator(currentMin.GetXCoords(), currentMin.GetYCoords());
+
+            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
+                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

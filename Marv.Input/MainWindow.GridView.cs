@@ -116,10 +116,10 @@ namespace Marv.Input
                     this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
                 }
 
-            //else
-            // {
-            //            this.CurrentInterpolatorDataPoints = null;
-            //}
+                    //else
+                    // {
+                    //            this.CurrentInterpolatorDataPoints = null;
+                    //}
                 else
                 {
                     this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();

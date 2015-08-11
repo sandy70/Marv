@@ -71,7 +71,18 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private bool isLineCross;
 
+        public bool IsLineCross
+        {
+            get { return isLineCross; }
+            set
+            {
+                isLineCross = value;
+                this.RaisePropertyChanged();
+            }
+        }
+            
         public List<AddRowCommand> AddRowCommands
         {
             get { return addRowCommands; }
@@ -758,6 +769,12 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
+            if (this.IsLineCross)
+            {
+                MessageBox.Show("Interpolator lines crossing each other");
+                return;
+            }
+
             LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
             this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
@@ -901,6 +918,8 @@ namespace Marv.Input
             this.BaseTableRange = 0;
 
             this.Chart.Annotations.Remove(annotation => true);
+            this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints();
+            this.IsLineCross = false;
             this.UpdateTable();
         }
 

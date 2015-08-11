@@ -50,6 +50,7 @@ namespace Marv.Input
 
         public ObservableCollection<ScatterDataPoint> GetNumberPoints(string selectedLine)
         {
+           
             if (selectedLine.Equals(Utils.MaxInterpolatorLine))
             {
                 return this.MaxNumberPoints;
