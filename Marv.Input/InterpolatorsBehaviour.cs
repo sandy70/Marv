@@ -63,6 +63,11 @@ namespace Marv.Input
         {
             var currentLine = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName].GetNumberPoints(mainWindow.SelectedLine);
 
+            if (currentLine == null)
+            {
+                return;
+            }
+
             mainWindow.CurrentInterpolatorDataPoints = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName];
 
             var firstPoint = mainWindow.Chart.GetPointOnChart(currentLine[0]);

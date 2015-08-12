@@ -5,7 +5,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
-using Marv.Common.Interpolators;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
@@ -59,13 +58,15 @@ namespace Marv.Input
                 {
                     var linePoint = this.Chart.GetPointOnChart(scatterPoint);
 
-                    if (Math.Round(linePoint.X) == (Math.Round(dynamicPoint.X)) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
+                    if (Math.Round(linePoint.X)==Math.Round(dynamicPoint.X) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
                     {
                         replacePoint = scatterPoint;
                     }
                 }
 
-                if (this.CurrentInterpolatorDataPoints.IsWithInRange())
+                this.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
+               
+                if (!this.IsLineCross)
                 {
                     currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
                 }
@@ -76,37 +77,6 @@ namespace Marv.Input
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
         }
-
-        //private bool IsWithInRange()
-        //{
-        //    var currentLine = this.CurrentInterpolatorDataPoints;
-
-        //    var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
-        //    var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
-        //    var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
-
-        //    var maxLinInterpolator = new LinearInterpolator(currentMax.GetXCoords(), currentMax.GetYCoords());
-        //    var modeLinInterpolator = new LinearInterpolator(currentMode.GetXCoords(), currentMode.GetYCoords());
-        //    var minLinInterpolator = new LinearInterpolator(currentMin.GetXCoords(), currentMin.GetYCoords());
-
-        //    if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
-        //    {
-        //        return false;
-        //    }
-
-        //    if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
-        //                                          scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
-        //    {
-        //        return false;
-        //    }
-
-        //    if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
-        //    {
-        //        return false;
-        //    }
-
-        //    return true;
-        //}
 
         private void Plot(string columnName)
         {

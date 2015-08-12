@@ -48,6 +48,7 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isInterpolateClicked;
+        private bool isLineCross;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
@@ -71,23 +72,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
-        private bool isLineCross;
-
-        public bool IsLineCross
-        {
-            get { return isLineCross; }
-            set
-            {
-                isLineCross = value;
-                this.RaisePropertyChanged();
-            }
-        }
-            
-        public List<AddRowCommand> AddRowCommands
-        {
-            get { return addRowCommands; }
-            set { addRowCommands = value; }
-        }
 
         public int AddRowCommandsCount
         {
@@ -329,6 +313,16 @@ namespace Marv.Input
             set
             {
                 isInterpolateClicked = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsLineCross
+        {
+            get { return isLineCross; }
+            set
+            {
+                isLineCross = value;
                 this.RaisePropertyChanged();
             }
         }

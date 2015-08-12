@@ -226,6 +226,8 @@ namespace Marv.Input
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {
+            this.IsLineCross = false;
+
             this.MinUserValue = minMaxValues["Minimum"];
             this.MaxUserValue = minMaxValues["Maximum"];
 
