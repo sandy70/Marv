@@ -153,6 +153,22 @@ namespace Marv.Input
 
             this.Validate();
             this.pastedCells.Clear();
+
+            if (this.Table.Count != 0)
+            {
+                if (this.isBaseTableAvailable)
+                {
+                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+                }
+                else
+                {
+                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                }
+            }
+            this.selectedColumnName = this.Table.DateTimes.First().String();
+            this.Plot(this.selectedColumnName);
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
@@ -307,6 +323,8 @@ namespace Marv.Input
             {
                 this.SelectedVertex.IsUserEvidenceComplete = false;
             }
+
+            
         }
 
         private void Validate()
