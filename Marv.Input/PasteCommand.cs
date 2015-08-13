@@ -42,7 +42,7 @@ namespace Marv.Input
         {
             var isUndoSuccess = true;
 
-            while (NewPastedRowsCount > 0 && this.Table.Count >0 )
+            while (NewPastedRowsCount > 0 && this.Table.Count > 0)
             {
                 this.Table.RemoveAt(this.Table.Count - 1);
                 NewPastedRowsCount--;
