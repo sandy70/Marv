@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
@@ -14,6 +15,7 @@ using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
+using Telerik.Windows.Controls.ChartView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 
 namespace Marv.Input
@@ -21,22 +23,15 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const int ModifyTolerance = 100;
+        private static readonly NumericalAxis LinearAxis = new LinearAxis();
+        private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
+
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
-        private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
 
-        public List<AddRowCommand> AddRowCommands
-        {
-            get { return addRowCommands; }
-            set
-            {
-                addRowCommands = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+        private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private double baseTableMax;
         private double baseTableMin;
         private double baseTableRange;
@@ -78,6 +73,17 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private NumericalAxis verticalAxis = LinearAxis;
+
+        public List<AddRowCommand> AddRowCommands
+        {
+            get { return addRowCommands; }
+            set
+            {
+                addRowCommands = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public double BaseTableMax
         {
@@ -571,46 +577,6 @@ namespace Marv.Input
             }
         }
 
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-
-            
-            var action = e.Action;
-
-            if (action == NotifyCollectionChangedAction.Add)
-            {
-                EvidenceRow newRow = null;
-
-                if (e.NewItems != null)
-                {
-                    foreach (var evidenceRow in e.NewItems.Cast<EvidenceRow>())
-                    {
-                        newRow = evidenceRow;
-
-                    }
-                }
-
-                var command = new AddRowCommand(newRow, this.Table);
-
-                if (this.commandStack.Count >= 100)
-                {
-                    this.commandStack.RemoveAt(0);
-                }
-
-                this.AddRowCommands.Add(command);
-                this.commandStack.Add(command);
-                this.CurrentCommand = this.commandStack.Count - 1;
-            }
-
-            else if (action == NotifyCollectionChangedAction.Remove)
-            {
-                
-            }    
-          
-
-            
-        }
-
         public Dict<string, string, InterpolatorDataPoints> UserNumberPoints
         {
             get { return this.userNumberPoints; }
@@ -627,12 +593,58 @@ namespace Marv.Input
             }
         }
 
+        public NumericalAxis VerticalAxis
+        {
+            get { return this.verticalAxis; }
+
+            set
+            {
+                this.verticalAxis = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public MainWindow()
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
 
-            
+            LinearAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+            LinearAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+
+            LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+            LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+        }
+
+        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var action = e.Action;
+
+            if (action == NotifyCollectionChangedAction.Add)
+            {
+                EvidenceRow newRow = null;
+
+                if (e.NewItems != null)
+                {
+                    foreach (var evidenceRow in e.NewItems.Cast<EvidenceRow>())
+                    {
+                        newRow = evidenceRow;
+                    }
+                }
+
+                var command = new AddRowCommand(newRow, this.Table);
+
+                if (this.commandStack.Count >= 100)
+                {
+                    this.commandStack.RemoveAt(0);
+                }
+
+                this.AddRowCommands.Add(command);
+                this.commandStack.Add(command);
+                this.CurrentCommand = this.commandStack.Count - 1;
+            }
+
+            else if (action == NotifyCollectionChangedAction.Remove) {}
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -658,6 +670,11 @@ namespace Marv.Input
 
             this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
             this.UpdateTable();
+        }
+
+        private void AxisTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateVerticalAxis();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -850,6 +867,8 @@ namespace Marv.Input
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
+            this.UpdateVerticalAxis();
+
             this.UpdateTable();
 
             if (this.Table.Count != 0)
@@ -1071,6 +1090,16 @@ namespace Marv.Input
             {
                 this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
+        }
+
+        private void UpdateVerticalAxis()
+        {
+            if (this.SelectedVertex == null)
+            {
+                return;
+            }
+
+            this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

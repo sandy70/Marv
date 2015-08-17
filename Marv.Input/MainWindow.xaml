@@ -225,7 +225,9 @@
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource VertexAxisTypes}}"
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"
-                                                             Width="100" />
+                                                             SelectedItem="{Binding ElementName=Root, Path=SelectedVertex.AxisType, Mode=TwoWay}"
+                                                             Width="100"
+                                                             SelectionChanged="AxisTypeComboBox_SelectionChanged"/>
 
                                         <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
                                                                    InputMode="DatePicker"
@@ -252,6 +254,7 @@
                                                            Click="Done_Click" />
 
                                     </ToolBar>
+                                    
                                     <ToolBar Band="2"
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
@@ -305,7 +308,6 @@
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted" />
-                        
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -315,7 +317,9 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Chart -->
                             <telerik:RadCartesianChart Name="Chart"
+                                                       VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
                                                        MouseMove="Chart_MouseMove">
+                                
                                 <telerik:RadCartesianChart.Behaviors>
                                     <telerik:ChartPanAndZoomBehavior ZoomMode="None" PanMode="None" />
                                 </telerik:RadCartesianChart.Behaviors>
@@ -324,11 +328,6 @@
                                     <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
                                                         Minimum="{Binding ElementName=Root, Path=Minimum}" />
                                 </telerik:RadCartesianChart.HorizontalAxis>
-
-                                <telerik:RadCartesianChart.VerticalAxis>
-                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=SelectedVertex.SafeMax}"
-                                                        Minimum="{Binding ElementName=Root, Path=SelectedVertex.SafeMin}" />
-                                </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
 
@@ -339,13 +338,10 @@
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand">
-
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
-                                        
                                     </telerik:ScatterLineSeries>
-
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
                                                                Name="ModeLine"
@@ -354,11 +350,9 @@
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand">
-                                                            
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
-                                        
                                     </telerik:ScatterLineSeries>
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
@@ -368,13 +362,10 @@
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand">
-
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
-                                        
                                     </telerik:ScatterLineSeries>
-
                                 </telerik:RadCartesianChart.Series>
                             </telerik:RadCartesianChart>
                         </telerik:RadPane>
