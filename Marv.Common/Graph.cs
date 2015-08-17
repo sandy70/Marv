@@ -112,6 +112,7 @@ namespace Marv.Common
             {
                 var vertex = new Vertex
                 {
+                    AxisType = networkVertex.AxisType,
                     ConnectorPositions = networkVertex.ParseJson<Dict<string, string, EdgeConnectorPositions>>("ConnectorPositions"),
                     Description = networkVertex.ParseStringProperty("HR_HTML_Desc"),
                     Groups = networkVertex.Groups,
@@ -241,6 +242,7 @@ namespace Marv.Common
             {
                 var vertex = this.Vertices[networkNode.Key];
 
+                networkNode.Properties["AxisType"] = vertex.AxisType.ToString().Enquote();
                 networkNode.Properties["ConnectorPositions"] = vertex.ConnectorPositions.ToJson().Replace('"', '\'').Enquote();
                 networkNode.Properties["HR_Desc"] = vertex.Description.Enquote();
                 networkNode.Properties["HR_HTML_Desc"] = vertex.Description.Enquote();
