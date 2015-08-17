@@ -47,7 +47,7 @@
                                                 ShowTrackInfo="True"/>
             </telerik:RadCartesianChart.Behaviors>
 
-            <telerik:LineSeries CategoryBinding="Server_TimeStamp"
+            <telerik:LineSeries CategoryBinding="Local_TimeStamp"
                                 ValueBinding="Value"
                                 ItemsSource="{Binding ElementName=Root, Path=DataPoints}">
                 <telerik:LineSeries.TrackBallInfoTemplate>
@@ -73,7 +73,7 @@
 
             <telerik:RadCartesianChart.HorizontalAxis>
                 <telerik:DateTimeContinuousAxis MajorStepUnit="Second"
-                                                LabelFormat="HH:mm:ss"
+                                                LabelFormat="HH:mm"
                                                 FontFamily="Segoe UI"
                                                 PlotMode="OnTicks"
                                                 ActualVisibleRangeChanged="DateTimeContinuousAxis_OnActualVisibleRangeChanged" />
