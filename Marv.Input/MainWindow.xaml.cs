@@ -48,7 +48,6 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isInterpolateClicked;
-        private bool isLineCross;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
@@ -313,16 +312,6 @@ namespace Marv.Input
             set
             {
                 isInterpolateClicked = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public bool IsLineCross
-        {
-            get { return isLineCross; }
-            set
-            {
-                isLineCross = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -763,7 +752,12 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsLineCross)
+            if (this.CurrentInterpolatorDataPoints == null)
+            {
+                return;
+            }
+
+            if (this.CurrentInterpolatorDataPoints.IsLineCross)
             {
                 MessageBox.Show("Interpolator lines crossing each other");
                 return;
@@ -892,12 +886,7 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
 
-            var columnName = this.CurrentColumn == null ? this.oldColumnName : this.CurrentColumn.UniqueName;
-
-            if (columnName == null)
-            {
-                return;
-            }
+            var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
         }
@@ -913,7 +902,8 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
             this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints();
-            this.IsLineCross = false;
+            this.CurrentInterpolatorDataPoints.IsLineCross = false;
+
             this.UpdateTable();
         }
 

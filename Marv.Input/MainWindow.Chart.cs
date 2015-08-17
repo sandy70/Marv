@@ -21,7 +21,7 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                this.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
+                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
 
                 this.DraggedPoint.YValue = (double) (data.SecondValue);
                 ScatterDataPoint replacePoint = null;
@@ -64,9 +64,9 @@ namespace Marv.Input
                     }
                 }
 
-                this.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
-               
-                if (!this.IsLineCross)
+                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
+
+                if (!this.CurrentInterpolatorDataPoints.IsLineCross)
                 {
                     currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
                 }
@@ -97,6 +97,7 @@ namespace Marv.Input
 
             if (vertexEvidence == null)
             {
+                this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
                 return;
             }
 

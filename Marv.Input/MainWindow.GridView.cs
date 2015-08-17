@@ -242,7 +242,7 @@ namespace Marv.Input
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {
-            this.IsLineCross = false;
+            this.CurrentInterpolatorDataPoints.IsLineCross = false;
 
             this.MinUserValue = minMaxValues["Minimum"];
             this.MaxUserValue = minMaxValues["Maximum"];
@@ -324,7 +324,9 @@ namespace Marv.Input
                 this.SelectedVertex.IsUserEvidenceComplete = false;
             }
 
-            
+            var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
+
+            this.Plot(columnName);
         }
 
         private void Validate()

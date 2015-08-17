@@ -583,6 +583,10 @@ namespace Marv.Controls
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.Graph == null)
+            {
+                return;
+            }
             this.Graph.Write(this.Network);
         }
 

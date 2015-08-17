@@ -331,7 +331,7 @@
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue"
                                                                IsHitTestVisible="True"
-                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
                                                               
 
                                         <i:Interaction.Behaviors>
@@ -345,7 +345,7 @@
                                                                Name="ModeLine"
                                                                ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue">
 
@@ -362,7 +362,7 @@
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand"
-                                                               Stroke="{Binding ElementName=Root, Path=IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
 
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />

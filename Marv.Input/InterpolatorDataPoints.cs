@@ -41,6 +41,18 @@ namespace Marv.Input
             }
         }
 
+        private bool isLineCross;
+
+        public bool IsLineCross
+        {
+            get { return isLineCross; }
+            set
+            {
+                isLineCross = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
         public InterpolatorDataPoints()
         {
             this.MaxNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
