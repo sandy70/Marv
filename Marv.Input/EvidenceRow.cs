@@ -7,7 +7,6 @@ namespace Marv.Input
     public class EvidenceRow : Dynamic
     {
         private double from;
-        private bool isValid = true;
         private double to;
 
         [Display(Order = 0)]
@@ -24,17 +23,6 @@ namespace Marv.Input
                 }
 
                 this.from = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        [Display(AutoGenerateField = false)]
-        public bool IsValid
-        {
-            get { return this.isValid; }
-            set
-            {
-                this.isValid = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -64,7 +52,15 @@ namespace Marv.Input
                 return this.From <= other.From && other.To <= this.To;
             }
 
-            return this.From.Equals(other.From) && this.To.Equals(other.To);
+            // Ex: section such as 0-12/12-24 should not be picked up for point value 12-12
+            var pointValue = other.From;
+
+            if (this.From.Equals(pointValue) || this.To.Equals(pointValue))
+            {
+                return this.From.Equals(other.From) && this.To.Equals(other.To);
+            }
+
+            return this.From <= other.From && other.To <= this.To;
         }
 
         public override bool Equals(object obj)

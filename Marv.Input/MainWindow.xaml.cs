@@ -901,9 +901,8 @@ namespace Marv.Input
             this.BaseTableRange = 0;
 
             this.Chart.Annotations.Remove(annotation => true);
-            this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints();
-            this.CurrentInterpolatorDataPoints.IsLineCross = false;
-
+            this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints { IsLineCross = false };
+            this.selectedVertex.IsUserEvidenceComplete = false;
             this.UpdateTable();
         }
 
@@ -1006,7 +1005,7 @@ namespace Marv.Input
                         baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
                     }
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
 
                     mergedDataSet = mergedDataSet.UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 

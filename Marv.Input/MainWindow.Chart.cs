@@ -42,7 +42,7 @@ namespace Marv.Input
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
 
-            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked)
+            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked && this.SelectedLine!=null)
             {
                 var chart = (RadCartesianChart) sender;
 

@@ -41,14 +41,6 @@
 
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
 
-                <input:CellTemplateSelector.InValidTemplate>
-                    <DataTemplate DataType="input:EvidenceRow">
-                        <TextBlock  Foreground="{Binding Path=IsValid, Converter={StaticResource BooleanToBrushConverter}}"
-                                    Text="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                    TextDecorations="underline"/>
-                    </DataTemplate>
-                </input:CellTemplateSelector.InValidTemplate>
-
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
                         <telerik:RadColumnSparkline ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
@@ -216,10 +208,6 @@
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
 
-                                        <telerik:RadButton Click="ValidateButton_Click">
-                                            <Image Source="/Marv.Common;component/Resources/Icons/Validate.png" />
-                                        </telerik:RadButton>
-
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource SelectionThemes}}"
                                                              IsFilteringEnabled="True"
                                                              OpenDropDownOnFocus="True"
@@ -292,7 +280,6 @@
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
-                                                     RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted" />
 
                             </Grid>

@@ -151,7 +151,6 @@ namespace Marv.Input
             this.UpdateCommandStack(command);
             this.SelectedVertex.IsUserEvidenceComplete = true;
 
-            this.Validate();
             this.pastedCells.Clear();
 
             if (this.Table.Count != 0)
@@ -201,10 +200,10 @@ namespace Marv.Input
 
         private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
         {
-            var evidenceRow = e.Row.Item as EvidenceRow;
+            //var evidenceRow = e.Row.Item as EvidenceRow;
 
-            e.IsValid = evidenceRow.From <= evidenceRow.To;
-            evidenceRow.IsValid = e.IsValid;
+            //e.IsValid = evidenceRow.From <= evidenceRow.To;
+            //evidenceRow.IsValid = e.IsValid;
         }
 
         private void Intepolate_Click(object sender, RoutedEventArgs e)
@@ -329,29 +328,5 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void Validate()
-        {
-            var selectedVertexKey = this.SelectedVertex.Key;
-
-            var evidenceTable = this.lineDataObj[this.selectedTheme][selectedVertexKey];
-
-            var fromToList = new List<double>();
-
-            foreach (var evidenceRow in evidenceTable)
-            {
-                fromToList.Add(evidenceRow.From);
-                fromToList.Add(evidenceRow.To);
-            }
-
-            for (var i = 0; i < fromToList.Count - 1; i++)
-            {
-                evidenceTable[i / 2].IsValid = !(fromToList[i] > fromToList[i + 1]);
-            }
-        }
-
-        private void ValidateButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Validate();
-        }
     }
 }
