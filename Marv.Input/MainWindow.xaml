@@ -8,6 +8,7 @@
         xmlns:input="clr-namespace:Marv.Input"
         xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized"
@@ -127,7 +128,15 @@
 
                                 <ToolBarTray Grid.Row="0">
                                     <ToolBarTray.Resources>
-                                        <ResourceDictionary Source="/Marv.Controls;component/ToolbarTrayStyle.xaml" />
+                                        <ResourceDictionary>
+                                            <ResourceDictionary.MergedDictionaries>
+                                                <ResourceDictionary Source="/Marv.Controls;component/ToolbarTrayStyle.xaml" />
+                                            </ResourceDictionary.MergedDictionaries>
+
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </ResourceDictionary>
                                     </ToolBarTray.Resources>
 
                                     <!-- Define Timeline Toolbar -->
@@ -141,10 +150,6 @@
                                                     <x:Type TypeName="calendar:DateSelectionMode" />
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
-
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="VerticalAlignment" Value="Center" />
-                                            </Style>
                                         </ToolBar.Resources>
 
                                         <TextBlock Margin="4"
@@ -181,15 +186,23 @@
                                                            Click="CloseButton_Click" />
                                     </ToolBar>
 
+                                    <!-- Cell Toolbar -->
                                     <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
-                                            <ObjectDataProvider MethodName="GetValues"
-                                                                ObjectType="{x:Type sys:Enum}"
-                                                                x:Key="SelectionThemes">
+                                            <ObjectDataProvider x:Key="SelectionThemes"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
                                                 <ObjectDataProvider.MethodParameters>
                                                     <x:Type TypeName="input:DataTheme" />
                                                 </ObjectDataProvider.MethodParameters>
-
+                                            </ObjectDataProvider>
+                                            
+                                            <ObjectDataProvider x:Key="VertexAxisTypes"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="common:VertexAxisType" />
+                                                </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
                                         </ToolBar.Resources>
                                         <telerik:RadButton Click="Undo_Click">
@@ -207,6 +220,22 @@
                                         <telerik:RadButton Click="CopyAcrossAll_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
+
+                                        <!-- Vertex Axis Type ComboBox -->
+                                        <TextBlock Margin="4"
+                                                   Text="Chart Axis" />
+
+                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource VertexAxisTypes}}"
+                                                             OpenDropDownOnFocus="True"
+                                                             SelectedIndex="0"
+                                                             SelectedItem="{Binding ElementName=Root, Path=SelectedVertex.AxisType, Mode=TwoWay}"
+                                                             Width="100"
+                                                             SelectionChanged="AxisTypeComboBox_SelectionChanged"/>
+
+                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=StartDate}"
+                                                                   SelectionChanged="StartDateTimePicker_SelectionChanged" />
 
                                         <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource SelectionThemes}}"
                                                              IsFilteringEnabled="True"
@@ -228,6 +257,7 @@
                                                            Click="Done_Click" />
 
                                     </ToolBar>
+                                    
                                     <ToolBar Band="2"
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
@@ -281,7 +311,7 @@
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      Pasted="GridView_Pasted" />
-
+                        
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -291,11 +321,12 @@
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <!-- Chart -->
                             <telerik:RadCartesianChart Name="Chart"
+                                                       VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
                                                        MouseMove="Chart_MouseMove">
                                 
                                 <telerik:RadCartesianChart.Behaviors>
                                     <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
-
+                                  
                                 </telerik:RadCartesianChart.Behaviors>
                                
                                 
@@ -303,11 +334,6 @@
                                     <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
                                                         Minimum="{Binding ElementName=Root, Path=Minimum}" />
                                 </telerik:RadCartesianChart.HorizontalAxis>
-
-                                <telerik:RadCartesianChart.VerticalAxis>
-                                    <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=SelectedVertex.SafeMax}"
-                                                        Minimum="{Binding ElementName=Root, Path=SelectedVertex.SafeMin}" />
-                                </telerik:RadCartesianChart.VerticalAxis>
 
                                 <telerik:RadCartesianChart.Series>
 
@@ -320,11 +346,10 @@
                                                                IsHitTestVisible="True"
                                                                Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
                                                               
-
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
-
+                                        
                                     </telerik:ScatterLineSeries>
 
                                     <telerik:ScatterLineSeries Cursor="Hand"
@@ -335,11 +360,11 @@
                                                                Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue">
-
+                                                            
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
-
+                                        
                                     </telerik:ScatterLineSeries>
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
@@ -350,15 +375,12 @@
                                                                IsHitTestVisible="True"
                                                                Cursor="Hand"
                                                                Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
-
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
                                         
-                                        
 
                                     </telerik:ScatterLineSeries>
-
                                 </telerik:RadCartesianChart.Series>
                               
                             </telerik:RadCartesianChart>

@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
+using Telerik.Windows.Controls.ChartView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 using ICommand = Marv.Common.ICommand;
 
@@ -23,9 +24,13 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const int ModifyTolerance = 200;
+        private static readonly NumericalAxis LinearAxis = new LinearAxis();
+        private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
+
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
+        
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
@@ -71,6 +76,17 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private NumericalAxis verticalAxis = LinearAxis;
+
+        public List<AddRowCommand> AddRowCommands
+        {
+            get { return addRowCommands; }
+            set
+            {
+                addRowCommands = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public int AddRowCommandsCount
         {
@@ -584,18 +600,26 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, string, InterpolatorDataPoints> UserNumberPoints
-        {
             get { return this.userNumberPoints; }
-
             set
             {
                 if (value.Equals(this.userNumberPoints))
                 {
                     return;
                 }
-
+            
                 this.userNumberPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public NumericalAxis VerticalAxis
+        {
+            get { return this.verticalAxis; }
+
+            set
+            {
+                this.verticalAxis = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -604,6 +628,16 @@ namespace Marv.Input
         {
             StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
+
+            LinearAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+            LinearAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+
+            LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+            LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+        }
+
+        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
         }
 
         protected void Table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -614,11 +648,10 @@ namespace Marv.Input
             {
                 return;
             }
-
             var command = new AddRowCommand(this.Table);
 
             this.AddRowCommandsCount++;
-
+            
             this.UpdateCommandStack(command);
         }
 
@@ -646,6 +679,11 @@ namespace Marv.Input
             this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
 
             this.UpdateTable();
+        }
+
+        private void AxisTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateVerticalAxis();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -861,6 +899,8 @@ namespace Marv.Input
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
+            this.UpdateVerticalAxis();
+
             this.UpdateTable();
 
             if (this.Table.Count != 0)
@@ -1108,6 +1148,16 @@ namespace Marv.Input
             {
                 this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
+        }
+
+        private void UpdateVerticalAxis()
+        {
+            if (this.SelectedVertex == null)
+            {
+                return;
+            }
+
+            this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

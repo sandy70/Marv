@@ -17,6 +17,20 @@ namespace Marv.Common
         private ObservableCollection<State> states;
         private VertexType? type;
 
+        public VertexAxisType AxisType
+        {
+            get
+            {
+                VertexAxisType axisType;
+
+                if (Enum.TryParse(this.ParseStringProperty("AxisType"), out axisType))
+                {
+                    return axisType;
+                }
+                return VertexAxisType.Linear;
+            }
+        }
+
         public string Expression { get; set; }
 
         public ObservableCollection<string> Groups

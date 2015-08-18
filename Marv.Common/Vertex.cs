@@ -11,6 +11,7 @@ namespace Marv.Common
 {
     public class Vertex : NotifyPropertyChanged, IKeyed, IVertex
     {
+        private VertexAxisType axisType = VertexAxisType.Linear;
         private Dict<string, string, EdgeConnectorPositions> connectorPositions = new Dict<string, string, EdgeConnectorPositions>();
         private string description = "";
         private Point displayPosition;
@@ -35,6 +36,17 @@ namespace Marv.Common
         private ObservableCollection<State> states = new ObservableCollection<State>();
         private VertexType type = VertexType.Labelled;
         private string units = "";
+
+        public VertexAxisType AxisType
+        {
+            get { return this.axisType; }
+
+            set
+            {
+                this.axisType = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public double[] Belief
         {
