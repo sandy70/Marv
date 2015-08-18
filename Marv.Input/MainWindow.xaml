@@ -40,6 +40,11 @@
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
 
+            <converters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+                                                 FalseString="Interpolate"
+                                                 TrueString="Clear" />
+           
+
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
 
                 <input:CellTemplateSelector.SparkLineTemplate>
@@ -245,7 +250,7 @@
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
 
-                                        <telerik:RadButton Content="Interpolate"
+                                        <telerik:RadButton Content="{Binding ElementName=Root, Path=IsInterpolateClicked, Converter={StaticResource BooleanToStringConverter}}"
                                                            FontWeight="Bold"
                                                            Width="100"
                                                            Click="Intepolate_Click" />

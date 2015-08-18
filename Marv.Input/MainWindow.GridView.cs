@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Types;
@@ -198,17 +199,16 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
-        {
-            //var evidenceRow = e.Row.Item as EvidenceRow;
-
-            //e.IsValid = evidenceRow.From <= evidenceRow.To;
-            //evidenceRow.IsValid = e.IsValid;
-        }
-
         private void Intepolate_Click(object sender, RoutedEventArgs e)
         {
-            this.IsInterpolateClicked = true;
+            if (this.IsInterpolateClicked)
+            {
+                this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints { IsLineCross = false };
+                this.IsInterpolateClicked = !this.IsInterpolateClicked;
+                return;
+            }
+
+            this.IsInterpolateClicked = !this.IsInterpolateClicked;
 
             if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {

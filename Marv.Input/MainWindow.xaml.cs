@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Interpolators;
@@ -596,18 +597,21 @@ namespace Marv.Input
                 this.table = value;
                 this.RaisePropertyChanged();
 
-                this.Table.CollectionChanged += Table_CollectionChanged;
+                this.table.CollectionChanged += table_CollectionChanged;
             }
         }
 
+        public Dict<string, string, InterpolatorDataPoints> UserNumberPoints
+        {
             get { return this.userNumberPoints; }
+
             set
             {
                 if (value.Equals(this.userNumberPoints))
                 {
                     return;
                 }
-            
+
                 this.userNumberPoints = value;
                 this.RaisePropertyChanged();
             }
