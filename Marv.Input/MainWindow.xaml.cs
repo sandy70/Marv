@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
@@ -17,25 +18,28 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
+using ICommand = Marv.Common.ICommand;
 
 namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private const int ModifyTolerance = 100;
+        private const int ModifyTolerance = 200;
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
 
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
-
+        
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
+        private int addRowCommandsCount;
         private double baseTableMax;
         private double baseTableMin;
         private double baseTableRange;
         private ICommand cellEditCommand;
+        private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
         private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
@@ -81,6 +85,16 @@ namespace Marv.Input
             set
             {
                 addRowCommands = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public int AddRowCommandsCount
+        {
+            get { return addRowCommandsCount; }
+            set
+            {
+                addRowCommandsCount = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -137,6 +151,16 @@ namespace Marv.Input
             set
             {
                 this.cellEditCommand = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public int CreatedRowsCount
+        {
+            get { return createdRowsCount; }
+            set
+            {
+                createdRowsCount = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -618,33 +642,21 @@ namespace Marv.Input
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+        }
+
+        protected void Table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
             var action = e.Action;
 
-            if (action == NotifyCollectionChangedAction.Add)
+            if (action != NotifyCollectionChangedAction.Add)
             {
-                EvidenceRow newRow = null;
-
-                if (e.NewItems != null)
-                {
-                    foreach (var evidenceRow in e.NewItems.Cast<EvidenceRow>())
-                    {
-                        newRow = evidenceRow;
-                    }
-                }
-
-                var command = new AddRowCommand(newRow, this.Table);
-
-                if (this.commandStack.Count >= 100)
-                {
-                    this.commandStack.RemoveAt(0);
-                }
-
-                this.AddRowCommands.Add(command);
-                this.commandStack.Add(command);
-                this.CurrentCommand = this.commandStack.Count - 1;
+                return;
             }
+            var command = new AddRowCommand(this.Table);
 
-            else if (action == NotifyCollectionChangedAction.Remove) {}
+            this.AddRowCommandsCount++;
+            
+            this.UpdateCommandStack(command);
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -669,6 +681,7 @@ namespace Marv.Input
             this.dates.Add(date);
 
             this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
+
             this.UpdateTable();
         }
 
@@ -781,6 +794,17 @@ namespace Marv.Input
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
+            if (this.CurrentInterpolatorDataPoints == null)
+            {
+                return;
+            }
+
+            if (this.CurrentInterpolatorDataPoints.IsLineCross)
+            {
+                MessageBox.Show("Interpolator lines crossing each other");
+                return;
+            }
+
             LinearInterpolator maxLinInterpolator, modeLinInterpolator, minLinInterpolator;
 
             this.GetLinearInterpolators(out maxLinInterpolator, out modeLinInterpolator, out minLinInterpolator);
@@ -849,13 +873,25 @@ namespace Marv.Input
         private void Go_Click(object sender, RoutedEventArgs e)
         {
             this.isBaseTableAvailable = true;
+
+            this.Minimum = Math.Min(this.Minimum, this.BaseTableMin);
+            this.Maximum = Math.Max(this.Maximum, this.BaseTableMax);
+
+            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
+
+            this.PlotInterpolatorLines(minMaxValues);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
         {
-            if (this.SelectedSectionId != null && this.SelectedYear > 0 && this.SelectedVertex != null)
+            if (this.selectedRow != null && this.SelectedColumnName != null && this.SelectedVertex != null)
             {
-                this.LineData.GetEvidence(this.SelectedSectionId)[this.SelectedYear][this.SelectedVertex.Key] = vertexEvidence;
+                var selectRow = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].FirstOrDefault(row => row.Equals(this.selectedRow));
+
+                if (selectRow != null)
+                {
+                    selectRow[this.SelectedColumnName] = vertexEvidence;
+                }
             }
 
             if (vertexEvidence == null)
@@ -873,8 +909,16 @@ namespace Marv.Input
 
             if (this.Table.Count != 0)
             {
-                this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-                this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                if (this.isBaseTableAvailable)
+                {
+                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+                }
+                else
+                {
+                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                }
             }
 
             if (this.UserNumberPoints != null)
@@ -886,27 +930,23 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
 
-            var columnName = this.CurrentColumn == null ? this.oldColumnName : this.CurrentColumn.UniqueName;
-
-            if (columnName == null)
-            {
-                return;
-            }
+            var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
         }
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var result = LineDataSaveAs();
-
-            if (!result.Equals(true))
-            {
-                return;
-            }
+            this.LineDataSaveAs();
 
             this.lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
+            this.BaseTableMax = 0;
+            this.BaseTableMin = 0;
+            this.BaseTableRange = 0;
+
             this.Chart.Annotations.Remove(annotation => true);
+            this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints { IsLineCross = false };
+            this.selectedVertex.IsUserEvidenceComplete = false;
             this.UpdateTable();
         }
 
@@ -932,11 +972,12 @@ namespace Marv.Input
                 else
                 {
                     this.lineDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, EvidenceTable>>(dialog.FileName);
+                    this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
                 }
             }
         }
 
-        private bool? LineDataSaveAs()
+        private void LineDataSaveAs()
         {
             var dialog = new SaveFileDialog
             {
@@ -951,8 +992,6 @@ namespace Marv.Input
 
                 this.lineDataObj.WriteJson(this.lineDataObjFileName);
             }
-
-            return result;
         }
 
         private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -962,23 +1001,30 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //this.LineDataSaveAs();
-
-            var dialog = new SaveFileDialog
+            if (this.lineDataObjFileName == null)
             {
-                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
-            };
-
-            var result = dialog.ShowDialog();
-
-            if (result == true)
+                this.LineDataSaveAs();
+            }
+            else
             {
-                var evidenceRow = new EvidenceRow { From = 0, To = 10 };
-                evidenceRow["Hello"] = 90;
-                evidenceRow.WriteJson(dialog.FileName);
+                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+            }
+        }
 
-                var newRow = Common.Utils.ReadJson<EvidenceRow>(dialog.FileName);
-                Console.WriteLine(newRow);
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.S || !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
+            if (this.lineDataObjFileName == null)
+            {
+                this.LineDataSaveAs();
+            }
+            else
+            {
+                this.lineDataObj.WriteJson(this.lineDataObjFileName);
             }
         }
 
@@ -1003,7 +1049,10 @@ namespace Marv.Input
                         baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
                     }
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList).UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
+
+                    mergedDataSet = mergedDataSet.UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
             }
@@ -1077,12 +1126,25 @@ namespace Marv.Input
             }
         }
 
+        private void UpdateCommandStack(ICommand command)
+        {
+            if (this.commandStack.Count >= 100)
+            {
+                this.commandStack.RemoveAt(0);
+            }
+
+            this.commandStack.Add(command);
+            this.CurrentCommand = this.commandStack.Count - 1;
+        }
+
         private void UpdateTable()
         {
             if (this.SelectedVertex == null)
             {
                 return;
             }
+
+            this.GridView.CommitEdit();
 
             this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
 

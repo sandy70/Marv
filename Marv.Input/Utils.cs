@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -14,7 +15,22 @@ namespace Marv.Input
     {
         public const string MaxInterpolatorLine = "MaximumLine";
         public const string MinInterpolatorLine = "MinimumLine";
+        public const double MinusInfinity = 10E-09;
         public const string ModeInterpolatorLine = "ModeLine";
+
+        public static string  ValueToDistribution(this double[] evidenceValue)
+        {
+            var evidenceString = "";
+            var i = 0;
+            while (i < evidenceValue.Length)
+            {
+                evidenceString += evidenceValue[i] + ",";
+                i++;
+            }
+            evidenceString = evidenceString.Substring(0, evidenceString.Length - 1);
+
+            return evidenceString;
+        }
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
@@ -97,7 +113,38 @@ namespace Marv.Input
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
-        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList)
+        public static bool IsWithInRange(this InterpolatorDataPoints currentInterpolatorDataPoints)
+        {
+            var currentLine = currentInterpolatorDataPoints;
+
+            var currentMax = currentLine.GetNumberPoints(MaxInterpolatorLine);
+            var currentMode = currentLine.GetNumberPoints(ModeInterpolatorLine);
+            var currentMin = currentLine.GetNumberPoints(MinInterpolatorLine);
+
+            var maxLinInterpolator = new LinearInterpolator(currentMax.GetXCoords(), currentMax.GetYCoords());
+            var modeLinInterpolator = new LinearInterpolator(currentMode.GetXCoords(), currentMode.GetYCoords());
+            var minLinInterpolator = new LinearInterpolator(currentMin.GetXCoords(), currentMin.GetYCoords());
+
+            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
+                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Vertex selectedVertex)
         {
             var mergedEvidenceSet = new Dict<string, EvidenceTable>();
             var newList = new List<double>();
@@ -143,17 +190,64 @@ namespace Marv.Input
                         continue;
                     }
 
-                    mergedEvidenceTable.AddUnique(evidenceRow);
+                    // multiple inputs for a single point feature are allowed 
+                    if (unmergedEvidenceSet.Contains(evidenceRow) && newList[i] == newList[i + 1])
+                    {
+                        mergedEvidenceTable.Add(evidenceRow);
+                    }
+                    else
+                    {
+                        mergedEvidenceTable.AddUnique(evidenceRow);
+                    }
                 }
+
+                EvidenceRow uniqueRow = null;
+                var deleteRows = new ObservableCollection<EvidenceRow>();
 
                 foreach (var mergedEvidenceRow in mergedEvidenceTable)
                 {
-                    var unmergedEvidenceRow = unmergedEvidenceTable.FirstOrDefault(row => row.Contains(mergedEvidenceRow));
+                    if (uniqueRow == null)
+                    {
+                        uniqueRow = mergedEvidenceRow;
+                        continue;
+                    }
+
+                    if (mergedEvidenceRow.Equals(uniqueRow))
+                    {
+                        deleteRows.Add(mergedEvidenceRow);
+                    }
+                    else
+                    {
+                        uniqueRow = mergedEvidenceRow;
+                    }
+                }
+
+                mergedEvidenceTable.Remove(deleteRows);
+
+                foreach (var mergedEvidenceRow in mergedEvidenceTable)
+                {
+                    var unmergedEvidenceRows = unmergedEvidenceTable.Where(row => row.Contains(mergedEvidenceRow)).ToList();
                     var columnNames = mergedEvidenceRow.GetDynamicMemberNames().ToList();
 
-                    foreach (var columnName in columnNames)
+                    if (unmergedEvidenceRows.Count() > 1) // merged section has multiple input values 
                     {
-                        mergedEvidenceRow[columnName] = unmergedEvidenceRow == null ? new VertexEvidence { Type = VertexEvidenceType.Null } : unmergedEvidenceRow[columnName];
+                        var avgEvidenceValues = GetEvidenceAverage(unmergedEvidenceRows);
+
+                        foreach (var columnName in columnNames)
+                        {
+                            var evidenceString = avgEvidenceValues[columnName].ValueToDistribution();
+                            mergedEvidenceRow[columnName] = selectedVertex.States.ParseEvidenceString(evidenceString);
+                        }
+                    }
+
+                    else
+                    {
+                        foreach (var columnName in columnNames)
+                        {
+                            mergedEvidenceRow[columnName] = !unmergedEvidenceRows.Any()
+                                                                ? new VertexEvidence { Type = VertexEvidenceType.Null }
+                                                                : unmergedEvidenceRows.FirstOrDefault()[columnName];
+                        }
                     }
                 }
 
@@ -186,7 +280,12 @@ namespace Marv.Input
 
                         foreach (var columnName in columnNames)
                         {
-                            mergedEvidenceRow[columnName] = interpolatedRow[columnName];
+                            var vertexEvidence = interpolatedRow[columnName] as VertexEvidence;
+                            if (vertexEvidence == null)
+                            {
+                                continue;
+                            }
+                            mergedEvidenceRow[columnName] = vertexEvidence;
                         }
                     }
                 }
@@ -205,6 +304,43 @@ namespace Marv.Input
             }
 
             return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+        }
+
+        private static Dict<string, double[]> GetEvidenceAverage(List<EvidenceRow> unmergedEvidenceRows)
+        {
+            var columnNames = unmergedEvidenceRows[0].GetDynamicMemberNames().ToList();
+            var noOfstates = (unmergedEvidenceRows[0][columnNames[0]] as VertexEvidence).Value.Count();
+            var combinedColumnValues = new Dict<string, double[]>();
+
+            foreach (var columnName in columnNames)
+            {
+                combinedColumnValues.Add(columnName, new double[noOfstates]);
+
+                foreach (var evidenceRow in unmergedEvidenceRows)
+                {
+                    var i = 0;
+                    var evidence = evidenceRow[columnName] as VertexEvidence;
+                    var value = evidence.Value;
+
+                    while (i < noOfstates)
+                    {
+                        combinedColumnValues[columnName][i] += value[i];
+                        i++;
+                    }
+                }
+            }
+
+            foreach (var kvp in combinedColumnValues)
+            {
+                var colValue = kvp.Value;
+
+                for (var i = 0; i < colValue.Length; i++)
+                {
+                    colValue[i] = colValue[i] / unmergedEvidenceRows.Count;
+                }
+            }
+
+            return combinedColumnValues;
         }
     }
 }

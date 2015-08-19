@@ -1,5 +1,4 @@
-﻿   
-<Window x:Class="Marv.Input.MainWindow"
+﻿<Window x:Class="Marv.Input.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:calendar="clr-namespace:Telerik.Windows.Controls.Calendar;assembly=Telerik.Windows.Controls.Input"
         xmlns:marv="http://dnvgl.com/marv"
@@ -10,24 +9,43 @@
         xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
-
         Name="Root"
         Title="MARV - Input Designer"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        KeyDown="MainWindow_KeyDown">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Marv.Controls;component/ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter">
+                <converters:BooleanToBrushConverter.FalseBrush>
+                    <SolidColorBrush Color="Red" />
+                </converters:BooleanToBrushConverter.FalseBrush>
+
+                <converters:BooleanToBrushConverter.TrueBrush>
+                    <SolidColorBrush Color="Black" />
+                </converters:BooleanToBrushConverter.TrueBrush>
+            </converters:BooleanToBrushConverter>
+
+            <converters:BooleanToBrushConverter x:Key="InterpolatorLineCrossConverter">
+                <converters:BooleanToBrushConverter.FalseBrush>
+                    <SolidColorBrush Color="Green" />
+                </converters:BooleanToBrushConverter.FalseBrush>
+
+                <converters:BooleanToBrushConverter.TrueBrush>
+                    <SolidColorBrush Color="Red" />
+                </converters:BooleanToBrushConverter.TrueBrush>
+            </converters:BooleanToBrushConverter>
+
+            <converters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+                                                 FalseString="Interpolate"
+                                                 TrueString="Clear" />
+           
+
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
-                <input:CellTemplateSelector.InValidTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
-                                   TextDecorations="underline"
-                                   Foreground="Red" />
-                    </DataTemplate>
-                </input:CellTemplateSelector.InValidTemplate>
 
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
@@ -39,19 +57,13 @@
                     </DataTemplate>
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
-            
-            <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter">
-                <converters:BooleanToBrushConverter.FalseBrush>
-                    <SolidColorBrush Color="Red" />
-                </converters:BooleanToBrushConverter.FalseBrush>
-                
-            </converters:BooleanToBrushConverter>
+
             <DataTemplate x:Key="EllipsePointTemplate">
                 <Ellipse Cursor="Hand"
                          Width="8"
                          Height="8"
-                         Fill="Goldenrod"
-                         Stroke="DarkGoldenrod"
+                         Fill="Green"
+                         Stroke="DarkGreen"
                          StrokeThickness="1"
                          MouseDown="Ellipse_MouseDown"
                          MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
@@ -199,7 +211,7 @@
                                             </ObjectDataProvider>
                                         </ToolBar.Resources>
                                         <telerik:RadButton Click="Undo_Click">
-                                            <Image Source="/Marv.Common;component/Resources/Icons/Back.png " />
+                                            <Image Source="/Marv.Common;component/Resources/Icons/Undo.png " />
                                         </telerik:RadButton>
                                         <telerik:RadButton Click="CopyAcrossCol_Click">
 
@@ -212,10 +224,6 @@
 
                                         <telerik:RadButton Click="CopyAcrossAll_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
-                                        </telerik:RadButton>
-
-                                        <telerik:RadButton Click="ValidateButton_Click">
-                                            <Image Source="/Marv.Common;component/Resources/Icons/Validate.png" />
                                         </telerik:RadButton>
 
                                         <!-- Vertex Axis Type ComboBox -->
@@ -242,7 +250,7 @@
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
 
-                                        <telerik:RadButton Content="Interpolate"
+                                        <telerik:RadButton Content="{Binding ElementName=Root, Path=IsInterpolateClicked, Converter={StaticResource BooleanToStringConverter}}"
                                                            FontWeight="Bold"
                                                            Width="100"
                                                            Click="Intepolate_Click" />
@@ -259,15 +267,15 @@
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
 
-                                        <Label Name="MinVal" Width="50" Content="MinVal" />
+                                        <Label Name="Start" Width="70" Content="Start (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMin}" />
-                                        <Label Name="MaxVal" Width="50" Content="MaxVal" />
+                                        <Label Name="End" Width="70" Content="End (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableMax}" />
-                                        <Label Name="Range" Width="50" Content="Range" />
+                                        <Label Name="Range" Width="75" Content="Range (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=BaseTableRange}" />
@@ -281,7 +289,8 @@
                                 </ToolBarTray>
 
                                 <!-- Input Grid View -->
-                                <telerik:RadGridView Grid.Row="1"
+                                <telerik:RadGridView Name="GridView"
+                                                     Grid.Row="1"
                                                      CanUserFreezeColumns="False"
                                                      CanUserInsertRows="True"
                                                      CanUserDeleteRows="True"
@@ -306,8 +315,8 @@
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
-                                                     RowValidating="GridView_RowValidating"
                                                      Pasted="GridView_Pasted" />
+                        
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
@@ -321,9 +330,11 @@
                                                        MouseMove="Chart_MouseMove">
                                 
                                 <telerik:RadCartesianChart.Behaviors>
-                                    <telerik:ChartPanAndZoomBehavior ZoomMode="None" PanMode="None" />
+                                    <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
+                                  
                                 </telerik:RadCartesianChart.Behaviors>
-
+                               
+                                
                                 <telerik:RadCartesianChart.HorizontalAxis>
                                     <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
                                                         Minimum="{Binding ElementName=Root, Path=Minimum}" />
@@ -331,28 +342,34 @@
 
                                 <telerik:RadCartesianChart.Series>
 
-                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
+                                    <telerik:ScatterLineSeries Cursor="Hand"
+                                                               ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
                                                                Name="MaximumLine"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                XValueBinding="XValue"
                                                                YValueBinding="YValue"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               Cursor="Hand">
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                              
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
+                                        
                                     </telerik:ScatterLineSeries>
 
-                                    <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
-                                                               Name="ModeLine"
-                                                               XValueBinding="XValue"
-                                                               YValueBinding="YValue"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
+                                    <telerik:ScatterLineSeries Cursor="Hand"
                                                                IsHitTestVisible="True"
-                                                               Cursor="Hand">
+                                                               Name="ModeLine"
+                                                               ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
+                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
+                                                               XValueBinding="XValue"
+                                                               YValueBinding="YValue">
+                                                            
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
+                                        
                                     </telerik:ScatterLineSeries>
 
                                     <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
@@ -361,13 +378,18 @@
                                                                YValueBinding="YValue"
                                                                PointTemplate="{StaticResource EllipsePointTemplate}"
                                                                IsHitTestVisible="True"
-                                                               Cursor="Hand">
+                                                               Cursor="Hand"
+                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
                                         <i:Interaction.Behaviors>
                                             <input:InterpolatorsBehaviour />
                                         </i:Interaction.Behaviors>
+                                        
+
                                     </telerik:ScatterLineSeries>
                                 </telerik:RadCartesianChart.Series>
+                              
                             </telerik:RadCartesianChart>
+                            
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>

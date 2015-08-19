@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Types;
@@ -34,8 +35,7 @@ namespace Marv.Input
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
 
-            var table = this.Table;
-            var val = e.NewObject;
+            this.CreatedRowsCount++;
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -61,20 +61,10 @@ namespace Marv.Input
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
-            if (e.NewData.Equals(e.OldData))
-            {
-                return;
-            }
-
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
-            if (this.commandStack.Count >= 100)
-            {
-                this.commandStack.RemoveAt(0);
-            }
-            this.commandStack.Add(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
+            this.UpdateCommandStack(command);
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -128,8 +118,8 @@ namespace Marv.Input
                 }
 
                     //else
-                    //{
-                    //    this.CurrentInterpolatorDataPoints = null;
+                    // {
+                    //            this.CurrentInterpolatorDataPoints = null;
                     //}
                 else
                 {
@@ -149,25 +139,36 @@ namespace Marv.Input
 
         private void GridView_Pasted(object sender, RadRoutedEventArgs e)
         {
-            var list = new List<AddRowCommand>();
-
-            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues, this.AddRowCommands);
+            var newRowsCount = this.AddRowCommandsCount;
+            var command = new PasteCommand(this.SelectedVertex, this.pastedCells, oldValues, (newRowsCount - this.CreatedRowsCount), this.Table);
 
             command.Execute();
 
             this.oldValues.Clear();
-            this.AddRowCommands = list;
 
-            if (this.commandStack.Count >= 100)
-            {
-                this.commandStack.RemoveAt(0);
-            }
-            this.commandStack.Add(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
+            this.AddRowCommandsCount = 0;
+            this.CreatedRowsCount = 0;
 
+            this.UpdateCommandStack(command);
             this.SelectedVertex.IsUserEvidenceComplete = true;
-            this.Validate();
+
             this.pastedCells.Clear();
+
+            if (this.Table.Count != 0)
+            {
+                if (this.isBaseTableAvailable)
+                {
+                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+                }
+                else
+                {
+                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+                }
+            }
+            this.selectedColumnName = this.Table.DateTimes.First().String();
+            this.Plot(this.selectedColumnName);
         }
 
         private void GridView_PastingCellClipboardContent(object sender, GridViewCellClipboardEventArgs e)
@@ -186,21 +187,28 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-            this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
-        }
-
-        private void GridView_RowValidating(object sender, GridViewRowValidatingEventArgs e)
-        {
-            var evidenceRow = e.Row.Item as EvidenceRow;
-
-            e.IsValid = evidenceRow.From <= evidenceRow.To;
-            evidenceRow.IsValid = e.IsValid;
+            if (this.isBaseTableAvailable)
+            {
+                this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
+                this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
+            }
+            else
+            {
+                this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
+                this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
+            }
         }
 
         private void Intepolate_Click(object sender, RoutedEventArgs e)
         {
-            this.IsInterpolateClicked = true;
+            if (this.IsInterpolateClicked)
+            {
+                this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints { IsLineCross = false };
+                this.IsInterpolateClicked = !this.IsInterpolateClicked;
+                return;
+            }
+
+            this.IsInterpolateClicked = !this.IsInterpolateClicked;
 
             if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {
@@ -233,6 +241,8 @@ namespace Marv.Input
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {
+            this.CurrentInterpolatorDataPoints.IsLineCross = false;
+
             this.MinUserValue = minMaxValues["Minimum"];
             this.MaxUserValue = minMaxValues["Maximum"];
 
@@ -301,47 +311,22 @@ namespace Marv.Input
             }
 
             var command = this.commandStack[this.CurrentCommand];
-            var isDone = command.Undo();
 
-            if (!isDone)
+            if (command.Undo())
             {
-                return;
+                this.commandStack.Remove(command);
+                this.CurrentCommand = this.commandStack.Count - 1;
             }
 
-            this.commandStack.Remove(command);
-            this.CurrentCommand = this.commandStack.Count - 1;
-        }
-
-        private void Validate()
-        {
-            var selectedVertexKey = this.SelectedVertex.Key;
-
-            var evidenceTable = this.lineDataObj[this.selectedTheme][selectedVertexKey];
-
-            var fromToList = new List<double>();
-
-            foreach (var evidenceRow in evidenceTable)
+            if (this.CurrentCommand < 0)
             {
-                fromToList.Add(evidenceRow.From);
-                fromToList.Add(evidenceRow.To);
+                this.SelectedVertex.IsUserEvidenceComplete = false;
             }
 
-            foreach (var pastedCell in this.pastedCells) {}
+            var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
-            for (var i = 0; i < fromToList.Count - 1; i++)
-            {
-                evidenceTable[i / 2].IsValid = !(fromToList[i] > fromToList[i + 1]);
-
-                if (!evidenceTable[i / 2].IsValid)
-                {
-                    MessageBox.Show("Row no" + i / 2 + " is invalid");
-                }
-            }
+            this.Plot(columnName);
         }
 
-        private void ValidateButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Validate();
-        }
     }
 }

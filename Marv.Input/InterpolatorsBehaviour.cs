@@ -63,6 +63,11 @@ namespace Marv.Input
         {
             var currentLine = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName].GetNumberPoints(mainWindow.SelectedLine);
 
+            if (currentLine == null)
+            {
+                return;
+            }
+
             mainWindow.CurrentInterpolatorDataPoints = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName];
 
             var firstPoint = mainWindow.Chart.GetPointOnChart(currentLine[0]);
@@ -92,13 +97,15 @@ namespace Marv.Input
             {
                 mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName].GetNumberPoints(mainWindow.SelectedLine).Remove(closestScatterPoint);
             }
+
+            mainWindow.CurrentInterpolatorDataPoints.IsLineCross = !mainWindow.CurrentInterpolatorDataPoints.IsWithInRange();
         }
 
         private void InsertDataPoint(ScatterDataPoint userDataPoint)
         {
             mainWindow.CurrentInterpolatorDataPoints = mainWindow.UserNumberPoints[mainWindow.SelectedVertex.Key][mainWindow.SelectedColumnName];
 
-            var currentLine = mainWindow.CurrentInterpolatorDataPoints.GetNumberPoints(mainWindow.SelectedLine);
+            var currentLine = this.mainWindow.CurrentInterpolatorDataPoints.GetNumberPoints(this.mainWindow.SelectedLine);
 
             if (currentLine != null)
             {

@@ -1,13 +1,11 @@
 ﻿using System;
 using Marv.Common;
-using Telerik.Windows.Controls;
 
 namespace Marv.Input
 {
     public class CellEditCommand : ICommand
     {
         public string ColumnName { get; set; }
-        public GridViewCellEditEndedEventArgs E { get; set; }
         public object NewData { get; set; }
         public object OldData { get; set; }
         public EvidenceRow Row { get; set; }
@@ -29,13 +27,12 @@ namespace Marv.Input
             if (ColumnName.TryParse(out dateTime))
             {
                 Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
-               
             }
             else
             {
-                Row[ColumnName] = Convert.ToDouble(NewData.ToString());
+                double val;
+                Row[ColumnName] = Double.TryParse(NewData.ToString(), out val) ? Convert.ToDouble(NewData.ToString()) : 0;
             }
-
             this.SelectedVertex.IsUserEvidenceComplete = true;
         }
 
@@ -61,6 +58,7 @@ namespace Marv.Input
             }
 
             Row[ColumnName] = OldData;
+
             return true;
         }
     }

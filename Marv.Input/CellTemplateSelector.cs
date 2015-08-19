@@ -10,7 +10,6 @@ namespace Marv.Input
 {
     public class CellTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate InValidTemplate { get; set; }
         public DataTemplate SparkLineTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -63,12 +62,7 @@ namespace Marv.Input
                     return this.SparkLineTemplate;
                 }
 
-                if (evidenceRow.IsValid)
-                {
-                    return null;
-                }
-
-                return this.InValidTemplate;
+                return null;
             }
             catch (NullReferenceException)
             {

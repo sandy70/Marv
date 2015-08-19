@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Marv.Common.Types;
 using Newtonsoft.Json;
 
@@ -7,8 +6,6 @@ namespace Marv.Input
 {
     public class EvidenceRow : Dynamic
     {
-        [Display(AutoGenerateField = false)] public bool IsValid = true;
-
         private double from;
         private double to;
 
@@ -50,6 +47,19 @@ namespace Marv.Input
 
         public bool Contains(EvidenceRow other)
         {
+            if (!other.From.Equals(other.To))
+            {
+                return this.From <= other.From && other.To <= this.To;
+            }
+
+            // Ex: section such as 0-12/12-24 should not be picked up for point value 12-12
+            var pointValue = other.From;
+
+            if (this.From.Equals(pointValue) || this.To.Equals(pointValue))
+            {
+                return this.From.Equals(other.From) && this.To.Equals(other.To);
+            }
+
             return this.From <= other.From && other.To <= this.To;
         }
 

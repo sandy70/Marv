@@ -21,10 +21,7 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
-                if (! IsWithInRange(data))
-                {
-                    return;
-                }
+                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
 
                 this.DraggedPoint.YValue = (double) (data.SecondValue);
                 ScatterDataPoint replacePoint = null;
@@ -45,7 +42,7 @@ namespace Marv.Input
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
 
-            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked)
+            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked && this.SelectedLine!=null)
             {
                 var chart = (RadCartesianChart) sender;
 
@@ -61,13 +58,15 @@ namespace Marv.Input
                 {
                     var linePoint = this.Chart.GetPointOnChart(scatterPoint);
 
-                    if (Math.Round(linePoint.X) == (Math.Round(dynamicPoint.X)) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
+                    if (Math.Round(linePoint.X)==Math.Round(dynamicPoint.X) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
                     {
                         replacePoint = scatterPoint;
                     }
                 }
 
-                if (IsWithInRange(this.Chart.ConvertPointToData(dynamicPoint)))
+                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
+
+                if (!this.CurrentInterpolatorDataPoints.IsLineCross)
                 {
                     currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
                 }
@@ -77,54 +76,6 @@ namespace Marv.Input
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
-        }
-
-        private bool IsWithInRange(DataTuple data)
-        {
-            var currentLine = this.CurrentInterpolatorDataPoints;
-
-            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
-            var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
-            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
-
-            if (this.SelectedLine == Utils.MaxInterpolatorLine)
-            {
-                foreach (var scatterPoint in currentMode)
-                {
-                    if (!((double) data.SecondValue > scatterPoint.YValue))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            else if (this.SelectedLine == Utils.ModeInterpolatorLine)
-            {
-                foreach (var scatterPointMax in currentMax)
-                {
-                    foreach (var scatterPointMin in currentMin)
-                    {
-                        if (!((double) (data.SecondValue) < scatterPointMax.YValue && 
-                            (double) (data.SecondValue) > scatterPointMin.YValue))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            else
-            {
-                foreach (var scatterPoint in currentMode)
-                {
-                    if (!((double) data.SecondValue < scatterPoint.YValue))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
 
         private void Plot(string columnName)
@@ -146,11 +97,13 @@ namespace Marv.Input
 
             if (vertexEvidence == null)
             {
+                this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
                 return;
             }
 
             // Remove older annotations
-            this.Chart.Annotations.Remove(annotation => annotation.Tag.Equals(dataRow));
+
+            this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
@@ -212,20 +165,22 @@ namespace Marv.Input
                     EndPoint = new Point(0, 1)
                 };
 
-                vertexEvidence.Value.ForEach((value, i) =>
+                for (var i = vertexEvidence.Value.Count(); i > 0; i--)
                 {
+                    var value = vertexEvidence.Value[i - 1];
+
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = this.SelectedVertex.Intervals.ElementAt(i) / this.SelectedVertex.SafeMax,
+                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
 
                     fill.GradientStops.Add(new GradientStop
                     {
-                        Offset = this.SelectedVertex.Intervals.ElementAt(i + 1) / this.SelectedVertex.SafeMax,
+                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i - 1) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
                         Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
                     });
-                });
+                }
 
                 this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                 {

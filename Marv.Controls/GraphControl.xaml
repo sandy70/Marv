@@ -28,7 +28,7 @@
                 
                 <converters:MultiValueToBrushConverter.FalseBrush>
                     
-                    <SolidColorBrush Color="Red" />
+                    <SolidColorBrush Color="Black" />
                 </converters:MultiValueToBrushConverter.FalseBrush>
             </converters:MultiValueToBrushConverter>
 
