@@ -209,6 +209,15 @@
                                                     <x:Type TypeName="common:VertexAxisType" />
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
+                                            
+                                            <ObjectDataProvider x:Key="DistributionType"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="input:DistributionType"/>
+                                                </ObjectDataProvider.MethodParameters>
+                                                
+                                            </ObjectDataProvider>
                                         </ToolBar.Resources>
                                         <telerik:RadButton Click="Undo_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/Undo.png " />
@@ -249,7 +258,15 @@
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
-
+                                        
+                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DistributionType}}"
+                                                             IsFilteringEnabled="True"
+                                                             OpenDropDownOnFocus="True"
+                                                             SelectedIndex="0"
+                                                             SelectedItem="{Binding ElementName=Root, Path=InterpolatorDistribution}"
+                                                             Width="100"
+                                                             SelectionChanged="InterpolateDistributionComboBox_SelectionChanged"/>
+                                        
                                         <telerik:RadButton Content="{Binding ElementName=Root, Path=IsInterpolateClicked, Converter={StaticResource BooleanToStringConverter}}"
                                                            FontWeight="Bold"
                                                            Width="100"
@@ -331,7 +348,6 @@
                                 
                                 <telerik:RadCartesianChart.Behaviors>
                                     <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
-                                  
                                 </telerik:RadCartesianChart.Behaviors>
                                
                                 

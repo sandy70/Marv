@@ -22,7 +22,7 @@ namespace Marv.Input
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
                 this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
-
+               
                 this.DraggedPoint.YValue = (double) (data.SecondValue);
                 ScatterDataPoint replacePoint = null;
 

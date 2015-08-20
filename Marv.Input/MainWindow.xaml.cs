@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
+using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -27,11 +28,9 @@ namespace Marv.Input
         private const int ModifyTolerance = 200;
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
-
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
-        
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
@@ -42,13 +41,14 @@ namespace Marv.Input
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
-        private InterpolatorDataPoints currentInterpolatorDataPoints = new InterpolatorDataPoints();
+        private IInterpolatorDataPoints currentInterpolatorDataPoints = new TriangularInterpolator();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity;
+        private DistributionType interpolatorDistribution;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -76,7 +76,7 @@ namespace Marv.Input
         private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private Dict<string, string, InterpolatorDataPoints> userNumberPoints;
+        private Dict<string, string, IInterpolatorDataPoints> userNumberPoints;
         private NumericalAxis verticalAxis = LinearAxis;
 
         public List<AddRowCommand> AddRowCommands
@@ -197,7 +197,7 @@ namespace Marv.Input
             }
         }
 
-        public InterpolatorDataPoints CurrentInterpolatorDataPoints
+        public IInterpolatorDataPoints CurrentInterpolatorDataPoints
         {
             get { return this.currentInterpolatorDataPoints; }
 
@@ -279,6 +279,16 @@ namespace Marv.Input
                 }
 
                 this.horizontalAxisQuantity = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public DistributionType InterpolatorDistribution
+        {
+            get { return interpolatorDistribution; }
+            set
+            {
+                interpolatorDistribution = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -601,7 +611,7 @@ namespace Marv.Input
             }
         }
 
-        public Dict<string, string, InterpolatorDataPoints> UserNumberPoints
+        public Dict<string, string, IInterpolatorDataPoints> UserNumberPoints
         {
             get { return this.userNumberPoints; }
 
@@ -640,10 +650,6 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
         }
 
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-        }
-
         protected void Table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             var action = e.Action;
@@ -655,9 +661,11 @@ namespace Marv.Input
             var command = new AddRowCommand(this.Table);
 
             this.AddRowCommandsCount++;
-            
+
             this.UpdateCommandStack(command);
         }
+
+        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {}
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
@@ -815,6 +823,7 @@ namespace Marv.Input
             {
                 interpolatedTable = this.lineDataObj[DataTheme.Interpolated][this.SelectedVertex.Key];
             }
+
             else
             {
                 interpolatedTable = new EvidenceTable(this.dates);
@@ -835,7 +844,11 @@ namespace Marv.Input
                 var yInterpolatedMode = Math.Round(modeLinInterpolator.Eval(midRangeValue), 2);
                 var yInterpolatedMax = Math.Round(maxLinInterpolator.Eval(midRangeValue), 2);
 
-                var val = "tri(" + yInterpolatedMin + "," + yInterpolatedMode + "," + yInterpolatedMax + ")";
+                var interpolatedValues = new List<double> { yInterpolatedMax, yInterpolatedMode, yInterpolatedMin };
+
+                interpolatedValues.Sort();
+                
+                var val = this.CurrentInterpolatorDataPoints.GetInterpolatedEvidenceString(interpolatedValues);
 
                 interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
             }
@@ -935,6 +948,11 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
+        private void InterpolateDistributionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.CurrentInterpolatorDataPoints= Utils.UpdateCurrentInterpolator(this.interpolatorDistribution);
+        }
+
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -945,7 +963,8 @@ namespace Marv.Input
             this.BaseTableRange = 0;
 
             this.Chart.Annotations.Remove(annotation => true);
-            this.CurrentInterpolatorDataPoints = new InterpolatorDataPoints { IsLineCross = false };
+
+            this.CurrentInterpolatorDataPoints = new TriangularInterpolator { IsLineCross = false };
             this.selectedVertex.IsUserEvidenceComplete = false;
             this.UpdateTable();
         }

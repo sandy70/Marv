@@ -6,6 +6,7 @@ using System.Windows;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
+using Marv.Controls;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 
@@ -113,7 +114,7 @@ namespace Marv.Input
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
-        public static bool IsWithInRange(this InterpolatorDataPoints currentInterpolatorDataPoints)
+        public static bool IsWithInRange(this IInterpolatorDataPoints currentInterpolatorDataPoints)
         {
             var currentLine = currentInterpolatorDataPoints;
 
@@ -341,6 +342,24 @@ namespace Marv.Input
             }
 
             return combinedColumnValues;
+        }
+
+        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
+        {
+            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
+            {
+                return  new SingleValueInterpolator { IsLineCross = false };
+            }
+
+            else if (interpolatorDistribution.Equals(DistributionType.Uniform))
+            {
+                return new UniformInterpolator { IsLineCross = false };
+            }
+
+            else
+            {
+                return new TriangularInterpolator { IsLineCross = false };
+            }
         }
     }
 }
