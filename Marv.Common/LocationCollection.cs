@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Marv.Common.Types;
+using SharpKml.Dom;
+using SharpKml.Engine;
 
 namespace Marv.Common
 {
@@ -80,6 +83,22 @@ namespace Marv.Common
             return locationCollection;
         }
 
+        public static IEnumerable<LocationCollection> ReadKml(string path)
+        {
+            var kmlFile = KmlFile.Load(new StreamReader(path));
+
+            if (kmlFile.Root != null)
+            {
+                return kmlFile.Root
+                    .Flatten()
+                    .OfType<Placemark>()
+                    .Where(placemark => placemark.Geometry is LineString)
+                    .Select(placemark => (LocationCollection)(placemark.Geometry as LineString));
+            }
+
+            return null;
+        }
+
         public Location GetLocationNearestTo(Location queryLocation)
         {
             return this.MinBy(location => Utils.Distance(location, queryLocation));
@@ -145,6 +164,22 @@ namespace Marv.Common
         public static implicit operator MapControl.LocationCollection(LocationCollection locations)
         {
             return new MapControl.LocationCollection(locations.Select(location => (MapControl.Location) location));
+        }
+
+        public static implicit operator LocationCollection(LineString linestring)
+        {
+            var locationCollection = new LocationCollection();
+
+            foreach (var coordinate in linestring.Coordinates)
+            {
+                locationCollection.Add(new Location
+                {
+                    Latitude = coordinate.Latitude,
+                    Longitude = coordinate.Longitude
+                });
+            }
+
+            return locationCollection;
         }
     }
 }
