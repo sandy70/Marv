@@ -8,91 +8,106 @@
         Title="MainWindow"
         Width="1000"
         Loaded="MainWindow_Loaded">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="32" />
-        </Grid.RowDefinitions>
-
-        <ToolBar Grid.Row="0">
-            <Label Content="Sensor" />
-
-            <ComboBox ItemsSource="{Binding ElementName=Root, Path=Streams}"
-                      SelectedIndex="0"
-                      SelectedItem="{Binding ElementName=Root, Path=SelectedStream}"
-                      SelectionChanged="SteamComboBox_SelectionChanged" />
-
-            <Label Content="Show past" />
-
-            <ComboBox DisplayMemberPath="Key"
-                      ItemsSource="{Binding ElementName=Root, Path=TimeSpans}"
-                      SelectedIndex="0"
-                      SelectedValue="{Binding ElementName=Root, Path=SelectedTimeSpan}"
-                      SelectedValuePath="Value"
-                      SelectionChanged="TimeSpanComboBox_SelectionChanged" />
+    <telerik:RadDocking HasDocumentHost="False">
+        <telerik:RadSplitContainer Orientation="Vertical">
+            <!-- Map -->
+            <telerik:RadPaneGroup>
+                <telerik:RadPane Header="Map">
+                    <controls:MapView />
+                </telerik:RadPane>
+            </telerik:RadPaneGroup>
             
-            <telerik:RadButton Content="Save"
-                               Width="64"
-                               Click="SaveButton_Click"/>
-        </ToolBar>
+            <!-- Sensor Data Chart -->
+            <telerik:RadPaneGroup>
+                <telerik:RadPane Header="Sensor Data">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
 
-        <telerik:RadCartesianChart Grid.Row="1">
-            <telerik:RadCartesianChart.Behaviors>
-                <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"
-                                                 ZoomMode='Horizontal'
-                                                 PanMode="Horizontal" />
+                        <ToolBar Grid.Row="0">
+                            <Label Content="Sensor" />
 
-                <telerik:ChartTrackBallBehavior ShowIntersectionPoints="True"
-                                                ShowTrackInfo="True"/>
-            </telerik:RadCartesianChart.Behaviors>
+                            <ComboBox ItemsSource="{Binding ElementName=Root, Path=Streams}"
+                                      SelectedIndex="0"
+                                      SelectedItem="{Binding ElementName=Root, Path=SelectedStream}"
+                                      SelectionChanged="SteamComboBox_SelectionChanged" />
 
-            <telerik:LineSeries CategoryBinding="Local_TimeStamp"
-                                ValueBinding="Value"
-                                ItemsSource="{Binding ElementName=Root, Path=DataPoints}">
-                <telerik:LineSeries.TrackBallInfoTemplate>
-                    <DataTemplate>
-                        <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
-                                                 DescriptionPanelVisibility="Collapsed"
-                                                 FieldIndicatorVisibility="Collapsed"
-                                                 Height="Auto" Width="Auto"
-                                                 HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                 IsReadOnly="True"
-                                                 Item="{Binding}"
-                                                 Margin="8"
-                                                 SearchBoxVisibility="Collapsed"
-                                                 SortAndGroupButtonsVisibility="Collapsed">
-                            <telerik:RadPropertyGrid.PropertyDefinitions>
-                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Server_TimeStamp}" DisplayName="Time" />
-                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Value}" DisplayName="Value" />
-                            </telerik:RadPropertyGrid.PropertyDefinitions>
-                        </telerik:RadPropertyGrid>
-                    </DataTemplate>
-                </telerik:LineSeries.TrackBallInfoTemplate>
-            </telerik:LineSeries>
+                            <Label Content="Show past" />
 
-            <telerik:RadCartesianChart.HorizontalAxis>
-                <telerik:DateTimeContinuousAxis MajorStepUnit="Second"
-                                                LabelFormat="HH:mm"
-                                                FontFamily="Segoe UI"
-                                                PlotMode="OnTicks"
-                                                ActualVisibleRangeChanged="DateTimeContinuousAxis_OnActualVisibleRangeChanged" />
-            </telerik:RadCartesianChart.HorizontalAxis>
+                            <ComboBox DisplayMemberPath="Key"
+                                      ItemsSource="{Binding ElementName=Root, Path=TimeSpans}"
+                                      SelectedIndex="0"
+                                      SelectedValue="{Binding ElementName=Root, Path=SelectedTimeSpan}"
+                                      SelectedValuePath="Value"
+                                      SelectionChanged="TimeSpanComboBox_SelectionChanged" />
 
-            <telerik:RadCartesianChart.VerticalAxis>
-                <telerik:LinearAxis Minimum="0"
-                                    MajorStep="500"
-                                    Maximum="1024"
-                                    FontFamily="Segoe UI" />
-            </telerik:RadCartesianChart.VerticalAxis>
+                            <telerik:RadButton Content="Save"
+                                               Width="64"
+                                               Click="SaveButton_Click" />
+                        </ToolBar>
 
-            <telerik:RadCartesianChart.Grid>
-                <telerik:CartesianChartGrid MajorLinesVisibility="Y"
-                                            MajorYLineDashArray="3,4" />
-            </telerik:RadCartesianChart.Grid>
-        </telerik:RadCartesianChart>
+                        <telerik:RadCartesianChart Grid.Row="1">
+                            <telerik:RadCartesianChart.Behaviors>
+                                <telerik:ChartPanAndZoomBehavior MouseWheelMode="ZoomHorizontally"
+                                                                 ZoomMode='Horizontal'
+                                                                 PanMode="Horizontal" />
 
-        <controls:StatusControl Grid.Row="2"
-                                Notifications="{Binding ElementName=Root, Path=Notifications}" />
-    </Grid>
+                                <telerik:ChartTrackBallBehavior ShowIntersectionPoints="True"
+                                                                ShowTrackInfo="True" />
+                            </telerik:RadCartesianChart.Behaviors>
+
+                            <telerik:LineSeries CategoryBinding="Local_TimeStamp"
+                                                ValueBinding="Value"
+                                                ItemsSource="{Binding ElementName=Root, Path=DataPoints}">
+                                <telerik:LineSeries.TrackBallInfoTemplate>
+                                    <DataTemplate>
+                                        <telerik:RadPropertyGrid AutoGeneratePropertyDefinitions="False"
+                                                                 DescriptionPanelVisibility="Collapsed"
+                                                                 FieldIndicatorVisibility="Collapsed"
+                                                                 Height="Auto" Width="Auto"
+                                                                 HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                                 IsReadOnly="True"
+                                                                 Item="{Binding}"
+                                                                 Margin="8"
+                                                                 SearchBoxVisibility="Collapsed"
+                                                                 SortAndGroupButtonsVisibility="Collapsed">
+                                            <telerik:RadPropertyGrid.PropertyDefinitions>
+                                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Server_TimeStamp}" DisplayName="Time" />
+                                                <telerik:PropertyDefinition Binding="{Binding Path=DataPoint.DataItem.Value}" DisplayName="Value" />
+                                            </telerik:RadPropertyGrid.PropertyDefinitions>
+                                        </telerik:RadPropertyGrid>
+                                    </DataTemplate>
+                                </telerik:LineSeries.TrackBallInfoTemplate>
+                            </telerik:LineSeries>
+
+                            <telerik:RadCartesianChart.HorizontalAxis>
+                                <telerik:DateTimeContinuousAxis MajorStepUnit="Second"
+                                                                LabelFormat="HH:mm"
+                                                                FontFamily="Segoe UI"
+                                                                PlotMode="OnTicks"
+                                                                ActualVisibleRangeChanged="DateTimeContinuousAxis_OnActualVisibleRangeChanged" />
+                            </telerik:RadCartesianChart.HorizontalAxis>
+
+                            <telerik:RadCartesianChart.VerticalAxis>
+                                <telerik:LinearAxis Minimum="0"
+                                                    MajorStep="500"
+                                                    Maximum="1024"
+                                                    FontFamily="Segoe UI" />
+                            </telerik:RadCartesianChart.VerticalAxis>
+
+                            <telerik:RadCartesianChart.Grid>
+                                <telerik:CartesianChartGrid MajorLinesVisibility="Y"
+                                                            MajorYLineDashArray="3,4" />
+                            </telerik:RadCartesianChart.Grid>
+                        </telerik:RadCartesianChart>
+
+                        <controls:StatusControl Grid.Row="2"
+                                                Notifications="{Binding ElementName=Root, Path=Notifications}" />
+                    </Grid></telerik:RadPane>
+            </telerik:RadPaneGroup>
+        </telerik:RadSplitContainer>
+    </telerik:RadDocking>
 </Window>
