@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using CsvHelper;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Epri.Properties;
@@ -32,8 +33,6 @@ namespace Marv.Epri
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
-        private string device;
-        private bool isDownloading;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
@@ -176,7 +175,8 @@ namespace Marv.Epri
             {
                 try
                 {
-                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri)));
+                    var uri1 = uri;
+                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri1)));
 
                     downloadedPoints.Add(response.list);
 
@@ -212,7 +212,8 @@ namespace Marv.Epri
 
             while (true)
             {
-                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<Stream>>(await httpClient.GetStringAsync(uriEndPoint)));
+                var point = uriEndPoint;
+                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<Stream>>(await httpClient.GetStringAsync(point)));
 
                 downloadedStreams.Add(response.list.Select(x => x.id.Split("/".ToArray())[1]));
 
@@ -242,6 +243,10 @@ namespace Marv.Epri
             this.Notifications.Remove(notification);
 
             await this.UpdateDataPoints();
+
+            var locationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
+
+            Console.WriteLine(locationCollections);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -261,7 +266,7 @@ namespace Marv.Epri
 
             if (dialog.ShowDialog() == true)
             {
-                var csvWriter = new CsvHelper.CsvWriter(new StreamWriter(dialog.FileName));
+                var csvWriter = new CsvWriter(new StreamWriter(dialog.FileName));
                 csvWriter.WriteRecords(this.DataPoints);
             }
         }
