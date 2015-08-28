@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
 
 namespace Marv.Input
@@ -13,5 +14,6 @@ namespace Marv.Input
         ObservableCollection<ScatterDataPoint> ModeNumberPoints { get; set; }
         string GetInterpolatedEvidenceString(List<double> interpolatedValues);
         ObservableCollection<ScatterDataPoint> GetNumberPoints(string selectedLine);
+        List<LinearInterpolator>GetLinearInterpolators();
     }
 }

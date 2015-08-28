@@ -258,7 +258,7 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static Dict<string, EvidenceTable> UpdateInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
+        public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
             if (interpolatedDataSet == null)
             {

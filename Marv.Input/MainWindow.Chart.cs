@@ -84,6 +84,7 @@ namespace Marv.Input
             {
                 this.Plot(row, columnName);
             }
+
         }
 
         private void Plot(EvidenceRow dataRow, string columnName)
@@ -194,6 +195,8 @@ namespace Marv.Input
                     ZIndex = -200
                 });
             }
+
+            
         }
     }
 }

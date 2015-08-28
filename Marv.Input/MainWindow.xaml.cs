@@ -506,6 +506,12 @@ namespace Marv.Input
         public string SelectedColumnName
         {
             get { return this.selectedColumnName; }
+
+            set
+            {
+                this.selectedColumnName = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public string SelectedLine
@@ -800,8 +806,13 @@ namespace Marv.Input
             this.IsTimelineToolbarVisible = true;
         }
 
-        private void Done_Click(object sender, RoutedEventArgs e)
+        private void CaptureInterpolatedData()
         {
+            if (!this.IsInterpolateClicked)
+            {
+                MessageBox.Show("Cannot capture data without interpolation");
+                return;
+            }
             if (this.CurrentInterpolatorDataPoints == null)
             {
                 return;
@@ -847,13 +858,14 @@ namespace Marv.Input
                 var interpolatedValues = new List<double> { yInterpolatedMax, yInterpolatedMode, yInterpolatedMin };
 
                 interpolatedValues.Sort();
-                
+
                 var val = this.CurrentInterpolatorDataPoints.GetInterpolatedEvidenceString(interpolatedValues);
 
                 interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
             }
             this.SelectedVertex.IsInterpolateEvidenceComplete = true;
             this.IsInterpolateClicked = false;
+            this.SelectedTheme = DataTheme.Interpolated;
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
         }
 
@@ -948,10 +960,7 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void InterpolateDistributionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.CurrentInterpolatorDataPoints= Utils.UpdateCurrentInterpolator(this.interpolatorDistribution);
-        }
+
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -1057,6 +1066,13 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
+                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
+            {
+                MessageBox.Show("cannot run model without any data");
+                return;
+            }
+
             try
             {
                 if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
@@ -1070,7 +1086,21 @@ namespace Marv.Input
 
                     var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
 
-                    mergedDataSet = mergedDataSet.UpdateInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
+                    this.IsInterpolateClicked = false;
+                    foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
+                    {
+                        if (button.IsChecked == true)
+                        {
+                            this.IsInterpolateClicked = true;
+                        }
+                    }
+
+                    if (this.IsInterpolateClicked)
+                    {
+                        CaptureInterpolatedData();
+                    }
+
+                    mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
@@ -1120,12 +1150,14 @@ namespace Marv.Input
                         var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = val;
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.SelectedVertex.States.ParseEvidenceString(val.ValueToDistribution());
                     }
 
                     vertexEvidences.Clear();
                 }
             }
+            this.SelectedTheme = DataTheme.Beliefs;
+            MessageBox.Show("Model run sucessful");
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1184,5 +1216,65 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+
+        private void TriangularRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
+                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
+            {
+                MessageBox.Show("cannot interpolate without any data");
+                return;
+            }
+            this.InterpolatorDistribution = DistributionType.Triangular;
+            Interpolate();
+        }
+
+        private void UniformRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
+                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
+            {
+                MessageBox.Show("cannot interpolate without any data");
+                return;
+            }
+
+            this.InterpolatorDistribution = DistributionType.Uniform;
+            Interpolate();
+        }
+
+        private void SingleValueRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
+                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
+            {
+                MessageBox.Show("cannot interpolate without any data");
+                return;
+            }
+            this.InterpolatorDistribution = DistributionType.SingleValue;
+            Interpolate();
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            this.ClearInterpolatorLines();
+
+            foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
+            {
+                button.IsChecked = false;
+            }
+        }
+
+        private void LinAxis_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.VerticalAxis = LogarithmicAxis;
+        }
+
+        private void LogarthmicAxis_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.VerticalAxis = LinearAxis;
+
+            
+        }
     }
 }

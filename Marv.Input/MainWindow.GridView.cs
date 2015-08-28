@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Types;
-using Marv.Controls;
 using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -34,8 +32,8 @@ namespace Marv.Input
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
-
             this.CreatedRowsCount++;
+            
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -104,7 +102,7 @@ namespace Marv.Input
 
             var gridViewColumn = gridViewCell.Column;
 
-            this.selectedColumnName = gridViewColumn.UniqueName;
+            this.SelectedColumnName = gridViewColumn.UniqueName;
 
             DateTime dateTime;
 
@@ -198,20 +196,22 @@ namespace Marv.Input
                 this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
             }
         }
-
-        private void Intepolate_Click(object sender, RoutedEventArgs e)
+        
+        private void Interpolate()
         {
-            if (this.IsInterpolateClicked)
-            {
-               this.CurrentInterpolatorDataPoints =  Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
-               var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-                if (vertexAvail)
-                {
-                    this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
-                }
-                this.IsInterpolateClicked = !this.IsInterpolateClicked;
-                return;
-            }
+            //if (this.IsInterpolateClicked)
+            //{
+            //    this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
+            //    var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+            //    if (vertexAvail)
+            //    {
+            //        this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
+            //    }
+            //    this.IsInterpolateClicked = !this.IsInterpolateClicked;
+            //    return;
+            //}
+
+            this.ClearInterpolatorLines();
 
             this.IsInterpolateClicked = !this.IsInterpolateClicked;
 
@@ -244,7 +244,6 @@ namespace Marv.Input
                     {
                         dateColumns.Add(dateTime.String(), new TriangularInterpolator());
                     }
-
                 }
                 this.UserNumberPoints.Add(this.SelectedVertex.Key, dateColumns);
             }
@@ -257,25 +256,38 @@ namespace Marv.Input
                     IInterpolatorDataPoints interpolatorLine = null;
                     if (this.InterpolatorDistribution.Equals(DistributionType.SingleValue))
                     {
-                       interpolatorLine=  new SingleValueInterpolator();
+                        interpolatorLine = new SingleValueInterpolator();
                     }
                     else if (this.InterpolatorDistribution.Equals(DistributionType.Uniform))
                     {
-                        interpolatorLine= new UniformInterpolator();
+                        interpolatorLine = new UniformInterpolator();
                     }
                     else
                     {
-                        interpolatorLine= new TriangularInterpolator();
+                        interpolatorLine = new TriangularInterpolator();
                     }
 
                     this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName] = interpolatorLine;
                 }
-            }            
+            }
             this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
 
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
 
             this.PlotInterpolatorLines(minMaxValues);
+        }
+
+        private void ClearInterpolatorLines()
+        {
+            if (this.UserNumberPoints !=null)
+            {
+                this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
+                var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+                if (vertexAvail)
+                {
+                    this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
+                }
+            }
         }
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
