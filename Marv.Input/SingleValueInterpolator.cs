@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
 
 namespace Marv.Input
@@ -64,6 +65,23 @@ namespace Marv.Input
             this.ModeNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
         }
 
+        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
+        {
+            return Math.Round(interpolatedValues[0], 2).ToString();
+        }
+
+        public List<LinearInterpolator> GetLinearInterpolators()
+        {
+            var linearInterpolators = new List<LinearInterpolator>();
+
+            var xCoordsMode = this.GetNumberPoints(Utils.ModeInterpolatorLine).GetXCoords();
+            var yCoordsMode = this.GetNumberPoints(Utils.ModeInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMode, yCoordsMode));
+
+            return linearInterpolators;
+        }
+
         public ObservableCollection<ScatterDataPoint> GetNumberPoints(string selectedLine)
         {
             if (selectedLine == null)
@@ -71,13 +89,24 @@ namespace Marv.Input
                 return null;
             }
 
-            return this.ModeNumberPoints;
+            if (selectedLine.Equals(Utils.MaxInterpolatorLine))
+            {
+                return this.MaxNumberPoints;
+            }
+
+            if (selectedLine.Equals(Utils.ModeInterpolatorLine))
+            {
+                return this.ModeNumberPoints;
+            }
+
+            return this.MinNumberPoints;
         }
 
-        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
+        public bool IsWithInRange()
         {
-            return  Math.Round(interpolatedValues[2],2).ToString();
+            return true;
         }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)

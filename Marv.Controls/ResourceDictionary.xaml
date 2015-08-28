@@ -23,6 +23,7 @@
     <marv:DoubleToBrushConverter x:Key="DoubleToBrush" />
     <marv:DoubleToJetGradientConverter x:Key="DoubleToJetColorConverter" />
     <marv:FilePathToFileNameConverter x:Key="FilePathToFileName"/>
+    <marv:LongDateToShortConverter x:Key="LongDateToShort"/>
     <marv:IntToVisibilityConverter x:Key="IntToVisibility" />
     
     <marv:NullToBooleanConverter x:Key="NullToBoolean" />

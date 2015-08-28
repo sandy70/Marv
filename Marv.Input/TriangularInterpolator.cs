@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
-using Marv.Controls;
 using Telerik.Charting;
 
 namespace Marv.Input
@@ -14,6 +14,7 @@ namespace Marv.Input
     internal class TriangularInterpolator : IInterpolatorDataPoints
     {
         private bool isLineCross;
+
         private ObservableCollection<ScatterDataPoint> maxNumberPoints;
         private ObservableCollection<ScatterDataPoint> minNumberPoints;
         private ObservableCollection<ScatterDataPoint> modeNumberPoints;
@@ -63,7 +64,66 @@ namespace Marv.Input
             this.MaxNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
             this.ModeNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
             this.MinNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
+        }
 
+        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
+        {
+            return "tri(" + interpolatedValues[0] + "," + interpolatedValues[1] + "," + interpolatedValues[2] + ")";
+        }
+
+        public List<LinearInterpolator> GetLinearInterpolators( )
+        {
+           
+            var linearInterpolators = new List<LinearInterpolator>();
+            var xCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetXCoords();
+            var yCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMaximum, yCoordsMaximum));
+
+            var xCoordsMode = this.GetNumberPoints(Utils.ModeInterpolatorLine).GetXCoords();
+            var yCoordsMode = this.GetNumberPoints(Utils.ModeInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMode, yCoordsMode));
+
+            var xCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetXCoords();
+            var yCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMinimum, yCoordsMinimum));
+
+            return linearInterpolators;
+        }
+
+        public bool IsWithInRange()
+        {
+            var currentLine = this;
+
+            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
+            var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
+            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
+
+            var linearInterpolators = this.GetLinearInterpolators();
+
+            var maxLinInterpolator = linearInterpolators[0];
+            var modeLinInterpolator = linearInterpolators[1];
+            var minLinInterpolator = linearInterpolators[2];
+
+            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
+                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public ObservableCollection<ScatterDataPoint> GetNumberPoints(string selectedLine)
@@ -86,10 +146,7 @@ namespace Marv.Input
             return this.MinNumberPoints;
         }
 
-        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
-        {
-            return "tri(" + interpolatedValues[0] + "," + interpolatedValues[1] + "," + interpolatedValues[2] + ")";
-        }
+        
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)

@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Marv.Controls;
 using Telerik.Charting;
@@ -75,12 +78,60 @@ namespace Marv.Input
                 return this.MaxNumberPoints;
             }
 
-           return this.MinNumberPoints;
+            if (selectedLine.Equals(Utils.ModeInterpolatorLine))
+            {
+                return this.ModeNumberPoints;
+            }
+
+            return this.MinNumberPoints;
+        }
+
+        public List<LinearInterpolator> GetLinearInterpolators()
+        {
+
+            var linearInterpolators = new List<LinearInterpolator>();
+            var xCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetXCoords();
+            var yCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMaximum, yCoordsMaximum));
+
+           
+            var xCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetXCoords();
+            var yCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMinimum, yCoordsMinimum));
+
+            return linearInterpolators;
+        }
+
+        public bool IsWithInRange()
+        {
+            var currentLine = this;
+
+            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
+            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
+
+            var linearInterpolators = this.GetLinearInterpolators();
+
+            var maxLinInterpolator = linearInterpolators[0];
+            var minLinInterpolator = linearInterpolators[1];
+
+            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
+            {
+                return false;
+            }
+
+            if (currentMin.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
         {
-            return "" + interpolatedValues[0] + ":" + interpolatedValues[2] ;
+            return "" + interpolatedValues[0] + ":" + interpolatedValues[1] ;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)

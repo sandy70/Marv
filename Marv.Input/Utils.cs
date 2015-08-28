@@ -6,7 +6,6 @@ using System.Windows;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
-using Marv.Controls;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
 
@@ -18,20 +17,6 @@ namespace Marv.Input
         public const string MinInterpolatorLine = "MinimumLine";
         public const double MinusInfinity = 10E-09;
         public const string ModeInterpolatorLine = "ModeLine";
-
-        public static string  ValueToDistribution(this double[] evidenceValue)
-        {
-            var evidenceString = "";
-            var i = 0;
-            while (i < evidenceValue.Length)
-            {
-                evidenceString += evidenceValue[i] + ",";
-                i++;
-            }
-            evidenceString = evidenceString.Substring(0, evidenceString.Length - 1);
-
-            return evidenceString;
-        }
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
@@ -258,6 +243,21 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
+        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
+        {
+            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
+            {
+                return new SingleValueInterpolator { IsLineCross = false };
+            }
+
+            if (interpolatorDistribution.Equals(DistributionType.Uniform))
+            {
+                return new UniformInterpolator { IsLineCross = false };
+            }
+
+            return new TriangularInterpolator { IsLineCross = false };
+        }
+
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
             if (interpolatedDataSet == null)
@@ -293,6 +293,20 @@ namespace Marv.Input
             }
 
             return mergedEvidenceSet;
+        }
+
+        public static string ValueToDistribution(this double[] evidenceValue)
+        {
+            var evidenceString = "";
+            var i = 0;
+            while (i < evidenceValue.Length)
+            {
+                evidenceString += evidenceValue[i] + ",";
+                i++;
+            }
+            evidenceString = evidenceString.Substring(0, evidenceString.Length - 1);
+
+            return evidenceString;
         }
 
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)
@@ -342,24 +356,6 @@ namespace Marv.Input
             }
 
             return combinedColumnValues;
-        }
-
-        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
-        {
-            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
-            {
-                return  new SingleValueInterpolator { IsLineCross = false };
-            }
-
-            else if (interpolatorDistribution.Equals(DistributionType.Uniform))
-            {
-                return new UniformInterpolator { IsLineCross = false };
-            }
-
-            else
-            {
-                return new TriangularInterpolator { IsLineCross = false };
-            }
         }
     }
 }

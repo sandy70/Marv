@@ -331,31 +331,9 @@
                                      
                                     </ToolBar>
 
-                                     <!--Vertex Axis Type ComboBox-->
-                                    <!--<ToolBar>
-                                        <ToolBar.Resources>
-                                            <ObjectDataProvider x:Key="VertexAxisTypes"
-                                                                MethodName="GetValues"
-                                                                ObjectType="{x:Type sys:Enum}">
-                                                <ObjectDataProvider.MethodParameters>
-                                                    <x:Type TypeName="common:VertexAxisType" />
-                                                </ObjectDataProvider.MethodParameters>
-                                            </ObjectDataProvider>
-                                        </ToolBar.Resources>
-                                        <TextBlock Margin="4"
-                                                   Text="Chart Axis" />
-
-                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource VertexAxisTypes}}"
-                                                             OpenDropDownOnFocus="True"
-                                                             SelectedIndex="0"
-                                                             SelectedItem="{Binding ElementName=Root, Path=SelectedVertex.AxisType, Mode=TwoWay}"
-                                                             Width="100"
-                                                             SelectionChanged="AxisTypeComboBox_SelectionChanged" />
-                                    </ToolBar>-->
-                                </ToolBarTray>
-                                <!--<Label Grid.Row="1" HorizontalAlignment="Left" Width="50" Content="Time:"/>-->
-                                
-                                <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName}"/>
+                              </ToolBarTray>
+                               
+                                <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}"/>
                                 <StackPanel Orientation="Horizontal"
                                             Name="ChartAxis" 
                                             Grid.Row="1"
