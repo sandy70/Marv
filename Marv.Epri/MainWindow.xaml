@@ -15,8 +15,9 @@
                 <!-- Map -->
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Map">
-                        <controls:MapView TileLayer="{x:Static controls:TileLayers.Blank}">
-                            <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=LocationCollections}">
+                        <controls:MapView StartBounds="{Binding ElementName=Root, Path=LocationCollections.Bounds}"
+                                          TileLayer="{x:Static controls:TileLayers.Blank}">
+                            <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=LocationCollections.LineStrings}">
                                 <mapControl:MapItemsControl.ItemContainerStyle>
                                     <Style TargetType="mapControl:MapItem">
                                         <Setter Property="Template">

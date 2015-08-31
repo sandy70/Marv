@@ -34,7 +34,7 @@ namespace Marv.Epri
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
-        private ObservableCollection<LocationCollection> locationCollections = new ObservableCollection<LocationCollection>();
+        private LineStringCollection locationCollections = new LineStringCollection();
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
@@ -60,7 +60,7 @@ namespace Marv.Epri
             }
         }
 
-        public ObservableCollection<LocationCollection> LocationCollections
+        public LineStringCollection LocationCollections
         {
             get { return this.locationCollections; }
 
@@ -253,7 +253,7 @@ namespace Marv.Epri
 
             await this.UpdateDataPoints();
 
-            this.LocationCollections = new ObservableCollection<LocationCollection>(LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml"));
+            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
 
             this.GraphControl.Open(@"C:\Users\vkha\Data\Misc\XivelyLight.net");
         }

@@ -13,7 +13,7 @@ namespace Marv.Controls
     public class MapView : Map
     {
         public static readonly DependencyProperty StartBoundsProperty =
-            DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null));
+            DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null, StartBoundsChanged));
 
         private int discreteZoomLevel = 100;
         private Location previousCenter;
@@ -55,6 +55,16 @@ namespace Marv.Controls
 
             this.ViewportChanged -= this.MapView_ViewportChanged;
             this.ViewportChanged += this.MapView_ViewportChanged;
+        }
+
+        private static void StartBoundsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as MapView;
+
+            if (control.StartBounds != null)
+            {
+                control.Bounds = control.StartBounds;
+            }
         }
 
         public bool Contains(IEnumerable<Location> locations)

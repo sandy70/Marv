@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -83,17 +82,27 @@ namespace Marv.Common
             return locationCollection;
         }
 
-        public static IEnumerable<LocationCollection> ReadKml(string path)
+        public static LineStringCollection ReadKml(string path)
         {
             var kmlFile = KmlFile.Load(new StreamReader(path));
 
             if (kmlFile.Root != null)
             {
+                var lineStringCollection = new LineStringCollection();
+
                 return kmlFile.Root
-                    .Flatten()
-                    .OfType<Placemark>()
-                    .Where(placemark => placemark.Geometry is LineString)
-                    .Select(placemark => (LocationCollection)(placemark.Geometry as LineString));
+                              .Flatten()
+                              .OfType<Placemark>()
+                              .Where(pm => pm.Geometry is LineString)
+                              .Select(pm => pm.Geometry)
+                              .Cast<LineString>()
+                              .Aggregate(lineStringCollection,
+                                  (current, lineString) =>
+                                  {
+                                      current.LineStrings.Add(lineString);
+                                      return current;
+                                      return current;
+                                  });
             }
 
             return null;
