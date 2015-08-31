@@ -15,7 +15,7 @@
                 <!-- Map -->
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="Map">
-                        <controls:MapView>
+                        <controls:MapView TileLayer="{x:Static controls:TileLayers.Blank}">
                             <mapControl:MapItemsControl ItemsSource="{Binding ElementName=Root, Path=LocationCollections}">
                                 <mapControl:MapItemsControl.ItemContainerStyle>
                                     <Style TargetType="mapControl:MapItem">
@@ -26,8 +26,6 @@
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
-
-                                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                                     </Style>
                                 </mapControl:MapItemsControl.ItemContainerStyle>
                             </mapControl:MapItemsControl>
