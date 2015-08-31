@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Marv.Common;
 using Marv.Common.Interpolators;
-using Marv.Common.Types;
-using Marv.Controls;
 using Telerik.Charting;
 
 namespace Marv.Input
@@ -48,6 +44,7 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<ScatterDataPoint> ModeNumberPoints
         {
             get { return this.modeNumberPoints; }
@@ -57,15 +54,37 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
-         public UniformInterpolator()
+
+        public UniformInterpolator()
         {
             this.MaxNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
-          
+
             this.MinNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
 
             this.ModeNumberPoints = new ObservableCollection<ScatterDataPoint> { new ScatterDataPoint() };
-             
         }
+
+        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
+        {
+            return "" + interpolatedValues[0] + ":" + interpolatedValues[1];
+        }
+
+        public List<LinearInterpolator> GetLinearInterpolators()
+        {
+            var linearInterpolators = new List<LinearInterpolator>();
+            var xCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetXCoords();
+            var yCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMaximum, yCoordsMaximum));
+
+            var xCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetXCoords();
+            var yCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetYCoords();
+
+            linearInterpolators.Add(new LinearInterpolator(xCoordsMinimum, yCoordsMinimum));
+
+            return linearInterpolators;
+        }
+
         public ObservableCollection<ScatterDataPoint> GetNumberPoints(string selectedLine)
         {
             if (selectedLine == null)
@@ -84,24 +103,6 @@ namespace Marv.Input
             }
 
             return this.MinNumberPoints;
-        }
-
-        public List<LinearInterpolator> GetLinearInterpolators()
-        {
-
-            var linearInterpolators = new List<LinearInterpolator>();
-            var xCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetXCoords();
-            var yCoordsMaximum = this.GetNumberPoints(Utils.MaxInterpolatorLine).GetYCoords();
-
-            linearInterpolators.Add(new LinearInterpolator(xCoordsMaximum, yCoordsMaximum));
-
-           
-            var xCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetXCoords();
-            var yCoordsMinimum = this.GetNumberPoints(Utils.MinInterpolatorLine).GetYCoords();
-
-            linearInterpolators.Add(new LinearInterpolator(xCoordsMinimum, yCoordsMinimum));
-
-            return linearInterpolators;
         }
 
         public bool IsWithInRange()
@@ -127,11 +128,6 @@ namespace Marv.Input
             }
 
             return true;
-        }
-
-        public string GetInterpolatedEvidenceString(List<double> interpolatedValues)
-        {
-            return "" + interpolatedValues[0] + ":" + interpolatedValues[1] ;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)

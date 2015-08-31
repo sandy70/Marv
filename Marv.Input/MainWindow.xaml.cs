@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Marv.Controls;
 using Microsoft.Win32;
@@ -936,7 +935,7 @@ namespace Marv.Input
             {
                 var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
 
-                this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : null;
+                this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new TriangularInterpolator();
             }
 
             this.Chart.Annotations.Remove(annotation => true);

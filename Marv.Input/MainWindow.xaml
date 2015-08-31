@@ -345,8 +345,8 @@
                                                  GroupName="ChartAxis" 
                                                  VerticalAlignment="Top" 
                                                  HorizontalAlignment="Right" 
-                                                 Width="40" 
-                                                 Content="Lin"
+                                                 Width="60" 
+                                                 Content="Linear"
                                                  IsChecked="True"
                                                  Unchecked="LinAxis_Unchecked"/>
 
@@ -354,7 +354,7 @@
                                              GroupName="ChartAxis" 
                                              VerticalAlignment="Top" 
                                              HorizontalAlignment="Right" 
-                                             Width="40" 
+                                             Width="60" 
                                              Content="Log"
                                              Unchecked="LogarthmicAxis_Unchecked"/>
 
