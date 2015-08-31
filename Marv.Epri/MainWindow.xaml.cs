@@ -18,6 +18,7 @@ using Marv.Epri.Properties;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Telerik.Charting;
+using Telerik.Windows.Controls;
 
 namespace Marv.Epri
 {
@@ -33,6 +34,7 @@ namespace Marv.Epri
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
+        private ObservableCollection<LocationCollection> locationCollections = new ObservableCollection<LocationCollection>();
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
@@ -53,12 +55,18 @@ namespace Marv.Epri
 
             set
             {
-                if (value.Equals(this.dataPoints))
-                {
-                    return;
-                }
-
                 this.dataPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<LocationCollection> LocationCollections
+        {
+            get { return this.locationCollections; }
+
+            set
+            {
+                this.locationCollections = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -145,6 +153,7 @@ namespace Marv.Epri
 
         public MainWindow()
         {
+            StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
 
             this.timer.Tick += timer_Tick;
@@ -244,9 +253,9 @@ namespace Marv.Epri
 
             await this.UpdateDataPoints();
 
-            var locationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
+            this.LocationCollections = new ObservableCollection<LocationCollection>(LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml"));
 
-            Console.WriteLine(locationCollections);
+            this.GraphControl.Open(@"C:\Users\vkha\Data\Misc\XivelyLight.net");
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -299,6 +308,14 @@ namespace Marv.Epri
             if (this.task == null || this.task.IsCompleted)
             {
                 this.DataPoints = await (this.task = this.DownloadDataPointsAsync());
+
+                var vertexEvidences = new Dict<string, VertexEvidence>
+                {
+                    { "Value", this.GraphControl.Graph.Vertices["Value"].States.ParseEvidenceString(this.DataPoints.Last().Value.ToString()) }
+                };
+
+                this.GraphControl.Graph.Belief = this.GraphControl.Network.Run(vertexEvidences);
+                this.GraphControl.Graph.SetEvidence(vertexEvidences);
             }
 
             this.Notifications.Remove(notification);
