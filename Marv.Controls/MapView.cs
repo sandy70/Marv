@@ -12,6 +12,8 @@ namespace Marv.Controls
 {
     public class MapView : Map
     {
+        private const double StartBoundsPadding = 0.25;
+
         public static readonly DependencyProperty StartBoundsProperty =
             DependencyProperty.Register("StartBounds", typeof (LocationRect), typeof (MapView), new PropertyMetadata(null, StartBoundsChanged));
 
@@ -59,12 +61,7 @@ namespace Marv.Controls
 
         private static void StartBoundsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as MapView;
-
-            if (control.StartBounds != null)
-            {
-                control.Bounds = control.StartBounds;
-            }
+            (d as MapView).UpdateBounds();
         }
 
         public bool Contains(IEnumerable<Location> locations)
@@ -127,10 +124,7 @@ namespace Marv.Controls
         {
             this.previousCenter = this.Center;
 
-            if (this.StartBounds != null)
-            {
-                this.Bounds = this.StartBounds;
-            }
+            this.UpdateBounds();
         }
 
         private void MapView_ViewportChanged(object sender, EventArgs e)
@@ -174,6 +168,14 @@ namespace Marv.Controls
             if (this.ZoomLevelChanged != null)
             {
                 this.ZoomLevelChanged(this, zoom);
+            }
+        }
+
+        private void UpdateBounds()
+        {
+            if (this.StartBounds != null)
+            {
+                this.Bounds = this.StartBounds.GetPadded(StartBoundsPadding);
             }
         }
 
