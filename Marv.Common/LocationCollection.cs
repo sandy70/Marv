@@ -94,13 +94,12 @@ namespace Marv.Common
                               .Flatten()
                               .OfType<Placemark>()
                               .Where(pm => pm.Geometry is LineString)
-                              .Select(pm => pm.Geometry)
-                              .Cast<LineString>()
                               .Aggregate(lineStringCollection,
-                                  (current, lineString) =>
+                                  (current, placemark) =>
                                   {
-                                      current.LineStrings.Add(lineString);
-                                      return current;
+                                      LocationCollection locationCollection = placemark.Geometry as LineString;
+                                      locationCollection.Key = placemark.Name;
+                                      current.LineStrings.Add(locationCollection);
                                       return current;
                                   });
             }
