@@ -8,6 +8,7 @@ using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
@@ -17,6 +18,29 @@ namespace Marv.Input
         public const string MinInterpolatorLine = "MinimumLine";
         public const double MinusInfinity = 10E-09;
         public const string ModeInterpolatorLine = "ModeLine";
+
+        public static void CorrectBindingError(this IInterpolatorDataPoints currentInterpolatorDataPoints, PresenterCollection<CartesianSeries> associatedSeriesCollection)
+        {
+            var maxLine = currentInterpolatorDataPoints.GetNumberPoints(MaxInterpolatorLine);
+            var modeLine = currentInterpolatorDataPoints.GetNumberPoints(ModeInterpolatorLine);
+            var minLine = currentInterpolatorDataPoints.GetNumberPoints(MinInterpolatorLine);
+
+            var dataPoints = (associatedSeriesCollection[0] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                maxLine[i] = dataPoints[i];
+            }
+            dataPoints = (associatedSeriesCollection[1] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                modeLine[i] = dataPoints[i];
+            }
+            dataPoints = (associatedSeriesCollection[2] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                minLine[i] = dataPoints[i];
+            }
+        }
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {

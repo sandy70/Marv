@@ -66,6 +66,7 @@ namespace Marv.Input
         private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
+        private PresenterCollection<CartesianSeries> scatterLineSeriesCollection;
         private string selectedColumnName;
         private string selectedLine;
         private EvidenceRow selectedRow;
@@ -502,6 +503,16 @@ namespace Marv.Input
             }
         }
 
+        public PresenterCollection<CartesianSeries> ScatterLineSeriesCollection
+        {
+            get { return scatterLineSeriesCollection; }
+            set
+            {
+                scatterLineSeriesCollection = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public string SelectedColumnName
         {
             get { return this.selectedColumnName; }
@@ -655,7 +666,7 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
         }
 
-        protected void Table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             var action = e.Action;
 
@@ -669,8 +680,6 @@ namespace Marv.Input
 
             this.UpdateCommandStack(command);
         }
-
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {}
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
