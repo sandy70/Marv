@@ -18,6 +18,13 @@ namespace Marv.Controls
             TileSource = new TileSource { UriFormat = "http://ecn.t{i}.tiles.virtualearth.net/tiles/r{q}.png?g=0&amp;stl=h" }
         };
 
+        public static TileLayer Blank = new TileLayer
+        {
+            SourceName = "Blank",
+            Description = "Blank",
+            TileSource = new TileSource { UriFormat = "localhost://{c}/{z}/{x}/{y}.png" }
+        };
+
         public static readonly TileLayer MapBoxAerial = new TileLayer
         {
             SourceName = "MapBoxAerial",
