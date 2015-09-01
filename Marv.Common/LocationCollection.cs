@@ -3,6 +3,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Marv.Common.Types;
+using SharpKml.Dom;
+using SharpKml.Engine;
 
 namespace Marv.Common
 {
@@ -80,6 +82,31 @@ namespace Marv.Common
             return locationCollection;
         }
 
+        public static LineStringCollection ReadKml(string path)
+        {
+            var kmlFile = KmlFile.Load(new StreamReader(path));
+
+            if (kmlFile.Root != null)
+            {
+                var lineStringCollection = new LineStringCollection();
+
+                return kmlFile.Root
+                              .Flatten()
+                              .OfType<Placemark>()
+                              .Where(pm => pm.Geometry is LineString)
+                              .Aggregate(lineStringCollection,
+                                  (current, placemark) =>
+                                  {
+                                      LocationCollection locationCollection = placemark.Geometry as LineString;
+                                      locationCollection.Key = placemark.Name;
+                                      current.LineStrings.Add(locationCollection);
+                                      return current;
+                                  });
+            }
+
+            return null;
+        }
+
         public Location GetLocationNearestTo(Location queryLocation)
         {
             return this.MinBy(location => Utils.Distance(location, queryLocation));
@@ -145,6 +172,22 @@ namespace Marv.Common
         public static implicit operator MapControl.LocationCollection(LocationCollection locations)
         {
             return new MapControl.LocationCollection(locations.Select(location => (MapControl.Location) location));
+        }
+
+        public static implicit operator LocationCollection(LineString linestring)
+        {
+            var locationCollection = new LocationCollection();
+
+            foreach (var coordinate in linestring.Coordinates)
+            {
+                locationCollection.Add(new Location
+                {
+                    Latitude = coordinate.Latitude,
+                    Longitude = coordinate.Longitude
+                });
+            }
+
+            return locationCollection;
         }
     }
 }

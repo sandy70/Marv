@@ -598,7 +598,7 @@ namespace Marv.Controls
                 FilterIndex = 1,
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            if (this.Graph == null || openFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }

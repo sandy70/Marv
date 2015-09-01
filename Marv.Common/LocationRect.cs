@@ -165,6 +165,16 @@ namespace Marv.Common
 
         public static LocationRect Union(LocationRect rect1, LocationRect rect2)
         {
+            if (rect1 == null)
+            {
+                return rect2;
+            }
+
+            if (rect2 == null)
+            {
+                return rect1;
+            }
+
             return new LocationRect
             {
                 North = Math.Max(rect1.North, rect2.North),

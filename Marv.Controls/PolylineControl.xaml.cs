@@ -464,8 +464,8 @@ namespace Marv.Controls
                 return;
             }
 
-            this.SimplifiedLocations = Common.Extensions.Reduce(this.Locations
-                                                       .ToPoints(this.mapView), 5)
+            this.SimplifiedLocations = this.Locations
+                                           .ToPoints(this.mapView).Reduce(5)
                                            .ToLocations(this.mapView);
 
             this.UpdateSimplifiedPolylineParts();
