@@ -712,6 +712,11 @@ namespace Marv.Input
             this.UpdateVerticalAxis();
         }
 
+        private void AxisTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateVerticalAxis();
+        }
+
         private void CaptureInterpolatedData()
         {
             if (!this.IsInterpolateClicked)
@@ -954,11 +959,6 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void LinAxis_Unchecked(object sender, RoutedEventArgs e)
-        {
-            this.VerticalAxis = LogarithmicAxis;
-        }
-
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -1035,11 +1035,6 @@ namespace Marv.Input
             {
                 this.lineDataObj.WriteJson(this.lineDataObjFileName);
             }
-        }
-
-        private void LogarthmicAxis_Unchecked(object sender, RoutedEventArgs e)
-        {
-            this.VerticalAxis = LinearAxis;
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
