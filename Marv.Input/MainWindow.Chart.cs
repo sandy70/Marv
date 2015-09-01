@@ -21,6 +21,7 @@ namespace Marv.Input
 
                 var data = chart.ConvertPointToData(e.GetPosition(chart));
 
+                this.CurrentInterpolatorDataPoints.CorrectBindingError(this.ScatterLineSeriesCollection);
                 this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
 
                 this.DraggedPoint.YValue = (double) (data.SecondValue);
@@ -39,10 +40,12 @@ namespace Marv.Input
                 }
 
                 this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
+
+                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].CorrectBindingError(this.scatterLineSeriesCollection);
                 this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
             }
 
-            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked && this.SelectedLine!=null)
+            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked && this.SelectedLine != null)
             {
                 var chart = (RadCartesianChart) sender;
 
@@ -58,7 +61,7 @@ namespace Marv.Input
                 {
                     var linePoint = this.Chart.GetPointOnChart(scatterPoint);
 
-                    if (Math.Round(linePoint.X)==Math.Round(dynamicPoint.X) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
+                    if (Math.Round(linePoint.X) == Math.Round(dynamicPoint.X) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
                     {
                         replacePoint = scatterPoint;
                     }

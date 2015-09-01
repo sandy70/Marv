@@ -8,6 +8,7 @@ using Marv.Common.Interpolators;
 using Marv.Common.Types;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
@@ -18,18 +19,27 @@ namespace Marv.Input
         public const double MinusInfinity = 10E-09;
         public const string ModeInterpolatorLine = "ModeLine";
 
-        public static string  ValueToDistribution(this double[] evidenceValue)
+        public static void CorrectBindingError(this IInterpolatorDataPoints currentInterpolatorDataPoints, PresenterCollection<CartesianSeries> associatedSeriesCollection)
         {
-            var evidenceString = "";
-            var i = 0;
-            while (i < evidenceValue.Length)
-            {
-                evidenceString += evidenceValue[i] + ",";
-                i++;
-            }
-            evidenceString = evidenceString.Substring(0, evidenceString.Length - 1);
+            var maxLine = currentInterpolatorDataPoints.GetNumberPoints(MaxInterpolatorLine);
+            var modeLine = currentInterpolatorDataPoints.GetNumberPoints(ModeInterpolatorLine);
+            var minLine = currentInterpolatorDataPoints.GetNumberPoints(MinInterpolatorLine);
 
-            return evidenceString;
+            var dataPoints = (associatedSeriesCollection[0] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                maxLine[i] = dataPoints[i];
+            }
+            dataPoints = (associatedSeriesCollection[1] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                modeLine[i] = dataPoints[i];
+            }
+            dataPoints = (associatedSeriesCollection[2] as ScatterLineSeries).DataPoints;
+            for (var i = 0; i < dataPoints.Count; i++)
+            {
+                minLine[i] = dataPoints[i];
+            }
         }
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
@@ -113,7 +123,7 @@ namespace Marv.Input
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
-        public static bool IsWithInRange(this InterpolatorDataPoints currentInterpolatorDataPoints)
+        public static bool IsWithInRange(this IInterpolatorDataPoints currentInterpolatorDataPoints)
         {
             var currentLine = currentInterpolatorDataPoints;
 
@@ -257,7 +267,22 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static Dict<string, EvidenceTable> UpdateInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
+        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
+        {
+            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
+            {
+                return new SingleValueInterpolator { IsLineCross = false };
+            }
+
+            if (interpolatorDistribution.Equals(DistributionType.Uniform))
+            {
+                return new UniformInterpolator { IsLineCross = false };
+            }
+
+            return new TriangularInterpolator { IsLineCross = false };
+        }
+
+        public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
             if (interpolatedDataSet == null)
             {
@@ -292,6 +317,20 @@ namespace Marv.Input
             }
 
             return mergedEvidenceSet;
+        }
+
+        public static string ValueToDistribution(this double[] evidenceValue)
+        {
+            var evidenceString = "";
+            var i = 0;
+            while (i < evidenceValue.Length)
+            {
+                evidenceString += evidenceValue[i] + ",";
+                i++;
+            }
+            evidenceString = evidenceString.Substring(0, evidenceString.Length - 1);
+
+            return evidenceString;
         }
 
         private static bool Contains(this Dict<string, EvidenceTable> evidenceSet, EvidenceRow evidenceRow)

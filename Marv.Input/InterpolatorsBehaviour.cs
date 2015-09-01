@@ -5,6 +5,7 @@ using System.Windows.Interactivity;
 using Marv.Common;
 using Marv.Controls;
 using Telerik.Charting;
+using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
@@ -24,6 +25,8 @@ namespace Marv.Input
             this.AssociatedObject.MouseDoubleClick += AssociatedObject_MouseDoubleClick;
 
             mainWindow = this.AssociatedObject.GetParent<MainWindow>();
+
+            mainWindow.ScatterLineSeriesCollection = AssociatedObject.GetParent<RadCartesianChart>().Series;
         }
 
         protected override void OnDetaching()

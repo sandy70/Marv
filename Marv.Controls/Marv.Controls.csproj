@@ -116,6 +116,7 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\LocationCollectionConverter.cs" />
     <Compile Include="Converters\LocationConverter.cs" />
+    <Compile Include="Converters\LongDateToShortConverter.cs" />
     <Compile Include="Converters\MultiValueToBrushConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
