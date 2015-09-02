@@ -707,11 +707,6 @@ namespace Marv.Input
             this.UpdateTable();
         }
 
-        private void AxisTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.UpdateVerticalAxis();
-        }
-
         private void AxisTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.UpdateVerticalAxis();
@@ -772,16 +767,6 @@ namespace Marv.Input
             this.IsInterpolateClicked = false;
             this.SelectedTheme = DataTheme.Interpolated;
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
-        }
-
-        private void Clear_Click(object sender, RoutedEventArgs e)
-        {
-            this.ClearInterpolatorLines();
-            this.SelectedInterpolationType = null;
-            //foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
-            //{
-            //    button.IsChecked = false;
-            //}
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -959,7 +944,13 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void InterpolatorTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void InterpolationTypeClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ClearInterpolatorLines();
+            this.SelectedInterpolationType = null;
+        }
+
+        private void InterpolationTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.Interpolate();
         }
