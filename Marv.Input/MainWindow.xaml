@@ -306,7 +306,7 @@
                                                                 MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}">
                                                 <ObjectDataProvider.MethodParameters>
-                                                    <x:Type TypeName="input:DistributionType" />
+                                                    <x:Type TypeName="input:InterpolationType" />
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
                                         </ToolBar.Resources>
@@ -314,7 +314,7 @@
                                         <ListBox BorderBrush="White"
                                                  Height="32"
                                                  ItemsSource="{Binding Source={StaticResource InterpolatorTypes}}"
-                                                 SelectedItem="{Binding ElementName=Root, Path=InterpolatorDistribution}"
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationType}"
                                                  SelectionChanged="InterpolatorTypeListBox_SelectionChanged">
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>

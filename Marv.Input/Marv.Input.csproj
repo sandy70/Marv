@@ -194,7 +194,7 @@
     <Compile Include="AddRowCommand.cs" />
     <Compile Include="CellEditCommand.cs" />
     <Compile Include="DataTheme.cs" />
-    <Compile Include="DistributionType.cs" />
+    <Compile Include="InterpolationType.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />

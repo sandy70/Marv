@@ -267,14 +267,14 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
+        public static IInterpolatorDataPoints UpdateCurrentInterpolator(InterpolationType interpolationType)
         {
-            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
+            if (interpolationType.Equals(InterpolationType.SingleValue))
             {
                 return new SingleValueInterpolator { IsLineCross = false };
             }
 
-            if (interpolatorDistribution.Equals(DistributionType.Uniform))
+            if (interpolationType.Equals(InterpolationType.Uniform))
             {
                 return new UniformInterpolator { IsLineCross = false };
             }

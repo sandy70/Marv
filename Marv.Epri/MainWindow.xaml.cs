@@ -255,7 +255,7 @@ namespace Marv.Epri
 
             this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
 
-            this.GraphControl.Open(@"C:\Users\vkha\Data\Misc\XivelyLight.net");
+            this.GraphControl.Open(@"C:\Users\vkha\Data\EPRI\EpriDemo.net");
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -309,13 +309,13 @@ namespace Marv.Epri
             {
                 this.DataPoints = await (this.task = this.DownloadDataPointsAsync());
 
-                var vertexEvidences = new Dict<string, VertexEvidence>
-                {
-                    { "Value", this.GraphControl.Graph.Vertices["Value"].States.ParseEvidenceString(this.DataPoints.Last().Value.ToString()) }
-                };
+                //var vertexEvidences = new Dict<string, VertexEvidence>
+                //{
+                //    { "Value", this.GraphControl.Graph.Vertices["Value"].States.ParseEvidenceString(this.DataPoints.Last().Value.ToString()) }
+                //};
 
-                this.GraphControl.Graph.Belief = this.GraphControl.Network.Run(vertexEvidences);
-                this.GraphControl.Graph.SetEvidence(vertexEvidences);
+                //this.GraphControl.Graph.Belief = this.GraphControl.Network.Run(vertexEvidences);
+                //this.GraphControl.Graph.SetEvidence(vertexEvidences);
             }
 
             this.Notifications.Remove(notification);

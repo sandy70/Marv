@@ -47,7 +47,6 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity;
-        private DistributionType? interpolatorDistribution;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -68,6 +67,7 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private PresenterCollection<CartesianSeries> scatterLineSeriesCollection;
         private string selectedColumnName;
+        private InterpolationType? selectedInterpolationType;
         private string selectedLine;
         private EvidenceRow selectedRow;
         private string selectedSectionId;
@@ -279,16 +279,6 @@ namespace Marv.Input
                 }
 
                 this.horizontalAxisQuantity = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public DistributionType? InterpolatorDistribution
-        {
-            get { return interpolatorDistribution; }
-            set
-            {
-                interpolatorDistribution = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -520,6 +510,16 @@ namespace Marv.Input
             set
             {
                 this.selectedColumnName = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public InterpolationType? SelectedInterpolationType
+        {
+            get { return this.selectedInterpolationType; }
+            set
+            {
+                this.selectedInterpolationType = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -777,7 +777,7 @@ namespace Marv.Input
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             this.ClearInterpolatorLines();
-            this.InterpolatorDistribution = null;
+            this.SelectedInterpolationType = null;
             //foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
             //{
             //    button.IsChecked = false;
@@ -957,6 +957,11 @@ namespace Marv.Input
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
+        }
+
+        private void InterpolatorTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.Interpolate();
         }
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1167,49 +1172,12 @@ namespace Marv.Input
             //this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
-        private void SingleValueRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
-            this.InterpolatorDistribution = DistributionType.SingleValue;
-            Interpolate();
-        }
-
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.StartDate > this.EndDate)
             {
                 this.EndDate = this.StartDate;
             }
-        }
-
-        private void TriangularRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
-            this.InterpolatorDistribution = DistributionType.Triangular;
-            Interpolate();
-        }
-
-        private void UniformRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
-
-            this.InterpolatorDistribution = DistributionType.Uniform;
-            Interpolate();
         }
 
         private void UpdateCommandStack(ICommand command)
@@ -1251,10 +1219,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void InterpolatorTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.Interpolate();
-        }
     }
 }
