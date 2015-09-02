@@ -290,38 +290,40 @@ namespace Marv.Input
                 return;
             }
 
+            var modeLineStartPoint = new ScatterDataPoint
+            {
+                XValue = this.BaseTableMin,
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.ModeInterpolatorLine),
+            };
+            var modeLineEndPoint = new ScatterDataPoint
+            {
+                XValue = this.BaseTableMax,
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.ModeInterpolatorLine),
+            };
+
             var minLineStartPoint = new ScatterDataPoint
             {
                 XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.SafeMin +0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin),
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MinInterpolatorLine),
             };
 
             var minLineEndPoint = new ScatterDataPoint
             {
                 XValue = this.BaseTableMax,
-                YValue = 1.1*this.SelectedVertex.SafeMin+ 0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin), 
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MinInterpolatorLine),
             };
             var maxLineStartPoint = new ScatterDataPoint
             {
                 XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.SafeMax -0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin) ,
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MaxInterpolatorLine),
             };
             var maxLineEndPoint = new ScatterDataPoint
             {
                 XValue = this.BaseTableMax,
-                YValue = this.SelectedVertex.SafeMax - 0.25 * (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin),
+                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MaxInterpolatorLine),
             };
 
-            var modeLineStartPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.SafeMin+ (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin)/2,
-            };
-            var modeLineEndPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMax,
-                YValue = this.SelectedVertex.SafeMin + (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin) / 2,
-            };
+           
 
             if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)
             {

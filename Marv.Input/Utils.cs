@@ -69,6 +69,38 @@ namespace Marv.Input
             return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
         }
 
+        public static double GetInterpolatorPosition(this Vertex selectedVertex, string line)
+        {
+            double linearPosition = 0;
+            double logarithmicPosition = 0;
+
+            if (line == ModeInterpolatorLine)
+            {
+                linearPosition = (selectedVertex.SafeMax + selectedVertex.SafeMin) / 2;
+
+                logarithmicPosition = Math.Pow(10,
+                    selectedVertex.SafeMin == 0
+                        ? Math.Log10(selectedVertex.SafeMax) / 2
+                        : (Math.Log10(selectedVertex.SafeMax) + Math.Log10(selectedVertex.SafeMin)) / 2);
+            }
+
+            if (line == MaxInterpolatorLine)
+            {
+                linearPosition = (selectedVertex.SafeMax + (selectedVertex.SafeMin + selectedVertex.SafeMax) / 2) / 2;
+                logarithmicPosition = Math.Pow(10, selectedVertex.SafeMin == 0 ? 0.75 * Math.Log10(selectedVertex.SafeMax) : 
+                                                                                (Math.Log10(selectedVertex.SafeMax) + (Math.Log10(selectedVertex.SafeMax) + Math.Log10(selectedVertex.SafeMin)) / 2) / 2);
+            }
+
+            if (line == MinInterpolatorLine)
+            {
+                linearPosition = (selectedVertex.SafeMin + (selectedVertex.SafeMin + selectedVertex.SafeMax) / 2) / 2;
+                logarithmicPosition = Math.Pow(10, selectedVertex.SafeMin == 0 ? 0.25 * Math.Log10(selectedVertex.SafeMax) :
+                                                                                (Math.Log10(selectedVertex.SafeMin) + (Math.Log10(selectedVertex.SafeMax) + Math.Log10(selectedVertex.SafeMin)) / 2) / 2);
+            }
+
+            return selectedVertex.AxisType == VertexAxisType.Linear ? linearPosition : logarithmicPosition;
+        }
+
         public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable, string selectedColumnName)
         {
             var minUserValue = double.MaxValue;
