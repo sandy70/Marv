@@ -342,7 +342,7 @@
                                         <telerik:RadButton Name="Clear"
                                                            Content="Clear"
                                                            Width="64"
-                                                           Click="InterpolationTypeClearButton_Click" />
+                                                           Click="InterpolationDataClearButton_Click" />
                                     </ToolBar>
 
                                 </ToolBarTray>

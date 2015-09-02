@@ -951,7 +951,11 @@ namespace Marv.Input
             //    this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new TriangularInterpolator();
             //}
 
-            this.UpdateSelectedInterpolationData();
+            if (this.SelectedColumnName != null)
+            {
+                this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                this.UpdateSelectedInterpolationDataPoints();
+            }
 
             this.Chart.Annotations.Remove(annotation => true);
 
@@ -960,15 +964,14 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void InterpolationTypeClearButton_Click(object sender, RoutedEventArgs e)
+        private void InterpolationDataClearButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ClearInterpolatorLines();
-            this.SelectedInterpolationType = null;
+            this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName] = this.SelectedInterpolationData = null;
         }
 
         private void InterpolationTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.UpdateSelectedInterpolationData();
+            this.UpdateSelectedInterpolationDataPoints();
             // this.Interpolate();
         }
 
@@ -1199,14 +1202,12 @@ namespace Marv.Input
             this.CurrentCommand = this.commandStack.Count - 1;
         }
 
-        private void UpdateSelectedInterpolationData()
+        private void UpdateSelectedInterpolationDataPoints()
         {
-            if (this.SelectedColumnName == null)
+            if (this.SelectedInterpolationData == null)
             {
                 return;
             }
-
-            this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
 
             var mid = (this.SelectedVertex.SafeMax + this.SelectedVertex.SafeMin) / 2;
             var bot = (mid + this.SelectedVertex.SafeMin) / 2;
@@ -1261,6 +1262,11 @@ namespace Marv.Input
                         new ScatterDataPoint { XValue = this.Maximum, YValue = top },
                     }
                 };
+            }
+
+            foreach (var series in this.Chart.Series)
+            {
+                Console.WriteLine(series.DataContext);
             }
         }
 

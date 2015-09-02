@@ -121,6 +121,9 @@ namespace Marv.Input
 
             this.SelectedColumnName = gridViewColumn.UniqueName;
 
+            this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+            this.UpdateSelectedInterpolationDataPoints();
+
             DateTime dateTime;
 
             this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
