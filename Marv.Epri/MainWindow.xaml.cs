@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using CsvHelper;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Epri.Properties;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Telerik.Charting;
+using Telerik.Windows.Controls;
 
 namespace Marv.Epri
 {
@@ -32,8 +34,7 @@ namespace Marv.Epri
         };
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
-        private string device;
-        private bool isDownloading;
+        private LineStringCollection locationCollections = new LineStringCollection();
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
@@ -54,12 +55,18 @@ namespace Marv.Epri
 
             set
             {
-                if (value.Equals(this.dataPoints))
-                {
-                    return;
-                }
-
                 this.dataPoints = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public LineStringCollection LocationCollections
+        {
+            get { return this.locationCollections; }
+
+            set
+            {
+                this.locationCollections = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -146,6 +153,7 @@ namespace Marv.Epri
 
         public MainWindow()
         {
+            StyleManager.ApplicationTheme = new Windows8Theme();
             InitializeComponent();
 
             this.timer.Tick += timer_Tick;
@@ -176,7 +184,8 @@ namespace Marv.Epri
             {
                 try
                 {
-                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri)));
+                    var uri1 = uri;
+                    var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<DataPoint>>(await this.httpClient.GetStringAsync(uri1)));
 
                     downloadedPoints.Add(response.list);
 
@@ -212,7 +221,8 @@ namespace Marv.Epri
 
             while (true)
             {
-                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<Stream>>(await httpClient.GetStringAsync(uriEndPoint)));
+                var point = uriEndPoint;
+                var response = await Task.Run(async () => JsonConvert.DeserializeObject<Response<Stream>>(await httpClient.GetStringAsync(point)));
 
                 downloadedStreams.Add(response.list.Select(x => x.id.Split("/".ToArray())[1]));
 
@@ -242,6 +252,10 @@ namespace Marv.Epri
             this.Notifications.Remove(notification);
 
             await this.UpdateDataPoints();
+
+            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
+
+            this.GraphControl.Open(@"C:\Users\vkha\Data\Misc\XivelyLight.net");
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -261,7 +275,7 @@ namespace Marv.Epri
 
             if (dialog.ShowDialog() == true)
             {
-                var csvWriter = new CsvHelper.CsvWriter(new StreamWriter(dialog.FileName));
+                var csvWriter = new CsvWriter(new StreamWriter(dialog.FileName));
                 csvWriter.WriteRecords(this.DataPoints);
             }
         }
@@ -294,6 +308,14 @@ namespace Marv.Epri
             if (this.task == null || this.task.IsCompleted)
             {
                 this.DataPoints = await (this.task = this.DownloadDataPointsAsync());
+
+                var vertexEvidences = new Dict<string, VertexEvidence>
+                {
+                    { "Value", this.GraphControl.Graph.Vertices["Value"].States.ParseEvidenceString(this.DataPoints.Last().Value.ToString()) }
+                };
+
+                this.GraphControl.Graph.Belief = this.GraphControl.Network.Run(vertexEvidences);
+                this.GraphControl.Graph.SetEvidence(vertexEvidences);
             }
 
             this.Notifications.Remove(notification);

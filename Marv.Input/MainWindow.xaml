@@ -8,7 +8,6 @@
         xmlns:input="clr-namespace:Marv.Input"
         xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:common="clr-namespace:Marv.Common;assembly=Marv.Common"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized"
@@ -40,10 +39,10 @@
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
 
-            <converters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+            <converters:BooleanToStringConverter x:Key="BooleanToStringConverter"
                                                  FalseString="Interpolate"
                                                  TrueString="Clear" />
-           
+
 
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
 
@@ -201,9 +200,8 @@
                                                     <x:Type TypeName="input:DataTheme" />
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
-                
-                                               
-                                        
+
+
                                         </ToolBar.Resources>
                                         <telerik:RadButton Click="Undo_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/Undo.png " />
@@ -228,9 +226,9 @@
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
-                                        
+
                                     </ToolBar>
-                                    
+
                                     <ToolBar Band="2"
                                              BandIndex="1"
                                              IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
@@ -284,89 +282,93 @@
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
                                                      Pasted="GridView_Pasted" />
-                        
+
                             </Grid>
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
                     <telerik:RadPaneGroup>
-                        
+
                         <telerik:RadPane Header="DataPlot"
                                          IsHidden="{Binding ElementName=Root, Path=IsLineDataChartVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 
                                 <ToolBarTray Grid.Row="0">
-                                    
-                                  <ToolBar Name="InterpolationToolBar">
-                                       
-                                     <RadioButton Name="TriangularRadioButton"
-                                                  GroupName="Distribution"
-                                                  Content="Triangular"
-                                                  Checked="TriangularRadioButton_Checked"
+
+                                    <ToolBar Name="InterpolationToolBar">
+
+                                        <RadioButton Name="TriangularRadioButton"
+                                                     GroupName="Distribution"
+                                                     Content="Triangular"
+                                                     Checked="TriangularRadioButton_Checked"
                                                   IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Triangular}}"
-                                                  Width="100"/>
-                                        
-                                     <RadioButton Name="UniformRadioButton"
-                                                  GroupName="Distribution"
-                                                  Content="Uniform"
+                                                     Width="100" />
+
+                                        <RadioButton Name="UniformRadioButton"
+                                                     GroupName="Distribution"
+                                                     Content="Uniform"
                                                   IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Uniform}}"
-                                                  Checked="UniformRadioButton_Checked"
-                                                  Width="100"/>
-                                        
-                                     <RadioButton Name="SingleValueRadioButton"
-                                                  GroupName="Distribution"
-                                                  Content="SingleValue"
+                                                     Checked="UniformRadioButton_Checked"
+                                                     Width="100" />
+
+                                        <RadioButton Name="SingleValueRadioButton"
+                                                     GroupName="Distribution"
+                                                     Content="SingleValue"
                                                    IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.SingleValue}}"
-                                                  Width="100"
-                                                  Checked="SingleValueRadioButton_Checked"/>
-                                      
-                                     <telerik:RadButton Name="Clear"
-                                                        Content="Clear"
-                                                        Click="Clear_Click">
-                                         
-                                     </telerik:RadButton>
-                                        
-                                     
+                                                     Width="100"
+                                                     Checked="SingleValueRadioButton_Checked" />
+
+                                        <telerik:RadButton Name="Clear"
+                                                           Content="Clear"
+                                                           Click="Clear_Click" />
+
+
                                     </ToolBar>
 
-                              </ToolBarTray>
-                               
-                                <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}"/>
-                                <StackPanel Orientation="Horizontal"
-                                            Name="ChartAxis" 
-                                            Grid.Row="1"
-                                            VerticalAlignment="Top"
-                                            HorizontalAlignment="Right"
-                                            Margin="10">
+                                </ToolBarTray>
 
-                                    <RadioButton Name="LinAxis" 
-                                                 GroupName="ChartAxis" 
-                                                 VerticalAlignment="Top" 
-                                                 HorizontalAlignment="Right" 
-                                                 Width="60" 
-                                                 Content="Linear"
-                                                 IsChecked="True"
-                                                 Unchecked="LinAxis_Unchecked"/>
+                                <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}" />
 
-                                    <RadioButton Name="LogarthmicAxis" 
-                                             GroupName="ChartAxis" 
-                                             VerticalAlignment="Top" 
-                                             HorizontalAlignment="Right" 
-                                             Width="60" 
-                                             Content="Log"
-                                             Unchecked="LogarthmicAxis_Unchecked"/>
+                                <!-- Chart Axis Radio Buttons -->
+                                <ListBox Grid.Row="1"
+                                         HorizontalAlignment="Right"
+                                         ItemsSource="{Binding Source={StaticResource VertexAxisTypes}}"
+                                         Margin="8"
+                                         SelectedItem="{Binding ElementName=Root, Path=SelectedVertex.AxisType, Mode=TwoWay}"
+                                         VerticalAlignment="Top"
+                                         SelectionChanged="AxisTypeListBox_SelectionChanged">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
 
-                                </StackPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <RadioButton Content="{Binding}"
+                                                                     GroupName="AxisType"
+                                                                     IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}"
+                                                                     Margin="8" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                </ListBox>
+
                                 <!-- Chart -->
                                 <telerik:RadCartesianChart Grid.Row="2"
-                                                            Name="Chart"
-                                                            VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
-                                                            MouseMove="Chart_MouseMove">
+                                                           Name="Chart"
+                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
+                                                           MouseMove="Chart_MouseMove">
 
 
                                     <telerik:RadCartesianChart.Behaviors>
@@ -382,13 +384,13 @@
                                     <telerik:RadCartesianChart.Series>
 
                                         <telerik:ScatterLineSeries Cursor="Hand"
-                                                               ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
-                                                               Name="MaximumLine"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                               XValueBinding="XValue"
-                                                               YValueBinding="YValue"
-                                                               IsHitTestVisible="True"
-                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
+                                                                   Name="MaximumLine"
+                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                                   XValueBinding="XValue"
+                                                                   YValueBinding="YValue"
+                                                                   IsHitTestVisible="True"
+                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
 
                                             <i:Interaction.Behaviors>
                                                 <input:InterpolatorsBehaviour />
@@ -397,13 +399,13 @@
                                         </telerik:ScatterLineSeries>
 
                                         <telerik:ScatterLineSeries Cursor="Hand"
-                                                               IsHitTestVisible="True"
-                                                               Name="ModeLine"
-                                                               ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
-                                                               XValueBinding="XValue"
-                                                               YValueBinding="YValue">
+                                                                   IsHitTestVisible="True"
+                                                                   Name="ModeLine"
+                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
+                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
+                                                                   XValueBinding="XValue"
+                                                                   YValueBinding="YValue">
 
                                             <i:Interaction.Behaviors>
                                                 <input:InterpolatorsBehaviour />
@@ -412,13 +414,13 @@
                                         </telerik:ScatterLineSeries>
 
                                         <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
-                                                               Name="MinimumLine"
-                                                               XValueBinding="XValue"
-                                                               YValueBinding="YValue"
-                                                               PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                               IsHitTestVisible="True"
-                                                               Cursor="Hand"
-                                                               Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
+                                                                   Name="MinimumLine"
+                                                                   XValueBinding="XValue"
+                                                                   YValueBinding="YValue"
+                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
+                                                                   IsHitTestVisible="True"
+                                                                   Cursor="Hand"
+                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
                                             <i:Interaction.Behaviors>
                                                 <input:InterpolatorsBehaviour />
                                             </i:Interaction.Behaviors>
@@ -428,11 +430,11 @@
                                     </telerik:RadCartesianChart.Series>
 
                                 </telerik:RadCartesianChart>
-                                 
-                              
+
+
                             </Grid>
-                
-                            
+
+
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>

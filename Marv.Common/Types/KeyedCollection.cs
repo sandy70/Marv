@@ -51,7 +51,10 @@ namespace Marv.Common.Types
             {
                 foreach (var keyedItem in e.OldItems.OfType<IKeyed>())
                 {
-                    this.dictionary.Remove(keyedItem.Key);
+                    if (keyedItem.Key != null)
+                    {
+                        this.dictionary.Remove(keyedItem.Key);
+                    }
                 }
             }
 
