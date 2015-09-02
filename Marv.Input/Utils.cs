@@ -269,6 +269,10 @@ namespace Marv.Input
 
         public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
         {
+            if (interpolatorDistribution.Equals(DistributionType.Triangular))
+            {
+                return new TriangularInterpolator { IsLineCross = false };
+            }
             if (interpolatorDistribution.Equals(DistributionType.SingleValue))
             {
                 return new SingleValueInterpolator { IsLineCross = false };
@@ -279,7 +283,7 @@ namespace Marv.Input
                 return new UniformInterpolator { IsLineCross = false };
             }
 
-            return new TriangularInterpolator { IsLineCross = false };
+            return new EmptyInterpolator();
         }
 
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)

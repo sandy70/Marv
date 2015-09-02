@@ -107,6 +107,7 @@
     <Compile Include="Converters\DoubleToBrushConverter.cs" />
     <Compile Include="Converters\DoubleToJetGradientConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\FilePathToFileNameConverter.cs" />
     <Compile Include="Converters\IEnumerableIntToStringConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />

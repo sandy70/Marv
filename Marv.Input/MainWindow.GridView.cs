@@ -88,6 +88,13 @@ namespace Marv.Input
                     e.ErrorMessage = "Invalid evidence for node " + this.SelectedVertex.Key;
                 }
             }
+
+            else if (! (this.BaseTableMin<= (double)e.NewValue && (double)e.NewValue <= this.BaseTableMax))
+            {
+                e.IsValid = false;
+                e.ErrorMessage = "sections should be within pipeline length";
+            }
+            
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -153,19 +160,6 @@ namespace Marv.Input
 
             this.pastedCells.Clear();
 
-            if (this.Table.Count != 0)
-            {
-                if (this.isBaseTableAvailable)
-                {
-                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
-                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
-                }
-                else
-                {
-                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
-                }
-            }
             this.selectedColumnName = this.Table.DateTimes.First().String();
             this.Plot(this.selectedColumnName);
         }
@@ -186,33 +180,17 @@ namespace Marv.Input
 
         private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
         {
-            if (this.isBaseTableAvailable)
-            {
-                this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
-                this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
-            }
-            else
-            {
-                this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-                this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
-            }
+            
         }
         
         private void Interpolate()
         {
-            //if (this.IsInterpolateClicked)
-            //{
-            //    this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
-            //    var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-            //    if (vertexAvail)
-            //    {
-            //        this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
-            //    }
-            //    this.IsInterpolateClicked = !this.IsInterpolateClicked;
-            //    return;
-            //}
+            if (this.SelectedVertex == null)
+            {
+                return;
+            }
 
-            this.ClearInterpolatorLines();
+           // this.ClearInterpolatorLines();
 
             this.IsInterpolateClicked = !this.IsInterpolateClicked;
 
@@ -280,14 +258,23 @@ namespace Marv.Input
 
         private void ClearInterpolatorLines()
         {
-            if (this.UserNumberPoints !=null)
+            if (this.UserNumberPoints == null)
             {
-                this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
-                var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-                if (vertexAvail)
-                {
-                    this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
-                }
+                return;
+            }
+
+            this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
+           
+            var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+            if (vertexAvail)
+            {
+                this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
+                                        
+            }
+
+            if (this.UserNumberPoints[this.SelectedVertex.Key].Count == 0)
+            {
+                this.UserNumberPoints.Remove(this.SelectedVertex.Key);
             }
         }
 
@@ -305,35 +292,35 @@ namespace Marv.Input
 
             var minLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
-                YValue = this.MinUserValue,
+                XValue = this.BaseTableMin,
+                YValue = this.SelectedVertex.SafeMin +0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin),
             };
 
             var minLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
-                YValue = this.MinUserValue,
+                XValue = this.BaseTableMax,
+                YValue = 1.1*this.SelectedVertex.SafeMin+ 0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin), 
             };
             var maxLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
-                YValue = this.MaxUserValue
+                XValue = this.BaseTableMin,
+                YValue = this.SelectedVertex.SafeMax -0.25*(this.SelectedVertex.SafeMax-this.SelectedVertex.SafeMin) ,
             };
             var maxLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
-                YValue = this.MaxUserValue
+                XValue = this.BaseTableMax,
+                YValue = this.SelectedVertex.SafeMax - 0.25 * (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin),
             };
 
             var modeLineStartPoint = new ScatterDataPoint
             {
-                XValue = this.Minimum,
-                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+                XValue = this.BaseTableMin,
+                YValue = this.SelectedVertex.SafeMin+ (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin)/2,
             };
             var modeLineEndPoint = new ScatterDataPoint
             {
-                XValue = this.Maximum,
-                YValue = (this.MaxUserValue + this.MinUserValue) / 2,
+                XValue = this.BaseTableMax,
+                YValue = this.SelectedVertex.SafeMin + (this.SelectedVertex.SafeMax - this.SelectedVertex.SafeMin) / 2,
             };
 
             if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)

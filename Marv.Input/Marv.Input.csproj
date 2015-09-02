@@ -195,11 +195,11 @@
     <Compile Include="CellEditCommand.cs" />
     <Compile Include="DataTheme.cs" />
     <Compile Include="DistributionType.cs" />
+    <Compile Include="EmptyInterpolator.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IInterpolatorDataPoints.cs" />
-    <Compile Include="InterpolatorDataPoints.cs" />
     <Compile Include="InterpolatorsBehaviour.cs" />
     <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />

@@ -11,5 +11,6 @@ namespace Marv.Input
         Triangular,
         Uniform,
         SingleValue,
+        Empty,
     }
 }

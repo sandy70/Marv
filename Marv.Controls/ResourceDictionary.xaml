@@ -14,6 +14,7 @@
     
     <marv:BooleanNotConverter x:Key="BooleanNot" />
     <marv:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+    <marv:EnumToBooleanConverter x:Key="EnumToBoolean"/>
     <marv:BooleanToStringConverter x:Key="IsHeaderToColor" TrueString="#b11d01" FalseString="#20aeff" />
     <marv:BooleanToStringConverter x:Key="IsEvidenceEnteredToColor" TrueString="#78ba00" FalseString="#20aeff" />
     <marv:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />

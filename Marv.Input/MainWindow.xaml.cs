@@ -33,14 +33,14 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
-        private double baseTableMax;
-        private double baseTableMin;
-        private double baseTableRange;
+        private double baseTableMax=100;
+        private double baseTableMin=0;
+        private double baseTableRange=10;
         private ICommand cellEditCommand;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
-        private IInterpolatorDataPoints currentInterpolatorDataPoints = new TriangularInterpolator();
+        private IInterpolatorDataPoints currentInterpolatorDataPoints = new EmptyInterpolator();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
@@ -48,7 +48,6 @@ namespace Marv.Input
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity;
         private DistributionType interpolatorDistribution;
-        private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
@@ -61,9 +60,7 @@ namespace Marv.Input
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
         private double maxUserValue;
-        private double maximum = 100;
         private double minUserValue;
-        private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private PresenterCollection<CartesianSeries> scatterLineSeriesCollection;
@@ -423,22 +420,6 @@ namespace Marv.Input
             }
         }
 
-        public double Maximum
-        {
-            get { return this.maximum; }
-
-            set
-            {
-                if (value.Equals(this.maximum))
-                {
-                    return;
-                }
-
-                this.maximum = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public double MinUserValue
         {
             get { return this.minUserValue; }
@@ -451,22 +432,6 @@ namespace Marv.Input
                 }
 
                 this.minUserValue = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double Minimum
-        {
-            get { return this.minimum; }
-
-            set
-            {
-                if (value.Equals(this.minimum))
-                {
-                    return;
-                }
-
-                this.minimum = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -719,7 +684,7 @@ namespace Marv.Input
                 MessageBox.Show("Cannot capture data without interpolation");
                 return;
             }
-            if (this.CurrentInterpolatorDataPoints == null)
+            if (this.CurrentInterpolatorDataPoints == null || this.CurrentInterpolatorDataPoints is EmptyInterpolator)
             {
                 return;
             }
@@ -771,7 +736,10 @@ namespace Marv.Input
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
+          
             this.ClearInterpolatorLines();
+
+            
 
             foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
             {
@@ -891,11 +859,7 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
-            this.isBaseTableAvailable = true;
-
-            this.Minimum = Math.Min(this.Minimum, this.BaseTableMin);
-            this.Maximum = Math.Max(this.Maximum, this.BaseTableMax);
-
+            
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
 
             this.PlotInterpolatorLines(minMaxValues);
@@ -926,25 +890,37 @@ namespace Marv.Input
 
             this.UpdateTable();
 
-            if (this.Table.Count != 0)
-            {
-                if (this.isBaseTableAvailable)
-                {
-                    this.Maximum = Math.Max(this.Table.Max(row => Math.Max(row.From, row.To)), this.BaseTableMax);
-                    this.Minimum = Math.Min(this.Table.Min(row => Math.Min(row.From, row.To)), this.BaseTableMin);
-                }
-                else
-                {
-                    this.Maximum = this.Table.Max(row => Math.Max(row.From, row.To));
-                    this.Minimum = this.Table.Min(row => Math.Min(row.From, row.To));
-                }
-            }
-
             if (this.UserNumberPoints != null)
             {
                 var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
 
-                this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new TriangularInterpolator();
+               
+                this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new EmptyInterpolator();
+
+
+                if (this.CurrentInterpolatorDataPoints != null)
+                {
+                    
+
+                    if (this.CurrentInterpolatorDataPoints is TriangularInterpolator)
+                    {
+                        this.InterpolatorDistribution = DistributionType.Triangular;
+                    }
+
+                    else if (this.CurrentInterpolatorDataPoints is UniformInterpolator)
+                    {
+                        this.InterpolatorDistribution = DistributionType.Uniform;
+                    }
+
+                    else if (this.CurrentInterpolatorDataPoints is SingleValueInterpolator)
+                    {
+                        this.InterpolatorDistribution = DistributionType.SingleValue;
+                    }
+                    else
+                    {
+                        this.InterpolatorDistribution = DistributionType.Empty;
+                    }
+                }
             }
 
             this.Chart.Annotations.Remove(annotation => true);
@@ -957,6 +933,7 @@ namespace Marv.Input
         private void LinAxis_Unchecked(object sender, RoutedEventArgs e)
         {
             this.VerticalAxis = LogarithmicAxis;
+            //this.UpdateVerticalAxis();
         }
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1040,6 +1017,7 @@ namespace Marv.Input
         private void LogarthmicAxis_Unchecked(object sender, RoutedEventArgs e)
         {
             this.VerticalAxis = LinearAxis;
+            //this.UpdateVerticalAxis();
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -1069,24 +1047,14 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot run model without any data");
-                return;
-            }
-
-            try
+           try
             {
                 if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
                 {
                     List<double> baseRowsList = null;
-
-                    if (this.isBaseTableAvailable)
-                    {
-                        baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
-                    }
-
+                    
+                    baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
+                    
                     var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
 
                     this.IsInterpolateClicked = false;
@@ -1115,13 +1083,8 @@ namespace Marv.Input
 
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
-            var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
-
-            var noOfDateTimes = 0;
-            while (itr.MoveNext())
-            {
-                noOfDateTimes++;
-            }
+            var noOfDateTimes = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.Count();
+           
 
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
@@ -1174,12 +1137,6 @@ namespace Marv.Input
 
         private void SingleValueRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
             this.InterpolatorDistribution = DistributionType.SingleValue;
             Interpolate();
         }
@@ -1194,25 +1151,14 @@ namespace Marv.Input
 
         private void TriangularRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
+           
             this.InterpolatorDistribution = DistributionType.Triangular;
             Interpolate();
         }
 
         private void UniformRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (!this.lineDataObj[DataTheme.User].Keys.Any(key =>
-                                                           this.lineDataObj[DataTheme.User][key].Any(row => row.GetDynamicMemberNames().Any())))
-            {
-                MessageBox.Show("cannot interpolate without any data");
-                return;
-            }
-
+            
             this.InterpolatorDistribution = DistributionType.Uniform;
             Interpolate();
         }
