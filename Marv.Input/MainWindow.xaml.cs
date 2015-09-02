@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Types;
 using Marv.Controls;
@@ -930,6 +931,20 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
 
+            foreach (var val in this.SelectedVertex.GetIntervals())
+            {
+                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                {
+                    HorizontalFrom = this.BaseTableMin,
+                    HorizontalTo = this.BaseTableMax,
+                    Stroke = new SolidColorBrush(Colors.Gray),
+                    StrokeThickness = 1,
+                    VerticalFrom = val,
+                    VerticalTo = val,
+                    ZIndex = -200
+                })
+            ;
+            }
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
