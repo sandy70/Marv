@@ -216,10 +216,11 @@ namespace Marv.Input
 
             this.IsInterpolateClicked = !this.IsInterpolateClicked;
 
-            if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
+            if (this.SelectedVertex == null || this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {
                 return;
             }
+
             if (this.UserNumberPoints == null)
             {
                 this.UserNumberPoints = new Dict<string, string, IInterpolatorDataPoints>();
@@ -282,8 +283,13 @@ namespace Marv.Input
         {
             if (this.UserNumberPoints !=null)
             {
-                this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
+                if (this.InterpolatorDistribution != null)
+                {
+                    this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution.Value);
+                }
+
                 var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+                
                 if (vertexAvail)
                 {
                     this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);

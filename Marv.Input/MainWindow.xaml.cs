@@ -47,7 +47,7 @@ namespace Marv.Input
         private DateTime endDate = DateTime.Now;
         private Graph graph;
         private HorizontalAxisQuantity horizontalAxisQuantity;
-        private DistributionType interpolatorDistribution;
+        private DistributionType? interpolatorDistribution;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -283,7 +283,7 @@ namespace Marv.Input
             }
         }
 
-        public DistributionType InterpolatorDistribution
+        public DistributionType? InterpolatorDistribution
         {
             get { return interpolatorDistribution; }
             set
@@ -777,11 +777,11 @@ namespace Marv.Input
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             this.ClearInterpolatorLines();
-
-            foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
-            {
-                button.IsChecked = false;
-            }
+            this.InterpolatorDistribution = null;
+            //foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
+            //{
+            //    button.IsChecked = false;
+            //}
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -1251,5 +1251,10 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void InterpolatorTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.Interpolate();
+        }
     }
 }

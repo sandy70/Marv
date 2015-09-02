@@ -301,30 +301,48 @@
                                 <ToolBarTray Grid.Row="0">
 
                                     <ToolBar Name="InterpolationToolBar">
+                                        <ToolBar.Resources>
+                                            <ObjectDataProvider x:Key="InterpolatorTypes"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="input:DistributionType" />
+                                                </ObjectDataProvider.MethodParameters>
+                                            </ObjectDataProvider>
+                                        </ToolBar.Resources>
 
-                                        <RadioButton Name="TriangularRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="Triangular"
-                                                     Checked="TriangularRadioButton_Checked"
-                                                     Width="100" />
+                                        <ListBox BorderBrush="White"
+                                                 Height="32"
+                                                 ItemsSource="{Binding Source={StaticResource InterpolatorTypes}}"
+                                                 SelectedItem="{Binding ElementName=Root, Path=InterpolatorDistribution}"
+                                                 SelectionChanged="InterpolatorTypeListBox_SelectionChanged">
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
 
-                                        <RadioButton Name="UniformRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="Uniform"
-                                                     Checked="UniformRadioButton_Checked"
-                                                     Width="100" />
-
-                                        <RadioButton Name="SingleValueRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="SingleValue"
-                                                     Width="100"
-                                                     Checked="SingleValueRadioButton_Checked" />
+                                            <ItemsControl.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <RadioButton Content="{Binding}"
+                                                                             GroupName="InterpolatorType"
+                                                                             IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}"
+                                                                             VerticalAlignment="Center"
+                                                                             Width="80" />
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ItemsControl.ItemContainerStyle>
+                                        </ListBox>
 
                                         <telerik:RadButton Name="Clear"
                                                            Content="Clear"
+                                                           Width="64"
                                                            Click="Clear_Click" />
-
-
                                     </ToolBar>
 
                                 </ToolBarTray>
