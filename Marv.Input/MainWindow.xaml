@@ -314,8 +314,8 @@
                                         <ListBox BorderBrush="White"
                                                  Height="32"
                                                  ItemsSource="{Binding Source={StaticResource InterpolatorTypes}}"
-                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationType}"
-                                                 SelectionChanged="InterpolatorTypeListBox_SelectionChanged">
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationData.Type}"
+                                                 SelectionChanged="InterpolationTypeListBox_SelectionChanged">
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal" />
@@ -342,7 +342,7 @@
                                         <telerik:RadButton Name="Clear"
                                                            Content="Clear"
                                                            Width="64"
-                                                           Click="Clear_Click" />
+                                                           Click="InterpolationTypeClearButton_Click" />
                                     </ToolBar>
 
                                 </ToolBarTray>
@@ -385,68 +385,46 @@
                                                            VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
                                                            MouseMove="Chart_MouseMove">
 
-
                                     <telerik:RadCartesianChart.Behaviors>
                                         <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
                                     </telerik:RadCartesianChart.Behaviors>
-
 
                                     <telerik:RadCartesianChart.HorizontalAxis>
                                         <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=Maximum}"
                                                             Minimum="{Binding ElementName=Root, Path=Minimum}" />
                                     </telerik:RadCartesianChart.HorizontalAxis>
 
-                                    <telerik:RadCartesianChart.Series>
+                                    <telerik:RadCartesianChart.SeriesProvider>
+                                        <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=SelectedInterpolationData.Points}">
+                                            <telerik:ChartSeriesProvider.SeriesDescriptors>
+                                                <telerik:ScatterSeriesDescriptor XValuePath="XValue" YValuePath="YValue">
+                                                    <telerik:ScatterSeriesDescriptor.Style>
+                                                        <Style TargetType="telerik:ScatterLineSeries">
 
-                                        <telerik:ScatterLineSeries Cursor="Hand"
-                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
-                                                                   Name="MaximumLine"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue"
-                                                                   IsHitTestVisible="True"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
-
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-                                        </telerik:ScatterLineSeries>
-
-                                        <telerik:ScatterLineSeries Cursor="Hand"
-                                                                   IsHitTestVisible="True"
-                                                                   Name="ModeLine"
-                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue">
-
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-                                        </telerik:ScatterLineSeries>
-
-                                        <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
-                                                                   Name="MinimumLine"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   IsHitTestVisible="True"
-                                                                   Cursor="Hand"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-
-                                        </telerik:ScatterLineSeries>
-                                    </telerik:RadCartesianChart.Series>
-
+                                                            <Setter Property="PointTemplate">
+                                                                <Setter.Value>
+                                                                    <DataTemplate>
+                                                                        <Ellipse Cursor="Hand"
+                                                                                 Width="8"
+                                                                                 Height="8"
+                                                                                 Fill="Green"
+                                                                                 Stroke="DarkGreen"
+                                                                                 StrokeThickness="1"
+                                                                                 MouseDown="Ellipse_MouseDown"
+                                                                                 MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
+                                                                    </DataTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            
+                                                            <Setter Property="Stroke" Value="Green" />
+                                                            
+                                                        </Style>
+                                                    </telerik:ScatterSeriesDescriptor.Style>
+                                                </telerik:ScatterSeriesDescriptor>
+                                            </telerik:ChartSeriesProvider.SeriesDescriptors>
+                                        </telerik:ChartSeriesProvider>
+                                    </telerik:RadCartesianChart.SeriesProvider>
                                 </telerik:RadCartesianChart>
-
-
                             </Grid>
 
 
