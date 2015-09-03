@@ -382,8 +382,7 @@
                                 <!-- Chart -->
                                 <telerik:RadCartesianChart Grid.Row="2"
                                                            Name="Chart"
-                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
-                                                           MouseMove="Chart_MouseMove">
+                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
 
                                     <telerik:RadCartesianChart.Behaviors>
                                         <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
@@ -401,6 +400,8 @@
                                                     <telerik:ScatterSeriesDescriptor.Style>
                                                         <Style TargetType="telerik:ScatterLineSeries">
 
+                                                            <Setter Property="Cursor" Value="Hand" />
+
                                                             <Setter Property="PointTemplate">
                                                                 <Setter.Value>
                                                                     <DataTemplate>
@@ -409,15 +410,20 @@
                                                                                  Height="8"
                                                                                  Fill="Green"
                                                                                  Stroke="DarkGreen"
-                                                                                 StrokeThickness="1"
-                                                                                 MouseDown="Ellipse_MouseDown"
-                                                                                 MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
+                                                                                 StrokeThickness="1" />
                                                                     </DataTemplate>
                                                                 </Setter.Value>
                                                             </Setter>
-                                                            
+
                                                             <Setter Property="Stroke" Value="Green" />
                                                             
+                                                            <EventSetter Event="MouseDoubleClick" Handler="InterpolationSeries_MouseDoubleClick"></EventSetter>
+
+                                                            <EventSetter Event="MouseDown" Handler="InterpolationSeries_MouseDown" />
+
+                                                            <EventSetter Event="MouseMove" Handler="InterpolationSeries_MouseMove" />
+
+                                                            <EventSetter Event="MouseUp" Handler="InterpolationSeries_MouseUp" />
                                                         </Style>
                                                     </telerik:ScatterSeriesDescriptor.Style>
                                                 </telerik:ScatterSeriesDescriptor>

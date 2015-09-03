@@ -130,26 +130,6 @@ namespace Marv.Input
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
-                if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] != null)
-                {
-                    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
-                }
-
-                    //else
-                    // {
-                    //            this.CurrentInterpolatorDataPoints = null;
-                    //}
-                else
-                {
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
-
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
-                }
-
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
             }

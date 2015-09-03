@@ -964,17 +964,6 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-        private void InterpolationDataClearButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName] = this.SelectedInterpolationData = null;
-        }
-
-        private void InterpolationTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.UpdateSelectedInterpolationDataPoints();
-            // this.Interpolate();
-        }
-
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -1262,11 +1251,6 @@ namespace Marv.Input
                         new ScatterDataPoint { XValue = this.Maximum, YValue = top },
                     }
                 };
-            }
-
-            foreach (var series in this.Chart.Series)
-            {
-                Console.WriteLine(series.DataContext);
             }
         }
 
