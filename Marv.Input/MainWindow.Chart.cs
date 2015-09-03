@@ -108,6 +108,21 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
 
+            foreach (var val in this.SelectedVertex.GetIntervals())
+            {
+                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                {
+                    HorizontalFrom = this.BaseTableMin,
+                    HorizontalTo = this.BaseTableMax,
+                    Stroke = new SolidColorBrush(Colors.Gray),
+                    StrokeThickness = 1,
+                    VerticalFrom = val,
+                    VerticalTo = val,
+                    ZIndex = -200
+                })
+                    ;
+            }
+
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
                 if (from == to)
@@ -160,42 +175,23 @@ namespace Marv.Input
             }
             else if (vertexEvidence.Type != VertexEvidenceType.Null && vertexEvidence.Type != VertexEvidenceType.State)
             {
-                var maxValue = vertexEvidence.Value.Max();
-
-                var fill = new LinearGradientBrush
+               foreach (var state in this.SelectedVertex.States)
                 {
-                    StartPoint = new Point(0, 0),
-                    EndPoint = new Point(0, 1)
-                };
+                    var stateIndex = this.SelectedVertex.States.IndexOf(state);
+                    var gammaAdjustedValue = Math.Pow(vertexEvidence.Value[stateIndex],0.7);
 
-                for (var i = vertexEvidence.Value.Count(); i > 0; i--)
-                {
-                    var value = vertexEvidence.Value[i - 1];
-
-                    fill.GradientStops.Add(new GradientStop
+                    this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                     {
-                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
-                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
-                    });
-
-                    fill.GradientStops.Add(new GradientStop
-                    {
-                        Offset = 1 - (this.SelectedVertex.Intervals.ElementAt(i - 1) - this.selectedVertex.SafeMin) / (this.SelectedVertex.SafeMax - this.selectedVertex.SafeMin),
-                        Color = Color.FromArgb((byte) (value / maxValue * 255), 218, 165, 32)
+                        Fill = new SolidColorBrush(Color.FromArgb((byte)(gammaAdjustedValue * 255), 218, 165, 32)),
+                        HorizontalFrom = @from,
+                        HorizontalTo = to,
+                        Stroke = new SolidColorBrush(Color.FromArgb((byte)(gammaAdjustedValue * 255), 218, 165, 32)),
+                        Tag = dataRow,
+                        VerticalFrom = state.SafeMin,
+                        VerticalTo = state.SafeMax,
+                        ZIndex = -200
                     });
                 }
-
-                this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
-                {
-                    Fill = fill,
-                    HorizontalFrom = @from,
-                    HorizontalTo = to,
-                    Stroke = strokeBrush,
-                    Tag = dataRow,
-                    VerticalFrom = this.SelectedVertex.SafeMin,
-                    VerticalTo = this.SelectedVertex.SafeMax,
-                    ZIndex = -200
-                });
             }
         }
     }

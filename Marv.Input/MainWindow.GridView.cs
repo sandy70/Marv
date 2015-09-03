@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Types;
+using Marv.Controls;
 using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -185,19 +186,30 @@ namespace Marv.Input
         
         private void Interpolate()
         {
-            if (this.SelectedVertex == null)
+            if (this.SelectedVertex == null )
             {
                 return;
             }
 
-           // this.ClearInterpolatorLines();
-
-            this.IsInterpolateClicked = !this.IsInterpolateClicked;
-
+            if (this.SelectedColumnName ==null)
+            {
+                foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
+                {
+                    button.IsChecked = false;
+                }
+                return;
+            }
             if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {
+
+                MessageBox.Show("cannot interpolate data for labelled or boolean type vertex");
                 return;
             }
+
+            this.ClearInterpolatorLines();
+     
+            this.IsInterpolateClicked = true;
+            
             if (this.UserNumberPoints == null)
             {
                 this.UserNumberPoints = new Dict<string, string, IInterpolatorDataPoints>();
@@ -248,7 +260,10 @@ namespace Marv.Input
 
                     this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName] = interpolatorLine;
                 }
+                
             }
+
+            
             this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
 
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
@@ -276,7 +291,8 @@ namespace Marv.Input
             {
                 this.UserNumberPoints.Remove(this.SelectedVertex.Key);
             }
-        }
+
+           }
 
         private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
         {

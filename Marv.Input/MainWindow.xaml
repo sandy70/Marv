@@ -306,20 +306,20 @@
                                                      GroupName="Distribution"
                                                      Content="Triangular"
                                                      Checked="TriangularRadioButton_Checked"
-                                                  IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Triangular}}"
+                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Triangular}}"
                                                      Width="100" />
 
                                         <RadioButton Name="UniformRadioButton"
                                                      GroupName="Distribution"
                                                      Content="Uniform"
-                                                  IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Uniform}}"
+                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Uniform}}"
                                                      Checked="UniformRadioButton_Checked"
                                                      Width="100" />
 
                                         <RadioButton Name="SingleValueRadioButton"
                                                      GroupName="Distribution"
                                                      Content="SingleValue"
-                                                   IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.SingleValue}}"
+                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.SingleValue}}"
                                                      Width="100"
                                                      Checked="SingleValueRadioButton_Checked" />
 

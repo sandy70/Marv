@@ -34,9 +34,9 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
-        private double baseTableMax=100;
-        private double baseTableMin=0;
-        private double baseTableRange=10;
+        private double baseTableMax = 100;
+        private double baseTableMin;
+        private double baseTableRange = 10;
         private ICommand cellEditCommand;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
@@ -683,69 +683,75 @@ namespace Marv.Input
             this.UpdateVerticalAxis();
         }
 
-        private void CaptureInterpolatedData()
+        private void CaptureInterpolatedData(Dict<string, EvidenceTable> mergedDataSet)
         {
-            if (!this.IsInterpolateClicked)
+            var triInterpolator = new TriangularInterpolator();
+            var uniInterpolator = new UniformInterpolator();
+            var singleInterpolator = new SingleValueInterpolator();
+
+            foreach (var kvp in this.UserNumberPoints)
             {
-                MessageBox.Show("Cannot capture data without interpolation");
-                return;
-            }
-            if (this.CurrentInterpolatorDataPoints == null || this.CurrentInterpolatorDataPoints is EmptyInterpolator)
-            {
-                return;
-            }
-
-            if (this.CurrentInterpolatorDataPoints.IsLineCross)
-            {
-                MessageBox.Show("Interpolator lines crossing each other");
-            }
-
-            var linearInterpolators = this.CurrentInterpolatorDataPoints.GetLinearInterpolators();
-
-            EvidenceTable interpolatedTable = null;
-
-            if (this.lineDataObj[DataTheme.Interpolated].Keys.Any(nodeKey => nodeKey.Equals(this.SelectedVertex.Key)))
-            {
-                interpolatedTable = this.lineDataObj[DataTheme.Interpolated][this.SelectedVertex.Key];
-            }
-
-            else
-            {
-                interpolatedTable = new EvidenceTable(this.dates);
-
-                foreach (var userEvidenceRow in this.lineDataObj[DataTheme.User][this.SelectedVertex.Key])
+                foreach (var column in kvp.Value)
                 {
-                    var interpolatedRow = new EvidenceRow { From = userEvidenceRow.From, To = userEvidenceRow.To };
-                    interpolatedTable.Add(interpolatedRow);
+                    var interpolatorDataPoints = column.Value;
+
+                    if (interpolatorDataPoints == null)
+                    {
+                        continue;
+                    }
+                    var linearInterpolators = interpolatorDataPoints.GetLinearInterpolators();
+
+                    EvidenceTable interpolatedTable = null;
+
+                    interpolatedTable = new EvidenceTable(this.dates);
+
+                    foreach (var mergedEvidenceRow in mergedDataSet.Values[0])
+                    {
+                        var interpolatedRow = new EvidenceRow { From = mergedEvidenceRow.From, To = mergedEvidenceRow.To };
+                        interpolatedTable.Add(interpolatedRow);
+                    }
+                    this.lineDataObj[DataTheme.Interpolated].Add(kvp.Key, interpolatedTable);
+
+                    foreach (var interpolatedRow in interpolatedTable)
+                    {
+                        var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
+
+                        var interpolatedValues = linearInterpolators.Select(linearInterpolator => Math.Round(linearInterpolator.Eval(midRangeValue), 2)).ToList();
+
+                        interpolatedValues.Sort();
+
+                        var val = "";
+                        if (interpolatedValues.Count == 3)
+                        {
+                            val = triInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
+                        }
+                        else if (interpolatedValues.Count == 2)
+                        {
+                            val = uniInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
+                        }
+                        else
+                        {
+                            val = singleInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
+                        }
+
+                        interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
+                    }
+
+               
                 }
-                this.lineDataObj[DataTheme.Interpolated].Add(this.SelectedVertex.Key, interpolatedTable);
+
+                
             }
 
-            foreach (var interpolatedRow in interpolatedTable)
-            {
-                var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
-
-                var interpolatedValues = linearInterpolators.Select(linearInterpolator => Math.Round(linearInterpolator.Eval(midRangeValue), 2)).ToList();
-                ;
-
-                interpolatedValues.Sort();
-
-                var val = this.CurrentInterpolatorDataPoints.GetInterpolatedEvidenceString(interpolatedValues);
-
-                interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
-            }
-            this.SelectedVertex.IsInterpolateEvidenceComplete = true;
-            this.IsInterpolateClicked = false;
-            this.SelectedTheme = DataTheme.Interpolated;
-            // Should currentInterpolator datapoints and usernumberpoints be cleared ???
+            
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-          
-            this.ClearInterpolatorLines();
+            this.InterpolatorDistribution = DistributionType.Empty;
 
-            
+            this.ClearInterpolatorLines();
+            this.IsInterpolateClicked = false;
 
             foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
             {
@@ -765,7 +771,7 @@ namespace Marv.Input
                 return;
             }
             var val = selectedRow[selectedColumnName];
-
+            
             DateTime dateTime;
             if (selectedColumnName.TryParse(out dateTime))
             {
@@ -865,7 +871,6 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
-            
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
 
             this.PlotInterpolatorLines(minMaxValues);
@@ -895,19 +900,24 @@ namespace Marv.Input
             this.UpdateVerticalAxis();
 
             this.UpdateTable();
-
+            if (this.SelectedVertex == null)
+            {
+                return;
+            }
             if (this.UserNumberPoints != null)
             {
                 var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
 
-               
                 this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new EmptyInterpolator();
 
+                // temporary fix to ensure currentinterpolatordatapoints not null
+                if (vertexAvailable && this.CurrentInterpolatorDataPoints == null)
+                {
+                    this.CurrentInterpolatorDataPoints = new EmptyInterpolator();
+                }
 
                 if (this.CurrentInterpolatorDataPoints != null)
                 {
-                    
-
                     if (this.CurrentInterpolatorDataPoints is TriangularInterpolator)
                     {
                         this.InterpolatorDistribution = DistributionType.Triangular;
@@ -943,14 +953,14 @@ namespace Marv.Input
                     VerticalTo = val,
                     ZIndex = -200
                 })
-            ;
+                    ;
             }
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
         }
 
-            //this.UpdateVerticalAxis();
+        //this.UpdateVerticalAxis();
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -961,8 +971,22 @@ namespace Marv.Input
             this.BaseTableRange = 0;
 
             this.Chart.Annotations.Remove(annotation => true);
+            foreach (var val in this.SelectedVertex.GetIntervals())
+            {
+                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                {
+                    HorizontalFrom = this.BaseTableMin,
+                    HorizontalTo = this.BaseTableMax,
+                    Stroke = new SolidColorBrush(Colors.Gray),
+                    StrokeThickness = 1,
+                    VerticalFrom = val,
+                    VerticalTo = val,
+                    ZIndex = -200
+                });
+            }
 
-            this.CurrentInterpolatorDataPoints = new TriangularInterpolator { IsLineCross = false };
+            this.ClearInterpolatorLines();
+
             this.selectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.UpdateTable();
@@ -1029,7 +1053,7 @@ namespace Marv.Input
             }
         }
 
-            //this.UpdateVerticalAxis();
+        //this.UpdateVerticalAxis();
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.S || !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
@@ -1057,31 +1081,21 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-           try
+            try
             {
                 if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
                 {
                     List<double> baseRowsList = null;
-                    
+
                     baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
-                    
+
                     var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
 
-                    this.IsInterpolateClicked = false;
-                    foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
+                    if (this.UserNumberPoints != null)
                     {
-                        if (button.IsChecked == true)
-                        {
-                            this.IsInterpolateClicked = true;
-                        }
+                        CaptureInterpolatedData(mergedDataSet);
+                        mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
                     }
-
-                    if (this.IsInterpolateClicked)
-                    {
-                        CaptureInterpolatedData();
-                    }
-
-                    mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
@@ -1094,7 +1108,6 @@ namespace Marv.Input
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
             var noOfDateTimes = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.Count();
-           
 
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
@@ -1147,8 +1160,17 @@ namespace Marv.Input
 
         private void SingleValueRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            this.InterpolatorDistribution = DistributionType.SingleValue;
-            Interpolate();
+           
+
+            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
+
+            if (!vertexAvailable || !linesForColAvailable)
+            {
+                this.InterpolatorDistribution = DistributionType.SingleValue;
+                Interpolate();
+            }
+           
         }
 
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1161,16 +1183,30 @@ namespace Marv.Input
 
         private void TriangularRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-           
-            this.InterpolatorDistribution = DistributionType.Triangular;
-            Interpolate();
+          
+
+            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
+
+            if (!vertexAvailable || !linesForColAvailable)
+            {
+                this.InterpolatorDistribution = DistributionType.Triangular;
+                Interpolate();
+            }
+            
         }
 
         private void UniformRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            
-            this.InterpolatorDistribution = DistributionType.Uniform;
-            Interpolate();
+           
+            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
+            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
+            if (!vertexAvailable || !linesForColAvailable)
+            {
+                this.InterpolatorDistribution = DistributionType.Uniform;
+                Interpolate();
+            }
+           
         }
 
         private void UpdateCommandStack(ICommand command)
