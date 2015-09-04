@@ -26,11 +26,12 @@ namespace Marv.Input
     {
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
+
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
-        private readonly string oldColumnName;
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+
         private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
         private double baseTableMax;
@@ -56,7 +57,6 @@ namespace Marv.Input
         private bool isLineDataControlVisible = true;
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
-        private string lineDataFileName;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
         private double maxUserValue;
@@ -753,7 +753,7 @@ namespace Marv.Input
 
             var linearInterpolators = this.CurrentInterpolatorDataPoints.GetLinearInterpolators();
 
-            EvidenceTable interpolatedTable = null;
+            EvidenceTable interpolatedTable;
 
             if (this.lineDataObj[DataTheme.Interpolated].Keys.Any(nodeKey => nodeKey.Equals(this.SelectedVertex.Key)))
             {
@@ -777,7 +777,6 @@ namespace Marv.Input
                 var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
 
                 var interpolatedValues = linearInterpolators.Select(linearInterpolator => Math.Round(linearInterpolator.Eval(midRangeValue), 2)).ToList();
-                ;
 
                 interpolatedValues.Sort();
 
@@ -909,8 +908,6 @@ namespace Marv.Input
             this.Maximum = Math.Max(this.Maximum, this.BaseTableMax);
 
             var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
-
-            this.PlotInterpolatorLines(minMaxValues);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -1108,7 +1105,7 @@ namespace Marv.Input
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 Console.WriteLine("Can run the model only for user or interpolated data set");
             }

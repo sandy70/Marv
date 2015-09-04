@@ -267,21 +267,6 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static IInterpolatorDataPoints UpdateCurrentInterpolator(InterpolationType interpolationType)
-        {
-            if (interpolationType.Equals(InterpolationType.SingleValue))
-            {
-                return new SingleValueInterpolator { IsLineCross = false };
-            }
-
-            if (interpolationType.Equals(InterpolationType.Uniform))
-            {
-                return new UniformInterpolator { IsLineCross = false };
-            }
-
-            return new TriangularInterpolator { IsLineCross = false };
-        }
-
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
             if (interpolatedDataSet == null)
