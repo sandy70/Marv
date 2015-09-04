@@ -111,10 +111,5 @@ namespace Marv.Input
 
             this.capturedPoint = null;
         }
-
-        private void InterpolationTypeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.UpdateSelectedInterpolationDataPoints();
-        }
     }
 }
