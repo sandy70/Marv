@@ -3,11 +3,11 @@
         xmlns:calendar="clr-namespace:Telerik.Windows.Controls.Calendar;assembly=Telerik.Windows.Controls.Input"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:telerikCharting="clr-namespace:Telerik.Charting;assembly=Telerik.Windows.Controls.Chart"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:input="clr-namespace:Marv.Input"
         xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized"
@@ -429,10 +429,16 @@
                                             </telerik:ChartSeriesProvider.SeriesDescriptors>
                                         </telerik:ChartSeriesProvider>
                                     </telerik:RadCartesianChart.SeriesProvider>
+                                    
+                                    <telerik:RadCartesianChart.Series>
+                                        <telerik:ScatterPointSeries>
+                                            <telerik:ScatterPointSeries.DataPoints>
+                                                <telerikCharting:ScatterDataPoint />
+                                            </telerik:ScatterPointSeries.DataPoints>
+                                        </telerik:ScatterPointSeries>
+                                    </telerik:RadCartesianChart.Series>
                                 </telerik:RadCartesianChart>
                             </Grid>
-
-
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
