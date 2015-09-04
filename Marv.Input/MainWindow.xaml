@@ -314,8 +314,7 @@
                                         <ListBox BorderBrush="White"
                                                  Height="32"
                                                  ItemsSource="{Binding Source={StaticResource InterpolatorTypes}}"
-                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationData.Type, Mode=TwoWay}"
-                                                 SelectionChanged="InterpolationTypeListBox_SelectionChanged">
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationData.Type, Mode=TwoWay}">
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal" />

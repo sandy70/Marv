@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -25,7 +24,6 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private const int ModifyTolerance = 200;
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
         private readonly List<ICommand> commandStack = new List<ICommand>();
@@ -531,7 +529,10 @@ namespace Marv.Input
                 this.selectedInterpolationData = value;
                 this.RaisePropertyChanged();
 
-                this.SelectedInterpolationData.PropertyChanged += SelectedInterpolationData_PropertyChanged;
+                if (this.SelectedInterpolationData != null)
+                {
+                    this.SelectedInterpolationData.PropertyChanged += SelectedInterpolationData_PropertyChanged;
+                }
             }
         }
 
@@ -856,64 +857,6 @@ namespace Marv.Input
             }
         }
 
-        private void CreateInterpolationDataPoints(InterpolationData data, double max, double min)
-        {
-            var mid = (max + min) / 2;
-            var bot = (mid + min) / 2;
-            var top = (mid + max) / 2;
-
-            if (data.Type == InterpolationType.SingleValue)
-            {
-                data.Points = new ObservableCollection<ObservableCollection<ScatterDataPoint>>
-                {
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = mid },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = mid },
-                    }
-                };
-            }
-
-            else if (data.Type == InterpolationType.Uniform)
-            {
-                data.Points = new ObservableCollection<ObservableCollection<ScatterDataPoint>>
-                {
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = bot },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = bot },
-                    },
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = top },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = top },
-                    }
-                };
-            }
-
-            else if (data.Type == InterpolationType.Triangular)
-            {
-                data.Points = new ObservableCollection<ObservableCollection<ScatterDataPoint>>
-                {
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = bot },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = bot },
-                    },
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = mid },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = mid },
-                    },
-                    new ObservableCollection<ScatterDataPoint>
-                    {
-                        new ScatterDataPoint { XValue = this.Minimum, YValue = top },
-                        new ScatterDataPoint { XValue = this.Maximum, YValue = top },
-                    }
-                };
-            }
-        }
-
         private void CreateNewBeliefDataSet()
         {
             if (this.lineDataObj[DataTheme.Beliefs].Count == 0)
@@ -1233,7 +1176,7 @@ namespace Marv.Input
         {
             if (e.PropertyName == "Type")
             {
-                this.CreateInterpolationDataPoints(this.SelectedInterpolationData, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+                this.SelectedInterpolationData.CreatePoints(this.Maximum, this.Minimum, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
             }
         }
 
