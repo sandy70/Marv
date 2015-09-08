@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using Telerik.Charting;
 
 namespace Marv.Input
 {
