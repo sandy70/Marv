@@ -194,22 +194,16 @@
     <Compile Include="AddRowCommand.cs" />
     <Compile Include="CellEditCommand.cs" />
     <Compile Include="DataTheme.cs" />
-    <Compile Include="DistributionType.cs" />
-    <Compile Include="EmptyInterpolator.cs" />
+    <Compile Include="InterpolationData.cs" />
+    <Compile Include="InterpolationType.cs" />
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IInterpolatorDataPoints.cs" />
-    <Compile Include="InterpolatorsBehaviour.cs" />
     <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />
-    <Compile Include="SingleValueInterpolator.cs" />
+    <Compile Include="MainWindow.Interpolation.cs" />
     <Compile Include="PasteCommand.cs" />
-    <Compile Include="ProbabilityDataPoint.cs" />
-    <Compile Include="HorizontalAxisQuantity.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="TriangularInterpolator.cs" />
-    <Compile Include="UniformInterpolator.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

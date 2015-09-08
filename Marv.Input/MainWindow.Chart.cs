@@ -1,81 +1,16 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
 using Telerik.Charting;
-using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
-        private void Chart_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (this.draggedPoint != null && e.LeftButton == MouseButtonState.Pressed)
-            {
-                var chart = (RadCartesianChart) sender;
-
-                var data = chart.ConvertPointToData(e.GetPosition(chart));
-
-                this.CurrentInterpolatorDataPoints.CorrectBindingError(this.ScatterLineSeriesCollection);
-                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
-
-                this.DraggedPoint.YValue = (double) (data.SecondValue);
-                ScatterDataPoint replacePoint = null;
-
-                this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
-
-                var currentLine = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine);
-
-                foreach (var userPoint in currentLine)
-                {
-                    if (userPoint.XValue.Equals(this.DraggedPoint.XValue))
-                    {
-                        replacePoint = userPoint;
-                    }
-                }
-
-                this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
-
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].CorrectBindingError(this.scatterLineSeriesCollection);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].GetNumberPoints(this.SelectedLine).Replace(replacePoint, this.DraggedPoint);
-            }
-
-            else if (this.draggedPoint == null && e.LeftButton == MouseButtonState.Pressed && this.IsInterpolateClicked && this.SelectedLine != null)
-            {
-                var chart = (RadCartesianChart) sender;
-
-                var dynamicPoint = e.GetPosition(chart);
-
-                this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName];
-
-                var currentLine = this.CurrentInterpolatorDataPoints.GetNumberPoints(this.SelectedLine);
-
-                ScatterDataPoint replacePoint = null;
-
-                foreach (var scatterPoint in currentLine)
-                {
-                    var linePoint = this.Chart.GetPointOnChart(scatterPoint);
-
-                    if (Math.Round(linePoint.X) == Math.Round(dynamicPoint.X) && Math.Abs(linePoint.Y - dynamicPoint.Y) < ModifyTolerance)
-                    {
-                        replacePoint = scatterPoint;
-                    }
-                }
-
-                this.CurrentInterpolatorDataPoints.IsLineCross = !this.CurrentInterpolatorDataPoints.IsWithInRange();
-
-                if (!this.CurrentInterpolatorDataPoints.IsLineCross)
-                {
-                    currentLine.Replace(replacePoint, this.Chart.GetScatterDataPoint(dynamicPoint));
-                }
-            }
-        }
-
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);

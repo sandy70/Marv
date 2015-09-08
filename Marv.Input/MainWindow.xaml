@@ -3,11 +3,11 @@
         xmlns:calendar="clr-namespace:Telerik.Windows.Controls.Calendar;assembly=Telerik.Windows.Controls.Input"
         xmlns:marv="http://dnvgl.com/marv"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:telerikCharting="clr-namespace:Telerik.Charting;assembly=Telerik.Windows.Controls.Chart"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:input="clr-namespace:Marv.Input"
         xmlns:converters="clr-namespace:Marv.Controls.Converters;assembly=Marv.Controls"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Name="Root"
         Title="MARV - Input Designer"
         WindowState="Maximized"
@@ -42,13 +42,7 @@
             
                
             
-            <converters:BooleanToStringConverter x:Key="BooleanToStringConverter"
-                                                 FalseString="Interpolate"
-                                                 TrueString="Clear" />
-
-
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
-
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
                         <telerik:RadColumnSparkline ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=telerik:GridViewCell}, Path=Tag}"
@@ -59,17 +53,6 @@
                     </DataTemplate>
                 </input:CellTemplateSelector.SparkLineTemplate>
             </input:CellTemplateSelector>
-
-            <DataTemplate x:Key="EllipsePointTemplate">
-                <Ellipse Cursor="Hand"
-                         Width="8"
-                         Height="8"
-                         Fill="Green"
-                         Stroke="DarkGreen"
-                         StrokeThickness="1"
-                         MouseDown="Ellipse_MouseDown"
-                         MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" />
-            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
@@ -306,33 +289,48 @@
                                 <ToolBarTray Grid.Row="0">
 
                                     <ToolBar Name="InterpolationToolBar">
+                                        <ToolBar.Resources>
+                                            <ObjectDataProvider x:Key="InterpolatorTypes"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="input:InterpolationType" />
+                                                </ObjectDataProvider.MethodParameters>
+                                            </ObjectDataProvider>
+                                        </ToolBar.Resources>
 
-                                        <RadioButton Name="TriangularRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="Triangular"
-                                                     Checked="TriangularRadioButton_Checked"
-                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Triangular}}"
-                                                     Width="100" />
-
-                                        <RadioButton Name="UniformRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="Uniform"
+                                        <ListBox BorderBrush="White"
+                                                 Height="32"
+                                                 ItemsSource="{Binding Source={StaticResource InterpolatorTypes}}"
+                                                 SelectedItem="{Binding ElementName=Root, Path=SelectedInterpolationData.Type, Mode=TwoWay}">
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
                                                      IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Uniform}}"
-                                                     Checked="UniformRadioButton_Checked"
-                                                     Width="100" />
 
-                                        <RadioButton Name="SingleValueRadioButton"
-                                                     GroupName="Distribution"
-                                                     Content="SingleValue"
-                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.SingleValue}}"
-                                                     Width="100"
-                                                     Checked="SingleValueRadioButton_Checked" />
+                                            <ItemsControl.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <RadioButton Content="{Binding}"
+                                                                             GroupName="InterpolatorType"
+                                                                             IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}"
+                                                                             VerticalAlignment="Center"
+                                                                             Width="80"/>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ItemsControl.ItemContainerStyle>
+                                        </ListBox>
 
                                         <telerik:RadButton Name="Clear"
                                                            Content="Clear"
-                                                           Click="Clear_Click" />
-
-
+                                                           Width="64"
+                                                           Click="InterpolationDataClearButton_Click" />
                                     </ToolBar>
 
                                 </ToolBarTray>
@@ -372,74 +370,65 @@
                                 <!-- Chart -->
                                 <telerik:RadCartesianChart Grid.Row="2"
                                                            Name="Chart"
-                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}"
-                                                           MouseMove="Chart_MouseMove">
-
+                                                           VerticalAxis="{Binding ElementName=Root, Path=VerticalAxis}">
 
                                     <telerik:RadCartesianChart.Behaviors>
                                         <telerik:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="None" DragMode="None" />
                                     </telerik:RadCartesianChart.Behaviors>
-
 
                                     <telerik:RadCartesianChart.HorizontalAxis>
                                         <telerik:LinearAxis Maximum="{Binding ElementName=Root, Path=BaseTableMax}"
                                                             Minimum="{Binding ElementName=Root, Path=BaseTableMin}" />
                                     </telerik:RadCartesianChart.HorizontalAxis>
 
+                                    <telerik:RadCartesianChart.SeriesProvider>
+                                        <telerik:ChartSeriesProvider Source="{Binding ElementName=Root, Path=SelectedInterpolationData.Points}">
+                                            <telerik:ChartSeriesProvider.SeriesDescriptors>
+                                                <telerik:ScatterSeriesDescriptor XValuePath="XValue" YValuePath="YValue">
+                                                    <telerik:ScatterSeriesDescriptor.Style>
+                                                        <Style TargetType="telerik:ScatterLineSeries">
+
+                                                            <Setter Property="Cursor" Value="Hand" />
+
+                                                            <Setter Property="PointTemplate">
+                                                                <Setter.Value>
+                                                                    <DataTemplate>
+                                                                        <Ellipse Cursor="Hand"
+                                                                                 Width="8"
+                                                                                 Height="8"
+                                                                                 Fill="Green"
+                                                                                 Stroke="DarkGreen"
+                                                                                 StrokeThickness="1" />
+                                                                    </DataTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+
+                                                            <Setter Property="Stroke" Value="Green" />
+                                                            
+                                                            <EventSetter Event="MouseDoubleClick" Handler="InterpolationSeries_MouseDoubleClick" />
+
+                                                            <EventSetter Event="MouseDown" Handler="InterpolationSeries_MouseDown" />
+
+                                                            <EventSetter Event="MouseMove" Handler="InterpolationSeries_MouseMove" />
+
+                                                            <EventSetter Event="MouseUp" Handler="InterpolationSeries_MouseUp" />
+                                                        </Style>
+                                                    </telerik:ScatterSeriesDescriptor.Style>
+                                                </telerik:ScatterSeriesDescriptor>
+                                            </telerik:ChartSeriesProvider.SeriesDescriptors>
+                                        </telerik:ChartSeriesProvider>
+                                    </telerik:RadCartesianChart.SeriesProvider>
+                                    
+                                    <!-- Dummy series to make sure chart is visible -->
                                     <telerik:RadCartesianChart.Series>
-
-                                        <telerik:ScatterLineSeries Cursor="Hand"
-                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MaxNumberPoints}"
-                                                                   Name="MaximumLine"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue"
-                                                                   IsHitTestVisible="True"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
-
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-                                        </telerik:ScatterLineSeries>
-
-                                        <telerik:ScatterLineSeries Cursor="Hand"
-                                                                   IsHitTestVisible="True"
-                                                                   Name="ModeLine"
-                                                                   ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.ModeNumberPoints}"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue">
-
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-                                        </telerik:ScatterLineSeries>
-
-                                        <telerik:ScatterLineSeries ItemsSource="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.MinNumberPoints}"
-                                                                   Name="MinimumLine"
-                                                                   XValueBinding="XValue"
-                                                                   YValueBinding="YValue"
-                                                                   PointTemplate="{StaticResource EllipsePointTemplate}"
-                                                                   IsHitTestVisible="True"
-                                                                   Cursor="Hand"
-                                                                   Stroke="{Binding ElementName=Root, Path=CurrentInterpolatorDataPoints.IsLineCross, Converter={StaticResource InterpolatorLineCrossConverter}}">
-                                            <i:Interaction.Behaviors>
-                                                <input:InterpolatorsBehaviour />
-                                            </i:Interaction.Behaviors>
-
-
-                                        </telerik:ScatterLineSeries>
+                                        <telerik:ScatterPointSeries>
+                                            <telerik:ScatterPointSeries.DataPoints>
+                                                <telerikCharting:ScatterDataPoint />
+                                            </telerik:ScatterPointSeries.DataPoints>
+                                        </telerik:ScatterPointSeries>
                                     </telerik:RadCartesianChart.Series>
-
                                 </telerik:RadCartesianChart>
-
-
                             </Grid>
-
-
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>

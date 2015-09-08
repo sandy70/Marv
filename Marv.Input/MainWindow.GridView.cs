@@ -34,7 +34,6 @@ namespace Marv.Input
         {
             e.OwnerGridViewItemsControl.CurrentColumn = e.OwnerGridViewItemsControl.Columns[0];
             this.CreatedRowsCount++;
-            
         }
 
         private void GridView_AutoGeneratingColumn(object sender, GridViewAutoGeneratingColumnEventArgs e)
@@ -56,11 +55,10 @@ namespace Marv.Input
 
         private void GridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
         {
-          
             var columnName = e.Cell.Column.UniqueName;
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
-            
+
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
@@ -113,32 +111,14 @@ namespace Marv.Input
 
             this.SelectedColumnName = gridViewColumn.UniqueName;
 
+            this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+
             DateTime dateTime;
 
             this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
 
             if (this.selectedColumnName.TryParse(out dateTime))
             {
-                if (this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] != null)
-                {
-                    this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
-                }
-
-                    //else
-                    // {
-                    //            this.CurrentInterpolatorDataPoints = null;
-                    //}
-                else
-                {
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Clear();
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Clear();
-
-                    this.CurrentInterpolatorDataPoints.MaxNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.ModeNumberPoints.Add(new ScatterDataPoint());
-                    this.CurrentInterpolatorDataPoints.MinNumberPoints.Add(new ScatterDataPoint());
-                }
-
                 this.Chart.Annotations.Remove(annotation => true);
                 this.Plot(this.selectedColumnName);
             }
@@ -196,111 +176,19 @@ namespace Marv.Input
                 foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
                 {
                     button.IsChecked = false;
-                }
                 return;
-            }
-            if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
-            {
-
-                MessageBox.Show("cannot interpolate data for labelled or boolean");
-                return;
-            }
-
-            this.ClearInterpolatorLines();
-     
-            this.IsInterpolateClicked = true;
-            
-            if (this.UserNumberPoints == null)
-            {
-                this.UserNumberPoints = new Dict<string, string, IInterpolatorDataPoints>();
-            }
-
-            var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-
-            if (!vertexAvailable)
-            {
-                var dateColumns = new Dict<string, IInterpolatorDataPoints>();
-
-                foreach (var dateTime in this.dates)
-                {
-                    if (this.InterpolatorDistribution.Equals(DistributionType.SingleValue))
-                    {
-                        dateColumns.Add(dateTime.String(), new SingleValueInterpolator());
-                    }
-                    else if (this.InterpolatorDistribution.Equals(DistributionType.Uniform))
-                    {
-                        dateColumns.Add(dateTime.String(), new UniformInterpolator());
-                    }
-                    else
-                    {
-                        dateColumns.Add(dateTime.String(), new TriangularInterpolator());
-                    }
-                }
-                this.UserNumberPoints.Add(this.SelectedVertex.Key, dateColumns);
-            }
-            else
-            {
-                var linesForColAvailable = this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
-
-                if (!linesForColAvailable)
-                {
-                    IInterpolatorDataPoints interpolatorLine = null;
-                    if (this.InterpolatorDistribution.Equals(DistributionType.SingleValue))
-                    {
-                        interpolatorLine = new SingleValueInterpolator();
-                    }
-                    else if (this.InterpolatorDistribution.Equals(DistributionType.Uniform))
-                    {
-                        interpolatorLine = new UniformInterpolator();
-                    }
-                    else
-                    {
-                        interpolatorLine = new TriangularInterpolator();
-                    }
-
-                    this.UserNumberPoints[this.SelectedVertex.Key][this.SelectedColumnName] = interpolatorLine;
-                }
                 
-            }
-
-            
-            this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
 
           this.PlotInterpolatorLines();
-        }
-
-        private void ClearInterpolatorLines()
-        {
-            if (this.UserNumberPoints == null)
-            {
                 return;
             }
 
-            this.CurrentInterpolatorDataPoints = Utils.UpdateCurrentInterpolator(this.InterpolatorDistribution);
            
-            var vertexAvail = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-            if (vertexAvail)
-            {
-                this.UserNumberPoints[this.SelectedVertex.Key].Remove(this.SelectedColumnName);
                                         
-            }
 
             if (this.UserNumberPoints[this.SelectedVertex.Key].Count == 0)
             {
                 this.UserNumberPoints.Remove(this.SelectedVertex.Key);
-            }
-
-           }
-
-        private void PlotInterpolatorLines()
-        {
-            this.CurrentInterpolatorDataPoints.IsLineCross = false;
-
-            
-            if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)
-            {
-                return;
-            }
 
             var modeLineStartPoint = new ScatterDataPoint
             {
@@ -313,66 +201,6 @@ namespace Marv.Input
                 YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.ModeInterpolatorLine),
             };
 
-            var minLineStartPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MinInterpolatorLine),
-            };
-
-            var minLineEndPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMax,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MinInterpolatorLine),
-            };
-            var maxLineStartPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MaxInterpolatorLine),
-            };
-            var maxLineEndPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMax,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.MaxInterpolatorLine),
-            };
-
-           
-
-            if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)
-            {
-                return;
-            }
-
-            if (this.InterpolatorDistribution.Equals(DistributionType.SingleValue))
-            {
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineEndPoint);
-            }
-
-            else if (this.InterpolatorDistribution.Equals(DistributionType.Uniform))
-            {
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineEndPoint);
-
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineEndPoint);
-            }
-
-            else
-            {
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MaxNumberPoints.Add(maxLineEndPoint);
-
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].MinNumberPoints.Add(minLineEndPoint);
-
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Clear();
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineStartPoint);
-                this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName].ModeNumberPoints.Add(modeLineEndPoint);
             }
         }
 
