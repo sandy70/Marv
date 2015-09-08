@@ -15,7 +15,8 @@ namespace Marv.Input
 
         private void InterpolationDataClearButton_Click(object sender, RoutedEventArgs e)
         {
-            this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName] = this.SelectedInterpolationData = null;
+            this.SelectedInterpolationData.Points = null;
+            this.SelectedInterpolationData.Type = null;
         }
 
         private void InterpolationSeries_MouseDoubleClick(object sender, MouseButtonEventArgs e)
