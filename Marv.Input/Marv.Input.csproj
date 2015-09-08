@@ -204,9 +204,7 @@
     <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="MainWindow.Interpolation.cs" />
     <Compile Include="PasteCommand.cs" />
-    <Compile Include="HorizontalAxisQuantity.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="TriangularInterpolator.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

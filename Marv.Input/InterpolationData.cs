@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using Marv.Common;
+using Marv.Common.Interpolators;
 using Telerik.Charting;
+using System.Linq;
 
 namespace Marv.Input
 {
@@ -87,6 +89,30 @@ namespace Marv.Input
                     }
                 };
             }
+        }
+
+        public string GetEvidenceString(double xValue)
+        {
+            var values = this.Points.Select(scatterDataPoints => (new LinearInterpolator(scatterDataPoints.GetXCoords(), scatterDataPoints.GetYCoords()).Eval(xValue))).ToList();
+            
+            values.Sort();
+
+            if (this.Type == InterpolationType.SingleValue)
+            {
+                return values[0].ToString();
+            }
+            
+            if (this.Type == InterpolationType.Uniform)
+            {
+                return values[0] + ":" + values[1];
+            }
+
+            if (this.Type == InterpolationType.Triangular)
+            {
+                return "TRI(" + values[0] + "," + values[1] + "," + values[2] + ")";
+            }
+
+            return null;
         }
     }
 }

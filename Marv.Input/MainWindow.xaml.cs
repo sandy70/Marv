@@ -39,7 +39,6 @@ namespace Marv.Input
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
-        private IInterpolatorDataPoints currentInterpolatorDataPoints = new TriangularInterpolator();
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
@@ -161,17 +160,6 @@ namespace Marv.Input
                 }
 
                 this.currentCommand = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public IInterpolatorDataPoints CurrentInterpolatorDataPoints
-        {
-            get { return this.currentInterpolatorDataPoints; }
-
-            set
-            {
-                this.currentInterpolatorDataPoints = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -546,17 +534,11 @@ namespace Marv.Input
                 MessageBox.Show("Cannot capture data without interpolation");
                 return;
             }
-            if (this.CurrentInterpolatorDataPoints == null)
+
+            if (this.SelectedInterpolationData == null)
             {
                 return;
             }
-
-            if (this.CurrentInterpolatorDataPoints.IsLineCross)
-            {
-                MessageBox.Show("Interpolator lines crossing each other");
-            }
-
-            var linearInterpolators = this.CurrentInterpolatorDataPoints.GetLinearInterpolators();
 
             EvidenceTable interpolatedTable;
 
@@ -574,6 +556,7 @@ namespace Marv.Input
                     var interpolatedRow = new EvidenceRow { From = userEvidenceRow.From, To = userEvidenceRow.To };
                     interpolatedTable.Add(interpolatedRow);
                 }
+
                 this.lineDataObj[DataTheme.Interpolated].Add(this.SelectedVertex.Key, interpolatedTable);
             }
 
@@ -581,17 +564,15 @@ namespace Marv.Input
             {
                 var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
 
-                var interpolatedValues = linearInterpolators.Select(linearInterpolator => Math.Round(linearInterpolator.Eval(midRangeValue), 2)).ToList();
+                var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue);
 
-                interpolatedValues.Sort();
-
-                var val = this.CurrentInterpolatorDataPoints.GetInterpolatedEvidenceString(interpolatedValues);
-
-                interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
+                interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(evidenceString);
             }
+
             this.SelectedVertex.IsInterpolateEvidenceComplete = true;
             this.IsInterpolateClicked = false;
             this.SelectedTheme = DataTheme.Interpolated;
+            
             // Should currentInterpolator datapoints and usernumberpoints be cleared ???
         }
 
@@ -777,7 +758,6 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
 
-            this.CurrentInterpolatorDataPoints = new TriangularInterpolator { IsLineCross = false };
             this.selectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.UpdateTable();
