@@ -4,9 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
-using Marv.Common.Types;
-using Marv.Controls;
-using Telerik.Charting;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.GridView;
@@ -88,12 +85,11 @@ namespace Marv.Input
                 }
             }
 
-            else if (! (this.BaseTableMin<= (double)e.NewValue && (double)e.NewValue <= this.BaseTableMax))
+            else if (! (this.BaseTableMin <= (double) e.NewValue && (double) e.NewValue <= this.BaseTableMax))
             {
                 e.IsValid = false;
                 e.ErrorMessage = "sections should be within pipeline length";
             }
-            
         }
 
         private void GridView_CurrentCellChanged(object sender, GridViewCurrentCellChangedEventArgs e)
@@ -159,50 +155,7 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
-        {
-            
-        }
-        
-        private void Interpolate()
-        {
-            if (this.SelectedVertex == null )
-            {
-                return;
-            }
-
-            if (this.SelectedColumnName ==null)
-            {
-                foreach (var button in this.InterpolationToolBar.GetChildren<RadioButton>())
-                {
-                    button.IsChecked = false;
-                return;
-                
-
-          this.PlotInterpolatorLines();
-                return;
-            }
-
-           
-                                        
-
-            if (this.UserNumberPoints[this.SelectedVertex.Key].Count == 0)
-            {
-                this.UserNumberPoints.Remove(this.SelectedVertex.Key);
-
-            var modeLineStartPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMin,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.ModeInterpolatorLine),
-            };
-            var modeLineEndPoint = new ScatterDataPoint
-            {
-                XValue = this.BaseTableMax,
-                YValue = this.SelectedVertex.GetInterpolatorPosition(Utils.ModeInterpolatorLine),
-            };
-
-            }
-        }
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e) {}
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {

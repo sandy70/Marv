@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Marv.Common;
 using Telerik.Charting;
@@ -59,11 +59,12 @@ namespace Marv.Input
                 return;
             }
 
-            var nearestPoint = points.MinBy(p => Utils.Distance(p, new ScatterDataPoint
-            {
-                XValue = (double) data.FirstValue,
-                YValue = (double) data.SecondValue
-            }));
+            var nearestPoint = points.MinBy(p => Utils.Distance(p,
+                new ScatterDataPoint
+                {
+                    XValue = (double) data.FirstValue,
+                    YValue = (double) data.SecondValue
+                }));
 
             var nearestPointPosition = this.Chart.ConvertDataToPoint(new DataTuple(nearestPoint.XValue, nearestPoint.YValue));
 
@@ -102,6 +103,39 @@ namespace Marv.Input
 
                 this.capturedPoint = newPoint;
             }
+        }
+
+        private void InterpolationSeries_MouseRightDown(object sender, MouseButtonEventArgs e)
+        {
+            var series = sender as ScatterLineSeries;
+
+            var points = series.DataContext as ObservableCollection<ScatterDataPoint>;
+
+            var mousePosition = e.MouseDevice.GetPosition(this.Chart);
+
+            var closestPointDistance = Utils.Distance(this.Chart.GetPointOnChart(points[0]), mousePosition);
+
+            ScatterDataPoint closestScatterPoint = null;
+            foreach (var scatterDataPoint in points)
+            {
+                var linePoint = this.Chart.GetPointOnChart(scatterDataPoint);
+
+                closestPointDistance = Math.Min(closestPointDistance, Utils.Distance(linePoint, mousePosition));
+
+                if (!(closestPointDistance < Tolerance))
+                {
+                    continue;
+                }
+                closestScatterPoint = scatterDataPoint;
+                break;
+            }
+
+            if (!(closestPointDistance < Tolerance))
+            {
+                return;
+            }
+
+            points.Remove(closestScatterPoint);
         }
 
         private void InterpolationSeries_MouseUp(object sender, MouseButtonEventArgs e)

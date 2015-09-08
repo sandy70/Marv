@@ -226,10 +226,10 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-            if (interpolatorDistribution.Equals(DistributionType.Triangular))
-            {
-                return new TriangularInterpolator { IsLineCross = false };
-            }
+        public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)
+        {
+            return chart.ConvertDataToPoint(new DataTuple(scatterPoint.XValue, scatterPoint.YValue));
+        }
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
             if (interpolatedDataSet == null)

@@ -39,9 +39,6 @@
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
             
-            
-               
-            
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
@@ -308,7 +305,7 @@
                                                     <StackPanel Orientation="Horizontal" />
                                                 </ItemsPanelTemplate>
                                             </ListBox.ItemsPanel>
-                                                     IsChecked="{Binding ElementName=Root, Path=InterpolatorDistribution, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static input:DistributionType.Uniform}}"
+                                                  
 
                                             <ItemsControl.ItemContainerStyle>
                                                 <Style TargetType="ListBoxItem">
@@ -406,6 +403,8 @@
                                                             <Setter Property="Stroke" Value="Green" />
                                                             
                                                             <EventSetter Event="MouseDoubleClick" Handler="InterpolationSeries_MouseDoubleClick" />
+                                                            
+                                                            <EventSetter Event="MouseRightButtonDown" Handler="InterpolationSeries_MouseRightDown"/>
 
                                                             <EventSetter Event="MouseDown" Handler="InterpolationSeries_MouseDown" />
 

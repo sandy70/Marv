@@ -9,10 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Types;
-using Marv.Controls;
 using Microsoft.Win32;
 using Telerik.Charting;
 using Telerik.Windows.Controls;
@@ -28,13 +26,12 @@ namespace Marv.Input
     {
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
-
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
-
         private int addRowCommandsCount;
+        private const double Tolerance = 5;
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
@@ -55,7 +52,9 @@ namespace Marv.Input
         private ILineData lineData;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
+
         private Network network;
+        private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
         private NotificationCollection notifications = new NotificationCollection();
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
@@ -65,18 +64,6 @@ namespace Marv.Input
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private NumericalAxis verticalAxis = LinearAxis;
-        private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
-
-        public GridViewNewRowPosition NewRowPosition
-        {
-            get { return newRowPosition; }
-            set
-            {
-                this.newRowPosition = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
 
         public int AddRowCommandsCount
         {
@@ -348,6 +335,16 @@ namespace Marv.Input
             }
         }
 
+        public GridViewNewRowPosition NewRowPosition
+        {
+            get { return newRowPosition; }
+            set
+            {
+                this.newRowPosition = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public NotificationCollection Notifications
         {
             get { return this.notifications; }
@@ -473,8 +470,21 @@ namespace Marv.Input
 
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+        }
 
-            
+        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var action = e.Action;
+
+            if (action != NotifyCollectionChangedAction.Add)
+            {
+                return;
+            }
+            var command = new AddRowCommand(this.Table);
+
+            this.AddRowCommandsCount++;
+
+            this.UpdateCommandStack(command);
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -510,20 +520,23 @@ namespace Marv.Input
 
         private void CaptureInterpolatedData(Dict<string, EvidenceTable> mergedDataSet)
         {
-            var triInterpolator = new TriangularInterpolator();
-            var uniInterpolator = new UniformInterpolator();
-            var singleInterpolator = new SingleValueInterpolator();
+            if (this.SelectedInterpolationData == null)
+            {
+                return;
+            }
 
-            foreach (var kvp in this.UserNumberPoints)
+            foreach (var kvp in this.interpolationData)
             {
                 foreach (var column in kvp.Value)
+                {
+                    var interpolatorDataPoints = column.Value;
 
-            if (this.SelectedInterpolationData == null)
+                    if (interpolatorDataPoints == null)
                     {
-                return;
+                        continue;
                     }
-                    var linearInterpolators = interpolatorDataPoints.GetLinearInterpolators();
-            EvidenceTable interpolatedTable;
+
+                    EvidenceTable interpolatedTable = null;
 
                     interpolatedTable = new EvidenceTable(this.dates);
 
@@ -533,39 +546,18 @@ namespace Marv.Input
                         interpolatedTable.Add(interpolatedRow);
                     }
 
+                    this.lineDataObj[DataTheme.Interpolated].Add(kvp.Key, interpolatedTable);
 
                     foreach (var interpolatedRow in interpolatedTable)
                     {
                         var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
 
-                var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue);
-                        if (interpolatedValues.Count == 3)
-                        {
-                            val = triInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
-                        }
-                        else if (interpolatedValues.Count == 2)
-                        {
-                            val = uniInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
-                        }
-                        else
-                        {
-                            val = singleInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
-                        }
+                        var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue);
 
-                interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(evidenceString);
+                        interpolatedRow[this.selectedColumnName] = this.Network.Vertices[kvp.Key].States.ParseEvidenceString(evidenceString);
                     }
-
-               
                 }
-
             }
-
-            
-            this.InterpolatorDistribution = DistributionType.Empty;
-
-            this.IsInterpolateClicked = false;
-            
-            // Should currentInterpolator datapoints and usernumberpoints be cleared ???
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -580,7 +572,7 @@ namespace Marv.Input
                 return;
             }
             var val = selectedRow[selectedColumnName];
-            
+
             DateTime dateTime;
             if (selectedColumnName.TryParse(out dateTime))
             {
@@ -680,8 +672,7 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
-            
-            this.PlotInterpolatorLines();
+            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -705,73 +696,26 @@ namespace Marv.Input
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
-            if (this.SelectedVertex!=null )
+            if (this.SelectedVertex !=null)
             {
                 this.NewRowPosition = GridViewNewRowPosition.Bottom;
-
             }
             this.UpdateVerticalAxis();
 
             this.UpdateTable();
-            if (this.SelectedVertex == null)
-            {
-                return;
-            }
-            if (this.UserNumberPoints != null)
-            {
-                var vertexAvailable = this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-
-                this.CurrentInterpolatorDataPoints = vertexAvailable ? this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName] : new EmptyInterpolator();
-
-                // temporary fix to ensure currentinterpolatordatapoints not null
-                if (vertexAvailable && this.CurrentInterpolatorDataPoints == null)
-                {
-                    this.CurrentInterpolatorDataPoints = new EmptyInterpolator();
-                }
-
-                if (this.CurrentInterpolatorDataPoints != null)
-                {
-                    if (this.CurrentInterpolatorDataPoints is TriangularInterpolator)
-                    {
-                        this.InterpolatorDistribution = DistributionType.Triangular;
-                    }
 
             if (this.SelectedColumnName != null)
-                    {
+            {
                 this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
-                    }
-                    {
-                        this.InterpolatorDistribution = DistributionType.SingleValue;
-                    }
-                    else
-                    {
-                        this.InterpolatorDistribution = DistributionType.Empty;
-                    }
-                }
             }
 
             this.Chart.Annotations.Remove(annotation => true);
 
-            foreach (var val in this.SelectedVertex.GetIntervals())
-            {
-                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
-                {
-                    HorizontalFrom = this.BaseTableMin,
-                    HorizontalTo = this.BaseTableMax,
-                    Stroke = new SolidColorBrush(Colors.Gray),
-                    StrokeThickness = 1,
-                    VerticalFrom = val,
-                    VerticalTo = val,
-                    ZIndex = -200
-                })
-                    ;
-            }
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
         }
 
-        //this.UpdateVerticalAxis();
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -782,21 +726,6 @@ namespace Marv.Input
             this.BaseTableRange = 0;
 
             this.Chart.Annotations.Remove(annotation => true);
-            foreach (var val in this.SelectedVertex.GetIntervals())
-            {
-                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
-                {
-                    HorizontalFrom = this.BaseTableMin,
-                    HorizontalTo = this.BaseTableMax,
-                    Stroke = new SolidColorBrush(Colors.Gray),
-                    StrokeThickness = 1,
-                    VerticalFrom = val,
-                    VerticalTo = val,
-                    ZIndex = -200
-                });
-            }
-
-            this.ClearInterpolatorLines();
 
             this.selectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
@@ -864,7 +793,6 @@ namespace Marv.Input
             }
         }
 
-        //this.UpdateVerticalAxis();
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.S || !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
@@ -900,13 +828,10 @@ namespace Marv.Input
 
                     baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex,this.Network);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex, this.Network);
 
-                    if (this.UserNumberPoints != null)
-                    {
-                        CaptureInterpolatedData(mergedDataSet);
-                        mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
-                    }
+                    CaptureInterpolatedData(mergedDataSet);
+                    mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
                 }
@@ -918,7 +843,13 @@ namespace Marv.Input
 
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
-            var noOfDateTimes = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.Count();
+            var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
+
+            var noOfDateTimes = 0;
+            while (itr.MoveNext())
+            {
+                noOfDateTimes++;
+            }
 
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
@@ -950,37 +881,27 @@ namespace Marv.Input
                         var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.SelectedVertex.States.ParseEvidenceString(val.ValueToDistribution());
                     }
 
                     vertexEvidences.Clear();
                 }
             }
-            
             this.SelectedTheme = DataTheme.Beliefs;
             MessageBox.Show("Model run sucessful");
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //var sectionEvidence = this.LineData.GetEvidence(this.SelectedSectionId);
 
-            //var sectionBelief = this.Network.Run(sectionEvidence);
-
-            //this.LineData.SetBelief(this.SelectedSectionId, sectionBelief);
         }
 
         private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")
-            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
-
-            if (!vertexAvailable || !linesForColAvailable)
             {
-                this.SelectedInterpolationData.CreatePoints(this.Maximum, this.Minimum, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+                this.SelectedInterpolationData.CreatePoints(this.BaseTableMax, this.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
             }
-           
         }
 
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -989,18 +910,6 @@ namespace Marv.Input
             {
                 this.EndDate = this.StartDate;
             }
-        }
-
-            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
-
-            if (!vertexAvailable || !linesForColAvailable)
-        }
-
-            var vertexAvailable = this.UserNumberPoints != null && this.UserNumberPoints.Keys.Any(key => key.Equals(this.SelectedVertex.Key));
-            var linesForColAvailable = this.UserNumberPoints != null && this.UserNumberPoints[this.SelectedVertex.Key].Keys.Any(columnName => columnName.Equals(this.SelectedColumnName));
-            if (!vertexAvailable || !linesForColAvailable)
-            {
         }
 
         private void UpdateCommandStack(ICommand command)
@@ -1041,23 +950,8 @@ namespace Marv.Input
             this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
         }
 
-        private void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var action = e.Action;
-
-            if (action != NotifyCollectionChangedAction.Add)
-            {
-                return;
-            }
-            var command = new AddRowCommand(this.Table);
-
-            this.AddRowCommandsCount++;
-
-            this.UpdateCommandStack(command);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
-        
+       
     }
 }
