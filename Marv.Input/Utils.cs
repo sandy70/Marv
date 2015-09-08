@@ -186,7 +186,7 @@ namespace Marv.Input
             return true;
         }
 
-        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Vertex selectedVertex)
+        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Vertex selectedVertex, Network network)
         {
             var mergedEvidenceSet = new Dict<string, EvidenceTable>();
             var newList = new List<double>();
@@ -278,7 +278,7 @@ namespace Marv.Input
                         foreach (var columnName in columnNames)
                         {
                             var evidenceString = avgEvidenceValues[columnName].ValueToDistribution();
-                            mergedEvidenceRow[columnName] = selectedVertex.States.ParseEvidenceString(evidenceString);
+                            mergedEvidenceRow[columnName] = network.Vertices[unmergeEvidenceTableKey].States.ParseEvidenceString(evidenceString);
                         }
                     }
 

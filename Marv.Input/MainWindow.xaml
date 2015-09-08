@@ -38,7 +38,10 @@
                     <SolidColorBrush Color="Red" />
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
-
+            
+            
+               
+            
             <converters:BooleanToStringConverter x:Key="BooleanToStringConverter"
                                                  FalseString="Interpolate"
                                                  TrueString="Clear" />
@@ -231,7 +234,7 @@
 
                                     <ToolBar Band="2"
                                              BandIndex="1"
-                                             IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
+                                             IsEnabled="True">
 
                                         <Label Name="Start" Width="70" Content="Start (m)" />
                                         <TextBox Width="50"
@@ -269,7 +272,7 @@
                                                      IsFilteringAllowed="False"
                                                      IsReadOnly="{Binding ElementName=Root, Path=IsGridViewReadOnly}"
                                                      ItemsSource="{Binding ElementName=Root, Path=Table, Mode=TwoWay}"
-                                                     NewRowPosition="Bottom"
+                                                     NewRowPosition="{Binding ElementName=Root, Path=NewRowPosition}"
                                                      SelectionUnit="Mixed"
                                                      SelectionMode="Extended"
                                                      ShowGroupPanel="False"
@@ -281,7 +284,9 @@
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
-                                                     Pasted="GridView_Pasted" />
+                                                     Pasted="GridView_Pasted">
+                                                     
+                                    </telerik:RadGridView>
 
                             </Grid>
                         </telerik:RadPane>
@@ -443,7 +448,7 @@
                 <telerik:RadPaneGroup>
                     <telerik:RadPane Header="{Binding ElementName=Root, Path=Network.FileName}"
                                      IsHidden="{Binding ElementName=Root, Path=IsGraphControlVisible, Converter={StaticResource BooleanNot}}">
-                        <marv:GraphControl Background="WhiteSmoke"
+                        <marv:GraphControl Name="GraphControl" Background="WhiteSmoke"
                                            Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"
                                            SelectedVertex="{Binding ElementName=Root, Path=SelectedVertex, Mode=TwoWay}"
                                            EvidenceEntered="GraphControl_EvidenceEntered"

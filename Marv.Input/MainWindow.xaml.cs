@@ -18,6 +18,7 @@ using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
+using Telerik.Windows.Controls.GridView;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 using ICommand = Marv.Common.ICommand;
 
@@ -76,6 +77,18 @@ namespace Marv.Input
         private EvidenceTable table;
         private Dict<string, string, IInterpolatorDataPoints> userNumberPoints;
         private NumericalAxis verticalAxis = LinearAxis;
+        private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
+
+        public GridViewNewRowPosition NewRowPosition
+        {
+            get { return newRowPosition; }
+            set
+            {
+                this.newRowPosition = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
 
         public List<AddRowCommand> AddRowCommands
         {
@@ -630,6 +643,8 @@ namespace Marv.Input
 
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+
+            
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -734,7 +749,7 @@ namespace Marv.Input
                             val = singleInterpolator.GetInterpolatedEvidenceString(interpolatedValues);
                         }
 
-                        interpolatedRow[this.selectedColumnName] = this.SelectedVertex.States.ParseEvidenceString(val);
+                        interpolatedRow[this.selectedColumnName] = this.Network.Vertices[kvp.Key].States.ParseEvidenceString(val);
                     }
 
                
@@ -871,9 +886,8 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
-            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
-
-            this.PlotInterpolatorLines(minMaxValues);
+            
+            this.PlotInterpolatorLines();
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -897,6 +911,11 @@ namespace Marv.Input
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
+            if (this.SelectedVertex!=null )
+            {
+                this.NewRowPosition = GridViewNewRowPosition.Bottom;
+
+            }
             this.UpdateVerticalAxis();
 
             this.UpdateTable();
@@ -1089,7 +1108,7 @@ namespace Marv.Input
 
                     baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex,this.Network);
 
                     if (this.UserNumberPoints != null)
                     {
@@ -1139,12 +1158,13 @@ namespace Marv.Input
                         var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.SelectedVertex.States.ParseEvidenceString(val.ValueToDistribution());
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
                     }
 
                     vertexEvidences.Clear();
                 }
             }
+            
             this.SelectedTheme = DataTheme.Beliefs;
             MessageBox.Show("Model run sucessful");
         }
@@ -1248,5 +1268,7 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        
     }
 }

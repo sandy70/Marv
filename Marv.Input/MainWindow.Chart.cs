@@ -118,7 +118,7 @@ namespace Marv.Input
                     StrokeThickness = 1,
                     VerticalFrom = val,
                     VerticalTo = val,
-                    ZIndex = -200
+                    ZIndex = 200
                 })
                     ;
             }

@@ -202,7 +202,7 @@ namespace Marv.Input
             if (this.SelectedVertex.Type == VertexType.Labelled || this.SelectedVertex.Type == VertexType.Boolean)
             {
 
-                MessageBox.Show("cannot interpolate data for labelled or boolean type vertex");
+                MessageBox.Show("cannot interpolate data for labelled or boolean");
                 return;
             }
 
@@ -266,9 +266,7 @@ namespace Marv.Input
             
             this.CurrentInterpolatorDataPoints = this.UserNumberPoints[this.SelectedVertex.Key][this.selectedColumnName];
 
-            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
-
-            this.PlotInterpolatorLines(minMaxValues);
+          this.PlotInterpolatorLines();
         }
 
         private void ClearInterpolatorLines()
@@ -294,13 +292,11 @@ namespace Marv.Input
 
            }
 
-        private void PlotInterpolatorLines(Dict<string, double> minMaxValues)
+        private void PlotInterpolatorLines()
         {
             this.CurrentInterpolatorDataPoints.IsLineCross = false;
 
-            this.MinUserValue = minMaxValues["Minimum"];
-            this.MaxUserValue = minMaxValues["Maximum"];
-
+            
             if (this.UserNumberPoints == null || this.UserNumberPoints[this.SelectedVertex.Key] == null)
             {
                 return;
