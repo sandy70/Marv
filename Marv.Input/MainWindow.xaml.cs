@@ -508,21 +508,6 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
         }
 
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var action = e.Action;
-
-            if (action != NotifyCollectionChangedAction.Add)
-            {
-                return;
-            }
-            var command = new AddRowCommand(this.Table);
-
-            this.AddRowCommandsCount++;
-
-            this.UpdateCommandStack(command);
-        }
-
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             this.dates = new List<DateTime>();
@@ -1041,6 +1026,21 @@ namespace Marv.Input
             }
 
             this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
+        }
+
+        private void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var action = e.Action;
+
+            if (action != NotifyCollectionChangedAction.Add)
+            {
+                return;
+            }
+            var command = new AddRowCommand(this.Table);
+
+            this.AddRowCommandsCount++;
+
+            this.UpdateCommandStack(command);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -109,39 +109,6 @@ namespace Marv.Input
             return this.MinNumberPoints;
         }
 
-        public bool IsWithInRange()
-        {
-            var currentLine = this;
-
-            var currentMax = currentLine.GetNumberPoints(Utils.MaxInterpolatorLine);
-            var currentMode = currentLine.GetNumberPoints(Utils.ModeInterpolatorLine);
-            var currentMin = currentLine.GetNumberPoints(Utils.MinInterpolatorLine);
-
-            var linearInterpolators = this.GetLinearInterpolators();
-
-            var maxLinInterpolator = linearInterpolators[0];
-            var modeLinInterpolator = linearInterpolators[1];
-            var minLinInterpolator = linearInterpolators[2];
-
-            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
-            {
-                return false;
-            }
-
-            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
-                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
-            {
-                return false;
-            }
-
-            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
