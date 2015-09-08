@@ -32,12 +32,10 @@ namespace Marv.Input
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
 
-        private List<AddRowCommand> addRowCommands = new List<AddRowCommand>();
         private int addRowCommandsCount;
         private double baseTableMax;
         private double baseTableMin;
         private double baseTableRange;
-        private ICommand cellEditCommand;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
@@ -46,8 +44,6 @@ namespace Marv.Input
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
-        private Graph graph;
-        private HorizontalAxisQuantity horizontalAxisQuantity;
         private bool isBaseTableAvailable;
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
@@ -59,36 +55,18 @@ namespace Marv.Input
         private ILineData lineData;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
         private string lineDataObjFileName;
-        private double maxUserValue;
         private double maximum = 100;
-        private double minUserValue;
         private double minimum = 100;
         private Network network;
         private NotificationCollection notifications = new NotificationCollection();
-        private PresenterCollection<CartesianSeries> scatterLineSeriesCollection;
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
-        private InterpolationType? selectedInterpolationType;
-        private string selectedLine;
         private EvidenceRow selectedRow;
-        private string selectedSectionId;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
-        private int selectedYear;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private Dict<string, string, IInterpolatorDataPoints> userNumberPoints;
         private NumericalAxis verticalAxis = LinearAxis;
-
-        public List<AddRowCommand> AddRowCommands
-        {
-            get { return addRowCommands; }
-            set
-            {
-                addRowCommands = value;
-                this.RaisePropertyChanged();
-            }
-        }
 
         public int AddRowCommandsCount
         {
@@ -141,17 +119,6 @@ namespace Marv.Input
                 }
 
                 this.baseTableRange = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ICommand CellEditCommand
-        {
-            get { return this.cellEditCommand; }
-
-            set
-            {
-                this.cellEditCommand = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -248,38 +215,6 @@ namespace Marv.Input
                 }
 
                 this.endDate = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public Graph Graph
-        {
-            get { return this.graph; }
-
-            set
-            {
-                if (this.graph != null && this.graph.Equals(value))
-                {
-                    return;
-                }
-
-                this.graph = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public HorizontalAxisQuantity HorizontalAxisQuantity
-        {
-            get { return this.horizontalAxisQuantity; }
-
-            set
-            {
-                if (value.Equals(this.horizontalAxisQuantity))
-                {
-                    return;
-                }
-
-                this.horizontalAxisQuantity = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -398,22 +333,6 @@ namespace Marv.Input
             }
         }
 
-        public double MaxUserValue
-        {
-            get { return this.maxUserValue; }
-
-            set
-            {
-                if (this.maxUserValue.Equals(value))
-                {
-                    return;
-                }
-
-                this.maxUserValue = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public double Maximum
         {
             get { return this.maximum; }
@@ -426,22 +345,6 @@ namespace Marv.Input
                 }
 
                 this.maximum = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double MinUserValue
-        {
-            get { return this.minUserValue; }
-
-            set
-            {
-                if (this.minUserValue.Equals(value))
-                {
-                    return;
-                }
-
-                this.minUserValue = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -494,16 +397,6 @@ namespace Marv.Input
             }
         }
 
-        public PresenterCollection<CartesianSeries> ScatterLineSeriesCollection
-        {
-            get { return scatterLineSeriesCollection; }
-            set
-            {
-                scatterLineSeriesCollection = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string SelectedColumnName
         {
             get { return this.selectedColumnName; }
@@ -536,47 +429,6 @@ namespace Marv.Input
             }
         }
 
-        public InterpolationType? SelectedInterpolationType
-        {
-            get { return this.selectedInterpolationType; }
-            set
-            {
-                this.selectedInterpolationType = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public string SelectedLine
-        {
-            get { return this.selectedLine; }
-
-            set
-            {
-                if (value.Equals(this.selectedLine))
-                {
-                    return;
-                }
-                this.selectedLine = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public string SelectedSectionId
-        {
-            get { return this.selectedSectionId; }
-
-            set
-            {
-                if (value.Equals(this.selectedSectionId))
-                {
-                    return;
-                }
-
-                this.selectedSectionId = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public DataTheme SelectedTheme
         {
             get { return this.selectedTheme; }
@@ -595,22 +447,6 @@ namespace Marv.Input
             set
             {
                 this.selectedVertex = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public int SelectedYear
-        {
-            get { return this.selectedYear; }
-
-            set
-            {
-                if (value.Equals(this.selectedYear))
-                {
-                    return;
-                }
-
-                this.selectedYear = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -646,22 +482,6 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
 
                 this.table.CollectionChanged += table_CollectionChanged;
-            }
-        }
-
-        public Dict<string, string, IInterpolatorDataPoints> UserNumberPoints
-        {
-            get { return this.userNumberPoints; }
-
-            set
-            {
-                if (value.Equals(this.userNumberPoints))
-                {
-                    return;
-                }
-
-                this.userNumberPoints = value;
-                this.RaisePropertyChanged();
             }
         }
 
