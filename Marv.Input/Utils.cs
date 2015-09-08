@@ -16,31 +16,7 @@ namespace Marv.Input
     {
         public const string MaxInterpolatorLine = "MaximumLine";
         public const string MinInterpolatorLine = "MinimumLine";
-        public const double MinusInfinity = 10E-09;
         public const string ModeInterpolatorLine = "ModeLine";
-
-        public static void CorrectBindingError(this IInterpolatorDataPoints currentInterpolatorDataPoints, PresenterCollection<CartesianSeries> associatedSeriesCollection)
-        {
-            var maxLine = currentInterpolatorDataPoints.GetNumberPoints(MaxInterpolatorLine);
-            var modeLine = currentInterpolatorDataPoints.GetNumberPoints(ModeInterpolatorLine);
-            var minLine = currentInterpolatorDataPoints.GetNumberPoints(MinInterpolatorLine);
-
-            var dataPoints = (associatedSeriesCollection[0] as ScatterLineSeries).DataPoints;
-            for (var i = 0; i < dataPoints.Count; i++)
-            {
-                maxLine[i] = dataPoints[i];
-            }
-            dataPoints = (associatedSeriesCollection[1] as ScatterLineSeries).DataPoints;
-            for (var i = 0; i < dataPoints.Count; i++)
-            {
-                modeLine[i] = dataPoints[i];
-            }
-            dataPoints = (associatedSeriesCollection[2] as ScatterLineSeries).DataPoints;
-            for (var i = 0; i < dataPoints.Count; i++)
-            {
-                minLine[i] = dataPoints[i];
-            }
-        }
 
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
@@ -95,24 +71,6 @@ namespace Marv.Input
             return minMaxUserValues;
         }
 
-        public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)
-        {
-            return chart.ConvertDataToPoint(new DataTuple(scatterPoint.XValue, scatterPoint.YValue));
-        }
-
-        public static ScatterDataPoint GetScatterDataPoint(this RadCartesianChart chart, Point position)
-        {
-            var data = chart.ConvertPointToData(position);
-
-            var selectedDataPoint = new ScatterDataPoint
-            {
-                XValue = (double) data.FirstValue,
-                YValue = (double) data.SecondValue
-            };
-
-            return selectedDataPoint;
-        }
-
         public static IEnumerable<double> GetXCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
         {
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.XValue);
@@ -121,37 +79,6 @@ namespace Marv.Input
         public static IEnumerable<double> GetYCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
         {
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
-        }
-
-        public static bool IsWithInRange(this IInterpolatorDataPoints currentInterpolatorDataPoints)
-        {
-            var currentLine = currentInterpolatorDataPoints;
-
-            var currentMax = currentLine.GetNumberPoints(MaxInterpolatorLine);
-            var currentMode = currentLine.GetNumberPoints(ModeInterpolatorLine);
-            var currentMin = currentLine.GetNumberPoints(MinInterpolatorLine);
-
-            var maxLinInterpolator = new LinearInterpolator(currentMax.GetXCoords(), currentMax.GetYCoords());
-            var modeLinInterpolator = new LinearInterpolator(currentMode.GetXCoords(), currentMode.GetYCoords());
-            var minLinInterpolator = new LinearInterpolator(currentMin.GetXCoords(), currentMin.GetYCoords());
-
-            if (currentMax.Any(scatterPoint => !(scatterPoint.YValue > modeLinInterpolator.Eval(scatterPoint.XValue))))
-            {
-                return false;
-            }
-
-            if (currentMode.Any(scatterPoint => !(maxLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue &&
-                                                  scatterPoint.YValue > minLinInterpolator.Eval(scatterPoint.XValue))))
-            {
-                return false;
-            }
-
-            if (currentMin.Any(scatterPoint => !(modeLinInterpolator.Eval(scatterPoint.XValue) > scatterPoint.YValue)))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Vertex selectedVertex)
@@ -265,21 +192,6 @@ namespace Marv.Input
             }
 
             return mergedEvidenceSet;
-        }
-
-        public static IInterpolatorDataPoints UpdateCurrentInterpolator(DistributionType interpolatorDistribution)
-        {
-            if (interpolatorDistribution.Equals(DistributionType.SingleValue))
-            {
-                return new SingleValueInterpolator { IsLineCross = false };
-            }
-
-            if (interpolatorDistribution.Equals(DistributionType.Uniform))
-            {
-                return new UniformInterpolator { IsLineCross = false };
-            }
-
-            return new TriangularInterpolator { IsLineCross = false };
         }
 
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
