@@ -107,12 +107,14 @@ namespace Marv.Input
 
             this.SelectedColumnName = gridViewColumn.UniqueName;
 
-            this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
-
             DateTime dateTime;
 
-            this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
-
+            if (this.SelectedColumnName.TryParse(out dateTime))
+            {
+                this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
+            }
+            
             if (this.selectedColumnName.TryParse(out dateTime))
             {
                 this.Chart.Annotations.Remove(annotation => true);

@@ -529,13 +529,13 @@ namespace Marv.Input
             {
                 foreach (var column in kvp.Value)
                 {
-                    var interpolatorDataPoints = column.Value;
-
-                    if (interpolatorDataPoints == null)
+                    if (column.Value.Points == null)
                     {
                         continue;
                     }
 
+                    this.SelectedInterpolationData = column.Value;
+                   
                     EvidenceTable interpolatedTable = null;
 
                     interpolatedTable = new EvidenceTable(this.dates);
@@ -831,6 +831,7 @@ namespace Marv.Input
                     var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex, this.Network);
 
                     CaptureInterpolatedData(mergedDataSet);
+                    
                     mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
