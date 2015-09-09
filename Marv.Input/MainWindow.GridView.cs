@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -20,11 +19,6 @@ namespace Marv.Input
             {
                 this.UpdateTable();
             }
-        }
-
-        private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            this.DraggedPoint = null;
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
@@ -114,7 +108,7 @@ namespace Marv.Input
                 this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
                 this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
             }
-            
+
             if (this.selectedColumnName.TryParse(out dateTime))
             {
                 this.Chart.Annotations.Remove(annotation => true);

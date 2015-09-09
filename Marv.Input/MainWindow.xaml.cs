@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Types;
 using Microsoft.Win32;
@@ -24,6 +25,7 @@ namespace Marv.Input
 {
     public partial class MainWindow : INotifyPropertyChanged
     {
+        private const double Tolerance = 5;
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
         private readonly List<ICommand> commandStack = new List<ICommand>();
@@ -31,7 +33,6 @@ namespace Marv.Input
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private int addRowCommandsCount;
-        private const double Tolerance = 5;
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
@@ -174,17 +175,6 @@ namespace Marv.Input
                 }
 
                 this.dateSelectionMode = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ScatterDataPoint DraggedPoint
-        {
-            get { return this.draggedPoint; }
-
-            set
-            {
-                this.draggedPoint = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -535,7 +525,7 @@ namespace Marv.Input
                     }
 
                     this.SelectedInterpolationData = column.Value;
-                   
+
                     EvidenceTable interpolatedTable = null;
 
                     interpolatedTable = new EvidenceTable(this.dates);
@@ -672,7 +662,7 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
-            var minMaxValues = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].GetMinMaxUserValues(this.selectedColumnName);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -696,10 +686,11 @@ namespace Marv.Input
 
         private void GraphControl_SelectionChanged(object sender, Vertex e)
         {
-            if (this.SelectedVertex !=null)
+            if (this.SelectedVertex != null)
             {
                 this.NewRowPosition = GridViewNewRowPosition.Bottom;
             }
+
             this.UpdateVerticalAxis();
 
             this.UpdateTable();
@@ -710,7 +701,7 @@ namespace Marv.Input
             }
 
             this.Chart.Annotations.Remove(annotation => true);
-
+            
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
@@ -831,7 +822,7 @@ namespace Marv.Input
                     var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex, this.Network);
 
                     CaptureInterpolatedData(mergedDataSet);
-                    
+
                     mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
 
                     this.lineDataObj[DataTheme.Merged] = mergedDataSet;
@@ -892,10 +883,7 @@ namespace Marv.Input
             MessageBox.Show("Model run sucessful");
         }
 
-        private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e) {}
 
         private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -952,7 +940,5 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-       
     }
 }
