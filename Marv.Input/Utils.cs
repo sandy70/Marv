@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Interpolators;
 using Marv.Common.Types;
@@ -75,32 +76,6 @@ namespace Marv.Input
             }
 
             return selectedVertex.AxisType == VertexAxisType.Linear ? linearPosition : logarithmicPosition;
-        }
-
-        public static Dict<string, double> GetMinMaxUserValues(this EvidenceTable userTable, string selectedColumnName)
-        {
-            var minUserValue = double.MaxValue;
-            var maxUserValue = double.MinValue;
-
-            var minMaxUserValues = new Dict<string, double>();
-
-            foreach (var row in userTable)
-            {
-                var evidence = row[selectedColumnName] as VertexEvidence;
-
-                if (evidence == null)
-                {
-                    continue;
-                }
-
-                maxUserValue = Math.Max(maxUserValue, evidence.Params.Max());
-                minUserValue = Math.Min(minUserValue, evidence.Params.Min());
-
-                minMaxUserValues.Add("Maximum", maxUserValue);
-                minMaxUserValues.Add("Minimum", minUserValue);
-            }
-
-            return minMaxUserValues;
         }
 
         public static IEnumerable<double> GetXCoords(this ObservableCollection<ScatterDataPoint> numberPoints)
@@ -267,6 +242,23 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
+        public static void AddNodeStateLines(this RadCartesianChart chart, Vertex selectedVertex, double baseTableMax, double baseTableMin)
+        {
+            foreach (var val in selectedVertex.GetIntervals())
+            {
+                chart.Annotations.Add(new CartesianCustomLineAnnotation
+                {
+                    HorizontalFrom = baseTableMin,
+                    HorizontalTo = baseTableMax,
+                    Stroke = new SolidColorBrush(Colors.Gray),
+                    StrokeThickness = 1,
+                    VerticalFrom = val,
+                    VerticalTo = val,
+                    ZIndex = 200
+                });
+
+            }
+        }
         public static string ValueToDistribution(this double[] evidenceValue)
         {
             var evidenceString = "";
