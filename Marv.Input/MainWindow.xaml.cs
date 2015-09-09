@@ -712,12 +712,12 @@ namespace Marv.Input
             this.LineDataSaveAs();
 
             this.lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
-            this.BaseTableMax = 0;
+            this.BaseTableMax = 100;
             this.BaseTableMin = 0;
-            this.BaseTableRange = 0;
+            this.BaseTableRange = 10;
 
             this.Chart.Annotations.Remove(annotation => true);
-
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
             this.selectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.UpdateTable();
