@@ -12,13 +12,11 @@ namespace Marv.Input
 {
     public partial class MainWindow
     {
-        private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            this.draggedPoint = ((sender as Ellipse).DataContext as ScatterDataPoint);
-        }
 
         private void Plot(string columnName)
         {
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
+
             foreach (var row in this.Table)
             {
                 this.Plot(row, columnName);
@@ -44,20 +42,7 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
 
-            foreach (var val in this.SelectedVertex.GetIntervals())
-            {
-                this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
-                {
-                    HorizontalFrom = this.BaseTableMin,
-                    HorizontalTo = this.BaseTableMax,
-                    Stroke = new SolidColorBrush(Colors.Gray),
-                    StrokeThickness = 1,
-                    VerticalFrom = val,
-                    VerticalTo = val,
-                    ZIndex = 200
-                })
-                    ;
-            }
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
