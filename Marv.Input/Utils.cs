@@ -88,7 +88,7 @@ namespace Marv.Input
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
-        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Vertex selectedVertex, Network network)
+        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Network network)
         {
             var mergedEvidenceSet = new Dict<string, EvidenceTable>();
             var newList = new List<double>();
@@ -128,7 +128,7 @@ namespace Marv.Input
                 {
                     var evidenceRow = new EvidenceRow { From = newList[i], To = newList[i + 1] };
 
-                    // If this is a point feature an no table contains it, then don't add.
+                    // If this is a point feature and no table contains it, then don't add.
                     if (!unmergedEvidenceSet.Contains(evidenceRow) && newList[i] == newList[i + 1])
                     {
                         continue;
@@ -199,6 +199,20 @@ namespace Marv.Input
             }
 
             return mergedEvidenceSet;
+        }
+
+        public static double ComputeStatistic(this Vertex selectedVertex, SummaryStatistic selectedStatistic, double[] newValue)
+        {
+            if (selectedStatistic == SummaryStatistic.Mean)
+            {
+                return selectedVertex.Mean(newValue);
+            }
+            
+            if (selectedStatistic == SummaryStatistic.StdDev)
+            {
+                return selectedVertex.StandardDeviation(newValue);
+            }
+            return selectedStatistic == SummaryStatistic.FiftyPer ? selectedVertex.FiftyPercentile(newValue) : selectedVertex.NintyPercentile(newValue);
         }
 
         public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)

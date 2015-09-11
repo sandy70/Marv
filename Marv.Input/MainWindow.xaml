@@ -235,6 +235,36 @@
                                                            Width="30"
                                                            Click="Go_Click" />
                                     </ToolBar>
+                                    
+                                    <ToolBar Band="2"
+                                             BandIndex="2"
+                                             IsEnabled="{Binding ElementName=Root, Path=IsModelRun}">
+                                        
+                                        <ToolBar.Resources>
+                                            <ObjectDataProvider x:Key="StatSelector"
+                                                                MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="input:SummaryStatistic" />
+                                                </ObjectDataProvider.MethodParameters>
+                                            </ObjectDataProvider>
+                                        </ToolBar.Resources>
+                                        <Label Name="Statistic" Width="70" Content="Statistic" />
+
+                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource StatSelector}}"
+                                                             IsFilteringEnabled="True"
+                                                             OpenDropDownOnFocus="True"
+                                                             SelectedIndex="0"
+                                                             SelectedItem="{Binding ElementName=Root, Path=SelectedStatistic, Mode=TwoWay}"
+                                                             Width="100"
+                                                             SelectionChanged="StatSelector_SelectionChanged" />
+
+                                        <telerik:RadButton Content="Export"
+                                                           FontWeight="Bold"
+                                                           Padding="4"
+                                                           Width="50"
+                                                           Click="Export_Click" />
+                                    </ToolBar>
                                 </ToolBarTray>
 
                                 <!-- Input Grid View -->

@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using Marv.Common;
 using Marv.Common.Types;
 using Microsoft.Win32;
@@ -18,6 +17,9 @@ using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
 using Telerik.Windows.Controls.GridView;
+using Telerik.Windows.Documents.Spreadsheet.FormatProviders;
+using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
+using Telerik.Windows.Documents.Spreadsheet.Model;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 using ICommand = Marv.Common.ICommand;
 
@@ -60,12 +62,24 @@ namespace Marv.Input
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
+        private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
         private NumericalAxis verticalAxis = LinearAxis;
+        private bool isModelRun;
 
+        public bool IsModelRun
+        {
+            get { return isModelRun; }
+            set
+            {
+                isModelRun = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -383,6 +397,16 @@ namespace Marv.Input
             }
         }
 
+        public SummaryStatistic SelectedStatistic
+        {
+            get { return selectedStatistic; }
+            set
+            {
+                selectedStatistic = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public DataTheme SelectedTheme
         {
             get { return this.selectedTheme; }
@@ -660,6 +684,61 @@ namespace Marv.Input
             }
         }
 
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            var workbook = new Workbook();
+            var worksheet = workbook.Worksheets.Add();
+            var columnsCount = this.Table[0].GetDynamicMemberNames().Count();
+
+            worksheet.Cells[0, 0].SetValue("From");
+            worksheet.Cells[0, 1].SetValue("To");
+
+            for (var i = 0; i < columnsCount; i++)
+            {
+                DateTime dateTime;
+                if (this.Table[0].GetDynamicMemberNames().ToList()[i].TryParse(out dateTime))
+                {
+                    var value = this.Table[0].GetDynamicMemberNames().ToList()[i];
+                    var shortString = value.Substring(5, 2) + "/" + value.Substring(7, 2) + "/" + value.Substring(1, 4);
+                    worksheet.Cells[0, 2 + i].SetValue(shortString);
+                }
+            }
+
+            var rowCount = this.lineDataObj[DataTheme.Beliefs].Values[0].Count;
+            var noOfDateTimes = this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key].DateTimes.Count();
+
+            for (var row = 0; row < rowCount; row++)
+            {
+                worksheet.Cells[row + 1, 0].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["From"].ToString());
+                worksheet.Cells[row + 1, 1].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["To"].ToString());
+                for (var col = 0; col < noOfDateTimes; col++)
+                {
+                    var colName = this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row].GetDynamicMemberNames().ToList()[col];
+                    var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[] );
+                    var mean = this.SelectedVertex.ComputeStatistic(this.SelectedStatistic, beliefValue);
+                    worksheet.Cells[row + 1, col + 2].SetValue(mean);   
+                }   
+            }
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result != true)
+            {
+                return;
+            }
+            IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
+
+            using (var output = new FileStream(dialog.FileName, FileMode.Create))
+            {
+                formatProvider.Export(workbook, output);
+            }
+        }
+
         private void Go_Click(object sender, RoutedEventArgs e)
         {
             this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
@@ -701,7 +780,7 @@ namespace Marv.Input
             }
 
             this.Chart.Annotations.Remove(annotation => true);
-            
+
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
@@ -718,7 +797,7 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
-            this.selectedVertex.IsUserEvidenceComplete = false;
+            this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.UpdateTable();
         }
@@ -819,7 +898,7 @@ namespace Marv.Input
 
                     baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.SelectedVertex, this.Network);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.Network);
 
                     CaptureInterpolatedData(mergedDataSet);
 
@@ -835,14 +914,8 @@ namespace Marv.Input
 
             var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
-            var itr = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.GetEnumerator();
-
-            var noOfDateTimes = 0;
-            while (itr.MoveNext())
-            {
-                noOfDateTimes++;
-            }
-
+            var noOfDateTimes = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.Count();
+            
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
                 for (var dateTimecount = 0; dateTimecount < noOfDateTimes; dateTimecount++)
@@ -873,7 +946,8 @@ namespace Marv.Input
                         var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.SelectedVertex.States.ParseEvidenceString(val.ValueToDistribution());
+                      //  beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = val;
                     }
 
                     vertexEvidences.Clear();
@@ -881,6 +955,11 @@ namespace Marv.Input
             }
             this.SelectedTheme = DataTheme.Beliefs;
             MessageBox.Show("Model run sucessful");
+
+            if (this.lineDataObj[DataTheme.Beliefs].Count > 0)
+            {
+                this.IsModelRun = true;
+            }
         }
 
         private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e) {}
@@ -900,6 +979,8 @@ namespace Marv.Input
                 this.EndDate = this.StartDate;
             }
         }
+
+        private void StatSelector_SelectionChanged(object sender, SelectionChangedEventArgs e) {}
 
         private void UpdateCommandStack(ICommand command)
         {
