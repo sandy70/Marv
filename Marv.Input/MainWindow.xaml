@@ -66,6 +66,11 @@
 
                 <MenuItem Header="Open"
                           Click="LineDataOpenMenuItem_Click" />
+                <MenuItem Header="Import">
+                    <MenuItem Header="Excel(*.xlxs)"
+                              Click="LineDataImportExcelMenuItem_Click"
+                              Visibility="Visible"/>
+                </MenuItem>
 
                 <MenuItem Header="New"
                           Click="LineDataNewMenuItem_Click" />
