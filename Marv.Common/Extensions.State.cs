@@ -38,11 +38,13 @@ namespace Marv.Common
             // Check if string is the label of any of the states.
             if (stateList.Any(state => state.Key == anEvidenceString))
             {
+                var evidencePar = Enumerable.Range(1, stateList.Count + 1).Select(i => (double)i).ToArray(); // to display labelled nodes on chart
                 return new VertexEvidence
                 {
                     Value = stateList.Select(state => state.Key == anEvidenceString ? 1.0 : 0.0).Normalized().ToArray(),
                     Type = VertexEvidenceType.State,
-                    StateKey = stateList.Where(state => state.Key == anEvidenceString).Select(state => state.Key).First()
+                    StateKey = stateList.Where(state => state.Key == anEvidenceString).Select(state => state.Key).First(),
+                    Params = evidencePar,
                 };
             }
 

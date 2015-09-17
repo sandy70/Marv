@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
-using Telerik.Charting;
 using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
     public partial class MainWindow
     {
-
         private void Plot(string columnName)
         {
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
@@ -96,20 +92,57 @@ namespace Marv.Input
             }
             else if (vertexEvidence.Type != VertexEvidenceType.Null && vertexEvidence.Type != VertexEvidenceType.State)
             {
-               foreach (var state in this.SelectedVertex.States)
+                foreach (var state in this.SelectedVertex.States)
                 {
                     var stateIndex = this.SelectedVertex.States.IndexOf(state);
-                    var gammaAdjustedValue = Math.Pow(vertexEvidence.Value[stateIndex],0.7);
+                    var gammaAdjustedValue = Math.Pow(vertexEvidence.Value[stateIndex], 0.7);
 
                     this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                     {
-                        Fill = new SolidColorBrush(Color.FromArgb((byte)(gammaAdjustedValue * 255), 218, 165, 32)),
+                        Fill = new SolidColorBrush(Color.FromArgb((byte) (gammaAdjustedValue * 255), 218, 165, 32)),
                         HorizontalFrom = @from,
                         HorizontalTo = to,
-                        Stroke = new SolidColorBrush(Color.FromArgb((byte)(gammaAdjustedValue * 255), 218, 165, 32)),
+                        Stroke = new SolidColorBrush(Color.FromArgb((byte) (gammaAdjustedValue * 255), 218, 165, 32)),
                         Tag = dataRow,
                         VerticalFrom = state.SafeMin,
                         VerticalTo = state.SafeMax,
+                        ZIndex = -200
+                    });
+                }
+            }
+
+            else if (vertexEvidence.Type == VertexEvidenceType.State)
+            {
+                if (from == to)
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomAnnotation
+                    {
+                        Content = new Ellipse
+                        {
+                            Fill = fillBrush,
+                            Height = 8,
+                            Stroke = strokeBrush,
+                            Width = 8,
+                        },
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalValue = (from + to) / 2,
+                        Tag = dataRow,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalValue = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
+                        ZIndex = -200
+                    });
+                }
+                else
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                    {
+                        HorizontalFrom = @from,
+                        HorizontalTo = to,
+                        Stroke = fillBrush,
+                        StrokeThickness = 4,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
+                        VerticalTo = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
                         ZIndex = -200
                     });
                 }

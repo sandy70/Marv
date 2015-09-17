@@ -739,60 +739,6 @@ namespace Marv.Input
             }
         }
 
-        private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
-            };
-
-            var result = dialog.ShowDialog();
-
-            if (result != true)
-            {
-                return;
-            }
-
-            if (!File.Exists(dialog.FileName))
-            {
-                throw new FileNotFoundException(String.Format("File {0} was not found!", dialog.FileName));
-            }
-
-            IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
-            Workbook workbook;
-            using (var input = new FileStream(dialog.FileName, FileMode.Open))
-            {
-                workbook = formatProvider.Import(input);
-            }
-
-            var worksheet = workbook.Worksheets.GetByName(this.SelectedVertex.Key);
-
-            var noOfRows = 0;
-            var noOfColumns = 2 +  this.Table.DateTimes.Count();
-
-            while (worksheet.Cells[noOfRows, 0].GetValue().Value.ValueType != CellValueType.Empty)
-            {
-               noOfRows++;
-            }
-
-            
-            for (var rowCount = 0; rowCount < noOfRows; rowCount++)
-            {
-                for (var colCount = 0; colCount < noOfColumns; colCount++)
-                {
-                    var val = worksheet.Cells[rowCount, colCount].GetValue().Value.GetValueAsString( new CellValueFormat("0.00E+00"));
-                    Console.WriteLine(val);
-                }
-                
-            }
-
-            //foreach (var row in this.Table)
-            //{
-            //    row.From = Convert.ToDouble(worksheet.Cells[0, 0].GetValue().Value.RawValue);
-            //    row.To = Convert.ToDouble(worksheet.Cells[0, 1].GetValue().Value.RawValue);
-            //}
-
-        }
         private void Go_Click(object sender, RoutedEventArgs e)
         {
             this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
@@ -840,7 +786,57 @@ namespace Marv.Input
             this.Plot(columnName);
         }
 
-       
+        private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result != true)
+            {
+                return;
+            }
+
+            if (!File.Exists(dialog.FileName))
+            {
+                throw new FileNotFoundException(String.Format("File {0} was not found!", dialog.FileName));
+            }
+
+            IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
+            Workbook workbook;
+            using (var input = new FileStream(dialog.FileName, FileMode.Open))
+            {
+                workbook = formatProvider.Import(input);
+            }
+
+            var worksheet = workbook.Worksheets.GetByName(this.SelectedVertex.Key);
+
+            var noOfRows = 0;
+            var noOfColumns = 2 + this.Table.DateTimes.Count();
+
+            while (worksheet.Cells[noOfRows, 0].GetValue().Value.ValueType != CellValueType.Empty)
+            {
+                noOfRows++;
+            }
+
+            for (var rowCount = 0; rowCount < noOfRows; rowCount++)
+            {
+                for (var colCount = 0; colCount < noOfColumns; colCount++)
+                {
+                    var val = worksheet.Cells[rowCount, colCount].GetValue().Value.GetValueAsString(new CellValueFormat("0.00E+00"));
+                    Console.WriteLine(val);
+                }
+            }
+
+            //foreach (var row in this.Table)
+            //{
+            //    row.From = Convert.ToDouble(worksheet.Cells[0, 0].GetValue().Value.RawValue);
+            //    row.To = Convert.ToDouble(worksheet.Cells[0, 1].GetValue().Value.RawValue);
+            //}
+        }
 
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -1073,6 +1069,31 @@ namespace Marv.Input
             }
 
             this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
+            if (this.SelectedVertex.Type == VertexType.Labelled)
+            {
+                LinearAxis.Minimum = 1;
+                LinearAxis.Maximum = this.SelectedVertex.States.Count;
+
+                LogarithmicAxis.Minimum = 1;
+                LogarithmicAxis.Maximum = this.SelectedVertex.States.Count;
+            }
+
+            else if (this.VerticalAxis.Equals(LogarithmicAxis))
+            {
+                LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMax / 10;
+                LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMin * 10;
+            }
+
+            else
+            {
+                LinearAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+                LinearAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+
+                LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+                LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+            }
+
+            this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

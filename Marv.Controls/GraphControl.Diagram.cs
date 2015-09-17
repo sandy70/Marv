@@ -83,7 +83,10 @@ namespace Marv.Controls
                 this.BringIntoView(selectedShape);
             }
 
-            this.RaiseSelectionChanged(this.SelectedVertex);
+            if (this.SelectedVertex != null)
+            {
+                this.RaiseSelectionChanged(this.SelectedVertex);
+            }
         }
     }
 }
