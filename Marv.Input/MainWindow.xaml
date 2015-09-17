@@ -367,6 +367,7 @@
 
                                 </ToolBarTray>
 
+                                <Label Grid.Row="1" Width="100" HorizontalAlignment="Left" Content="{Binding ElementName=Root, Path=SelectedVertex.Key}"/>
                                 <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}" />
 
                                 <!-- Chart Axis Radio Buttons -->
