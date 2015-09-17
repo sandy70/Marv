@@ -427,11 +427,11 @@
                                                                 <Setter.Value>
                                                                     <DataTemplate>
                                                                         <Ellipse Cursor="Hand"
-                                                                                 Width="8"
-                                                                                 Height="8"
-                                                                                 Fill="Green"
+                                                                                 Width="10"
+                                                                                 Height="10"
+                                                                                 Fill="White"
                                                                                  Stroke="DarkGreen"
-                                                                                 StrokeThickness="1" />
+                                                                                 StrokeThickness="2" />
                                                                     </DataTemplate>
                                                                 </Setter.Value>
                                                             </Setter>
