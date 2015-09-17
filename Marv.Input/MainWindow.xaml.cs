@@ -31,7 +31,6 @@ namespace Marv.Input
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
         private readonly List<ICommand> commandStack = new List<ICommand>();
-        private readonly Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private int addRowCommandsCount;
@@ -45,6 +44,7 @@ namespace Marv.Input
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
+        private Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
@@ -55,7 +55,6 @@ namespace Marv.Input
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
         private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
-        private string lineDataObjFileName;
 
         private Network network;
         private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
@@ -68,6 +67,9 @@ namespace Marv.Input
         private Vertex selectedVertex;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
+
+        private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
+        private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
 
         public int AddRowCommandsCount
@@ -851,6 +853,8 @@ namespace Marv.Input
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
             this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
+            this.SelectedInterpolationData = null;
+            this.interpolationData = new Dict<string, string, InterpolationData>();
             this.UpdateTable();
         }
 
@@ -862,21 +866,38 @@ namespace Marv.Input
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true)
             {
-                this.lineDataObjFileName = dialog.FileName;
+                return;
+            }
 
-                var directoryName = Path.GetDirectoryName(dialog.FileName);
+            this.userDataObjFileName = dialog.FileName;
 
-                if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
+            var directoryName = Path.GetDirectoryName(dialog.FileName);
+
+            if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
+            {
+                // This is a folder line data
+                this.LineData = LineDataFolder.Read(dialog.FileName);
+            }
+            else
+            {
+                this.userDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, Object>>(dialog.FileName);
+
+                var userData = this.userDataObj[DataTheme.User];
+                var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
+
+                foreach (var kvp in userData)
                 {
-                    // This is a folder line data
-                    this.LineData = LineDataFolder.Read(dialog.FileName);
+                    this.lineDataObj[DataTheme.User][kvp.Key] = kvp.Value as EvidenceTable;
                 }
-                else
+
+                this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
+                this.UpdateTable();
+
+                foreach (var kvp in storedInterpolationData)
                 {
-                    this.lineDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, EvidenceTable>>(dialog.FileName);
-                    this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
+                    this.interpolationData[kvp.Key] = kvp.Value as Dict<string, InterpolationData>;
                 }
             }
         }
@@ -890,12 +911,23 @@ namespace Marv.Input
 
             var result = dialog.ShowDialog();
 
-            if (result == true)
+            if (result != true)
             {
-                this.lineDataObjFileName = dialog.FileName;
-
-                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+                return;
             }
+
+            this.userDataObjFileName = dialog.FileName;
+
+            foreach (var kvp in this.lineDataObj[DataTheme.User])
+            {
+                this.userDataObj[DataTheme.User].Add(kvp.Key, kvp.Value);
+            }
+            foreach (var kvp in this.interpolationData)
+            {
+                this.userDataObj[DataTheme.Interpolated].Add(kvp.Key, kvp.Value);
+            }
+
+            this.userDataObj.WriteJson(this.userDataObjFileName);
         }
 
         private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -905,13 +937,13 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (this.lineDataObjFileName == null)
+            if (this.userDataObjFileName == null)
             {
                 this.LineDataSaveAs();
             }
             else
             {
-                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+                this.userDataObj.WriteJson(this.userDataObjFileName);
             }
         }
 
@@ -922,13 +954,13 @@ namespace Marv.Input
                 return;
             }
 
-            if (this.lineDataObjFileName == null)
+            if (this.userDataObjFileName == null)
             {
                 this.LineDataSaveAs();
             }
             else
             {
-                this.lineDataObj.WriteJson(this.lineDataObjFileName);
+                this.userDataObj.WriteJson(this.userDataObjFileName);
             }
         }
 
@@ -950,7 +982,7 @@ namespace Marv.Input
 
                     baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[this.SelectedTheme], baseRowsList, this.Network);
+                    var mergedDataSet = Utils.Merge(this.lineDataObj[DataTheme.User], baseRowsList, this.Network);
 
                     CaptureInterpolatedData(mergedDataSet);
 
