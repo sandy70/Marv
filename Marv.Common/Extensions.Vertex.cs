@@ -21,13 +21,6 @@ namespace Marv.Common
             return newValue.Entropy() - oldValue.Entropy();
         }
 
-        public static double FiftyPercentile(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
-        {
-            CheckVertexStatisticComputable(networkVertex, newValue);
-
-            return CalculatePercentile(networkVertex, newValue, 50);
-        }
-
         public static IEnumerable<double> GetIntervals(this IVertex vertex)
         {
             if (vertex.Type == VertexType.Interval)
@@ -47,9 +40,9 @@ namespace Marv.Common
         {
             CheckVertexStatisticComputable(networkVertex, newValue);
 
-            return networkVertex.States
+            return Math.Round(networkVertex.States
                                 .Select((state, i) => (newValue[i] * (state.SafeMax + state.SafeMin) / 2))
-                                .Sum();
+                                .Sum(),2);
         }
 
         public static double MeanDifference(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
@@ -58,13 +51,6 @@ namespace Marv.Common
             CheckVertexStatisticComputable(networkVertex, oldValue);
 
             return networkVertex.Mean(newValue) - networkVertex.Mean(oldValue);
-        }
-
-        public static double NintyPercentile(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
-        {
-            CheckVertexStatisticComputable(networkVertex, newValue);
-
-            return CalculatePercentile(networkVertex, newValue, 90);
         }
 
         public static double StandardDeviation(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
@@ -82,40 +68,9 @@ namespace Marv.Common
                                                     ))
                                      .Sum();
 
-            return Math.Sqrt(stdev / networkVertex.States.Count);
+            return Math.Round(Math.Sqrt(stdev / networkVertex.States.Count), 2);
         }
 
-        private static double CalculatePercentile(IVertex networkVertex, double[] newValue, double percentileValue)
-        {
-            double sum = 0;
-            var index = 0;
-            double result = 0;
-
-            for (var i = 0; i < networkVertex.States.Count; i++)
-            {
-                sum += newValue[i];
-                if (!(Math.Round(sum, 2) >= (percentileValue / 100)))
-                {
-                    continue;
-                }
-                index = i;
-                break;
-            }
-
-            for (var i = index + 1; i < networkVertex.States.Count; i++)
-            {
-                result += (percentileValue / (100 - percentileValue)) * newValue[i] * (networkVertex.States[i].SafeMax - networkVertex.States[i].SafeMin);
-            }
-
-            for (var i = 0; i < index; i++)
-            {
-                result -= newValue[i] * (networkVertex.States[i].SafeMax - networkVertex.States[i].SafeMin);
-            }
-
-            result += (percentileValue / (100-percentileValue)) * newValue[index] * (networkVertex.States[index].SafeMax - networkVertex.States[index].SafeMin);
-
-            return networkVertex.States[index].SafeMin + Math.Round(result / (((percentileValue / (100-percentileValue)) + 1) * newValue[index]), 2);
-        }
 
         private static void CheckValueArrayLength(IVertex networkVertex, double[] value)
         {

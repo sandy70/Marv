@@ -59,6 +59,7 @@ namespace Marv.Input
         private Network network;
         private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
         private NotificationCollection notifications = new NotificationCollection();
+        private string requiredPercentiles;
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
@@ -363,6 +364,16 @@ namespace Marv.Input
                 }
 
                 this.notifications = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string RequiredPercentiles
+        {
+            get { return requiredPercentiles; }
+            set
+            {
+                requiredPercentiles = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -690,35 +701,66 @@ namespace Marv.Input
         {
             var workbook = new Workbook();
             var worksheet = workbook.Worksheets.Add();
-            var columnsCount = this.Table[0].GetDynamicMemberNames().Count();
+            worksheet.Name = this.SelectedVertex.Key;
 
-            worksheet.Cells[0, 0].SetValue("From");
-            worksheet.Cells[0, 1].SetValue("To");
+            var template = new WorkSheetTemplate(worksheet);
 
-            for (var i = 0; i < columnsCount; i++)
+            template.AddColumn("From", 0, 1);
+            template.AddColumn("To", 0, 1);
+            template.AddColumn("Mean", 0, this.Table.DateTimes.Count());
+            template.AddColumn("Stdv", 0, this.Table.DateTimes.Count());
+
+            var requiredPercentileList = new List<double>();
+            if (!string.IsNullOrWhiteSpace(requiredPercentiles))
             {
-                DateTime dateTime;
-                if (this.Table[0].GetDynamicMemberNames().ToList()[i].TryParse(out dateTime))
+                var parts = requiredPercentiles.Trim().Split("(),: ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
                 {
-                    var value = this.Table[0].GetDynamicMemberNames().ToList()[i];
-                    var shortString = value.Substring(5, 2) + "/" + value.Substring(7, 2) + "/" + value.Substring(1, 4);
-                    worksheet.Cells[0, 2 + i].SetValue(shortString);
+                    double value;
+                    if (double.TryParse(part, out value))
+                    {
+                        requiredPercentileList.Add(value);
+                    }
                 }
             }
 
-            var rowCount = this.lineDataObj[DataTheme.Beliefs].Values[0].Count;
-            var noOfDateTimes = this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key].DateTimes.Count();
+            requiredPercentileList.ForEach(val => template.AddColumn(val.ToString(), 0, this.Table.DateTimes.Count()));
 
-            for (var row = 0; row < rowCount; row++)
+            foreach (var kvp in template.GetColumns())
             {
-                worksheet.Cells[row + 1, 0].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["From"].ToString());
-                worksheet.Cells[row + 1, 1].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["To"].ToString());
-                for (var col = 0; col < noOfDateTimes; col++)
+                if (kvp.Key == "From" || kvp.Key == "To")
                 {
-                    var colName = this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row].GetDynamicMemberNames().ToList()[col];
+                    continue;
+                }
+
+                foreach (var dateTime in this.Table.DateTimes)
+                {
+                    template.AddSubColumn(kvp.Key, dateTime.ToShortDateString(), 1, 1);
+                }
+            }
+
+            var noOfDateTimes = this.Table.DateTimes.Count();
+            var evidenceRowCount = this.lineDataObj[DataTheme.Beliefs].Values[0].Count;
+
+            for (var row = 0; row < evidenceRowCount; row++)
+            {
+                worksheet.Cells[row + 2, 0].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["From"].ToString());
+                worksheet.Cells[row + 2, 1].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["To"].ToString());
+
+                for (var dateTime = 0; dateTime < noOfDateTimes; dateTime++)
+                {
+                    var colName = this.Table.DateTimes.ToList()[dateTime].String();
                     var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
-                    var mean = this.SelectedVertex.ComputeStatistic(this.SelectedStatistic, beliefValue);
-                    worksheet.Cells[row + 1, col + 2].SetValue(mean);
+
+                    var mean = selectedVertex.Mean(beliefValue);
+                    var stdv = selectedVertex.StandardDeviation(beliefValue);
+                    var percentiles = requiredPercentileList.Select(val => new VertexPercentileComputer(val).Compute(this.Network.Vertices[this.SelectedVertex.Key], beliefValue)).ToList();
+
+                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Mean",  row +2)].SetValue(mean);
+                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Stdv",  row +2)].SetValue(stdv);
+
+                    requiredPercentileList.ForEach((val, i) => worksheet.Cells[row + 2, template.GetSubColumnPosition(val.ToString(), row+2)].SetValue(percentiles[i]));
                 }
             }
 
@@ -1062,8 +1104,6 @@ namespace Marv.Input
                 this.EndDate = this.StartDate;
             }
         }
-
-        private void StatSelector_SelectionChanged(object sender, SelectionChangedEventArgs e) {}
 
         private void UpdateCommandStack(ICommand command)
         {

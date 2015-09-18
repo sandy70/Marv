@@ -227,6 +227,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SummaryStatistic.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="WorkSheetTemplate.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

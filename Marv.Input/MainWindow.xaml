@@ -256,14 +256,16 @@
                                         </ToolBar.Resources>
                                         <Label Name="Statistic" Width="70" Content="Statistic" />
 
-                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource StatSelector}}"
+                                        <!--<telerik:RadComboBox ItemsSource="{Binding Source={StaticResource StatSelector}}"
                                                              IsFilteringEnabled="True"
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedStatistic, Mode=TwoWay}"
-                                                             Width="100"
-                                                             SelectionChanged="StatSelector_SelectionChanged" />
-
+                                                             Width="100"/>-->
+                                        <TextBox Width="100"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=RequiredPercentiles}" />
+                                        
                                         <telerik:RadButton Content="Export"
                                                            FontWeight="Bold"
                                                            Padding="4"

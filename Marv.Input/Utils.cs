@@ -201,19 +201,14 @@ namespace Marv.Input
             return mergedEvidenceSet;
         }
 
-        public static double ComputeStatistic(this Vertex selectedVertex, SummaryStatistic selectedStatistic, double[] newValue)
-        {
-            if (selectedStatistic == SummaryStatistic.Mean)
-            {
-                return selectedVertex.Mean(newValue);
-            }
-            
-            if (selectedStatistic == SummaryStatistic.StdDev)
-            {
-                return selectedVertex.StandardDeviation(newValue);
-            }
-            return selectedStatistic == SummaryStatistic.FiftyPer ? selectedVertex.FiftyPercentile(newValue) : selectedVertex.NintyPercentile(newValue);
-        }
+        //public static void ComputeSummaryStats(this NetworkVertex selectedVertex, double[] newValue, Network network, List<double> requiredPercentiles, out double mean, out double stdv, out List<double> percentiles)
+        //{
+
+        //     mean = selectedVertex.Mean(newValue);
+        //     stdv = selectedVertex.StandardDeviation(newValue);
+        //     percentiles = requiredPercentiles.Select(val => new VertexPercentileComputer(val).Compute(selectedVertex, newValue)).ToList();
+           
+        //}
 
         public static Point GetPointOnChart(this RadCartesianChart chart, ScatterDataPoint scatterPoint)
         {

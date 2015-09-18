@@ -86,7 +86,7 @@ namespace Marv.Common
             this.percentile = thePercentile;
         }
 
-        public double Compute(NetworkVertex networkVertex, double[] newValue, double[] oldValue)
+        public double Compute(NetworkVertex networkVertex, double[] newValue, double[] oldValue=null)
         {
             var totalArea = 0.0;
 
