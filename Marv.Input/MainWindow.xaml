@@ -71,7 +71,10 @@
                               Click="LineDataImportExcelMenuItem_Click"
                               Visibility="Visible"/>
                 </MenuItem>
-
+                
+                <MenuItem Header="HeatMap"
+                          Click="HeatMapMenuItem_Click" />
+                
                 <MenuItem Header="New"
                           Click="LineDataNewMenuItem_Click" />
 
@@ -307,6 +310,11 @@
 
                             </Grid>
                         </telerik:RadPane>
+                        <telerik:RadPane Header="HeatMap"
+                                         IsHidden="{Binding ElementName=Root, Path=IsHeatMapVisible, Converter={StaticResource BooleanNot}}">
+                            
+                            
+                        </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
                     <telerik:RadPaneGroup>
@@ -467,6 +475,7 @@
                                 </telerik:RadCartesianChart>
                             </Grid>
                         </telerik:RadPane>
+                        
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
 

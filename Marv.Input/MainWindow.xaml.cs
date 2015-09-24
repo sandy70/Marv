@@ -72,6 +72,18 @@ namespace Marv.Input
         private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
+        private bool isHeatMapVisible;
+
+        public bool IsHeatMapVisible
+        {
+            get { return isHeatMapVisible; }
+            set
+            {
+                isHeatMapVisible = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
 
         public int AddRowCommandsCount
         {
@@ -897,6 +909,7 @@ namespace Marv.Input
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
             this.interpolationData = new Dict<string, string, InterpolationData>();
+            this.SelectedTheme = DataTheme.User;
             this.UpdateTable();
         }
 
@@ -1123,14 +1136,18 @@ namespace Marv.Input
                 return;
             }
 
+            
             this.GridView.CommitEdit();
 
             this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
+            
 
             if (this.Table == null || this.Table.Count == 0)
             {
                 this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
             }
+
+            this.SelectedColumnName = this.Table.DateTimes.First().String();
         }
 
         private void UpdateVerticalAxis()
@@ -1169,5 +1186,22 @@ namespace Marv.Input
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void HeatMapMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+            //foreach (var row in this.Table)
+            //{
+            //    foreach (var dateTime in this.Table.DateTimes)
+            //    {
+            //        this.GridView.CurrentCell.BeginEdit();
+            //        this.GridView.CurrentCell.CommitEdit();
+            //    }
+            //}
+
+            this.IsHeatMapVisible = true;
+            
+           
+        }
     }
 }

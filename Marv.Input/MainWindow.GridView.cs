@@ -19,6 +19,11 @@ namespace Marv.Input
             {
                 this.UpdateTable();
             }
+
+            if (this.SelectedColumnName!=null)
+            {
+                this.Plot(this.SelectedColumnName);
+            }
         }
 
         private void GridView_AddingNewDataItem(object sender, GridViewAddingNewEventArgs e)
