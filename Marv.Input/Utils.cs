@@ -256,7 +256,7 @@ namespace Marv.Input
                 {
                     newIntervals[i] = intervals[i];
                 }
-                newIntervals[newIntervals.Count() - 1] = selectedVertex.SafeMax;
+                newIntervals[newIntervals.Count() - 1] = newIntervals[newIntervals.Count() -2] * 10;
 
             }
             else

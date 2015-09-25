@@ -34,6 +34,7 @@ namespace Marv.Input
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private int addRowCommandsCount;
+        private double adjustedSafeMax;
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
@@ -48,6 +49,7 @@ namespace Marv.Input
         private bool isCellToolbarEnabled;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
+        private bool isHeatMapVisible;
         private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -72,18 +74,6 @@ namespace Marv.Input
         private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
-        private bool isHeatMapVisible;
-
-        public bool IsHeatMapVisible
-        {
-            get { return isHeatMapVisible; }
-            set
-            {
-                isHeatMapVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
 
         public int AddRowCommandsCount
         {
@@ -91,6 +81,16 @@ namespace Marv.Input
             set
             {
                 addRowCommandsCount = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public double AdjustedSafeMax
+        {
+            get { return adjustedSafeMax; }
+            set
+            {
+                adjustedSafeMax = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -250,6 +250,16 @@ namespace Marv.Input
                     return;
                 }
                 this.isGridViewReadOnly = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsHeatMapVisible
+        {
+            get { return isHeatMapVisible; }
+            set
+            {
+                isHeatMapVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -510,7 +520,7 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
 
-            var themes = Enum.GetNames(typeof(DataTheme));
+            var themes = Enum.GetNames(typeof (DataTheme));
             var list = from dataTheme in themes where dataTheme != "Merged" select dataTheme;
             this.SelectionThemeComboBox.ItemsSource = list;
         }
@@ -773,10 +783,10 @@ namespace Marv.Input
                     var stdv = selectedVertex.StandardDeviation(beliefValue);
                     var percentiles = requiredPercentileList.Select(val => new VertexPercentileComputer(val).Compute(this.Network.Vertices[this.SelectedVertex.Key], beliefValue)).ToList();
 
-                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Mean",  row +2)].SetValue(mean);
-                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Stdv",  row +2)].SetValue(stdv);
+                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Mean", row + 2)].SetValue(mean);
+                    worksheet.Cells[row + 2, template.GetSubColumnPosition("Stdv", row + 2)].SetValue(stdv);
 
-                    requiredPercentileList.ForEach((val, i) => worksheet.Cells[row + 2, template.GetSubColumnPosition(val.ToString(), row+2)].SetValue(percentiles[i]));
+                    requiredPercentileList.ForEach((val, i) => worksheet.Cells[row + 2, template.GetSubColumnPosition(val.ToString(), row + 2)].SetValue(percentiles[i]));
                 }
             }
 
@@ -844,6 +854,20 @@ namespace Marv.Input
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
+        }
+
+        private void HeatMapMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //foreach (var row in this.Table)
+            //{
+            //    foreach (var dateTime in this.Table.DateTimes)
+            //    {
+            //        this.GridView.CurrentCell.BeginEdit();
+            //        this.GridView.CurrentCell.CommitEdit();
+            //    }
+            //}
+
+            this.IsHeatMapVisible = true;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1141,11 +1165,9 @@ namespace Marv.Input
                 return;
             }
 
-            
             this.GridView.CommitEdit();
 
             this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
-            
 
             if (this.Table == null || this.Table.Count == 0)
             {
@@ -1163,6 +1185,7 @@ namespace Marv.Input
             }
 
             this.VerticalAxis = this.SelectedVertex.AxisType == VertexAxisType.Linear ? LinearAxis : LogarithmicAxis;
+
             if (this.SelectedVertex.Type == VertexType.Labelled)
             {
                 LinearAxis.Minimum = 1;
@@ -1183,12 +1206,30 @@ namespace Marv.Input
                     LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMin;
                 }
 
-                LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMax;
+                var intervals = selectedVertex.States.Select(state => state.Min).Concat(selectedVertex.States.Last().Max.Yield()).ToArray();
+                if (intervals.Any(val => val == Double.PositiveInfinity))
+                {
+                    LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMin * 10;
+                }
+
+                else
+                {
+                    LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMax;
+                }
             }
 
             else
             {
-                LinearAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+                var intervals = selectedVertex.States.Select(state => state.Min).Concat(selectedVertex.States.Last().Max.Yield()).ToArray();
+                if (intervals.Any(val => val == Double.PositiveInfinity))
+                {
+                    LinearAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMin * 10;
+                }
+                else
+                {
+                    LinearAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
+                }
+
                 LinearAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
 
                 LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
@@ -1196,27 +1237,8 @@ namespace Marv.Input
             }
 
             this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
-
-           
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void HeatMapMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
-            //foreach (var row in this.Table)
-            //{
-            //    foreach (var dateTime in this.Table.DateTimes)
-            //    {
-            //        this.GridView.CurrentCell.BeginEdit();
-            //        this.GridView.CurrentCell.CommitEdit();
-            //    }
-            //}
-
-            this.IsHeatMapVisible = true;
-            
-           
-        }
     }
 }
