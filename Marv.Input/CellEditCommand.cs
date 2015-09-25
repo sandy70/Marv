@@ -28,6 +28,11 @@ namespace Marv.Input
             {
                 Row[ColumnName] = this.SelectedVertex.States.ParseEvidenceString(NewData as string);
             }
+
+            else if (ColumnName == "Comment")
+            {
+                Row[ColumnName] = NewData as string;
+            }
             else
             {
                 double val;
@@ -55,6 +60,11 @@ namespace Marv.Input
                     Row[ColumnName] = "";
                 }
                 return true;
+            }
+
+            if (OldData == null)
+            {
+                OldData = "";
             }
 
             Row[ColumnName] = OldData;

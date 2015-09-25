@@ -33,6 +33,7 @@ namespace Marv.Common
                 };
             }
 
+            
             var stateList = states as IList<State> ?? states.ToList();
 
             // Check if string is the label of any of the states.

@@ -509,6 +509,10 @@ namespace Marv.Input
 
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
+
+            var themes = Enum.GetNames(typeof(DataTheme));
+            var list = from dataTheme in themes where dataTheme != "Merged" select dataTheme;
+            this.SelectionThemeComboBox.ItemsSource = list;
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -908,6 +912,7 @@ namespace Marv.Input
             this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
+            this.IsModelRun = false;
             this.interpolationData = new Dict<string, string, InterpolationData>();
             this.SelectedTheme = DataTheme.User;
             this.UpdateTable();
@@ -1169,7 +1174,16 @@ namespace Marv.Input
 
             else if (this.VerticalAxis.Equals(LogarithmicAxis))
             {
-                LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMax / 10;
+                if (this.SelectedVertex.States[0].SafeMin == 0)
+                {
+                    LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMax / 10;
+                }
+                else
+                {
+                    LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMin;
+                }
+
+                
                 LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMin * 10;
             }
 
@@ -1183,6 +1197,8 @@ namespace Marv.Input
             }
 
             this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
+
+           
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

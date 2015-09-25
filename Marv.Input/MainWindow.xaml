@@ -184,13 +184,13 @@
                                     <!-- Cell Toolbar -->
                                     <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
-                                            <ObjectDataProvider x:Key="SelectionThemes"
+                                            <!--<ObjectDataProvider x:Key="SelectionThemes"
                                                                 MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}">
                                                 <ObjectDataProvider.MethodParameters>
                                                     <x:Type TypeName="input:DataTheme" />
                                                 </ObjectDataProvider.MethodParameters>
-                                            </ObjectDataProvider>
+                                            </ObjectDataProvider>-->
 
 
                                         </ToolBar.Resources>
@@ -210,7 +210,7 @@
                                             <Image Source="/Marv.Common;component/Resources/Icons/CopyAcrossAll.png" />
                                         </telerik:RadButton>
 
-                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource SelectionThemes}}"
+                                        <telerik:RadComboBox Name="SelectionThemeComboBox"
                                                              IsFilteringEnabled="True"
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"

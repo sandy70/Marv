@@ -6,8 +6,21 @@ namespace Marv.Input
 {
     public class EvidenceRow : Dynamic
     {
+        private string comment="";
         private double from;
         private double to;
+
+        [Display(Order = 2)]
+        [JsonProperty]
+        public string Comment
+        {
+            get { return comment; }
+            set
+            {
+                comment = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         [Display(Order = 0)]
         [JsonProperty]
@@ -26,8 +39,7 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
-
-        [Display(Order = 1)]
+        [Display(Order =1)]
         [JsonProperty]
         public double To
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Marv.Common;
@@ -22,10 +23,11 @@ namespace Marv.Input
         private void Plot(EvidenceRow dataRow, string columnName)
         {
             var fillBrush = new SolidColorBrush(Colors.Goldenrod);
-            var strokeBrush = new SolidColorBrush(Colors.DarkGoldenrod);
+            var strokeBrush = new SolidColorBrush(Colors.Goldenrod);
 
             var from = (double) dataRow["From"];
             var to = (double) dataRow["To"];
+            var comment = (string) dataRow["Comment"];
             var vertexEvidence = dataRow[columnName] as VertexEvidence;
 
             if (vertexEvidence == null)
@@ -42,17 +44,26 @@ namespace Marv.Input
 
             if (vertexEvidence.Type == VertexEvidenceType.Number)
             {
+                var stackPanel = new StackPanel();
+                stackPanel.Orientation = Orientation.Vertical;
+
+                var commentTextBlock = new TextBlock { Text = comment };
+                var ellipse = new Ellipse
+                {
+                    Fill = fillBrush,
+                    Height = 8,
+                    Stroke = strokeBrush,
+                    Width = 8,
+                };
+
+                stackPanel.Children.Add(commentTextBlock);
+                stackPanel.Children.Add(ellipse);
+
                 if (from == to)
                 {
                     this.Chart.Annotations.Add(new CartesianCustomAnnotation
                     {
-                        Content = new Ellipse
-                        {
-                            Fill = fillBrush,
-                            Height = 8,
-                            Stroke = strokeBrush,
-                            Width = 8,
-                        },
+                        Content = stackPanel,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         HorizontalValue = (from + to) / 2,
                         Tag = dataRow,
@@ -89,7 +100,7 @@ namespace Marv.Input
                         Tag = dataRow,
                         VerticalFrom = vertexEvidence.Params[0],
                         VerticalTo = vertexEvidence.Params[1],
-                        ZIndex = -200
+                        ZIndex = -200,
                     });
                 }
 
@@ -146,7 +157,7 @@ namespace Marv.Input
                     };
 
                     fill1.GradientStops.Add(new GradientStop { Offset = 0, Color = Color.FromArgb(255, 218, 165, 32) });
-                    fill1.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(0, 218, 165, 32) });
+                    fill1.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(50, 218, 165, 32) });
 
                     this.Chart.Annotations.Add(new CartesianMarkedZoneAnnotation
                     {

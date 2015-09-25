@@ -13,7 +13,7 @@ namespace Marv.Controls.Converters
             {
                 return "";
             }
-            if (value.ToString().Equals("From") || value.ToString().Equals("To"))
+            if (value.ToString().Equals("From") || value.ToString().Equals("To") || value.ToString().Equals("Comment"))
             {
                 return "";
             }

@@ -14,6 +14,12 @@ namespace Marv.Input
         private void DataThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
+           
+            if (!this.SelectedTheme.Equals(DataTheme.User))
+            {
+             
+                this.SelectedInterpolationData = null;
+            }
 
             if (this.SelectedVertex != null)
             {
@@ -82,6 +88,10 @@ namespace Marv.Input
                     e.IsValid = false;
                     e.ErrorMessage = "Invalid evidence for node " + this.SelectedVertex.Key;
                 }
+            }
+            else if (columnName.Equals("Comment"))
+            {
+              
             }
 
             else if (! (this.BaseTableMin <= (double) e.NewValue && (double) e.NewValue <= this.BaseTableMax))
