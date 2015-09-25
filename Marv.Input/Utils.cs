@@ -245,7 +245,30 @@ namespace Marv.Input
 
         public static void AddNodeStateLines(this RadCartesianChart chart, Vertex selectedVertex, double baseTableMax, double baseTableMin)
         {
-            foreach (var val in selectedVertex.GetIntervals())
+            var intervals = selectedVertex.States.Select(state => state.Min).Concat(selectedVertex.States.Last().Max.Yield()).ToArray();
+            var newIntervals = new double[intervals.Count()];
+
+            if (intervals.Any(val => val == Double.PositiveInfinity)) // workaround to replace infinity
+            {
+                Array.Sort(intervals);
+
+                for (var i = 0; i < intervals.Count() - 1; i++)
+                {
+                    newIntervals[i] = intervals[i];
+                }
+                newIntervals[newIntervals.Count() - 1] = selectedVertex.SafeMax;
+
+            }
+            else
+            {
+                newIntervals = selectedVertex.GetIntervals().ToArray();
+            }
+
+            if (selectedVertex.Type == VertexType.Labelled)
+            {
+                newIntervals = Enumerable.Range(0, newIntervals.Count() + 1).Select(i => (double)i).ToArray();
+            }
+            foreach (var val in newIntervals)
             {
                 chart.Annotations.Add(new CartesianCustomLineAnnotation
                 {

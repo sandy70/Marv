@@ -1183,8 +1183,7 @@ namespace Marv.Input
                     LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMin;
                 }
 
-                
-                LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMin * 10;
+                LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMax;
             }
 
             else
