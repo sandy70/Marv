@@ -38,7 +38,7 @@
                     <SolidColorBrush Color="Red" />
                 </converters:BooleanToBrushConverter.TrueBrush>
             </converters:BooleanToBrushConverter>
-            
+
             <input:CellTemplateSelector x:Key="CellTemplateSelector">
                 <input:CellTemplateSelector.SparkLineTemplate>
                     <DataTemplate>
@@ -69,12 +69,9 @@
                 <MenuItem Header="Import">
                     <MenuItem Header="Excel(*.xlxs)"
                               Click="LineDataImportExcelMenuItem_Click"
-                              Visibility="Visible"/>
+                              Visibility="Visible" />
                 </MenuItem>
-                
-                <MenuItem Header="HeatMap"
-                          Click="HeatMapMenuItem_Click" />
-                
+
                 <MenuItem Header="New"
                           Click="LineDataNewMenuItem_Click" />
 
@@ -96,6 +93,16 @@
 
                 <MenuItem Header="Line"
                           Click="RunLineMenuItem_Click" />
+            </MenuItem>
+
+            <MenuItem Header="Tools">
+                <MenuItem Header="HeatMap"
+                          Click="HeatMapMenuItem_Click" 
+                          IsEnabled="False"/>
+
+                <MenuItem Header="CommentBlocksGrid"
+                          IsCheckable="True"
+                          Click="CommentBlocksGrid_Click" />
             </MenuItem>
         </Menu>
 
@@ -184,13 +191,13 @@
                                     <!-- Cell Toolbar -->
                                     <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
-                                            <!--<ObjectDataProvider x:Key="SelectionThemes"
+                                            <ObjectDataProvider x:Key="SelectionThemes"
                                                                 MethodName="GetValues"
                                                                 ObjectType="{x:Type sys:Enum}">
                                                 <ObjectDataProvider.MethodParameters>
                                                     <x:Type TypeName="input:DataTheme" />
                                                 </ObjectDataProvider.MethodParameters>
-                                            </ObjectDataProvider>-->
+                                            </ObjectDataProvider>
 
 
                                         </ToolBar.Resources>
@@ -212,6 +219,7 @@
 
                                         <telerik:RadComboBox Name="SelectionThemeComboBox"
                                                              IsFilteringEnabled="True"
+                                                             ItemsSource="{Binding  Source={StaticResource SelectionThemes}}"
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"
@@ -243,11 +251,11 @@
                                                            Width="30"
                                                            Click="Go_Click" />
                                     </ToolBar>
-                                    
+
                                     <ToolBar Band="2"
                                              BandIndex="2"
                                              IsEnabled="{Binding ElementName=Root, Path=IsModelRun}">
-                                        
+
                                         <ToolBar.Resources>
                                             <ObjectDataProvider x:Key="StatSelector"
                                                                 MethodName="GetValues"
@@ -259,16 +267,10 @@
                                         </ToolBar.Resources>
                                         <Label Name="Statistic" Width="70" Content="Statistic" />
 
-                                        <!--<telerik:RadComboBox ItemsSource="{Binding Source={StaticResource StatSelector}}"
-                                                             IsFilteringEnabled="True"
-                                                             OpenDropDownOnFocus="True"
-                                                             SelectedIndex="0"
-                                                             SelectedItem="{Binding ElementName=Root, Path=SelectedStatistic, Mode=TwoWay}"
-                                                             Width="100"/>-->
                                         <TextBox Width="100"
                                                  BorderBrush="CadetBlue"
                                                  Text="{Binding ElementName=Root, Path=RequiredPercentiles}" />
-                                        
+
                                         <telerik:RadButton Content="Export"
                                                            FontWeight="Bold"
                                                            Padding="4"
@@ -304,16 +306,56 @@
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
                                                      PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                      RowEditEnded="GridView_RowEditEnded"
-                                                     Pasted="GridView_Pasted">
-                                                     
-                                    </telerik:RadGridView>
+                                                     Pasted="GridView_Pasted" />
 
                             </Grid>
                         </telerik:RadPane>
                         <telerik:RadPane Header="HeatMap"
                                          IsHidden="{Binding ElementName=Root, Path=IsHeatMapVisible, Converter={StaticResource BooleanNot}}">
-                            
-                            
+                            <Grid>
+                                <telerik:RadHeatMap x:Name="HeatMap"
+                                                    CellBorderColor="Black"
+                                                    CellBorderThickness="1">
+                                    <telerik:RadHeatMap.Definition>
+                                        <telerik:CategoricalDefinition RowGroupMemberPath="{Binding ElementName=Root, Path=RowNames}"
+                                                                       ColumnGroupMemberPath="{Binding ElementName=Root, Path=ColumnNames}"
+                                                                       ValuePath="{Binding ElementName=Root, Path=EvidenceStringArray}" />
+                                    </telerik:RadHeatMap.Definition>
+
+                                    <telerik:RadHeatMap.CellLabelSettings>
+                                        <telerik:HeatMapCellLabelSettings Foreground="Yellow" />
+                                    </telerik:RadHeatMap.CellLabelSettings>
+                                </telerik:RadHeatMap>
+
+                            </Grid>
+
+                        </telerik:RadPane>
+                        <telerik:RadPane Header="CommentBlocks"
+                                         IsHidden="{Binding ElementName=Root, Path=IsCommentBlocksGridVisible, Converter={StaticResource BooleanNot}}">
+                            <Grid>
+                                <telerik:RadGridView Name="CommentBlocksGridView"
+                                                     Grid.Row="0"
+                                                     CanUserFreezeColumns="False"
+                                                     CanUserInsertRows="True"
+                                                     CanUserDeleteRows="True"
+                                                     CanUserSortColumns="False"
+                                                     ClipboardCopyMode="All"
+                                                     CurrentColumn="{Binding ElementName=Root, Path=CurrentColumn}"
+                                                     ClipboardPasteMode="Default"
+                                                     FrozenColumnCount="2"
+                                                     GroupRenderMode="Flat"
+                                                     IsFilteringAllowed="False"
+                                                     IsReadOnly="False"
+                                                     ItemsSource="{Binding ElementName=Root, Path=CommentBlocksInfoTable, Mode=TwoWay}"
+                                                     NewRowPosition="Bottom"
+                                                     SelectionUnit="Mixed"
+                                                     SelectionMode="Extended"
+                                                     ShowGroupPanel="False"
+                                                     ValidatesOnDataErrors="None"
+                                                     CellEditEnded="CommentBlocksGridView_CellEditEnded"
+                                                     RowEditEnded="CommentBlocksGridView_RowEditEnded" />
+                            </Grid>
+
                         </telerik:RadPane>
                     </telerik:RadPaneGroup>
 
@@ -327,7 +369,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                
+
                                 <ToolBarTray Grid.Row="0">
 
                                     <ToolBar Name="InterpolationToolBar">
@@ -350,7 +392,7 @@
                                                     <StackPanel Orientation="Horizontal" />
                                                 </ItemsPanelTemplate>
                                             </ListBox.ItemsPanel>
-                                                  
+
 
                                             <ItemsControl.ItemContainerStyle>
                                                 <Style TargetType="ListBoxItem">
@@ -361,7 +403,7 @@
                                                                              GroupName="InterpolatorType"
                                                                              IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}"
                                                                              VerticalAlignment="Center"
-                                                                             Width="80"/>
+                                                                             Width="80" />
                                                             </ControlTemplate>
                                                         </Setter.Value>
                                                     </Setter>
@@ -377,7 +419,7 @@
 
                                 </ToolBarTray>
 
-                                <Label Grid.Row="1" Width="100" HorizontalAlignment="Left" Content="{Binding ElementName=Root, Path=SelectedVertex.Key}"/>
+                                <Label Grid.Row="1" Width="100" HorizontalAlignment="Left" Content="{Binding ElementName=Root, Path=SelectedVertex.Key}" />
                                 <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}" />
 
                                 <!-- Chart Axis Radio Buttons -->
@@ -409,6 +451,7 @@
                                         </Style>
                                     </ItemsControl.ItemContainerStyle>
                                 </ListBox>
+
 
                                 <!-- Chart -->
                                 <telerik:RadCartesianChart Grid.Row="2"
@@ -447,10 +490,10 @@
                                                             </Setter>
 
                                                             <Setter Property="Stroke" Value="Green" />
-                                                            
+
                                                             <EventSetter Event="MouseDoubleClick" Handler="InterpolationSeries_MouseDoubleClick" />
-                                                            
-                                                            <EventSetter Event="MouseRightButtonDown" Handler="InterpolationSeries_MouseRightDown"/>
+
+                                                            <EventSetter Event="MouseRightButtonDown" Handler="InterpolationSeries_MouseRightDown" />
 
                                                             <EventSetter Event="MouseDown" Handler="InterpolationSeries_MouseDown" />
 
@@ -463,7 +506,7 @@
                                             </telerik:ChartSeriesProvider.SeriesDescriptors>
                                         </telerik:ChartSeriesProvider>
                                     </telerik:RadCartesianChart.SeriesProvider>
-                                    
+
                                     <!-- Dummy series to make sure chart is visible -->
                                     <telerik:RadCartesianChart.Series>
                                         <telerik:ScatterPointSeries>
@@ -475,7 +518,7 @@
                                 </telerik:RadCartesianChart>
                             </Grid>
                         </telerik:RadPane>
-                        
+
                     </telerik:RadPaneGroup>
                 </telerik:RadSplitContainer>
 

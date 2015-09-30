@@ -6,5 +6,6 @@
         Interpolated,
         Merged,
         Beliefs,
+        CommentBlocks,
     }
 }

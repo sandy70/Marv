@@ -15,6 +15,10 @@ namespace Marv.Input
 
         private void InterpolationDataClearButton_Click(object sender, RoutedEventArgs e)
         {
+            if (this.SelectedInterpolationData == null)
+            {
+                return;
+            }
             this.SelectedInterpolationData.Points = null;
             this.SelectedInterpolationData.Type = null;
         }

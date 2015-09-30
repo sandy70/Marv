@@ -28,6 +28,7 @@ namespace Marv.Input
 
             if (this.SelectedColumnName!=null)
             {
+                this.Chart.Annotations.Remove(annotations =>true);
                 this.Plot(this.SelectedColumnName);
             }
         }
@@ -120,8 +121,18 @@ namespace Marv.Input
 
             if (this.SelectedColumnName.TryParse(out dateTime))
             {
-                this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
-                this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
+
+                if (this.SelectedTheme != DataTheme.User)
+                {
+                    this.SelectedInterpolationData = null;
+                }
+
+                else
+                {
+                    this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                    this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
+                }
+               
             }
 
             if (this.selectedColumnName.TryParse(out dateTime))
@@ -166,7 +177,10 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e) {}
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            
+        }
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {

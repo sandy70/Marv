@@ -14,6 +14,14 @@ namespace Marv.Input
         {
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
 
+            if (CommentBlocksInfoTable !=null)
+            {
+                foreach (var row in this.CommentBlocksInfoTable)
+                {
+                    this.Chart.UpdateCommentBlocks(row, VerticalAxis);
+                }
+            }
+
             foreach (var row in this.Table)
             {
                 this.Plot(row, columnName);
@@ -125,6 +133,44 @@ namespace Marv.Input
                     }
                 }
             }
+
+            else if (vertexEvidence.Type == VertexEvidenceType.State)
+            {
+                if (from == to)
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomAnnotation
+                    {
+                        Content = new Ellipse
+                        {
+                            Fill = fillBrush,
+                            Height = 8,
+                            Stroke = strokeBrush,
+                            Width = 8,
+                        },
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalValue = (from + to) / 2,
+                        Tag = dataRow,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalValue = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
+                        ZIndex = -200
+                    });
+                }
+                else
+                {
+                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
+                    {
+                        HorizontalFrom = @from,
+                        HorizontalTo = to,
+                        Stroke = fillBrush,
+                        StrokeThickness = 4,
+                        Tag = dataRow,
+                        VerticalFrom = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
+                        VerticalTo = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
+                        ZIndex = -200
+                    });
+                }
+            }
+
             else if (vertexEvidence.Type != VertexEvidenceType.Null && vertexEvidence.Type != VertexEvidenceType.State)
             {
                 if (this.SelectedTheme != DataTheme.User)
@@ -194,42 +240,8 @@ namespace Marv.Input
                 }
             }
 
-            else if (vertexEvidence.Type == VertexEvidenceType.State)
-            {
-                if (from == to)
-                {
-                    this.Chart.Annotations.Add(new CartesianCustomAnnotation
-                    {
-                        Content = new Ellipse
-                        {
-                            Fill = fillBrush,
-                            Height = 8,
-                            Stroke = strokeBrush,
-                            Width = 8,
-                        },
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        HorizontalValue = (from + to) / 2,
-                        Tag = dataRow,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        VerticalValue = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
-                        ZIndex = -200
-                    });
-                }
-                else
-                {
-                    this.Chart.Annotations.Add(new CartesianCustomLineAnnotation
-                    {
-                        HorizontalFrom = @from,
-                        HorizontalTo = to,
-                        Stroke = fillBrush,
-                        StrokeThickness = 4,
-                        Tag = dataRow,
-                        VerticalFrom = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
-                        VerticalTo = vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)],
-                        ZIndex = -200
-                    });
-                }
-            }
+           
+
         }
     }
 }

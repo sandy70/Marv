@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -38,6 +39,9 @@ namespace Marv.Input
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
+        private List<string> columnNames = new List<string>();
+
+        private ObservableCollection<EvidenceRow> commentBlocksInfoTable;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
@@ -45,11 +49,14 @@ namespace Marv.Input
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
+        private string[,] evidenceStringArray;
         private Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
         private bool isCellToolbarEnabled;
+        private bool isCommentBlocksGridVisible;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isHeatMapVisible;
+
         private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -62,6 +69,7 @@ namespace Marv.Input
         private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
         private NotificationCollection notifications = new NotificationCollection();
         private string requiredPercentiles;
+        private List<string> rowNames = new List<string>();
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
@@ -70,6 +78,19 @@ namespace Marv.Input
         private Vertex selectedVertex;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
+        private ObservableCollection<string> displayThemes = new ObservableCollection<string>();
+
+        public ObservableCollection<string> DisplayThemes
+        {
+            get { return displayThemes; }
+            set
+            {
+                displayThemes = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
+
 
         private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
         private string userDataObjFileName;
@@ -136,6 +157,26 @@ namespace Marv.Input
                 }
 
                 this.baseTableRange = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public List<string> ColumnNames
+        {
+            get { return columnNames; }
+            set
+            {
+                columnNames = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<EvidenceRow> CommentBlocksInfoTable
+        {
+            get { return commentBlocksInfoTable; }
+            set
+            {
+                commentBlocksInfoTable = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -214,12 +255,32 @@ namespace Marv.Input
             }
         }
 
+        public string[,] EvidenceStringArray
+        {
+            get { return evidenceStringArray; }
+            set
+            {
+                evidenceStringArray = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public bool IsCellToolbarEnabled
         {
             get { return this.isCellToolbarEnabled; }
             set
             {
                 this.isCellToolbarEnabled = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsCommentBlocksGridVisible
+        {
+            get { return isCommentBlocksGridVisible; }
+            set
+            {
+                isCommentBlocksGridVisible = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -400,6 +461,17 @@ namespace Marv.Input
             }
         }
 
+        public List<string> RowNames
+        {
+            get { return rowNames; }
+
+            set
+            {
+                rowNames = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public string SelectedColumnName
         {
             get { return this.selectedColumnName; }
@@ -520,9 +592,11 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
 
-            var themes = Enum.GetNames(typeof (DataTheme));
-            var list = from dataTheme in themes where dataTheme != "Merged" select dataTheme;
-            this.SelectionThemeComboBox.ItemsSource = list;
+            //var themes = Enum.GetValues(typeof(DataTheme)).Cast<DataTheme>().Where(e => e != DataTheme.CommentBlocks );
+            //this.SelectionThemeComboBox.ItemsSource = themes;
+           
+
+         
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -618,6 +692,30 @@ namespace Marv.Input
             this.IsTimelineToolbarVisible = false;
         }
 
+        private void CommentBlocksGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+        {
+            var columnName = e.Cell.Column.UniqueName;
+            var row = e.Cell.ParentRow.Item as EvidenceRow;
+
+            var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
+            command.Execute();
+
+            this.UpdateCommandStack(command);
+        }
+
+        private void CommentBlocksGridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
+        {
+            var row = e.Row.Item as EvidenceRow;
+
+            this.Chart.UpdateCommentBlocks(row, VerticalAxis);
+        }
+
+        private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
+        {
+            this.CommentBlocksInfoTable = new ObservableCollection<EvidenceRow>();
+            this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
+        }
+
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
             if (!this.SelectedTheme.Equals(DataTheme.User))
@@ -693,7 +791,7 @@ namespace Marv.Input
                     var beliefTable = new EvidenceTable(evidenceDateTime);
 
                     var i = 0;
-                    while (i <= noOfEvidenceRows - 1)
+                    while (i < noOfEvidenceRows)
                     {
                         var beliefRow = new EvidenceRow
                         {
@@ -811,6 +909,12 @@ namespace Marv.Input
 
         private void Go_Click(object sender, RoutedEventArgs e)
         {
+            if (this.Network == null)
+            {
+                MessageBox.Show("Network file not loaded");
+                return;
+            }
+
             this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
         }
 
@@ -862,12 +966,29 @@ namespace Marv.Input
             //{
             //    foreach (var dateTime in this.Table.DateTimes)
             //    {
-            //        this.GridView.CurrentCell.BeginEdit();
-            //        this.GridView.CurrentCell.CommitEdit();
+            //        //this.GridView.CurrentCell.BeginEdit();
+            //        //this.GridView.CurrentCell.CommitEdit();
             //    }
             //}
+            this.ColumnNames.Clear();
 
-            this.IsHeatMapVisible = true;
+            this.ColumnNames = this.Table.DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
+            this.RowNames = this.Table.Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
+            this.EvidenceStringArray = new string[this.Table.Count(), this.Table.DateTimes.Count()];
+
+            for (var row = 0; row < this.Table.Count; row++)
+            {
+                for (var dateTime = 0; dateTime < this.Table.DateTimes.Count(); dateTime++)
+                {
+                    var colName = this.Table.DateTimes.ToList()[dateTime].String();
+                    var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
+
+                    this.EvidenceStringArray[row, dateTime] = selectedVertex.Mean(beliefValue).ToString();
+                }
+            }
+
+            
+            this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
@@ -970,6 +1091,8 @@ namespace Marv.Input
 
                 var userData = this.userDataObj[DataTheme.User];
                 var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
+                this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
+                this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
 
                 foreach (var kvp in userData)
                 {
@@ -1002,10 +1125,14 @@ namespace Marv.Input
 
             this.userDataObjFileName = dialog.FileName;
 
+            this.userDataObj.Clear();
+
             foreach (var kvp in this.lineDataObj[DataTheme.User])
             {
                 this.userDataObj[DataTheme.User].Add(kvp.Key, kvp.Value);
+                this.userDataObj[DataTheme.CommentBlocks].Add(kvp.Key, CommentBlocksInfoTable);
             }
+
             foreach (var kvp in this.interpolationData)
             {
                 this.userDataObj[DataTheme.Interpolated].Add(kvp.Key, kvp.Value);
@@ -1047,6 +1174,8 @@ namespace Marv.Input
                 this.userDataObj.WriteJson(this.userDataObjFileName);
             }
         }
+
+      
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -1114,7 +1243,7 @@ namespace Marv.Input
                         var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = val;
+                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
                     }
 
                     vertexEvidences.Clear();

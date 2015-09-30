@@ -283,6 +283,49 @@ namespace Marv.Input
 
             }
         }
+
+        public static void UpdateCommentBlocks(this RadCartesianChart chart, EvidenceRow row, NumericalAxis verticalAxis )
+        {
+            var fillBrush = new SolidColorBrush(Color.FromRgb(236, 236, 236));
+            var strokeBrush = new SolidColorBrush(Colors.LightGray);
+
+            var from = (double)row["From"];
+            var to = (double)row["To"];
+            var comment = (string)row["Comment"];
+
+            chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, row));
+
+            if (from == to)
+            {
+                chart.Annotations.Add(new CartesianCustomLineAnnotation
+                {
+                    HorizontalFrom = @from,
+                    HorizontalTo = to,
+                    Stroke = strokeBrush,
+                    StrokeThickness = 2,
+                    Tag = row,
+                    VerticalFrom = verticalAxis.Minimum,
+                    VerticalTo = verticalAxis.Maximum,
+                    ZIndex = -500
+                });
+            }
+
+            else
+            {
+                chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+                {
+                    Fill = fillBrush,
+                    HorizontalFrom = @from,
+                    HorizontalTo = to,
+                    Stroke = strokeBrush,
+                    Tag = row,
+                    VerticalFrom = verticalAxis.Minimum,
+                    VerticalTo = verticalAxis.Maximum,
+                    ZIndex = -500
+                });
+            }
+        }
+
         public static string ValueToDistribution(this double[] evidenceValue)
         {
             var evidenceString = "";
