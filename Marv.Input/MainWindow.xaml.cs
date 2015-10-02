@@ -1091,8 +1091,12 @@ namespace Marv.Input
 
                 var userData = this.userDataObj[DataTheme.User];
                 var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
-                this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
-                this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
+                if (this.userDataObj[DataTheme.CommentBlocks].Values.Count >0)
+                {
+                    this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
+                    this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
+                }
+               
 
                 foreach (var kvp in userData)
                 {
