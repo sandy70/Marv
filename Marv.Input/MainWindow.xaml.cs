@@ -28,13 +28,15 @@ namespace Marv.Input
     public partial class MainWindow : INotifyPropertyChanged
     {
         private const double Tolerance = 5;
+
         private static readonly NumericalAxis LinearAxis = new LinearAxis();
         private static readonly NumericalAxis LogarithmicAxis = new LogarithmicAxis();
+
         private readonly List<ICommand> commandStack = new List<ICommand>();
         private readonly List<Object> oldValues = new List<object>();
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
+
         private int addRowCommandsCount;
-        private double adjustedSafeMax;
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
@@ -51,7 +53,6 @@ namespace Marv.Input
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isHeatMapVisible;
-        private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isModelRun;
@@ -67,7 +68,6 @@ namespace Marv.Input
         private InterpolationData selectedInterpolationData;
         private NodeData selectedNodeData = new NodeData();
         private EvidenceRow selectedRow;
-        private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
         private EvidenceTable table;
@@ -80,16 +80,6 @@ namespace Marv.Input
             set
             {
                 addRowCommandsCount = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double AdjustedSafeMax
-        {
-            get { return adjustedSafeMax; }
-            set
-            {
-                adjustedSafeMax = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -287,16 +277,6 @@ namespace Marv.Input
             }
         }
 
-        public bool IsInterpolateClicked
-        {
-            get { return isInterpolateClicked; }
-            set
-            {
-                isInterpolateClicked = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public bool IsLineDataChartVisible
         {
             get { return this.isLineDataChartVisible; }
@@ -351,22 +331,6 @@ namespace Marv.Input
                 }
 
                 this.isTimelineToolbarVisible = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ILineData LineData
-        {
-            get { return this.lineData; }
-
-            set
-            {
-                if (value.Equals(this.lineData))
-                {
-                    return;
-                }
-
-                this.lineData = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -485,7 +449,6 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
-
         public SummaryStatistic SelectedStatistic
         {
             get { return selectedStatistic; }
@@ -854,7 +817,7 @@ namespace Marv.Input
 
             var dialog = new SaveFileDialog
             {
-                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
+                Filter = LineData.FileDescription + "|*." + "xlsx",
             };
 
             var result = dialog.ShowDialog();
@@ -951,14 +914,14 @@ namespace Marv.Input
             //    }
             //}
 
-            //this.IsHeatMapVisible = !this.IsHeatMapVisible;
+              this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
+                Filter = LineData.FileDescription + "|*." + "xlsx",
             };
 
             var result = dialog.ShowDialog();
@@ -1028,7 +991,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
+                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -1036,25 +999,29 @@ namespace Marv.Input
 
             this.userDataObjFileName = dialog.FileName;
 
-            var directoryName = Path.GetDirectoryName(dialog.FileName);
-
-            if (Directory.Exists(Path.Combine(directoryName, "SectionBeliefs")) && Directory.Exists(Path.Combine(directoryName, "SectionEvidences")))
-            {
-                // This is a folder line data
-                this.LineData = LineDataFolder.Read(dialog.FileName);
-            }
-            else
-            {
-                this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
+                this.userDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, Object>>(dialog.FileName);
                 
-            }
+                var userData = this.userDataObj[DataTheme.User];
+                var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
+                this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
+                this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
+                foreach (var kvp in userData)
+                {
+                    this.lineDataObj[DataTheme.User][kvp.Key] = kvp.Value as EvidenceTable;
+                }
+                this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
+                this.UpdateTable();
+                foreach (var kvp in storedInterpolationData)
+                {
+                    this.interpolationData[kvp.Key] = kvp.Value as Dict<string, InterpolationData>;
+                }
         }
 
         private void LineDataSaveAs()
         {
             var dialog = new SaveFileDialog
             {
-                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
+                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
             };
 
             var result = dialog.ShowDialog();

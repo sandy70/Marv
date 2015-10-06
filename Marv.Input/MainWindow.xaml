@@ -97,8 +97,8 @@
 
             <MenuItem Header="Tools">
                 <MenuItem Header="HeatMap"
-                          Click="HeatMapMenuItem_Click" 
-                          IsEnabled="True"/>
+                          Click="HeatMapMenuItem_Click"
+                          IsEnabled="False" />
 
                 <MenuItem Header="CommentBlocksGrid"
                           IsCheckable="True"
@@ -180,7 +180,50 @@
 
                                     </ToolBar>
 
+                                    <!-- Define Pipeline Toolbar -->
                                     <ToolBar Band="2"
+                                             BandIndex="1"
+                                             IsEnabled="True">
+                                        <TextBlock Margin="4"
+                                                   Text="Start (m)"
+                                                   TextAlignment="Right"
+                                                   Width="64" />
+
+                                        <TextBox BorderBrush="LightSkyBlue"
+                                                 Height="32"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}"
+                                                 TextAlignment="Right"
+                                                 Width="64" />
+
+                                        <TextBlock Margin="4"
+                                                   Text="End (m)"
+                                                   TextAlignment="Right"
+                                                   Width="64" />
+
+                                        <TextBox BorderBrush="LightSkyBlue"
+                                                 Height="32"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}"
+                                                 TextAlignment="Right"
+                                                 Width="64" />
+
+                                        <TextBlock Margin="4"
+                                                   Text="Range (m)"
+                                                   TextAlignment="Right"
+                                                   Width="64" />
+
+                                        <TextBox BorderBrush="LightSkyBlue"
+                                                 Height="32"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}"
+                                                 TextAlignment="Right"
+                                                 Width="64" />
+
+                                        <telerik:RadButton Content="Go"
+                                                           FontWeight="Bold"
+                                                           Width="32"
+                                                           Click="Go_Click" />
+                                    </ToolBar>
+                                    
+                                    <!-- Export Statistics Toolbar -->
                                              BandIndex="2"
                                              IsEnabled="{Binding ElementName=Root, Path=IsModelRun}">
 
@@ -227,7 +270,7 @@
                                                      SelectionMode="Extended"
                                                      ShowGroupPanel="False"
                                                      ValidatesOnDataErrors="None"
-                                                     
+
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
                                                      
