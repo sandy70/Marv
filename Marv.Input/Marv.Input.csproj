@@ -220,9 +220,11 @@
     <Compile Include="EvidenceRow.cs" />
     <Compile Include="EvidenceTable.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="LineData.cs" />
     <Compile Include="MainWindow.Chart.cs" />
     <Compile Include="MainWindow.GridView.cs" />
     <Compile Include="MainWindow.Interpolation.cs" />
+    <Compile Include="NodeData.cs" />
     <Compile Include="PasteCommand.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SummaryStatistic.cs" />

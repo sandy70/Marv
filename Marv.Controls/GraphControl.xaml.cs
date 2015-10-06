@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Marv.Common;
+using Marv.Common.Types;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Diagrams;
 using Telerik.Windows.Diagrams.Core;
@@ -66,13 +67,14 @@ namespace Marv.Controls
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof (string), typeof (GraphControl), new PropertyMetadata(null));
 
+        
         private Graph displayGraph;
         private Graph graph;
         private bool isConnectorsManipulationEnabled;
         private bool isDefaultGroupVisible;
         private bool isManipulationAdornerVisible;
         private string selectedGroup;
-
+        private KeyedCollection<Vertex> filteredVertices = new KeyedCollection<Vertex>();
         public int AutoSaveDuration
         {
             get { return (int) this.GetValue(AutoSaveDurationProperty); }
@@ -99,6 +101,25 @@ namespace Marv.Controls
                 }
 
                 this.displayGraph = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public KeyedCollection<Vertex> FilteredVertices
+        {
+            get
+            {
+                foreach (var vertex in this.Graph.Vertices.Where(vertex => vertex.Groups.Count > 1))
+                {
+                    this.filteredVertices.Add(vertex);
+                }
+
+                return filteredVertices;
+            }
+
+            set
+            {
+                this.filteredVertices = value;
                 this.RaisePropertyChanged();
             }
         }

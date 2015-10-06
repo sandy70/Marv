@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -15,10 +14,9 @@ namespace Marv.Input
         private void DataThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.IsGridViewReadOnly = !this.SelectedTheme.Equals(DataTheme.User);
-           
+
             if (!this.SelectedTheme.Equals(DataTheme.User))
             {
-             
                 this.SelectedInterpolationData = null;
             }
 
@@ -27,10 +25,9 @@ namespace Marv.Input
                 this.UpdateTable();
             }
 
-            
-            if (this.SelectedColumnName!=null)
+            if (this.SelectedColumnName != null)
             {
-                this.Chart.Annotations.Remove(annotations =>true);
+                this.Chart.Annotations.Remove(annotations => true);
                 this.Plot(this.SelectedColumnName);
             }
         }
@@ -64,14 +61,10 @@ namespace Marv.Input
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
-       
-          
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
             this.UpdateCommandStack(command);
-
-           
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -82,7 +75,6 @@ namespace Marv.Input
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var columnName = e.Cell.Column.UniqueName;
-
 
             DateTime dateTime;
 
@@ -97,10 +89,7 @@ namespace Marv.Input
                     e.ErrorMessage = "Invalid evidence for node " + this.SelectedVertex.Key;
                 }
             }
-            else if (columnName.Equals("Comment"))
-            {
-              
-            }
+            else if (columnName.Equals("Comment")) {}
 
             else if (! (this.BaseTableMin <= (double) e.NewValue && (double) e.NewValue <= this.BaseTableMax))
             {
@@ -128,7 +117,6 @@ namespace Marv.Input
 
             if (this.SelectedColumnName.TryParse(out dateTime))
             {
-
                 if (this.SelectedTheme != DataTheme.User)
                 {
                     this.SelectedInterpolationData = null;
@@ -139,7 +127,6 @@ namespace Marv.Input
                     this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
                     this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
                 }
-               
             }
 
             if (this.selectedColumnName.TryParse(out dateTime))
@@ -184,10 +171,7 @@ namespace Marv.Input
             }
         }
 
-        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e)
-        {
-            
-        }
+        private void GridView_RowEditEnded(object sender, GridViewRowEditEndedEventArgs e) {}
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {
@@ -212,29 +196,6 @@ namespace Marv.Input
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
-        }
-
-        private void GridView_CellLoaded(object sender, CellEventArgs e)
-        {
-            //var columnName = e.Cell.Column.UniqueName;
-            //var row = e.Cell.ParentRow.Item as EvidenceRow;
-
-            //DateTime dateTime;
-            //if (this.SelectedTheme == DataTheme.User && columnName.TryParse(out dateTime) && e.Cell.GetType() == (typeof(GridViewCell)) )
-            //{
-
-            //    var cells = this.GridView.ChildrenOfType<GridViewCell>().ToList(); 
-
-            //    var template = new DataTemplate();
-            //    var factory = new FrameworkElementFactory(typeof(TextBlock));
-
-            //    factory.SetValue(TextBlock.TextProperty, "hi");
-               
-            //    template.VisualTree = factory;
-
-            //    e.Cell.ContentTemplate = template;
-
-            //}
         }
     }
 }

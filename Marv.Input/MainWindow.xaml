@@ -230,7 +230,7 @@
                                                      ValidatesOnDataErrors="None"
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
-                                                     CellLoaded="GridView_CellLoaded"
+                                                     
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
                                                      CurrentCellChanged="GridView_CurrentCellChanged"

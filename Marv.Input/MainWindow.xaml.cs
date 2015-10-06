@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -48,6 +47,7 @@ namespace Marv.Input
         private int currentCommand;
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
+        private ObservableCollection<string> displayThemes = new ObservableCollection<string>();
         private ScatterDataPoint draggedPoint;
         private DateTime endDate = DateTime.Now;
         private string[,] evidenceStringArray;
@@ -79,24 +79,12 @@ namespace Marv.Input
         private Vertex selectedVertex;
         private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-        private ObservableCollection<string> displayThemes = new ObservableCollection<string>();
-
-        public ObservableCollection<string> DisplayThemes
-        {
-            get { return displayThemes; }
-            set
-            {
-                displayThemes = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
-
 
         private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
-
+    
+        
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -236,6 +224,16 @@ namespace Marv.Input
                 }
 
                 this.dateSelectionMode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> DisplayThemes
+        {
+            get { return displayThemes; }
+            set
+            {
+                displayThemes = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -593,13 +591,9 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
 
+            // filtering CommentsBlock and MergedSet from comboBox
             var themes = Enum.GetValues(typeof (DataTheme)).Cast<DataTheme>();
-            var filtedThemes = themes.Where(theme => theme != DataTheme.CommentBlocks).ToArray();
-            this.SelectionThemeComboBox.ItemsSource = filtedThemes;
-
-
-
-
+            this.SelectionThemeComboBox.ItemsSource = themes.Where(theme => (theme != DataTheme.CommentBlocks) && (theme != DataTheme.Merged)).ToArray();
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -782,13 +776,12 @@ namespace Marv.Input
 
         private void CreateNewBeliefDataSet()
         {
-            if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count < 
-                                                                                                    this.lineDataObj[DataTheme.Merged].Values[0].Count)
+            if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count <
+                this.lineDataObj[DataTheme.Merged].Values[0].Count)
             {
                 var evidenceDateTime = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes;
                 var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
 
-                
                 this.lineDataObj[DataTheme.Beliefs] = new Dict<string, EvidenceTable>();
 
                 foreach (var vertex in this.Network.Vertices)
@@ -992,7 +985,6 @@ namespace Marv.Input
                 }
             }
 
-            
             this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
@@ -1096,12 +1088,11 @@ namespace Marv.Input
 
                 var userData = this.userDataObj[DataTheme.User];
                 var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
-                if (this.userDataObj[DataTheme.CommentBlocks].Values.Count >0)
+                if (this.userDataObj[DataTheme.CommentBlocks].Values.Count > 0)
                 {
                     this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
                     this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
                 }
-               
 
                 foreach (var kvp in userData)
                 {
@@ -1184,8 +1175,6 @@ namespace Marv.Input
             }
         }
 
-      
-
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -1244,7 +1233,6 @@ namespace Marv.Input
                         this.CreateNewBeliefDataSet();
                     }
 
-                  
                     foreach (var kvp in nodeBelief)
                     {
                         var nodeKey = kvp.Key;
