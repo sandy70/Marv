@@ -172,7 +172,7 @@
 
                                         <telerik:RadComboBox Name="SelectionThemeComboBox"
                                                              IsFilteringEnabled="True"
-                                                             ItemsSource="{Binding  Source={StaticResource SelectionThemes}}"
+                                                             
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"

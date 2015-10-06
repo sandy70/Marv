@@ -78,9 +78,14 @@ namespace Marv.Input
                     }
                 }
 
+                else if (vertexEvidence.Type == VertexEvidenceType.Triangular)
+                {
+                    this.Chart.AddTriangularDistributionAnnotation(this.SelectedVertex, dataRow, columnName);
+                }
+
                 else if (vertexEvidence.Type != VertexEvidenceType.Null)
                 {
-                    this.Chart.AddDistributionAnnotation(this.SelectedVertex, dataRow, columnName);
+                    this.Chart.AddInterpolatedDistributionAnnotation(this.SelectedVertex, dataRow, columnName);
                 }
             }
 

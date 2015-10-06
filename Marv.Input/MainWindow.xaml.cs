@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -592,12 +593,13 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
 
-            //var themes = Enum.GetValues(typeof(DataTheme)).Cast<DataTheme>().Where(e => e != DataTheme.CommentBlocks );
-            //this.SelectionThemeComboBox.ItemsSource = themes;
-           
+            var themes = Enum.GetValues(typeof (DataTheme)).Cast<DataTheme>();
+            var filtedThemes = themes.Where(theme => theme != DataTheme.CommentBlocks).ToArray();
+            this.SelectionThemeComboBox.ItemsSource = filtedThemes;
 
 
-         
+
+
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -780,11 +782,13 @@ namespace Marv.Input
 
         private void CreateNewBeliefDataSet()
         {
-            if (this.lineDataObj[DataTheme.Beliefs].Count == 0)
+            if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count < 
+                                                                                                    this.lineDataObj[DataTheme.Merged].Values[0].Count)
             {
                 var evidenceDateTime = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes;
                 var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
 
+                
                 this.lineDataObj[DataTheme.Beliefs] = new Dict<string, EvidenceTable>();
 
                 foreach (var vertex in this.Network.Vertices)
@@ -1235,11 +1239,12 @@ namespace Marv.Input
 
                     var nodeBelief = this.Network.Run(vertexEvidences);
 
-                    if (this.lineDataObj[DataTheme.Beliefs].Count == 0)
+                    if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count < noOfEvidenceRows)
                     {
                         this.CreateNewBeliefDataSet();
                     }
 
+                  
                     foreach (var kvp in nodeBelief)
                     {
                         var nodeKey = kvp.Key;

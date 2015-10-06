@@ -50,7 +50,7 @@ namespace Marv.Common
             }
 
             double value;
-            if (double.TryParse(anEvidenceString, out value) && stateList.GetSafeMin() <= value && value <= stateList.GetSafeMax())
+            if (double.TryParse(anEvidenceString, out value) && stateList.GetSafeMin() <= value && value <= stateList.GetSafeMax() && anEvidenceString!="0,1,0,0")
             {
                 return new VertexEvidence
                 {

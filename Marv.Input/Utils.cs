@@ -20,7 +20,7 @@ namespace Marv.Input
         public const string MinInterpolatorLine = "MinimumLine";
         public const string ModeInterpolatorLine = "ModeLine";
 
-        public static void AddDistributionAnnotation(this RadCartesianChart chart, Vertex selectedVertex, EvidenceRow dataRow, string columnName)
+        public static void AddTriangularDistributionAnnotation(this RadCartesianChart chart, Vertex selectedVertex, EvidenceRow dataRow, string columnName)
         {
             var from = (double) dataRow["From"];
             var to = (double) dataRow["To"];
