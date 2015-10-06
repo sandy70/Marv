@@ -98,7 +98,7 @@
             <MenuItem Header="Tools">
                 <MenuItem Header="HeatMap"
                           Click="HeatMapMenuItem_Click" 
-                          IsEnabled="False"/>
+                          IsEnabled="True"/>
 
                 <MenuItem Header="CommentBlocksGrid"
                           IsCheckable="True"
@@ -141,54 +141,7 @@
                                         </ResourceDictionary>
                                     </ToolBarTray.Resources>
 
-                                    <!-- Define Timeline Toolbar -->
-                                    <ToolBar Band="1" IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
-                                             Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
-                                        <ToolBar.Resources>
-                                            <ObjectDataProvider MethodName="GetValues"
-                                                                ObjectType="{x:Type sys:Enum}"
-                                                                x:Key="DateSelectionModes">
-                                                <ObjectDataProvider.MethodParameters>
-                                                    <x:Type TypeName="calendar:DateSelectionMode" />
-                                                </ObjectDataProvider.MethodParameters>
-                                            </ObjectDataProvider>
-                                        </ToolBar.Resources>
-
-                                        <TextBlock Margin="4"
-                                                   Text="Start Time" />
-
-                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
-                                                                   InputMode="DatePicker"
-                                                                   SelectedValue="{Binding ElementName=Root, Path=StartDate}"
-                                                                   SelectionChanged="StartDateTimePicker_SelectionChanged" />
-
-                                        <TextBlock Margin="4"
-                                                   Text="End Time" />
-
-                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
-                                                                   InputMode="DatePicker"
-                                                                   SelectedValue="{Binding ElementName=Root, Path=EndDate}"
-                                                                   SelectionChanged="EndDateTimePicker_SelectionChanged" />
-
-                                        <TextBlock Margin="4"
-                                                   Text="Interval" />
-
-                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
-                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}"
-                                                             Width="64" />
-
-                                        <telerik:RadButton Content="Apply"
-                                                           Padding="4"
-                                                           Width="64"
-                                                           Click="ApplyButton_Click" />
-
-                                        <telerik:RadButton Content="Close"
-                                                           Padding="4"
-                                                           Width="64"
-                                                           Click="CloseButton_Click" />
-                                    </ToolBar>
-
-                                    <!-- Cell Toolbar -->
+                                   <!-- Cell Toolbar -->
                                     <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider x:Key="SelectionThemes"
@@ -226,30 +179,6 @@
                                                              Width="100"
                                                              SelectionChanged="DataThemeComboBox_SelectionChanged" />
 
-                                    </ToolBar>
-
-                                    <ToolBar Band="2"
-                                             BandIndex="1"
-                                             IsEnabled="True">
-
-                                        <Label Name="Start" Width="70" Content="Start (m)" />
-                                        <TextBox Width="50"
-                                                 BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}" />
-                                        <Label Name="End" Width="70" Content="End (m)" />
-                                        <TextBox Width="50"
-                                                 BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}" />
-                                        <Label Name="Range" Width="75" Content="Range (m)" />
-                                        <TextBox Width="50"
-                                                 BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}" />
-                                        <telerik:RadButton Content="Go"
-                                                           FontWeight="Bold"
-                                                           Height="22"
-                                                           Name="Go"
-                                                           Width="30"
-                                                           Click="Go_Click" />
                                     </ToolBar>
 
                                     <ToolBar Band="2"
@@ -301,6 +230,7 @@
                                                      ValidatesOnDataErrors="None"
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
+                                                     CellLoaded="GridView_CellLoaded"
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
@@ -333,8 +263,84 @@
                         <telerik:RadPane Header="CommentBlocks"
                                          IsHidden="{Binding ElementName=Root, Path=IsCommentBlocksGridVisible, Converter={StaticResource BooleanNot}}">
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                
+                                <ToolBarTray Grid.Row="0">
+                                    <ToolBar Band="1" IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
+                                             Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
+                                        <ToolBar.Resources>
+                                            <ObjectDataProvider MethodName="GetValues"
+                                                                ObjectType="{x:Type sys:Enum}"
+                                                                x:Key="DateSelectionModes">
+                                                <ObjectDataProvider.MethodParameters>
+                                                    <x:Type TypeName="calendar:DateSelectionMode" />
+                                                </ObjectDataProvider.MethodParameters>
+                                            </ObjectDataProvider>
+                                        </ToolBar.Resources>
+
+                                        <TextBlock Margin="4"
+                                                   Text="Start Time" />
+
+                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=StartDate}"
+                                                                   SelectionChanged="StartDateTimePicker_SelectionChanged" />
+
+                                        <TextBlock Margin="4"
+                                                   Text="End Time" />
+
+                                        <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=EndDate}"
+                                                                   SelectionChanged="EndDateTimePicker_SelectionChanged" />
+
+                                        <TextBlock Margin="4"
+                                                   Text="Interval" />
+
+                                        <telerik:RadComboBox ItemsSource="{Binding Source={StaticResource DateSelectionModes}}"
+                                                             SelectedItem="{Binding ElementName=Root, Path=DateSelectionMode}"
+                                                             Width="64" />
+
+                                        <telerik:RadButton Content="Apply"
+                                                           Padding="4"
+                                                           Width="64"
+                                                           Click="ApplyButton_Click" />
+
+                                        <telerik:RadButton Content="Close"
+                                                           Padding="4"
+                                                           Width="64"
+                                                           Click="CloseButton_Click" />
+                                    </ToolBar>
+
+                                    <ToolBar Band="2"
+                                             BandIndex="0"
+                                             IsEnabled="True">
+
+                                        <Label Name="Start" Width="70" Content="Start (m)" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}" />
+                                        <Label Name="End" Width="70" Content="End (m)" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}" />
+                                        <Label Name="Range" Width="75" Content="Range (m)" />
+                                        <TextBox Width="50"
+                                                 BorderBrush="CadetBlue"
+                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}" />
+                                        <telerik:RadButton Content="Go"
+                                                           FontWeight="Bold"
+                                                           Height="22"
+                                                           Name="Go"
+                                                           Width="30"
+                                                           Click="Go_Click" />
+                                    </ToolBar>
+                                </ToolBarTray>
                                 <telerik:RadGridView Name="CommentBlocksGridView"
-                                                     Grid.Row="0"
+                                                     Grid.Row="1"
                                                      CanUserFreezeColumns="False"
                                                      CanUserInsertRows="True"
                                                      CanUserDeleteRows="True"
@@ -541,4 +547,5 @@
                             Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}"
                             Height="28" />
     </Grid>
+    
 </Window>

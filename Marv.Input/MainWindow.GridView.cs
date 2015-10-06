@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Marv.Common;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
@@ -26,6 +27,7 @@ namespace Marv.Input
                 this.UpdateTable();
             }
 
+            
             if (this.SelectedColumnName!=null)
             {
                 this.Chart.Annotations.Remove(annotations =>true);
@@ -62,10 +64,14 @@ namespace Marv.Input
             var row = e.Cell.ParentRow.Item as EvidenceRow;
             var vertexEvidence = this.selectedVertex.States.ParseEvidenceString(e.NewData as string);
 
+       
+          
             var command = new CellEditCommand(row, columnName, this.SelectedVertex, e.NewData, e.OldData);
             command.Execute();
 
             this.UpdateCommandStack(command);
+
+           
 
             if (vertexEvidence.Type != VertexEvidenceType.Invalid)
             {
@@ -76,6 +82,7 @@ namespace Marv.Input
         private void GridView_CellValidating(object sender, GridViewCellValidatingEventArgs e)
         {
             var columnName = e.Cell.Column.UniqueName;
+
 
             DateTime dateTime;
 
@@ -205,6 +212,29 @@ namespace Marv.Input
             var columnName = this.CurrentColumn == null ? this.Table.DateTimes.First().String() : this.CurrentColumn.UniqueName;
 
             this.Plot(columnName);
+        }
+
+        private void GridView_CellLoaded(object sender, CellEventArgs e)
+        {
+            //var columnName = e.Cell.Column.UniqueName;
+            //var row = e.Cell.ParentRow.Item as EvidenceRow;
+
+            //DateTime dateTime;
+            //if (this.SelectedTheme == DataTheme.User && columnName.TryParse(out dateTime) && e.Cell.GetType() == (typeof(GridViewCell)) )
+            //{
+
+            //    var cells = this.GridView.ChildrenOfType<GridViewCell>().ToList(); 
+
+            //    var template = new DataTemplate();
+            //    var factory = new FrameworkElementFactory(typeof(TextBlock));
+
+            //    factory.SetValue(TextBlock.TextProperty, "hi");
+               
+            //    template.VisualTree = factory;
+
+            //    e.Cell.ContentTemplate = template;
+
+            //}
         }
     }
 }

@@ -14,10 +14,12 @@ namespace Marv.Input
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
+          
             var cell = container as GridViewCell;
             var evidenceRow = cell.ParentRow.Item as EvidenceRow;
             var column = cell.Column;
 
+            
             try
             {
                 var cellValue = evidenceRow[column.UniqueName];
@@ -57,7 +59,7 @@ namespace Marv.Input
 
                 DateTime dateTime;
 
-                if (column.UniqueName.TryParse(out dateTime))
+                if (column.UniqueName.TryParse(out dateTime) )
                 {
                     return this.SparkLineTemplate;
                 }
