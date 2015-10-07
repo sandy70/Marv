@@ -264,7 +264,7 @@ namespace Marv.Common
 
         public static string ToJson(this object _object)
         {
-            return JsonConvert.SerializeObject(_object);
+            return JsonConvert.SerializeObject(_object, Formatting.Indented);
         }
 
         public static LocationCollection ToLocationCollection(this IEnumerable<Location> locations)

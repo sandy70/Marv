@@ -7,19 +7,24 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Marv.Common.Distributions;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 using Smile;
 
 namespace Marv.Common
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Network : Smile.Network, INotifyPropertyChanged
     {
         private const string BeliefFileExtension = "marv-networkbelief";
 
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
+
+        [JsonProperty]
         public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
         private string fileName;
 
+        [JsonProperty]
         public string FileName
         {
             get { return this.fileName; }
