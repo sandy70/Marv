@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Marv.WCFServiceWebRole.NetworkService" CodeBehind="NetworkService.svc.cs" %>
