@@ -289,8 +289,9 @@ namespace Marv.Input
             return numberPoints.Select(scatterDataPoint => scatterDataPoint.YValue != null ? scatterDataPoint.YValue.Value : 0);
         }
 
-        public static Dict<string, EvidenceTable> Merge(Dict<string, EvidenceTable> unmergedEvidenceSet, List<double> baseRowsList, Network network)
+        public static Dict<string, EvidenceTable> Merge(Dict<string, NodeData> userDataObj, List<double> baseRowsList, Network network)
         {
+            var unmergedEvidenceSet = new Dict<string, EvidenceTable>();
             var mergedEvidenceSet = new Dict<string, EvidenceTable>();
             var newList = new List<double>();
 
@@ -299,6 +300,11 @@ namespace Marv.Input
                 newList = baseRowsList.ToList();
             }
 
+            foreach (var kvp in userDataObj)
+            {
+                unmergedEvidenceSet.Add(kvp.Key, kvp.Value.UserTable);
+            }
+            
             // Generate a list which holds the modified section ranges
             foreach (var kvp in unmergedEvidenceSet)
             {

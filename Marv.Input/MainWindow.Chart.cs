@@ -12,9 +12,9 @@ namespace Marv.Input
         {
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
 
-            if (CommentBlocksInfoTable != null)
+            if (this.PipeLineData.CommentBlocks != null)
             {
-                foreach (var row in this.CommentBlocksInfoTable)
+                foreach (var row in this.PipeLineData.CommentBlocks)
                 {
                     this.Chart.UpdateCommentBlocks(row, VerticalAxis);
                 }

@@ -3,9 +3,6 @@
     public enum DataTheme
     {
         User,
-        Interpolated,
-        Merged,
         Beliefs,
-        CommentBlocks,
     }
 }

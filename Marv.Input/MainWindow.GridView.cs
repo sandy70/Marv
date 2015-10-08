@@ -124,7 +124,8 @@ namespace Marv.Input
 
                 else
                 {
-                    this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                   // this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                    this.SelectedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
                     this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
                 }
             }

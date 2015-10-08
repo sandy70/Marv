@@ -1,25 +1,30 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 
 namespace Marv.Input
 {
-    internal class NodeData
+    public class NodeData
     {
-        private Dict<string, InterpolationData> nodeInterpolatedData;
+        
+        private Dict<string, InterpolationData> interpolatedNodeData;
         private EvidenceTable userTable;
-
-        public Dict<string, InterpolationData> NodeInterpolatedData
+        
+        [JsonProperty]
+        public Dict<string, InterpolationData> InterpolatedNodeData
         {
-            get { return nodeInterpolatedData; }
+            get { return interpolatedNodeData; }
             set
             {
-                nodeInterpolatedData = value;
+                interpolatedNodeData = value;
                 this.RaisePropertyChanged();
             }
         }
 
-        public EvidenceTable Table
+        [JsonProperty]
+        public EvidenceTable UserTable
         {
             get { return userTable; }
             set
@@ -27,6 +32,12 @@ namespace Marv.Input
                 userTable = value;
                 this.RaisePropertyChanged();
             }
+        }
+
+        public NodeData()
+        {
+            this.InterpolatedNodeData = new Dict<string, InterpolationData>();
+            this.UserTable = new EvidenceTable();
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)

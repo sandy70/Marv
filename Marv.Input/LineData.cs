@@ -1,19 +1,23 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 
 namespace Marv.Input
 {
-    internal class LineData
+    public class LineData
     {
-        private double baseTableMax = 100;
+        private double baseTableMax;
         private double baseTableMin;
-        private double baseTableRange = 10;
-        private DateTime endDate = DateTime.Now;
-        private DateTime startDate = DateTime.Now;
-        private Dict<string, NodeData> userDataObj = new Dict<string, NodeData>();
+        private double baseTableRange;
+        private ObservableCollection<EvidenceRow> commentBlocks = new ObservableCollection<EvidenceRow>();
+        private DateTime endDate;
+        private DateTime startDate;
+        private Dict<string, NodeData> userDataObj;
 
+        [JsonProperty]
         public double BaseTableMax
         {
             get { return this.baseTableMax; }
@@ -29,6 +33,7 @@ namespace Marv.Input
             }
         }
 
+        [JsonProperty]
         public double BaseTableMin
         {
             get { return this.baseTableMin; }
@@ -44,6 +49,7 @@ namespace Marv.Input
             }
         }
 
+        [JsonProperty]
         public double BaseTableRange
         {
             get { return this.baseTableRange; }
@@ -58,6 +64,18 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
+
+        [JsonProperty]
+        public ObservableCollection<EvidenceRow> CommentBlocks
+        {
+            get { return commentBlocks; }
+            set
+            {
+                this.commentBlocks = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
 
         public DateTime EndDate
         {
@@ -91,10 +109,25 @@ namespace Marv.Input
             }
         }
 
+        [JsonProperty]
         public Dict<string, NodeData> UserDataObj
         {
-            get { return userDataObj; }
-            set { userDataObj = value; }
+            get { return this.userDataObj; }
+            set
+            {
+                userDataObj = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public LineData()
+        {
+            BaseTableMin = 0;
+            BaseTableMax = 100;
+            BaseTableRange = 10;
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now;
+            UserDataObj = new Dict<string, NodeData>();
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)

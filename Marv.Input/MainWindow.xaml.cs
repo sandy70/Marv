@@ -13,7 +13,6 @@ using System.Windows.Input;
 using Marv.Common;
 using Marv.Common.Types;
 using Microsoft.Win32;
-using Telerik.Charting;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.Calendar;
 using Telerik.Windows.Controls.ChartView;
@@ -39,52 +38,42 @@ namespace Marv.Input
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
+        private Dict<string, EvidenceTable> beliefsData = new Dict<string,EvidenceTable>();
         private List<string> columnNames = new List<string>();
-
-        private ObservableCollection<EvidenceRow> commentBlocksInfoTable;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
         private DateSelectionMode dateSelectionMode = DateSelectionMode.Year;
         private List<DateTime> dates = new List<DateTime> { DateTime.Now };
-        private ObservableCollection<string> displayThemes = new ObservableCollection<string>();
-        private ScatterDataPoint draggedPoint;
-        private DateTime endDate = DateTime.Now;
         private string[,] evidenceStringArray;
-        private Dict<string, string, InterpolationData> interpolationData = new Dict<string, string, InterpolationData>();
         private bool isCellToolbarEnabled;
         private bool isCommentBlocksGridVisible;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
         private bool isHeatMapVisible;
-
         private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
         private bool isModelRun;
         private bool isTimelineToolbarVisible;
         private ILineData lineData;
-        private Dict<DataTheme, string, EvidenceTable> lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
-
         private Network network;
         private GridViewNewRowPosition newRowPosition = GridViewNewRowPosition.None;
         private NotificationCollection notifications = new NotificationCollection();
+        private LineData pipeLineData = new LineData();
         private string requiredPercentiles;
         private List<string> rowNames = new List<string>();
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
+        private NodeData selectedNodeData = new NodeData();
         private EvidenceRow selectedRow;
         private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
-        private DateTime startDate = DateTime.Now;
         private EvidenceTable table;
-
-        private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, Object>();
-        private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
-    
-        
+        private string userDataObjFileName;
+
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -150,22 +139,22 @@ namespace Marv.Input
             }
         }
 
+        public Dict<string, EvidenceTable> BeliefsData
+        {
+            get { return beliefsData; }
+            set
+            {
+                beliefsData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public List<string> ColumnNames
         {
             get { return columnNames; }
             set
             {
                 columnNames = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<EvidenceRow> CommentBlocksInfoTable
-        {
-            get { return commentBlocksInfoTable; }
-            set
-            {
-                commentBlocksInfoTable = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -224,32 +213,6 @@ namespace Marv.Input
                 }
 
                 this.dateSelectionMode = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> DisplayThemes
-        {
-            get { return displayThemes; }
-            set
-            {
-                displayThemes = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public DateTime EndDate
-        {
-            get { return this.endDate; }
-
-            set
-            {
-                if (value.Equals(this.endDate))
-                {
-                    return;
-                }
-
-                this.endDate = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -450,6 +413,16 @@ namespace Marv.Input
             }
         }
 
+        public LineData PipeLineData
+        {
+            get { return pipeLineData; }
+            set
+            {
+                pipeLineData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public string RequiredPercentiles
         {
             get { return requiredPercentiles; }
@@ -503,6 +476,16 @@ namespace Marv.Input
             }
         }
 
+        public NodeData SelectedNodeData
+        {
+            get { return selectedNodeData; }
+            set
+            {
+                selectedNodeData = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public SummaryStatistic SelectedStatistic
         {
             get { return selectedStatistic; }
@@ -515,11 +498,10 @@ namespace Marv.Input
 
         public DataTheme SelectedTheme
         {
-            get { return this.selectedTheme; }
-
+            get { return selectedTheme; }
             set
             {
-                this.selectedTheme = value;
+                selectedTheme = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -531,22 +513,6 @@ namespace Marv.Input
             set
             {
                 this.selectedVertex = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public DateTime StartDate
-        {
-            get { return this.startDate; }
-
-            set
-            {
-                if (value.Equals(this.startDate))
-                {
-                    return;
-                }
-
-                this.startDate = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -590,10 +556,6 @@ namespace Marv.Input
 
             LogarithmicAxis.SetBinding(NumericalAxis.MaximumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMax") });
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
-
-            // filtering CommentsBlock and MergedSet from comboBox
-            var themes = Enum.GetValues(typeof (DataTheme)).Cast<DataTheme>();
-            this.SelectionThemeComboBox.ItemsSource = themes.Where(theme => (theme != DataTheme.CommentBlocks) && (theme != DataTheme.Merged)).ToArray();
         }
 
         protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -615,9 +577,9 @@ namespace Marv.Input
         {
             this.dates = new List<DateTime>();
 
-            var date = this.StartDate;
+            var date = this.PipeLineData.StartDate;
 
-            while (date < this.EndDate)
+            while (date < this.PipeLineData.EndDate)
             {
                 var incrementFuncs = new Dict<DateSelectionMode, Func<int, DateTime>>
                 {
@@ -632,7 +594,8 @@ namespace Marv.Input
 
             this.dates.Add(date);
 
-            this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
+            //this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
+            this.PipeLineData.UserDataObj = new Dict<string, NodeData>();
 
             this.UpdateTable();
         }
@@ -642,16 +605,18 @@ namespace Marv.Input
             this.UpdateVerticalAxis();
         }
 
-        private void CaptureInterpolatedData(Dict<string, EvidenceTable> mergedDataSet)
+        private Dict<string, EvidenceTable> CaptureInterpolatedData(Dict<string, EvidenceTable> mergedDataSet)
         {
+            var interpolatedData = new Dict<string, EvidenceTable>();
+
             if (this.SelectedInterpolationData == null)
             {
-                return;
+                return interpolatedData;
             }
 
-            foreach (var kvp in this.interpolationData)
+            foreach (var kvp in this.PipeLineData.UserDataObj)
             {
-                foreach (var column in kvp.Value)
+                foreach (var column in kvp.Value.InterpolatedNodeData)
                 {
                     if (column.Value.Points == null)
                     {
@@ -670,7 +635,7 @@ namespace Marv.Input
                         interpolatedTable.Add(interpolatedRow);
                     }
 
-                    this.lineDataObj[DataTheme.Interpolated].Add(kvp.Key, interpolatedTable);
+                    interpolatedData.Add(kvp.Key, interpolatedTable);
 
                     foreach (var interpolatedRow in interpolatedTable)
                     {
@@ -682,6 +647,8 @@ namespace Marv.Input
                     }
                 }
             }
+
+            return interpolatedData;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -709,8 +676,7 @@ namespace Marv.Input
 
         private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
         {
-            this.CommentBlocksInfoTable = new ObservableCollection<EvidenceRow>();
-            this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
+           this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
         }
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
@@ -774,15 +740,15 @@ namespace Marv.Input
             }
         }
 
-        private void CreateNewBeliefDataSet()
+        private void CreateNewBeliefDataSet(Dict<string,EvidenceTable> mergedDataSet)
         {
-            if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count <
-                this.lineDataObj[DataTheme.Merged].Values[0].Count)
+            if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count <
+                mergedDataSet.Values[0].Count)
             {
-                var evidenceDateTime = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes;
-                var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
+                var evidenceDateTime = mergedDataSet.Values[0].DateTimes;
+                var noOfEvidenceRows = mergedDataSet.Values[0].Count;
 
-                this.lineDataObj[DataTheme.Beliefs] = new Dict<string, EvidenceTable>();
+                this.BeliefsData = new Dict<string, EvidenceTable>();
 
                 foreach (var vertex in this.Network.Vertices)
                 {
@@ -793,15 +759,15 @@ namespace Marv.Input
                     {
                         var beliefRow = new EvidenceRow
                         {
-                            From = this.lineDataObj[DataTheme.Merged][0].Value[i].From,
-                            To = this.lineDataObj[DataTheme.Merged][0].Value[i].To
+                            From = mergedDataSet[0].Value[i].From,
+                            To = mergedDataSet[0].Value[i].To
                         };
 
                         beliefTable.Add(beliefRow);
                         i++;
                     }
 
-                    this.lineDataObj[DataTheme.Beliefs].Add(vertex.Key, beliefTable);
+                    this.BeliefsData.Add(vertex.Key, beliefTable);
                 }
             }
         }
@@ -813,9 +779,9 @@ namespace Marv.Input
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.StartDate > this.EndDate)
+            if (this.PipeLineData.StartDate > this.PipeLineData.EndDate)
             {
-                this.StartDate = this.EndDate;
+                this.PipeLineData.StartDate = this.PipeLineData.EndDate;
             }
         }
 
@@ -863,17 +829,17 @@ namespace Marv.Input
             }
 
             var noOfDateTimes = this.Table.DateTimes.Count();
-            var evidenceRowCount = this.lineDataObj[DataTheme.Beliefs].Values[0].Count;
+            var evidenceRowCount = this.BeliefsData.Values[0].Count;
 
             for (var row = 0; row < evidenceRowCount; row++)
             {
-                worksheet.Cells[row + 2, 0].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["From"].ToString());
-                worksheet.Cells[row + 2, 1].SetValue(this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row]["To"].ToString());
+                worksheet.Cells[row + 2, 0].SetValue(this.BeliefsData[this.SelectedVertex.Key][row]["From"].ToString());
+                worksheet.Cells[row + 2, 1].SetValue(this.BeliefsData[this.SelectedVertex.Key][row]["To"].ToString());
 
                 for (var dateTime = 0; dateTime < noOfDateTimes; dateTime++)
                 {
                     var colName = this.Table.DateTimes.ToList()[dateTime].String();
-                    var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
+                    var beliefValue = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as double[]);
 
                     var mean = selectedVertex.Mean(beliefValue);
                     var stdv = selectedVertex.StandardDeviation(beliefValue);
@@ -920,7 +886,7 @@ namespace Marv.Input
         {
             if (this.selectedRow != null && this.SelectedColumnName != null && this.SelectedVertex != null)
             {
-                var selectRow = this.lineDataObj[DataTheme.User][this.SelectedVertex.Key].FirstOrDefault(row => row.Equals(this.selectedRow));
+                var selectRow = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].UserTable.FirstOrDefault(row => row.Equals(this.selectedRow));
 
                 if (selectRow != null)
                 {
@@ -948,7 +914,7 @@ namespace Marv.Input
 
             if (this.SelectedColumnName != null)
             {
-                this.SelectedInterpolationData = this.interpolationData[this.SelectedVertex.Key][this.SelectedColumnName];
+                this.SelectedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
             }
 
             this.Chart.Annotations.Remove(annotation => true);
@@ -968,24 +934,24 @@ namespace Marv.Input
             //        //this.GridView.CurrentCell.CommitEdit();
             //    }
             //}
-            this.ColumnNames.Clear();
+            //this.ColumnNames.Clear();
 
-            this.ColumnNames = this.Table.DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
-            this.RowNames = this.Table.Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
-            this.EvidenceStringArray = new string[this.Table.Count(), this.Table.DateTimes.Count()];
+            //this.ColumnNames = this.Table.DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
+            //this.RowNames = this.Table.Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
+            //this.EvidenceStringArray = new string[this.Table.Count(), this.Table.DateTimes.Count()];
 
-            for (var row = 0; row < this.Table.Count; row++)
-            {
-                for (var dateTime = 0; dateTime < this.Table.DateTimes.Count(); dateTime++)
-                {
-                    var colName = this.Table.DateTimes.ToList()[dateTime].String();
-                    var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
+            //for (var row = 0; row < this.Table.Count; row++)
+            //{
+            //    for (var dateTime = 0; dateTime < this.Table.DateTimes.Count(); dateTime++)
+            //    {
+            //        var colName = this.Table.DateTimes.ToList()[dateTime].String();
+            //        var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
 
-                    this.EvidenceStringArray[row, dateTime] = selectedVertex.Mean(beliefValue).ToString();
-                }
-            }
+            //        this.EvidenceStringArray[row, dateTime] = selectedVertex.Mean(beliefValue).ToString();
+            //    }
+            //}
 
-            this.IsHeatMapVisible = !this.IsHeatMapVisible;
+            //this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1044,19 +1010,17 @@ namespace Marv.Input
         {
             this.LineDataSaveAs();
 
-            this.lineDataObj = new Dict<DataTheme, string, EvidenceTable>();
-            this.BaseTableMax = 100;
-            this.BaseTableMin = 0;
-            this.BaseTableRange = 10;
+            this.PipeLineData = new LineData();
 
             this.Chart.Annotations.Remove(annotation => true);
+
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
             this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
             this.IsModelRun = false;
-            this.interpolationData = new Dict<string, string, InterpolationData>();
-            this.SelectedTheme = DataTheme.User;
+            //this.interpolationData = new Dict<string, string, InterpolationData>();
+
             this.UpdateTable();
         }
 
@@ -1068,10 +1032,7 @@ namespace Marv.Input
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() != true)
-            {
-                return;
-            }
+            if (dialog.ShowDialog() != true) {}
 
             this.userDataObjFileName = dialog.FileName;
 
@@ -1084,28 +1045,8 @@ namespace Marv.Input
             }
             else
             {
-                this.userDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, Object>>(dialog.FileName);
-
-                var userData = this.userDataObj[DataTheme.User];
-                var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
-                if (this.userDataObj[DataTheme.CommentBlocks].Values.Count > 0)
-                {
-                    this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
-                    this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
-                }
-
-                foreach (var kvp in userData)
-                {
-                    this.lineDataObj[DataTheme.User][kvp.Key] = kvp.Value as EvidenceTable;
-                }
-
-                this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
-                this.UpdateTable();
-
-                foreach (var kvp in storedInterpolationData)
-                {
-                    this.interpolationData[kvp.Key] = kvp.Value as Dict<string, InterpolationData>;
-                }
+                this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
+                
             }
         }
 
@@ -1125,20 +1066,10 @@ namespace Marv.Input
 
             this.userDataObjFileName = dialog.FileName;
 
-            this.userDataObj.Clear();
-
-            foreach (var kvp in this.lineDataObj[DataTheme.User])
+            if (this.userDataObjFileName != null)
             {
-                this.userDataObj[DataTheme.User].Add(kvp.Key, kvp.Value);
-                this.userDataObj[DataTheme.CommentBlocks].Add(kvp.Key, CommentBlocksInfoTable);
+                this.PipeLineData.WriteJson(this.userDataObjFileName);
             }
-
-            foreach (var kvp in this.interpolationData)
-            {
-                this.userDataObj[DataTheme.Interpolated].Add(kvp.Key, kvp.Value);
-            }
-
-            this.userDataObj.WriteJson(this.userDataObjFileName);
         }
 
         private void LineDataSaveAsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1154,7 +1085,7 @@ namespace Marv.Input
             }
             else
             {
-                this.userDataObj.WriteJson(this.userDataObjFileName);
+                this.PipeLineData.WriteJson(this.userDataObjFileName);
             }
         }
 
@@ -1171,7 +1102,7 @@ namespace Marv.Input
             }
             else
             {
-                this.userDataObj.WriteJson(this.userDataObjFileName);
+                this.PipeLineData.WriteJson(this.userDataObjFileName);
             }
         }
 
@@ -1185,22 +1116,19 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Dict<string, EvidenceTable> mergedDataSet = null;
+            
             try
             {
-                if (this.SelectedTheme.Equals(DataTheme.User) || this.SelectedTheme.Equals(DataTheme.Interpolated))
-                {
-                    List<double> baseRowsList = null;
+                List<double> baseRowsList = null;
 
-                    baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
+                baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
 
-                    var mergedDataSet = Utils.Merge(this.lineDataObj[DataTheme.User], baseRowsList, this.Network);
+                mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
 
-                    CaptureInterpolatedData(mergedDataSet);
+                var interpolatedData = CaptureInterpolatedData(mergedDataSet);
 
-                    mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(this.lineDataObj[DataTheme.Interpolated]);
-
-                    this.lineDataObj[DataTheme.Merged] = mergedDataSet;
-                }
+                mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(interpolatedData);
             }
             catch (Exception)
             {
@@ -1208,14 +1136,14 @@ namespace Marv.Input
             }
 
             var vertexEvidences = new Dict<string, VertexEvidence>();
-            var noOfEvidenceRows = this.lineDataObj[DataTheme.Merged].Values[0].Count;
-            var noOfDateTimes = this.lineDataObj[DataTheme.Merged].Values[0].DateTimes.Count();
+            var noOfEvidenceRows = mergedDataSet.Values[0].Count;
+            var noOfDateTimes = mergedDataSet.Values[0].DateTimes.Count();
 
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
                 for (var dateTimecount = 0; dateTimecount < noOfDateTimes; dateTimecount++)
                 {
-                    foreach (var kvp in this.lineDataObj[DataTheme.Merged])
+                    foreach (var kvp in mergedDataSet)
                     {
                         var nodeKey = kvp.Key;
                         var evidenceTable = kvp.Value;
@@ -1228,9 +1156,9 @@ namespace Marv.Input
 
                     var nodeBelief = this.Network.Run(vertexEvidences);
 
-                    if (this.lineDataObj[DataTheme.Beliefs].Count == 0 || this.lineDataObj[DataTheme.Beliefs][this.lineDataObj[DataTheme.Beliefs][0].Key].Count < noOfEvidenceRows)
+                    if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count < noOfEvidenceRows)
                     {
-                        this.CreateNewBeliefDataSet();
+                        this.CreateNewBeliefDataSet(mergedDataSet);
                     }
 
                     foreach (var kvp in nodeBelief)
@@ -1238,7 +1166,7 @@ namespace Marv.Input
                         var nodeKey = kvp.Key;
                         var val = kvp.Value;
 
-                        var beliefTable = this.lineDataObj[DataTheme.Beliefs][nodeKey];
+                        var beliefTable = this.BeliefsData[nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
                         beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
@@ -1250,7 +1178,7 @@ namespace Marv.Input
             this.SelectedTheme = DataTheme.Beliefs;
             MessageBox.Show("Model run sucessful");
 
-            if (this.lineDataObj[DataTheme.Beliefs].Count > 0)
+            if (this.BeliefsData.Count > 0)
             {
                 this.IsModelRun = true;
             }
@@ -1268,9 +1196,9 @@ namespace Marv.Input
 
         private void StartDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.StartDate > this.EndDate)
+            if (this.PipeLineData.StartDate > this.PipeLineData.EndDate)
             {
-                this.EndDate = this.StartDate;
+                this.PipeLineData.EndDate = this.PipeLineData.StartDate;
             }
         }
 
@@ -1294,11 +1222,12 @@ namespace Marv.Input
 
             this.GridView.CommitEdit();
 
-            this.Table = this.lineDataObj[this.SelectedTheme][this.SelectedVertex.Key];
+            this.Table = this.SelectedTheme == DataTheme.User ? this.PipeLineData.UserDataObj[this.SelectedVertex.Key].UserTable : this.BeliefsData[this.SelectedVertex.Key];
 
             if (this.Table == null || this.Table.Count == 0)
             {
-                this.lineDataObj[this.SelectedTheme].Add(this.SelectedVertex.Key, this.Table = new EvidenceTable(this.dates));
+                this.Table = new EvidenceTable(this.dates);
+                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData{UserTable = this.Table});
             }
 
             this.SelectedColumnName = this.Table.DateTimes.First().String();

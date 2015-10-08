@@ -152,7 +152,6 @@
                                                 </ObjectDataProvider.MethodParameters>
                                             </ObjectDataProvider>
 
-
                                         </ToolBar.Resources>
                                         <telerik:RadButton Click="Undo_Click">
                                             <Image Source="/Marv.Common;component/Resources/Icons/Undo.png " />
@@ -171,8 +170,8 @@
                                         </telerik:RadButton>
 
                                         <telerik:RadComboBox Name="SelectionThemeComboBox"
+                                                             ItemsSource="{Binding Source={StaticResource SelectionThemes}}"
                                                              IsFilteringEnabled="True"
-                                                             
                                                              OpenDropDownOnFocus="True"
                                                              SelectedIndex="0"
                                                              SelectedItem="{Binding ElementName=Root, Path=SelectedTheme, Mode=TwoWay}"
@@ -286,7 +285,7 @@
 
                                         <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
                                                                    InputMode="DatePicker"
-                                                                   SelectedValue="{Binding ElementName=Root, Path=StartDate}"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=PipeLineData.StartDate}"
                                                                    SelectionChanged="StartDateTimePicker_SelectionChanged" />
 
                                         <TextBlock Margin="4"
@@ -294,7 +293,7 @@
 
                                         <telerik:RadDateTimePicker DateSelectionMode="{Binding ElementName=Root, Path=DateSelectionMode}"
                                                                    InputMode="DatePicker"
-                                                                   SelectedValue="{Binding ElementName=Root, Path=EndDate}"
+                                                                   SelectedValue="{Binding ElementName=Root, Path=PipeLineData.EndDate}"
                                                                    SelectionChanged="EndDateTimePicker_SelectionChanged" />
 
                                         <TextBlock Margin="4"
@@ -322,15 +321,15 @@
                                         <Label Name="Start" Width="70" Content="Start (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}" />
+                                                 Text="{Binding ElementName=Root, Path=PipeLineData.BaseTableMin}" />
                                         <Label Name="End" Width="70" Content="End (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}" />
+                                                 Text="{Binding ElementName=Root, Path=PipeLineData.BaseTableMax}" />
                                         <Label Name="Range" Width="75" Content="Range (m)" />
                                         <TextBox Width="50"
                                                  BorderBrush="CadetBlue"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}" />
+                                                 Text="{Binding ElementName=Root, Path=PipeLineData.BaseTableRange}" />
                                         <telerik:RadButton Content="Go"
                                                            FontWeight="Bold"
                                                            Height="22"
@@ -352,7 +351,7 @@
                                                      GroupRenderMode="Flat"
                                                      IsFilteringAllowed="False"
                                                      IsReadOnly="False"
-                                                     ItemsSource="{Binding ElementName=Root, Path=CommentBlocksInfoTable, Mode=TwoWay}"
+                                                     ItemsSource="{Binding ElementName=Root, Path=PipeLineData.CommentBlocks, Mode=TwoWay}"
                                                      NewRowPosition="Bottom"
                                                      SelectionUnit="Mixed"
                                                      SelectionMode="Extended"
