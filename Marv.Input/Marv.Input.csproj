@@ -226,6 +226,7 @@
     <Compile Include="MainWindow.Interpolation.cs" />
     <Compile Include="NodeData.cs" />
     <Compile Include="PasteCommand.cs" />
+    <Compile Include="PlotInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SummaryStatistic.cs" />
     <Compile Include="Utils.cs" />

@@ -246,13 +246,14 @@
                                                     CellBorderColor="Black"
                                                     CellBorderThickness="1">
                                     <telerik:RadHeatMap.Definition>
-                                        <telerik:CategoricalDefinition RowGroupMemberPath="{Binding ElementName=Root, Path=RowNames}"
-                                                                       ColumnGroupMemberPath="{Binding ElementName=Root, Path=ColumnNames}"
-                                                                       ValuePath="{Binding ElementName=Root, Path=EvidenceStringArray}" />
+                                        <telerik:CategoricalDefinition RowGroupMemberPath="Row"
+                                                                       ColumnGroupMemberPath="Column"
+                                                                       ValuePath="Value" 
+                                                                       ItemsSource="{Binding}"/>
                                     </telerik:RadHeatMap.Definition>
 
                                     <telerik:RadHeatMap.CellLabelSettings>
-                                        <telerik:HeatMapCellLabelSettings Foreground="Yellow" />
+                                        <telerik:HeatMapCellLabelSettings Foreground="Black" />
                                     </telerik:RadHeatMap.CellLabelSettings>
                                 </telerik:RadHeatMap>
 

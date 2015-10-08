@@ -50,7 +50,7 @@ namespace Marv.Input
         private bool isCommentBlocksGridVisible;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
-        private bool isHeatMapVisible;
+        private bool isHeatMapVisible ;
         private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -62,7 +62,7 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private LineData pipeLineData = new LineData();
         private string requiredPercentiles;
-        private List<string> rowNames = new List<string>();
+        
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
@@ -432,17 +432,6 @@ namespace Marv.Input
             }
         }
 
-        public List<string> RowNames
-        {
-            get { return rowNames; }
-
-            set
-            {
-                rowNames = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public string SelectedColumnName
         {
             get { return this.selectedColumnName; }
@@ -585,7 +574,6 @@ namespace Marv.Input
 
             this.dates.Add(date);
 
-            //this.lineDataObj[DataTheme.User] = new Dict<string, EvidenceTable>();
             this.PipeLineData.UserDataObj = new Dict<string, NodeData>();
 
             this.UpdateTable();
@@ -917,32 +905,36 @@ namespace Marv.Input
 
         private void HeatMapMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //foreach (var row in this.Table)
-            //{
-            //    foreach (var dateTime in this.Table.DateTimes)
-            //    {
-            //        //this.GridView.CurrentCell.BeginEdit();
-            //        //this.GridView.CurrentCell.CommitEdit();
-            //    }
-            //}
-            //this.ColumnNames.Clear();
+            if (this.BeliefsData.Count == 0)
+            {
+                return;
+            }
+            var data = new List<PlotInfo>();
 
-            //this.ColumnNames = this.Table.DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
-            //this.RowNames = this.Table.Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
-            //this.EvidenceStringArray = new string[this.Table.Count(), this.Table.DateTimes.Count()];
+            var colNames = this.BeliefsData[this.SelectedVertex.Key].DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
+            var rowNames = this.BeliefsData[this.SelectedVertex.Key].Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
+           
+            for (var row = 0; row < this.Table.Count; row++)
+            {
+                for (var dateTime = 0; dateTime < this.BeliefsData[this.SelectedVertex.Key].DateTimes.Count(); dateTime++)
+                {
+                    var colName = this.Table.DateTimes.ToList()[dateTime].String();
+                    var beliefValue = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as VertexEvidence);
 
-            //for (var row = 0; row < this.Table.Count; row++)
-            //{
-            //    for (var dateTime = 0; dateTime < this.Table.DateTimes.Count(); dateTime++)
-            //    {
-            //        var colName = this.Table.DateTimes.ToList()[dateTime].String();
-            //        var beliefValue = (this.lineDataObj[DataTheme.Beliefs][this.SelectedVertex.Key][row][colName] as double[]);
+                    var pi = new PlotInfo
+                    {
+                        Row = rowNames[row],
+                        Column = colNames[dateTime],
+                        Value = selectedVertex.Mean(beliefValue.Params),
+                    };
 
-            //        this.EvidenceStringArray[row, dateTime] = selectedVertex.Mean(beliefValue).ToString();
-            //    }
-            //}
+                    data.Add(pi);
+                }
+            }
 
-            //this.IsHeatMapVisible = !this.IsHeatMapVisible;
+            this.HeatMap.DataContext = data;
+
+            this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1010,8 +1002,7 @@ namespace Marv.Input
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
             this.IsModelRun = false;
-            //this.interpolationData = new Dict<string, string, InterpolationData>();
-
+            
             this.UpdateTable();
         }
 
