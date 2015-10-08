@@ -83,8 +83,7 @@
 
                 <Separator />
 
-                <MenuItem Header="Define Timeline"
-                          Click="DefineTimelineMenuItem_Click" />
+                
             </MenuItem>
 
             <MenuItem Header="Run">
@@ -98,11 +97,11 @@
             <MenuItem Header="Tools">
                 <MenuItem Header="HeatMap"
                           Click="HeatMapMenuItem_Click" 
-                          IsEnabled="True"/>
+                          IsEnabled="True" />
 
-                <MenuItem Header="CommentBlocksGrid"
-                          IsCheckable="True"
-                          Click="CommentBlocksGrid_Click" />
+               <MenuItem Header="Define PipeLine"
+                          Click="DefineTimelineMenuItem_Click" />
+               
             </MenuItem>
         </Menu>
 

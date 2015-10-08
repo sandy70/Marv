@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -38,7 +37,7 @@ namespace Marv.Input
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
-        private Dict<string, EvidenceTable> beliefsData = new Dict<string,EvidenceTable>();
+        private Dict<string, EvidenceTable> beliefsData = new Dict<string, EvidenceTable>();
         private List<string> columnNames = new List<string>();
         private int createdRowsCount;
         private GridViewColumn currentColumn;
@@ -50,7 +49,7 @@ namespace Marv.Input
         private bool isCommentBlocksGridVisible;
         private bool isGraphControlVisible = true;
         private bool isGridViewReadOnly;
-        private bool isHeatMapVisible ;
+        private bool isHeatMapVisible;
         private bool isInterpolateClicked;
         private bool isLineDataChartVisible = true;
         private bool isLineDataControlVisible = true;
@@ -62,7 +61,7 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private LineData pipeLineData = new LineData();
         private string requiredPercentiles;
-        
+
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
@@ -70,8 +69,8 @@ namespace Marv.Input
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
         private EvidenceTable table;
-        private NumericalAxis verticalAxis = LinearAxis;
         private string userDataObjFileName;
+        private NumericalAxis verticalAxis = LinearAxis;
 
         public int AddRowCommandsCount
         {
@@ -464,8 +463,6 @@ namespace Marv.Input
             }
         }
 
- 
-
         public SummaryStatistic SelectedStatistic
         {
             get { return selectedStatistic; }
@@ -653,10 +650,10 @@ namespace Marv.Input
             this.Chart.UpdateCommentBlocks(row, VerticalAxis);
         }
 
-        private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
-        {
-           this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
-        }
+        //private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
+        //{
+        //    this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
+        //}
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
@@ -719,7 +716,7 @@ namespace Marv.Input
             }
         }
 
-        private void CreateNewBeliefDataSet(Dict<string,EvidenceTable> mergedDataSet)
+        private void CreateNewBeliefDataSet(Dict<string, EvidenceTable> mergedDataSet)
         {
             if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count <
                 mergedDataSet.Values[0].Count)
@@ -754,6 +751,7 @@ namespace Marv.Input
         private void DefineTimelineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.IsTimelineToolbarVisible = true;
+            this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
         }
 
         private void EndDateTimePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -913,7 +911,7 @@ namespace Marv.Input
 
             var colNames = this.BeliefsData[this.SelectedVertex.Key].DateTimes.Select(dateTime => dateTime.ToShortDateString()).ToList();
             var rowNames = this.BeliefsData[this.SelectedVertex.Key].Select(row => row.From.ToString() + "-" + row.To.ToString()).ToList();
-           
+
             for (var row = 0; row < this.Table.Count; row++)
             {
                 for (var dateTime = 0; dateTime < this.BeliefsData[this.SelectedVertex.Key].DateTimes.Count(); dateTime++)
@@ -1002,7 +1000,7 @@ namespace Marv.Input
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
             this.IsModelRun = false;
-            
+
             this.UpdateTable();
         }
 
@@ -1028,7 +1026,6 @@ namespace Marv.Input
             else
             {
                 this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
-                
             }
         }
 
@@ -1099,7 +1096,7 @@ namespace Marv.Input
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Dict<string, EvidenceTable> mergedDataSet = null;
-            
+
             try
             {
                 List<double> baseRowsList = null;
@@ -1209,7 +1206,7 @@ namespace Marv.Input
             if (this.Table == null || this.Table.Count == 0)
             {
                 this.Table = new EvidenceTable(this.dates);
-                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData{UserTable = this.Table});
+                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData { UserTable = this.Table });
             }
 
             this.SelectedColumnName = this.Table.DateTimes.First().String();
