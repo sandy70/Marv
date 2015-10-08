@@ -141,7 +141,7 @@
                                         </ResourceDictionary>
                                     </ToolBarTray.Resources>
 
-                                   <!-- Cell Toolbar -->
+                                    <!-- Cell Toolbar -->
                                     <ToolBar Band="2" BandIndex="0" IsEnabled="{Binding ElementName=Root, Path=IsCellToolbarEnabled}">
                                         <ToolBar.Resources>
                                             <ObjectDataProvider x:Key="SelectionThemes"
@@ -222,8 +222,9 @@
                                                            Width="32"
                                                            Click="Go_Click" />
                                     </ToolBar>
-                                    
+
                                     <!-- Export Statistics Toolbar -->
+                                    <ToolBar Band="2"
                                              BandIndex="2"
                                              IsEnabled="{Binding ElementName=Root, Path=IsModelRun}">
 
@@ -273,7 +274,7 @@
 
                                                      AddingNewDataItem="GridView_AddingNewDataItem"
                                                      AutoGeneratingColumn="GridView_AutoGeneratingColumn"
-                                                     
+
                                                      CellEditEnded="GridView_CellEditEnded"
                                                      CellValidating="GridView_CellValidating"
                                                      CurrentCellChanged="GridView_CurrentCellChanged"
@@ -310,7 +311,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                
+
                                 <ToolBarTray Grid.Row="0">
                                     <ToolBar Band="1" IsEnabled="{Binding ElementName=Root, Path=Table, Converter={StaticResource NullToBooleanReversed}}"
                                              Visibility="{Binding ElementName=Root, Path=IsTimelineToolbarVisible, Converter={StaticResource BooleanToVisibility}}">
@@ -590,5 +591,5 @@
                             Notifications="{Binding ElementName=Root, Path=Notifications, Mode=TwoWay}"
                             Height="28" />
     </Grid>
-    
+
 </Window>

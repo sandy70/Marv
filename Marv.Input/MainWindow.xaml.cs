@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -40,7 +39,7 @@ namespace Marv.Input
         private double baseTableMax = 100;
         private double baseTableMin;
         private double baseTableRange = 10;
-        private Dict<string, EvidenceTable> beliefsData = new Dict<string,EvidenceTable>();
+        private Dict<string, EvidenceTable> beliefsData = new Dict<string, EvidenceTable>();
         private List<string> columnNames = new List<string>();
         private int createdRowsCount;
         private GridViewColumn currentColumn;
@@ -68,11 +67,13 @@ namespace Marv.Input
         private InterpolationData selectedInterpolationData;
         private NodeData selectedNodeData = new NodeData();
         private EvidenceRow selectedRow;
+        private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
         private EvidenceTable table;
-        private NumericalAxis verticalAxis = LinearAxis;
+        private Dict<DataTheme, string, Object> userDataObj = new Dict<DataTheme, string, object>();
         private string userDataObjFileName;
+        private NumericalAxis verticalAxis = LinearAxis;
 
         public int AddRowCommandsCount
         {
@@ -449,12 +450,14 @@ namespace Marv.Input
                 this.RaisePropertyChanged();
             }
         }
+
         public SummaryStatistic SelectedStatistic
         {
-            get { return selectedStatistic; }
+            get { return this.selectedStatistic; }
+
             set
             {
-                selectedStatistic = value;
+                this.selectedStatistic = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -639,7 +642,7 @@ namespace Marv.Input
 
         private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
         {
-           this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
+            this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
         }
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
@@ -703,7 +706,7 @@ namespace Marv.Input
             }
         }
 
-        private void CreateNewBeliefDataSet(Dict<string,EvidenceTable> mergedDataSet)
+        private void CreateNewBeliefDataSet(Dict<string, EvidenceTable> mergedDataSet)
         {
             if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count <
                 mergedDataSet.Values[0].Count)
@@ -817,7 +820,7 @@ namespace Marv.Input
 
             var dialog = new SaveFileDialog
             {
-                Filter = LineData.FileDescription + "|*." + "xlsx",
+                Filter = "Microsoft Excel File|*.xlsx",
             };
 
             var result = dialog.ShowDialog();
@@ -826,6 +829,7 @@ namespace Marv.Input
             {
                 return;
             }
+
             IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
 
             using (var output = new FileStream(dialog.FileName, FileMode.Create))
@@ -914,14 +918,14 @@ namespace Marv.Input
             //    }
             //}
 
-              this.IsHeatMapVisible = !this.IsHeatMapVisible;
+            this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
         private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
-                Filter = LineData.FileDescription + "|*." + "xlsx",
+                Filter = "Microsoft Excel File|*.xlsx",
             };
 
             var result = dialog.ShowDialog();
@@ -991,7 +995,7 @@ namespace Marv.Input
         {
             var dialog = new OpenFileDialog
             {
-                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
                 Multiselect = false
             };
 
@@ -999,29 +1003,14 @@ namespace Marv.Input
 
             this.userDataObjFileName = dialog.FileName;
 
-                this.userDataObj = Common.Utils.ReadJson<Dict<DataTheme, string, Object>>(dialog.FileName);
-                
-                var userData = this.userDataObj[DataTheme.User];
-                var storedInterpolationData = this.userDataObj[DataTheme.Interpolated];
-                this.CommentBlocksInfoTable = this.userDataObj[DataTheme.CommentBlocks].Values.First() as ObservableCollection<EvidenceRow>;
-                this.CommentBlocksInfoTable.ForEach((row, i) => this.Chart.UpdateCommentBlocks(row, VerticalAxis));
-                foreach (var kvp in userData)
-                {
-                    this.lineDataObj[DataTheme.User][kvp.Key] = kvp.Value as EvidenceTable;
-                }
-                this.dates = (List<DateTime>) this.lineDataObj[DataTheme.User][0].Value.DateTimes;
-                this.UpdateTable();
-                foreach (var kvp in storedInterpolationData)
-                {
-                    this.interpolationData[kvp.Key] = kvp.Value as Dict<string, InterpolationData>;
-                }
+            this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
         }
 
         private void LineDataSaveAs()
         {
             var dialog = new SaveFileDialog
             {
-                Filter = LineData.FileDescription + "|*." + LineData.FileExtension,
+                Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
             };
 
             var result = dialog.ShowDialog();
@@ -1084,7 +1073,7 @@ namespace Marv.Input
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Dict<string, EvidenceTable> mergedDataSet = null;
-            
+
             try
             {
                 List<double> baseRowsList = null;
@@ -1194,7 +1183,7 @@ namespace Marv.Input
             if (this.Table == null || this.Table.Count == 0)
             {
                 this.Table = new EvidenceTable(this.dates);
-                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData{UserTable = this.Table});
+                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData { UserTable = this.Table });
             }
 
             this.SelectedColumnName = this.Table.DateTimes.First().String();
