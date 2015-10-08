@@ -1,0 +1,404 @@
+net
+{
+	node_size = (80 40);
+	HR_Desc = "defaultgroup=all";
+	HR_OOBN_CheckConsistency = "1";
+	HR_OOBN_FitExpand = "1";
+	HR_Zoom_ZoomFactor = "100";
+	HR_Groups_GroupColors = "";
+	HR_Groups_GroupNames = "";
+	HR_Groups_UserGroupsNo = "0";
+	HR_Color_Interface = "21";
+	HR_Color_Instance = "0";
+	HR_Color_Function = "4";
+	HR_Color_Utility = "36";
+	HR_Color_Decision = "17";
+	HR_Color_ContinuousChance = "48";
+	HR_Color_DiscreteChance = "16";
+	HR_Monitor_InitSD = "2";
+	HR_Monitor_Utility_Arrange = "0";
+	HR_Monitor_Mean_Variance = "1";
+	HR_Monitor_Chance_Utility = "1";
+	HR_Monitor_InitStates = "5";
+	HR_Monitor_OpenGraph = "0";
+	HR_Monitor_GraphPrecision = "100";
+	HR_Monitor_AutoUpdGraph = "0";
+	HR_Compile_MaxMinimalSeparators = "100000";
+	HR_Compile_ApproxEpsilon = "1.0E-5";
+	HR_Compile_Approximate = "0";
+	HR_Compile_SaveToMemory = "0";
+	HR_Compile_Compress = "0";
+	HR_Compile_TriangMethod = "0";
+	HR_Propagate_AutoNormal = "1";
+	HR_Propagate_AutoSum = "1";
+	HR_Propagate_Auto = "1";
+	HR_Font_Italic = "0";
+	HR_Font_Weight = "400";
+	HR_Font_Size = "-12";
+	HR_Font_Name = "javax.swing.plaf.FontUIResource[family=Tahoma,name=Tahoma,style=plain,size=11]";
+	HR_Grid_GridShow = "0";
+	HR_Grid_GridSnap = "0";
+	HR_Grid_Y = "40";
+	HR_Grid_X = "40";
+}
+
+node C10
+{
+	label = "Elbow";
+	position = (357 277);
+	states = ("No" "Yes");
+	HR_LinkMode = "[C2:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C2':{'SourcePosition':'Auto','TargetPosition':'Auto'},'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'50,50'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C9
+{
+	label = "Penetration";
+	position = (304 318);
+	states = ("No" "Yes");
+	HR_LinkMode = "[C2:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C2':{'SourcePosition':'Auto','TargetPosition':'Auto'},'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'50,271.12'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C8
+{
+	label = "Insulation Water Retention";
+	position = (365 158);
+	states = ("Low" "Medium" "Severe");
+	HR_NodeSize = "(116, 65)";
+	HR_LinkMode = "[C1:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_2 = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'434,50'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C7
+{
+	label = "Temp., C";
+	position = (463 387);
+	states = ("-4  - 30" "30 - 90" "90 - 150" "150 - 300");
+	HR_LinkMode = "[C2:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_5 = "";
+	HR_State_4 = "";
+	HR_State_3 = "";
+	HR_State_2 = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C2':{'SourcePosition':'Auto','TargetPosition':'Auto'},'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'50,492.24'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C6
+{
+	label = "Cycling";
+	position = (361 371);
+	states = ("No" "30" "60" "100");
+	HR_State_3 = "";
+	HR_State_2 = "";
+	HR_LinkMode = "[C2:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "temp. difference in C";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C2':{'SourcePosition':'Auto','TargetPosition':'Auto'},'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'50,762.62'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C5
+{
+	label = "Zn Coating ";
+	position = (817 278);
+	states = ("No" "Yes");
+	HR_State_0 = "";
+	HR_State_1 = "";
+	HR_Desc = "";
+	HR_LinkMode = "[C1:0]";
+	HR_Group = "0";
+	ConnectorPositions = "{'all':{'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'434,295.75'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C4
+{
+	label = "TSA Coating";
+	position = (737 318);
+	states = ("No" "Yes");
+	HR_LinkMode = "[C1:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'434,516.87'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C3
+{
+	label = "Epoxy Coating";
+	position = (620 323);
+	states = ("No" "Yes");
+	HR_LinkMode = "[C1:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'434,737.99'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C2
+{
+	label = "Moisture";
+	position = (476 317);
+	states = ("No" "Yes");
+	HR_LinkMode = "[C1:0]";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "";
+	HR_State_0 = "";
+	ConnectorPositions = "{'all':{'C1':{'SourcePosition':'Auto','TargetPosition':'Auto'}}}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'434,959.11'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+node C1
+{
+	label = "Corrosion Rate";
+	position = (607 216);
+	states = ("0-0.1" "0.1-1.0" "1.0-2.0" "2.0-5.0");
+	HR_State_3 = "mm/y";
+	HR_State_2 = "mm/y";
+	HR_NodeSize = "(106, 67)";
+	HR_Group = "0";
+	HR_Desc = "";
+	HR_State_1 = "mm/y";
+	HR_State_0 = "mm/y";
+	ConnectorPositions = "{}";
+	HR_HTML_Desc = "";
+	isexpanded = "True";
+	PositionForGroup = "{'all':'818,133.81'}";
+	units = "n/a";
+	groups = "all";
+	headerofgroup = "";
+}
+
+potential (C10)
+{
+	data = (0.5 0.5);
+}
+
+potential (C9)
+{
+	data = (0.5 0.5);
+}
+
+potential (C8)
+{
+	data = (0.333333333333333 0.333333333333333 0.333333333333333);
+}
+
+potential (C7)
+{
+	data = (0.25 0.25 0.25 0.25);
+}
+
+potential (C6)
+{
+	data = (0.25 0.25 0.25 0.25);
+}
+
+potential (C5)
+{
+	data = (0.5 0.5);
+}
+
+potential (C4)
+{
+	data = (0.5 0.5);
+}
+
+potential (C3)
+{
+	data = (0.5 0.5);
+}
+
+potential (C2 | C10 C9 C7 C6)
+{
+	data = (((((0.2 0.8)
+		       (0.4 0.6)
+		       (1 0)
+		       (1 0))
+		      ((1 0)
+		       (1 0)
+		       (0.9 0.1)
+		       (0.4 0.6))
+		      ((1 0)
+		       (1 0)
+		       (1 0)
+		       (0.9 0.1))
+		      ((1 0)
+		       (1 0)
+		       (1 0)
+		       (1 0)))
+		     (((0 1)
+		       (0 1)
+		       (0 1)
+		       (0 1))
+		      ((0 1)
+		       (0.1 0.9)
+		       (0.2 0.8)
+		       (0.3 0.7))
+		      ((1 0)
+		       (0.9 0.1)
+		       (0.8 0.2)
+		       (0.6 0.4))
+		      ((1 0)
+		       (1 0)
+		       (0.9 0.1)
+		       (0.7 0.3))))
+		    ((((0.2 0.8)
+		       (0.4 0.6)
+		       (1 0)
+		       (1 0))
+		      ((1 0)
+		       (1 0)
+		       (0.9 0.1)
+		       (0.4 0.6))
+		      ((1 0)
+		       (1 0)
+		       (1 0)
+		       (0.9 0.1))
+		      ((1 0)
+		       (1 0)
+		       (1 0)
+		       (1 0)))
+		     (((0 1)
+		       (0 1)
+		       (0 1)
+		       (0 1))
+		      ((0 1)
+		       (0.1 0.9)
+		       (0.2 0.8)
+		       (0.3 0.7))
+		      ((1 0)
+		       (0.9 0.1)
+		       (0.8 0.2)
+		       (0.6 0.4))
+		      ((1 0)
+		       (1 0)
+		       (0.9 0.1)
+		       (0.7 0.3)))));
+}
+
+potential (C1 | C8 C5 C4 C3 C2)
+{
+	data = ((((((1 0 0 0)
+		        (0 0.7 0.3 0))
+		       ((1 0 0 0)
+		        (0.6 0.4 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0))))
+		     ((((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0)))))
+		    (((((1 0 0 0)
+		        (0 0.6 0.4 0))
+		       ((1 0 0 0)
+		        (0.5 0.5 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0))))
+		     ((((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0)))))
+		    (((((1 0 0 0)
+		        (0 0.7 0.3 0))
+		       ((1 0 0 0)
+		        (0.6 0.4 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0))))
+		     ((((1 0 0 0)
+		        (0.8 0.2 0 0))
+		       ((1 0 0 0)
+		        (0.9 0.1 0 0)))
+		      (((1 0 0 0)
+		        (1 0 0 0))
+		       ((1 0 0 0)
+		        (1 0 0 0))))));
+}
+
