@@ -65,7 +65,6 @@ namespace Marv.Input
         private List<string> rowNames = new List<string>();
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
-        private NodeData selectedNodeData = new NodeData();
         private EvidenceRow selectedRow;
         private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
@@ -476,15 +475,7 @@ namespace Marv.Input
             }
         }
 
-        public NodeData SelectedNodeData
-        {
-            get { return selectedNodeData; }
-            set
-            {
-                selectedNodeData = value;
-                this.RaisePropertyChanged();
-            }
-        }
+ 
 
         public SummaryStatistic SelectedStatistic
         {
