@@ -34,11 +34,9 @@ namespace Marv.Input
         private readonly List<GridViewCellClipboardEventArgs> pastedCells = new List<GridViewCellClipboardEventArgs>();
         private int addRowCommandsCount;
         private double adjustedSafeMax;
-        private double baseTableMax = 100;
-        private double baseTableMin;
-        private double baseTableRange = 10;
         private Dict<string, EvidenceTable> beliefsData = new Dict<string, EvidenceTable>();
         private List<string> columnNames = new List<string>();
+        private string copiedColumnName;
         private int createdRowsCount;
         private GridViewColumn currentColumn;
         private int currentCommand;
@@ -61,17 +59,26 @@ namespace Marv.Input
         private NotificationCollection notifications = new NotificationCollection();
         private LineData pipeLineData = new LineData();
         private string requiredPercentiles;
-
         private string selectedColumnName;
         private InterpolationData selectedInterpolationData;
         private EvidenceRow selectedRow;
-        private SummaryStatistic selectedStatistic;
         private DataTheme selectedTheme = DataTheme.User;
         private Vertex selectedVertex;
         private EvidenceTable table;
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
+        private bool isInterpolationNull = true;
 
+        public bool IsInterpolationNull
+        {
+            get { return isInterpolationNull = true; }
+            set
+            {
+                isInterpolationNull = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -92,51 +99,6 @@ namespace Marv.Input
             }
         }
 
-        public double BaseTableMax
-        {
-            get { return this.baseTableMax; }
-            set
-            {
-                if (value.Equals(this.baseTableMax))
-                {
-                    return;
-                }
-
-                this.baseTableMax = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double BaseTableMin
-        {
-            get { return this.baseTableMin; }
-            set
-            {
-                if (value.Equals(this.baseTableMin))
-                {
-                    return;
-                }
-
-                this.baseTableMin = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public double BaseTableRange
-        {
-            get { return this.baseTableRange; }
-            set
-            {
-                if (value.Equals(this.baseTableRange))
-                {
-                    return;
-                }
-
-                this.baseTableRange = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public Dict<string, EvidenceTable> BeliefsData
         {
             get { return beliefsData; }
@@ -153,6 +115,16 @@ namespace Marv.Input
             set
             {
                 columnNames = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string CopiedColumnName
+        {
+            get { return copiedColumnName; }
+            set
+            {
+                copiedColumnName = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -463,16 +435,6 @@ namespace Marv.Input
             }
         }
 
-        public SummaryStatistic SelectedStatistic
-        {
-            get { return selectedStatistic; }
-            set
-            {
-                selectedStatistic = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
         public DataTheme SelectedTheme
         {
             get { return selectedTheme; }
@@ -650,6 +612,11 @@ namespace Marv.Input
             this.Chart.UpdateCommentBlocks(row, VerticalAxis);
         }
 
+        private void CompareDistribution_Click(object sender, RoutedEventArgs e)
+        {
+            this.DistributionComparator.IsHidden = !this.DistributionComparator.IsHidden;
+        }
+
         //private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
         //{
         //    this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
@@ -714,6 +681,11 @@ namespace Marv.Input
                     this.selectedRow[columnName] = val;
                 }
             }
+        }
+
+        private void CopyLines_Click(object sender, RoutedEventArgs e)
+        {
+            this.CopiedColumnName = this.SelectedColumnName;
         }
 
         private void CreateNewBeliefDataSet(Dict<string, EvidenceTable> mergedDataSet)
@@ -856,7 +828,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -995,7 +967,7 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => true);
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.BaseTableMax, this.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
             this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
@@ -1026,6 +998,7 @@ namespace Marv.Input
             else
             {
                 this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
+                this.dates = this.PipeLineData.UserDataObj[0].Value.UserTable.DateTimes.ToList();
             }
         }
 
@@ -1085,6 +1058,76 @@ namespace Marv.Input
             }
         }
 
+        private void PasteLines_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.CopiedColumnName == null)
+            {
+                return;
+            }
+            var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
+            var pastedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
+
+            pastedInterpolationData.Type = copiedInterpolationData.Type;
+            pastedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+
+            foreach (var line in pastedInterpolationData.Points.Where(line => line != null))
+            {
+                line.Clear();
+            }
+
+            for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
+            {
+                foreach (var point in copiedInterpolationData.Points[i])
+                {
+                    pastedInterpolationData.Points[i].Add(point);
+                }
+            }
+        }
+
+        private void PasteToAll_Click(object sender, RoutedEventArgs e)
+        {
+            var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
+
+            foreach (var kvp in this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData)
+            {
+                if (kvp.Key == this.CopiedColumnName)
+                {
+                    continue;
+                }
+
+                kvp.Value.Type = copiedInterpolationData.Type;
+                kvp.Value.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+            }
+
+            foreach (var kvp in this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData)
+            {
+                if (kvp.Key == this.CopiedColumnName)
+                {
+                    continue;
+                }
+
+                foreach (var line in kvp.Value.Points.Where(line => line != null))
+                {
+                    line.Clear();
+                }
+            }
+
+            foreach (var column in this.dates)
+            {
+                if (column.String() == this.CopiedColumnName)
+                {
+                    continue;
+                }
+                for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
+                {
+                    foreach (var point in copiedInterpolationData.Points[i])
+                    {
+                        this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[column.String()].Points[i].Add(point);
+                    }
+                }
+            }
+        }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null && propertyName != null)
@@ -1101,7 +1144,7 @@ namespace Marv.Input
             {
                 List<double> baseRowsList = null;
 
-                baseRowsList = Utils.CreateBaseRowsList(this.BaseTableMin, this.BaseTableMax, this.BaseTableRange);
+                baseRowsList = Utils.CreateBaseRowsList(this.PipeLineData.BaseTableMin, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableRange);
 
                 mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
 
@@ -1169,7 +1212,8 @@ namespace Marv.Input
         {
             if (e.PropertyName == "Type")
             {
-                this.SelectedInterpolationData.CreatePoints(this.BaseTableMax, this.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+               this.SelectedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+               
             }
         }
 
@@ -1271,7 +1315,7 @@ namespace Marv.Input
                 LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
             }
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, BaseTableMax, BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

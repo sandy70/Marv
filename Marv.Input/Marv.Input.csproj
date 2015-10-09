@@ -228,7 +228,6 @@
     <Compile Include="PasteCommand.cs" />
     <Compile Include="PlotInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="SummaryStatistic.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WorkSheetTemplate.cs" />
     <Page Include="MainWindow.xaml">

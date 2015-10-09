@@ -91,7 +91,7 @@ namespace Marv.Input
             }
             else if (columnName.Equals("Comment")) {}
 
-            else if (! (this.BaseTableMin <= (double) e.NewValue && (double) e.NewValue <= this.BaseTableMax))
+            else if (!(this.PipeLineData.BaseTableMin <= (double)e.NewValue && (double)e.NewValue <= this.PipeLineData.BaseTableMax))
             {
                 e.IsValid = false;
                 e.ErrorMessage = "sections should be within pipeline length";
