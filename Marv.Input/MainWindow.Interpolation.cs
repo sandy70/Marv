@@ -21,6 +21,7 @@ namespace Marv.Input
             }
             this.SelectedInterpolationData.Points = null;
             this.SelectedInterpolationData.Type = null;
+            this.CopiedColumnName = null;
         }
 
         private void InterpolationSeries_MouseDoubleClick(object sender, MouseButtonEventArgs e)

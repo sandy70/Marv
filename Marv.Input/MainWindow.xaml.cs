@@ -67,18 +67,7 @@ namespace Marv.Input
         private EvidenceTable table;
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
-        private bool isInterpolationNull = true;
 
-        public bool IsInterpolationNull
-        {
-            get { return isInterpolationNull = true; }
-            set
-            {
-                isInterpolationNull = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -547,13 +536,16 @@ namespace Marv.Input
         {
             var interpolatedData = new Dict<string, EvidenceTable>();
 
-            if (this.SelectedInterpolationData == null)
-            {
-                return interpolatedData;
-            }
+            //if (this.SelectedInterpolationData == null)
+            //{
+            //    return interpolatedData;
+            //}
 
             foreach (var kvp in this.PipeLineData.UserDataObj)
             {
+               var interpolatedTable = new EvidenceTable(this.dates);
+                interpolatedData.Add(kvp.Key, interpolatedTable);
+
                 foreach (var column in kvp.Value.InterpolatedNodeData)
                 {
                     if (column.Value.Points == null)
@@ -563,17 +555,18 @@ namespace Marv.Input
 
                     this.SelectedInterpolationData = column.Value;
 
-                    EvidenceTable interpolatedTable = null;
 
-                    interpolatedTable = new EvidenceTable(this.dates);
-
-                    foreach (var mergedEvidenceRow in mergedDataSet.Values[0])
+                    if (interpolatedTable.Count == 0)
                     {
-                        var interpolatedRow = new EvidenceRow { From = mergedEvidenceRow.From, To = mergedEvidenceRow.To };
-                        interpolatedTable.Add(interpolatedRow);
+                        foreach (var mergedEvidenceRow in mergedDataSet.Values[0])
+                        {
+                            var interpolatedRow = new EvidenceRow { From = mergedEvidenceRow.From, To = mergedEvidenceRow.To };
+                            interpolatedTable.Add(interpolatedRow);
+
+                        }
                     }
 
-                    interpolatedData.Add(kvp.Key, interpolatedTable);
+                   // interpolatedData.Add(kvp.Key, interpolatedTable);
 
                     foreach (var interpolatedRow in interpolatedTable)
                     {
@@ -581,9 +574,11 @@ namespace Marv.Input
 
                         var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue);
 
-                        interpolatedRow[this.selectedColumnName] = this.Network.Vertices[kvp.Key].States.ParseEvidenceString(evidenceString);
+                        interpolatedRow[column.Key] = this.Network.Vertices[kvp.Key].States.ParseEvidenceString(evidenceString);
                     }
                 }
+
+                Console.WriteLine();
             }
 
             return interpolatedData;
@@ -964,7 +959,7 @@ namespace Marv.Input
             this.LineDataSaveAs();
 
             this.PipeLineData = new LineData();
-
+            this.BeliefsData = new Dict<string, EvidenceTable>();
             this.Chart.Annotations.Remove(annotation => true);
 
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
@@ -1065,6 +1060,10 @@ namespace Marv.Input
                 return;
             }
             var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
+            if (copiedInterpolationData.Points == null)
+            {
+                return;
+            }
             var pastedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
 
             pastedInterpolationData.Type = copiedInterpolationData.Type;
@@ -1086,7 +1085,16 @@ namespace Marv.Input
 
         private void PasteToAll_Click(object sender, RoutedEventArgs e)
         {
+            if (this.CopiedColumnName == null)
+            {
+                return;
+            }
+
             var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
+            if (copiedInterpolationData.Points == null)
+            {
+                return;
+            }
 
             foreach (var kvp in this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData)
             {
@@ -1097,14 +1105,6 @@ namespace Marv.Input
 
                 kvp.Value.Type = copiedInterpolationData.Type;
                 kvp.Value.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
-            }
-
-            foreach (var kvp in this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData)
-            {
-                if (kvp.Key == this.CopiedColumnName)
-                {
-                    continue;
-                }
 
                 foreach (var line in kvp.Value.Points.Where(line => line != null))
                 {
@@ -1170,6 +1170,10 @@ namespace Marv.Input
                         var nodeKey = kvp.Key;
                         var evidenceTable = kvp.Value;
 
+                        if (evidenceTable.Count == 0)
+                        {
+                            continue;
+                        }
                         var dateTimeColumnName = evidenceTable[rowCount].GetDynamicMemberNames().ToList()[dateTimecount];
                         var evidence = evidenceTable[rowCount][dateTimeColumnName] as VertexEvidence;
 
@@ -1212,8 +1216,7 @@ namespace Marv.Input
         {
             if (e.PropertyName == "Type")
             {
-               this.SelectedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
-               
+                this.SelectedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
             }
         }
 
