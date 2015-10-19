@@ -1112,17 +1112,16 @@ namespace Marv.Input
                 }
             }
 
-            foreach (var column in this.dates)
-            {
-                if (column.String() == this.CopiedColumnName)
-                {
-                    continue;
-                }
+            foreach (var column in this.dates.Where(column => column.String() != this.CopiedColumnName)) {
                 for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
                 {
                     foreach (var point in copiedInterpolationData.Points[i])
                     {
-                        this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[column.String()].Points[i].Add(point);
+                        var observableCollection = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[column.String()].Points;
+                        if (observableCollection != null)
+                        {
+                            observableCollection[i].Add(point);
+                        }
                     }
                 }
             }
