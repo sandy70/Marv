@@ -27,6 +27,7 @@ namespace Marv.Epri
         private const string StreamId = "00000000-00000000-00409DFF-FF88AC6C";
 
         private readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.Login, Settings.Default.Password) });
+        private readonly Dict<string, string> positions = new Dict<string, string>();
 
         private readonly DispatcherTimer timer = new DispatcherTimer
         {
@@ -35,6 +36,7 @@ namespace Marv.Epri
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
         private LineStringCollection locationCollections = new LineStringCollection();
+        private Network network;
         private NotificationCollection notifications = new NotificationCollection();
         private DateTime selectedDateTime = new DateTime(2015, 9, 11);
         private string selectedStream;
@@ -68,6 +70,17 @@ namespace Marv.Epri
             set
             {
                 this.locationCollections = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public Network Network
+        {
+            get { return this.network; }
+
+            set
+            {
+                this.network = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -282,9 +295,16 @@ namespace Marv.Epri
 
             await this.UpdateDataPoints();
 
-            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml", assignIds: true);
+            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml", true);
 
             this.GraphControl.Open(Settings.Default.NetworkFilePath);
+
+            this.positions.Add(new CsvReader(File.OpenText(@"C:\Users\vkha\Data\EPRI\Positions.csv")).GetRecords<Kvp<string, string>>());
+        }
+
+        private void PolylineControl_SelectionChanged(object sender, Location location)
+        {
+            this.GraphControl.Graph.Belief = this.Network.Run("Position", this.positions[location.Key]);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")

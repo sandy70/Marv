@@ -23,7 +23,7 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <controls:PolylineControl Locations="{Binding}"/>
+                                                    <controls:PolylineControl Locations="{Binding}" SelectionChanged="PolylineControl_SelectionChanged"/>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -139,7 +139,8 @@
         
             <telerik:RadPaneGroup>
                 <telerik:RadPane Header="Network">
-                    <controls:GraphControl Name="GraphControl" />
+                    <controls:GraphControl Name="GraphControl"
+                                           Network="{Binding ElementName=Root, Path=Network, Mode=TwoWay}"/>
                 </telerik:RadPane>
             </telerik:RadPaneGroup>
         </telerik:RadSplitContainer>
