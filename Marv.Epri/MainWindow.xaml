@@ -4,10 +4,10 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mapControl="clr-namespace:MapControl;assembly=MapControl.WPF"
-        Height="500"
         Name="Root"
         Title="MainWindow"
-        Width="1000"
+        Height="1024"
+        Width="1920" 
         Loaded="MainWindow_Loaded">
     <telerik:RadDocking HasDocumentHost="False">
         <telerik:RadSplitContainer>
@@ -64,6 +64,15 @@
                                 <telerik:RadButton Content="Save"
                                                    Width="64"
                                                    Click="SaveButton_Click" />
+
+                                <TextBlock Margin="16,0,4,0"
+                                           Text="Download from"
+                                           VerticalAlignment="Center"  />
+                                
+                                <telerik:RadDateTimePicker SelectedDate="{Binding ElementName=Root, Path=SelectedDateTime}" />
+
+                                <telerik:RadButton Content="Download"
+                                                   Click="DownloadFromButton_Click"/>
                             </ToolBar>
 
                             <telerik:RadCartesianChart Grid.Row="1">
