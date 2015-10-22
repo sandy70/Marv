@@ -20,9 +20,7 @@ namespace Marv.MultiCorp
 
             for (var i = 0; i < 10; i++)
             {
-                Console.WriteLine(Utils.ComputeFlow(new GasOilWaterFlowParameters()));
-                Console.WriteLine(Utils.ComputeFlow(new GasWaterFlowParameters()));
-                Console.WriteLine(Utils.ComputeFlow(new OilWaterFlowParameters()));
+                Console.WriteLine(Utils.ComputeFlow(new FlowParameters()));
             }
 
             Console.ReadKey();

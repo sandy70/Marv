@@ -8,23 +8,40 @@ namespace Marv.MultiCorp
 {
     public static class Utils
     {
-        public static FlowResults ComputeFlow(IFlowParameters flowParameters)
+        public static FlowResults ComputeFlow(FlowParameters flowParameters)
         {
             //Create new Case
             var caseFactory = AbstractModelFactory.getFactory(AbstractModelFactory.AbstractModels.CORROSIONCASE) as CaseFactory;
-            var cCase = caseFactory.createModel() as AbstractCase;
+            var abstractCase = caseFactory.createModel() as AbstractCase;
 
             //Set Corrosion Type
-            (cCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
-            cCase.onCorrosionTypeChanged();
+            (abstractCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
+            abstractCase.onCorrosionTypeChanged();
 
             //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
-            cCase.onSimulationTypeChanged();
+            (abstractCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
+            abstractCase.onSimulationTypeChanged();
 
-            flowParameters.Set(cCase);
+            //Set Flow type
+            (abstractCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int)flowParameters.FlowType);
+            abstractCase.onFlowTypeChanged();
 
-            var flowModel = cCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;
+            abstractCase.getParameter(NameList.GAS_DENSITY).setValue(flowParameters.GasDensity);
+            abstractCase.getParameter(NameList.GAS_LIQUID_SURFACE_TENSION).setValue(flowParameters.GasLiquidSurfaceTension);
+            abstractCase.getParameter(NameList.SECTION_DIAMETER).setValue(flowParameters.InternalDiameter);
+            abstractCase.getParameter(NameList.SECTION_INCLINATION).setValue(flowParameters.Inclination);
+            abstractCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(flowParameters.InterfacialTension);
+            abstractCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(flowParameters.MixtureVelocity);
+            abstractCase.getParameter(NameList.OIL_DENSITY).setValue(flowParameters.OilDensity);
+            abstractCase.getParameter(NameList.OIL_VISCOSITY).setValue(flowParameters.OilViscosity);
+            abstractCase.getParameter(NameList.PIPE_THICKNESS).setValue(flowParameters.PipeThickness);
+            abstractCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(flowParameters.SuperficialGasVelocity);
+            abstractCase.getParameter(NameList.SUPERFICIAL_WATER_VELOCITY).setValue(flowParameters.SuperficialWaterVelocity);
+            abstractCase.getParameter(NameList.WATER_CUT).setValue(flowParameters.WaterCut);
+            abstractCase.getParameter(NameList.WATER_DENSITY).setValue(flowParameters.WaterDensity);
+            abstractCase.getParameter(NameList.WATER_VISCOSITY).setValue(flowParameters.WaterViscosity);
+
+            var flowModel = abstractCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;
 
             if (flowModel != null)
             {
@@ -38,7 +55,7 @@ namespace Marv.MultiCorp
             };
 
             flowModel.resetModel();
-            cCase.resetModel();
+            abstractCase.resetModel();
 
             return flowResults;
         }

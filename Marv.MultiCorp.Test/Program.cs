@@ -10,7 +10,7 @@ namespace Marv.MultiCorp.Test
 
             for (var i = 0; i < 100; i++)
             {
-                Console.WriteLine(Utils.ComputeFlow(new GasOilWaterFlowParameters
+                Console.WriteLine(Utils.ComputeFlow(new FlowParameters
                 {
                     MixtureVelocity = 0.2372,
                     OilViscosity = 0.0268,
