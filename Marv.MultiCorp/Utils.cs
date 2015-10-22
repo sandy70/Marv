@@ -18,12 +18,8 @@ namespace Marv.MultiCorp
             (cCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
             cCase.onCorrosionTypeChanged();
 
-            //Set Flow type
-            (cCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) FlowModel.FlowType.Gas_Oil_Water_Flow);
-            cCase.onFlowTypeChanged();
-
             //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Line_run);
+            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
             cCase.onSimulationTypeChanged();
 
             flowParameters.Set(cCase);
@@ -35,11 +31,16 @@ namespace Marv.MultiCorp
                 flowModel.doCalculation();
             }
 
-            return new FlowResults
+            var flowResults = new FlowResults
             {
                 Pattern = flowModel.getParameter(NameList.FLOW_PATTERN).getValue().ToString(),
                 Wetting = flowModel.getParameter(NameList.WETTING_PHASE).getValue().ToString()
             };
+
+            flowModel.resetModel();
+            cCase.resetModel();
+
+            return flowResults;
         }
 
         public static void Initialize()
