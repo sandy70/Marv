@@ -14,6 +14,12 @@ namespace Marv.Input
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
+            var theme = (Application.Current.MainWindow as MainWindow).SelectedTheme;
+
+            if (theme == DataTheme.User)
+            {
+                return null;
+            }
           
             var cell = container as GridViewCell;
             var evidenceRow = cell.ParentRow.Item as EvidenceRow;

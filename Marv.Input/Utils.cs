@@ -200,14 +200,15 @@ namespace Marv.Input
 
             chart.Annotations.Add(new CartesianMarkedZoneAnnotation
             {
-                Fill = new SolidColorBrush(Colors.Goldenrod),
+                //Fill = new SolidColorBrush(Colors.Goldenrod),
                 HorizontalFrom = @from,
                 HorizontalTo = to,
-                Stroke = new SolidColorBrush(Colors.Goldenrod),
+                //Stroke = new SolidColorBrush(Colors.Goldenrod),
                 Tag = dataRow,
                 VerticalFrom = vertexEvidence.Params[0],
                 VerticalTo = vertexEvidence.Params[1],
                 ZIndex = -200,
+                Style = (Application.Current.MainWindow as MainWindow).FindResource("NewMarkedZones") as Style
             });
         }
 
