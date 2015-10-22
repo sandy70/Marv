@@ -1,6 +1,9 @@
-﻿namespace Marv.MultiCorp
+﻿using edu.ohiou.icmt.modeling.globalresources;
+using edu.ohiou.icmt.multicorp.basemodel;
+
+namespace Marv.MultiCorp
 {
-    public class GasOilWaterFlowParameters
+    public class GasOilWaterFlowParameters : IFlowParameters
     {
         public double GasDensity = 7.54; // kg / m^3
         public double Inclination = 0; // deg
@@ -11,5 +14,18 @@
         public double OilViscosity = 0.002; // Pa.s
         public double SuperficialGasVelocity = 2; // m/s
         public double WaterCut = 0.05; // %
+
+        public void Set(AbstractCase abstractCase)
+        {
+            abstractCase.getParameter(NameList.GAS_DENSITY).setValue(this.GasDensity);
+            abstractCase.getParameter(NameList.SECTION_DIAMETER).setValue(this.InternalDiameter);
+            abstractCase.getParameter(NameList.SECTION_INCLINATION).setValue(this.Inclination);
+            abstractCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(this.InterfacialTension);
+            abstractCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(this.MixtureVelocity);
+            abstractCase.getParameter(NameList.OIL_DENSITY).setValue(this.OilDensity);
+            abstractCase.getParameter(NameList.OIL_VISCOSITY).setValue(this.OilViscosity);
+            abstractCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(this.SuperficialGasVelocity);
+            abstractCase.getParameter(NameList.WATER_CUT).setValue(this.WaterCut);
+        }
     }
 }
