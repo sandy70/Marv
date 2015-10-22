@@ -613,6 +613,20 @@ namespace Marv.Common
             return this.GetBeliefs();
         }
 
+        public Dict<string, double[]> Run(Dict<string, string> evidenceStrings)
+        {
+            this.ClearEvidence();
+
+            foreach (var kvp in evidenceStrings)
+            {
+                this.SetEvidence(kvp.Key, kvp.Value);
+            }
+
+            this.UpdateBeliefs();
+
+            return this.GetBeliefs();
+        }
+
         public void SetEvidence(string nodeKey, string evidenceString)
         {
             if (!this.Vertices.ContainsKey(nodeKey))

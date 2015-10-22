@@ -304,7 +304,15 @@ namespace Marv.Epri
 
         private void PolylineControl_SelectionChanged(object sender, Location location)
         {
-            this.GraphControl.Graph.Belief = this.Network.Run("Position", this.positions[location.Key]);
+            var random = new Random();
+
+            var evidenceStrings = new Dict<string, string>
+            {
+                { "Position", this.positions[location.Key] },
+                { "Sensor01", random.Next(1024).ToString() }
+            };
+
+            this.GraphControl.Graph.Belief = this.Network.Run(evidenceStrings);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
