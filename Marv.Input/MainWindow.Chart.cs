@@ -43,7 +43,8 @@ namespace Marv.Input
 
             if (vertexEvidence.Type == VertexEvidenceType.Invalid)
             {
-                MessageBox.Show("Invalid input entered");
+               
+              //  MessageBox.Show("Invalid input entered");
                 return;
             }
             // Remove older annotations
