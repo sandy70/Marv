@@ -214,7 +214,7 @@
                                                          CanUserSortColumns="False"
                                                          ClipboardCopyMode="All"
                                                          CurrentColumn="{Binding ElementName=Root, Path=CurrentColumn}"
-                                                         ClipboardPasteMode="Default"
+                                                         ClipboardPasteMode="OverwriteWithEmptyValues"
                                                          FrozenColumnCount="2"
                                                          GroupRenderMode="Flat"
                                                          IsFilteringAllowed="False"
@@ -227,15 +227,13 @@
                                                          ValidatesOnDataErrors="None"
                                                          AddingNewDataItem="GridView_AddingNewDataItem"
                                                          AutoGeneratingColumn="GridView_AutoGeneratingColumn"
-
                                                          CellEditEnded="GridView_CellEditEnded"
                                                          CellValidating="GridView_CellValidating"
                                                          CurrentCellChanged="GridView_CurrentCellChanged"
                                                          PastingCellClipboardContent="GridView_PastingCellClipboardContent"
                                                          RowEditEnded="GridView_RowEditEnded"
                                                          Pasted="GridView_Pasted" />
-
-
+                                   
                                 </Grid>
                             </telerik:RadPane>
                             <telerik:RadPane Header="HeatMap"
