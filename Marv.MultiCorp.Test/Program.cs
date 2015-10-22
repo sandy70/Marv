@@ -10,7 +10,7 @@ namespace Marv.MultiCorp.Test
 
             for (var i = 0; i < 100; i++)
             {
-                Console.WriteLine(Utils.ComputeFlowPattern(new OilWaterFlowParameters
+                Console.WriteLine(Utils.ComputeFlow(new OilWaterFlowParameters
                 {
                     MixtureVelocity = 0.2372,
                     OilViscosity = 0.0268,
@@ -19,7 +19,7 @@ namespace Marv.MultiCorp.Test
                     InterfacialTension = 0.125,
                     Inclination = -1.4038,
                     WaterCut = 3.0267 / 100
-                }));
+                }).Wetting);
             }
 
             Console.ReadKey();

@@ -53,8 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlowResults.cs" />
     <Compile Include="GasOilWaterFlowParameters.cs" />
     <Compile Include="GasWaterFlowParameters.cs" />
+    <Compile Include="IFlowParameters.cs" />
     <Compile Include="OilWaterFlowParameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
