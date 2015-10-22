@@ -19,8 +19,7 @@ namespace Marv.Common
 
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
 
-        [JsonProperty]
-        public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
+        [JsonProperty] public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
         private string fileName;
 
@@ -601,6 +600,31 @@ namespace Marv.Common
             }
 
             return sectionBeliefs;
+        }
+
+        public Dict<string, double[]> Run(string nodeKey, string evidence)
+        {
+            this.ClearEvidence();
+
+            this.SetEvidence(nodeKey, evidence);
+
+            this.UpdateBeliefs();
+
+            return this.GetBeliefs();
+        }
+
+        public Dict<string, double[]> Run(Dict<string, string> evidenceStrings)
+        {
+            this.ClearEvidence();
+
+            foreach (var kvp in evidenceStrings)
+            {
+                this.SetEvidence(kvp.Key, kvp.Value);
+            }
+
+            this.UpdateBeliefs();
+
+            return this.GetBeliefs();
         }
 
         public void SetEvidence(string nodeKey, string evidenceString)

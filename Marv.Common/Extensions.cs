@@ -7,6 +7,8 @@ using Marv.Common.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using QuickGraph.Algorithms.RankedShortestPath;
+using SharpKml.Dom;
+using Point = System.Windows.Point;
 
 namespace Marv.Common
 {
@@ -262,9 +264,9 @@ namespace Marv.Common
             return str;
         }
 
-        public static string ToJson(this object _object)
+        public static string ToJson(this object _object, Formatting formatting = Formatting.None)
         {
-            return JsonConvert.SerializeObject(_object, Formatting.Indented);
+            return JsonConvert.SerializeObject(_object, formatting);
         }
 
         public static LocationCollection ToLocationCollection(this IEnumerable<Location> locations)
@@ -274,6 +276,24 @@ namespace Marv.Common
             foreach (var location in locations)
             {
                 locationCollection.Add(location);
+            }
+
+            return locationCollection;
+        }
+
+        public static LocationCollection ToLocationCollection(this LineString lineString, bool assignIds = false)
+        {
+            var key = 0;
+            var locationCollection = new LocationCollection();
+
+            foreach (var coordinate in lineString.Coordinates)
+            {
+                locationCollection.Add(new Location
+                {
+                    Key = assignIds ? key++ + "" : null,
+                    Latitude = coordinate.Latitude,
+                    Longitude = coordinate.Longitude
+                });
             }
 
             return locationCollection;

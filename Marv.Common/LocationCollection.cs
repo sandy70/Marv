@@ -82,7 +82,7 @@ namespace Marv.Common
             return locationCollection;
         }
 
-        public static LineStringCollection ReadKml(string path)
+        public static LineStringCollection ReadKml(string path, bool assignIds = false)
         {
             var kmlFile = KmlFile.Load(new StreamReader(path));
 
@@ -97,7 +97,7 @@ namespace Marv.Common
                               .Aggregate(lineStringCollection,
                                   (current, placemark) =>
                                   {
-                                      LocationCollection locationCollection = placemark.Geometry as LineString;
+                                      var locationCollection = (placemark.Geometry as LineString).ToLocationCollection(assignIds);
                                       locationCollection.Key = placemark.Name;
                                       current.LineStrings.Add(locationCollection);
                                       return current;

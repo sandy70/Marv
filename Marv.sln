@@ -25,8 +25,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.MultiCorp.Test", "Marv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Script", "Marv.Script\Marv.Script.csproj", "{36757F7C-408C-4C28-963B-E6CA9AE3B5BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.WebService", "Marv.WebService\Marv.WebService.csproj", "{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}"
-EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Marv.CloudService", "Marv.CloudService\Marv.CloudService.ccproj", "{B357688B-0E4C-4AE7-9586-6A3F34A3E65C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.WCFServiceWebRole", "Marv.WCFServiceWebRole\Marv.WCFServiceWebRole.csproj", "{1D6D0396-552C-46C6-896F-CBAC0BB88D45}"
@@ -185,18 +183,6 @@ Global
 		{36757F7C-408C-4C28-963B-E6CA9AE3B5BE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{36757F7C-408C-4C28-963B-E6CA9AE3B5BE}.Release|x64.ActiveCfg = Release|Any CPU
 		{36757F7C-408C-4C28-963B-E6CA9AE3B5BE}.Release|x86.ActiveCfg = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|x64.ActiveCfg = Release|Any CPU
-		{D47F4F6A-4C8E-4B22-BD00-AEB65E4432A0}.Release|x86.ActiveCfg = Release|Any CPU
 		{B357688B-0E4C-4AE7-9586-6A3F34A3E65C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B357688B-0E4C-4AE7-9586-6A3F34A3E65C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B357688B-0E4C-4AE7-9586-6A3F34A3E65C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
