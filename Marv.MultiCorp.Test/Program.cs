@@ -19,7 +19,7 @@ namespace Marv.MultiCorp.Test
                     InterfacialTension = 0.125,
                     Inclination = -1.4038,
                     WaterCut = 3.0267 / 100
-                }));
+                }).Wetting);
             }
 
             Console.ReadKey();

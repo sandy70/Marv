@@ -28,16 +28,6 @@ namespace Marv.MultiCorp
 
             flowParameters.Set(cCase);
 
-            return cCase.GetFlowResults();
-        }
-
-        public static void Initialize()
-        {
-            MulticorpRunner.initialize();
-        }
-
-        private static FlowResults GetFlowResults(this AbstractCase cCase)
-        {
             var flowModel = cCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;
 
             if (flowModel != null)
@@ -48,8 +38,13 @@ namespace Marv.MultiCorp
             return new FlowResults
             {
                 Pattern = flowModel.getParameter(NameList.FLOW_PATTERN).getValue().ToString(),
-                Wetting = flowModel.getParameter(NameList.WETTING_FACTOR).getValue().ToString()
+                Wetting = flowModel.getParameter(NameList.WETTING_PHASE).getValue().ToString()
             };
+        }
+
+        public static void Initialize()
+        {
+            MulticorpRunner.initialize();
         }
     }
 }
