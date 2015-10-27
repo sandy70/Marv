@@ -607,16 +607,6 @@ namespace Marv.Input
             this.Chart.UpdateCommentBlocks(row, VerticalAxis);
         }
 
-        private void CompareDistribution_Click(object sender, RoutedEventArgs e)
-        {
-            this.DistributionComparator.IsHidden = !this.DistributionComparator.IsHidden;
-        }
-
-        //private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
-        //{
-        //    this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
-        //}
-
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
             if (!this.SelectedTheme.Equals(DataTheme.User))

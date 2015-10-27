@@ -96,9 +96,6 @@
                           Click="HeatMapMenuItem_Click"
                           IsEnabled="True" />
 
-                <MenuItem Header="Compare Dist"
-                          Click="CompareDistribution_Click" />
-
                 <MenuItem Header="Define PipeLine"
                           Click="DefineTimelineMenuItem_Click" />
 
@@ -231,27 +228,7 @@
                                    
                                 </Grid>
                             </telerik:RadPane>
-                            <telerik:RadPane Header="HeatMap"
-                                             IsHidden="{Binding ElementName=Root, Path=IsHeatMapVisible, Converter={StaticResource BooleanNot}}">
-                                <Grid>
-                                    <telerik:RadHeatMap x:Name="HeatMap"
-                                                        CellBorderColor="Black"
-                                                        CellBorderThickness="1">
-                                        <telerik:RadHeatMap.Definition>
-                                            <telerik:CategoricalDefinition RowGroupMemberPath="Row"
-                                                                           ColumnGroupMemberPath="Column"
-                                                                           ValuePath="Value"
-                                                                           ItemsSource="{Binding}" />
-                                        </telerik:RadHeatMap.Definition>
-
-                                        <telerik:RadHeatMap.CellLabelSettings>
-                                            <telerik:HeatMapCellLabelSettings Foreground="Black" />
-                                        </telerik:RadHeatMap.CellLabelSettings>
-                                    </telerik:RadHeatMap>
-
-                                </Grid>
-
-                            </telerik:RadPane>
+                           
 
                             <telerik:RadPane Header="CommentBlocks"
                                              IsHidden="{Binding ElementName=Root, Path=IsCommentBlocksGridVisible, Converter={StaticResource BooleanNot}}">
@@ -358,46 +335,26 @@
                             </telerik:RadPane>
                         </telerik:RadPaneGroup>
                         <telerik:RadPaneGroup>
-                            <telerik:RadPane IsHidden="True" Name="DistributionComparator">
+                            <telerik:RadPane Header="HeatMap"
+                                             IsHidden="{Binding ElementName=Root, Path=IsHeatMapVisible, Converter={StaticResource BooleanNot}}">
                                 <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
+                                    <telerik:RadHeatMap x:Name="HeatMap"
+                                                        CellBorderColor="Black"
+                                                        CellBorderThickness="1">
+                                        <telerik:RadHeatMap.Definition>
+                                            <telerik:CategoricalDefinition RowGroupMemberPath="Row"
+                                                                           ColumnGroupMemberPath="Column"
+                                                                           ValuePath="Value"
+                                                                           ItemsSource="{Binding}" />
+                                        </telerik:RadHeatMap.Definition>
 
-                                    <ToolBarTray Grid.Row="0">
-                                        <ToolBarTray.Resources>
-                                            <ResourceDictionary>
-                                                <ResourceDictionary.MergedDictionaries>
-                                                    <ResourceDictionary Source="/Marv.Controls;component/ToolbarTrayStyle.xaml" />
-                                                </ResourceDictionary.MergedDictionaries>
+                                        <telerik:RadHeatMap.CellLabelSettings>
+                                            <telerik:HeatMapCellLabelSettings Foreground="Black" />
+                                        </telerik:RadHeatMap.CellLabelSettings>
+                                    </telerik:RadHeatMap>
 
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </ResourceDictionary>
-                                        </ToolBarTray.Resources>
-                                        <ToolBar />
-
-                                    </ToolBarTray>
-
-                                    <telerik:RadCartesianChart Grid.Row="1">
-                                        <telerik:RadCartesianChart.HorizontalAxis>
-                                            <telerik:CategoricalAxis />
-                                        </telerik:RadCartesianChart.HorizontalAxis>
-                                        <telerik:RadCartesianChart.VerticalAxis>
-                                            <telerik:LinearAxis />
-                                        </telerik:RadCartesianChart.VerticalAxis>
-                                        <telerik:BarSeries>
-                                            <telerik:BarSeries.DataPoints>
-                                                <telerik:CategoricalDataPoint Category="20-40" Value="56" />
-                                                <telerik:CategoricalDataPoint Category="40-60" Value="28" />
-                                                <telerik:CategoricalDataPoint Category="60-80" Value="17" />
-                                                <telerik:CategoricalDataPoint Category="80-100" Value="30" />
-                                            </telerik:BarSeries.DataPoints>
-                                        </telerik:BarSeries>
-                                    </telerik:RadCartesianChart>
                                 </Grid>
+
                             </telerik:RadPane>
                         </telerik:RadPaneGroup>
                     </telerik:RadSplitContainer>

@@ -117,18 +117,21 @@ namespace Marv.Input
 
             if (this.SelectedColumnName.TryParse(out dateTime))
             {
+               
                 if (this.SelectedTheme != DataTheme.User)
                 {
                     this.SelectedInterpolationData = null;
+                    
                 }
 
                 else
                 {
                     this.SelectedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
-                    this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
+                    
                 }
+                
             }
-
+            this.IsCellToolbarEnabled = gridViewColumn.UniqueName.TryParse(out dateTime);
             if (this.selectedColumnName.TryParse(out dateTime))
             {
                 this.Chart.Annotations.Remove(annotation => true);

@@ -200,15 +200,14 @@ namespace Marv.Input
 
             chart.Annotations.Add(new CartesianMarkedZoneAnnotation
             {
-                //Fill = new SolidColorBrush(Colors.Goldenrod),
+                Fill = new SolidColorBrush(Colors.Goldenrod),
                 HorizontalFrom = @from,
                 HorizontalTo = to,
-                //Stroke = new SolidColorBrush(Colors.Goldenrod),
+                Stroke = new SolidColorBrush(Colors.Goldenrod),
                 Tag = dataRow,
                 VerticalFrom = vertexEvidence.Params[0],
                 VerticalTo = vertexEvidence.Params[1],
                 ZIndex = -200,
-                Style = (Application.Current.MainWindow as MainWindow).FindResource("NewMarkedZones") as Style
             });
         }
 
@@ -303,9 +302,27 @@ namespace Marv.Input
 
             foreach (var kvp in userDataObj)
             {
+                foreach (var row in kvp.Value.UserTable)
+                {
+                    var colNames = row.GetDynamicMemberNames().ToList();
+
+                    foreach (var colName in colNames)
+                    {
+                        if (row[colName] == "")
+                        {
+                            row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null };
+                        }
+                    }
+                }
+            }
+
+            foreach (var kvp in userDataObj)
+            {
                 unmergedEvidenceSet.Add(kvp.Key, kvp.Value.UserTable);
             }
-            
+
+           
+
             // Generate a list which holds the modified section ranges
             foreach (var kvp in unmergedEvidenceSet)
             {
@@ -364,7 +381,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    if (mergedEvidenceRow.Equals(uniqueRow))
+                    if (mergedEvidenceRow.From ==uniqueRow.From && mergedEvidenceRow.To == uniqueRow.To)
                     {
                         deleteRows.Add(mergedEvidenceRow);
                     }
@@ -511,13 +528,28 @@ namespace Marv.Input
                 values.Add(kvp.Value);
             }
 
-            return values.Any(table => table.Any(row => row.Equals(evidenceRow)));
+            return values.Any(table => table.Any(row => row.From==evidenceRow.From && row.To == evidenceRow.To));
         }
 
         private static Dict<string, double[]> GetEvidenceAverage(List<EvidenceRow> unmergedEvidenceRows)
         {
             var columnNames = unmergedEvidenceRows[0].GetDynamicMemberNames().ToList();
-            var noOfstates = (unmergedEvidenceRows[0][columnNames[0]] as VertexEvidence).Value.Count();
+            var noOfstates=0;
+           
+            foreach (var row in unmergedEvidenceRows)
+            {
+                foreach (var colName in columnNames)
+                {
+                    if ((row[colName] as VertexEvidence).Type != VertexEvidenceType.Null)
+                    {
+                        noOfstates = (row[colName] as VertexEvidence).Value.Count();
+                        goto loopExited;
+                    }
+                    
+                }
+            }
+
+            loopExited:
             var combinedColumnValues = new Dict<string, double[]>();
 
             foreach (var columnName in columnNames)
@@ -528,11 +560,14 @@ namespace Marv.Input
                 {
                     var i = 0;
                     var evidence = evidenceRow[columnName] as VertexEvidence;
-                    var value = evidence.Value;
-
+                    
+                    if (evidence.Value == null)
+                    {
+                        continue;
+                    }
                     while (i < noOfstates)
                     {
-                        combinedColumnValues[columnName][i] += value[i];
+                        combinedColumnValues[columnName][i] += evidence.Value[i];
                         i++;
                     }
                 }
