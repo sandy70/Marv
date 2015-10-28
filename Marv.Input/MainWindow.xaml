@@ -68,6 +68,7 @@
 
                 <MenuItem Header="Open"
                           Click="LineDataOpenMenuItem_Click" />
+                
                 <MenuItem Header="Import">
                     <MenuItem Header="Excel(*.xlxs)"
                               Click="LineDataImportExcelMenuItem_Click"
@@ -84,8 +85,6 @@
                           Click="LineDataSaveAsMenuItem_Click" />
 
                 <Separator />
-
-
             </MenuItem>
 
             <MenuItem Header="Run">
@@ -106,7 +105,6 @@
 
                 <MenuItem Header="Define PipeLine"
                           Click="DefineTimelineMenuItem_Click" />
-
             </MenuItem>
         </Menu>
 
@@ -121,6 +119,7 @@
             </telerik:RadDocking.Resources>
 
             <telerik:RadSplitContainer>
+                
                 <!-- InputGrid and Plot -->
                 <telerik:RadSplitContainer Orientation="Vertical">
                     <telerik:RadSplitContainer Orientation="Horizontal">
@@ -186,83 +185,83 @@
 
                                         </ToolBar>
 
-                                    <!-- Define Pipeline Toolbar -->
-                                    <ToolBar Band="2"
-                                             BandIndex="1"
-                                             IsEnabled="True">
-                                        <TextBlock Margin="4"
-                                                   Text="Start (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                        <!-- Define Pipeline Toolbar -->
+                                        <ToolBar Band="2"
+                                                 BandIndex="1"
+                                                 IsEnabled="True">
+                                            <TextBlock Margin="4"
+                                                       Text="Start (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableMin}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <TextBlock Margin="4"
-                                                   Text="End (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                            <TextBlock Margin="4"
+                                                       Text="End (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableMax}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <TextBlock Margin="4"
-                                                   Text="Range (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                            <TextBlock Margin="4"
+                                                       Text="Range (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableRange}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <TextBlock Margin="4"
-                                                   Text="Start (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                            <TextBlock Margin="4"
+                                                       Text="Start (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMin}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableMin}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <TextBlock Margin="4"
-                                                   Text="End (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                            <TextBlock Margin="4"
+                                                       Text="End (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableMax}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableMax}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <TextBlock Margin="4"
-                                                   Text="Range (m)"
-                                                   TextAlignment="Right"
-                                                   Width="64" />
+                                            <TextBlock Margin="4"
+                                                       Text="Range (m)"
+                                                       TextAlignment="Right"
+                                                       Width="64" />
 
-                                        <TextBox BorderBrush="LightSkyBlue"
-                                                 Height="32"
-                                                 Text="{Binding ElementName=Root, Path=BaseTableRange}"
-                                                 TextAlignment="Right"
-                                                 Width="64" />
+                                            <TextBox BorderBrush="LightSkyBlue"
+                                                     Height="32"
+                                                     Text="{Binding ElementName=Root, Path=BaseTableRange}"
+                                                     TextAlignment="Right"
+                                                     Width="64" />
 
-                                        <telerik:RadButton Content="Go"
-                                                           FontWeight="Bold"
-                                                           Width="32"
-                                                           Click="Go_Click" />
-                                    </ToolBar>
+                                            <telerik:RadButton Content="Go"
+                                                               FontWeight="Bold"
+                                                               Width="32"
+                                                               Click="Go_Click" />
+                                        </ToolBar>
 
-                                    <!-- Export Statistics Toolbar -->
+                                        <!-- Export Statistics Toolbar -->
                                         <ToolBar Band="2"
                                                  BandIndex="2"
                                                  IsEnabled="{Binding ElementName=Root, Path=IsModelRun}">
@@ -544,22 +543,29 @@
                                                            Width="64"
                                                            Click="InterpolationDataClearButton_Click" />
                                     </ToolBar>
+                                    
+                                    <!-- Interpolation Chart Toolbar -->
                                     <ToolBar>
-                                        <telerik:RadButton Name="CopyLines" 
-                                                           Content="Copy"
-                                                           Click="CopyLines_Click"/>
+                                        <telerik:RadButton Content="Copy"
+                                                           Width="64"
+                                                           Click="CopyLines_Click" />
 
-                                        <telerik:RadButton Name="PasteLines"
-                                                           Content="Paste"
-                                                           Click="PasteLines_Click"/>
+                                        <telerik:RadButton Content="Paste"
+                                                           Width="64"
+                                                           Click="PasteLines_Click" />
 
-                                        <telerik:RadButton Name="PasteToAll"
-                                                           Content="PasteToAll"
-                                                           Click="PasteToAll_Click"/>
+                                        <telerik:RadButton Content="Paste Everywhere"
+                                                           Width="96"
+                                                           Click="PasteEverywhereButton_Click" />
+                                        
+                                        <telerik:RadButton Content="Export Plot"
+                                                           Width="96"
+                                                           Click="ExportPlotButton_Click"/>
                                     </ToolBar>
                                 </ToolBarTray>
 
                                 <Label Grid.Row="1" Width="100" HorizontalAlignment="Left" Content="{Binding ElementName=Root, Path=SelectedVertex.Key}" />
+                                
                                 <Label Grid.Row="1" Width="100" Content="{Binding ElementName=Root, Path=SelectedColumnName, Converter={StaticResource LongDateToShort}}" />
 
                                 <!-- Chart Axis Radio Buttons -->

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A0AA151E-99FD-4CDD-A17D-CAF2A65BEF73}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Marv.MultiCorp</RootNamespace>
     <AssemblyName>Marv.MultiCorp</AssemblyName>
@@ -47,6 +47,10 @@
     <Reference Include="mc-modeling">
       <HintPath>..\lib\MultiCorp\mc-modeling.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,16 +58,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlowResults.cs" />
-    <Compile Include="GasOilWaterFlowParameters.cs" />
-    <Compile Include="GasWaterFlowParameters.cs" />
-    <Compile Include="IFlowParameters.cs" />
-    <Compile Include="OilWaterFlowParameters.cs" />
+    <Compile Include="FlowParameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DFORRTD.DLL">
@@ -84,6 +86,12 @@
     <Content Include="topcorp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marv.Common\Marv.Common.csproj">
+      <Project>{a17e2d7f-d5e8-4a8f-9394-9748c0ddbd1d}</Project>
+      <Name>Marv.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

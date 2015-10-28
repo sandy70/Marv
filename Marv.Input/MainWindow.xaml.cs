@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Marv.Common;
 using Marv.Common.Types;
 using Microsoft.Win32;
@@ -19,6 +20,7 @@ using Telerik.Windows.Controls.GridView;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
 using Telerik.Windows.Documents.Spreadsheet.Model;
+using ExportExtensions = Telerik.Windows.Media.Imaging.ExportExtensions;
 using GridViewColumn = Telerik.Windows.Controls.GridViewColumn;
 using ICommand = Marv.Common.ICommand;
 
@@ -486,21 +488,6 @@ namespace Marv.Input
             LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
         }
 
-        protected void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var action = e.Action;
-
-            if (action != NotifyCollectionChangedAction.Add)
-            {
-                return;
-            }
-            var command = new AddRowCommand(this.Table);
-
-            this.AddRowCommandsCount++;
-
-            this.UpdateCommandStack(command);
-        }
-
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             this.dates = new List<DateTime>();
@@ -543,7 +530,7 @@ namespace Marv.Input
 
             foreach (var kvp in this.PipeLineData.UserDataObj)
             {
-               var interpolatedTable = new EvidenceTable(this.dates);
+                var interpolatedTable = new EvidenceTable(this.dates);
                 interpolatedData.Add(kvp.Key, interpolatedTable);
 
                 foreach (var column in kvp.Value.InterpolatedNodeData)
@@ -555,18 +542,16 @@ namespace Marv.Input
 
                     this.SelectedInterpolationData = column.Value;
 
-
                     if (interpolatedTable.Count == 0)
                     {
                         foreach (var mergedEvidenceRow in mergedDataSet.Values[0])
                         {
                             var interpolatedRow = new EvidenceRow { From = mergedEvidenceRow.From, To = mergedEvidenceRow.To };
                             interpolatedTable.Add(interpolatedRow);
-
                         }
                     }
 
-                   // interpolatedData.Add(kvp.Key, interpolatedTable);
+                    // interpolatedData.Add(kvp.Key, interpolatedTable);
 
                     foreach (var interpolatedRow in interpolatedTable)
                     {
@@ -611,11 +596,6 @@ namespace Marv.Input
         {
             this.DistributionComparator.IsHidden = !this.DistributionComparator.IsHidden;
         }
-
-        //private void CommentBlocksGrid_Click(object sender, RoutedEventArgs e)
-        //{
-        //    this.IsCommentBlocksGridVisible = !this.IsCommentBlocksGridVisible;
-        //}
 
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
@@ -726,6 +706,26 @@ namespace Marv.Input
             if (this.PipeLineData.StartDate > this.PipeLineData.EndDate)
             {
                 this.PipeLineData.StartDate = this.PipeLineData.EndDate;
+            }
+        }
+
+        private void ExportPlotButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "PNG Image|*.png",
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result != true)
+            {
+                return;
+            }
+
+            using (Stream fileStream = File.Open(dialog.FileName, FileMode.OpenOrCreate))
+            {
+                ExportExtensions.ExportToImage(this.Chart, fileStream, new PngBitmapEncoder());
             }
         }
 
@@ -1053,37 +1053,7 @@ namespace Marv.Input
             }
         }
 
-        private void PasteLines_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.CopiedColumnName == null)
-            {
-                return;
-            }
-            var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
-            if (copiedInterpolationData.Points == null)
-            {
-                return;
-            }
-            var pastedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
-
-            pastedInterpolationData.Type = copiedInterpolationData.Type;
-            pastedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
-
-            foreach (var line in pastedInterpolationData.Points.Where(line => line != null))
-            {
-                line.Clear();
-            }
-
-            for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
-            {
-                foreach (var point in copiedInterpolationData.Points[i])
-                {
-                    pastedInterpolationData.Points[i].Add(point);
-                }
-            }
-        }
-
-        private void PasteToAll_Click(object sender, RoutedEventArgs e)
+        private void PasteEverywhereButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.CopiedColumnName == null)
             {
@@ -1112,7 +1082,8 @@ namespace Marv.Input
                 }
             }
 
-            foreach (var column in this.dates.Where(column => column.String() != this.CopiedColumnName)) {
+            foreach (var column in this.dates.Where(column => column.String() != this.CopiedColumnName))
+            {
                 for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
                 {
                     foreach (var point in copiedInterpolationData.Points[i])
@@ -1123,6 +1094,36 @@ namespace Marv.Input
                             observableCollection[i].Add(point);
                         }
                     }
+                }
+            }
+        }
+
+        private void PasteLines_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.CopiedColumnName == null)
+            {
+                return;
+            }
+            var copiedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.CopiedColumnName];
+            if (copiedInterpolationData.Points == null)
+            {
+                return;
+            }
+            var pastedInterpolationData = this.PipeLineData.UserDataObj[this.SelectedVertex.Key].InterpolatedNodeData[this.SelectedColumnName];
+
+            pastedInterpolationData.Type = copiedInterpolationData.Type;
+            pastedInterpolationData.CreatePoints(this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.SelectedVertex.SafeMax, this.SelectedVertex.SafeMin);
+
+            foreach (var line in pastedInterpolationData.Points.Where(line => line != null))
+            {
+                line.Clear();
+            }
+
+            for (var i = 0; i < copiedInterpolationData.Points.Count; i++)
+            {
+                foreach (var point in copiedInterpolationData.Points[i])
+                {
+                    pastedInterpolationData.Points[i].Add(point);
                 }
             }
         }
@@ -1318,6 +1319,21 @@ namespace Marv.Input
             }
 
             this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+        }
+
+        private void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var action = e.Action;
+
+            if (action != NotifyCollectionChangedAction.Add)
+            {
+                return;
+            }
+            var command = new AddRowCommand(this.Table);
+
+            this.AddRowCommandsCount++;
+
+            this.UpdateCommandStack(command);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
