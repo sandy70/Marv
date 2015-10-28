@@ -1,4 +1,5 @@
 ﻿using System;
+using edu.ohiou.icmt.multicorp.basemodel;
 
 namespace Marv.MultiCorp.Test
 {
@@ -8,19 +9,43 @@ namespace Marv.MultiCorp.Test
         {
             Utils.Initialize();
 
-            for (var i = 0; i < 100; i++)
-            {
-                Console.WriteLine(Utils.ComputeFlow(new FlowParameters
-                {
-                    MixtureVelocity = 0.2372,
-                    OilViscosity = 0.0268,
-                    OilDensity = 805.19,
-                    InternalDiameter = 16 / 39.37,
-                    InterfacialTension = 0.125,
-                    Inclination = -1.4038,
-                    WaterCut = 3.0267 / 100
-                }).Wetting);
-            }
+            var gasOilWaterFlowParams = new FlowParameters();
+
+            gasOilWaterFlowParams.FlowType = FlowModel.FlowType.Gas_Oil_Water_Flow;
+
+            gasOilWaterFlowParams.InternalDiameter = 33.95 * 0.0254;
+            gasOilWaterFlowParams.PipeThickness = 1.025 * 0.0254;
+
+            gasOilWaterFlowParams.VelocityInputType = FlowModel.VelTypes.Mixture;
+
+            gasOilWaterFlowParams.Inclination = 0;
+            gasOilWaterFlowParams.SuperficialGasVelocity = 0.1;
+            gasOilWaterFlowParams.MixtureVelocity = 1;
+            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
+
+            gasOilWaterFlowParams.OilDensity = 825;
+            gasOilWaterFlowParams.OilViscosity = 0.002;
+            gasOilWaterFlowParams.InterfacialTension = 0.04;
+
+            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
+
+
+
+            gasOilWaterFlowParams.Inclination = 0;
+            gasOilWaterFlowParams.SuperficialGasVelocity = 0.1;
+            gasOilWaterFlowParams.MixtureVelocity = 10;
+            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
+
+            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
+
+
+
+            gasOilWaterFlowParams.Inclination = 0;
+            gasOilWaterFlowParams.SuperficialGasVelocity = 10;
+            gasOilWaterFlowParams.MixtureVelocity = 1;
+            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
+
+            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
 
             Console.ReadKey();
         }
