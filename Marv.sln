@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.Script", "Marv.Script\
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Marv.CloudService", "Marv.CloudService\Marv.CloudService.ccproj", "{B357688B-0E4C-4AE7-9586-6A3F34A3E65C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.WCFServiceWebRole", "Marv.WCFServiceWebRole\Marv.WCFServiceWebRole.csproj", "{1D6D0396-552C-46C6-896F-CBAC0BB88D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marv.CloudServiceWebRole", "Marv.CloudServiceWebRole\Marv.CloudServiceWebRole.csproj", "{1D6D0396-552C-46C6-896F-CBAC0BB88D45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

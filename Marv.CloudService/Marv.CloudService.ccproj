@@ -38,20 +38,20 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marv.WCFServiceWebRole\Marv.WCFServiceWebRole.csproj">
-      <Name>Marv.WCFServiceWebRole</Name>
+    <Folder Include="Marv.CloudServiceWebRoleContent" />
+  </ItemGroup>
+  <ItemGroup>
+    <DiagnosticsConfiguration Include="Marv.CloudServiceWebRoleContent\diagnostics.wadcfgx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marv.CloudServiceWebRole\Marv.CloudServiceWebRole.csproj">
+      <Name>Marv.CloudServiceWebRole</Name>
       <Project>{1d6d0396-552c-46c6-896f-cbac0bb88d45}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
-      <RoleName>Marv.WCFServiceWebRole</RoleName>
+      <RoleName>Marv.CloudServiceWebRole</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Marv.WCFServiceWebRoleContent\" />
-  </ItemGroup>
-  <ItemGroup>
-    <DiagnosticsConfiguration Include="Marv.WCFServiceWebRoleContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

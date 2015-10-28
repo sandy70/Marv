@@ -1,51 +1,56 @@
 ﻿using System;
+using edu.ohiou.icmt;
+using edu.ohiou.icmt.modeling.globalresources;
+using edu.ohiou.icmt.modeling.param;
 using edu.ohiou.icmt.multicorp.basemodel;
+using edu.ohiou.icmt.multicorp.factory;
 
 namespace Marv.MultiCorp.Test
 {
-    internal class Program
+    internal static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
-            Utils.Initialize();
+            MulticorpRunner.initialize();
 
-            var gasOilWaterFlowParams = new FlowParameters();
+            //Create new Case
+            var caseFactory = AbstractModelFactory.getFactory(AbstractModelFactory.AbstractModels.CORROSIONCASE) as CaseFactory;
+            var abstractCase = caseFactory.createModel() as AbstractCase;
 
-            gasOilWaterFlowParams.FlowType = FlowModel.FlowType.Gas_Oil_Water_Flow;
+            //Set Corrosion Type
+            (abstractCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
+            abstractCase.onCorrosionTypeChanged();
 
-            gasOilWaterFlowParams.InternalDiameter = 33.95 * 0.0254;
-            gasOilWaterFlowParams.PipeThickness = 1.025 * 0.0254;
+            //Set simulation Type
+            (abstractCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
+            abstractCase.onSimulationTypeChanged();
 
-            gasOilWaterFlowParams.VelocityInputType = FlowModel.VelTypes.Mixture;
+            //Set Flow type
+            (abstractCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) FlowModel.FlowType.Gas_Oil_Water_Flow);
+            abstractCase.onFlowTypeChanged();
 
-            gasOilWaterFlowParams.Inclination = 0;
-            gasOilWaterFlowParams.SuperficialGasVelocity = 0.1;
-            gasOilWaterFlowParams.MixtureVelocity = 1;
-            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
+            // The order in which the parameters are set matters. We are going to follow the order in the MultiCorp GUI
 
-            gasOilWaterFlowParams.OilDensity = 825;
-            gasOilWaterFlowParams.OilViscosity = 0.002;
-            gasOilWaterFlowParams.InterfacialTension = 0.04;
+            // Flow Velocity
+            (abstractCase.getParameter(NameList.VELOCITY_INPUT_TYPE) as OptionParameter).setOption((int) FlowModel.VelTypes.Mixture);
 
-            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
+            // Line Parameters
+            abstractCase.getParameter(NameList.SECTION_DIAMETER).setValue(0.85);
 
+            Console.WriteLine((abstractCase.getParameter(NameList.SECTION_DIAMETER) as Parameter).getBaseUnitName());
 
+            abstractCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(10);
+            abstractCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(1);
+            abstractCase.getParameter(NameList.WATER_CUT).setValue(0.2);
 
-            gasOilWaterFlowParams.Inclination = 0;
-            gasOilWaterFlowParams.SuperficialGasVelocity = 0.1;
-            gasOilWaterFlowParams.MixtureVelocity = 10;
-            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
+            var flowModel = abstractCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;
 
-            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
+            if (flowModel != null)
+            {
+                flowModel.doCalculation();
+            }
 
-
-
-            gasOilWaterFlowParams.Inclination = 0;
-            gasOilWaterFlowParams.SuperficialGasVelocity = 10;
-            gasOilWaterFlowParams.MixtureVelocity = 1;
-            gasOilWaterFlowParams.WaterCut = 20.0 / 100;
-
-            Console.WriteLine(Utils.ComputeFlow(gasOilWaterFlowParams).Pattern);
+            Console.WriteLine(flowModel.getParameter(NameList.FLOW_PATTERN).getValue());
 
             Console.ReadKey();
         }
