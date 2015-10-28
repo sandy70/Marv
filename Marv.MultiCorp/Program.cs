@@ -9,23 +9,26 @@ using edu.ohiou.icmt.multicorp.basemodel;
 using edu.ohiou.icmt.multicorp.corrosion.multiplex;
 using edu.ohiou.icmt.multicorp.factory;
 using edu.ohiou.icmt.multicorp.postprocessing;
+using Marv.Common;
 
 namespace Marv.MultiCorp
 {
-    public class Program
+    public static class Program
     {
-        private static void Main()
+        private static void Main(string[] args)
         {
             Utils.Initialize();
 
-            for (var i = 0; i < 10; i++)
-            {
-                Console.WriteLine(Utils.ComputeFlowPattern(new GasOilWaterFlowParameters()));
-                Console.WriteLine(Utils.ComputeFlowPattern(new GasWaterFlowParameters()));
-                Console.WriteLine(Utils.ComputeFlowPattern(new OilWaterFlowParameters()));
-            }
+            var flowParameters = Common.Utils.ReadJson<FlowParameters>(args[0]);
 
-            Console.ReadKey();
+            if (args.Length > 1)
+            {
+                Utils.ComputeFlow(flowParameters).WriteJson(args[1]);
+            }
+            else
+            {
+                Console.Write(Utils.ComputeFlow(flowParameters).ToJson());
+            }
         }
 
         private static void TestMultiCorp()

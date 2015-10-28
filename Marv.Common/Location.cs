@@ -14,11 +14,6 @@ namespace Marv.Common
 
             set
             {
-                if (value.Equals(this.key))
-                {
-                    return;
-                }
-
                 this.key = value;
                 this.RaisePropertyChanged();
             }

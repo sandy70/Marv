@@ -7,19 +7,23 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Marv.Common.Distributions;
 using Marv.Common.Types;
+using Newtonsoft.Json;
 using Smile;
 
 namespace Marv.Common
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Network : Smile.Network, INotifyPropertyChanged
     {
         private const string BeliefFileExtension = "marv-networkbelief";
 
         public readonly Dictionary<string, string> Properties = new Dictionary<string, string>();
-        public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
+
+        [JsonProperty] public readonly KeyedCollection<NetworkVertex> Vertices = new KeyedCollection<NetworkVertex>();
 
         private string fileName;
 
+        [JsonProperty]
         public string FileName
         {
             get { return this.fileName; }
@@ -596,6 +600,31 @@ namespace Marv.Common
             }
 
             return sectionBeliefs;
+        }
+
+        public Dict<string, double[]> Run(string nodeKey, string evidence)
+        {
+            this.ClearEvidence();
+
+            this.SetEvidence(nodeKey, evidence);
+
+            this.UpdateBeliefs();
+
+            return this.GetBeliefs();
+        }
+
+        public Dict<string, double[]> Run(Dict<string, string> evidenceStrings)
+        {
+            this.ClearEvidence();
+
+            foreach (var kvp in evidenceStrings)
+            {
+                this.SetEvidence(kvp.Key, kvp.Value);
+            }
+
+            this.UpdateBeliefs();
+
+            return this.GetBeliefs();
         }
 
         public void SetEvidence(string nodeKey, string evidenceString)

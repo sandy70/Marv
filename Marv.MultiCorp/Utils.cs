@@ -1,4 +1,5 @@
-﻿using edu.ohiou.icmt;
+﻿using System;
+using edu.ohiou.icmt;
 using edu.ohiou.icmt.modeling.globalresources;
 using edu.ohiou.icmt.modeling.param;
 using edu.ohiou.icmt.multicorp.basemodel;
@@ -8,118 +9,72 @@ namespace Marv.MultiCorp
 {
     public static class Utils
     {
-        public static string ComputeFlowPattern(GasOilWaterFlowParameters parameters)
+        public static FlowResults ComputeFlow(FlowParameters flowParameters)
         {
             //Create new Case
             var caseFactory = AbstractModelFactory.getFactory(AbstractModelFactory.AbstractModels.CORROSIONCASE) as CaseFactory;
-            var cCase = caseFactory.createModel() as AbstractCase;
+            var abstractCase = caseFactory.createModel() as AbstractCase;
 
             //Set Corrosion Type
-            (cCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
-            cCase.onCorrosionTypeChanged();
-
-            //Set Flow type
-            (cCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) FlowModel.FlowType.Gas_Oil_Water_Flow);
-            cCase.onFlowTypeChanged();
+            (abstractCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
+            abstractCase.onCorrosionTypeChanged();
 
             //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Line_run);
-            cCase.onSimulationTypeChanged();
-
-            cCase.getParameter(NameList.GAS_DENSITY).setValue(parameters.GasDensity);
-            cCase.getParameter(NameList.SECTION_DIAMETER).setValue(parameters.InternalDiameter);
-            cCase.getParameter(NameList.SECTION_INCLINATION).setValue(parameters.Inclination);
-            cCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(parameters.InterfacialTension);
-            cCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(parameters.MixtureVelocity);
-            cCase.getParameter(NameList.OIL_DENSITY).setValue(parameters.OilDensity);
-            cCase.getParameter(NameList.OIL_VISCOSITY).setValue(parameters.OilViscosity);
-            cCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(parameters.SuperficialGasVelocity);
-            cCase.getParameter(NameList.WATER_CUT).setValue(parameters.WaterCut);
-
-            var flow = cCase.getModel(NameList.MODEL_NAME_FLOW_MODEL);
-
-            if (flow != null)
-            {
-                flow.doCalculation();
-            }
-
-            return flow.getParameter(NameList.FLOW_PATTERN).getValue().ToString();
-        }
-
-        public static string ComputeFlowPattern(GasWaterFlowParameters parameters)
-        {
-            //Create new Case
-            var caseFactory = AbstractModelFactory.getFactory(AbstractModelFactory.AbstractModels.CORROSIONCASE) as CaseFactory;
-            var cCase = caseFactory.createModel() as AbstractCase;
-
-            //Set Corrosion Type
-            (cCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
-            cCase.onCorrosionTypeChanged();
+            (abstractCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Single_run);
+            abstractCase.onSimulationTypeChanged();
 
             //Set Flow type
-            (cCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) FlowModel.FlowType.Gas_Water_Flow);
-            cCase.onFlowTypeChanged();
+            (abstractCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) flowParameters.FlowType);
+            abstractCase.onFlowTypeChanged();
 
-            //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Line_run);
-            cCase.onSimulationTypeChanged();
+            // The order in which the parameters are set matters. We are going to follow the order in the MultiCorp GUI
 
-            cCase.getParameter(NameList.SECTION_DIAMETER).setValue(parameters.InternalDiameter);
-            cCase.getParameter(NameList.SECTION_INCLINATION).setValue(parameters.Inclination);
-            cCase.getParameter(NameList.GAS_LIQUID_SURFACE_TENSION).setValue(parameters.GasLiquidSurfaceTension);
-            cCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(parameters.SuperficialGasVelocity);
-            cCase.getParameter(NameList.GAS_DENSITY).setValue(parameters.GasDensity);
-            cCase.getParameter(NameList.WATER_DENSITY).setValue(parameters.WaterDensity);
-            cCase.getParameter(NameList.WATER_VISCOSITY).setValue(parameters.WaterViscosity);
-            cCase.getParameter(NameList.SUPERFICIAL_WATER_VELOCITY).setValue(parameters.SuperficialWaterVelocity);
+            // Line Parameters
+            abstractCase.getParameter(NameList.SECTION_DIAMETER).setValue(flowParameters.InternalDiameter);
+            abstractCase.getParameter(NameList.SECTION_INCLINATION).setValue(flowParameters.Inclination);
+            abstractCase.getParameter(NameList.PIPE_ROUGHNESS).setValue(flowParameters.PipeRoughness);
+            abstractCase.getParameter(NameList.PIPE_THICKNESS).setValue(flowParameters.PipeThickness);
+            abstractCase.getParameter(NameList.PIPE_CONDUCTIVITY).setValue(flowParameters.PipeConductivity);
 
-            var flow = cCase.getModel(NameList.MODEL_NAME_FLOW_MODEL);
+            // Flow Velocity
+            abstractCase.getParameter(NameList.VELOCITY_INPUT_TYPE).setValue((int)flowParameters.VelocityInputType);
 
-            if (flow != null)
+            if (flowParameters.VelocityInputType == FlowModel.VelTypes.Mixture)
             {
-                flow.doCalculation();
+                abstractCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(flowParameters.SuperficialGasVelocity);
+                abstractCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(flowParameters.MixtureVelocity);
+                abstractCase.getParameter(NameList.WATER_CUT).setValue(flowParameters.WaterCut);
+            }
+            else
+            {
+                abstractCase.getParameter(NameList.SUPERFICIAL_WATER_VELOCITY).setValue(flowParameters.SuperficialWaterVelocity);
+                abstractCase.getParameter(NameList.SUPERFICIAL_GAS_VELOCITY).setValue(flowParameters.SuperficialGasVelocity);
             }
 
-            return flow.getParameter(NameList.FLOW_PATTERN).getValue().ToString();
-        }
+            // Water Properties at Operating Conditions
+            abstractCase.getParameter(NameList.WATER_DENSITY).setValue(flowParameters.WaterDensity);
+            abstractCase.getParameter(NameList.WATER_VISCOSITY).setValue(flowParameters.WaterViscosity);
 
-        public static string ComputeFlowPattern(OilWaterFlowParameters parameters)
-        {
-            //Create new Case
-            var caseFactory = AbstractModelFactory.getFactory(AbstractModelFactory.AbstractModels.CORROSIONCASE) as CaseFactory;
-            var cCase = caseFactory.createModel() as AbstractCase;
+            // Oil Properties
+            abstractCase.getParameter(NameList.OIL_DENSITY).setValue(flowParameters.OilDensity);
+            abstractCase.getParameter(NameList.OIL_VISCOSITY).setValue(flowParameters.OilViscosity);
+            abstractCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(flowParameters.InterfacialTension);
 
-            //Set Corrosion Type
-            (cCase.getParameter(NameList.CORROSION_TYPE) as OptionParameter).setOption((int) AbstractCase.CorrosionPosition.BLC);
-            cCase.onCorrosionTypeChanged();
+            // Gas Properties at Operating Conditions
+            abstractCase.getParameter(NameList.GAS_LIQUID_SURFACE_TENSION).setValue(flowParameters.GasLiquidSurfaceTension);
 
-            //Set Flow type
-            (cCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) FlowModel.FlowType.Oil_Water_Flow);
-            cCase.onFlowTypeChanged();
+            var flowModel = abstractCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;
 
-            //Set simulation Type
-            (cCase.getParameter(NameList.SIMU_TYPE) as OptionParameter).setOption((int) CorrosionModel.SimulationModelType.Line_run);
-            cCase.onSimulationTypeChanged();
-
-            cCase.getParameter(NameList.INPUT_TYPE).setValue(FlowModel.InputTypes.Velocity);
-            cCase.getParameter(NameList.VELOCITY_INPUT_TYPE).setValue(FlowModel.VelTypes.Mixture);
-
-            cCase.getParameter(NameList.SECTION_DIAMETER).setValue(parameters.InternalDiameter);
-            cCase.getParameter(NameList.SECTION_INCLINATION).setValue(parameters.Inclination);
-            cCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(parameters.InterfacialTension);
-            cCase.getParameter(NameList.MIXTURE_VELOCITY).setValue(parameters.MixtureVelocity);
-            cCase.getParameter(NameList.OIL_DENSITY).setValue(parameters.OilDensity);
-            cCase.getParameter(NameList.OIL_VISCOSITY).setValue(parameters.OilViscosity);
-            cCase.getParameter(NameList.WATER_CUT).setValue(parameters.WaterCut);
-
-            var flow = cCase.getModel(NameList.MODEL_NAME_FLOW_MODEL);
-
-            if (flow != null)
+            if (flowModel != null)
             {
-                flow.doCalculation();
+                flowModel.doCalculation();
             }
 
-            return flow.getParameter(NameList.FLOW_PATTERN).getValue().ToString();
+            return new FlowResults
+            {
+                Pattern = flowModel.getParameter(NameList.FLOW_PATTERN).getValue().ToString(),
+                Wetting = flowModel.getParameter(NameList.WETTING_PHASE).getValue().ToString()
+            };
         }
 
         public static void Initialize()

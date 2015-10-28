@@ -8,5 +8,8 @@
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)">!Ncc1764</Value>
     </Setting>
+    <Setting Name="NetworkFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\vkha\Data\EPRI\EpriSimulation.net</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

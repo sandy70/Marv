@@ -6,7 +6,7 @@ namespace Marv.Input
 {
     public class EvidenceRow : Dynamic
     {
-        private string comment = "";
+        private string comment="";
         private double from;
         private double to;
 

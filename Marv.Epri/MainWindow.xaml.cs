@@ -27,6 +27,7 @@ namespace Marv.Epri
         private const string StreamId = "00000000-00000000-00409DFF-FF88AC6C";
 
         private readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(Settings.Default.Login, Settings.Default.Password) });
+        private readonly Dict<string, string> positions = new Dict<string, string>();
 
         private readonly DispatcherTimer timer = new DispatcherTimer
         {
@@ -35,7 +36,9 @@ namespace Marv.Epri
 
         private ObservableCollection<DataPoint> dataPoints = new ObservableCollection<DataPoint>();
         private LineStringCollection locationCollections = new LineStringCollection();
+        private Network network;
         private NotificationCollection notifications = new NotificationCollection();
+        private DateTime selectedDateTime = new DateTime(2015, 9, 11);
         private string selectedStream;
         private TimeSpan selectedTimeSpan;
         private ObservableCollection<string> streams;
@@ -71,6 +74,17 @@ namespace Marv.Epri
             }
         }
 
+        public Network Network
+        {
+            get { return this.network; }
+
+            set
+            {
+                this.network = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         public NotificationCollection Notifications
         {
             get { return this.notifications; }
@@ -83,6 +97,17 @@ namespace Marv.Epri
                 }
 
                 this.notifications = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public DateTime SelectedDateTime
+        {
+            get { return this.selectedDateTime; }
+
+            set
+            {
+                this.selectedDateTime = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -166,7 +191,7 @@ namespace Marv.Epri
             Console.WriteLine("DateTimeContinuousAxis_OnActualVisibleRangeChanged");
         }
 
-        private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync()
+        private async Task<ObservableCollection<DataPoint>> DownloadDataPointsAsync(DateTime startDateTime)
         {
             const string server = @"http://devicecloud.digi.com";
 
@@ -174,7 +199,7 @@ namespace Marv.Epri
 
             var uri = uriEndPoint + "?" + Utils.FormRestArgs(new
             {
-                start_time = (DateTime.UtcNow - this.SelectedTimeSpan).ToString("o"),
+                start_time = startDateTime.ToString("o"),
                 timeline = "server"
             });
 
@@ -195,6 +220,7 @@ namespace Marv.Epri
                     }
 
                     uri = server + response.next_uri;
+                    Console.WriteLine("nPoints: " + downloadedPoints.Count);
                 }
                 catch (HttpRequestException exception)
                 {
@@ -204,6 +230,22 @@ namespace Marv.Epri
             }
 
             return downloadedPoints;
+        }
+
+        private async void DownloadFromButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "Comma Sepated Values|*.csv"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                using (var csvWriter = new CsvWriter(new StreamWriter(dialog.FileName)))
+                {
+                    csvWriter.WriteRecords(await this.DownloadDataPointsAsync(this.SelectedDateTime));
+                }
+            }
         }
 
         private async Task<ObservableCollection<string>> DownloadStreamsAsync()
@@ -253,9 +295,24 @@ namespace Marv.Epri
 
             await this.UpdateDataPoints();
 
-            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml");
+            this.LocationCollections = LocationCollection.ReadKml(@"C:\Users\vkha\Data\EPRI\EpriPipes.kml", true);
 
-            this.GraphControl.Open(@"C:\Users\vkha\Data\EPRI\EpriDemo.net");
+            this.GraphControl.Open(Settings.Default.NetworkFilePath);
+
+            this.positions.Add(new CsvReader(File.OpenText(@"C:\Users\vkha\Data\EPRI\Positions.csv")).GetRecords<Kvp<string, string>>());
+        }
+
+        private void PolylineControl_SelectionChanged(object sender, Location location)
+        {
+            var random = new Random();
+
+            var evidenceStrings = new Dict<string, string>
+            {
+                { "Position", this.positions[location.Key] },
+                { "Sensor01", random.Next(1024).ToString() }
+            };
+
+            this.GraphControl.Graph.Belief = this.Network.Run(evidenceStrings);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -307,7 +364,7 @@ namespace Marv.Epri
 
             if (this.task == null || this.task.IsCompleted)
             {
-                this.DataPoints = await (this.task = this.DownloadDataPointsAsync());
+                this.DataPoints = await (this.task = this.DownloadDataPointsAsync(DateTime.Now - this.SelectedTimeSpan));
 
                 //var vertexEvidences = new Dict<string, VertexEvidence>
                 //{
