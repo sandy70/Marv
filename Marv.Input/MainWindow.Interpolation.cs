@@ -98,7 +98,7 @@ namespace Marv.Input
 
             if (this.capturedPoint != null)
             {
-                var newPoint = new ScatterDataPoint
+              var newPoint = new ScatterDataPoint
                 {
                     XValue = this.capturedPoint.XValue,
                     YValue = mousePoint.YValue

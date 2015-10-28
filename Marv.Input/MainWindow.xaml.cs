@@ -983,7 +983,28 @@ namespace Marv.Input
             else
             {
                 this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
-                this.dates = this.PipeLineData.UserDataObj[0].Value.UserTable.DateTimes.ToList();
+                var deleteNodes = new List<string>();
+                foreach (var kvp in this.PipeLineData.UserDataObj)
+                {
+                    if (!this.Network.Vertices.Keys.Contains(kvp.Key))
+                    {
+                        deleteNodes.Add(kvp.Key);
+                    }
+                }
+                foreach (var key in deleteNodes)
+                {
+                    this.PipeLineData.UserDataObj.Remove(key);
+                }
+
+                foreach (var kvp in this.PipeLineData.UserDataObj)
+                {
+                    if (!kvp.Value.UserTable.Any())
+                    {
+                        continue;
+                    }
+                    this.dates = kvp.Value.UserTable.DateTimes.ToList();
+                }
+               
             }
         }
 

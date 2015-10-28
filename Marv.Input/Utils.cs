@@ -20,55 +20,6 @@ namespace Marv.Input
         public const string MinInterpolatorLine = "MinimumLine";
         public const string ModeInterpolatorLine = "ModeLine";
 
-        public static void AddTriangularDistributionAnnotation(this RadCartesianChart chart, Vertex selectedVertex, EvidenceRow dataRow, string columnName)
-        {
-            var from = (double) dataRow["From"];
-            var to = (double) dataRow["To"];
-            var vertexEvidence = dataRow[columnName] as VertexEvidence;
-
-            var fill1 = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 0),
-                EndPoint = new Point(0, 1)
-            };
-
-            fill1.GradientStops.Add(new GradientStop { Offset = 0, Color = Color.FromArgb(255, 218, 165, 32) });
-            fill1.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(50, 218, 165, 32) });
-
-            chart.Annotations.Add(new CartesianMarkedZoneAnnotation
-            {
-                Fill = fill1,
-                HorizontalFrom = @from,
-                HorizontalTo = to,
-                Stroke = new SolidColorBrush(Colors.Goldenrod),
-                Tag = dataRow,
-                VerticalFrom = vertexEvidence.Params[1],
-                VerticalTo = vertexEvidence.Params[0],
-                ZIndex = -200
-            });
-
-            var fill2 = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 0),
-                EndPoint = new Point(0, 1)
-            };
-
-            fill2.GradientStops.Add(new GradientStop { Offset = 0, Color = Color.FromArgb(0, 218, 165, 32) });
-            fill2.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(255, 218, 165, 32) });
-
-            chart.Annotations.Add(new CartesianMarkedZoneAnnotation
-            {
-                Fill = fill2,
-                HorizontalFrom = @from,
-                HorizontalTo = to,
-                Stroke = new SolidColorBrush(Colors.Goldenrod),
-                Tag = dataRow,
-                VerticalFrom = vertexEvidence.Params[2],
-                VerticalTo = vertexEvidence.Params[1],
-                ZIndex = -200
-            });
-        }
-
         public static void AddInterpolatedDistributionAnnotation(this RadCartesianChart chart, Vertex selectedVertex, EvidenceRow dataRow, string columnName)
         {
             var from = (double) dataRow["From"];
@@ -211,6 +162,55 @@ namespace Marv.Input
             });
         }
 
+        public static void AddTriangularDistributionAnnotation(this RadCartesianChart chart, Vertex selectedVertex, EvidenceRow dataRow, string columnName)
+        {
+            var from = (double) dataRow["From"];
+            var to = (double) dataRow["To"];
+            var vertexEvidence = dataRow[columnName] as VertexEvidence;
+
+            var fill1 = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, 1)
+            };
+
+            fill1.GradientStops.Add(new GradientStop { Offset = 0, Color = Color.FromArgb(255, 218, 165, 32) });
+            fill1.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(50, 218, 165, 32) });
+
+            chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+            {
+                Fill = fill1,
+                HorizontalFrom = @from,
+                HorizontalTo = to,
+                Stroke = new SolidColorBrush(Colors.Goldenrod),
+                Tag = dataRow,
+                VerticalFrom = vertexEvidence.Params[1],
+                VerticalTo = vertexEvidence.Params[0],
+                ZIndex = -200
+            });
+
+            var fill2 = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, 1)
+            };
+
+            fill2.GradientStops.Add(new GradientStop { Offset = 0, Color = Color.FromArgb(0, 218, 165, 32) });
+            fill2.GradientStops.Add(new GradientStop { Offset = 1, Color = Color.FromArgb(255, 218, 165, 32) });
+
+            chart.Annotations.Add(new CartesianMarkedZoneAnnotation
+            {
+                Fill = fill2,
+                HorizontalFrom = @from,
+                HorizontalTo = to,
+                Stroke = new SolidColorBrush(Colors.Goldenrod),
+                Tag = dataRow,
+                VerticalFrom = vertexEvidence.Params[2],
+                VerticalTo = vertexEvidence.Params[1],
+                ZIndex = -200
+            });
+        }
+
         public static List<double> CreateBaseRowsList(double baseMin, double baseMax, double baseRange)
         {
             var baseRowsList = new List<double>();
@@ -310,18 +310,55 @@ namespace Marv.Input
                     {
                         if (row[colName] == "")
                         {
-                            row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null };
+                            row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null};
                         }
                     }
                 }
+            }
+
+            // Remove Empty EvidenceTables
+            var deleteNodes = new List<string>();
+            foreach (var kvp in userDataObj)
+            {
+                if (!kvp.Value.UserTable.Any())
+                {
+                    deleteNodes.Add(kvp.Key);
+                }
+                else
+                {
+                    var isEmpty = true;
+                    foreach (var row in kvp.Value.UserTable)
+                    {
+                        foreach (var colName in row.GetDynamicMemberNames().ToList())
+                        {
+                            if ((row[colName] as VertexEvidence).Type != VertexEvidenceType.Null)
+                            {
+                                isEmpty = false;
+                            }
+
+                            if ((row[colName] as VertexEvidence).Type == VertexEvidenceType.Invalid)
+                            {
+                                row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null };
+                            }
+                        }
+                    }
+
+                    if (isEmpty)
+                    {
+                        deleteNodes.Add(kvp.Key);
+                    }
+                }
+            }
+
+            foreach (var key in deleteNodes)
+            {
+                userDataObj.Remove(key);
             }
 
             foreach (var kvp in userDataObj)
             {
                 unmergedEvidenceSet.Add(kvp.Key, kvp.Value.UserTable);
             }
-
-           
 
             // Generate a list which holds the modified section ranges
             foreach (var kvp in unmergedEvidenceSet)
@@ -381,7 +418,7 @@ namespace Marv.Input
                         continue;
                     }
 
-                    if (mergedEvidenceRow.From ==uniqueRow.From && mergedEvidenceRow.To == uniqueRow.To)
+                    if (mergedEvidenceRow.From == uniqueRow.From && mergedEvidenceRow.To == uniqueRow.To)
                     {
                         deleteRows.Add(mergedEvidenceRow);
                     }
@@ -400,12 +437,16 @@ namespace Marv.Input
 
                     if (unmergedEvidenceRows.Count() > 1) // merged section has multiple input values 
                     {
-                        var avgEvidenceValues = GetEvidenceAverage(unmergedEvidenceRows);
+                        var avgEvidenceValues = GetEvidenceAverage(unmergedEvidenceRows, network.Vertices[unmergeEvidenceTableKey].States.Count());
 
                         foreach (var columnName in columnNames)
                         {
                             var evidenceString = avgEvidenceValues[columnName].ValueToDistribution();
-                            mergedEvidenceRow[columnName] = network.Vertices[unmergeEvidenceTableKey].States.ParseEvidenceString(evidenceString);
+
+                           
+                                mergedEvidenceRow[columnName] = network.Vertices[unmergeEvidenceTableKey].States.ParseEvidenceString(evidenceString);
+                            
+                           
                         }
                     }
 
@@ -528,28 +569,13 @@ namespace Marv.Input
                 values.Add(kvp.Value);
             }
 
-            return values.Any(table => table.Any(row => row.From==evidenceRow.From && row.To == evidenceRow.To));
+            return values.Any(table => table.Any(row => row.From == evidenceRow.From && row.To == evidenceRow.To));
         }
 
-        private static Dict<string, double[]> GetEvidenceAverage(List<EvidenceRow> unmergedEvidenceRows)
+        private static Dict<string, double[]> GetEvidenceAverage(List<EvidenceRow> unmergedEvidenceRows, int noOfstates)
         {
             var columnNames = unmergedEvidenceRows[0].GetDynamicMemberNames().ToList();
-            var noOfstates=0;
            
-            foreach (var row in unmergedEvidenceRows)
-            {
-                foreach (var colName in columnNames)
-                {
-                    if ((row[colName] as VertexEvidence).Type != VertexEvidenceType.Null)
-                    {
-                        noOfstates = (row[colName] as VertexEvidence).Value.Count();
-                        goto loopExited;
-                    }
-                    
-                }
-            }
-
-            loopExited:
             var combinedColumnValues = new Dict<string, double[]>();
 
             foreach (var columnName in columnNames)
@@ -560,7 +586,7 @@ namespace Marv.Input
                 {
                     var i = 0;
                     var evidence = evidenceRow[columnName] as VertexEvidence;
-                    
+
                     if (evidence.Value == null)
                     {
                         continue;

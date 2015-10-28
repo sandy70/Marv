@@ -45,6 +45,7 @@ namespace Marv.Input
             {
                
               //  MessageBox.Show("Invalid input entered");
+                dataRow[columnName] = new VertexEvidence { Type = VertexEvidenceType.Null };
                 return;
             }
             // Remove older annotations
