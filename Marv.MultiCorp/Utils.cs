@@ -1,5 +1,4 @@
-﻿using System;
-using edu.ohiou.icmt;
+﻿using edu.ohiou.icmt;
 using edu.ohiou.icmt.modeling.globalresources;
 using edu.ohiou.icmt.modeling.param;
 using edu.ohiou.icmt.multicorp.basemodel;
@@ -37,7 +36,7 @@ namespace Marv.MultiCorp
             abstractCase.getParameter(NameList.PIPE_CONDUCTIVITY).setValue(flowParameters.PipeConductivity);
 
             // Flow Velocity
-            abstractCase.getParameter(NameList.VELOCITY_INPUT_TYPE).setValue((int)flowParameters.VelocityInputType);
+            abstractCase.getParameter(NameList.VELOCITY_INPUT_TYPE).setValue((int) flowParameters.VelocityInputType);
 
             if (flowParameters.VelocityInputType == FlowModel.VelTypes.Mixture)
             {
@@ -61,6 +60,14 @@ namespace Marv.MultiCorp
             abstractCase.getParameter(NameList.INTERFICIAL_TENSION).setValue(flowParameters.InterfacialTension);
 
             // Gas Properties at Operating Conditions
+            abstractCase.getParameter(NameList.GAS_PROPERTIES_INPUT).setValue((int) flowParameters.GasPropertiesInputType);
+
+            if (flowParameters.GasPropertiesInputType == FlowModel.GasPropertiesInput.Input)
+            {
+                abstractCase.getParameter(NameList.GAS_DENSITY).setValue(flowParameters.GasDensity);
+                abstractCase.getParameter(NameList.GAS_VISCOSITY).setValue(flowParameters.GasViscosity);
+            }
+
             abstractCase.getParameter(NameList.GAS_LIQUID_SURFACE_TENSION).setValue(flowParameters.GasLiquidSurfaceTension);
 
             var flowModel = abstractCase.getModel(NameList.MODEL_NAME_FLOW_MODEL) as FlowModel;

@@ -5,8 +5,10 @@ namespace Marv.MultiCorp
     public class FlowParameters
     {
         public FlowModel.FlowType FlowType = FlowModel.FlowType.Gas_Oil_Water_Flow;
-        public double GasDensity = 12.02; // kg / m^3
+        public double GasDensity = 25; // kg / m^3
         public double GasLiquidSurfaceTension = 0.0721; // N/m
+        public FlowModel.GasPropertiesInput GasPropertiesInputType = FlowModel.GasPropertiesInput.Input;
+        public double GasViscosity = 1.714E-5;
         public double Inclination = 0; // deg
         public double InterfacialTension = 0.04; // N/m
         public double InternalDiameter = 0.1; // m
