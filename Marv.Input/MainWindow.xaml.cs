@@ -778,8 +778,8 @@ namespace Marv.Input
                 for (var dateTime = 0; dateTime < noOfDateTimes; dateTime++)
                 {
                     var colName = this.Table.DateTimes.ToList()[dateTime].String();
-                    var beliefValue = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as double[]);
-
+                    var evidence = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as VertexEvidence);
+                    var beliefValue = evidence.Value;
                     var mean = selectedVertex.Mean(beliefValue);
                     var stdv = selectedVertex.StandardDeviation(beliefValue);
                     var percentiles = requiredPercentileList.Select(val => new VertexPercentileComputer(val).Compute(this.Network.Vertices[this.SelectedVertex.Key], beliefValue)).ToList();
