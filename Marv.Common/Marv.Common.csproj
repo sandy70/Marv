@@ -91,7 +91,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="Telerik.Windows.Diagrams.Core, Version=2015.2.623.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\RCWPF\2015.2.623.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
+      <HintPath>..\lib\RCWPF\2015.3.930.45\Telerik.Windows.Diagrams.Core.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>

@@ -41,6 +41,13 @@ namespace Marv.Input
                 return;
             }
 
+            if (vertexEvidence.Type == VertexEvidenceType.Invalid)
+            {
+               
+              //  MessageBox.Show("Invalid input entered");
+                dataRow[columnName] = new VertexEvidence { Type = VertexEvidenceType.Null };
+                return;
+            }
             // Remove older annotations
 
             this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));

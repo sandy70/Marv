@@ -40,7 +40,7 @@ namespace Marv.Input
             }
         }
 
-        [Display(Order =1)]
+        [Display(Order = 1)]
         [JsonProperty]
         public double To
         {

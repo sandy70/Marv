@@ -592,11 +592,6 @@ namespace Marv.Input
             this.Chart.UpdateCommentBlocks(row, VerticalAxis);
         }
 
-        private void CompareDistribution_Click(object sender, RoutedEventArgs e)
-        {
-            this.DistributionComparator.IsHidden = !this.DistributionComparator.IsHidden;
-        }
-
         private void CopyAcrossAll_Click(object sender, RoutedEventArgs e)
         {
             if (!this.SelectedTheme.Equals(DataTheme.User))
@@ -783,8 +778,8 @@ namespace Marv.Input
                 for (var dateTime = 0; dateTime < noOfDateTimes; dateTime++)
                 {
                     var colName = this.Table.DateTimes.ToList()[dateTime].String();
-                    var beliefValue = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as double[]);
-
+                    var evidence = (this.BeliefsData[this.SelectedVertex.Key][row][colName] as VertexEvidence);
+                    var beliefValue = evidence.Value;
                     var mean = selectedVertex.Mean(beliefValue);
                     var stdv = selectedVertex.StandardDeviation(beliefValue);
                     var percentiles = requiredPercentileList.Select(val => new VertexPercentileComputer(val).Compute(this.Network.Vertices[this.SelectedVertex.Key], beliefValue)).ToList();
@@ -993,7 +988,28 @@ namespace Marv.Input
             else
             {
                 this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
-                this.dates = this.PipeLineData.UserDataObj[0].Value.UserTable.DateTimes.ToList();
+                var deleteNodes = new List<string>();
+                foreach (var kvp in this.PipeLineData.UserDataObj)
+                {
+                    if (!this.Network.Vertices.Keys.Contains(kvp.Key))
+                    {
+                        deleteNodes.Add(kvp.Key);
+                    }
+                }
+                foreach (var key in deleteNodes)
+                {
+                    this.PipeLineData.UserDataObj.Remove(key);
+                }
+
+                foreach (var kvp in this.PipeLineData.UserDataObj)
+                {
+                    if (!kvp.Value.UserTable.Any())
+                    {
+                        continue;
+                    }
+                    this.dates = kvp.Value.UserTable.DateTimes.ToList();
+                }
+               
             }
         }
 
@@ -1210,9 +1226,7 @@ namespace Marv.Input
             }
         }
 
-        private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e) {}
-
-        private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+      private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")
             {
