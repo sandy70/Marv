@@ -29,6 +29,7 @@ namespace Marv.Common
                 {
                     return axisType;
                 }
+
                 return VertexAxisType.Linear;
             }
         }
