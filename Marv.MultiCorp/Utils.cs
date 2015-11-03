@@ -1,4 +1,6 @@
-﻿using edu.ohiou.icmt;
+﻿using System;
+using System.Linq;
+using edu.ohiou.icmt;
 using edu.ohiou.icmt.modeling.globalresources;
 using edu.ohiou.icmt.modeling.param;
 using edu.ohiou.icmt.multicorp.basemodel;
@@ -25,8 +27,6 @@ namespace Marv.MultiCorp
             //Set Flow type
             (abstractCase.getParameter(NameList.FLOW_TYPE) as OptionParameter).setOption((int) flowParameters.FlowType);
             abstractCase.onFlowTypeChanged();
-
-            // The order in which the parameters are set matters. We are going to follow the order in the MultiCorp GUI
 
             // Line Parameters
             abstractCase.getParameter(NameList.SECTION_DIAMETER).setValue(flowParameters.InternalDiameter);

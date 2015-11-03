@@ -23,8 +23,6 @@ namespace Marv.MultiCorp.Test
                 WaterCut = 0.2
             }).Pattern);
 
-            NameList.FLOW_PATTERN_ANNULAR
-
             Console.ReadKey();
         }
     }
