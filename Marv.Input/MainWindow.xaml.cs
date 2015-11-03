@@ -1009,7 +1009,6 @@ namespace Marv.Input
                     }
                     this.dates = kvp.Value.UserTable.DateTimes.ToList();
                 }
-               
             }
         }
 
@@ -1154,7 +1153,7 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Dict<string, EvidenceTable> mergedDataSet = null;
+            Dict<string, EvidenceTable> mergedDataSet;
 
             var baseRowsList = Utils.CreateBaseRowsList(this.PipeLineData.BaseTableMin, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableRange);
 
@@ -1219,7 +1218,7 @@ namespace Marv.Input
             }
         }
 
-      private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")
             {
