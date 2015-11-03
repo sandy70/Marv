@@ -119,6 +119,8 @@ namespace Marv.Input
             var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
 
             var commentTextBlock = new TextBlock { Text = comment };
+
+            
             var ellipse = new Ellipse
             {
                 Fill = new SolidColorBrush(Colors.Goldenrod),

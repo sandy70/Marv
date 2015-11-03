@@ -83,10 +83,8 @@
             </MenuItem>
 
             <MenuItem Header="Run">
-                <MenuItem Header="Section"
-                          Click="RunSectionMenuItem_Click" />
-
-                <MenuItem Header="Line"
+                
+             <MenuItem Header="Line"
                           Click="RunLineMenuItem_Click" />
             </MenuItem>
 
@@ -214,40 +212,7 @@
                                                      TextAlignment="Right"
                                                      Width="64" />
 
-                                            <TextBlock Margin="4"
-                                                       Text="Start (m)"
-                                                       TextAlignment="Right"
-                                                       Width="64" />
-
-                                            <TextBox BorderBrush="LightSkyBlue"
-                                                     Height="32"
-                                                     Text="{Binding ElementName=Root, Path=BaseTableMin}"
-                                                     TextAlignment="Right"
-                                                     Width="64" />
-
-                                            <TextBlock Margin="4"
-                                                       Text="End (m)"
-                                                       TextAlignment="Right"
-                                                       Width="64" />
-
-                                            <TextBox BorderBrush="LightSkyBlue"
-                                                     Height="32"
-                                                     Text="{Binding ElementName=Root, Path=BaseTableMax}"
-                                                     TextAlignment="Right"
-                                                     Width="64" />
-
-                                            <TextBlock Margin="4"
-                                                       Text="Range (m)"
-                                                       TextAlignment="Right"
-                                                       Width="64" />
-
-                                            <TextBox BorderBrush="LightSkyBlue"
-                                                     Height="32"
-                                                     Text="{Binding ElementName=Root, Path=BaseTableRange}"
-                                                     TextAlignment="Right"
-                                                     Width="64" />
-
-                                            <telerik:RadButton Content="Go"
+                                           <telerik:RadButton Content="Go"
                                                                FontWeight="Bold"
                                                                Width="32"
                                                                Click="Go_Click" />

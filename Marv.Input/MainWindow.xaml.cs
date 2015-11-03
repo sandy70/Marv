@@ -1226,9 +1226,7 @@ namespace Marv.Input
             }
         }
 
-        private void RunSectionMenuItem_Click(object sender, RoutedEventArgs e) {}
-
-        private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+      private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")
             {
