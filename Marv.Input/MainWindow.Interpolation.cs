@@ -85,7 +85,7 @@ namespace Marv.Input
 
             var data = this.Chart.ConvertPointToData(e.MouseDevice.GetPosition(this.Chart));
 
-            if (data.FirstValue == null || data.SecondValue == null)
+            if (data.FirstValue == null || data.SecondValue == null || (double)data.SecondValue > this.SelectedVertex.SafeMax || (double) data.SecondValue < this.SelectedVertex.SafeMin)
             {
                 return;
             }
