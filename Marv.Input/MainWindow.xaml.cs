@@ -818,7 +818,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin,this.VerticalAxis);
         }
 
         private void GraphControl_EvidenceEntered(object sender, VertexEvidence vertexEvidence)
@@ -957,7 +957,7 @@ namespace Marv.Input
             this.BeliefsData = new Dict<string, EvidenceTable>();
             this.Chart.Annotations.Remove(annotation => true);
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin,this.VerticalAxis);
             this.SelectedVertex.IsUserEvidenceComplete = false;
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
@@ -1293,9 +1293,11 @@ namespace Marv.Input
 
             else if (this.VerticalAxis.Equals(LogarithmicAxis))
             {
+
                 if (this.SelectedVertex.States[0].SafeMin == 0)
                 {
-                    LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMax / 10;
+                    LogarithmicAxis.Minimum = this.SelectedVertex.States[0].SafeMax / 100;
+                   
                 }
                 else
                 {
@@ -1313,7 +1315,6 @@ namespace Marv.Input
                     LogarithmicAxis.Maximum = this.SelectedVertex.States[this.SelectedVertex.States.Count() - 1].SafeMax;
                 }
             }
-
             else
             {
                 var intervals = selectedVertex.States.Select(state => state.Min).Concat(selectedVertex.States.Last().Max.Yield()).ToArray();
@@ -1332,7 +1333,7 @@ namespace Marv.Input
                 LogarithmicAxis.SetBinding(NumericalAxis.MinimumProperty, new Binding { Source = this, Path = new PropertyPath("SelectedVertex.SafeMin") });
             }
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.VerticalAxis);
         }
 
         private void table_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

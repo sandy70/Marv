@@ -67,7 +67,7 @@ namespace Marv.Input
             });
         }
 
-        public static void AddNodeStateLines(this RadCartesianChart chart, Vertex selectedVertex, double baseTableMax, double baseTableMin)
+        public static void AddNodeStateLines(this RadCartesianChart chart, Vertex selectedVertex, double baseTableMax, double baseTableMin, NumericalAxis verticalAxis)
         {
             var intervals = selectedVertex.States.Select(state => state.Min).Concat(selectedVertex.States.Last().Max.Yield()).ToArray();
             var newIntervals = new double[intervals.Count()];
@@ -82,6 +82,18 @@ namespace Marv.Input
                 }
                 newIntervals[newIntervals.Count() - 1] = newIntervals[newIntervals.Count() - 2] * 10;
             }
+
+            else if ((verticalAxis is LogarithmicAxis) && intervals.Any(val => val == 0))
+            {
+                Array.Sort(intervals);
+                for (var i = 0; i < intervals.Count(); i++)
+                {
+                    newIntervals[i] = intervals[i];
+                }
+
+                newIntervals[0] = newIntervals[1] / 100;
+            }
+
             else
             {
                 newIntervals = selectedVertex.GetIntervals().ToArray();
@@ -118,9 +130,24 @@ namespace Marv.Input
 
             var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
 
+            //var grid = new Grid();
+
+            //var firstRow = new RowDefinition();
+            //var secondRow = new RowDefinition();
+
+            //grid.RowDefinitions.Add(firstRow);
+            //grid.RowDefinitions.Add(secondRow);
+
+            //var innerGrid = new Grid();
+
+            //var firstCol = new ColumnDefinition {  };
+            //var secondCol = new ColumnDefinition {  };
+
+            //innerGrid.ColumnDefinitions.Add(firstCol);
+            //innerGrid.ColumnDefinitions.Add(secondCol);
+
             var commentTextBlock = new TextBlock { Text = comment };
 
-            
             var ellipse = new Ellipse
             {
                 Fill = new SolidColorBrush(Colors.Goldenrod),
@@ -129,8 +156,32 @@ namespace Marv.Input
                 Width = 8,
             };
 
-            stackPanel.Children.Add(commentTextBlock);
+            //if (from < 0.1 * (chart.HorizontalAxis as LinearAxis).Maximum )
+            //{
+            //    Grid.SetRow(commentTextBlock, 0);
+            //    Grid.SetColumn(commentTextBlock, 1);
+            //    commentTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            //    innerGrid.Children.Add(commentTextBlock);
+
+            //    Grid.SetRow(innerGrid, 0);
+            //    grid.Children.Add(innerGrid);
+
+            //    Grid.SetRow(ellipse, 1);
+            //    grid.Children.Add(ellipse);
+            //}
+
+            //else if (from > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum)
+            //{
+            //    Grid.SetRow(commentTextBlock, 0);
+            //    Grid.SetColumn(commentTextBlock, 0);
+            //    grid.Children.Add(commentTextBlock);
+
+            //    Grid.SetRow(ellipse, 1);
+            //    grid.Children.Add(ellipse);
+            //}
+
             stackPanel.Children.Add(ellipse);
+            stackPanel.Children.Add(commentTextBlock);
 
             chart.Annotations.Add(new CartesianCustomAnnotation
             {
@@ -312,7 +363,7 @@ namespace Marv.Input
                     {
                         if (row[colName] == "")
                         {
-                            row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null};
+                            row[colName] = new VertexEvidence { Type = VertexEvidenceType.Null };
                         }
                     }
                 }
@@ -445,10 +496,7 @@ namespace Marv.Input
                         {
                             var evidenceString = avgEvidenceValues[columnName].ValueToDistribution();
 
-                           
-                                mergedEvidenceRow[columnName] = network.Vertices[unmergeEvidenceTableKey].States.ParseEvidenceString(evidenceString);
-                            
-                           
+                            mergedEvidenceRow[columnName] = network.Vertices[unmergeEvidenceTableKey].States.ParseEvidenceString(evidenceString);
                         }
                     }
 
@@ -577,7 +625,7 @@ namespace Marv.Input
         private static Dict<string, double[]> GetEvidenceAverage(List<EvidenceRow> unmergedEvidenceRows, int noOfstates)
         {
             var columnNames = unmergedEvidenceRows[0].GetDynamicMemberNames().ToList();
-           
+
             var combinedColumnValues = new Dict<string, double[]>();
 
             foreach (var columnName in columnNames)

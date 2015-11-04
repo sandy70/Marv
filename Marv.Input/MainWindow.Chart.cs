@@ -10,7 +10,7 @@ namespace Marv.Input
     {
         private void Plot(string columnName)
         {
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin, this.VerticalAxis);
 
             if (this.PipeLineData.CommentBlocks != null)
             {
@@ -52,7 +52,7 @@ namespace Marv.Input
 
             this.Chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, dataRow));
 
-            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin);
+            this.Chart.AddNodeStateLines(this.SelectedVertex, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableMin,this.VerticalAxis);
 
             if (selectedTheme == DataTheme.User)
             {
