@@ -627,6 +627,37 @@ namespace Marv.Common
             return this.GetBeliefs();
         }
 
+        public Dict<DateTime, string, double[]> Run(Dict<DateTime, string, VertexEvidence> evidences)
+        {
+            var beliefs = new Dict<DateTime, string, double[]>();
+            var lastDateTime = evidences.Keys[0];
+
+            foreach (var dateTime in evidences.Keys)
+            {
+                if (lastDateTime == dateTime)
+                {
+                    beliefs[dateTime] = this.Run(evidences[dateTime]);
+                }
+                else
+                {
+                    foreach (var dstNodeKey in this.Loops.Keys)
+                    {
+                        evidences[dateTime][dstNodeKey] = new VertexEvidence
+                        {
+                            Type = VertexEvidenceType.Distribution,
+                            Value = beliefs[lastDateTime][this.Loops[dstNodeKey]]
+                        };
+                    }
+
+                    beliefs[dateTime] = this.Run(evidences[dateTime]);
+                }
+
+                lastDateTime = dateTime;
+            }
+
+            return beliefs;
+        }
+
         public void SetEvidence(string nodeKey, string evidenceString)
         {
             if (!this.Vertices.ContainsKey(nodeKey))

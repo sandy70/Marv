@@ -1009,7 +1009,6 @@ namespace Marv.Input
                     }
                     this.dates = kvp.Value.UserTable.DateTimes.ToList();
                 }
-               
             }
         }
 
@@ -1154,32 +1153,23 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Dict<string, EvidenceTable> mergedDataSet = null;
+            Dict<string, EvidenceTable> mergedDataSet;
 
-            try
-            {
-                List<double> baseRowsList = null;
+            var baseRowsList = Utils.CreateBaseRowsList(this.PipeLineData.BaseTableMin, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableRange);
 
-                baseRowsList = Utils.CreateBaseRowsList(this.PipeLineData.BaseTableMin, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableRange);
+            mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
 
-                mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
+            var interpolatedData = CaptureInterpolatedData(mergedDataSet);
 
-                var interpolatedData = CaptureInterpolatedData(mergedDataSet);
+            mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(interpolatedData);
 
-                mergedDataSet = mergedDataSet.UpdateWithInterpolatedData(interpolatedData);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Can run the model only for user or interpolated data set");
-            }
-
-            var vertexEvidences = new Dict<string, VertexEvidence>();
             var noOfEvidenceRows = mergedDataSet.Values[0].Count;
-            var noOfDateTimes = mergedDataSet.Values[0].DateTimes.Count();
 
             for (var rowCount = 0; rowCount < noOfEvidenceRows; rowCount++)
             {
-                for (var dateTimecount = 0; dateTimecount < noOfDateTimes; dateTimecount++)
+                var evidences = new Dict<DateTime, string, VertexEvidence>();
+
+                foreach (var dateTime in mergedDataSet.Values[0].DateTimes)
                 {
                     foreach (var kvp in mergedDataSet)
                     {
@@ -1190,20 +1180,23 @@ namespace Marv.Input
                         {
                             continue;
                         }
-                        var dateTimeColumnName = evidenceTable[rowCount].GetDynamicMemberNames().ToList()[dateTimecount];
-                        var evidence = evidenceTable[rowCount][dateTimeColumnName] as VertexEvidence;
 
-                        vertexEvidences.Add(nodeKey, evidence);
+                        var vertexEvidence = evidenceTable[rowCount][dateTime.String()] as VertexEvidence;
+
+                        evidences[dateTime][nodeKey] = vertexEvidence;
                     }
+                }
 
-                    var nodeBelief = this.Network.Run(vertexEvidences);
+                var beliefs = this.Network.Run(evidences);
 
-                    if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count < noOfEvidenceRows)
-                    {
-                        this.CreateNewBeliefDataSet(mergedDataSet);
-                    }
+                if (this.BeliefsData.Count == 0 || this.BeliefsData[this.BeliefsData[0].Key].Count < noOfEvidenceRows)
+                {
+                    this.CreateNewBeliefDataSet(mergedDataSet);
+                }
 
-                    foreach (var kvp in nodeBelief)
+                foreach (var dateTime in mergedDataSet.Values[0].DateTimes)
+                {
+                    foreach (var kvp in beliefs[dateTime])
                     {
                         var nodeKey = kvp.Key;
                         var val = kvp.Value;
@@ -1211,12 +1204,11 @@ namespace Marv.Input
                         var beliefTable = this.BeliefsData[nodeKey];
                         var beliefRow = beliefTable[rowCount];
 
-                        beliefRow[beliefRow.GetDynamicMemberNames().ToList()[dateTimecount]] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
+                        beliefRow[dateTime.String()] = this.Network.Vertices[nodeKey].States.ParseEvidenceString(val.ValueToDistribution());
                     }
-
-                    vertexEvidences.Clear();
                 }
             }
+
             this.SelectedTheme = DataTheme.Beliefs;
             MessageBox.Show("Model run sucessful");
 
@@ -1226,7 +1218,7 @@ namespace Marv.Input
             }
         }
 
-      private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")
             {
