@@ -968,13 +968,21 @@ namespace Marv.Input
 
         private void LineDataOpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (this.Network == null)
+            {
+                MessageBox.Show("Please node the network file");
+                return;
+            }
             var dialog = new OpenFileDialog
             {
                 Filter = Common.LineData.FileDescription + "|*." + Common.LineData.FileExtension,
                 Multiselect = false
             };
 
-            if (dialog.ShowDialog() != true) {}
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
 
             this.userDataObjFileName = dialog.FileName;
 
@@ -1259,7 +1267,11 @@ namespace Marv.Input
             if (this.Table == null || this.Table.Count == 0)
             {
                 this.Table = new EvidenceTable(this.dates);
-                this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData { UserTable = this.Table });
+
+                if (this.SelectedTheme == DataTheme.User)
+                {
+                    this.PipeLineData.UserDataObj.Add(this.SelectedVertex.Key, new NodeData { UserTable = this.Table });
+                }
             }
 
             this.SelectedColumnName = this.Table.DateTimes.First().String();
