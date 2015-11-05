@@ -557,7 +557,7 @@ namespace Marv.Input
                     {
                         var midRangeValue = (interpolatedRow.From + interpolatedRow.To) / 2;
 
-                        var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue);
+                        var evidenceString = this.SelectedInterpolationData.GetEvidenceString(midRangeValue, this.VerticalAxis.Equals(LinearAxis)?VertexAxisType.Linear: VertexAxisType.Logarithmic);
 
                         interpolatedRow[column.Key] = this.Network.Vertices[kvp.Key].States.ParseEvidenceString(evidenceString);
                     }

@@ -8,9 +8,11 @@ namespace Marv.Common.Interpolators
     public class LinearInterpolator : IInterpolator
     {
         private readonly List<Point> points = new List<Point>();
+        private readonly VertexAxisType verticalAxisType;
 
-        public LinearInterpolator(IEnumerable<double> xCoords, IEnumerable<double> yCoords)
+        public LinearInterpolator(IEnumerable<double> xCoords, IEnumerable<double> yCoords, VertexAxisType axisType)
         {
+            verticalAxisType = axisType;
             var x = xCoords as IList<double> ?? xCoords.ToList();
             var y = yCoords as IList<double> ?? yCoords.ToList();
 
@@ -53,7 +55,10 @@ namespace Marv.Common.Interpolators
             var max = this.points[xMaxIndex];
             var min = this.points[xMinIndex];
 
-            return (x - min.X) * (max.Y - min.Y) / (max.X - min.X) + min.Y;
+            var result = verticalAxisType == VertexAxisType.Linear
+                             ? (x - min.X) * ((max.Y - min.Y) / (max.X - min.X)) + min.Y
+                             :  Math.Pow((x - min.X) * ((Math.Log10(max.Y) - Math.Log10(min.Y)) / (max.X - min.X)) + Math.Log10(min.Y),10);
+            return result;
         }
     }
 }

@@ -180,8 +180,9 @@ namespace Marv.Input
             //    grid.Children.Add(ellipse);
             //}
 
-            stackPanel.Children.Add(ellipse);
             stackPanel.Children.Add(commentTextBlock);
+            stackPanel.Children.Add(ellipse);
+            
 
             chart.Annotations.Add(new CartesianCustomAnnotation
             {

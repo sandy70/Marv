@@ -3,6 +3,7 @@ using Marv.Common;
 using Marv.Common.Interpolators;
 using Telerik.Charting;
 using System.Linq;
+using Telerik.Windows.Controls.ChartView;
 
 namespace Marv.Input
 {
@@ -91,9 +92,9 @@ namespace Marv.Input
             }
         }
 
-        public string GetEvidenceString(double xValue)
+        public string GetEvidenceString(double xValue, VertexAxisType axisType )
         {
-            var values = this.Points.Select(scatterDataPoints => (new LinearInterpolator(scatterDataPoints.GetXCoords(), scatterDataPoints.GetYCoords()).Eval(xValue))).ToList();
+            var values = this.Points.Select(scatterDataPoints => (new LinearInterpolator(scatterDataPoints.GetXCoords(), scatterDataPoints.GetYCoords(), axisType).Eval(xValue))).ToList();
             
             values.Sort();
 
