@@ -128,25 +128,7 @@ namespace Marv.Input
                                     ? vertexEvidence.Params[0]
                                     : vertexEvidence.Params[vertexEvidence.Value.IndexOf(val => val == 1)];
 
-            var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
-
-            //var grid = new Grid();
-
-            //var firstRow = new RowDefinition();
-            //var secondRow = new RowDefinition();
-
-            //grid.RowDefinitions.Add(firstRow);
-            //grid.RowDefinitions.Add(secondRow);
-
-            //var innerGrid = new Grid();
-
-            //var firstCol = new ColumnDefinition {  };
-            //var secondCol = new ColumnDefinition {  };
-
-            //innerGrid.ColumnDefinitions.Add(firstCol);
-            //innerGrid.ColumnDefinitions.Add(secondCol);
-
-            var commentTextBlock = new TextBlock { Text = comment };
+            var commentTextBlock = new TextBlock { Text = comment, Margin = new Thickness(8, 0, 0, 0) };
 
             var ellipse = new Ellipse
             {
@@ -156,41 +138,24 @@ namespace Marv.Input
                 Width = 8,
             };
 
-            //if (from < 0.1 * (chart.HorizontalAxis as LinearAxis).Maximum )
-            //{
-            //    Grid.SetRow(commentTextBlock, 0);
-            //    Grid.SetColumn(commentTextBlock, 1);
-            //    commentTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            //    innerGrid.Children.Add(commentTextBlock);
-
-            //    Grid.SetRow(innerGrid, 0);
-            //    grid.Children.Add(innerGrid);
-
-            //    Grid.SetRow(ellipse, 1);
-            //    grid.Children.Add(ellipse);
-            //}
-
-            //else if (from > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum)
-            //{
-            //    Grid.SetRow(commentTextBlock, 0);
-            //    Grid.SetColumn(commentTextBlock, 0);
-            //    grid.Children.Add(commentTextBlock);
-
-            //    Grid.SetRow(ellipse, 1);
-            //    grid.Children.Add(ellipse);
-            //}
-
-            stackPanel.Children.Add(commentTextBlock);
-            stackPanel.Children.Add(ellipse);
-            
-
             chart.Annotations.Add(new CartesianCustomAnnotation
             {
-                Content = stackPanel,
+                Content = ellipse,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 HorizontalValue = (from + to) / 2,
                 Tag = dataRow,
                 VerticalAlignment = VerticalAlignment.Center,
+                VerticalValue = verticalValue,
+                ZIndex = -200
+            });
+
+            chart.Annotations.Add(new CartesianCustomAnnotation
+            {
+                Content = commentTextBlock,
+                HorizontalAlignment = (from + to) / 2 > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum ? HorizontalAlignment.Left : HorizontalAlignment.Right,
+                HorizontalValue = (from + to) / 2,
+                Tag = dataRow,
+                VerticalAlignment = verticalValue > 0.9 * (chart.VerticalAxis as LinearAxis).Maximum ? VerticalAlignment.Bottom : VerticalAlignment.Top,
                 VerticalValue = verticalValue,
                 ZIndex = -200
             });
