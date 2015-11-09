@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -70,6 +71,15 @@ namespace Marv.Input
         private string userDataObjFileName;
         private NumericalAxis verticalAxis = LinearAxis;
 
+        public string UserDataObjFileName
+        {
+            get { return this.userDataObjFileName; }
+            set
+            {
+                this.userDataObjFileName = value;
+                this.RaisePropertyChanged();
+            }
+        }
         public int AddRowCommandsCount
         {
             get { return addRowCommandsCount; }
@@ -962,7 +972,7 @@ namespace Marv.Input
             this.SelectedColumnName = null;
             this.SelectedInterpolationData = null;
             this.IsModelRun = false;
-
+            this.UserDataObjFileName = "";
             this.UpdateTable();
         }
 
@@ -971,6 +981,7 @@ namespace Marv.Input
             if (this.Network == null)
             {
                 MessageBox.Show("Please node the network file");
+               
                 return;
             }
             var dialog = new OpenFileDialog
@@ -984,7 +995,7 @@ namespace Marv.Input
                 return;
             }
 
-            this.userDataObjFileName = dialog.FileName;
+            this.UserDataObjFileName = dialog.FileName;
 
             var directoryName = Path.GetDirectoryName(dialog.FileName);
 
@@ -995,6 +1006,7 @@ namespace Marv.Input
             }
             else
             {
+              
                 this.PipeLineData = Common.Utils.ReadJson<LineData>(dialog.FileName);
                 var deleteNodes = new List<string>();
                 foreach (var kvp in this.PipeLineData.UserDataObj)
@@ -1017,6 +1029,7 @@ namespace Marv.Input
                     }
                     this.dates = kvp.Value.UserTable.DateTimes.ToList();
                 }
+
             }
         }
 
@@ -1034,11 +1047,11 @@ namespace Marv.Input
                 return;
             }
 
-            this.userDataObjFileName = dialog.FileName;
+            this.UserDataObjFileName = dialog.FileName;
 
-            if (this.userDataObjFileName != null)
+            if (this.UserDataObjFileName != null)
             {
-                this.PipeLineData.WriteJson(this.userDataObjFileName);
+                this.PipeLineData.WriteJson(this.UserDataObjFileName);
             }
         }
 
@@ -1049,13 +1062,13 @@ namespace Marv.Input
 
         private void LineDataSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (this.userDataObjFileName == null)
+            if (this.UserDataObjFileName == null)
             {
                 this.LineDataSaveAs();
             }
             else
             {
-                this.PipeLineData.WriteJson(this.userDataObjFileName);
+                this.PipeLineData.WriteJson(this.UserDataObjFileName);
             }
         }
 
@@ -1066,13 +1079,13 @@ namespace Marv.Input
                 return;
             }
 
-            if (this.userDataObjFileName == null)
+            if (this.UserDataObjFileName == null)
             {
                 this.LineDataSaveAs();
             }
             else
             {
-                this.PipeLineData.WriteJson(this.userDataObjFileName);
+                this.PipeLineData.WriteJson(this.UserDataObjFileName);
             }
         }
 
@@ -1161,11 +1174,9 @@ namespace Marv.Input
 
         private void RunLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Dict<string, EvidenceTable> mergedDataSet;
-
             var baseRowsList = Utils.CreateBaseRowsList(this.PipeLineData.BaseTableMin, this.PipeLineData.BaseTableMax, this.PipeLineData.BaseTableRange);
 
-            mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
+            var mergedDataSet = Utils.Merge(this.PipeLineData.UserDataObj, baseRowsList, this.Network);
 
             var interpolatedData = CaptureInterpolatedData(mergedDataSet);
 
@@ -1226,6 +1237,7 @@ namespace Marv.Input
             }
         }
 
+        
         private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Type")

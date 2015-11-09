@@ -40,6 +40,7 @@
         </ItemsPanelTemplate>
     </StatusBar.ItemsPanel>
     
+    
     <StatusBarItem Grid.Column="0">
         <Image Visibility="{Binding ElementName=Root, Path=SelectedNotification.IsWarning, Converter={StaticResource BooleanToVisibility}}"
                Source="/Marv.Common;component/Resources/Icons/Warning.png" />
@@ -47,7 +48,8 @@
 
     <StatusBarItem Grid.Column="1">
         <Grid>
-            <telerik:RadProgressBar Minimum="0"
+            <telerik:RadProgressBar Name="ProgressBar"
+                                    Minimum="0"
                                     IsIndeterminate="{Binding ElementName=Root, Path=SelectedNotification.IsIndeterminate}"
                                     Width="200"
                                     Value="{Binding ElementName=Root, Path=SelectedNotification.Value, Converter={StaticResource DecimalToPercentage}}" />
