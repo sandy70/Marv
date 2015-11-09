@@ -736,6 +736,12 @@ namespace Marv.Input
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
+            if (SelectedVertex.Type != VertexType.Interval)
+            {
+               MessageBox.Show("Mean is undefined for non-interval type node [{0}]." + SelectedVertex);
+                return;
+            }
+
             var workbook = new Workbook();
             var worksheet = workbook.Worksheets.Add();
             worksheet.Name = this.SelectedVertex.Key;

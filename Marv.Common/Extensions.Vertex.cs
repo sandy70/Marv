@@ -38,7 +38,14 @@ namespace Marv.Common
 
         public static double Mean(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
         {
-            CheckVertexStatisticComputable(networkVertex, newValue);
+            try
+            {
+                CheckVertexStatisticComputable(networkVertex, newValue);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             return Math.Round(networkVertex.States
                                 .Select((state, i) => (newValue[i] * (state.SafeMax + state.SafeMin) / 2))
@@ -47,15 +54,29 @@ namespace Marv.Common
 
         public static double MeanDifference(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
         {
-            CheckVertexStatisticComputable(networkVertex, newValue);
-            CheckVertexStatisticComputable(networkVertex, oldValue);
+            try
+            {
+                CheckVertexStatisticComputable(networkVertex, newValue);
+                CheckVertexStatisticComputable(networkVertex, oldValue);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             return networkVertex.Mean(newValue) - networkVertex.Mean(oldValue);
         }
 
         public static double StandardDeviation(this IVertex networkVertex, double[] newValue, double[] oldValue = null)
         {
-            CheckVertexStatisticComputable(networkVertex, newValue);
+            try
+            {
+                CheckVertexStatisticComputable(networkVertex, newValue);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             var mu = networkVertex.Mean(newValue);
 
@@ -85,11 +106,12 @@ namespace Marv.Common
         {
             CheckValueArrayLength(networkVertex, value);
 
-            if (networkVertex.Type != VertexType.Interval)
+            if (networkVertex.Type == VertexType.Interval)
             {
-                var message = System.String.Format("Mean is undefined for non-interval type node [{0}].", networkVertex);
-                throw new ArgumentException(message);
+                return;
             }
+            var message = System.String.Format("Mean is undefined for non-interval type node [{0}].", networkVertex);
+            throw new ArgumentException(message);
         }
     }
 }
