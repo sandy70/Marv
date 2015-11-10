@@ -913,58 +913,6 @@ namespace Marv.Input
             this.IsHeatMapVisible = !this.IsHeatMapVisible;
         }
 
-        private void LineDataImportExcelMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = Common.LineData.FileDescription + "|*." + "xlsx",
-            };
-
-            var result = dialog.ShowDialog();
-
-            if (result != true)
-            {
-                return;
-            }
-
-            if (!File.Exists(dialog.FileName))
-            {
-                throw new FileNotFoundException(String.Format("File {0} was not found!", dialog.FileName));
-            }
-
-            IWorkbookFormatProvider formatProvider = new XlsxFormatProvider();
-            Workbook workbook;
-            using (var input = new FileStream(dialog.FileName, FileMode.Open))
-            {
-                workbook = formatProvider.Import(input);
-            }
-
-            var worksheet = workbook.Worksheets.GetByName(this.SelectedVertex.Key);
-
-            var noOfRows = 0;
-            var noOfColumns = 2 + this.Table.DateTimes.Count();
-
-            while (worksheet.Cells[noOfRows, 0].GetValue().Value.ValueType != CellValueType.Empty)
-            {
-                noOfRows++;
-            }
-
-            for (var rowCount = 0; rowCount < noOfRows; rowCount++)
-            {
-                for (var colCount = 0; colCount < noOfColumns; colCount++)
-                {
-                    var val = worksheet.Cells[rowCount, colCount].GetValue().Value.GetValueAsString(new CellValueFormat("0.00E+00"));
-                    Console.WriteLine(val);
-                }
-            }
-
-            //foreach (var row in this.Table)
-            //{
-            //    row.From = Convert.ToDouble(worksheet.Cells[0, 0].GetValue().Value.RawValue);
-            //    row.To = Convert.ToDouble(worksheet.Cells[0, 1].GetValue().Value.RawValue);
-            //}
-        }
-
         private void LineDataNewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.LineDataSaveAs();
@@ -1242,7 +1190,6 @@ namespace Marv.Input
                 this.IsModelRun = true;
             }
         }
-
         
         private void SelectedInterpolationData_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

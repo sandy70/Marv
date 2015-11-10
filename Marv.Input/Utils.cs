@@ -65,6 +65,7 @@ namespace Marv.Input
                 VerticalTo = verticalValue,
                 ZIndex = -200
             });
+
         }
 
         public static void AddNodeStateLines(this RadCartesianChart chart, Vertex selectedVertex, double baseTableMax, double baseTableMin, NumericalAxis verticalAxis)
@@ -149,16 +150,38 @@ namespace Marv.Input
                 ZIndex = -200
             });
 
-            chart.Annotations.Add(new CartesianCustomAnnotation
+            if (comment ==null || comment.Equals(""))
             {
-                Content = commentTextBlock,
-                HorizontalAlignment = (from + to) / 2 > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum ? HorizontalAlignment.Left : HorizontalAlignment.Right,
-                HorizontalValue = (from + to) / 2,
-                Tag = dataRow,
-                VerticalAlignment = verticalValue > 0.9 * (chart.VerticalAxis as LinearAxis).Maximum ? VerticalAlignment.Bottom : VerticalAlignment.Top,
-                VerticalValue = verticalValue,
-                ZIndex = -200
-            });
+                return;
+            }
+
+          if (chart.VerticalAxis as LinearAxis == null)
+            {
+                chart.Annotations.Add(new CartesianCustomAnnotation
+                {
+                    Content = commentTextBlock,
+                    HorizontalAlignment = (from + to) / 2 > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum ? HorizontalAlignment.Left : HorizontalAlignment.Right,
+                    HorizontalValue = (from + to) / 2,
+                    Tag = dataRow,
+                    VerticalAlignment = verticalValue > 0.9 * (chart.VerticalAxis as LogarithmicAxis).Maximum ? VerticalAlignment.Bottom : VerticalAlignment.Top,
+                    VerticalValue = verticalValue,
+                    ZIndex = -200
+                });
+            }
+            else
+            {
+                chart.Annotations.Add(new CartesianCustomAnnotation
+                {
+                    Content = commentTextBlock,
+                    HorizontalAlignment = (from + to) / 2 > 0.9 * (chart.HorizontalAxis as LinearAxis).Maximum ? HorizontalAlignment.Left : HorizontalAlignment.Right,
+                    HorizontalValue = (from + to) / 2,
+                    Tag = dataRow,
+                    VerticalAlignment = verticalValue > 0.9 * (chart.VerticalAxis as LinearAxis).Maximum ? VerticalAlignment.Bottom : VerticalAlignment.Top,
+                    VerticalValue = verticalValue,
+                    ZIndex = -200
+                });
+            }
+           
         }
 
         public static void AddRangeAnnotation(this RadCartesianChart chart, EvidenceRow dataRow, string columnName)
@@ -493,7 +516,7 @@ namespace Marv.Input
             var comment = (string) row["Comment"];
 
             chart.Annotations.Remove(annotation => ReferenceEquals(annotation.Tag, row));
-
+            
             if (from == to)
             {
                 chart.Annotations.Add(new CartesianCustomLineAnnotation
@@ -523,7 +546,8 @@ namespace Marv.Input
                     ZIndex = -500
                 });
             }
-        }
+
+       }
 
         public static Dict<string, EvidenceTable> UpdateWithInterpolatedData(this Dict<string, EvidenceTable> mergedEvidenceSet, Dict<string, EvidenceTable> interpolatedDataSet)
         {
